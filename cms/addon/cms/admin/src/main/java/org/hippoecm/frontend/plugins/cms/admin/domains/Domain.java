@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.domains;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -26,6 +28,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 
@@ -42,25 +46,30 @@ public class Domain implements IClusterable {
     private final String name;
     private String description = "";
 
+    private transient Node node;
+
     private SortedMap<String, AuthRole> authRoles = new TreeMap<String, AuthRole>();
 
     public class AuthRole {
         private final String role;
-        private SortedSet<String> users = new TreeSet<String>();
-        private SortedSet<String> groups = new TreeSet<String>();
+        private SortedSet<String> usernames = new TreeSet<String>();
+        private SortedSet<String> groupnames = new TreeSet<String>();
 
+        private transient Node authRoleNode;
+        
         public AuthRole(final Node node) throws RepositoryException {
+            this.authRoleNode = node;
             this.role = node.getProperty(HippoNodeType.HIPPO_ROLE).getString();
             if (node.hasProperty(HippoNodeType.HIPPO_USERS)) {
                 Value[] vals = node.getProperty(HippoNodeType.HIPPO_USERS).getValues();
                 for (Value val : vals) {
-                    users.add(val.getString());
+                    usernames.add(val.getString());
                 }
             }
             if (node.hasProperty(HippoNodeType.HIPPO_GROUPS)) {
                 Value[] vals = node.getProperty(HippoNodeType.HIPPO_GROUPS).getValues();
                 for (Value val : vals) {
-                    groups.add(val.getString());
+                    groupnames.add(val.getString());
                 }
             }
         }
@@ -69,12 +78,24 @@ public class Domain implements IClusterable {
             return role;
         }
         
-        public SortedSet<String> getUsers() {
-            return users;
+        public SortedSet<String> getUsernames() {
+            return usernames;
         }
         
-        public SortedSet<String> getGroups() {
-            return groups;
+        public SortedSet<String> getGroupnames() {
+            return groupnames;
+        }
+
+        public void removeGroup(String group) throws RepositoryException {
+            groupnames.remove(group);
+            authRoleNode.setProperty(HippoNodeType.HIPPO_GROUPS, groupnames.toArray(new String[groupnames.size()]));
+            authRoleNode.save();
+        }
+
+        public void addGroup(String group) throws RepositoryException {
+            groupnames.add(group);
+            authRoleNode.setProperty(HippoNodeType.HIPPO_GROUPS, groupnames.toArray(new String[groupnames.size()]));
+            authRoleNode.save();
         }
     }
 
@@ -103,6 +124,7 @@ public class Domain implements IClusterable {
     public Domain(final Node node) throws RepositoryException {
         this.path = node.getPath().substring(1);
         this.name = NodeNameCodec.decode(node.getName());
+        this.node = node;
 
         if (node.hasProperty(PROP_DESCRIPTION)) {
             setDescription(node.getProperty(PROP_DESCRIPTION).getString());
@@ -118,7 +140,30 @@ public class Domain implements IClusterable {
             }
         }
     }
+    
 
+
+    //-------------------- persistence helpers ----------//
+
+    public void addGroupToRole(String role, String group) throws RepositoryException {
+        for (Domain.AuthRole authRole : getAuthRoles().values()) {
+            if (role.equals(authRole.getRole())) {
+                authRole.addGroup(group);
+            }
+        }
+    }
+
+    public void removeGroupFromRole(String role, String group) throws RepositoryException {
+        for (Domain.AuthRole authRole : getAuthRoles().values()) {
+            if (role.equals(authRole.getRole())) {
+                authRole.removeGroup(group);
+            }
+        }
+        
+    }
+    
+
+    //--------------------- default object -------------------//
     /**
      * @see java.lang.Object#equals(java.lang.Object)
      */

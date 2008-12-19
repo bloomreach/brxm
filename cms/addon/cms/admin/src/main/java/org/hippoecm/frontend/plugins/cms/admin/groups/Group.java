@@ -38,7 +38,7 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Group implements IClusterable {
+public class Group implements Comparable<Group>, IClusterable {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -84,6 +84,8 @@ public class Group implements IClusterable {
         } catch (RepositoryException e) {
             log.error("Error while querying for a list of local groups", e);
         }
+        // TODO: remove when query can sort on node names
+        Collections.sort(groups);
         return groups;
     }
     
@@ -107,6 +109,8 @@ public class Group implements IClusterable {
         } catch (RepositoryException e) {
             log.error("Error while querying for a list of local groups", e);
         }
+        // TODO: remove when query can sort on node names
+        Collections.sort(groups);
         return groups;
     }
     
@@ -134,6 +138,7 @@ public class Group implements IClusterable {
         } catch (RepositoryException e) {
             log.error("Error while querying for a list of local groups", e);
         }
+        // TODO: remove when query can sort on node names
         Collections.sort(roles);
         return roles;
     }
@@ -228,5 +233,45 @@ public class Group implements IClusterable {
 
         }
         return false;
+    }
+
+    /**
+     * Sort on group name
+     * TODO: Not needed when soring on node names works
+     */
+    public int compareTo(Group o) {
+        
+        String thisName = getGroupname();
+        String otherName = o.getGroupname();
+        // 
+        int len1 = thisName.length();
+        int len2 = otherName.length();
+        int n = Math.min(len1, len2);
+        char v1[] = thisName.toCharArray();
+        char v2[] = otherName.toCharArray();
+        int i = 0;
+        int j = 0;
+
+        if (i == j) {
+            int k = i;
+            int lim = n + i;
+            while (k < lim) {
+            char c1 = v1[k];
+            char c2 = v2[k];
+            if (c1 != c2) {
+                return c1 - c2;
+            }
+            k++;
+            }
+        } else {
+            while (n-- != 0) {
+            char c1 = v1[i++];
+            char c2 = v2[j++];
+            if (c1 != c2) {
+                return c1 - c2;
+            }
+            }
+        }
+        return len1 - len2;
     }
 }

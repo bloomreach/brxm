@@ -34,14 +34,6 @@ public class UsersPanel extends AdminBreadCrumbPanel {
     public UsersPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-
-        // add feedback panel to show errors
-        FeedbackPanel feedback = new FeedbackPanel("feedback");
-        feedback.setOutputMarkupId(true);
-        add(feedback);
-        
-        //add(new ListUsersPanel(panelId, this));
-        //add(detailsFragment);
     }
 
     public IModel getTitle(Component component) {
