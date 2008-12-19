@@ -1,28 +1,85 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+  Copyright 2008 Hippo.
+ 
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+       http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
 <document>
+<!--
+   Basic guidelines are in the comments. For more instructions, see
+   http://maven.apache.org/plugins/maven-changes-plugin/usage.html
+-->
  <properties>
   <title>Release notes Hippo CMS 7</title>
   <author email="a.cahn@onehippo.com">Arje Cahn</author>
  </properties>
+
+
  <body>
-  <release version="current" description="Current work version">    
-   <action dev="Duke Java" type="add">
-    A new cool feature.
+  <!--
+  * body is a list of releases:
+  <release version="1.0.0" date='2008-12-19' description="First public release">    
+
+   * release is a list of actions:
+   <action type="add" dev="acahn">  
+    * type attribute: mandatory, possible values: 
+
+     * add    : added functionnality to the project.
+     * fix    : bug fix for the project.
+     * update : updated some part of the project.
+     * remove : removed some functionnality from the project.
+
+    * dev attribute:  
+
+   </action>
+   <action type="fix" dev="acahn">  
+    <fixes issue='HREPTWO-1951'/>
+    <fixes issue='HREPTWO-1967'/>
+    <fixes issue='HREPTWO-1989'/>
+   </action>
+  </release>
+  -->
+
+  <release version="current" date='in SVN trunk' description="Current work version">    
+   <action type="update" dev="jtietema">
+     Improve performance of tag completion.
    </action>         
   </release>
 
-  <release version="1.0.0" date="2008-12-19" description="Release fix">   
-   <action dev="Duke Java" type="improvement">
-    Scheduled publication, a features for CMS editors.
-    <a href='../  Scheduled publication'
-   </action>                      
+ <!--
+    <a href='../delve_into/user/editors/concepts/scheduled_publication.html'>Scheduled publication</a>
+ -->
 
-           <action dev="Duke Java" type="fix" issue="1254">
-               Fixed a nasty bug.
-           </action>        
-           <action dev="Duke Java" type="delete">
-               Removed a feature that nobody liked.
-           </action>        
+  <release version="1.0.0" date="2008-12-19" description="First public release">   
+   <action type="update" dev="acahn">
+    Scheduled publication, an improved publication feature for CMS editors.
+   </action>                      
+   <action type="update" dev="acahn">
+    Performance improved: speed is doubled!
+   </action>                      
+   <action type="add" dev="jtietema">
+    Tag completion.
+   </action>                      
+   <action type="add" dev="jtietema">
+    Tag completion.
+    <fixes issue='HREPTWO-1951'/>
+    <fixes issue='HREPTWO-1967'/>
+    <fixes issue='HREPTWO-1989'/>
+   </action>                      
+   <action type="add" dev="rbijlsma">
+    deTag completion.
+    <fixes issue='HREPTWO-1952'/>
+   </action> 
   </release>         
  </body>
 </document>

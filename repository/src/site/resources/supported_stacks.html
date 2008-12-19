@@ -18,6 +18,8 @@ html1/DTD/xhtml1-strict.dtd">
 
  <style type='text/css'>
 
+  body { margin-left: 20ex; margin-right: 20ex; }
+
   .posix { background: #E0E0FF }
   .both { background: white }
   .ms { background: #FFDDDD }
@@ -64,8 +66,13 @@ html1/DTD/xhtml1-strict.dtd">
 
   <p>Hippo CMS requires a stack of system software to be able to run.  
      Hippo CMS support is only OS type dependent, not stack dependent. I.e.: given a particular OS type, 
-     you can choose a particular piece of system software for every layer of the stack and none of your choices depends on your other choices.
+     you can choose any piece of system software from the sets given
+     below. Apart from you choice of OS type, none of your choices
+     reduces your others sets of options. 
   </p>
+  <p>Below, the supported stacks are presented in two ways: as a layer view and as
+a table view.</p>
+
 
   <h2>Layer View</h2>
 
@@ -193,10 +200,10 @@ html1/DTD/xhtml1-strict.dtd">
 	  </td>	  
          </tr>
          <tr>
-         <td class='posix'>Linux<br/> kernel<br/> 2.6
+         <td class='posix'>Redhat<br/>Enterprise<br/>Linux 5
 	 </td>
          <td class='posix'>
-          Sun<br/>Solaris
+          SUSE Linux<br/>Enterprise<br/>Desktop 10
          </td>
          <td class='ms start'>
           MS Windows<br/>XP
@@ -221,7 +228,7 @@ html1/DTD/xhtml1-strict.dtd">
    Sun JVM has versions for many operating systems and supplies an OS independent platform.
   </li>
   <li><span class='prefposix'>
-   Tomcat runs slow on MS OS'ses so is preferably run on <span class='posix'>(allmost) POSIX compliant OS'ses.</span>  
+   Tomcat runs slow on Microsoft OS'ses so is preferably run on <span class='posix'>Linux</span>.  
    The cause is that Tomcat makes excessive use of thread switching, which eventually has to be taken care of
    by the OS and MS OS's are not very good at that.</span>
   </li>
@@ -236,7 +243,7 @@ http://www.opengroup.org/platform/single_unix_specification/
 
   <h2>Table view</h2>
 
-   <p>The table below shows which system software required by Hippo CMS are supported on what OS (type).
+   <p>The table below shows the same information in table form. 
       <!-- As support depends only on OS type, not on OS, two columns, one for each OS type, would suffice. -->
    </p>
   
@@ -331,12 +338,12 @@ http://www.opengroup.org/platform/single_unix_specification/
   </table>
  </div>
 
- <ol>
+ <ul>
   <li><span class='warn'>Tomcat runs slow on MS OS'ses so is preferably run on <span class='posix'>Linux</span>.  
    The cause is that Tomcat makes excessive use of thread switching, which eventually has to be taken care of
    by the OS and MS OS's are not very good at that.</span>
   </li>
- </ol>
+ </ul>
  
 </body>
 </html>
