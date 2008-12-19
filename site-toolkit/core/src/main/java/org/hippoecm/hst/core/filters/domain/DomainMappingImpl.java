@@ -2,7 +2,9 @@ package org.hippoecm.hst.core.filters.domain;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -13,6 +15,7 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.servlet.FilterConfig;
 
+import org.apache.commons.collections.map.LRUMap;
 import org.hippoecm.hst.jcr.JcrSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,7 @@ public class DomainMappingImpl implements DomainMapping{
     private String scheme;
     private boolean isPortInUrl;
     private int port;
+    private Map cache = Collections.synchronizedMap(new LRUMap(500));
     
     // TODO for now hardcoded paths to binary location. This information is needed to rewrite urls to subsites with another domain
     private String[] binaryLocations = new String[]{"/content/gallery", "/content/assets"};
@@ -168,6 +172,11 @@ public class DomainMappingImpl implements DomainMapping{
     }
 
     public Domain match(String serverName){
+        Object d = cache.get(serverName);
+        if(d != null)
+        {
+            return (Domain)d;
+        }
         if(serverName == null) {
             log.warn("Cannot match serverName because is null");
             return null;
@@ -177,6 +186,7 @@ public class DomainMappingImpl implements DomainMapping{
         for(Domain domain : orderedDomains) {
             if(domain.match(serverName.toLowerCase(), serverName.split(Domain.DELIMITER))) {
                 log.debug("found matching domain for '{}' --> '{}'", serverName, domain.getPattern());
+                cache.put(serverName, domain);
                 return domain;
             }
         } 

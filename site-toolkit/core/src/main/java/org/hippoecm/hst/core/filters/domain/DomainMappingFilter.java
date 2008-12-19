@@ -117,6 +117,7 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
         }
         
         Domain matchingDomain = domainMapping.match(req.getServerName());
+        
         if(matchingDomain == null) {
             if(domainMapping.getPrimaryDomain() != null) {
                 log.warn("No domain matched. Redirecting to primary domain '{}'", domainMapping.getPrimaryDomain().getPattern());

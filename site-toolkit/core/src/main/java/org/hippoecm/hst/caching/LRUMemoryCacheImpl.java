@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.caching;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -23,30 +24,26 @@ import org.hippoecm.hst.caching.validity.SourceValidity;
 
 public class LRUMemoryCacheImpl implements Cache{
 
-    private LRUMap cache;
+    private Map cache;
     private boolean active = true;
     
     // stats
-    private long misses = 0;
+    private long misses = 0; 
     private long hits = 0;
     private long puts = 0;
     
     public LRUMemoryCacheImpl(int size) {
-        this.cache = new LRUMap(size);
+        this.cache = Collections.synchronizedMap(new LRUMap(size));
     }
     
     public void clear() {
-        synchronized(cache) {
-            cache.clear();
-        }
+          cache.clear();
     }
 
     public boolean containsKey(CacheKey key) {
         if(!active) {return false;}
         CachedResponse cachedResponse =null ;
-        synchronized (cache) {
-            cachedResponse = (CachedResponse)this.cache.get(key);
-        }
+        cachedResponse = (CachedResponse)this.cache.get(key);
         
         if(cachedResponse == null) {
             misses++;
@@ -68,9 +65,7 @@ public class LRUMemoryCacheImpl implements Cache{
     public CachedResponse get(CacheKey key) {
         if(!active) {return null;}
         CachedResponse cachedResponse =null ;
-        synchronized (cache) {
-            cachedResponse = (CachedResponse)this.cache.get(key);
-        }
+        cachedResponse = (CachedResponse)this.cache.get(key);
         if(cachedResponse == null) {
             misses++;
             return null;
@@ -101,9 +96,7 @@ public class LRUMemoryCacheImpl implements Cache{
         }
         SourceValidity[] sourceValidities = cachedResponse.getValidityObjects();
         if(sourceValidities == null) {
-            synchronized (cache) {
-                this.cache.remove(key);
-            }
+            this.cache.remove(key);
             return false;
         } else {
             boolean isValid = true;
@@ -118,9 +111,7 @@ public class LRUMemoryCacheImpl implements Cache{
                 }
             }
             if(!isValid) {
-                synchronized (cache) {
-                    this.cache.remove(key);
-                }
+               this.cache.remove(key);
             }
             return isValid;
         }
@@ -131,7 +122,6 @@ public class LRUMemoryCacheImpl implements Cache{
         Map<String, String> stats = new LinkedHashMap<String, String>();
         synchronized(this) {
             stats.put("Type ", this.getClass().getSimpleName());
-            stats.put("Max size ", String.valueOf(cache.maxSize()));
             stats.put("Current size ", String.valueOf(cache.size()));
             stats.put("Cache put" , String.valueOf(puts));
             stats.put("Cache hits" , String.valueOf(hits));

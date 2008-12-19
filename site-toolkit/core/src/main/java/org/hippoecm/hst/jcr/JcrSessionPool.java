@@ -15,9 +15,11 @@
  */
 package org.hippoecm.hst.jcr;
 
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
@@ -38,7 +40,7 @@ public class JcrSessionPool {
     private SimpleCredentials simpleCredentials;
     private String repositoryLocation;
     private LinkedList<ReadOnlyPooledSession> idleSessions = new LinkedList<ReadOnlyPooledSession>();
-    private IdentityHashMap<HttpSession, ReadOnlyPooledSession> activeSessions = new IdentityHashMap<HttpSession, ReadOnlyPooledSession>();
+    private Map<HttpSession, ReadOnlyPooledSession> activeSessions = Collections.synchronizedMap(new IdentityHashMap<HttpSession, ReadOnlyPooledSession>());
 
     public JcrSessionPool(SimpleCredentials simpleCredentials, String repositoryLocation) {
         log.debug("Create a new jcr session pool for '" + simpleCredentials.getUserID() + "'");
@@ -54,20 +56,20 @@ public class JcrSessionPool {
         log.debug("fetching a session from the pool.");
         ReadOnlyPooledSession session = null;
 
-        synchronized (this.activeSessions) {
-            session = this.activeSessions.get(httpSession);
-            if (session != null) {
-                if (session.isLive()) {
-                    session.increaseRefCount();
-                    log.debug("return found active session in pool for the request. ");
-                    return session;
-                } else {
-                    log.debug("found a session which is not alive: logout and remove from active sessions");
-                    session.getDelegatee().logout();
-                    this.activeSessions.remove(httpSession);
-                }
+        
+        session = this.activeSessions.get(httpSession);
+        if (session != null) {
+            if (session.isLive()) {
+                session.increaseRefCount();
+                log.debug("return found active session in pool for the request. ");
+                return session;
+            } else {
+                log.debug("found a session which is not alive: logout and remove from active sessions");
+                session.getDelegatee().logout();
+                this.activeSessions.remove(httpSession);
             }
         }
+        
 
         log.debug("trying to get a session from the 'idle sessions' list");
         // because both idleSessions and activeSessions modifying/reading, sychronize on jcrSessionPool
@@ -105,10 +107,9 @@ public class JcrSessionPool {
             throw new JcrConnectionException("Failed to initialize repository");
         }
         session = new ReadOnlyPooledSession(jcrSession, this);
-        synchronized (this.activeSessions) {
-            session.increaseRefCount();
-            this.activeSessions.put(httpSession, session);
-        }
+        session.increaseRefCount();
+        this.activeSessions.put(httpSession, session);
+        
         return session;
     }
 
