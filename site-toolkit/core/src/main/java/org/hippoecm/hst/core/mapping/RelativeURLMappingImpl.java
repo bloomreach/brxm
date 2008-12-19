@@ -52,8 +52,8 @@ public class RelativeURLMappingImpl implements URLMapping{
             return link;
         }
         String relativeUri = computeRelativeUrl(link.getUri(), requestUriToWrap);
-        link.setUri(relativeUri);
-        return link;
+        Link relLink = new LinkImpl(relativeUri, link.isExternal(), link.isSameDomain());
+        return relLink;
     }
     
     public Link rewriteLocation(Node node, String sitemap, HstRequestContext hstRequestContext, boolean external) {
@@ -62,8 +62,8 @@ public class RelativeURLMappingImpl implements URLMapping{
             return link;
         }
         String relativeUri = computeRelativeUrl(link.getUri(), requestUriToWrap);
-        link.setUri(relativeUri);
-        return link;
+        Link relLink = new LinkImpl(relativeUri, link.isExternal(), link.isSameDomain());
+        return relLink;
     }
 
 
@@ -73,8 +73,8 @@ public class RelativeURLMappingImpl implements URLMapping{
             return link;
         }
         String relativeUri = computeRelativeUrl(link.getUri(), requestUriToWrap);
-        link.setUri(relativeUri);
-        return link;
+        Link relLink = new LinkImpl(relativeUri, link.isExternal(), link.isSameDomain());
+        return relLink;
     }
     
     public Link getLocation(String path, boolean external) {
@@ -83,8 +83,8 @@ public class RelativeURLMappingImpl implements URLMapping{
             return link;
         }
         String relativeUri = computeRelativeUrl(link.getUri(), requestUriToWrap);
-        link.setUri(relativeUri);
-        return link;
+        Link relLink = new LinkImpl(relativeUri, link.isExternal(), link.isSameDomain());
+        return relLink;
     }
   
     public static String computeRelativeUrl(String absoluteLocation, String currentRequestUri) {
