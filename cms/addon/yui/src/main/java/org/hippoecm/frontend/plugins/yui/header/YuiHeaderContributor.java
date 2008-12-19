@@ -324,7 +324,6 @@ public class YuiHeaderContributor implements IHeaderContributor {
         CachedHeaderContributor file;
         CachedHeaderContributor css;
         CachedHeaderContributor coreCss;
-        //String name;
         boolean rendered;
 
         public Module(YuiDependency dependency) {
@@ -334,13 +333,10 @@ public class YuiHeaderContributor implements IHeaderContributor {
                 log.error(errorMsg);
                 throw new IllegalArgumentException(errorMsg);
             } else {
-                //name = dependency.getModule();
-
                 final boolean debug = log.isDebugEnabled()
                         && (debugModules.size() == 0 || debugModules.contains(dependency.getModule()));
 
-                //TODO: add minified option
-                final String path = dependency.getRealModulePath() + ((debug) ? "-debug" : "") + ".js";
+                String path = dependency.getFilePath(debug, CACHE_ENABLED);
                 Class<? extends YuiNamespace> clazz = dependency.getNamespace().getClass();
 
                 if (debug) {
@@ -369,8 +365,8 @@ public class YuiHeaderContributor implements IHeaderContributor {
                 if(coreCss != null) {
                     coreCss.renderHead(response);
                 }
+                rendered = true;
             }
-            rendered = true;
         }
 
     }
@@ -404,8 +400,8 @@ public class YuiHeaderContributor implements IHeaderContributor {
                 for(Module mod : modules) {
                     mod.renderHead(response);
                 }
+                rendered = true;
             }
-            rendered = true;
         }
     }
 
