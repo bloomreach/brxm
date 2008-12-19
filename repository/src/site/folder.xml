@@ -164,13 +164,13 @@
     <folder>reference
      <folder>frontend
       <file ext='xml' mimetype='text/xml' valid='yes'
-   fullname='delve_into/custom/reference/frontend/frontend-plugin-architecture.xml'
+   fullname='delve_into/custom/reference/frontend/frontend_plugin_architecture.xml'
    relpath='delve_into/custom/reference/frontend'
-  >frontend-plugin-architecture</file>
+  >frontend_plugin_architecture</file>
       <file ext='xml' mimetype='text/xml' valid='yes'
-   fullname='delve_into/custom/reference/frontend/frontend-plugin-communication.xml'
+   fullname='delve_into/custom/reference/frontend/frontend_plugin_communication.xml'
    relpath='delve_into/custom/reference/frontend'
-  >frontend-plugin-communication</file>
+  >frontend_plugin_communication</file>
       <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/custom/reference/frontend/index.xml'
    relpath='delve_into/custom/reference/frontend'
@@ -217,11 +217,26 @@
    relpath='delve_into'
   >quickstart</file>
    <folder>sysadmin
+<info>
+ <title>System Administration Guide</title>
+ <shortdesc>What does a sysadmin need to know and do for Hippo CMS?</shortdesc>
+ <introduction>
+   These pages describe how to get Hippo ECM up and running and how to configure your running application.
+ </introduction>
+</info>
     <folder>configuration
      <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/sysadmin/configuration/console.xml'
    relpath='delve_into/sysadmin/configuration'
   >console</file>
+     <file ext='xml#' mimetype='text/xml'
+   fullname='delve_into/sysadmin/configuration/#database_server.xml#'
+   relpath='delve_into/sysadmin/configuration'
+  >#database_server</file>
+     <file ext='xml' mimetype='text/xml' valid='yes'
+   fullname='delve_into/sysadmin/configuration/database_server.xml'
+   relpath='delve_into/sysadmin/configuration'
+  >database_server</file>
      <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
    fullname='delve_into/sysadmin/configuration/index.xml'
    relpath='delve_into/sysadmin/configuration'
@@ -252,6 +267,10 @@
    relpath='delve_into/sysadmin/configuration/nodes'
   >workflow</file>
      </folder>
+     <file ext='xml' mimetype='text/xml' valid='yes'
+   fullname='delve_into/sysadmin/configuration/performance_tuning.xml'
+   relpath='delve_into/sysadmin/configuration'
+  >performance_tuning</file>
      <folder>repository
       <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/sysadmin/configuration/repository/authentication.xml'
@@ -261,7 +280,7 @@
    fullname='delve_into/sysadmin/configuration/repository/index.xml'
    relpath='delve_into/sysadmin/configuration/repository'
   >index</file>
-      <file ext='xml' mimetype='text/xml' valid='yes'
+      <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
    fullname='delve_into/sysadmin/configuration/repository/searchindex.xml'
    relpath='delve_into/sysadmin/configuration/repository'
   >searchindex</file>
@@ -272,6 +291,10 @@
      </folder>
     </folder>
     <file ext='xml' mimetype='text/xml' valid='yes'
+   fullname='delve_into/sysadmin/debugging.xml'
+   relpath='delve_into/sysadmin'
+  >debugging</file>
+    <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
    fullname='delve_into/sysadmin/index.xml'
    relpath='delve_into/sysadmin'
   >index</file>
@@ -539,6 +562,10 @@
  </afterlist>
 </info>
       <file ext='xml' mimetype='text/xml' valid='yes'
+   fullname='delve_into/user/editors/concepts/editor.xml'
+   relpath='delve_into/user/editors/concepts'
+  >editor</file>
+      <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/user/editors/concepts/folder.xml'
    relpath='delve_into/user/editors/concepts'
   >folder</file>
@@ -550,6 +577,10 @@
    fullname='delve_into/user/editors/concepts/request.xml'
    relpath='delve_into/user/editors/concepts'
   >request</file>
+      <file ext='xml' mimetype='text/xml' valid='yes'
+   fullname='delve_into/user/editors/concepts/scheduled_publication.xml'
+   relpath='delve_into/user/editors/concepts'
+  >scheduled_publication</file>
      </folder>
      <folder>howto
       <file ext='xml' mimetype='text/xml' valid='yes' note='todo'

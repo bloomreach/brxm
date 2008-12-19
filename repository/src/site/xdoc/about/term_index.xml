@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 678 terms</span>
+      <span class="shortdesc">Term index, 680 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -69,27 +69,27 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/add_boolean_to_documenttype.html#Add_boolean_to_Documentttype">Add boolean to Documentttype</a>
+              <a href="../delve_into/user/information_architects/howto/add_boolean_to_documenttype.html#Add_boolean_to_document_type">Add boolean to document type</a>
             </td>
-            <td>Howto: Add boolean to Documentttype</td>
+            <td>Howto: Add boolean to document type</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/add_boolean_to_documenttype.html#Add_boolean_to_documenttype_screenshot">Add boolean to documenttype screenshot</a>
+              <a href="../delve_into/user/information_architects/howto/add_boolean_to_documenttype.html#Add_boolean_to_document_type_screenshot">Add boolean to document type screenshot</a>
             </td>
-            <td>Howto: Add boolean to Documentttype</td>
+            <td>Howto: Add boolean to document type</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/add_date_to_documenttype.html#Add_date_to_Documentttype">Add date to Documentttype</a>
+              <a href="../delve_into/user/information_architects/howto/add_date_to_documenttype.html#Add_date_to_document_type">Add date to document type</a>
             </td>
-            <td>Howto: Add date to Documentttype</td>
+            <td>Howto: Add date to document type</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/add_date_to_documenttype.html#Add_date_to_documenttype_screenshot">Add date to documenttype screenshot</a>
             </td>
-            <td>Howto: Add date to Documentttype</td>
+            <td>Howto: Add date to document type</td>
           </tr>
           <tr>
             <td>
@@ -105,27 +105,27 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/add_markuped_text_to_documenttype.html#Add_markuped_text_field_to_Documentttype">Add markuped text field to Documentttype</a>
+              <a href="../delve_into/user/information_architects/howto/add_markuped_text_to_documenttype.html#Add_marked-up_text_field_to_document_type">Add marked-up text field to document type</a>
             </td>
-            <td>Howto: Add markuped text field to Documentttype</td>
+            <td>Howto: Add marked-up text field to document type</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/add_markuped_text_to_documenttype.html#Add_markuped_text_to_documenttype_screenshot">Add markuped text to documenttype screenshot</a>
+              <a href="../delve_into/user/information_architects/howto/add_markuped_text_to_documenttype.html#Add_markuped_text_to_document_type_screenshot">Add markuped text to document type screenshot</a>
             </td>
-            <td>Howto: Add markuped text field to Documentttype</td>
+            <td>Howto: Add marked-up text field to document type</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/add_string_to_documenttype.html#Add_string_to_Documentttype">Add string to Documentttype</a>
+              <a href="../delve_into/user/information_architects/howto/add_string_to_documenttype.html#Add_string_to_document_type">Add string to document type</a>
             </td>
-            <td>Howto: Add string to Documentttype</td>
+            <td>Howto: Add string to document type</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/add_string_to_documenttype.html#Add_string_to_documenttype_screenshot">Add string to documenttype screenshot</a>
             </td>
-            <td>Howto: Add string to Documentttype</td>
+            <td>Howto: Add string to document type</td>
           </tr>
           <tr>
             <td>
@@ -183,13 +183,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/reference/frontend/frontend-plugin-architecture.html#Advanced_-_Subject_to_Change">Advanced - Subject to Change</a>
+              <a href="../delve_into/custom/reference/frontend/frontend_plugin_architecture.html#Advanced_-_Subject_to_Change">Advanced - Subject to Change</a>
             </td>
             <td>Frontend Plugin Architecture</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/reference/frontend/frontend-plugin-communication.html#Advanced_-_Subject_to_Change">Advanced - Subject to Change</a>
+              <a href="../delve_into/custom/reference/frontend/frontend_plugin_communication.html#Advanced_-_Subject_to_Change">Advanced - Subject to Change</a>
             </td>
             <td>Frontend Plugin Communication</td>
           </tr>
@@ -285,7 +285,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/reference/frontend/frontend-plugin-architecture.html#Applications">Applications</a>
+              <a href="../delve_into/custom/reference/frontend/frontend_plugin_architecture.html#Applications">Applications</a>
             </td>
             <td>Frontend Plugin Architecture</td>
           </tr>
@@ -339,7 +339,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/reference/frontend/frontend-plugin-communication.html#Available_Services">Available Services</a>
+              <a href="../delve_into/custom/reference/frontend/frontend_plugin_communication.html#Available_Services">Available Services</a>
             </td>
             <td>Frontend Plugin Communication</td>
           </tr>
@@ -435,15 +435,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/change_field_in_documenttype.html#Change_field_in_documenttype">Change field in documenttype</a>
+              <a href="../delve_into/user/information_architects/howto/change_field_in_documenttype.html#Change_field_in_document_type">Change field in document type</a>
             </td>
-            <td>Howto: Change field in documenttype</td>
+            <td>Howto: Change field in document type</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/change_field_in_documenttype.html#change_field_screenshot">change field screenshot</a>
             </td>
-            <td>Howto: Change field in documenttype</td>
+            <td>Howto: Change field in document type</td>
           </tr>
           <tr>
             <td>
@@ -527,7 +527,7 @@
             <td>
               <a href="../delve_into/user/information_architects/howto/add_boolean_to_documenttype.html#checkbox">checkbox</a>
             </td>
-            <td>Howto: Add boolean to Documentttype</td>
+            <td>Howto: Add boolean to document type</td>
           </tr>
           <tr>
             <td>
@@ -546,6 +546,12 @@
               <a href="../delve_into/user/contributors/howto/index.html#CMS_Contributor_Howto">CMS Contributor Howto</a>
             </td>
             <td>Welcome: CMS Contributor Howto</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/concepts/editor.html#CMS_editor">CMS editor</a>
+            </td>
+            <td>Concept: CMS editor</td>
           </tr>
           <tr>
             <td>
@@ -615,6 +621,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/configuration/database_server.html#Configuration_of_the_database_server_">Configuration of the database server.</a>
+            </td>
+            <td>Database server configuration</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/core/building/netbeans.html#Configure_Netbeans">Configure Netbeans</a>
             </td>
             <td>Building with Netbeans</td>
@@ -677,7 +689,7 @@
             <td>
               <a href="../delve_into/user/information_architects/howto/goto_content_browse_tab.html#content_browse_screenshot">content browse screenshot</a>
             </td>
-            <td>Howto: Goto Content Browse Tab</td>
+            <td>Howto: Go to content browse tab</td>
           </tr>
           <tr>
             <td>
@@ -754,15 +766,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/create_documenttype.html#Create_Documentttype">Create Documentttype</a>
+              <a href="../delve_into/user/information_architects/howto/create_documenttype.html#Create_document_type">Create document type</a>
             </td>
-            <td>Howto: Create Documentttype</td>
+            <td>Howto: Create document type</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/create_documenttype.html#Create_documenttype_screenshot">Create documenttype screenshot</a>
+              <a href="../delve_into/user/information_architects/howto/create_documenttype.html#Create_document_type_screenshot">Create document type screenshot</a>
             </td>
-            <td>Howto: Create Documentttype</td>
+            <td>Howto: Create document type</td>
           </tr>
           <tr>
             <td>
@@ -784,15 +796,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/create_namespace.html#Create_Namespace">Create Namespace</a>
+              <a href="../delve_into/user/information_architects/howto/create_namespace.html#Create_namespace">Create namespace</a>
             </td>
-            <td>Howto: Create Namespace</td>
+            <td>Howto: Create namespace</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/create_namespace.html#Create_namespace_screenshot">Create namespace screenshot</a>
             </td>
-            <td>Howto: Create Namespace</td>
+            <td>Howto: Create namespace</td>
           </tr>
           <tr>
             <td>
@@ -832,7 +844,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/reference/frontend/frontend-plugin-architecture.html#Customization_by_configuration">Customization by configuration</a>
+              <a href="../delve_into/custom/reference/frontend/frontend_plugin_architecture.html#Customization_by_configuration">Customization by configuration</a>
             </td>
             <td>Frontend Plugin Architecture</td>
           </tr>
@@ -874,6 +886,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/configuration/database_server.html#Database_server_configuration">Database server configuration</a>
+            </td>
+            <td>Database server configuration</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#Date">Date</a>
             </td>
             <td>Field Types Reference</td>
@@ -889,6 +907,12 @@
               <a href="../delve_into/user/cms_admins/howto/deactivate_account.html#Deactivate_account_screenshot">Deactivate account screenshot</a>
             </td>
             <td>Howto: Deactivate account</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/debugging.html#Debugging">Debugging</a>
+            </td>
+            <td>Debugging</td>
           </tr>
           <tr>
             <td>
@@ -994,12 +1018,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/requirements.html#derby_logo">derby logo</a>
-            </td>
-            <td>Requirements</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/jcr/reference/derived_data.html#Derived_Data">Derived Data</a>
             </td>
             <td>Derived Data</td>
@@ -1024,7 +1042,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/reference/frontend/frontend-plugin-communication.html#Dialogs_/_Page_Serialization">Dialogs / Page Serialization</a>
+              <a href="../delve_into/custom/reference/frontend/frontend_plugin_communication.html#Dialogs_/_Page_Serialization">Dialogs / Page Serialization</a>
             </td>
             <td>Frontend Plugin Communication</td>
           </tr>
@@ -1036,9 +1054,21 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/configuration/performance_tuning.html#Do_not_allow_very_large_assets">Do not allow very large assets</a>
+            </td>
+            <td>Performance tuning</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/document.html#Document">Document</a>
             </td>
             <td>Concept: Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/configuration/#database_server.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td/>
           </tr>
           <tr>
             <td>
@@ -1072,6 +1102,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/documenttype.html#Document_type">Document type</a>
+            </td>
+            <td>Concept: Document type</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/howto/document_types/tutorial.html#Document_Type_Tutorial">Document Type Tutorial</a>
             </td>
             <td>Document Type Tutorial</td>
@@ -1090,15 +1126,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/concepts/documenttype.html#Documenttype">Documenttype</a>
-            </td>
-            <td>Concept: Documenttype</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/information_architects/howto/goto_documenttype_tab.html#documenttype_tab_screenshot">documenttype tab screenshot</a>
             </td>
-            <td>Howto: Goto a Documenttype</td>
+            <td>Howto: Go to a Document type</td>
           </tr>
           <tr>
             <td>
@@ -1114,7 +1144,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/reference/frontend/frontend-plugin-architecture.html#Dynamic_Services">Dynamic Services</a>
+              <a href="../delve_into/custom/reference/frontend/frontend_plugin_architecture.html#Dynamic_Services">Dynamic Services</a>
             </td>
             <td>Frontend Plugin Architecture</td>
           </tr>
@@ -1222,7 +1252,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/reference/frontend/frontend-plugin-architecture.html#Explanation_of_the_frontend_plugin_architecture_">Explanation of the frontend plugin architecture.</a>
+              <a href="../delve_into/custom/reference/frontend/frontend_plugin_architecture.html#Explanation_of_the_frontend_plugin_architecture_">Explanation of the frontend plugin architecture.</a>
             </td>
             <td>Frontend Plugin Architecture</td>
           </tr>
@@ -1288,33 +1318,33 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/howto/fieldcaption.html#Field_caption">Field caption</a>
+            </td>
+            <td>Howto: Field caption</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/fieldsize.html#Field_size">Field size</a>
+            </td>
+            <td>Howto: Field size</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#Field_Types_Reference">Field Types Reference</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/fieldcaption.html#Fieldcaption">Fieldcaption</a>
-            </td>
-            <td>Howto: Fieldcaption</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/information_architects/howto/fieldcaption.html#Fieldcaption_screenshot">Fieldcaption screenshot</a>
             </td>
-            <td>Howto: Fieldcaption</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/howto/fieldsize.html#Fieldsize">Fieldsize</a>
-            </td>
-            <td>Howto: Fieldsize</td>
+            <td>Howto: Field caption</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/fieldsize.html#Fieldsize_screenshot">Fieldsize screenshot</a>
             </td>
-            <td>Howto: Fieldsize</td>
+            <td>Howto: Field size</td>
           </tr>
           <tr>
             <td>
@@ -1348,15 +1378,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/fill_markuped_text_in_document.html#Fill_markuped_text_in_Document">Fill markuped text in Document</a>
+              <a href="../delve_into/user/contributors/howto/fill_markuped_text_in_document.html#Fill_marked-up_text_in_Document">Fill marked-up text in Document</a>
             </td>
-            <td>Howto: Fill markuped text in Document</td>
+            <td>Howto: Fill marked-up text in Document</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/fill_markuped_text_in_document.html#Fill_markuped_text_screenshot">Fill markuped text screenshot</a>
+              <a href="../delve_into/user/contributors/howto/fill_markuped_text_in_document.html#Fill_marked-up_text_screenshot">Fill marked-up text screenshot</a>
             </td>
-            <td>Howto: Fill markuped text in Document</td>
+            <td>Howto: Fill marked-up text in Document</td>
           </tr>
           <tr>
             <td>
@@ -1462,13 +1492,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/reference/frontend/frontend-plugin-architecture.html#Frontend_Plugin_Architecture">Frontend Plugin Architecture</a>
+              <a href="../delve_into/custom/reference/frontend/frontend_plugin_architecture.html#Frontend_Plugin_Architecture">Frontend Plugin Architecture</a>
             </td>
             <td>Frontend Plugin Architecture</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/reference/frontend/frontend-plugin-communication.html#Frontend_Plugin_Communication">Frontend Plugin Communication</a>
+              <a href="../delve_into/custom/reference/frontend/frontend_plugin_communication.html#Frontend_Plugin_Communication">Frontend Plugin Communication</a>
             </td>
             <td>Frontend Plugin Communication</td>
           </tr>
@@ -1571,9 +1601,39 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/requirements.html#glassfish_logo">glassfish logo</a>
+              <a href="../delve_into/user/information_architects/howto/goto_documenttype_tab.html#Go_to_a_Document_type">Go to a Document type</a>
             </td>
-            <td>Requirements</td>
+            <td>Howto: Go to a Document type</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/goto_namespace.html#Go_to_a_namespace">Go to a namespace</a>
+            </td>
+            <td>Howto: Go to a namespace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/goto_content_browse_tab.html#Go_to_content_browse_tab">Go to content browse tab</a>
+            </td>
+            <td>Howto: Go to content browse tab</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/goto_documenttypes_tab.html#Go_to_Document_Types_Tab">Go to Document Types Tab</a>
+            </td>
+            <td>Howto: Go to Document Types Tab</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/goto_documenttypes_tab.html#Go_to_document_types_tab_screenshot">Go to document types tab screenshot</a>
+            </td>
+            <td>Howto: Go to Document Types Tab</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/goto_namespace.html#Go_to_namespace_screenshot">Go to namespace screenshot</a>
+            </td>
+            <td>Howto: Go to a namespace</td>
           </tr>
           <tr>
             <td>
@@ -1583,21 +1643,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/goto_documenttype_tab.html#Goto_a_Documenttype">Goto a Documenttype</a>
-            </td>
-            <td>Howto: Goto a Documenttype</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/contributors/howto/goto_folder.html#Goto_a_Folder">Goto a Folder</a>
             </td>
             <td>Howto: Goto a Folder</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/howto/goto_namespace.html#Goto_a_Namespace">Goto a Namespace</a>
-            </td>
-            <td>Howto: Goto a Namespace</td>
           </tr>
           <tr>
             <td>
@@ -1613,24 +1661,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/goto_content_browse_tab.html#Goto_Content_Browse_Tab">Goto Content Browse Tab</a>
-            </td>
-            <td>Howto: Goto Content Browse Tab</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/howto/goto_documenttypes_tab.html#Goto_Documenttypes_Tab">Goto Documenttypes Tab</a>
-            </td>
-            <td>Howto: Goto Documenttypes Tab</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/howto/goto_documenttypes_tab.html#Goto_documenttypes_tab_screenshot">Goto documenttypes tab screenshot</a>
-            </td>
-            <td>Howto: Goto Documenttypes Tab</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/contributors/howto/goto_folder.html#Goto_folder_screenshot">Goto folder screenshot</a>
             </td>
             <td>Howto: Goto a Folder</td>
@@ -1640,12 +1670,6 @@
               <a href="../delve_into/user/cms_admins/howto/goto_group_properties.html#Goto_Group_Properties">Goto Group Properties</a>
             </td>
             <td>Howto: Goto Group Properties</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/howto/goto_namespace.html#Goto_namespace_screenshot">Goto namespace screenshot</a>
-            </td>
-            <td>Howto: Goto a Namespace</td>
           </tr>
           <tr>
             <td>
@@ -1907,15 +1931,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/add_boolean_to_documenttype.html#How_to_add_a_boolean_to_a_documenttype_">How to add a boolean to a documenttype.</a>
+              <a href="../delve_into/user/information_architects/howto/add_boolean_to_documenttype.html#How_to_add_a_boolean_to_a_document_type_">How to add a boolean to a document type.</a>
             </td>
-            <td>Howto: Add boolean to Documentttype</td>
+            <td>Howto: Add boolean to document type</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/add_date_to_documenttype.html#How_to_add_a_datefield_to_a_documenttype_">How to add a datefield to a documenttype.</a>
+              <a href="../delve_into/user/information_architects/howto/add_date_to_documenttype.html#How_to_add_a_date_field_to_a_document_type_">How to add a date field to a document type.</a>
             </td>
-            <td>Howto: Add date to Documentttype</td>
+            <td>Howto: Add date to document type</td>
           </tr>
           <tr>
             <td>
@@ -1925,15 +1949,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/add_markuped_text_to_documenttype.html#How_to_add_a_markuped_text_field_to_a_documenttype_">How to add a markuped text field to a documenttype.</a>
+              <a href="../delve_into/user/information_architects/howto/add_markuped_text_to_documenttype.html#How_to_add_a_marked-up_text_field_to_a_document_type_">How to add a marked-up text field to a document type.</a>
             </td>
-            <td>Howto: Add markuped text field to Documentttype</td>
+            <td>Howto: Add marked-up text field to document type</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/add_string_to_documenttype.html#How_to_add_a_string_field_to_a_documenttype_">How to add a string field to a documenttype.</a>
+              <a href="../delve_into/user/information_architects/howto/add_string_to_documenttype.html#How_to_add_a_string_field_to_a_document_type_">How to add a string field to a document type.</a>
             </td>
-            <td>Howto: Add string to Documentttype</td>
+            <td>Howto: Add string to document type</td>
           </tr>
           <tr>
             <td>
@@ -1967,9 +1991,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/change_field_in_documenttype.html#How_to_change_a_field_in_a_documenttype_">How to change a field in a documenttype.</a>
+              <a href="../delve_into/user/information_architects/howto/change_field_in_documenttype.html#How_to_change_a_field_in_a_document_type_">How to change a field in a document type.</a>
             </td>
-            <td>Howto: Change field in documenttype</td>
+            <td>Howto: Change field in document type</td>
           </tr>
           <tr>
             <td>
@@ -2003,10 +2027,10 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/create_documenttype.html#How_to_create_a_documenttype,_to_define_the_structure_&#10;_________of_a_class_of_similar_documents_">How to create a documenttype, to define the structure 
+              <a href="../delve_into/user/information_architects/howto/create_documenttype.html#How_to_create_a_document_type,_to_define_the_structure_&#10;_________of_a_class_of_similar_documents_">How to create a document type, to define the structure 
          of a class of similar documents.</a>
             </td>
-            <td>Howto: Create Documentttype</td>
+            <td>Howto: Create document type</td>
           </tr>
           <tr>
             <td>
@@ -2016,9 +2040,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/create_namespace.html#How_to_create_a_namespace_to_gather_documenttypes_in_">How to create a namespace to gather documenttypes in.</a>
+              <a href="../delve_into/user/information_architects/howto/create_namespace.html#How_to_create_a_namespace_to_gather_document_types_in_">How to create a namespace to gather document types in.</a>
             </td>
-            <td>Howto: Create Namespace</td>
+            <td>Howto: Create namespace</td>
           </tr>
           <tr>
             <td>
@@ -2040,9 +2064,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/fieldcaption.html#How_to_define_a_caption_for_a_field_in_a_documenttype_">How to define a caption for a field in a documenttype.</a>
+              <a href="../delve_into/user/information_architects/howto/fieldcaption.html#How_to_define_a_caption_for_a_field_in_a_document_type_">How to define a caption for a field in a document type.</a>
             </td>
-            <td>Howto: Fieldcaption</td>
+            <td>Howto: Field caption</td>
           </tr>
           <tr>
             <td>
@@ -2052,9 +2076,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/fieldsize.html#How_to_define_the_size_for_a_field_in_a_documenttype_">How to define the size for a field in a documenttype.</a>
+              <a href="../delve_into/user/information_architects/howto/fieldsize.html#How_to_define_the_size_for_a_field_in_a_document_type_">How to define the size for a field in a document type.</a>
             </td>
-            <td>Howto: Fieldsize</td>
+            <td>Howto: Field size</td>
           </tr>
           <tr>
             <td>
@@ -2082,21 +2106,21 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/goto_namespace.html#How_to_get_to_a_namespace,_to_view_the_documenttypes_in_it_">How to get to a namespace, to view the documenttypes in it.</a>
+              <a href="../delve_into/user/information_architects/howto/goto_namespace.html#How_to_get_to_a_namespace,_to_view_the_document_types_in_it_">How to get to a namespace, to view the document types in it.</a>
             </td>
-            <td>Howto: Goto a Namespace</td>
+            <td>Howto: Go to a namespace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/goto_documenttype_tab.html#How_to_get_to_a_screen_to_manipulate_a_particular_document_type_">How to get to a screen to manipulate a particular document type.</a>
+            </td>
+            <td>Howto: Go to a Document type</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/contributors/howto/goto_document_tab.html#How_to_get_to_a_screen_to_manipulate_a_particular_document_">How to get to a screen to manipulate a particular document.</a>
             </td>
             <td>Howto: Goto a Document</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/howto/goto_documenttype_tab.html#How_to_get_to_a_screen_to_manipulate_a_particular_documenttype_">How to get to a screen to manipulate a particular documenttype.</a>
-            </td>
-            <td>Howto: Goto a Documenttype</td>
           </tr>
           <tr>
             <td>
@@ -2114,13 +2138,13 @@
             <td>
               <a href="../delve_into/user/information_architects/howto/goto_content_browse_tab.html#How_to_get_to_the_content_browse_tab_">How to get to the content browse tab.</a>
             </td>
-            <td>Howto: Goto Content Browse Tab</td>
+            <td>Howto: Go to content browse tab</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/goto_documenttypes_tab.html#How_to_get_to_the_documenttypes_tab,_to_add_and_change_documenttypes_">How to get to the documenttypes tab, to add and change documenttypes.</a>
+              <a href="../delve_into/user/information_architects/howto/goto_documenttypes_tab.html#How_to_get_to_the_document_types_tab,_to_add_and_change_document_types_">How to get to the document types tab, to add and change document types.</a>
             </td>
-            <td>Howto: Goto Documenttypes Tab</td>
+            <td>Howto: Go to Document Types Tab</td>
           </tr>
           <tr>
             <td>
@@ -2145,6 +2169,12 @@
               <a href="../delve_into/user/editors/howto/handle_request.html#How_to_handle_a_request_">How to handle a request.</a>
             </td>
             <td>Howto: Handle request</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/configuration/performance_tuning.html#How_to_improve_performance_of_Hippo_CMS_by_site_specific_tuning_">How to improve performance of Hippo CMS by site specific tuning.</a>
+            </td>
+            <td>Performance tuning</td>
           </tr>
           <tr>
             <td>
@@ -2210,15 +2240,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/naming_a_field.html#How_to_name_a_field_of_a_documenttype_">How to name a field of a documenttype.</a>
+              <a href="../delve_into/user/information_architects/howto/naming_a_field.html#How_to_name_a_field_of_a_document_type_">How to name a field of a document type.</a>
             </td>
             <td>Howto: Naming a field</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/remove_field_from_documenttype.html#How_to_remove_a_field_from_a_documenttype_">How to remove a field from a documenttype.</a>
+              <a href="../delve_into/user/information_architects/howto/remove_field_from_documenttype.html#How_to_remove_a_field_from_a_document_type_">How to remove a field from a document type.</a>
             </td>
-            <td>Howto: Remove field from documenttype</td>
+            <td>Howto: Remove field from document type</td>
           </tr>
           <tr>
             <td>
@@ -2234,9 +2264,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/save_documenttype.html#How_to_save_a_documenttype_">How to save a documenttype.</a>
+              <a href="../delve_into/user/information_architects/howto/save_documenttype.html#How_to_save_a_document_type_">How to save a document type.</a>
             </td>
-            <td>Howto: Save Documentttype</td>
+            <td>Howto: Save document type</td>
           </tr>
           <tr>
             <td>
@@ -2300,9 +2330,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/fill_markuped_text_in_document.html#How_to_write_markuped_text_in_a_document_">How to write markuped text in a document.</a>
+              <a href="../delve_into/user/contributors/howto/fill_markuped_text_in_document.html#How_to_write_marked-up_text_in_a_document_">How to write marked-up text in a document.</a>
             </td>
-            <td>Howto: Fill markuped text in Document</td>
+            <td>Howto: Fill marked-up text in Document</td>
           </tr>
           <tr>
             <td>
@@ -2333,6 +2363,12 @@
               <a href="../delve_into/custom/howto/packaging.html#Include_your_own_GUI_plugin_in_Hippo_CMS">Include your own GUI plugin in Hippo CMS</a>
             </td>
             <td>Howto: Testing the Hello World plugin</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/configuration/database_server.html#Increase_the_maximum_allowed_asset_size">Increase the maximum allowed asset size</a>
+            </td>
+            <td>Database server configuration</td>
           </tr>
           <tr>
             <td>
@@ -2474,12 +2510,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/requirements.html#JBoss_logo">JBoss logo</a>
-            </td>
-            <td>Requirements</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/jcr/jcr.html#JCR_Basics">JCR Basics</a>
             </td>
             <td>JCR Basics</td>
@@ -2510,7 +2540,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/reference/frontend/frontend-plugin-communication.html#Learn_how_frontend_plugins_communicate_with_each_other_">Learn how frontend plugins communicate with each other.</a>
+              <a href="../delve_into/custom/reference/frontend/frontend_plugin_communication.html#Learn_how_frontend_plugins_communicate_with_each_other_">Learn how frontend plugins communicate with each other.</a>
             </td>
             <td>Frontend Plugin Communication</td>
           </tr>
@@ -2543,12 +2573,6 @@
               <a href="../delve_into/web/add-ons/howto/index.html#Learn_how_to_make_your_own_content_add-ons_">Learn how to make your own content add-ons.</a>
             </td>
             <td>Welcome: Howto</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/sysadmin/requirements.html#linux_logo">linux logo</a>
-            </td>
-            <td>Requirements</td>
           </tr>
           <tr>
             <td>
@@ -2678,6 +2702,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/configuration/database_server.html#max_allowed_packet">max_allowed_packet</a>
+            </td>
+            <td>Database server configuration</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/sysadmin/configuration/repository/searchindex.html#Minimal_configuration">Minimal configuration</a>
             </td>
             <td>SearchIndex configuration</td>
@@ -2699,12 +2729,6 @@
               <a href="../delve_into/custom/howto/editing_template_plugin.html#My_Favorite_Developer_Template_Plugin">My Favorite Developer Template Plugin</a>
             </td>
             <td>Howto: Create an Editing Template Plugin</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/sysadmin/requirements.html#MySQL_logo">MySQL logo</a>
-            </td>
-            <td>Requirements</td>
           </tr>
           <tr>
             <td>
@@ -2848,7 +2872,7 @@
             <td>
               <a href="../delve_into/user/contributors/howto/fill_markuped_text_in_document.html#Next">Next</a>
             </td>
-            <td>Howto: Fill markuped text in Document</td>
+            <td>Howto: Fill marked-up text in Document</td>
           </tr>
           <tr>
             <td>
@@ -2950,79 +2974,79 @@
             <td>
               <a href="../delve_into/user/information_architects/howto/add_boolean_to_documenttype.html#Next">Next</a>
             </td>
-            <td>Howto: Add boolean to Documentttype</td>
+            <td>Howto: Add boolean to document type</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/add_date_to_documenttype.html#Next">Next</a>
             </td>
-            <td>Howto: Add date to Documentttype</td>
+            <td>Howto: Add date to document type</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/add_markuped_text_to_documenttype.html#Next">Next</a>
             </td>
-            <td>Howto: Add markuped text field to Documentttype</td>
+            <td>Howto: Add marked-up text field to document type</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/add_string_to_documenttype.html#Next">Next</a>
             </td>
-            <td>Howto: Add string to Documentttype</td>
+            <td>Howto: Add string to document type</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/change_field_in_documenttype.html#Next">Next</a>
             </td>
-            <td>Howto: Change field in documenttype</td>
+            <td>Howto: Change field in document type</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/create_documenttype.html#Next">Next</a>
             </td>
-            <td>Howto: Create Documentttype</td>
+            <td>Howto: Create document type</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/create_namespace.html#Next">Next</a>
             </td>
-            <td>Howto: Create Namespace</td>
+            <td>Howto: Create namespace</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/fieldcaption.html#Next">Next</a>
             </td>
-            <td>Howto: Fieldcaption</td>
+            <td>Howto: Field caption</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/fieldsize.html#Next">Next</a>
             </td>
-            <td>Howto: Fieldsize</td>
+            <td>Howto: Field size</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/goto_content_browse_tab.html#Next">Next</a>
             </td>
-            <td>Howto: Goto Content Browse Tab</td>
+            <td>Howto: Go to content browse tab</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/goto_documenttypes_tab.html#Next">Next</a>
             </td>
-            <td>Howto: Goto Documenttypes Tab</td>
+            <td>Howto: Go to Document Types Tab</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/goto_documenttype_tab.html#Next">Next</a>
             </td>
-            <td>Howto: Goto a Documenttype</td>
+            <td>Howto: Go to a Document type</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/goto_namespace.html#Next">Next</a>
             </td>
-            <td>Howto: Goto a Namespace</td>
+            <td>Howto: Go to a namespace</td>
           </tr>
           <tr>
             <td>
@@ -3052,13 +3076,13 @@
             <td>
               <a href="../delve_into/user/information_architects/howto/remove_field_from_documenttype.html#Next">Next</a>
             </td>
-            <td>Howto: Remove field from documenttype</td>
+            <td>Howto: Remove field from document type</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/save_documenttype.html#Next">Next</a>
             </td>
-            <td>Howto: Save Documentttype</td>
+            <td>Howto: Save document type</td>
           </tr>
           <tr>
             <td>
@@ -3116,19 +3140,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/requirements.html#oracle_logo">oracle logo</a>
-            </td>
-            <td>Requirements</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/howto/index.html#Other">Other</a>
             </td>
             <td>Welcome: Howto</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/reference/frontend/frontend-plugin-communication.html#Other_Communication_Patterns">Other Communication Patterns</a>
+              <a href="../delve_into/custom/reference/frontend/frontend_plugin_communication.html#Other_Communication_Patterns">Other Communication Patterns</a>
             </td>
             <td>Frontend Plugin Communication</td>
           </tr>
@@ -3152,9 +3170,21 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/debugging.html#Packet_for_query_is_too_large_(4729208_&gt;_1048576)">Packet for query is too large (4729208 &gt; 1048576)</a>
+            </td>
+            <td>Debugging</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/howto/naming_a_field.html#Path_sar:title_is_used_in_multiple_fields">Path sar:title is used in multiple fields</a>
             </td>
             <td>Howto: Naming a field</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/configuration/performance_tuning.html#Performance_tuning">Performance tuning</a>
+            </td>
+            <td>Performance tuning</td>
           </tr>
           <tr>
             <td>
@@ -3164,7 +3194,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/reference/frontend/frontend-plugin-architecture.html#Plugin_Configuration">Plugin Configuration</a>
+              <a href="../delve_into/custom/reference/frontend/frontend_plugin_architecture.html#Plugin_Configuration">Plugin Configuration</a>
             </td>
             <td>Frontend Plugin Architecture</td>
           </tr>
@@ -3176,7 +3206,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/reference/frontend/frontend-plugin-architecture.html#Plugin_Context">Plugin Context</a>
+              <a href="../delve_into/custom/reference/frontend/frontend_plugin_architecture.html#Plugin_Context">Plugin Context</a>
             </td>
             <td>Frontend Plugin Architecture</td>
           </tr>
@@ -3254,15 +3284,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/remove_field_from_documenttype.html#Remove_field_from_documenttype">Remove field from documenttype</a>
+              <a href="../delve_into/user/information_architects/howto/remove_field_from_documenttype.html#Remove_field_from_document_type">Remove field from document type</a>
             </td>
-            <td>Howto: Remove field from documenttype</td>
+            <td>Howto: Remove field from document type</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/remove_field_from_documenttype.html#remove_field_screenshot">remove field screenshot</a>
             </td>
-            <td>Howto: Remove field from documenttype</td>
+            <td>Howto: Remove field from document type</td>
           </tr>
           <tr>
             <td>
@@ -3392,15 +3422,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/save_documenttype.html#Save_Documentttype">Save Documentttype</a>
+              <a href="../delve_into/user/information_architects/howto/save_documenttype.html#Save_document_type">Save document type</a>
             </td>
-            <td>Howto: Save Documentttype</td>
+            <td>Howto: Save document type</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/save_documenttype.html#save_documenttype_screenshot">save documenttype screenshot</a>
+              <a href="../delve_into/user/information_architects/howto/save_documenttype.html#save_document_type_screenshot">save document type screenshot</a>
             </td>
-            <td>Howto: Save Documentttype</td>
+            <td>Howto: Save document type</td>
           </tr>
           <tr>
             <td>
@@ -3413,6 +3443,12 @@
               <a href="../delve_into/user/cms_admins/howto/save_settings.html#save_settings_screenshot">save settings screenshot</a>
             </td>
             <td>Howto: Save settings</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/concepts/scheduled_publication.html#Scheduled_publication">Scheduled publication</a>
+            </td>
+            <td>Concept: Scheduled publication</td>
           </tr>
           <tr>
             <td>
@@ -3578,15 +3614,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/reference/frontend/frontend-plugin-communication.html#Sharing_Models">Sharing Models</a>
+              <a href="../delve_into/custom/reference/frontend/frontend_plugin_communication.html#Sharing_Models">Sharing Models</a>
             </td>
             <td>Frontend Plugin Communication</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/sysadmin/requirements.html#Solaris_logo">Solaris logo</a>
-            </td>
-            <td>Requirements</td>
           </tr>
           <tr>
             <td>
@@ -3650,33 +3680,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/requirements.html#Sun_logo">Sun logo</a>
-            </td>
-            <td>Requirements</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/jcr/reference/derived_data.html#Supplying_the_method_that_computes_the_derived_property">Supplying the method that computes the derived property</a>
             </td>
             <td>Derived Data</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/requirements.html#Supported_Stacks">Supported Stacks</a>
-            </td>
-            <td>Requirements</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/synonyms.html#Synonyms">Synonyms</a>
             </td>
             <td>Synonyms</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/sysadmin/index.html#System_Administration_Guide">System Administration Guide</a>
-            </td>
-            <td>Welcome: System Administration Guide</td>
           </tr>
           <tr>
             <td>
@@ -3728,25 +3740,25 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/tour.html#To_get_introduced_in_the_role_of_CMS_administrator,_take_the_following_tour_">To get introduced in the role of CMS administrator, take the following tour.</a>
+              <a href="../delve_into/user/cms_admins/tour.html#To_get_introduced_to_the_role_of_CMS_administrator,_take_the_following_tour_">To get introduced to the role of CMS administrator, take the following tour.</a>
             </td>
             <td>Hippo CMS Admin Tour</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/tour.html#To_get_introduced_in_the_role_of_CMS_Contributor,_take_the_following_tour_">To get introduced in the role of CMS Contributor, take the following tour.</a>
+              <a href="../delve_into/user/contributors/tour.html#To_get_introduced_to_the_role_of_CMS_Contributor,_take_the_following_tour_">To get introduced to the role of CMS Contributor, take the following tour.</a>
             </td>
             <td>Hippo CMS Contributor Tour</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/editors/tour.html#To_get_introduced_in_the_role_of_CMS_Editor,_take_the_following_tour_">To get introduced in the role of CMS Editor, take the following tour.</a>
+              <a href="../delve_into/user/editors/tour.html#To_get_introduced_to_the_role_of_CMS_Editor,_take_the_following_tour_">To get introduced to the role of CMS Editor, take the following tour.</a>
             </td>
             <td>Hippo CMS Editor Tour</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/tour.html#To_get_introduced_in_the_role_of_CMS_information_architect,_&#10;______take_the_following_tour_">To get introduced in the role of CMS information architect, 
+              <a href="../delve_into/user/information_architects/tour.html#To_get_introduced_to_the_role_of_CMS_information_architect,_&#10;______take_the_following_tour_">To get introduced to the role of CMS information architect, 
       take the following tour.</a>
             </td>
             <td>Hippo CMS Tour for Information Architects</td>
@@ -3762,12 +3774,6 @@
               <a href="../delve_into/sysadmin/installation/index.html#tomcat_logo">tomcat logo</a>
             </td>
             <td>Welcome: Installation</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/sysadmin/requirements.html#tomcat_logo">tomcat logo</a>
-            </td>
-            <td>Requirements</td>
           </tr>
           <tr>
             <td>
@@ -3798,12 +3804,6 @@
               <a href="../delve_into/user/cms_admins/howto/type_in_editing_region.html#Type_in_editing_region">Type in editing region</a>
             </td>
             <td>Howto: Type in editing region</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/sysadmin/requirements.html#Unix_logo">Unix logo</a>
-            </td>
-            <td>Requirements</td>
           </tr>
           <tr>
             <td>
@@ -3921,24 +3921,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/concepts/folder.html#Wat_is_a_Folder_">Wat is a Folder?</a>
-            </td>
-            <td>Concept: Folder</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/editors/concepts/folder.html#Wat_is_a_Folder_">Wat is a Folder?</a>
-            </td>
-            <td>Concept: Folder</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/concepts/mandatory_or_optional.html#Wat_is_a_mandatory_or_optional_field_in_a_documenttype_">Wat is a mandatory or optional field in a documenttype?</a>
-            </td>
-            <td>Concept: Mandatory or optional field</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/web/index.html#Website_Development">Website Development</a>
             </td>
             <td>Welcome: Website Development</td>
@@ -3957,15 +3939,21 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/index.html#What_does_a_sysadmin_needs_to_know_and_do_for_Hippo_CMS_">What does a sysadmin needs to know and do for Hippo CMS?</a>
-            </td>
-            <td>Welcome: System Administration Guide</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/information_architects/concepts/boolean.html#What_is_a_boolean">What is a boolean</a>
             </td>
             <td>Concept: Boolean</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/concepts/editor.html#What_is_a_CMS_editor_">What is a CMS editor?</a>
+            </td>
+            <td>Concept: CMS editor</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/documenttype.html#What_is_a_document_type">What is a document type</a>
+            </td>
+            <td>Concept: Document type</td>
           </tr>
           <tr>
             <td>
@@ -3975,9 +3963,21 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/concepts/documenttype.html#What_is_a_documenttype">What is a documenttype</a>
+              <a href="../delve_into/user/contributors/concepts/folder.html#What_is_a_Folder_">What is a Folder?</a>
             </td>
-            <td>Concept: Documenttype</td>
+            <td>Concept: Folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/concepts/folder.html#What_is_a_Folder_">What is a Folder?</a>
+            </td>
+            <td>Concept: Folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/mandatory_or_optional.html#What_is_a_mandatory_or_optional_field_in_a_documenttype_">What is a mandatory or optional field in a documenttype?</a>
+            </td>
+            <td>Concept: Mandatory or optional field</td>
           </tr>
           <tr>
             <td>
@@ -4023,6 +4023,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/debugging.html#What_to_do_in_case_of_errors_">What to do in case of errors?</a>
+            </td>
+            <td>Debugging</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/jcr/jcr_dropbox_example.html#What's_the_demo_all_about">What's the demo all about</a>
             </td>
             <td>Demo on interfacing with Hippo ECM Repository</td>
@@ -4044,6 +4050,12 @@
               <a href="../delve_into/sysadmin/configuration/nodes/workflow.html#Workflow_configuration">Workflow configuration</a>
             </td>
             <td>Workflow configuration</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/debugging.html#Workflow_error:_Can_not_insert_new_record:">Workflow error: Can not insert new record:</a>
+            </td>
+            <td>Debugging</td>
           </tr>
           <tr>
             <td>

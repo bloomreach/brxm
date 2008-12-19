@@ -49,8 +49,8 @@
     <links>
       <item name="Hippo ECM" href="http://docs.onehippo.org/"/>
       <item name="Hippo CMS" href="/index.html"/>
-      <item name="Hippo Site Toolkit" href="http://docs.onehippo.org/site-toolkit/" />
-      <!-- <item name="Hippo Portal" href="http://docs.onehippo.org/portal2"/> -->
+      <item name="Hippo Site Toolkit" href="http://www.onehippo.org/site-toolkit/" />
+      <!-- <item name="Hippo Portal" href="http://www.onehippo.org/portal2"/> -->
       <item name="Hippo CMS 6.x" href="http://www.hippocms.org/"/>
     </links>
     <menu name="About Hippo CMS">
@@ -250,6 +250,7 @@
         </item>
         <item name="Configuration" href="/delve_into/sysadmin/configuration/index.html" collapse="true">
           <item name="Performance tuning" href="/delve_into/sysadmin/configuration/performance_tuning.html" collapse="false"/>
+          <item name="Database server" href="/delve_into/sysadmin/configuration/database_server.html" collapse="false"/>
           <item name="Repository" href="/delve_into/sysadmin/configuration/repository/index.html" collapse="true">
             <item name="Workspace" href="/delve_into/sysadmin/configuration/repository/workspace.html"/>
             <item name="Search Index" href="/delve_into/sysadmin/configuration/repository/searchindex.html"/>
@@ -264,6 +265,7 @@
           </item>
           <item name="Console" href="/delve_into/sysadmin/configuration/console.html"/>
         </item>
+        <item name="Debugging" href="/delve_into/sysadmin/debugging.html"/>
       </item>
 
       <item name="Website Development" href="/delve_into/web/index.html" collapse="true">
@@ -332,13 +334,13 @@
 
     <!--
     <menu name="Versions of these Docs">
-      <item name="Latest release" href="http://docs.onehippo.org/hippo-ecm/"/>
-      <item name="M6.4" href="http://docs.onehippo.org/hippo-ecm/2.01.00.13536/"/>
-      <item name="M6.3" href="http://docs.onehippo.org/hippo-ecm/2.01.00.12907/"/>
-      <item name="M6.2" href="http://docs.onehippo.org/hippo-ecm/2.01.00.12677/"/>
-      <item name="M6.1" href="http://docs.onehippo.org/hippo-ecm/2.01.00.12357/"/>
-      <item name="M6" href="http://docs.onehippo.org/hippo-ecm/2.01.00.12094/"/>
-      <item name="SNAPSHOT" href="http://docs.onehippo.org/hippo-ecm/SNAPSHOT/"/>
+      <item name="Latest release" href="http://www.onehippo.org/hippo-ecm/"/>
+      <item name="M6.4" href="http://www.onehippo.org/hippo-ecm/2.01.00.13536/"/>
+      <item name="M6.3" href="http://www.onehippo.org/hippo-ecm/2.01.00.12907/"/>
+      <item name="M6.2" href="http://www.onehippo.org/hippo-ecm/2.01.00.12677/"/>
+      <item name="M6.1" href="http://www.onehippo.org/hippo-ecm/2.01.00.12357/"/>
+      <item name="M6" href="http://www.onehippo.org/hippo-ecm/2.01.00.12094/"/>
+      <item name="SNAPSHOT" href="http://www.onehippo.org/hippo-ecm/SNAPSHOT/"/>
     </menu>
     -->
 

@@ -18,22 +18,23 @@
   limitations under the License.
 -->
 <document>
-    <properties>
-        <title>Performance tuning</title>
-    </properties>
-    <body>
-      <section name="Performance tuning">
-       <span class='shortdesc'>How to improve performance of Hippo CMS by site specific tuning.</span>
+  <properties>
+    <title>Debugging</title>
+  </properties>
+  <body>
+    <section name="Debugging">
+     <span class='shortdesc'>What to do in case of errors?</span>
 
-       <subsection name='Do not allow very large assets'>
+      <subsection name='Workflow error: Can not insert new record:'>
+        <p><span class='index' id='Packet_for_query_is_too_large'>Packet for query is too large (4729208 &gt; 1048576)</span>.</p>
+ 
+        <p>Someone tries to load an asset (binary document like .pdf or an image) that is too large.
+           You may  
+           <a href='./configuration/database_server.html#increase_packet_size'>configure your database server to allow for larger assets</a>.
+        </p>         
 
-        <p>
-          The max_allowed_packet variable of your database server may be set to a larger
-          value, to allow for larger assets, see <a href='./database_server.html#increase_packet_size'>increase packet size</a>.
-          However, this will reduce performance.
-	</p>
-       </subsection>
+      </subsection>
 
-      </section>
-    </body>
+    </section>
+  </body>
 </document>

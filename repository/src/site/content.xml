@@ -228,7 +228,7 @@
    
    <folder>frontend
    
-   <document ext="xml" filename="frontend-plugin-architecture" relpath="delve_into/custom/reference/frontend">Frontend Plugin Architecture
+   <document ext="xml" filename="frontend_plugin_architecture" relpath="delve_into/custom/reference/frontend">Frontend Plugin Architecture
    <section>Frontend Plugin Architecture</section>
    <shortdesc>Explanation of the frontend plugin architecture.</shortdesc>
    <subsection>Customization by configuration</subsection>
@@ -237,7 +237,7 @@
    <subsection>Plugin Configuration</subsection>
    <subsection>Plugin Context</subsection>
    <subsection>Dynamic Services</subsection>
-  </document><document ext="xml" filename="frontend-plugin-communication" relpath="delve_into/custom/reference/frontend">Frontend Plugin Communication
+  </document><document ext="xml" filename="frontend_plugin_communication" relpath="delve_into/custom/reference/frontend">Frontend Plugin Communication
    <section>Frontend Plugin Communication</section>
    <shortdesc>Learn how frontend plugins communicate with each other.</shortdesc>
    <subsection>Sharing Models</subsection>
@@ -296,12 +296,19 @@
    <subsection>Alternatives</subsection>
    <subsection>Next</subsection>
   </document><folder>sysadmin
-   
+   <title>System Administration Guide</title><shortdesc>What does a sysadmin need to know and do for Hippo CMS?</shortdesc><introduction>
+   These pages describe how to get Hippo ECM up and running and how to configure your running application.
+ </introduction>
    <folder>configuration
    
    <document ext="xml" filename="console" relpath="delve_into/sysadmin/configuration">Console
    <section>Console</section>
    <img>Screenshot of the console</img>
+  </document><document ext="xml#" filename="#database_server" relpath="delve_into/sysadmin/configuration"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="database_server" relpath="delve_into/sysadmin/configuration">Database server configuration
+   <section>Database server configuration</section>
+   <shortdesc>Configuration of the database server.</shortdesc>
+   <subsection>Increase the maximum allowed asset size</subsection>
+   <index>max_allowed_packet</index>
   </document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration">Configuration
    <section>Configuration</section>
    <shortdesc>What does a sysadmin have to configure in Hippo CMS?</shortdesc>
@@ -334,7 +341,11 @@
    <subsection>hippo:user</subsection>
   </document><document ext="xml" filename="workflow" relpath="delve_into/sysadmin/configuration/nodes">Workflow configuration
    <section>Workflow configuration</section>
-  </document></folder><folder>repository
+  </document></folder><document ext="xml" filename="performance_tuning" relpath="delve_into/sysadmin/configuration">Performance tuning
+   <section>Performance tuning</section>
+   <shortdesc>How to improve performance of Hippo CMS by site specific tuning.</shortdesc>
+   <subsection>Do not allow very large assets</subsection>
+  </document><folder>repository
    
    <document ext="xml" filename="authentication" relpath="delve_into/sysadmin/configuration/repository">Repository based authentication
    <section>Repository based authentication</section>
@@ -355,9 +366,12 @@
   </document><document ext="xml" filename="workspace" relpath="delve_into/sysadmin/configuration/repository">Workspace configuration
    <section>Workspace configuration</section>
    <subsection>Sample</subsection>
-  </document></folder></folder><document ext="xml" filename="index" relpath="delve_into/sysadmin">System Administration Guide
-   <section>System Administration Guide</section>
-   <shortdesc>What does a sysadmin needs to know and do for Hippo CMS?</shortdesc>
+  </document></folder></folder><document ext="xml" filename="debugging" relpath="delve_into/sysadmin">Debugging
+   <section>Debugging</section>
+   <shortdesc>What to do in case of errors?</shortdesc>
+   <subsection>Workflow error: Can not insert new record:</subsection>
+   <index>Packet for query is too large (4729208 &gt; 1048576)</index>
+  </document><document ext="xml" filename="index" relpath="delve_into/sysadmin">
   </document><folder>installation
    
    <document ext="xml" filename="help_renamed" relpath="delve_into/sysadmin/installation">help renamed
@@ -422,17 +436,6 @@
   </document></folder><document ext="xml" filename="requirements" relpath="delve_into/sysadmin">Requirements
    <section>Requirements</section>
    <shortdesc>What do you need to run Hippo CMS?</shortdesc>
-   <subsection>Supported Stacks</subsection>
-   <img>MySQL logo</img>
-   <img>oracle logo</img>
-   <img>derby logo</img>
-   <img>tomcat logo</img>
-   <img>glassfish logo</img>
-   <img>JBoss logo</img>
-   <img>Sun logo</img>
-   <img>linux logo</img>
-   <img>Solaris logo</img>
-   <img>Unix logo</img>
    <subsection>Operating System</subsection>
    <subsection>Java</subsection>
    <subsection>Java Servlet Container</subsection>
@@ -539,7 +542,7 @@
    <shortdesc>Guide for Hippo CMS users to perform the role of CMS admin</shortdesc>
   </document><document ext="xml" filename="tour" relpath="delve_into/user/cms_admins">Hippo CMS Admin Tour
    <section>Hippo CMS Admin Tour</section>
-   <shortdesc>To get introduced in the role of CMS administrator, take the following tour.</shortdesc>
+   <shortdesc>To get introduced to the role of CMS administrator, take the following tour.</shortdesc>
   </document></folder><folder>contributors
    
    <folder>concepts
@@ -556,7 +559,7 @@
    <h4>Etymology</h4>
   </document><document ext="xml" filename="folder" relpath="delve_into/user/contributors/concepts">Folder
    <section>Folder</section>
-   <shortdesc>Wat is a Folder?</shortdesc>
+   <shortdesc>What is a Folder?</shortdesc>
   </document><document ext="xml" filename="index" relpath="delve_into/user/contributors/concepts">
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="versioning" relpath="delve_into/user/contributors/concepts">Versioning
@@ -583,10 +586,10 @@
    <shortdesc>How to fill a date field in a document.</shortdesc>
    <img>Fill date screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="fill_markuped_text_in_document" relpath="delve_into/user/contributors/howto">Fill markuped text in Document
-   <section>Fill markuped text in Document</section>
-   <shortdesc>How to write markuped text in a document.</shortdesc>
-   <img>Fill markuped text screenshot</img>
+  </document><document ext="xml" filename="fill_markuped_text_in_document" relpath="delve_into/user/contributors/howto">Fill marked-up text in Document
+   <section>Fill marked-up text in Document</section>
+   <shortdesc>How to write marked-up text in a document.</shortdesc>
+   <img>Fill marked-up text screenshot</img>
    <subsection>Next</subsection>
   </document><document ext="xml" filename="fill_string_field_in_document" relpath="delve_into/user/contributors/howto">Fill string in Document
    <section>Fill string in Document</section>
@@ -644,7 +647,7 @@
    <shortdesc>Guide for Hippo CMS users to perform the role of contributor.</shortdesc>
   </document><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour
    <section>Hippo CMS Contributor Tour</section>
-   <shortdesc>To get introduced in the role of CMS Contributor, take the following tour.</shortdesc>
+   <shortdesc>To get introduced to the role of CMS Contributor, take the following tour.</shortdesc>
   </document></folder><folder>editors
    
    <folder>concepts
@@ -655,14 +658,20 @@
      </p>
   </subsection>
  </afterlist>
-   <document ext="xml" filename="folder" relpath="delve_into/user/editors/concepts">Folder
+   <document ext="xml" filename="editor" relpath="delve_into/user/editors/concepts">CMS editor
+   <section>CMS editor</section>
+   <shortdesc>What is a CMS editor?</shortdesc>
+  </document><document ext="xml" filename="folder" relpath="delve_into/user/editors/concepts">Folder
    <section>Folder</section>
-   <shortdesc>Wat is a Folder?</shortdesc>
+   <shortdesc>What is a Folder?</shortdesc>
   </document><document ext="xml" filename="index" relpath="delve_into/user/editors/concepts">
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="request" relpath="delve_into/user/editors/concepts">Request
    <section>Request</section>
    <shortdesc>What is a request?</shortdesc>
+  </document><document ext="xml" filename="scheduled_publication" relpath="delve_into/user/editors/concepts">Scheduled publication
+   <section>Scheduled publication</section>
+   <shortdesc/>
   </document></folder><folder>howto
    
    <document ext="xml" filename="check_for_requests" relpath="delve_into/user/editors/howto">Check for requests
@@ -708,7 +717,7 @@
    <shortdesc>Guide for Hippo CMS users to perform the role of editor.</shortdesc>
   </document><document ext="xml" filename="tour" relpath="delve_into/user/editors">Hippo CMS Editor Tour
    <section>Hippo CMS Editor Tour</section>
-   <shortdesc>To get introduced in the role of CMS Editor, take the following tour.</shortdesc>
+   <shortdesc>To get introduced to the role of CMS Editor, take the following tour.</shortdesc>
   </document></folder><document ext="xml" filename="index" relpath="delve_into/user">User Guide
    <section>User Guide</section>
    <shortdesc>How to work as a user of Hippo CMS.</shortdesc>
@@ -725,14 +734,14 @@
    <document ext="xml" filename="boolean" relpath="delve_into/user/information_architects/concepts">Boolean
    <section>Boolean</section>
    <shortdesc>What is a boolean</shortdesc>
-  </document><document ext="xml" filename="documenttype" relpath="delve_into/user/information_architects/concepts">Documenttype
-   <section>Documenttype</section>
-   <shortdesc>What is a documenttype</shortdesc>
+  </document><document ext="xml" filename="documenttype" relpath="delve_into/user/information_architects/concepts">Document type
+   <section>Document type</section>
+   <shortdesc>What is a document type</shortdesc>
   </document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/concepts">
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="mandatory_or_optional" relpath="delve_into/user/information_architects/concepts">Mandatory or optional field
    <section>Mandatory or optional field</section>
-   <shortdesc>Wat is a mandatory or optional field in a documenttype?</shortdesc>
+   <shortdesc>What is a mandatory or optional field in a documenttype?</shortdesc>
   </document><document ext="xml" filename="namespace" relpath="delve_into/user/information_architects/concepts">namespace
    <section>namespace</section>
    <shortdesc>What is a namespace</shortdesc>
@@ -744,41 +753,41 @@
    <shortdesc>URL</shortdesc>
   </document></folder><folder>howto
    
-   <document ext="xml" filename="add_boolean_to_documenttype" relpath="delve_into/user/information_architects/howto">Add boolean to Documentttype
-   <section>Add boolean to Documentttype</section>
-   <shortdesc>How to add a boolean to a documenttype.</shortdesc>
-   <img>Add boolean to documenttype screenshot</img>
+   <document ext="xml" filename="add_boolean_to_documenttype" relpath="delve_into/user/information_architects/howto">Add boolean to document type
+   <section>Add boolean to document type</section>
+   <shortdesc>How to add a boolean to a document type.</shortdesc>
+   <img>Add boolean to document type screenshot</img>
    <index>checkbox</index>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="add_date_to_documenttype" relpath="delve_into/user/information_architects/howto">Add date to Documentttype
-   <section>Add date to Documentttype</section>
-   <shortdesc>How to add a datefield to a documenttype.</shortdesc>
+  </document><document ext="xml" filename="add_date_to_documenttype" relpath="delve_into/user/information_architects/howto">Add date to document type
+   <section>Add date to document type</section>
+   <shortdesc>How to add a date field to a document type.</shortdesc>
    <img>Add date to documenttype screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="add_markuped_text_to_documenttype" relpath="delve_into/user/information_architects/howto">Add markuped text field to Documentttype
-   <section>Add markuped text field to Documentttype</section>
-   <shortdesc>How to add a markuped text field to a documenttype.</shortdesc>
-   <img>Add markuped text to documenttype screenshot</img>
+  </document><document ext="xml" filename="add_markuped_text_to_documenttype" relpath="delve_into/user/information_architects/howto">Add marked-up text field to document type
+   <section>Add marked-up text field to document type</section>
+   <shortdesc>How to add a marked-up text field to a document type.</shortdesc>
+   <img>Add markuped text to document type screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="add_string_to_documenttype" relpath="delve_into/user/information_architects/howto">Add string to Documentttype
-   <section>Add string to Documentttype</section>
-   <shortdesc>How to add a string field to a documenttype.</shortdesc>
+  </document><document ext="xml" filename="add_string_to_documenttype" relpath="delve_into/user/information_architects/howto">Add string to document type
+   <section>Add string to document type</section>
+   <shortdesc>How to add a string field to a document type.</shortdesc>
    <img>Add string to documenttype screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="change_field_in_documenttype" relpath="delve_into/user/information_architects/howto">Change field in documenttype
-   <section>Change field in documenttype</section>
-   <shortdesc>How to change a field in a documenttype.</shortdesc>
+  </document><document ext="xml" filename="change_field_in_documenttype" relpath="delve_into/user/information_architects/howto">Change field in document type
+   <section>Change field in document type</section>
+   <shortdesc>How to change a field in a document type.</shortdesc>
    <img>change field screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="create_documenttype" relpath="delve_into/user/information_architects/howto">Create Documentttype
-   <section>Create Documentttype</section>
-   <shortdesc>How to create a documenttype, to define the structure 
+  </document><document ext="xml" filename="create_documenttype" relpath="delve_into/user/information_architects/howto">Create document type
+   <section>Create document type</section>
+   <shortdesc>How to create a document type, to define the structure 
          of a class of similar documents.</shortdesc>
-   <img>Create documenttype screenshot</img>
+   <img>Create document type screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="create_namespace" relpath="delve_into/user/information_architects/howto">Create Namespace
-   <section>Create Namespace</section>
-   <shortdesc>How to create a namespace to gather documenttypes in.</shortdesc>
+  </document><document ext="xml" filename="create_namespace" relpath="delve_into/user/information_architects/howto">Create namespace
+   <section>Create namespace</section>
+   <shortdesc>How to create a namespace to gather document types in.</shortdesc>
    <img>Create namespace screenshot</img>
    <subsection>Next</subsection>
   </document><folder>document_types
@@ -820,35 +829,35 @@
    <subsection>Creating your first document type</subsection>
    <img>screenshot detail of 'create new type' action</img>
    <img>screenshot detail of 'create new type' dialog</img>
-  </document></folder><document ext="xml" filename="fieldcaption" relpath="delve_into/user/information_architects/howto">Fieldcaption
-   <section>Fieldcaption</section>
-   <shortdesc>How to define a caption for a field in a documenttype.</shortdesc>
+  </document></folder><document ext="xml" filename="fieldcaption" relpath="delve_into/user/information_architects/howto">Field caption
+   <section>Field caption</section>
+   <shortdesc>How to define a caption for a field in a document type.</shortdesc>
    <img>Fieldcaption screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="fieldsize" relpath="delve_into/user/information_architects/howto">Fieldsize
-   <section>Fieldsize</section>
-   <shortdesc>How to define the size for a field in a documenttype.</shortdesc>
+  </document><document ext="xml" filename="fieldsize" relpath="delve_into/user/information_architects/howto">Field size
+   <section>Field size</section>
+   <shortdesc>How to define the size for a field in a document type.</shortdesc>
    <img>Fieldsize screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="goto_content_browse_tab" relpath="delve_into/user/information_architects/howto">Goto Content Browse Tab
-   <section>Goto Content Browse Tab</section>
+  </document><document ext="xml" filename="goto_content_browse_tab" relpath="delve_into/user/information_architects/howto">Go to content browse tab
+   <section>Go to content browse tab</section>
    <shortdesc>How to get to the content browse tab.</shortdesc>
    <img>content browse screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="goto_documenttypes_tab" relpath="delve_into/user/information_architects/howto">Goto Documenttypes Tab
-   <section>Goto Documenttypes Tab</section>
-   <shortdesc>How to get to the documenttypes tab, to add and change documenttypes.</shortdesc>
-   <img>Goto documenttypes tab screenshot</img>
+  </document><document ext="xml" filename="goto_documenttypes_tab" relpath="delve_into/user/information_architects/howto">Go to Document Types Tab
+   <section>Go to Document Types Tab</section>
+   <shortdesc>How to get to the document types tab, to add and change document types.</shortdesc>
+   <img>Go to document types tab screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="goto_documenttype_tab" relpath="delve_into/user/information_architects/howto">Goto a Documenttype
-   <section>Goto a Documenttype</section>
-   <shortdesc>How to get to a screen to manipulate a particular documenttype.</shortdesc>
+  </document><document ext="xml" filename="goto_documenttype_tab" relpath="delve_into/user/information_architects/howto">Go to a Document type
+   <section>Go to a Document type</section>
+   <shortdesc>How to get to a screen to manipulate a particular document type.</shortdesc>
    <img>documenttype tab screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="goto_namespace" relpath="delve_into/user/information_architects/howto">Goto a Namespace
-   <section>Goto a Namespace</section>
-   <shortdesc>How to get to a namespace, to view the documenttypes in it.</shortdesc>
-   <img>Goto namespace screenshot</img>
+  </document><document ext="xml" filename="goto_namespace" relpath="delve_into/user/information_architects/howto">Go to a namespace
+   <section>Go to a namespace</section>
+   <shortdesc>How to get to a namespace, to view the document types in it.</shortdesc>
+   <img>Go to namespace screenshot</img>
    <subsection>Next</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/howto">CMS Information Architect Howto
    <section>CMS Information Architect Howto</section>
@@ -870,19 +879,19 @@
    <subsection>Next</subsection>
   </document><document ext="xml" filename="naming_a_field" relpath="delve_into/user/information_architects/howto">Naming a field
    <section>Naming a field</section>
-   <shortdesc>How to name a field of a documenttype.</shortdesc>
+   <shortdesc>How to name a field of a document type.</shortdesc>
    <img>Naming a field screenshot</img>
    <index>Path sar:title is used in multiple fields</index>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="remove_field_from_documenttype" relpath="delve_into/user/information_architects/howto">Remove field from documenttype
-   <section>Remove field from documenttype</section>
-   <shortdesc>How to remove a field from a documenttype.</shortdesc>
+  </document><document ext="xml" filename="remove_field_from_documenttype" relpath="delve_into/user/information_architects/howto">Remove field from document type
+   <section>Remove field from document type</section>
+   <shortdesc>How to remove a field from a document type.</shortdesc>
    <img>remove field screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="save_documenttype" relpath="delve_into/user/information_architects/howto">Save Documentttype
-   <section>Save Documentttype</section>
-   <shortdesc>How to save a documenttype.</shortdesc>
-   <img>save documenttype screenshot</img>
+  </document><document ext="xml" filename="save_documenttype" relpath="delve_into/user/information_architects/howto">Save document type
+   <section>Save document type</section>
+   <shortdesc>How to save a document type.</shortdesc>
+   <img>save document type screenshot</img>
    <subsection>Next</subsection>
   </document><document ext="xml" filename="start_CMS" relpath="delve_into/user/information_architects/howto">Start CMS
    <section>Start CMS</section>
@@ -898,7 +907,7 @@
    <shortdesc>Guide for Hippo CMS users to perform the role of Information Architect.</shortdesc>
   </document><document ext="xml" filename="tour" relpath="delve_into/user/information_architects">Hippo CMS Tour for Information Architects
    <section>Hippo CMS Tour for Information Architects</section>
-   <shortdesc>To get introduced in the role of CMS information architect, 
+   <shortdesc>To get introduced to the role of CMS information architect, 
       take the following tour.</shortdesc>
   </document></folder></folder><folder>web
    

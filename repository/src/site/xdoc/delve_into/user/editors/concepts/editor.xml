@@ -3,7 +3,7 @@
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
-  Copyright 2007 Hippo
+  Copyright 2008 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -19,21 +19,16 @@
 -->
 <document>
     <properties>
-        <title>Performance tuning</title>
+        <title>CMS editor</title>
     </properties>
     <body>
-      <section name="Performance tuning">
-       <span class='shortdesc'>How to improve performance of Hippo CMS by site specific tuning.</span>
+        <section name="CMS editor">
+         <span class='shortdesc'>What is a CMS editor?</span>
 
-       <subsection name='Do not allow very large assets'>
+          <p>A CMS editor is a person performing the role of editing in Hippo CMS.
+             The CMS editor reviews documents and decides if they can be published online, should be deleted or have to be taken offline.
+          </p>
 
-        <p>
-          The max_allowed_packet variable of your database server may be set to a larger
-          value, to allow for larger assets, see <a href='./database_server.html#increase_packet_size'>increase packet size</a>.
-          However, this will reduce performance.
-	</p>
-       </subsection>
-
-      </section>
+    </section>
     </body>
 </document>
