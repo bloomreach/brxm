@@ -46,7 +46,7 @@
   </category>
   
   <category additivity="false" name="org.hippoecm.repository">
-    <level value="warn"/>
+    <level value="info"/>
     <appender-ref ref="root"/>
   </category>
   
@@ -61,7 +61,7 @@
   </category>
   
   <category additivity="false" name="org.apache.wicket">
-    <level value="warn"/>
+    <level value="info"/>
     <appender-ref ref="console"/>
   </category>
   
@@ -95,7 +95,7 @@
   </category>
   
   <root>
-    <level value="error"/>
+    <level value="info"/>
     <appender-ref ref="console"/>
     <appender-ref ref="root"/>
   </root>

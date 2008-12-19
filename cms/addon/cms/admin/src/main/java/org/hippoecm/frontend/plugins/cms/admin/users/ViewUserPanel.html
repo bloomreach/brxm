@@ -16,9 +16,8 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-  <div class="admin-user-panel">
-
-    <table class="admin-user-details">
+   <div class="hippo-controlpanel-form">
+   <table>
       <tr>
         <td><wicket:message key="user-username"/>: </td>
         <td><label wicket:id="username"/> </td>
@@ -44,27 +43,18 @@
         <td><label wicket:id="provider"/> </td>
       </tr>
     </table>
-
-    <br/>
-
     <label wicket:id="local-memberships-label"/>
     <ul class="admin-user-memberships">
       <li wicket:id="local-memberships">
         <label wicket:id="local-membership"/>
       </li>
     </ul>
-
-    <br/>
-
     <label wicket:id="external-memberships-label"/>
     <ul class="admin-user-memberships">
       <li wicket:id="external-memberships">
         <label wicket:id="external-membership"/>
       </li>
     </ul>
-
-    <br/>
-
     <label wicket:id="properties-label"/>
     <table class="admin-user-properties">
       <tr wicket:id="properties">
@@ -72,19 +62,14 @@
         <td><label wicket:id="value"/></td>
       </tr>
     </table>
-    
-    <br/>
-    
-    <div class="admin-user-action-container">
+   </div>
+    <div class="hippo-controlpanel-actions">
       <ul>
-        <li class="admin-user-action" wicket:id="edit-user"><wicket:message key="user-edit"/></li>
-        <li class="admin-user-action" wicket:id="set-user-password"><wicket:message key="user-set-password"/></li>
-        <li class="admin-user-action" wicket:id="set-user-memberships"><wicket:message key="user-set-memberships"/></li>
-        <li class="admin-user-action" wicket:id="delete-user"/>
+        <li class="edit-16 icon-16" wicket:id="edit-user"><wicket:message key="user-edit"/></li>
+        <li class="permissions-16 icon-16" wicket:id="set-user-password"><wicket:message key="user-set-password"/></li>
+        <li class="groups-16 icon-16" wicket:id="set-user-memberships"><wicket:message key="user-set-memberships"/></li>
+        <li class="delete-16 icon-16" wicket:id="delete-user"/>
       </ul>
     </div>
-
-    
-  </div>
   </wicket:panel>
 </html>

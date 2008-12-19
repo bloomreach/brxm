@@ -16,8 +16,7 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-  <div class="admin-user-panel" style="margin: 10px;">  
-    <form wicket:id="form">
+      <form class="hippo-controlpanel-form" wicket:id="form">
       <table>
         <tr>
           <td><wicket:message key="user-username"/>: </td>
@@ -43,16 +42,11 @@
           <td><wicket:message key="user-password-check"/>: </td>
           <td><input type="password" wicket:id="password-check"/></td>
         </tr>
-        <tr>
-          <td>&nbsp;</td>
-          <td>
-            <input type="submit" value="Create" wicket:id="create-button"/>
-            &nbsp;&nbsp;
-            <input type="submit" value="Cancel" wicket:id="cancel-button"/>
-          </td>
-        </tr>
       </table>
+        <div class="hippo-controlpanel-actions">
+          <input type="submit" value="Create" wicket:id="create-button"/>
+          <input type="submit" value="Cancel" wicket:id="cancel-button"/>
+        </div>
     </form>
-  </div>
   </wicket:panel>
 </html>

@@ -137,7 +137,7 @@ padding-top: 8px;
 
 /* Header */
 /* ================================================ */
-.hippo-header{height: 45px;}
+.hippo-header{height: 45px; background: url("images/headerBack.png") repeat-x top left;}
 .hippo-header-home{background: url("images/hippologo.png") no-repeat; text-indent: -9999px; display: block; width: 29px; height: 24px; margin-left: 5px; }
 .hippo-logout-username{position: absolute; left: 40px; top: 5px; color: white;  font-weight: bold; text-transform: capitalize}
 
@@ -254,7 +254,7 @@ padding-right: 9px;
 .hippo-list-details tr td.icon-16 {height: 16px; width: 16px; padding: 0px;}
 .hippo-list-details tr td.icon-16 span{display:block; height: 16px; width: 16px; margin-left: 2px;}
 .hippo-list-details tr td.icon-16 span{background-repeat: no-repeat; background-position: center center;}
-.hippo-list-details tr th{padding: 1px; padding-left: 4px; padding-bottom: 2px; border-left: 1px solid #afafaf;}
+.hippo-list-details tr th{padding: 1px; padding-left: 4px; padding-bottom: 2px; border-left: 1px solid #afafaf; background: url("images/hippo-list-details-th-back.png") repeat-x;}
 .hippo-list-details tr th span{padding-left: 3px; padding-right: 3px;}
 .hippo-list-details tr td{border-bottom: 1px solid #f4f4f4; padding: 4px 2px 5px 4px; border-right: none;}
 .hippo-list-details tr td:hover{cursor: pointer}
@@ -287,7 +287,7 @@ padding-right: 9px;
 /* ================================================ */
 .hippo-perspective-dashboard{padding-top: 23px;}
 .hippo-perspective-dashboard .hippo-perspective-dashboard-panel{background: #ffffff; border: 1px solid #afafaf; border-right: 0px;}
-.hippo-perspective-dashboard .hippo-perspective-dashboard-panel h2{color: #666666; padding: 8px; padding-left: 4px; padding-right: 4px; font-weight: bold; border-bottom: 1px dotted #afafaf}
+.hippo-perspective-dashboard .hippo-perspective-dashboard-panel h2{color: #666666; padding: 8px; padding-left: 4px; padding-right: 4px; font-weight: bold; border-bottom: 1px dotted #afafaf; background: url("images/hippo-panels-headerback.png") repeat-x}
 .hippo-perspective-dashboard .hippo-list-details {width: 100%;}
 .hippo-perspective-dashboard .hippo-list-details tr td{padding: 6px; color: #666666;}
 .hippo-perspective-dashboard .hippo-list-details tr.even td{background: #e5ebf0}
@@ -304,9 +304,9 @@ padding-right: 9px;
 
 /* Shortcuts */
 /* ================================================ */
-.hippo-header-shortcuts {/*margin-left: 35px;*/ padding: 4px; display: none}
+.hippo-header-shortcuts {padding: 4px; position: absolute; top: 0px; right: 300px}
 .hippo-header-shortcuts div div{float: left; margin-right: 8px;}
-.hippo-header-shortcuts div div a{color: #333333}
+.hippo-header-shortcuts div div a{color: #cccccc}
 .hippo-header-shortcuts div div a.publish-16{display: none;}
 .hippo-header-shortcuts div div a.depublish-16{display: none;}
 .hippo-header-shortcuts div div a.document-16{background: none}
@@ -344,7 +344,7 @@ padding-right: 9px;
 .hippo-window-buttons input{} 
 /* forms inside windows */
 .hippo-window-form {background: #f4f4f4; padding: 5px;}
-.hippo-window-form td input{background: white; border: 1px solid #afafaf; padding: 3px; line-height: 18px; width: 200px}
+.hippo-window-form td input{background: white; border: 1px solid #afafaf; padding: 3px; line-height: 18px;}
 .hippo-window-form td{padding: 5px;}
 .hippo-window-form .hippo-form-select{width: 300px;}
 
@@ -379,38 +379,17 @@ background-image:url(images/box-blue2.png);}
 .hippo-root div.wicket-modal div.w_content_1{margin-right: 7px;}
 .hippo-root div.wicket-modal div.w_right_1 {margin-left:7px;}
 
-/* xinha window actions buttons, this is lame and needs a fix */
-
-.hippo-root div.wicket-modal div.w_content #_wicket_window_1,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_2,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_3,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_4,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_5,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_6,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_7,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_8,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_9,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_10,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_11,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_12,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_13,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_14,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_15,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_16,
-.hippo-root div.wicket-modal div.w_content #_wicket_window_17
-{background: white url("images/hippo-window-buttons-back.png") repeat-x bottom}
-
 /* Overlay on full application on popup styling */
 .hippo-root div.wicket-mask-dark{opacity: 0.5; background-image:url("images/transparent-back.png"); filter:alpha(opacity=0.5)}
 
 /* Picker General Styling */
-.hippo-picker{background: url("images/picker-back.png") repeat-y; height: 330px;}
+.hippo-picker{background: url("images/picker-back.png") repeat-y; height: 331px; border-bottom: 1px solid #afafaf}
 .hippo-picker-tree{width: 193px; float: left;} 
 .hippo-picker-tree .hippo-tree{height: 255px; width: 193px}
-.hippo-picker-list-details{height: 255px; margin-left: 194px; background: #ffffff url('images/silverBack3.png') repeat-x; width: auto; position: relative; overflow: auto}
-.hippo-picker-properties{clear:both; height: 35px; padding: 10px; border-top: 1px solid #afafaf}
-
-.hippo-picker-list-details .hippo-list-paging{}
+.hippo-picker-list-details{height: 306px; margin-left: 194px; background: #ffffff url('images/silverBack3.png') repeat-x; width: auto; position: relative; overflow: auto}
+.hippo-picker-properties{clear:both; height: 35px; padding: 10px;}
+.hippo-picker .hippo-list-details .hippo-list-paging td{width: 630px; text-align: right;}
+.hippo-picker .hippo-window-form td input{width: 200px}
 
 /*
 .hippo-list-paging{position: absolute; bottom: 0px; left: 0px; background: url("images/hippo-paging-back.png") repeat-x left bottom; width: 100%; color: #afafaf}
@@ -422,21 +401,40 @@ background-image:url(images/box-blue2.png);}
 .hippo-list-paging td span em, .hippo-list-paging td a em{font-style: normal}
 */
 
-.hippo-picker-navigation{background: url("images/silver4.png") repeat-x; height: 20px; width: 639px; border-bottom: 1px solid #afafaf; border-right: 1px solid #afafaf; margin-left: 194px; padding-top: 2px; padding-bottom: 2px; padding-left: 2px;}
+.hippo-picker-navigation{background: url("images/silver4.png") repeat-x; height: 20px; width: 640px; border-bottom: 1px solid #afafaf; margin-left: 194px; padding-top: 2px; padding-bottom: 2px; padding-left: 2px;}
 
 .hippo-picker-navigation-buttons{background: url("images/hippo-picker-navigation-back.png") repeat-x;}
-.hippo-picker-navigation .end{background: url("images/hippo-picker-navigation-end.png") no-repeat; }
+.hippo-picker-navigation-buttons input{float: left; padding: 0px; height: 22px; width: 24px; font-size: 11px; background: url("images/hippo-picker-navigation-buttons-back.png") no-repeat; background-position: 0px -20px; border: none; margin: 0px; text-indent: -9999px;}
 
-.hippo-picker-navigation-breadcrumbs .breadcrumb{background: url("images/hippo-picker-navigation-breadcrumb.png") repeat-x; }
-.hippo-picker-navigation-breadcrumbs {background: url("images/hippo-picker-navigation-start.png") no-repeat; padding-left: 6px;} 
-.hippo-picker-navigation-buttons input{float: left; padding: 0px; height: 22px; width: 24px; font-size: 11px; background: url("images/hippo-picker-navigation-buttons-back.png") no-repeat; border: none; margin: 0px; text-indent: -9999px;}
-.hippo-picker-navigation-breadcrumbs {float: left; margin-left: 2px;}
+.hippo-picker-navigation-breadcrumbs {float: left; margin-left: 2px; background-image: url("images/hippo-picker-navigation-breadcrumb.png"); background-position: left 20px; padding-left: 15px;}
 .hippo-picker-navigation-breadcrumbs li {display: block; float: left;}
-/* background: url("images/hippo-picker-navigation-back.png") repeat-x; */
-.hippo-picker-navigation-breadcrumbs li em, .hippo-picker-navigation-breadcrumbs li a{display: block; float: left; height: 22px; background: url("images/hippo-picker-navigation-breadcrumb.png") no-repeat top right; line-height: 18px; padding-right: 35px;}
+
+.hippo-picker-navigation-breadcrumbs li em, 
+.hippo-picker-navigation-breadcrumbs li a{
+display: block; float: left; 
+height: 20px; 
+background-image: url("images/hippo-picker-navigation-breadcrumb.png"); background-repeat: no-repeat;
+background-position: right 0px;
+padding-right: 30px; 
+line-height: 18px;}
+
+.hippo-picker-navigation-breadcrumbs li.firstlast em,
+.hippo-picker-navigation-breadcrumbs li.firstlast a{background-position: right -40px}
+.hippo-picker-navigation-breadcrumbs li.first em,
+.hippo-picker-navigation-breadcrumbs li.first a{background-position: top right; padding-right: 30px;}
+.hippo-picker-navigation-breadcrumbs li.last em,
+.hippo-picker-navigation-breadcrumbs li.last a{background-position: right -40px;}
+
+.hippo-picker-navigation-breadcrumbs li a:hover{text-decoration: underline}
+/*
+.hippo-picker-navigation-breadcrumbs li a:hover{background-position: right -20px}
+.hippo-picker-navigation-breadcrumbs li.firstlast a:hover{background-position: right -60px}
+.hippo-picker-navigation-breadcrumbs li.first a:hover{background-position: 0px 0px}
+.hippo-picker-navigation-breadcrumbs li.last a:hover{background-position: 0px 0px}
+*/
 
 /* Image Picker */
-.hippo-picker-properties label{float: left; margin-right: 5px; padding: 2px; line-height: 16px;}
+.hippo-picker-properties label{float: left; margin-right: 5px; padding: 2px; line-height: 21px;}
 body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; line-height: 16px; background: url("images/hippo-window-input-back.png") no-repeat; width: 660px}
 .hippo-picker-list-details table tr th{padding: 1px; padding-left: 4px; padding-bottom: 2px; border: 1px solid #afafaf; border-right: 0px; border-bottom: none;}
 
@@ -585,6 +583,7 @@ font-weight: bold;
 .hippo-editor-field-title{font-size: 11px; font-weight: bold; color: #666666; margin-bottom: 8px;}
 
 /* Text Input elements */
+.hippo-controlpanel-form input,
 .hippo-window-form input,
 .hippo-picker-properties input,
 .hippo-editor-field textarea,
@@ -723,42 +722,32 @@ margin-top: 10px;
 
 /* Control panel */
 /* ================================================ */
-.hippo-control-panel {
-    margin-top: 10px;
-    margin-left: 10px;
-    border: 1px;
-    }
-    
-.hippo-admin  .hippo-admin-user-details {
-    margin-bottom: 10px;
-    border-bottom: 1px solid #0079d6;
-    }
-table.admin-user-details tr { padding-top: 2px; padding-bottom: 2px; }
-    
-table.dataview {
-    margin-bottom: 10px;
-    border-bottom: 1px solid #0079d6;
-    width: 800px;
-    }
-    
-table.dataview caption { text-align: left; }
-table.dataview tr { padding-top: 2px; padding-bottom: 2px; }
-table.dataview tr.even { background-color: #E1EAFF; }
-table.dataview tr.odd { background-color: #FFFFFF; }
-table.dataview tr td { padding-left: 8px; padding-right: 30px; }
-table.dataview tr th { color: black; padding-top: 3px; padding-bottom: 3px; padding-left: 8px; padding-right: 30px; background-color: #c1e4ff; border-bottom: 1px solid #0079d6; border-top: 1px solid #0079d6; text-align: left; white-space: nowrap; vertical-align: middle;}
+.hippo-controlpanel {margin-top: 30px;}
+.hippo-controlpanel-panel{padding: 15px;}
 
-table.dataview tr th { background-position: right; background-repeat:no-repeat; }
-table.dataview tr th.wicket_orderDown {
-    background-color: #87cbff; background-image: url(displaytag/img/arrow_down.png); }
-table.dataview tr th.wicket_orderUp {
-    background-color: #87cbff; background-image: url(displaytag/img/arrow_up.png); }
-table.dataview tr th.wicket_orderNone {
-    background-image: url(displaytag/img/arrow_off.png);
-}
-table.dataview tr th a { font-weight: normal; }
-table.dataview #message { padding-left: 3px; }
-table.dataview caption { padding-bottom: 2px; }
+.hippo-controlpanel-form {padding: 5px;}
+.hippo-controlpanel-form table tr td{padding: 4px}
+
+.hippo-controlpanel-form input{border: 1px solid #afafaf; padding: 3px; line-height: 16px;}
+
+.hippo-controlpanel-panel .hippo-list-details{border: 1px solid #afafaf;}
+.hippo-controlpanel-panel .hippo-list-details tr th{border-bottom: 1px solid #afafaf}
+.hippo-controlpanel-panel .hippo-list-details tr.odd td{background: #f4f4f4}
+.hippo-controlpanel-panel .hippo-list-details tr.even td{background: white;}
+
+.hippo-controlpanel-breadcrumbs{background: url("images/hippo-panels-headerback.png") repeat-x; border-bottom: 1px dotted #afafaf; padding: 7px; font-weight: bold}
+.hippo-controlpanel-breadcrumbs a, .hippo-controlpanel-breadcrumbs span em{font-weight: bold; color: #666666;}
+.hippo-controlpanel-breadcrumbs a:hover{text-decoration: underline}
+
+.hippo-controlpanel-navigation li{display: block; float: left}
+.hippo-controlpanel-navigation li a{color: #666666; width: 200px; height: 100px; border: 1px solid #afafaf; padding: 15px; float: left; margin: 10px; padding-left: 80px; font-size: 17px;}
+.hippo-controlpanel-navigation li a:hover{background-color: #fff6e0}   
+
+.hippo-controlpanel-actions{padding: 5px; background: #f4f4f4; border: 1px solid #afafaf; margin-bottom: 15px; height: 27px}   
+.hippo-controlpanel-actions input{padding: 15px;}
+.hippo-controlpanel-actions li{float: left; margin-right: 10px;}
+.hippo-controlpanel-actions a{padding: 6px; display: block; float: left; border: 1px solid #afafaf; background: #f4f4f4; font-weight: bold;}
+.hippo-controlpanel-actions a:hover{background: #fff6e0; text-decoration: underline; cursor: pointer}
 
 
 /* Global Icon Management */
@@ -769,7 +758,7 @@ table.dataview caption { padding-bottom: 2px; }
 .icon-48 a{background-repeat: no-repeat;}
 .icon-24 a{background-repeat: no-repeat;}
 .icon-16 {background-repeat: no-repeat; background-position: center left; padding-left: 22px; padding-top:4px; padding-bottom: 4px; }
-
+.icon-48 a{background-position: 8px 8px;}
 /* mimetypes icons */
 table tr.selected span.document-16, .document-16{background-image:url("images/icons/document-16.png")}
 table tr.selected span.folder-16, .folder-16{background-image:url("images/icons/folder-16.png")}
@@ -792,11 +781,20 @@ table tr.selected span.folder-open-16, .folder-open-16{background-image:url("ima
 .users-48{background-image:url("images/icons/groups-48.png")}
 .groups-48{background-image:url("images/icons/groups-48.png")}
 
+/* control panel */
+.users-48{background-image:url("images/icons/user-48.png")}
+.groups-48{background-image:url("images/icons/groups-48.png")}
+.permissions-48{background-image:url("images/icons/permissions-48.png")}
+.controlpanel-48{background-image:url("images/icons/controlpanel-48.png")}
+.commandline-48{background-image:url("images/icons/commandline-48.png")}
+.system-properties-48{background-image:url("images/icons/system-properties-48.png")}
+
 .state-review-16{background-image:url("images/icons/state-review-16.gif")}
 .state-changed-16{background-image:url("images/icons/state-changed-16.gif")}
 .state-new-16{background-image:url("images/icons/state-new-16.gif")}
 .state-live-16{background-image:url("images/icons/state-live-16.gif")}
 
+.permissions-16{background-image:url("images/icons/permissions-16.png")}
 
 .arrow-sort-down-16{background-image:url("images/icons/arrow-sort-down-16.png")}
 .arrow-sort-up-16{background-image:url("images/icons/arrow-sort-up-16.png")}
@@ -809,6 +807,11 @@ table tr.selected span.folder-open-16, .folder-open-16{background-image:url("ima
 .user-32{background-image:url("images/icons/user-32.png")}
 .user-48{background-image:url("images/icons/user-48.png")}
 .user-128{background-image:url("images/icons/user-128.png")}
+
+.groups-16{background-image:url("images/icons/groups-16.png")}
+.groups-32{background-image:url("images/icons/groups-32.png")}
+.groups-48{background-image:url("images/icons/groups-48.png")}
+.groups-128{background-image:url("images/icons/groups-128.png")}
 
 
 .document-new-48{background-image:url("images/icons/document-48.png")}
