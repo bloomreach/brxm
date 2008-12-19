@@ -163,11 +163,13 @@ public class RelativeURLMappingImpl implements URLMapping{
             	  startsWith = false;
             	}            	
                 relativeUrl.append(absoluteLocationParts[matchDepth]);
+                matchDepth++;
                 if(matchDepth < absoluteLocationParts.length) {
                     relativeUrl.append("/");
                 }
+            } else {
+                matchDepth++;
             }
-            matchDepth++;
         }
         return relativeUrl.toString();
     }
