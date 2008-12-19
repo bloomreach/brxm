@@ -53,12 +53,20 @@
          May not contain dots as they are processed by Apache velocity.
          Can be used in xdoc files with the extension .xml.vm
     -->
+    <quickstart_war_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.14160/hippo-ecm-quickstart-war-2.01.00.14160.war</quickstart_war_url>
+     <!-- also found: http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.13536/hippo-ecm-quickstart-war-2.01.00.13536.war -->
+
+    <quickstart_ear_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-ear/2.01.00.14160/hippo-ecm-quickstart-ear-2.01.00.14160.ear</quickstart_ear_url>     
+    <!-- also found: http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-ear/2.01.00.13536/hippo-ecm-quickstart-ear-2.01.00.13536.ear --> 
+                        
+    <quickstart_zip_package_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.04/hippo-ecm-quickstart-bin-2.01.04.zip</quickstart_zip_package_url>
+    <quickstart_targz_package_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.04/hippo-ecm-quickstart-bin-2.01.04.tar.gz</quickstart_targz_package_url>
+
+    <geronimo_jar_url>http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar</geronimo_jar_url>
+
     <public_project_wiki>wiki.hippo.nl/display/CMS/Hippo+CMS+Home</public_project_wiki>
     <product_name>Hippo CMS</product_name>
     <product_abr>CMS</product_abr>
-
-    <quickstart_zip_package_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.04/hippo-ecm-quickstart-bin-2.01.04.zip</quickstart_zip_package_url>
-    <quickstart_targz_package_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.04/hippo-ecm-quickstart-bin-2.01.04.tar.gz</quickstart_targz_package_url>
 
     <!-- Test dependencies  -->
     <easymock.version>1.1</easymock.version>
