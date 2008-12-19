@@ -24,3 +24,6 @@ ln -s -v ../../../../../webResources/xinha/plugins/FullscreenCompatible Fullscre
 
 cd ../skins
 ln -s -v ../../../../../webResources/xinha/skins/hippo-gray hippo-gray
+
+cd ../iconsets
+ln -s -v ../../../../../webResources/xinha/iconsets/Hippo Hippo
