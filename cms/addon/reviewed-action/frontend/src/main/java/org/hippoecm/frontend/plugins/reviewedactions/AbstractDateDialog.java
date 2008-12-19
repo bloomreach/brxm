@@ -37,8 +37,8 @@ public abstract class AbstractDateDialog extends AbstractWorkflowDialog {
 
     protected AjaxLink now;
 
-    public AbstractDateDialog(AbstractWorkflowPlugin workflowPlugin, IModel title, IModel question, Date date) {
-        super(workflowPlugin, title);
+    public AbstractDateDialog(AbstractWorkflowPlugin workflowPlugin, IModel question, Date date) {
+        super(workflowPlugin);
         this.date = date;
 
         add(new Label("question", question));
