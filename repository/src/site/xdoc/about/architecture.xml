@@ -20,13 +20,91 @@
 -->
 <document>
     <properties>
-        <title>Architecture</title>
+      <title>Architecture</title>
+    </properties>
+    <body>
+     <section name="Architecture">
+      <span class='shortdesc'>Architecture of Hippo CMS and Hippo Repository</span> 
+
+     <p>As example pages, use this page and  
+     </p>
+
     </properties>
     <body>
         <section name="Architecture">
 
             <p>TODO</p>
 
+CMS (web-based application)
+ |  communication strategy (RMI-based JCR)
+Repository (can be web-based application)
+ |       \
+Database file store
+
+  |jcr
+Repository
+  |      \
+Database  files
+
+database
+flat files
+lucene search index
+
+(connector)
+(engine)
+(jackrabbit)
+
+cms
+- plugin manager
+- core plugins
+- services (plugins can be services)
+- highlight: communication mechanism for plugins as service
+- wicket
+
+interface to certain core services
+
+core plugins
+- root,dashboard,management,reporting,workflow,versioning,gallery
+- base classes: workflowplugin, dialogs, shortcuts, search
+- yui,xinha
+- template editor
+- browse
+- listing
+
+repository
+ldap
+jcr extended api
+
+
+repository
+connector
+additional api layer
+ access
+ security/login
+ jackrabbit-core
+search indexing improvements
+virtualization
+facilities
+ derived data
+ workflow
+ ocm
+ core workflow (version,remodel)
+core layer
+storage
+ database
+ filestore
+
+
+
         </section>
     </body>
 </document>
+
+
+./package/layout/src/main/webapp/WEB-INF/default/org/hippoecm/frontend/plugins/cms/browse/Navigator.html
+
+14017
+
+
+14160
+13536

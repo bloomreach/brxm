@@ -105,7 +105,7 @@ milestone number.  You need to replace dots by an underscore sign.
 mvn release:prepare \
     -DallowTimestampedSnapshots=true \
     -DautoVersionSubmodules=true \
-    -Dtag=Release-HREPTWO-v2_01_00-M0 \
+    -Dtag=Tag-HREPTWO-v2_01_02 \
     -DdryRun=true
 </source>
 
@@ -140,6 +140,13 @@ mvn release:prepare \
     -Dtag=Release-HREPTWO-v2_01_00-M0 \
     -DscmCommentPrefix="HREPTWO-0:"
 </source>
+
+mvn release:prepare \
+    -DallowTimestampedSnapshots=true \
+    -DautoVersionSubmodules=true \
+    -Dtag=Tag-HREPTWO-v2_01_03 \
+    -DscmCommentPrefix="HREPTWO-1905:" \
+    -DdevelopmentVersion=2.01.04-SNAPSHOT -DreleaseVersion=2.01.03
 
 <p>
 Again release the tag should be set to the same value as before and
