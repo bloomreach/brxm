@@ -15,8 +15,8 @@
     limitations under the License.
 -->
 <!DOCTYPE configuration SYSTEM "http://jackrabbit.apache.org/dtd/indexing-configuration-1.0.dtd">
-<configuration xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.1"
-    xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.1">
+<configuration xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.2"
+    xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.2">
     <!-- hippo aggregates -->
     <aggregates>
         <nodetype>hippostd:html</nodetype>

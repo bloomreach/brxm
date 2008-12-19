@@ -16,8 +16,8 @@
 -->
 <sv:node sv:name="content" xmlns:fn="http://www.w3.org/2005/xpath-functions"
   xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
-  xmlns:hippo="http://www.hippoecm.org/nt/1.1"
-  xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.1"
+  xmlns:hippo="http://www.hippoecm.org/nt/1.2"
+  xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.2"
   xmlns:jcr="http://www.jcp.org/jcr/1.0"
   xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
   xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
@@ -37,6 +37,7 @@
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
     <sv:value>New Document</sv:value>
     <sv:value>New Folder</sv:value>
+    <sv:value>New Poll</sv:value>
   </sv:property>
   <sv:node sv:name="articles">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
