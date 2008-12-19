@@ -152,7 +152,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
         
         public RoleListView(final String id) {
             super(id, Group.getAllRoles());
-            setReuseItems(true);
+            setReuseItems(false);
         }
 
         protected void populateItem(final ListItem item) {
