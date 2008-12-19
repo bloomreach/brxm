@@ -1,6 +1,6 @@
-<'gettingstarted'='http://www.hippoecm.org/gettingstarted/1.0'>
-<'hippostd'='http://www.hippoecm.org/hippostd/nt/1.1'>
-<'hippo'='http://www.hippoecm.org/nt/1.1'>
+<'gettingstarted'='http://www.hippoecm.org/gettingstarted/1.1'>
+<'hippostd'='http://www.hippoecm.org/hippostd/nt/1.2'>
+<'hippo'='http://www.hippoecm.org/nt/1.2'>
 
 [gettingstarted:textpage] > hippostd:publishable, hippostd:publishableSummary, hippo:document
 - gettingstarted:body (string)

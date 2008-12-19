@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
-    xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.1"
+    xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.2"
     
-    xmlns:hippogallery="http://www.hippoecm.org/hippogallery/nt/1.1"
+    xmlns:hippogallery="http://www.hippoecm.org/hippogallery/nt/1.2"
     xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
     xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
     xmlns:fn="http://www.w3.org/2005/xpath-functions"
-    xmlns:hippo="http://www.hippoecm.org/nt/1.1"
+    xmlns:hippo="http://www.hippoecm.org/nt/1.2"
     xmlns:jcr="http://www.jcp.org/jcr/1.0"
-    xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.1"
-    xmlns:hst="http://www.hippoecm.org/hst/nt/1.0"
+    xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.2"
+    xmlns:hst="http://www.hippoecm.org/hst/nt/1.1"
     xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.1"
+    xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.2"
     sv:name="sitemap">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:module</sv:value>

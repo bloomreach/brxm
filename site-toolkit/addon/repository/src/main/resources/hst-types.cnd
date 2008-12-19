@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-<hst='http://www.hippoecm.org/hst/nt/1.0'>
-<hippostd='http://www.hippoecm.org/hippostd/nt/1.1'>
-<hippo='http://www.hippoecm.org/nt/1.1'>
+<hst='http://www.hippoecm.org/hst/nt/1.1'>
+<hippostd='http://www.hippoecm.org/hippostd/nt/1.2'>
+<hippo='http://www.hippoecm.org/nt/1.2'>
 
 // TYPES SHOULD EVOLVE DURING HST DEVELOPMENT
 

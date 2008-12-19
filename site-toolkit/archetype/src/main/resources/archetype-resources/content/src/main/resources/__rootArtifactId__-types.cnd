@@ -1,8 +1,8 @@
 #set($hyphen = '-')
 #set($empty = '')
-<'${rootArtifactId.replace($hyphen,$empty)}'='http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$empty)}/1.0'>
-<'hippostd'='http://www.hippoecm.org/hippostd/nt/1.1'>
-<'hippo'='http://www.hippoecm.org/nt/1.1'>
+<'${rootArtifactId.replace($hyphen,$empty)}'='http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$empty)}/1.1'>
+<'hippostd'='http://www.hippoecm.org/hippostd/nt/1.2'>
+<'hippo'='http://www.hippoecm.org/nt/1.2'>
 
 [${rootArtifactId.replace($hyphen,$empty)}:textpage] > hippostd:publishable, hippostd:publishableSummary, hippo:document
 - ${rootArtifactId.replace($hyphen,$empty)}:body (string)
