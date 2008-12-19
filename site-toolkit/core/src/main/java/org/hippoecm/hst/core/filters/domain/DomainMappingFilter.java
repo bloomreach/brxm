@@ -92,6 +92,9 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
             CachedResponse cachedResponse = (CachedResponse)o;
             domainMapping = (DomainMapping)cachedResponse.getResponse();
         } else {
+            // if domain mapping is recreated, flush all caches (to avoid cached wrong links)
+            CacheManagerImpl.getCaches().clear();
+            
             domainMapping = new DomainMappingImpl(domainMappingLocation, filterConfig);
             // put it in the eventcache
             SourceValidity sourceValidity = new EventValidity(new NamedEvent(domainMappingLocation));

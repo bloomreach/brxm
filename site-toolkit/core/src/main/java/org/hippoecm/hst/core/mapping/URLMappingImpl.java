@@ -544,13 +544,13 @@ public class URLMappingImpl implements URLMapping {
 
     private String computeCacheKey(String name, boolean externalize, boolean secondTry, String precedence, HstRequestContext hstRequestContext) {
         StringBuffer key = new StringBuffer();
-        key.append(this.repositoryMapping.getDomain().getPattern().hashCode() + hstRequestContext.getRequest().getServerName().hashCode());
+        key.append(this.repositoryMapping.getDomain().getPattern().hashCode());
+        key.append(hstRequestContext.getRequest().getServerName().hashCode());
         key.append("_");
         key.append(name);
         key.append("_").append(externalize);
         key.append("_").append(secondTry);
         key.append("_").append(precedence);
-        log.debug("Cachekey = {}", key.toString());
         return key.toString();
     }
     private class RewriteLRUCache {
