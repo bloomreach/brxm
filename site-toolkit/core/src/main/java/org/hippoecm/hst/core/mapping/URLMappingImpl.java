@@ -484,7 +484,7 @@ public class URLMappingImpl implements URLMapping {
             rewriteString = externalize(rewriteString, this.repositoryMapping.getDomainMapping(),path, hstRequestContext, null);  
         }
         
-        Link link = new LinkImpl(rewriteString, false, true);
+        Link link = new LinkImpl(rewriteString, external, true);
         if (cacheKey != null) {
             this.rewriteLRUCache.put(cacheKey, link);
         }
@@ -514,7 +514,7 @@ public class URLMappingImpl implements URLMapping {
         if(external) {
             path = externalize(path, this.repositoryMapping.getDomainMapping(),path, hstRequestContext, null);  
         }
-        Link link = new LinkImpl(path, false, true);
+        Link link = new LinkImpl(path, external, true);
         return link;
     }
 
