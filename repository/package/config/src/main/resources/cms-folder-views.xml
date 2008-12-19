@@ -36,7 +36,7 @@
     <sv:value>list.page.size</sv:value>
   </sv:property>
   <sv:property sv:name="list.page.size" sv:type="String">
-    <sv:value>5</sv:value>
+    <sv:value>15</sv:value>
   </sv:property>
   <sv:node sv:name="root">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -240,6 +240,10 @@
     <sv:value>wicket.id</sv:value>
     <sv:value>model.folder</sv:value>
     <sv:value>model.document</sv:value>
+    <sv:value>list.page.size</sv:value>
+  </sv:property>
+  <sv:property sv:name="list.page.size" sv:type="String">
+    <sv:value>15</sv:value>
   </sv:property>
   <sv:node sv:name="root">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -258,7 +262,7 @@
       <sv:value>${model.document}</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>15</sv:value>
+      <sv:value>${list.page.size}</sv:value>
     </sv:property>
     <sv:node sv:name="yui.config">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -734,6 +738,10 @@
     <sv:value>wicket.id</sv:value>
     <sv:value>model.folder</sv:value>
     <sv:value>model.document</sv:value>
+    <sv:value>list.page.size</sv:value>
+  </sv:property>
+  <sv:property sv:name="list.page.size" sv:type="String">
+    <sv:value>15</sv:value>
   </sv:property>
   <sv:node sv:name="root">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -752,7 +760,7 @@
       <sv:value>${model.document}</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>15</sv:value>
+      <sv:value>${list.page.size}</sv:value>
     </sv:property>
     <sv:node sv:name="filters">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -926,7 +934,11 @@
     <sv:value>wicket.id</sv:value>
     <sv:value>model.folder</sv:value>
     <sv:value>model.document</sv:value>
+    <sv:value>list.page.size</sv:value>
   </sv:property>
+  <sv:property sv:name="list.page.size" sv:type="String">
+    <sv:value>15</sv:value>
+  </sv:property>    
   <sv:node sv:name="root">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -944,7 +956,7 @@
       <sv:value>${model.document}</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>15</sv:value>
+      <sv:value>${list.page.size}</sv:value>
     </sv:property>
     <sv:node sv:name="filters">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -1118,6 +1130,10 @@
     <sv:value>wicket.id</sv:value>
     <sv:value>model.folder</sv:value>
     <sv:value>model.document</sv:value>
+    <sv:value>list.page.size</sv:value>
+  </sv:property>
+  <sv:property sv:name="list.page.size" sv:type="String">
+    <sv:value>15</sv:value>
   </sv:property>
   <sv:node sv:name="root">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -1136,7 +1152,7 @@
       <sv:value>${model.document}</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>15</sv:value>
+      <sv:value>${list.page.size}</sv:value>
     </sv:property>
     <sv:node sv:name="yui.config">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
