@@ -70,7 +70,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     @Override
     protected boolean isIncludedInNodeIndex(Name propertyName) {
-        Name excludeName = NameFactoryImpl.getInstance().create("http://www.hippoecm.org/nt/1.1","paths");
+        Name excludeName = NameFactoryImpl.getInstance().create("http://www.hippoecm.org/nt/1.2","paths");
         if(excludeName.equals(propertyName)){
             return false;
         }
