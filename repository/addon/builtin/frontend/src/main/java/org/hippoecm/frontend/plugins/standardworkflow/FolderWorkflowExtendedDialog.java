@@ -50,10 +50,12 @@ public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
     private String docbase;
     private String facet;
     private String value;
+    private IModel title;
 
     public FolderWorkflowExtendedDialog(AbstractFolderWorkflowPlugin folderWorkflowPlugin, IModel title,
             String category, Set<String> prototypes) {
-        super(folderWorkflowPlugin, title);
+        super(folderWorkflowPlugin);
+        this.title = title;
         this.category = category;
         this.prototypes = prototypes;
 
@@ -97,6 +99,10 @@ public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
         }
 
         enableButtons();
+    }
+    
+    public IModel getTitle() {
+        return title;
     }
 
     private void enableButtons() {

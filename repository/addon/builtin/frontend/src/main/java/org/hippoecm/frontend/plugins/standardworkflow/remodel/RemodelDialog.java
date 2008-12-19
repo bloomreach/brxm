@@ -21,9 +21,9 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -54,7 +54,7 @@ public class RemodelDialog extends AbstractWorkflowDialog {
     private RemodelWizard wizard;
 
     public RemodelDialog(AbstractWorkflowPlugin plugin, IServiceReference<IJcrService> jcrService) {
-        super(plugin, new StringResourceModel("update-content", (Component) null, null));
+        super(plugin);
 
         this.jcrServiceRef = jcrService;
 
@@ -73,6 +73,10 @@ public class RemodelDialog extends AbstractWorkflowDialog {
     public void setDialogService(IDialogService dialogService) {
         super.setDialogService(dialogService);
         wizard.setDialogService(dialogService);
+    }
+    
+    public IModel getTitle() {
+        return new StringResourceModel("update-content", this, null);
     }
 
     void remodel() throws Exception {

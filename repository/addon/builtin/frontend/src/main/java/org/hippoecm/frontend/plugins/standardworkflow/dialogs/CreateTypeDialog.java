@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 
-import org.apache.wicket.Component;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
@@ -42,7 +42,7 @@ public class CreateTypeDialog extends AbstractWorkflowDialog {
     private IServiceReference<IJcrService> jcrServiceRef;
 
     public CreateTypeDialog(AbstractWorkflowPlugin plugin, IServiceReference<IJcrService> jcrService) {
-        super(plugin, new StringResourceModel("create-type", (Component) null, null));
+        super(plugin);
 
         this.jcrServiceRef = jcrService;
 
@@ -59,5 +59,9 @@ public class CreateTypeDialog extends AbstractWorkflowDialog {
         if (jcrService != null) {
             jcrService.flush(wflModel.getNodeModel());
         }
+    }
+    
+    public IModel getTitle() {
+        return new StringResourceModel("create-type", this, null);
     }
 }

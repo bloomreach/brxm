@@ -48,10 +48,12 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
     private Set<String> prototypes;
     private String prototype;
     private String name;
+    private IModel title;
 
     public FolderWorkflowDialog(AbstractFolderWorkflowPlugin folderWorkflowPlugin, 
             IModel title, String category, Set<String> prototypes) {
-        super(folderWorkflowPlugin, title);
+        super(folderWorkflowPlugin);
+        this.title = title;
         this.category = category;
         this.prototypes = prototypes;
 
@@ -113,6 +115,10 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
         }
 
         enableButtons();
+    }
+    
+    public IModel getTitle() {
+        return title;
     }
 
     private void enableButtons() {
