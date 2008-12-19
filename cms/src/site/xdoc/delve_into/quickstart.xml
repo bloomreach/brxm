@@ -42,8 +42,8 @@
    </td>
    <td>
     Download the
-    <a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.04/hippo-ecm-quickstart-bin-2.01.04.zip">zipped quickstart package that includes the Jetty application container</a>
-    (if you prefer the <a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.04/hippo-ecm-quickstart-bin-2.01.04.tar.gz">tar.gz</a>, take that).
+    <a href="${quickstart_zip_package_url}">zipped quickstart package that includes the Jetty application container</a>
+    (if you prefer the <a href="${quickstart_targz_package_url}">tar.gz</a>, take that).
    </td>
   </tr>
   <tr>
