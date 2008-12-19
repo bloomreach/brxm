@@ -26,6 +26,8 @@ import javax.jcr.Value;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -34,8 +36,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.widgets.TextAreaWidget;
-import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,37 +56,16 @@ public class PropertyDialog extends AbstractDialog {
     public PropertyDialog(MenuPlugin plugin, IPluginContext context) {
         this.plugin = plugin;
 
-        add(new CheckBox("isMultiple", new PropertyModel(this, "isMultiple")) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected boolean wantOnSelectionChangedNotifications() {
-                return true;
-            }
-
-            @Override
-            protected void onSelectionChanged(Object newSelection) {
-                setMultiple((Boolean) newSelection);
-            }
-        });
+        add(new CheckBox("isMultiple", new PropertyModel(this, "isMultiple")));
 
         type = PropertyType.TYPENAME_STRING;
-        add(new DropDownChoice("types", new PropertyModel(this, "propertyType"), getTypes()) {
-            private static final long serialVersionUID = 1L;
 
-            @Override
-            protected boolean wantOnSelectionChangedNotifications() {
-                return true;
-            }
+        DropDownChoice ddChoice = new DropDownChoice("types", new PropertyModel(this, "propertyType"), getTypes());
+        ddChoice.setRequired(true);
+        add(ddChoice);
 
-            @Override
-            protected void onSelectionChanged(Object newSelection) {
-                setPropertyType((String) newSelection);
-            }
-        }.setRequired(true));
-
-        add(new TextFieldWidget("name", new PropertyModel(this, "name")));
-        add(new TextAreaWidget("value", new PropertyModel(this, "value")));
+        add(new TextField("name", new PropertyModel(this, "name")));
+        add(new TextArea("value", new PropertyModel(this, "value")));
     }
 
     @Override

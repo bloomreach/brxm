@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.console.menu.node;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -25,7 +26,6 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.service.ITitleDecorator;
-import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class NodeDialog extends AbstractDialog implements ITitleDecorator {
     @SuppressWarnings("unused")
@@ -39,8 +39,8 @@ public class NodeDialog extends AbstractDialog implements ITitleDecorator {
 
     public NodeDialog(MenuPlugin plugin) {
         this.plugin = plugin;
-        add(new TextFieldWidget("name", new PropertyModel(this, "name")));
-        add(new TextFieldWidget("type", new PropertyModel(this, "type")));
+        add(new TextField("name", new PropertyModel(this, "name")));
+        add(new TextField("type", new PropertyModel(this, "type")));
     }
 
     @Override

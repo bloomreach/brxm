@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.console.menu.rename;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -26,7 +27,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ public class RenameDialog extends AbstractDialog {
             log.error(e.getMessage());
         }
 
-        add(new TextFieldWidget("name", new PropertyModel(this, "name")));
+        add(new TextField("name", new PropertyModel(this, "name")));
         if (nodeModel.getNode() == null) {
             ok.setVisible(false);
         }
