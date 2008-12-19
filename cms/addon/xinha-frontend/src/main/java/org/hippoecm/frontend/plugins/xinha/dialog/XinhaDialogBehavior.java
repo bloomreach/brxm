@@ -44,13 +44,23 @@ public abstract class XinhaDialogBehavior extends DialogBehavior {
         return newDialogModelObject(p);
     }
 
-    public String onDialogOk() {
+    private JsBean getBean() {
         IModel model = modelService.getModel();
-        JsBean bean = (JsBean) model.getObject();
+        return (JsBean) model.getObject();
+    }
+    
+    public String onDialogOk() {
+        JsBean bean = getBean();
         onOk(bean);
         return bean.toJsString();
     }
 
+    public String onDialogRemove() {
+        JsBean bean = getBean();
+        onRemove(bean);
+        return bean.toJsString();
+    }
+    
     @Override
     protected String getServiceId() {
         return "cms-pickers/" + getId();
@@ -59,6 +69,8 @@ public abstract class XinhaDialogBehavior extends DialogBehavior {
     protected abstract JsBean newDialogModelObject(HashMap<String, String> p);
 
     protected abstract void onOk(JsBean bean);
+
+    protected abstract void onRemove(JsBean bean);
 
     protected abstract String getId();
 

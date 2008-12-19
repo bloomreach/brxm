@@ -33,7 +33,7 @@ public class ImagePickerBehavior extends XinhaDialogBehavior {
     public ImagePickerBehavior(IPluginContext context, IPluginConfig config, String serviceId) {
         super(context, config, serviceId);
     }
-    
+
     @Override
     protected void configureModal(final ModalWindow modal) {
         super.configureModal(modal);
@@ -48,6 +48,11 @@ public class ImagePickerBehavior extends XinhaDialogBehavior {
     }
 
     @Override
+    protected String getId() {
+        return "imagepicker";
+    }
+
+    @Override
     protected void onOk(JsBean bean) {
         XinhaImage xi = (XinhaImage) bean;
         String url = getImageService().attach(xi);
@@ -56,13 +61,15 @@ public class ImagePickerBehavior extends XinhaDialogBehavior {
         }
     }
 
+    @Override
+    protected void onRemove(JsBean bean) {
+        XinhaImage img = (XinhaImage)bean;
+        if (getImageService().detach(img)) {
+            img.reset();
+        }
+    }
+
     private XinhaImageService getImageService() {
         return context.getService(clusterServiceId + ".images", XinhaImageService.class);
     }
-
-    @Override
-    protected String getId() {
-        return "imagepicker";
-    }
-
 }

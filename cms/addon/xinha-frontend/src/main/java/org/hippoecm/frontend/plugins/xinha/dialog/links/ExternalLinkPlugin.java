@@ -65,10 +65,17 @@ public class ExternalLinkPlugin extends AbstractBrowserPlugin {
             }
         });
     }
-
+    
+    @Override
+    protected boolean hasRemoveButton() {
+        String href = getBean().getHref();
+        return href != null && !"".equals(href);
+    }
+    
     private void update() {
         if (!ok.isEnabled() && (getBean().getHref() != null && getBean().getHref().length() > 0)) {
             enableOk(true);
+            AjaxRequestTarget.get().addComponent(ok);
         }
     }
 
@@ -109,4 +116,5 @@ public class ExternalLinkPlugin extends AbstractBrowserPlugin {
         }
 
     }
+
 }

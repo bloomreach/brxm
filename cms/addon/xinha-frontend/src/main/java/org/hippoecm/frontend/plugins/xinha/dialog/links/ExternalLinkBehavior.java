@@ -56,4 +56,9 @@ public class ExternalLinkBehavior extends XinhaDialogBehavior {
         return "externallinks";
     }
 
+    @Override
+    protected void onRemove(JsBean bean) {
+        bean.reset();
+    }
+
 }

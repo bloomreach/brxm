@@ -69,6 +69,23 @@ public class XinhaLinkService implements IClusterable {
         }
         return null;
     }
+    
+    public boolean detach(XinhaLink link) {
+        String relPath = link.getHref();
+        Node node = link.getNodeModel().getNode();
+        try {
+            if (node.hasNode(relPath)) {
+                Node linkNode = node.getNode(relPath);
+                linkNode.remove();
+                node.save();
+                return true;
+            }
+        } catch (RepositoryException e) {
+            log.error("Error during remove of internal link node[" + relPath + "]", e);
+        }
+        return false;
+    }
+
 
     private String createLink(JcrNodeModel nodeModel) {
         try {

@@ -39,6 +39,7 @@ public abstract class AbstractBrowserPlugin extends RenderPlugin {
     final private Form form;
     final protected AjaxButton ok;
     final protected AjaxButton cancel;
+    final protected AjaxButton remove;
     final protected FeedbackPanel feedback;
 
     public AbstractBrowserPlugin(IPluginContext context, final IPluginConfig config) {
@@ -69,7 +70,24 @@ public abstract class AbstractBrowserPlugin extends RenderPlugin {
         //TODO: feedback is written in the page feedbackpanel, not this one in the modalwindow
         form.add(feedback = new FeedbackPanel("dialog.feedback"));
         feedback.setOutputMarkupId(true);
+        
+        form.add(remove = new AjaxButton("remove") {
+            private static final long serialVersionUID = 1L;
 
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form form) {
+                onRemove(target);
+            }
+
+            @Override
+            public boolean isVisible() {
+                return hasRemoveButton();
+            }
+        });
+    }
+
+    protected boolean hasRemoveButton() {
+        return false;
     }
 
     protected IDialog getDialog() {
@@ -79,6 +97,10 @@ public abstract class AbstractBrowserPlugin extends RenderPlugin {
 
     protected void enableOk(boolean state) {
         AjaxRequestTarget.get().addComponent(ok.setEnabled(state));
+    }
+    
+    protected void onRemove(AjaxRequestTarget target) {
+        getDialog().remove(target);
     }
 
 }

@@ -13,16 +13,22 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<wicket:panel>
-  <div>
-    <wicket:child/>
-  </div>
-  <div class="hippo-window-buttons">
-    <form wicket:id="form">
-      <span wicket:id="dialog.feedback">[ Feedback panel ]</span>
-      <input type="button" wicket:id="ok" value = "OK"/>
-      <input type="button" wicket:id="close" value="Close" />
-    </form>
-  </div>  
-</wicket:panel>
-
+<html>
+  <body>
+    <wicket:panel>
+      <div>
+        <wicket:child/>
+      </div>
+      <div class="hippo-window-buttons">
+        <form wicket:id="form">
+          <wicket:enclosure>
+            <input type="button" wicket:id="remove" value="remove" />          
+          </wicket:enclosure>
+          <span wicket:id="dialog.feedback">[ Feedback panel ]</span>
+          <input type="button" wicket:id="ok" value = "OK"/>
+          <input type="button" wicket:id="close" value="Close" />
+        </form>
+      </div>  
+    </wicket:panel>
+  </body>
+</html>  

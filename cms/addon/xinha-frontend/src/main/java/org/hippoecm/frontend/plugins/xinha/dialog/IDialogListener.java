@@ -28,4 +28,6 @@ public interface IDialogListener extends IClusterable {
     void onDialogClose();
 
     String onDialogOk();
+
+    String onDialogRemove();
 }
