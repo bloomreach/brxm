@@ -62,7 +62,18 @@ InsertImage.prototype.prepareDialog = function()
     // Connect the OK button
     var self = this;
     this.dialog.onOk = function(values) {
-        self.apply();
+        var img = self.image;
+        if(values.f_url == '' && img != null) {
+            var p = img.parentNode;
+            while(img.hasChildNodes())
+            {
+                p.insertBefore(img.removeChild(img.childNodes[0]), img);
+            }
+            p.removeChild(img);
+            self.editor.updateToolbar();
+        } else {
+            self.apply();
+        }
         self.editor.plugins.AutoSave.instance.saveSynchronous();
     };
     this.dialogReady = true;

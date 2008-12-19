@@ -59,9 +59,7 @@ public abstract class BrowserPlugin extends AbstractBrowserPlugin {
             protected String getExtensionPoint() {
                 return config.getString("dialog.list");
             }
-
         };
-        
     }
     
     protected void onDocumentChanged(IModel model) {
@@ -94,6 +92,11 @@ public abstract class BrowserPlugin extends AbstractBrowserPlugin {
     @Override
     protected void enableOk(boolean state) {
         AjaxRequestTarget.get().addComponent(ok.setEnabled(state));
+    }
+    
+    @Override
+    protected boolean hasRemoveButton() {
+        return initialModel != null;
     }
     
     protected abstract JcrNodeModel findNewModel(IModel model);

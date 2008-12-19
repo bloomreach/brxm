@@ -75,5 +75,10 @@ public class DocumentBrowserPlugin extends BrowserPlugin {
         }
         return null;
     }
+    
+    @Override
+    protected boolean hasRemoveButton() {
+        return initialModel != null;
+    }
 
 }

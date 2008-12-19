@@ -17,15 +17,24 @@ public abstract class Dialog implements IDialog {
         private static final long serialVersionUID = 1L;
 
         public void onDialogClose() {
-            log.warn("No IDialogListener configured.");
+            fail();
         }
 
         public String onDialogOk() {
-            log.warn("No IDialogListener configured.");
-            return null;
+            return fail();
         }
 
         public void render(PluginRequestTarget target) {
+            fail();
+        }
+
+        public String onDialogRemove() {
+            return fail();
+        }
+        
+        private String fail() {
+            log.warn("No IDialogListener configured.");
+            return null;
         }
     };
 
@@ -45,7 +54,6 @@ public abstract class Dialog implements IDialog {
                 cancel(target);
                 return false;
             }
-            
         });
         
         modal.setResizable(defaultResizable);
@@ -81,6 +89,11 @@ public abstract class Dialog implements IDialog {
 
     public void cancel(AjaxRequestTarget target) {
         close(target, getCancelScript());
+    }
+    
+    public void remove(AjaxRequestTarget target) {
+        String returnValue = listener.onDialogRemove();
+        close(target, getCloseScript(returnValue));
     }
     
     private void close(AjaxRequestTarget target, String closeScript) {

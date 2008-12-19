@@ -43,6 +43,13 @@ public class JsBean implements IClusterable {
     public void setNodeModel(JcrNodeModel nodeModel) {
         this.nodeModel = nodeModel;
     }
+    
+    public void reset() {
+        for(Entry<String, String> entry : values.entrySet()) {
+            entry.setValue("");
+        }
+        nodeModel = null;
+    }
 
     public String toJsString() {
         StringBuilder sb = new StringBuilder();
@@ -75,11 +82,16 @@ public class JsBean implements IClusterable {
         }
 
         public Object getObject() {
-            return values.get(key);
+            if (values != null) {
+                return values.get(key);
+            }
+            return null;
         }
 
         public void setObject(Object object) {
-            values.put(key, (String) object);
+            if (values != null) {
+                values.put(key, (String) object);
+            }
         }
 
         public void detach() {

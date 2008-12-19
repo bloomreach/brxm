@@ -33,4 +33,6 @@ public interface IDialog extends IClusterable {
     
     ModalWindow getModal();
 
+    void remove(AjaxRequestTarget target);
+
 }

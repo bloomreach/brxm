@@ -66,4 +66,13 @@ public class InternalLinkBehavior extends XinhaDialogBehavior {
     protected String getId() {
         return "internallinks";
     }
+
+    @Override
+    protected void onRemove(JsBean bean) {
+        XinhaLink link = (XinhaLink) bean;
+        if (getLinkService().detach(link)) {
+            link.reset();
+        }
+    }
+
 }

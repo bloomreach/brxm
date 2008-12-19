@@ -103,6 +103,27 @@ public class XinhaImageService implements IClusterable {
         }
         return false;
     }
+    
+    private boolean detachImageItem(ImageItem item) {
+        if (item.getUuid() != null) {
+            Node node = nodeModel.getNode();
+            String nodeName = item.getNodeName();
+            try {
+                if (node.hasNode(nodeName)) {
+                    Node imgNode = node.getNode(nodeName);
+                    imgNode.remove();
+                    node.save();
+                    return true;
+                }
+            } catch (RepositoryException e) {
+                log
+                        .error("An error occured while trying to save new image facetSelect[" + item.getNodeName()
+                                + "]", e);
+            }
+        }
+        return false;
+    }
+
 
     //Attach an image with only a JcrNodeModel. Method return json object wich 
     public String attach(JcrNodeModel model) {
@@ -123,6 +144,14 @@ public class XinhaImageService implements IClusterable {
             return item.getUrl();
         }
         return null;
+    }
+    
+    public boolean detach(XinhaImage img) {
+        ImageItem item = createImageItem(img.getNodeModel());
+        if (detachImageItem(item)) {
+            return true;
+        }
+        return false;
     }
 
     public XinhaImage createXinhaImage(HashMap<String, String> p) {
