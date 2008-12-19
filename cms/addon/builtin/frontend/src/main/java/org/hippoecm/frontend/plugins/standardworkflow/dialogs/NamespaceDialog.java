@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 
-import org.apache.wicket.Component;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
@@ -40,7 +40,7 @@ public class NamespaceDialog extends AbstractWorkflowDialog {
     private String url;
 
     public NamespaceDialog(AbstractWorkflowPlugin plugin) {
-        super(plugin, new StringResourceModel("create-namespace", (Component) null, null));
+        super(plugin);
 
         add(new TextFieldWidget("prefix", new PropertyModel(this, "prefix")));
 
@@ -51,5 +51,9 @@ public class NamespaceDialog extends AbstractWorkflowDialog {
     protected void execute() throws Exception {
         TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) getWorkflow();
         workflow.createNamespace(NodeNameCodec.encode(prefix, true), url);
+    }
+    
+    public IModel getTitle() {
+        return new StringResourceModel("create-namespace", this, null);
     }
 }

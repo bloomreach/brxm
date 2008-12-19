@@ -20,7 +20,6 @@ import java.util.Map;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.i18n.SearchingTranslatorPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -48,13 +47,11 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog implements I
 
     static protected Logger log = LoggerFactory.getLogger(AbstractWorkflowDialog.class);
 
-    private IModel title;
     private WorkflowsModel model;
     private AbstractWorkflowPlugin plugin;
     private ITranslateService translator;
 
-    public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IModel title) {
-        this.title = title;
+    public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin) {
         this.model = (WorkflowsModel) plugin.getModel();
         this.plugin = plugin;
 
@@ -91,10 +88,6 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog implements I
             log.error(e.getMessage());
         }
         return null;
-    }
-
-    public IModel getTitle() {
-        return title;
     }
 
     @Override

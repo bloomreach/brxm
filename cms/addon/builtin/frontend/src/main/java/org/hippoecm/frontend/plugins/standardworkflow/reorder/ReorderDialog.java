@@ -42,7 +42,7 @@ public class ReorderDialog extends AbstractWorkflowDialog {
     private ReorderPanel panel;
 
     public ReorderDialog(AbstractWorkflowPlugin plugin, IServiceReference<IJcrService> jcrService) {
-        super(plugin, new StringResourceModel("reorder", (Component) null, null));
+        super(plugin);
         jcrServiceRef = jcrService;
 
         JcrNodeModel folderModel = ((WorkflowsModel) plugin.getModel()).getNodeModel();
@@ -56,6 +56,10 @@ public class ReorderDialog extends AbstractWorkflowDialog {
             name = "";
         }
         add(new Label("message", new StringResourceModel("reorder-message", this, null, new Object[] { name })));
+    }
+    
+    public IModel getTitle() {
+        return new StringResourceModel("reorder", this, null);
     }
 
     @Override

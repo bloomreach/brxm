@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractNameDialog;
@@ -51,15 +52,7 @@ public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog() {
-                StringResourceModel text;
-                try {
-                    Object[] params = new Object[] { ((WorkflowsModel) FolderWorkflowPlugin.this.getModel())
-                            .getNodeModel().getNode().getName() };
-                    text = new StringResourceModel("delete-message-extended", null, null, params);
-                } catch (RepositoryException ex) {
-                    text = new StringResourceModel("delete-message", (Component) null, null);
-                }
-                return new AbstractWorkflowDialog(FolderWorkflowPlugin.this, text) {
+                return new AbstractWorkflowDialog(FolderWorkflowPlugin.this) {
                     @Override
                     protected void execute() throws Exception {
                         // FIXME: this assumes that folders are always embedded in other folders
@@ -70,6 +63,18 @@ public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
                         WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
                         workflow.delete(node.getName() + "[" + node.getIndex() + "]");
+                    }
+                    
+                    public IModel getTitle() {
+                        StringResourceModel text;
+                        try {
+                            Object[] params = new Object[] { ((WorkflowsModel) FolderWorkflowPlugin.this.getModel())
+                                    .getNodeModel().getNode().getName() };
+                            text = new StringResourceModel("delete-message-extended", this, null, params);
+                        } catch (RepositoryException ex) {
+                            text = new StringResourceModel("delete-message", this, null);
+                        }
+                        return text;
                     }
                 };
             }

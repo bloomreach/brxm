@@ -28,11 +28,17 @@ public abstract class AbstractNameDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
     protected String name;
+    private IModel title;
 
     public AbstractNameDialog(AbstractWorkflowPlugin workflowPlugin, IModel title, IModel question, String name) {
-        super(workflowPlugin, title);
+        super(workflowPlugin);
         this.name = name;
+        this.title = title;
         add(new Label("question", question));
         add(new TextFieldWidget("value", new PropertyModel(this, "name")));
+    }
+    
+    public IModel getTitle() {
+        return title;
     }
 }
