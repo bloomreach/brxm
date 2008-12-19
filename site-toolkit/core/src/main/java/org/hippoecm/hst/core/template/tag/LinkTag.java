@@ -42,6 +42,7 @@ public class LinkTag extends SimpleTagSupport {
     private String staticattr;
     private ELNode item;
     private String sitemap;
+    private boolean externalize;
     
 
     @Override
@@ -61,12 +62,12 @@ public class LinkTag extends SimpleTagSupport {
             }
         } else {
             if(item!= null) {
-                href = urlMapping.rewriteLocation(item.getJcrNode(), sitemap, hstRequestContext, false).getUri();
+                href = urlMapping.rewriteLocation(item.getJcrNode(), sitemap, hstRequestContext, externalize).getUri();
             } else if(location != null ) {
             	// location must be a sitemapNodeName
-                href = urlMapping.rewriteLocation(location, hstRequestContext, false).getUri();
+                href = urlMapping.rewriteLocation(location, hstRequestContext, externalize).getUri();
             } else if(staticattr != null ) {
-                href = urlMapping.getLocation(staticattr, false).getUri();
+                href = urlMapping.getLocation(staticattr, externalize).getUri();
             }
         }
         if(href != null) {
@@ -120,6 +121,14 @@ public class LinkTag extends SimpleTagSupport {
         this.sitemap = sitemap;
     }
     
+    public boolean isExternalize() {
+        return externalize;
+    }
+
+    public void setExternalize(boolean externalize) {
+        this.externalize = externalize;
+    }
+    
     public class Link {
         /*
          * three link attributes, all returning the same value. 
@@ -152,7 +161,7 @@ public class LinkTag extends SimpleTagSupport {
         public void setHref(String href) {
             this.href = href;
         }
-        
+
     }
 
 }
