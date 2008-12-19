@@ -42,28 +42,18 @@ public class CachedYuiDependencyResolver {
     private static YuiDependencyResolver dependencyResolver = null;
 
     public static Set<YuiDependency> getDependencies(YuiNamespace ns, String module) {
-        return getDependencies(new YuiDependency(ns, module));
-    }
-
-    public static Set<YuiDependency> getDependencies(YuiDependency dependency) {
         if (dependencyResolver == null) {
             cacheEnabled = Application.get().getConfigurationType().equals(Application.DEPLOYMENT);
             dependencyResolver = new YuiDependencyResolver(cacheEnabled);
         }
 
-        if (cacheEnabled && modulesLoaded.containsKey(dependency.getModule())) {
-            return modulesLoaded.get(dependency.getModule());
+        if (cacheEnabled && modulesLoaded.containsKey(module)) {
+            return modulesLoaded.get(module);
         }
 
-        Set<YuiDependency> dependencies = dependencyResolver.resolveDependencies(dependency);
-        if (dependency.getOptionalDependencies() != null) {
-            for (YuiDependency optsDependency : dependency.getOptionalDependencies()) {
-                dependencies.add(optsDependency);
-            }
-        }
-        dependencies.add(dependency);
+        Set<YuiDependency> dependencies = dependencyResolver.resolveDependencies(ns, module);
         if (cacheEnabled)
-            modulesLoaded.put(dependency.getModule(), dependencies);
+            modulesLoaded.put(module, dependencies);
         return dependencies;
     }
 
