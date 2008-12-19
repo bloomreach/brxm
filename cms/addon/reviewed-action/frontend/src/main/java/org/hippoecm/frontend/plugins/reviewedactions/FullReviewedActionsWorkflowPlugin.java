@@ -105,7 +105,9 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
         addWorkflowAction("publish-dialog", new StringResourceModel("publish-label", this, null), new Visibility() {
             private static final long serialVersionUID = 1L;
             public boolean isVisible() {
-                return !(stateSummary.equals("review") || stateSummary.equals("live")) && !pendingRequest;
+                // HREPTWO-2021
+                // return !(stateSummary.equals("review") || stateSummary.equals("live")) && !pendingRequest;
+                return false;
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
@@ -126,7 +128,9 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
-                return !(stateSummary.equals("review") || stateSummary.equals("new")) && !pendingRequest;
+                // HREPTWO-2021
+                // return !(stateSummary.equals("review") || stateSummary.equals("new")) && !pendingRequest;
+                return false;
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
@@ -207,7 +211,11 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                     @Override
                     protected void execute() throws Exception {
                         FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                        workflow.publish(date);
+                        if (date != null) {
+                            workflow.publish(date);
+                        } else {
+                            workflow.publish();
+                        }
                     }
                 };
             }
@@ -233,7 +241,11 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                     @Override
                     protected void execute() throws Exception {
                         FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                        workflow.depublish(date);
+                        if (date != null) {
+                            workflow.depublish(date);
+                        } else {
+                            workflow.depublish();
+                        }
                     }
                 };
             }
