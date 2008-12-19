@@ -27,6 +27,15 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.caching.Cache;
+import org.hippoecm.hst.caching.CacheKey;
+import org.hippoecm.hst.caching.CacheManagerImpl;
+import org.hippoecm.hst.caching.CachedResponse;
+import org.hippoecm.hst.caching.CachedResponseImpl;
+import org.hippoecm.hst.caching.EventCacheImpl;
+import org.hippoecm.hst.caching.NamedEvent;
+import org.hippoecm.hst.caching.validity.EventValidity;
+import org.hippoecm.hst.caching.validity.SourceValidity;
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.ContextBaseException;
@@ -47,6 +56,7 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
     private String domainMappingLocation;
     
     private DomainMapping domainMapping;
+    private FilterConfig filterConfig;
 
     public void init(FilterConfig filterConfig) throws ServletException {
         domainMappingLocation = filterConfig.getInitParameter(REPOSITORY_DOMAIN_MAPPING_LOCATION_PARAM);
@@ -54,7 +64,7 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
             log.warn("No '{}' defined in web.xml for filter DomainMappingFilter. Skipping domain mapping" , REPOSITORY_DOMAIN_MAPPING_LOCATION_PARAM);
             return;
         }
-        domainMapping = new DomainMappingImpl(domainMappingLocation, filterConfig);
+        this.filterConfig = filterConfig;
     }
 
     
@@ -73,7 +83,22 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
     @Override
     public void handleRequestForThisFilter(HttpServletRequest req, ServletResponse response, FilterChain chain,
             HstRequestContext hstRequestContext) throws IOException, ServletException {
-      
+        
+        CacheKey cacheKey = new CacheKey("DomainMapping", this.getClass());
+        Cache cache = CacheManagerImpl.getCache(this.getClass().getName(), EventCacheImpl.class.getName());;
+        
+        Object o = cache.get(cacheKey);
+        if(o != null && o instanceof CachedResponse) {
+            CachedResponse cachedResponse = (CachedResponse)o;
+            domainMapping = (DomainMapping)cachedResponse.getResponse();
+        } else {
+            domainMapping = new DomainMappingImpl(domainMappingLocation, filterConfig);
+            // put it in the eventcache
+            SourceValidity sourceValidity = new EventValidity(new NamedEvent(domainMappingLocation));
+            CachedResponse cachedResponse = new CachedResponseImpl(sourceValidity, domainMapping);
+            cache.store(cacheKey, cachedResponse);
+        }
+        
         if(!this.domainMapping.isInitialized()) {
             try {
                 domainMapping.init();
@@ -90,6 +115,7 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
                 log.debug("Exception during initializing domainMapping", e);
             }
         }
+        
         Domain matchingDomain = domainMapping.match(req.getServerName());
         if(matchingDomain == null) {
             if(domainMapping.getPrimaryDomain() != null) {
