@@ -70,15 +70,15 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                System.out.println("SET " + selectedRole + " " + selectedGroup.getGroupname());
                 try {
                     domain.addGroupToRole(selectedRole, selectedGroup.getGroupname());
                     info(getString("permissions-group-added", model));
+                    log.info("Grant " + selectedRole + " role to group " + selectedGroup.getGroupname() + " for domain " + domain.getName());
                     this.removeAll();
                     target.addComponent(roleList);
                 } catch (RepositoryException e) {
                     error(getString("permissions-group-add-failed", model));
-                    log.error("Failed to revoke permission", e);
+                    log.error("Failed to add permission", e);
                 }
             }
 
@@ -133,6 +133,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
                     try {
                         domain.removeGroupFromRole(role, group);
                         info(getString("permissions-group-removed", model));
+                        log.info("Revoke " + selectedRole + " role from group " + selectedGroup.getGroupname() + " for domain " + domain.getName());
                         this.removeAll();
                         target.addComponent(roleList);
                     } catch (RepositoryException e) {
