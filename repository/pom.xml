@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   Copyright 2007-2008 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +13,8 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.hippoecm</groupId>
@@ -20,7 +22,7 @@
   <version>2.02.00-SNAPSHOT</version>
 
   <name>Hippo ECM</name>
-  <description>The core of the Hippo ECM, i.e. repository 2, plus a advanced webbased userinterface for content management: CMS, 
+  <description>The core of the Hippo ECM, i.e. repository 2, plus an advanced webbased userinterface for content management: CMS, 
     plus a simple webbased userinterface to access the repository: console.
   </description>
   <packaging>pom</packaging>
@@ -54,6 +56,9 @@
     <public_project_wiki>wiki.hippo.nl/display/CMS/Hippo+CMS+Home</public_project_wiki>
     <product_name>Hippo CMS</product_name>
     <product_abr>CMS</product_abr>
+
+    <quickstart_zip_package_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.04/hippo-ecm-quickstart-bin-2.01.04.zip</quickstart_zip_package_url>
+    <quickstart_targz_package_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.04/hippo-ecm-quickstart-bin-2.01.04.tar.gz</quickstart_targz_package_url>
 
     <!-- Test dependencies  -->
     <easymock.version>1.1</easymock.version>
@@ -238,6 +243,16 @@
       </roles>
       <timezone>+1</timezone>
     </developer>
+    <developer>
+      <name>Jeroen Tietema</name>
+      <id>jtietema</id>
+      <email>j.tietema@onehippo.com</email>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
   </developers>
 
   <mailingLists>
@@ -401,6 +416,44 @@
             <goals>
               <goal>jar</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+       <!-- Report project history via xdoc, by supplying information in src/changes/changes.xml 
+                 
+         WARNINGS 
+         - Some examples use the following changes plugin, but the report is full of bugs,
+           missing title and descriptions, not using the issueLinkTemplate and ugly markup.
+           <groupId>org.codehaus.mojo</groupId>
+           <artifactId>changes-maven-plugin</artifactId>
+
+         - The issueLinkTemplate configuration is supposed to be deprecated, but is the only
+           way to configure for actions that have no system attribute and therefor have
+           as system 'default'. From the details of issueLinkTemplatePerSystem.
+           Note: The deprecated issueLinkTemplate will be used for a system called "default".           
+
+        -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <configuration>
+         <issueLinkTemplatePerSystem>
+          <Jira>%URL%/%ISSUE%</Jira>
+         </issueLinkTemplatePerSystem>
+         <issueLinkTemplate>%URL%/%ISSUE%</issueLinkTemplate>
+	</configuration>
+        <executions>
+          <execution>
+            <id>validate-changes</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>changes-validate</goal>
+            </goals>
+            <configuration>
+              <!-- if set to true the build will fail if the changes file is invalid,
+                   if set to false warnings will be logged. -->
+              <failOnError>false</failOnError>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -684,10 +737,23 @@
         </configuration>
       </plugin>
 
-      <!-- Report project history via xdoc, by supplying information in src/changes/changes.xml -->
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>changes-maven-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <configuration>
+         <issueLinkTemplatePerSystem>
+          <Jira>%URL%/%ISSUE%</Jira>
+         </issueLinkTemplatePerSystem>
+         <issueLinkTemplate>%URL%/%ISSUE%</issueLinkTemplate>
+	</configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+              <!-- <report>jira-report</report> -->
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
 
       <!-- Autogenerate todo list from @todo and TODO tags -->
