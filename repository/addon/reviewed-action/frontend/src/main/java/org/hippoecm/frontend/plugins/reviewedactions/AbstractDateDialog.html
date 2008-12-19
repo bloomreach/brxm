@@ -14,7 +14,15 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>
+  <wicket:head>
+    <script type="text/javascript" language="JavaScript">
+      Wicket.Window.unloadConfirmation = false;
+    </script>
+  </wicket:head>
+  <wicket:panel>
+    <div class="hippo-window">
+      <div class="hippo-root">
+        <form wicket:id="form">
     <table class="hippo-window-form">
       <tr>
         <td>
@@ -25,5 +33,20 @@
         </td>
       </tr>
     </table>
-  </wicket:extend>
+          <div class="hippo-window-buttons">
+            <div class="hippo-window-exception" wicket:id="exception"/>
+            <button wicket:id="now">
+              <wicket:message key="now"/>
+            </button>
+            <button wicket:id="ok">
+              <wicket:message key="ok"/>
+            </button>
+            <button wicket:id="cancel">
+              <wicket:message key="cancel"/>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </wicket:panel>
 </html>

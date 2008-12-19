@@ -17,6 +17,9 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.util.Date;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
@@ -32,10 +35,61 @@ public abstract class AbstractDateDialog extends AbstractWorkflowDialog {
 
     protected Date date;
 
+    protected AjaxLink now;
+
     public AbstractDateDialog(AbstractWorkflowPlugin workflowPlugin, IModel title, IModel question, Date date) {
         super(workflowPlugin, title);
         this.date = date;
+
         add(new Label("question", question));
+
         add(new AjaxDateTimeField("value", new PropertyModel(this, "date")));
+
+        now = new AjaxLink("now") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                AbstractDateDialog.this.date = null;
+                try {
+                    ok();
+                    closeDialog();
+                } catch (Exception e) {
+                    String msg = e.getClass().getName() + ": " + e.getMessage();
+                    log.error(msg);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Error from repository: ", e);
+                    }
+                    setException(msg);
+                    target.addComponent(exceptionLabel);
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            protected IAjaxCallDecorator getAjaxCallDecorator() {
+                return new IAjaxCallDecorator() {
+                    private static final long serialVersionUID = 1L;
+
+                    public CharSequence decorateOnFailureScript(CharSequence script) {
+                        return getScript("none") + script;
+                    }
+
+                    public CharSequence decorateOnSuccessScript(CharSequence script) {
+                        return getScript("none") + script;
+                    }
+
+                    public CharSequence decorateScript(CharSequence script) {
+                        return getScript("block") + script;
+                    }
+
+                    private String getScript(String state) {
+                        String id = indicator.getMarkupId();
+                        return "document.getElementById('" + id + "').style.display = '" + state + "';";
+                    }
+                };
+            }
+        };
+        add(now);
     }
 }

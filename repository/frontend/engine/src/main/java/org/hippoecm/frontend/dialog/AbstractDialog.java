@@ -35,6 +35,7 @@ public abstract class AbstractDialog extends Panel implements IDialogService.Dia
     private final static String SVN_ID = "$Id$";
     static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
 
+    protected Label exceptionLabel;
     protected AjaxButton ok;
     protected AjaxButton cancel;
     protected WicketAjaxIndicatorAppender indicator;
@@ -46,7 +47,7 @@ public abstract class AbstractDialog extends Panel implements IDialogService.Dia
     public AbstractDialog() {
         super(IDialogService.DIALOG_WICKET_ID);
 
-        final Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
+        exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
         exceptionLabel.setOutputMarkupId(true);
         add(exceptionLabel);
 

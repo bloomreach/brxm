@@ -105,7 +105,9 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
         addWorkflowAction("requestPublication-dialog", new StringResourceModel("request-publication", this, null), new Visibility() {
             private static final long serialVersionUID = 1L;
             public boolean isVisible() {
-                return !(stateSummary.equals("review") || stateSummary.equals("live")) && !pendingRequest;
+                // HREPTWO-2021
+                // return !(stateSummary.equals("review") || stateSummary.equals("live")) && !pendingRequest;
+                return false;
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
@@ -126,7 +128,9 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
-                return !(stateSummary.equals("review") || stateSummary.equals("new")) && !pendingRequest;
+                // HREPTWO-2021
+                // return !(stateSummary.equals("review") || stateSummary.equals("new")) && !pendingRequest;
+                return false;
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
@@ -184,7 +188,11 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                     @Override
                     protected void execute() throws Exception {
                         BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow();
-                        workflow.requestPublication(date);
+                        if (date != null) {
+                            workflow.requestPublication(date);
+                        } else {
+                            workflow.requestPublication();
+                        }
                     }
                 };
             }
@@ -210,7 +218,11 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                     @Override
                     protected void execute() throws Exception {
                         BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow();
-                        workflow.requestDepublication(date);
+                        if (date != null) {
+                            workflow.requestDepublication(date);
+                        } else {
+                            workflow.requestDepublication();
+                        }
                     }
                 };
             }
