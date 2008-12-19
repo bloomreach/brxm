@@ -129,7 +129,11 @@ public abstract class AbstractDialog extends Panel implements IDialogService.Dia
         form.add(cancel);
     }
 
-    public void add(FormComponent formComponent) {
+    protected void addToForm(Component component) {
+        form.add(component);
+    }
+
+    protected void add(FormComponent formComponent) {
         form.add(formComponent);
     }
 

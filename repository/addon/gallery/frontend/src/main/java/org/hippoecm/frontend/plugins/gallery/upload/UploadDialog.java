@@ -56,7 +56,7 @@ public class UploadDialog extends AbstractDialog {
         jcrServiceRef = context.getReference(service);
 
         wizard = new UploadWizard("wizard", this);
-        add(wizard);
+        addToForm(wizard);
     }
 
     @Override
