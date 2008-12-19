@@ -16,35 +16,27 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-  <div class="admin-user-panel">
-
-    <wicket:message key="user-membership-available-groups"/>
+   <wicket:message key="user-membership-available-groups"/>
+<div class="hippo-controlpanel-actions">
     <form wicket:id="form">
       <select wicket:id="local-groups">
         <option>group1</option>
       </select>
       <input type="button" value="add" wicket:id="submit"/>
     </form>
-    
+    </div>
     <span wicket:id="local-memberships-label"/>
-    <table class="admin-user-memberships">
+    <table class="hippo-list-details">
       <tr wicket:id="local-memberships">
         <td><label wicket:id="local-membership"/></td>
-        <td><span wicket:id="remove"/></td>
+        <td><li class="delete-16 icon-16" wicket:id="remove"/></td>
       </tr>
     </table>
-
-    <br/>
-
     <span wicket:id="external-memberships-label"/>
     <ul class="admin-user-memberships">
       <li wicket:id="external-memberships">
         <label wicket:id="external-membership"/>
       </li>
     </ul>
-
-
-    
-  </div>
   </wicket:panel>
 </html>
