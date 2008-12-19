@@ -63,11 +63,11 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
             publishedWorkflow.doDepublish();
             request = null;
         } else if(PublicationRequest.SCHEDPUBLISH.equals(requestType)) {
-            if (publishedWorkflow == null) {
-                throw new WorkflowException("cannot depublish document when not published");
+            if (unpublishedWorkflow == null) {
+                throw new WorkflowException("cannot publish document when no changes present");
             }
-            publishedWorkflow.setWorkflowContext(getWorkflowContext().getWorkflowContext(document)); // FIXME; should use workflow chaining
-            publishedWorkflow.doSchedPublish(request.getScheduledDate());
+            unpublishedWorkflow.setWorkflowContext(getWorkflowContext().getWorkflowContext(document)); // FIXME; should use workflow chaining
+            unpublishedWorkflow.doSchedPublish(request.getScheduledDate());
             request = null;
         } else if(PublicationRequest.SCHEDDEPUBLISH.equals(requestType)) {
             if (publishedWorkflow == null) {

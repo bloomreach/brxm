@@ -85,18 +85,17 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-
         WorkflowsModel model = (WorkflowsModel) getModel();
         try {
             JcrNodeModel nodeModel = model.getNodeModel();
             Node node = nodeModel.getNode();
             Node child = null;
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext();) {
+                for (NodeIterator iter = node.getNodes(HippoNodeType.NT_REQUEST); iter.hasNext();) {
                     child = iter.nextNode();
                     if (child.isNodeType(HippoNodeType.NT_REQUEST)) {
                         node = child;
-                        if (child.hasProperty("type")) {
+                        if (child.hasProperty("type") && !child.getProperty("type").getString().equals("rejected")) {
                             break;
                         }
                     } else {
