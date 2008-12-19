@@ -145,14 +145,17 @@ public class BreadcrumbPlugin extends RenderPlugin {
                 link.add(new Label("name", new Model(nodeItem.name)));
                 link.setEnabled(nodeItem.enabled);
                 item.add(link);
-                String state = nodeItem.enabled ? "enabled" : "disabled";
-                item.add(new AttributeAppender("class", new Model(state), " "));
                 
-                if (item.getIndex() == 0) {
-                    item.add(new AttributeAppender("class", new Model("first"), " "));
+                String css = nodeItem.enabled ? "enabled" : "disabled";
+                
+                if (list.size() == 1) {
+                    css += " firstlast";
+                } else if (item.getIndex() == 0) {
+                    css += " first";
                 } else if (item.getIndex() == (list.size() - 1)) {
-                    item.add(new AttributeAppender("class", new Model("last"), " "));
+                    css += " last";
                 }
+                item.add(new AttributeAppender("class", new Model(css), " "));
             }
         };
         return listview;
