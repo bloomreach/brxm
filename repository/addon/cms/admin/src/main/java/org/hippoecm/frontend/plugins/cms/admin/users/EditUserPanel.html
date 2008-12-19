@@ -1,4 +1,4 @@
-  <?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   * Copyright 2008 Hippo
   *
@@ -16,7 +16,7 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <form wicket:id="form">
+    <form class="hippo-controlpanel-form" wicket:id="form">
       <table>
         <tr>
           <td><wicket:message key="user-firstname"/>: </td>
@@ -35,12 +35,12 @@
           <td><input type="checkbox" wicket:id="active"/></td>
         </tr>
       </table>
-    </form>
     <div class="hippo-controlpanel-actions">
       <ul>
         <li class="save-16 icon-16"><input type="submit" value="Save" wicket:id="save-button"/></li>
         <li class="cancel-16 icon-16"><input type="submit" value="Cancel" wicket:id="cancel-button"/></li>
       </ul>
     </div>
+    </form>
   </wicket:panel>
 </html>
