@@ -75,15 +75,15 @@ public class URLMappingFilter extends HstBaseFilter implements Filter{
         }
 
         hstRequestContext.setAbsoluteUrlMapping(urlMapping);
-        URLMapping relativeURLMapping = new RelativeURLMappingImpl(hstRequestContext.getHstRequestUri(), urlMapping);
+        URLMapping relativeURLMapping = new RelativeURLMappingImpl(hstRequestContext.getRequest().getRequestURI(), urlMapping);
         
         // TODO make this below urlMapping --> relativeURLMapping
-        hstRequestContext.setRelativeUrlMapping(urlMapping);
+        hstRequestContext.setRelativeUrlMapping(relativeURLMapping);
         
         // now we have a urlMapping obj, also set the ContentRewriter on the HstRequestContext
         hstRequestContext.setContentRewriter(new SimpleContentRewriterImpl(hstRequestContext));
         
-        request.setAttribute(HSTHttpAttributes.URL_MAPPING_ATTR, urlMapping);
+        request.setAttribute(HSTHttpAttributes.URL_MAPPING_ATTR, relativeURLMapping);
         chain.doFilter(request, response);
     }
 

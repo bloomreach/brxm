@@ -210,15 +210,15 @@ public class URLMappingImpl implements URLMapping {
 
     }
 
-    public String rewriteLocation(Node node, HstRequestContext hstRequestContext) {
-        return rewriteLocation(node, null, false, false, hstRequestContext);
+    public Link rewriteLocation(Node node, HstRequestContext hstRequestContext, boolean external) {
+        return rewriteLocation(node, null, false, hstRequestContext, external);
     }
     
-    public String rewriteLocation(Node node, String sitemap, HstRequestContext hstRequestContext) {
-        return rewriteLocation(node, sitemap, false, false, hstRequestContext);
+    public Link rewriteLocation(Node node, String sitemap, HstRequestContext hstRequestContext, boolean external) {
+        return rewriteLocation(node, sitemap, false, hstRequestContext, external);
     }
 
-    private String rewriteLocation(Node node, String sitemap,boolean externalize, boolean secondTry, HstRequestContext hstRequestContext) {
+    private Link rewriteLocation(Node node, String sitemap, boolean secondTry, HstRequestContext hstRequestContext, boolean external) {
         long start = System.currentTimeMillis();
         String rewritePath = null;
         String path = "";
@@ -226,12 +226,11 @@ public class URLMappingImpl implements URLMapping {
         String cacheKey = null;
         try {
             rewritePath = node.getPath();
-            cacheKey = computeCacheKey(rewritePath, externalize, secondTry, sitemap);
-            String rewritten = this.rewriteLRUCache.get(cacheKey);
+            cacheKey = computeCacheKey(rewritePath, external, secondTry, sitemap);
+            Link rewritten = this.rewriteLRUCache.get(cacheKey);
             if (rewritten != null) {
                 return rewritten;
             }
-
             if (!secondTry) {
                 if (node instanceof HippoNode) {
                     HippoNode hippoNode = (HippoNode) node;
@@ -282,13 +281,13 @@ public class URLMappingImpl implements URLMapping {
                                 matchingRepositoryMapping, this.urlMappingManager, node.getSession());
                         
                         // if the domain belonging to the matching repository mappingis not equal to the current domain, we have to externalize (including http://hostname:port ...) the link
-                        boolean isExternalLink = false;
+                    
                         if(matchingRepositoryMapping.getDomain() != this.repositoryMapping.getDomain()) {
-                            isExternalLink = true;
+                            external = true;
                         }
                         
                         // set second try to true to avoid recusive possible loop
-                        return newUrlMapping.rewriteLocation(node, sitemap,isExternalLink, true, hstRequestContext);
+                        return newUrlMapping.rewriteLocation(node, sitemap, true, hstRequestContext, external);
                     } catch (URLMappingException e) {
                         log.warn("Exception while getting url mapping for '{}' : {}", matchingRepositoryMapping.getHstConfigPath(), e.getMessage());
                     }
@@ -369,9 +368,10 @@ public class URLMappingImpl implements URLMapping {
             log.warn("rewrite failed: Return ''");
             rewrite = "";
         }
+        
         rewrite = UrlUtilities.encodeUrl(rewrite);
         
-        if(externalize) {
+        if(external) {
             DomainMapping domainMapping = this.repositoryMapping.getDomainMapping();
             StringBuffer externalLink = new StringBuffer(domainMapping.getScheme()).append("://");
             // if the link is 'externalize' the domain can not contain wildcards
@@ -385,16 +385,17 @@ public class URLMappingImpl implements URLMapping {
             rewrite = externalLink.toString();
         }
         
+        Link link = new LinkImpl(rewrite, external, true);
         if (rewrite != null && cacheKey != null) {
-            this.rewriteLRUCache.put(cacheKey, rewrite);
+            this.rewriteLRUCache.put(cacheKey, link);
         }
-        return rewrite;
+        return link;
     }
 
-    public String rewriteLocation(String sitemapNodeName, HstRequestContext hstRequestContext) {
+    public Link rewriteLocation(String sitemapNodeName, HstRequestContext hstRequestContext, boolean external) {
         long start = System.currentTimeMillis();
         String cacheKey = computeCacheKey(sitemapNodeName, false, false, null);
-        String rewritten = this.rewriteLRUCache.get(cacheKey);
+        Link rewritten = this.rewriteLRUCache.get(cacheKey);
         if (rewritten != null) {
             return rewritten;
         }
@@ -414,10 +415,11 @@ public class URLMappingImpl implements URLMapping {
                 sitemapNodeName = sitemapNodeName.substring(1);
                 if (sitemapNodeName.length() == 0) {
                     log.warn("Unable to rewrite link for sitemap nodename = '/' or ''.");
+                    Link link = new LinkImpl("",false,true);
                     if (cacheKey != null) {
-                        this.rewriteLRUCache.put(cacheKey, "");
+                        this.rewriteLRUCache.put(cacheKey, link);
                     }
-                    return "";
+                    return link;
                 }
             }
             try {
@@ -471,11 +473,12 @@ public class URLMappingImpl implements URLMapping {
         }
         log.debug("rewriteLocation for path took " + (System.currentTimeMillis() - start) + " ms.");
         if (rewrite == null) {
+            Link link = new LinkImpl("", false, true);
             log.warn("Unable to rewrite '{}' to a sitemap item link", sitemapNodeName);
             if (cacheKey != null) {
-                this.rewriteLRUCache.put(cacheKey, "");
+                this.rewriteLRUCache.put(cacheKey, link);
             }
-            return "";
+            return link;
         }
 
         if (this.repositoryMapping.getDomainMapping().isServletContextPathInUrl()) {
@@ -484,10 +487,11 @@ public class URLMappingImpl implements URLMapping {
 
         String rewriteString = rewrite.toString();
         rewriteString = UrlUtilities.encodeUrl(rewriteString);
+        Link link = new LinkImpl(rewriteString, false, true);
         if (cacheKey != null) {
-            this.rewriteLRUCache.put(cacheKey, rewriteString);
+            this.rewriteLRUCache.put(cacheKey, link);
         }
-        return rewriteString;
+        return link;
     }
 
     /*
@@ -507,7 +511,7 @@ public class URLMappingImpl implements URLMapping {
         return key.toString();
     }
 
-    public String getLocation(String path) {
+    public Link getLocation(String path, boolean external) {
         if (repositoryMapping.getDomainMapping().isServletContextPathInUrl()) {
             String contextPath = repositoryMapping.getDomainMapping().getServletContextPath();
             if (contextPath != null && !contextPath.equals("")) {
@@ -527,7 +531,8 @@ public class URLMappingImpl implements URLMapping {
                 }
             }
         }
-        return path;
+        Link link = new LinkImpl(path, false, true);
+        return link;
     }
 
     private class RewriteLRUCache {
@@ -540,8 +545,8 @@ public class URLMappingImpl implements URLMapping {
             this.cache = Collections.synchronizedMap(new LRUMap(size));
         }
 
-        private String get(String key) {
-            String rewrite = (String) cache.get(key);
+        private Link get(String key) {
+            Link rewrite = (Link) cache.get(key);
             if (rewrite == null) {
                 miss++;
             } else {
@@ -550,7 +555,7 @@ public class URLMappingImpl implements URLMapping {
             return rewrite;
         }
 
-        private void put(String key, String rewrite) {
+        private void put(String key, Link rewrite) {
             // TODO enable this
             cache.put(key, rewrite);
         }

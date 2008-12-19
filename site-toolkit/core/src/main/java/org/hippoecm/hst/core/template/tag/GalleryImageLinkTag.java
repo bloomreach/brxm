@@ -71,7 +71,7 @@ public class GalleryImageLinkTag extends SimpleTagSupport {
                                     } else {
                                         gpn = childFacetNode.getNode("hippogallery:picture");
                                     }
-                                    src = hstRequestContext.getUrlMapping().rewriteLocation(gpn, hstRequestContext);
+                                    src = hstRequestContext.getUrlMapping().rewriteLocation(gpn, hstRequestContext, false).getUri();
                                 }
                             }
                             pageContext.setAttribute(getVar(), src);

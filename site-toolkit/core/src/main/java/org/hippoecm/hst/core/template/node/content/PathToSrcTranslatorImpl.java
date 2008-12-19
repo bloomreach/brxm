@@ -89,9 +89,9 @@ public class PathToSrcTranslatorImpl implements PathToSrcTranslator {
                         if(postfix.startsWith("/")) {
                             postfix = postfix.substring(1);
                         }
-                        return hstRequestContext.getUrlMapping().rewriteLocation(deref.getNode(postfix), hstRequestContext);
+                        return hstRequestContext.getUrlMapping().rewriteLocation(deref.getNode(postfix), hstRequestContext, false).getUri();
                     } else {
-                        return hstRequestContext.getUrlMapping().rewriteLocation(deref.getNode(deref.getName()), hstRequestContext);
+                        return hstRequestContext.getUrlMapping().rewriteLocation(deref.getNode(deref.getName()), hstRequestContext, false).getUri();
                     }
 
                 } else {

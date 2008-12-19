@@ -46,25 +46,45 @@ public class RelativeURLMappingImpl implements URLMapping{
         return delegatee.getMatchingPageNode(requestURI, hstRequestContext);
     }
 
-    public String rewriteLocation(Node node, HstRequestContext hstRequestContext) {
-        String absoluteLocation = delegatee.rewriteLocation(node, hstRequestContext);
-        return computeRelativeUrl(absoluteLocation, requestUriToWrap);
+    public Link rewriteLocation(Node node, HstRequestContext hstRequestContext, boolean external) {
+        Link link = delegatee.rewriteLocation(node, hstRequestContext, external);
+        if(link.isExternal()) {
+            return link;
+        }
+        String relativeUri = computeRelativeUrl(link.getUri(), requestUriToWrap);
+        link.setUri(relativeUri);
+        return link;
     }
     
-    public String rewriteLocation(Node node, String sitemap, HstRequestContext hstRequestContext) {
-        String absoluteLocation = delegatee.rewriteLocation(node, sitemap, hstRequestContext);
-        return computeRelativeUrl(absoluteLocation, requestUriToWrap);
+    public Link rewriteLocation(Node node, String sitemap, HstRequestContext hstRequestContext, boolean external) {
+        Link link = delegatee.rewriteLocation(node, sitemap, hstRequestContext, external);
+        if(link.isExternal()) {
+            return link;
+        }
+        String relativeUri = computeRelativeUrl(link.getUri(), requestUriToWrap);
+        link.setUri(relativeUri);
+        return link;
     }
 
 
-    public String rewriteLocation(String sitemapNodeName, HstRequestContext hstRequestContext) {
-        String absoluteLocation = delegatee.rewriteLocation(sitemapNodeName, hstRequestContext);
-        return computeRelativeUrl(absoluteLocation, requestUriToWrap);
+    public Link rewriteLocation(String sitemapNodeName, HstRequestContext hstRequestContext, boolean external) {
+        Link link = delegatee.rewriteLocation(sitemapNodeName, hstRequestContext, external);
+        if(link.isExternal()) {
+            return link;
+        }
+        String relativeUri = computeRelativeUrl(link.getUri(), requestUriToWrap);
+        link.setUri(relativeUri);
+        return link;
     }
     
-    public String getLocation(String path) {
-        path = delegatee.getLocation(path);
-        return computeRelativeUrl(path, requestUriToWrap);
+    public Link getLocation(String path, boolean external) {
+        Link link = delegatee.getLocation(path, external);
+        if(link.isExternal()) {
+            return link;
+        }
+        String relativeUri = computeRelativeUrl(link.getUri(), requestUriToWrap);
+        link.setUri(relativeUri);
+        return link;
     }
   
     public static String computeRelativeUrl(String absoluteLocation, String currentRequestUri) {

@@ -191,7 +191,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                             } else {
                                 canonical = hippoNode.getCanonicalNode();
                             }
-                            return hstRequestContext.getUrlMapping().rewriteLocation(canonical, hstRequestContext);
+                            return hstRequestContext.getUrlMapping().rewriteLocation(canonical, hstRequestContext, false);
                         }
                     } else {
                         log.warn(resourceName + "not of type hippo:resource. Returning null");

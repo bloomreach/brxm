@@ -48,23 +48,25 @@ public class LinkTag extends SimpleTagSupport {
     public void doTag() throws JspException, IOException {
         PageContext pageContext = (PageContext) getJspContext();
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        
         HstRequestContext hstRequestContext = (HstRequestContext)request.getAttribute(HstRequestContext.class.getName());
-        URLMapping urlMapping = hstRequestContext.getUrlMapping();
+        URLMapping urlMapping = null;
+        if(hstRequestContext != null) {
+            urlMapping = hstRequestContext.getUrlMapping();
+        }
         String href = null;
         if( urlMapping == null) {
             log.debug("urlMapping not set as attribute on request. Cannot rewrite a link. Try to make it relative only for staticattr");
             if(staticattr != null ) {
-                href =  RelativeURLMappingImpl.computeRelativeUrl(staticattr, hstRequestContext.getHstRequestUri());
+                href =  RelativeURLMappingImpl.computeRelativeUrl(staticattr, request.getRequestURI());
             }
         } else {
             if(item!= null) {
-                href = urlMapping.rewriteLocation(item.getJcrNode(), sitemap, hstRequestContext);
+                href = urlMapping.rewriteLocation(item.getJcrNode(), sitemap, hstRequestContext, false).getUri();
             } else if(location != null ) {
             	// location must be a sitemapNodeName
-                href = urlMapping.rewriteLocation(location, hstRequestContext);
+                href = urlMapping.rewriteLocation(location, hstRequestContext, false).getUri();
             } else if(staticattr != null ) {
-                href = urlMapping.getLocation(staticattr);
+                href = urlMapping.getLocation(staticattr, false).getUri();
             }
         }
         if(href != null) {
