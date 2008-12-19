@@ -114,7 +114,7 @@ padding: 2px;
 text-align: left;
 margin-left: 60px; 
 margin-right: 60px; 
-border: 2px solid #1691e7; 
+border: 1px solid #afafaf; 
 color: #1691e7;
 background-color: #fff8d5; 
 margin-bottom: 15px; 
@@ -724,6 +724,8 @@ margin-top: 10px;
 /* ================================================ */
 .hippo-controlpanel {margin-top: 30px;}
 .hippo-controlpanel-panel{padding: 15px;}
+
+.hippo-controlpanel .hippo-login-feedback ul{margin-left: 0px; margin-right: 0px}
 
 .hippo-controlpanel-form {padding: 5px;}
 .hippo-controlpanel-form table tr td{padding: 4px}
