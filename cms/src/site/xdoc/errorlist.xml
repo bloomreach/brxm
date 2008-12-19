@@ -24,29 +24,29 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">146 errors and/or todos in 79 out of 176 documents (44%).</span>
+      <span class="shortdesc">154 errors and/or todos in 80 out of 182 documents (43%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
         <li>1 documents using dummy references.
      </li>
-        <li>3 unlinked documents.
+        <li>8 unlinked documents.
        </li>
         <li>1 documents with typo's.
      </li>
         <li>3 documents to review.
      </li>
-        <li>46 documents missing required info.
+        <li>47 documents missing required info.
      </li>
         <li>3 empty documents.
      </li>
         <li>5 documents to rewrite.
      </li>
-        <li>2 documents requiring additions.
+        <li>3 documents requiring additions.
      </li>
         <li>10 documents with unidentified TODO strings.
      </li>
-        <li>3 not valid XML documents.
+        <li>4 not valid XML documents.
      </li>
         <li>12 documents with bad text.
      </li>
@@ -64,7 +64,7 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="Unlinked documents (compared to previous linkreport): 3">
+      <subsection name="Unlinked documents (compared to previous linkreport): 8">
         <ol>
           <li>
             <a href="./delve_into/custom/schemas.html">schemas: </a>
@@ -76,6 +76,36 @@
             <a href="./delve_into/user/cms_admins/howto/schemas.html">schemas: </a>
             <ul>
               <li> The file file:///home/rita/werk/cms/target/site/delve_into/user/cms_admins/howto/schemas.html is never referenced in the site, not even from the menu.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/document_types/editor.html">editor: The Document Type Editor</a>
+            <ul>
+              <li> The file file:///home/rita/werk/cms/target/site/delve_into/user/information_architects/howto/document_types/editor.html is never referenced in the site, not even from the menu.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/document_types/examples.html">examples: Examples of document types</a>
+            <ul>
+              <li> The file file:///home/rita/werk/cms/target/site/delve_into/user/information_architects/howto/document_types/examples.html is never referenced in the site, not even from the menu.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/document_types/fieldtypes.html">fieldtypes: Field Types Reference</a>
+            <ul>
+              <li> The file file:///home/rita/werk/cms/target/site/delve_into/user/information_architects/howto/document_types/fieldtypes.html is never referenced in the site, not even from the menu.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/document_types/index.html">index: Document Types</a>
+            <ul>
+              <li> The file file:///home/rita/werk/cms/target/site/delve_into/user/information_architects/howto/document_types/index.html is never referenced in the site, not even from the menu.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/document_types/tutorial.html">tutorial: Document Type Tutorial</a>
+            <ul>
+              <li> The file file:///home/rita/werk/cms/target/site/delve_into/user/information_architects/howto/document_types/tutorial.html is never referenced in the site, not even from the menu.</li>
             </ul>
           </li>
           <li>
@@ -96,7 +126,7 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents with empty elements: 12">
+      <subsection name="Documents with empty elements: 11">
         <ol>
           <li>
             <a href="./delve_into/core/building/netbeans.html">netbeans: Building with Netbeans</a>
@@ -150,12 +180,6 @@
             </ul>
           </li>
           <li>
-            <a href="./delve_into/sysadmin/requirements.html">requirements: Requirements</a>
-            <ul>
-              <li>&lt;th colspan='2'/&gt;</li>
-            </ul>
-          </li>
-          <li>
             <a href="./delve_into/user/cms_admins/howto/goto_user_management_tab.html">goto_user_management_tab: Goto User Management Tab</a>
             <ul>
               <li>...&lt;span class='usermanagement_16'/&gt;,
@@ -186,7 +210,7 @@
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/information_architects/howto/goto_content_browse_tab.html">goto_content_browse_tab: Goto Content Browse Tab</a>
+            <a href="./delve_into/user/information_architects/howto/goto_content_browse_tab.html">goto_content_browse_tab: Go to content browse tab</a>
             <ul>
               <li>...&lt;span class='content_browse_16'/&gt;,
      at the left of the screen. 
@@ -234,7 +258,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents lacking some information: 46">
+      <subsection name="Documents lacking some information: 47">
         <ol>
           <li>
             <a href="./about/architecture.html">architecture: Architecture</a>
@@ -431,6 +455,13 @@ repository is;
             </ul>
           </li>
           <li>
+            <a href="./delve_into/sysadmin/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
             <a href="./delve_into/sysadmin/installation/help_web_servlet_container.html">help_web_servlet_container: Help web Servlet Container</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
@@ -587,12 +618,21 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Add something to documents: 2">
+      <subsection name="Add something to documents: 3">
         <ol>
           <li>
             <a href="./delve_into/overview.html">overview: Delve into Hippo CMS</a>
             <ul>
               <li>Enlighting and attractive diagram.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/sysadmin/configuration/repository/searchindex.html">searchindex: SearchIndex configuration</a>
+            <ul>
+              <li>New, working link to JackRabbit lucene implementation
+          Also see
+           href="http://jackrabbit.apache.org/doc/arch/operate/index-readers.html" JackRabbit lucene implementation.
+          </li>
             </ul>
           </li>
           <li>
@@ -717,13 +757,13 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/custom/reference/frontend/frontend-plugin-architecture.html">frontend-plugin-architecture: Frontend Plugin Architecture</a>
+            <a href="./delve_into/custom/reference/frontend/frontend_plugin_architecture.html">frontend_plugin_architecture: Frontend Plugin Architecture</a>
             <ul>
               <li>Has 2 sections.</li>
             </ul>
           </li>
           <li>
-            <a href="./delve_into/custom/reference/frontend/frontend-plugin-communication.html">frontend-plugin-communication: Frontend Plugin Communication</a>
+            <a href="./delve_into/custom/reference/frontend/frontend_plugin_communication.html">frontend_plugin_communication: Frontend Plugin Communication</a>
             <ul>
               <li>Has 2 sections.</li>
             </ul>
@@ -846,8 +886,14 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="notvalid documents: 3">
+      <subsection name="notvalid documents: 4">
         <ol>
+          <li>
+            <a href="./delve_into/sysadmin/configuration/#database_server.html">#database_server: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
           <li>
             <a href="./delve_into/web/add-ons/howto/#editing_template.html">#editing_template: </a>
             <ul>

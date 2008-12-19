@@ -19,20 +19,23 @@
 -->
 <document>
     <properties>
-        <title>Performance tuning</title>
+        <title>Database server configuration</title>
     </properties>
     <body>
-      <section name="Performance tuning">
-       <span class='shortdesc'>How to improve performance of Hippo CMS by site specific tuning.</span>
+      <section name="Database server configuration">
+       <span class='shortdesc'>Configuration of the database server.</span>
 
-       <subsection name='Do not allow very large assets'>
+        <subsection name='Increase the maximum allowed asset size'>
 
         <p>
-          The max_allowed_packet variable of your database server may be set to a larger
-          value, to allow for larger assets, see <a href='./database_server.html#increase_packet_size'>increase packet size</a>.
-          However, this will reduce performance.
+         Assets (binary documents, i.e. .pdf and images) are stored as a single packet, so
+         are the first to not fit in the database.
+        <a name='increase_packet_size'/>
+         Increase the <span class='index' id='max_allowed_packet'>max_allowed_packet</span> variable of your database server to allow 
+         for larger assets. Be aware that this will reduce <a href='./performance_tuning.html'>performance</a>.           
 	</p>
-       </subsection>
+
+	</subsection>
 
       </section>
     </body>

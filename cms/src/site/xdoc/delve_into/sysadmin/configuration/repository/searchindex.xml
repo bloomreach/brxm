@@ -62,8 +62,11 @@
           which in turn slows down lucene queries severly.
           The volatileIdleTime is the idle time in seconds until the volatile index part is moved to a
           persistent index even though minMergeDocs is not reached.
+
+          <span class='add'>New, working link to JackRabbit lucene implementation
           Also see
-          <a href="http://jackrabbit.apache.org/doc/arch/operate/index-readers.html">JackRabbit lucene implementation</a>.
+           href="http://jackrabbit.apache.org/doc/arch/operate/index-readers.html" JackRabbit lucene implementation.
+          </span>
         </p>
         <p>
           Two other interesting SearchIndex params are

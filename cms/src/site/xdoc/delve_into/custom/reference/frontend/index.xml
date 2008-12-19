@@ -42,7 +42,7 @@
           <table>
             <tr>
               <td>
-                <a href="frontend-plugin-architecture.html">Architecture</a>
+                <a href="frontend_plugin_architecture.html">Architecture</a>
               </td>
               <td>
                 Explanation of the frontend plugin architecture.
@@ -50,7 +50,7 @@
             </tr>
             <tr>
               <td>
-                <a href="frontend-plugin-communication.html">Plugin Communication</a>
+                <a href="frontend_plugin_communication.html">Plugin Communication</a>
               </td>
               <td>
                 Learn how frontend plugins communicate with each other.

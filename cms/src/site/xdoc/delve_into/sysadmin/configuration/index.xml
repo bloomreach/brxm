@@ -33,6 +33,10 @@
             - How to improve performance of Hippo CMS by site specific tuning.
           </li>
           <li>
+            <a href="database_server.html">Database server configuration</a>
+            - Configuration of the database server.
+          </li>
+          <li>
             <a href="repository/index.html">Repository configuration</a>
             - The base repository configuration through a number of XML files.
           </li>
