@@ -205,7 +205,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
             public AbstractDialog createDialog() {
 
-                return new AbstractDateDialog(FullReviewedActionsWorkflowPlugin.this, schedulePublishTitle, schedulePublishText, new Date()) {
+                return new AbstractDateDialog(FullReviewedActionsWorkflowPlugin.this, schedulePublishText, new Date()) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -216,6 +216,10 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                         } else {
                             workflow.publish();
                         }
+                    }
+
+                    public IModel getTitle() {
+                        return schedulePublishTitle;
                     }
                 };
             }
@@ -235,7 +239,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
             public AbstractDialog createDialog() {
 
-                return new AbstractDateDialog(FullReviewedActionsWorkflowPlugin.this, scheduleDePublishTitle, scheduleDePublishText, new Date()) {
+                return new AbstractDateDialog(FullReviewedActionsWorkflowPlugin.this, scheduleDePublishText, new Date()) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -246,6 +250,10 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                         } else {
                             workflow.depublish();
                         }
+                    }
+
+                    public IModel getTitle() {
+                        return scheduleDePublishTitle;
                     }
                 };
             }
