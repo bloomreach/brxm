@@ -33,6 +33,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.domains.DomainDataProvider;
+import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 
 public class PermissionsPanel extends AdminBreadCrumbPanel {
@@ -51,11 +52,7 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
-        // add feedback panel to show errors
-        FeedbackPanel feedback = new FeedbackPanel("feedback");
-        feedback.setOutputMarkupId(true);
-        add(feedback);
-        
+        List<String> roles = Group.getAllRoles();        
         List<IColumn> columns = new ArrayList<IColumn>();
 
         //        columns.add(new AbstractColumn(new Model("Actions"))
@@ -67,51 +64,55 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
         //            }
         //        });
 
-        columns.add(new PropertyColumn(new Model("Name"), "name"));
-        columns.add(new PropertyColumn(new Model("Description"), "description"));
-        columns.add(new AbstractColumn(new Model("Roles")) {
-            private static final long serialVersionUID = 1L;
+        columns.add(new PropertyColumn(new Model("SecurityDomain"), "name"));
+        //columns.add(new PropertyColumn(new Model("Description"), "description"));
+        
+        for (final String role : roles) {
+            columns.add(new AbstractColumn(new Model("Role: " + role)) {
+                private static final long serialVersionUID = 1L;
 
-            public void populateItem(Item cellItem, String componentId, IModel model) {
-                Domain domain = (Domain) model.getObject();
-                StringBuilder sb = new StringBuilder();
-                for (Domain.AuthRole authRole : domain.getAuthRoles().values()) {
-                    sb.append(authRole.getRole());
-                    if (authRole.getUsers().size() > 0) {
-                        sb.append("->[users: ");
-                        boolean first = true;
-                        for (String user: authRole.getUsers()) {
-                            if (first) {
-                                sb.append(user);
-                                first = false;
-                            } else {
-                                sb.append(',').append(user);
+                // TODO: can be optimized by returning the correct role immediately
+                //       instead of looping here
+                public void populateItem(Item cellItem, String componentId, IModel model) {
+                    Domain domain = (Domain) model.getObject();
+                    StringBuilder sb = new StringBuilder();
+                    for (Domain.AuthRole authRole : domain.getAuthRoles().values()) {
+                        if (role.equals(authRole.getRole())) {
+                            if (authRole.getUsers().size() > 0) {
+                                sb.append("users: ");
+                                boolean first = true;
+                                for (String user : authRole.getUsers()) {
+                                    if (first) {
+                                        sb.append(user);
+                                        first = false;
+                                    } else {
+                                        sb.append(',').append(user);
+                                    }
+                                }
                             }
-                            
-                        }
-                        sb.append(']');
-                    }
-                    if (authRole.getGroups().size() > 0) {
-                        sb.append("->[groups: ");
-                        boolean first = true;
-                        for (String group: authRole.getGroups()) {
-                            if (first) {
-                                sb.append(group);
-                                first = false;
-                            } else {
-                                sb.append(',').append(group);
+                            sb.append("\n");
+                            if (authRole.getGroups().size() > 0) {
+                                sb.append("groups: ");
+                                boolean first = true;
+                                for (String group : authRole.getGroups()) {
+                                    if (first) {
+                                        sb.append(group);
+                                        first = false;
+                                    } else {
+                                        sb.append(',').append(group);
+                                    }
+
+                                }
                             }
-                            
                         }
-                        sb.append(']');
                     }
-                    sb.append("\n");
+                    cellItem.add(new MultiLineLabel(componentId, sb.toString()));
                 }
-                cellItem.add(new MultiLineLabel(componentId, sb.toString()));
-            }
-        });
+            });
+        }
 
-        table = new AdminDataTable("table", columns, new DomainDataProvider(), 40) {
+
+        table = new AdminDataTable("table", columns, new DomainDataProvider(), 20) {
             private static final long serialVersionUID = 1L;
 
             @Override
