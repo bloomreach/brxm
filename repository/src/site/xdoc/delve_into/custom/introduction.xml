@@ -78,7 +78,7 @@ ________________________________________________________________________________
           When your project calls for a custom way of representing the content in the
           repository, you have the option of creating your own plugin to achieve this.
           As an example, you can get the dashboard to show a list of the last 5 images
-          using the <a href="http://lastimages.forge.hippo-ecm.org/">Last images plugin</a>.
+          using the <a href="http://lastimages.forge.onehippo.org/">Last images plugin</a>.
         </p>
         <p>
           The add-on that is used here contains both a plugin (Java code, HTML
