@@ -280,7 +280,7 @@
   </document></folder><document ext="xml" filename="overview" relpath="delve_into">Delve into Hippo CMS
    <section>Delve into Hippo CMS</section>
    <shortdesc>Get to know all the details of Hippo CMS.</shortdesc>
-  </document><document ext="xml" filename="quickstart_in_existing_container" relpath="delve_into">Your own Quickstart
+  </document><document ext="xml.vm" filename="quickstart_in_existing_container" relpath="delve_into">Your own Quickstart
    <section>Your own Quickstart</section>
    <shortdesc>Quickstart in your own servlet container.</shortdesc>
    <subsection>Rubbish</subsection>
@@ -288,7 +288,7 @@
    <img/>
    <img/>
    <subsection>Deploy the binary distribution</subsection>
-  </document><document ext="xml" filename="quickstart" relpath="delve_into">Quickstart Steps
+  </document><document ext="xml.vm" filename="quickstart" relpath="delve_into">Quickstart Steps
    <section>Quickstart Steps</section>
    <shortdesc>Quickly install and use standard Hippo CMS with example content.</shortdesc>
    <subsection>Install standard Hippo CMS with example content</subsection>
@@ -386,7 +386,7 @@
   </document><document ext="xml" filename="help_web_servlet_container" relpath="delve_into/sysadmin/installation">Help web Servlet Container
    <section>Help web Servlet Container</section>
    <subsection>Empty page after login to Hippo CMS</subsection>
-  </document><document ext="xml" filename="in_application_server" relpath="delve_into/sysadmin/installation">Deploying in Application Server
+  </document><document ext="xml.vm" filename="in_application_server" relpath="delve_into/sysadmin/installation">Deploying in Application Server
    <section>Deploying in Application Server</section>
    <shortdesc>Get Hippo CMS up and running in a Java application server.</shortdesc>
    <index>application server</index>
@@ -411,7 +411,7 @@
    <img>jetty logo</img>
    <img>glassfish logo</img>
    <img>JBoss logo</img>
-  </document><document ext="xml" filename="in_servlet_container" relpath="delve_into/sysadmin/installation">Deploying in Servlet Container
+  </document><document ext="xml.vm" filename="in_servlet_container" relpath="delve_into/sysadmin/installation">Deploying in Servlet Container
    <section>Deploying in Servlet Container</section>
    <shortdesc>Get Hippo CMS up and running 
        in a Java servlet container.</shortdesc>

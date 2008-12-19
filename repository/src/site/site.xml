@@ -297,8 +297,8 @@
         <item name="Reference Guide" href="/delve_into/custom/reference/index.html" collapse="true">
           <item name="Repository Plugins" href="/delve_into/custom/reference/repository/repository_plugins.html"/>
           <item name="Frontend Plugins" href="/delve_into/custom/reference/frontend/index.html" collapse="true">
-            <item name="Architecture" href="/delve_into/custom/reference/frontend/frontend-plugin-architecture.html"/>
-            <item name="Communication" href="/delve_into/custom/reference/frontend/frontend-plugin-communication.html"/>
+            <item name="Architecture" href="/delve_into/custom/reference/frontend/frontend_plugin_architecture.html"/>
+            <item name="Communication" href="/delve_into/custom/reference/frontend/frontend_plugin_communication.html"/>
           </item>
         </item>
         <item name="JCR interface" href="/delve_into/custom/jcr/index.html" collapse="true">

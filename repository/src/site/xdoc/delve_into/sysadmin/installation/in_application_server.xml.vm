@@ -31,7 +31,7 @@
                 EAR package:
               </p>
 <source>
-  <a href='http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-ear/2.01.00.14160/hippo-ecm-quickstart-ear-2.01.00.14160.ear'>Quickstart EAR</a>
+  <a href='${quickstart_ear_url}'>Quickstart EAR</a>
 </source>
 <p>
 The EAR package takes advantage of the extra possibilities of application servers (as compared to servlet containers).

@@ -208,12 +208,16 @@
    fullname='delve_into/overview.xml'
    relpath='delve_into'
   >overview</file>
-   <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
-   fullname='delve_into/quickstart_in_existing_container.xml'
+   <file ext='xml.vm' mimetype='text/xml' valid='yes' note='todo'
+   fullname='delve_into/quickstart_in_existing_container.xml.vm'
    relpath='delve_into'
   >quickstart_in_existing_container</file>
-   <file ext='xml' mimetype='text/xml' valid='yes'
-   fullname='delve_into/quickstart.xml'
+   <file ext='xml.vm~' mimetype='text/xml' note='todo'
+   fullname='delve_into/quickstart_in_existing_container.xml.vm~'
+   relpath='delve_into'
+  >quickstart_in_existing_container</file>
+   <file ext='xml.vm' mimetype='text/xml' valid='yes'
+   fullname='delve_into/quickstart.xml.vm'
    relpath='delve_into'
   >quickstart</file>
    <folder>sysadmin
@@ -311,8 +315,12 @@
    fullname='delve_into/sysadmin/installation/help_web_servlet_container.xml'
    relpath='delve_into/sysadmin/installation'
   >help_web_servlet_container</file>
-     <file ext='xml' mimetype='text/xml' valid='yes'
-   fullname='delve_into/sysadmin/installation/in_application_server.xml'
+     <file ext='xml.vm' mimetype='text/xml' valid='yes'
+   fullname='delve_into/sysadmin/installation/in_application_server.xml.vm'
+   relpath='delve_into/sysadmin/installation'
+  >in_application_server</file>
+     <file ext='xml.vm~' mimetype='text/xml'
+   fullname='delve_into/sysadmin/installation/in_application_server.xml.vm~'
    relpath='delve_into/sysadmin/installation'
   >in_application_server</file>
      <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
@@ -323,12 +331,20 @@
    fullname='delve_into/sysadmin/installation/index.xml~rita'
    relpath='delve_into/sysadmin/installation'
   >index</file>
-     <file ext='xml' mimetype='text/xml' valid='yes'
-   fullname='delve_into/sysadmin/installation/in_servlet_container.xml'
+     <file ext='xml~' mimetype='text/xml'
+   fullname='delve_into/sysadmin/installation/in_servlet_container.xml~'
    relpath='delve_into/sysadmin/installation'
   >in_servlet_container</file>
      <file ext='xml~rita' mimetype='text/xml' note='todo'
    fullname='delve_into/sysadmin/installation/in_servlet_container.xml~rita'
+   relpath='delve_into/sysadmin/installation'
+  >in_servlet_container</file>
+     <file ext='xml.vm' mimetype='text/xml' valid='yes'
+   fullname='delve_into/sysadmin/installation/in_servlet_container.xml.vm'
+   relpath='delve_into/sysadmin/installation'
+  >in_servlet_container</file>
+     <file ext='xml.vm~' mimetype='text/xml'
+   fullname='delve_into/sysadmin/installation/in_servlet_container.xml.vm~'
    relpath='delve_into/sysadmin/installation'
   >in_servlet_container</file>
      <file ext='xml' mimetype='text/xml' valid='yes' note='todo'

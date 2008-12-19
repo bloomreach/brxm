@@ -275,3 +275,9 @@ FIFI
 fifi is /home/rita/bin/fifi
 #________________________________________________________________________________________________________rita_2008-w51-5-14:54
       <span class="shortdesc">154 errors and/or todos in 80 out of 182 documents (43%).</span>
+PATH
+/usr/local/share/jdk1.5.0_16/bin:/usr/local/share/apache-maven-2.0.9/bin:/home/rita/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/home/rita/programs/alle:/usr/local/share/jdk1.5.0_16/bin:/usr/local/share/netbeans-6.1/java2/ant/bin:/usr/local/share/eclipse:/usr/local/share/mybins//ritaCD/bin:/usr/local/share/mybins//irisfm/bin:/usr/local/share/mybins//scripta_scripta/bin:/usr/local/share/mybins//uureceive/bin:/usr/local/share/mybins//irisfm/receive/home/rita/bin:/usr/local/share/mybins//test/bin:/usr/local/share/mybins//tue/bin:/usr/local/share/mybins//rita/bin:/usr/local/share/mybins//rita2/bin:/usr/bin/mh:/home/rita/programs:/home/rita/bin:/home/rita/rbin:/home/rita/opt/*/bin:/home/ritamail/bin:/home/test/bin:/usr/local/ritadev/ritaCD/bin:/usr/local/ritadev/rita2/rita/bin:/home/rita/keep/uureceive/bin:/usr/local/ritadev/ritaCD/irisfm/bin:/usr/local/ritadev/rita2/rita/opt/tue/bin:/usr/local/ritadev/ritaCD/irisfm/receive/home/rita/bin
+FIFI
+fifi is /home/rita/bin/fifi
+#________________________________________________________________________________________________________rita_2008-w51-5-19:05
+      <span class="shortdesc">154 errors and/or todos in 80 out of 182 documents (43%).</span>

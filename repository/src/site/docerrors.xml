@@ -123,11 +123,11 @@ repository is;
     <unlinked> The file file:///home/rita/werk/cms/target/site/delve_into/custom/schemas.html is never referenced in the site, not even from the menu.</unlinked>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="synonyms" relpath="delve_into/custom">Synonyms</document></folder><document ext="xml" filename="overview" relpath="delve_into">Delve into Hippo CMS
-    <add>Enlighting and attractive diagram.</add></document><document ext="xml" filename="quickstart_in_existing_container" relpath="delve_into">Your own Quickstart
+    <add>Enlighting and attractive diagram.</add></document><document ext="xml.vm" filename="quickstart_in_existing_container" relpath="delve_into">Your own Quickstart
     <rewrite>This text contains much that is admin information and is mostly redundant.
                         Merge this document into the admin guide and leave the new version very small, 
                         mainly refering to the necessary admin documents. 
-  </rewrite></document><document ext="xml" filename="quickstart" relpath="delve_into">Quickstart Steps
+  </rewrite></document><document ext="xml.vm" filename="quickstart" relpath="delve_into">Quickstart Steps
     <empty_elem>...&lt;span class='to_index' id='localhost'/&gt; 
    in your (this) webbrowser.
    A window `Sign In, Hippo CMS 7' will open.
@@ -173,8 +173,8 @@ repository is;
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><folder>installation
    
    <document ext="xml" filename="help_renamed" relpath="delve_into/sysadmin/installation">help renamed</document><document ext="xml" filename="help_startup_servlet_container" relpath="delve_into/sysadmin/installation">Help startup in Servlet Container</document><document ext="xml" filename="help_web_servlet_container" relpath="delve_into/sysadmin/installation">Help web Servlet Container
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="in_application_server" relpath="delve_into/sysadmin/installation">Deploying in Application Server</document><document ext="xml" filename="index" relpath="delve_into/sysadmin/installation">Installation
-    <empty_elem>&lt;td/&gt;</empty_elem></document><document ext="xml" filename="in_servlet_container" relpath="delve_into/sysadmin/installation">Deploying in Servlet Container</document><document ext="xml" filename="install_tomcat" relpath="delve_into/sysadmin/installation">Install Tomcat
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml.vm" filename="in_application_server" relpath="delve_into/sysadmin/installation">Deploying in Application Server</document><document ext="xml" filename="index" relpath="delve_into/sysadmin/installation">Installation
+    <empty_elem>&lt;td/&gt;</empty_elem></document><document ext="xml.vm" filename="in_servlet_container" relpath="delve_into/sysadmin/installation">Deploying in Servlet Container</document><document ext="xml" filename="install_tomcat" relpath="delve_into/sysadmin/installation">Install Tomcat
     <empty_elem>...&lt;span class='to_index' id='tomcat_5.5'/&gt;.
      .../&lt;td&gt;<br/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</empty_elem></document><document ext="xml" filename="plugins" relpath="delve_into/sysadmin/installation">Installing plugins from the Hippo forge
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="requirements" relpath="delve_into/sysadmin">Requirements</document></folder><folder>user
