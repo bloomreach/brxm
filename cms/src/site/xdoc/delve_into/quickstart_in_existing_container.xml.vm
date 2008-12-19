@@ -37,8 +37,8 @@
    download either the WAR or EAR package, whichever type you prefer:
 </p>
 <ul>
-   <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.13536/hippo-ecm-quickstart-war-2.01.00.13536.war">quickstart war package</a></li>
-   <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-ear/2.01.00.13536/hippo-ecm-quickstart-ear-2.01.00.13536.ear">quickstart ear package</a></li>
+   <li><a href="${quickstart_war_url}">quickstart war package</a></li>
+   <li><a href="${quickstart_ear_url}">quickstart ear package</a></li>
 </ul>
 <p>
   Note that other application containers and Linux packages of the mentioned application containers 
