@@ -30,10 +30,14 @@
 
       <span class='listrank'>1</span>
       <p>
-        Hippo CMS (Content Management System) is the web-based graphical user interface to the content in the 
+        Hippo CMS (Hippo Content Management System) is the web-based graphical user interface to the content in the 
         repository of the Hippo ECM. It provides an easy way to create and manage your content, i.e. to 
         write or upload, share, print, search, refer to, edit and structure content, assign rights to do so, 
         have content automatically validated against your business rules and restore previous versions of the content. 
+      </p>
+      <p>Hippo CMS is open source and continually in agile development, providing new features monthly. 
+         See the <a href='./changes-report.html'>release notes</a> for available releases and the 
+         <a href='http://www.onehippo.org/about/roadmap/release_schedule.html'>roadmap</a> for coming releases.
       </p>
 
    <table>
