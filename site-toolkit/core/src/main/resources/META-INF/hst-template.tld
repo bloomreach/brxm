@@ -157,6 +157,13 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+        <attribute>
+            <description>When you add this attr and set it to true, links will include the scheme/hostname/port etc
+            </description>
+            <name>externalize</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
     
     <tag>
