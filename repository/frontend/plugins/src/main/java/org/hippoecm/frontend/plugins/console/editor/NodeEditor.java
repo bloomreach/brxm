@@ -101,21 +101,15 @@ class NodeEditor extends Form {
     private class PropertiesFilter implements IDataProvider {
         private static final long serialVersionUID = 1L;
 
+        private JcrPropertiesProvider decorated;
         private List<JcrPropertyModel> entries;
 
-        public PropertiesFilter(JcrPropertiesProvider propertiesProvider) throws RepositoryException {
-            entries = new ArrayList<JcrPropertyModel>();
-            Iterator<Property> it = propertiesProvider.iterator(0, propertiesProvider.size());
-            while (it.hasNext()) {
-                Property p = it.next();
-                if (!p.getName().equals("jcr:primaryType") && !p.getName().equals("jcr:mixinTypes")) {
-                    entries.add(new JcrPropertyModel(p));
-                }
-            }
-            Collections.sort(entries, new PropertyComparator());
+        public PropertiesFilter(JcrPropertiesProvider propertiesProvider) {
+            decorated = propertiesProvider;
         }
 
         public Iterator<JcrPropertyModel> iterator(int first, int count) {
+            load();
             return entries.subList(first, first + count).iterator();
         }
 
@@ -124,13 +118,29 @@ class NodeEditor extends Form {
         }
 
         public int size() {
+            load();
             return entries.size();
         }
 
         public void detach() {
-            for (JcrPropertyModel entry : entries) {
-                entry.detach();
+            entries = null;
+            decorated.detach();
+        }
+
+        private void load() {
+            entries = new ArrayList<JcrPropertyModel>();
+            try {
+                Iterator<Property> it = decorated.iterator(0, decorated.size());
+                while (it.hasNext()) {
+                    Property p = it.next();
+                    if (!p.getName().equals("jcr:primaryType") && !p.getName().equals("jcr:mixinTypes")) {
+                        entries.add(new JcrPropertyModel(p));
+                    }
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
             }
+            Collections.sort(entries, new PropertyComparator());
         }
     }
 

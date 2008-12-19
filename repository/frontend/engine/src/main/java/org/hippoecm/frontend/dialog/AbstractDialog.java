@@ -18,9 +18,11 @@ package org.hippoecm.frontend.dialog;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.WicketAjaxIndicatorAppender;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
@@ -33,10 +35,11 @@ public abstract class AbstractDialog extends Panel implements IDialogService.Dia
     private final static String SVN_ID = "$Id$";
     static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
 
-    protected AjaxLink ok;
-    protected AjaxLink cancel;
+    protected AjaxButton ok;
+    protected AjaxButton cancel;
     protected WicketAjaxIndicatorAppender indicator;
     private IDialogService dialogService;
+    private Form form;
 
     private String exception = "";
 
@@ -56,11 +59,22 @@ public abstract class AbstractDialog extends Panel implements IDialogService.Dia
             }
         });
 
-        ok = new AjaxLink("ok") {
+        form = new Form("form") {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public boolean isTransparentResolver() {
+                return true;
+            }
+        };
+        form.setOutputMarkupId(true);
+        add(form);
+
+        ok = new AjaxButton("ok", form) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form form) {
                 try {
                     ok();
                     closeDialog();
@@ -100,18 +114,22 @@ public abstract class AbstractDialog extends Panel implements IDialogService.Dia
                 };
             }
         };
-        add(ok);
+        form.add(ok);
 
-        cancel = new AjaxLink("cancel") {
+        cancel = new AjaxButton("cancel", form) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            protected void onSubmit(AjaxRequestTarget target, Form form) {
                 cancel();
                 closeDialog();
             }
         };
-        add(cancel);
+        form.add(cancel);
+    }
+
+    public void add(FormComponent formComponent) {
+        form.add(formComponent);
     }
 
     public void setException(String exception) {
