@@ -76,7 +76,7 @@ margin: 2px;
 
 /* Login */
 /* ================================================ */
-.hippo-body-back-hack{background: white; position: absolute; top: 0px; left: 0px; width: 100%; height: 150px; z-index: -999}
+.hippo-body-back-hack{background: white; position: absolute; top: 0px; left: 0px; width: 100%; height: 150px;}
 .hippo-login-panel {
 background:transparent url(images/loginback.png) repeat-y scroll center top;
 margin:100px auto;
