@@ -2,7 +2,7 @@ function CreateExternalLink(editor, args) {
     this.editor = editor;
     var cfg = editor.config;
     var self = this;
-    editor.config.registerButton('createexternallink', 'Create external link', 'external-link.gif', false, function() { self.show(self._getSelectedAnchor()); });
+    editor.config.registerButton('createexternallink', 'Create external link', [_editor_url + cfg.imgURL + "ed_buttons_main.png",5,1], false, function() { self.show(self._getSelectedAnchor()); });
 }
 
 CreateExternalLink._pluginInfo = {

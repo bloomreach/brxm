@@ -22,17 +22,7 @@ body{padding: 15px;}
 .hippo-console .wicket-tree *{font-family: monospace}
 .hippo-console .wicket-tree div.row-selected span {font-weight: normal}
 
-.hippo-console-tree .hippo-tree .wicket-tree span.plus, 
-.hippo-console-tree .hippo-tree .wicket-tree span.minus,
-.hippo-console-tree .hippo-tree .wicket-tree span.junction, 
-.hippo-console-tree .hippo-tree .wicket-tree span.junction-last, 
-.hippo-console-tree .hippo-tree .wicket-tree span.corner, 
-.hippo-console-tree .hippo-tree .wicket-tree span.indent-line
-{background-image: url("images/tree-console-icons.png"); width: 18px} 
 .hippo-console-tree .hippo-tree .wicket-tree span.indent-blank{background: transparent}
-.hippo-console-tree .hippo-tree .wicket-tree span.indent-blank{display: none}
-.hippo-console-tree .hippo-tree .wicket-tree span.indent-blank span.indent-blank {display: block}
-
 .hippo-console-tree .hippo-tree div.wicket-tree div.row, .hippo-tree div.wicket-tree div.row-selected{padding-top: 0px; padding-bottom: 0px}
 
 .hippo-console-menu-advanced {padding: 10px;}
@@ -82,6 +72,7 @@ body{padding: 15px;}
 
 
 
+.hippo-console-editor{padding: 20px;}
 .hippo-console-editor *{font-size: 14px; margin-bottom: 4px; margin-top: 4px;}
 .hippo-console-editor strong{color:#666666}
 .hippo-console-editor sup a{color:#32629b}

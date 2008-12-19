@@ -23,4 +23,6 @@ junction InsertImage ..\..\..\..\..\webResources\xinha\plugins\InsertImage
 junction FullscreenCompatible ..\..\..\..\..\webResources\xinha\plugins\FullscreenCompatible
 
 cd ..\skins
-junction hippo-gray ..\..\..\..\..\webResources\xinha\skins\hippo-gray
+junction hippo-lite ..\..\..\..\..\webResources\xinha\skins\hippo-lite
+cd ..\iconsets 
+junction Hippo ..\..\..\..\..\webResources\xinha\iconsets\Hippo

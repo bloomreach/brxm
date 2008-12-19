@@ -691,6 +691,9 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Introduction</sv:value>
           </sv:property>
+          <sv:property sv:name="template.width" sv:type="String">
+            <sv:value>90%</sv:value>
+          </sv:property>
         </sv:node>
 
         <sv:node sv:name="body">
@@ -1312,6 +1315,9 @@
           </sv:property>
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Introduction</sv:value>
+          </sv:property>
+          <sv:property sv:name="template.width" sv:type="String">
+            <sv:value>90%</sv:value>
           </sv:property>
         </sv:node>
 
