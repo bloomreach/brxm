@@ -135,18 +135,13 @@ If everything looks sound, cleanup and do the actual release preparation:
 mvn release:clean
 svn --recursive revert .
 mvn release:prepare \
-    -DallowTimestampedSnapshots=true \
-    -DautoVersionSubmodules=true \
-    -Dtag=Release-HREPTWO-v2_01_00-M0 \
-    -DscmCommentPrefix="HREPTWO-0:"
-</source>
-
 mvn release:prepare \
     -DallowTimestampedSnapshots=true \
     -DautoVersionSubmodules=true \
-    -Dtag=Tag-HREPTWO-v2_01_03 \
-    -DscmCommentPrefix="HREPTWO-1905:" \
+    -Dtag=Tag-HREPTWO-v2_02_00 \
+    -DscmCommentPrefix="HREPTWO-1910:" \
     -DdevelopmentVersion=2.01.04-SNAPSHOT -DreleaseVersion=2.01.03
+</source>
 
 <p>
 Again release the tag should be set to the same value as before and
