@@ -74,7 +74,7 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
                     target.addComponent(localList);
                 } catch (RepositoryException e) {
                     error(getString("user-membership-add-failed", new DetachableGroup(selectedGroup)));
-                    log.error("Failed to remove memberships", e);
+                    log.error("Failed to add memberships", e);
                 }
             }
 
