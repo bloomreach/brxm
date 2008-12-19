@@ -39,13 +39,25 @@
      * update : updated some part of the project.
      * remove : removed some functionnality from the project.
 
-    * dev attribute:  
+    * dev attribute: mandatory, value is exactly one codename of a developer listed in the pom.
+                     This is the developmer taking reponsibility for the action. 
+
+    * text: mandatory: description of the action. 
+      WARNING: no tags allowed. tags before text result in all content of document being ignored!
+
+    Scheduled publication, an improved publication feature for CMS editors.
 
    </action>
    <action type="fix" dev="acahn">  
-    <fixes issue='HREPTWO-1951'/>
-    <fixes issue='HREPTWO-1967'/>
-    <fixes issue='HREPTWO-1989'/>
+    Scheduled publication, an improved publication feature for CMS editors.
+   
+    * Jira issues fixed by the action: optionally, an action may contain a list of Jira issue numbers, 
+      of issues that are fixed by the action:
+
+     <fixes issue='HREPTWO-1951'/>
+     <fixes issue='HREPTWO-1967'/>
+     <fixes issue='HREPTWO-1989'/>
+
    </action>
   </release>
   -->
@@ -56,9 +68,6 @@
    </action>         
   </release>
 
- <!--
-    <a href='../delve_into/user/editors/concepts/scheduled_publication.html'>Scheduled publication</a>
- -->
 
   <release version="1.0.0" date="2008-12-19" description="First public release">   
    <action type="update" dev="acahn">
@@ -68,18 +77,14 @@
     Performance improved: speed is doubled!
    </action>                      
    <action type="add" dev="jtietema">
-    Tag completion.
+    Tag completion. 
    </action>                      
-   <action type="add" dev="jtietema">
-    Tag completion.
-    <fixes issue='HREPTWO-1951'/>
-    <fixes issue='HREPTWO-1967'/>
-    <fixes issue='HREPTWO-1989'/>
-   </action>                      
-   <action type="add" dev="rbijlsma">
-    deTag completion.
-    <fixes issue='HREPTWO-1952'/>
-   </action> 
   </release>         
  </body>
 </document>
+
+
+ <!--
+  TODO, I wanted this link in, but that does not work!
+    <a href='../delve_into/user/editors/concepts/scheduled_publication.html'>Scheduled publication</a>
+ -->
