@@ -135,7 +135,6 @@ If everything looks sound, cleanup and do the actual release preparation:
 mvn release:clean
 svn --recursive revert .
 mvn release:prepare \
-mvn release:prepare \
     -DallowTimestampedSnapshots=true \
     -DautoVersionSubmodules=true \
     -Dtag=Tag-HREPTWO-v2_02_00 \
@@ -202,6 +201,19 @@ procedure.
 </p>
 
 </subsection>
+</section>
+
+<section name="Branching">
+<source>
+mvn release:branch \
+  -DscmCommentPrefix="HREPTWO-1910:" \
+  -DbranchName=Branch-HREPTWO-v2_02_xx \
+  -DautoVersionSubmodules=true \
+  -DupdateBranchVersions=true -DupdateWorkingCopyVersions=false
+</source>
+<p>
+Enter version number 2.03.01 on all (sub)modules.
+</p>
 </section>
 
     </body>
