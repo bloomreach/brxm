@@ -325,6 +325,17 @@
           <contextPath>/cms</contextPath>
         </configuration>
         <dependencies>
+          <dependency>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jsp-2.1</artifactId>
+            <version>6.1.10</version>
+            <exclusions>
+              <exclusion>
+                <groupId>org.eclipse.jdt</groupId>
+                <artifactId>core</artifactId>
+	      </exclusion>
+	    </exclusions>
+          </dependency>
           <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
           <dependency>
             <groupId>com.atomikos</groupId>
