@@ -52,7 +52,7 @@ set BASEDIR=!CD!
 
 if "!REPO!"=="" set REPO="!BASEDIR!\repo"
 
-set EXTRA_JVM_ARGUMENTS=
+set EXTRA_JVM_ARGUMENTS=-Xms256m -Xmx256m
 goto endInit
 
 @REM Reaching here means variables are defined and arguments have been captured
