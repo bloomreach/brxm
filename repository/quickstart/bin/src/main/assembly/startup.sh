@@ -63,7 +63,7 @@ else
   CLASSPATH="lib/classes$jars:$CLASSPATH"
 fi
 
-EXTRA_JVM_ARGUMENTS="-Xms256m"
+EXTRA_JVM_ARGUMENTS="-Xms256m -Xmx256m"
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
