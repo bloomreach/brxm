@@ -16,27 +16,37 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-   <wicket:message key="user-membership-available-groups"/>
-<div class="hippo-controlpanel-actions">
-    <form wicket:id="form">
-      <select wicket:id="local-groups">
-        <option>group1</option>
-      </select>
-      <input type="button" value="add" wicket:id="submit"/>
-    </form>
-    </div>
-    <span wicket:id="user-local-memberships"/>
-    <table class="hippo-list-details">
-      <tr wicket:id="local-memberships">
-        <td><label wicket:id="local-membership"/></td>
-        <td><li class="delete-16 icon-16" wicket:id="remove"/></td>
+  <div class="admin-group-panel">
+
+    <table class="admin-group-details">
+      <tr>
+        <td><wicket:message key="group-name"/>: </td>
+        <td><label wicket:id="groupname"/> </td>
+      </tr>
+      <tr>
+        <td><wicket:message key="group-description"/>: </td>
+        <td><label wicket:id="description"/> </td>
       </tr>
     </table>
-    <span wicket:id="user-external-memberships"/>
-    <ul class="admin-user-memberships">
-      <li wicket:id="external-memberships">
-        <label wicket:id="external-membership"/>
+
+    <br/>
+
+    <label wicket:id="group-members-label"/>
+    <ul class="admin-group-memberships">
+      <li wicket:id="members">
+        <label wicket:id="member"/>
       </li>
     </ul>
+
+    <br/>
+    
+    <div class="admin-user-action-container">
+      <ul>
+        <li class="admin-user-action" wicket:id="edit-group"><wicket:message key="group-edit"/></li>
+      </ul>
+    </div>
+
+    
+  </div>
   </wicket:panel>
 </html>
