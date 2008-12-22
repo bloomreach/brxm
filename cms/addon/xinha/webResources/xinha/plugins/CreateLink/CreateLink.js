@@ -2,7 +2,8 @@ function CreateLink(editor, args) {
     this.editor = editor;
     var cfg = editor.config;
     var self = this;
-
+    
+    editor.config.btnList.createlink[0] = this._lc('Internal link');
     editor.config.btnList.createlink[3] = function() {
         self.show(self._getSelectedAnchor()); 
     }
@@ -24,7 +25,7 @@ Xinha.Config.prototype.CreateLink= {
 };
 
 CreateLink.prototype._lc = function(string) {
-    return Xinha._lc(string, 'Xinha');
+    return Xinha._lc(string, {url : _editor_url + 'plugins/CreateLink/lang/', context:"CreateLink"});
 };
 
 CreateLink.prototype.onGenerateOnce = function()
