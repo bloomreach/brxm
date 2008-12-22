@@ -259,7 +259,7 @@ public class DomainMappingImpl implements DomainMapping{
             // we are not interested in domains with a wildcard in them because we can only rewrite to exact hosts
             if(domain.isExactHost() && !domain.isRedirect()) {
                 for(RepositoryMapping repositoryMapping : domain.getRepositoryMappings()) {
-                    if(repositoryPath.startsWith(repositoryMapping.getCanonicalContentPath())) {
+                    if(!repositoryMapping.isTemplate() && repositoryPath.startsWith(repositoryMapping.getCanonicalContentPath())) {
                         log.debug("found a domain for repository path '{}' --> '{}' ", repositoryPath, domain.getPattern());
                         return repositoryMapping;
                     }

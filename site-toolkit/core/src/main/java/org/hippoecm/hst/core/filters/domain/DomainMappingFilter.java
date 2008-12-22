@@ -146,6 +146,7 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
                 if(repositoryMapping == null) {
                     log.warn("repositoryMapping is null. Cannot process request further");
                     ((HttpServletResponse)response).sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
                 }
                 
                 // set the repositoryMapping on the hstRequestContext. This repositoryMapping gives access to the entire domain + domainMapping
