@@ -24,6 +24,8 @@
     <body>
       <section name="Developing workflows">
 
+  <span class='update'>http://www.hippoecm.org/nt/1.2 is out of date. There are also instances of this adres in other files.</span>
+
 <p>
 The most common functionality to be added in the repository is the addition of
 project specific workflow.  The role of workflow and the access to workflow
