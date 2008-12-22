@@ -15,16 +15,14 @@
  */
 var Hippo_scroll_registered = false;
 
-function Hippo_scroll_savePosition(elId) {
-	var el = document.getElementById(elId);	
+function Hippo_scroll_savePosition(el) {
 	var offsetY = el.pageYOffset || el.scrollTop;
 	Hippo_scroll_setCookie('Hippo_scroll_offsetY', offsetY);
 }
 
-function Hippo_scroll_loadPosition(elId) {
+function Hippo_scroll_loadPosition(el) {
 	var y = Hippo_scroll_getCookie('Hippo_scroll_offsetY');
 	if (y) {
-		var el = document.getElementById(elId);
 		el.scrollTop = y;
 		Hippo_scroll_deleteCookie('Hippo_scroll_offsetY');
 	}
