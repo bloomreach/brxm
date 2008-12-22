@@ -61,7 +61,7 @@
       <source>~/> mvn -Declipse.workspace=&lt;path-to-eclipse-workspace&gt; eclipse:add-maven-repo</source>
       <p> 
         Import the Eclipse update site bookmarks file 
-        <a href="http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/bookmark.xml"><b>
+        <a href="${project_source_url}/trunk/tools/eclipse/bookmark.xml"><b>
         ~/hippo-ecm/tools/eclipse/bookmark.xml</b></a> using the Eclipse update manager.
         <br/><br/>
         This will add update sites for the following Eclipse plugins which need to be installed:
@@ -116,7 +116,7 @@
         <li>
           <p>
             <b>Windows: </b> Open a command shell, go to the <b>~\hippo-ecm\tools\eclipse</b> directory and run the 
-            <a href="http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/createlinks.bat"><b>
+            <a href="${project_source_url}/trunk/tools/eclipse/createlinks.bat"><b>
             createlinks.bat</b></a> script.
           </p>
           <p>
@@ -131,7 +131,7 @@
         <li>
           <p>
             <b>Unix: </b> Open a command shell, go to the <b>~/hippo-ecm/tools/eclipse</b> directory and run the 
-            <a href="http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/createlinks.sh"><b>
+            <a href="${project_source_url}/trunk/tools/eclipse/createlinks.sh"><b>
             createlinks.sh</b></a> script.
           </p>
         </li>
@@ -183,7 +183,7 @@
       </ol>     
       <p>
         As a final step you need to run the 
-        <a href="http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/monkey/prepareProjects.gm">
+        <a href="${project_source_url}/trunk/tools/eclipse/monkey/prepareProjects.gm">
         <b>prepareProjects.gm</b></a> script that you can find under
         the <i>Prepare Hippo ECM projects</i> menu item in the <i>Groovy Monkey</i> Eclipse menu.
         This script will fix some project dependencies that were not set correctly by
@@ -220,6 +220,7 @@
       <source>-Dorg.mortbay.util.FileResource.checkAliases=False</source>
       <p>(Optional) Select the 'Common' tab and check 'Run' and 'Debug' under
         'display in favorites menu'</p>
+  <span class='update'>org.hippoecm.frontend.Home</span>
       <p> You can now debug Hippo ECM within Eclipse: Set a breakpoint in the constructor
         of org.hippoecm.frontend.Home, start the Run-Jetty-Run launcher in debug mode,
         open your browser and go to <a href="http://localhost:8080/cms">http://localhost:8080/cms</a></p>
@@ -230,7 +231,7 @@
       <p>
         Before committing java code, please make sure that it has been formatted
         using the standard Hippo code formatting rules. Download
-        <a href="http://repository.hippocms.org/coding-standards/hippo-eclipse-formatting.xml">hippo-eclipse-formatting.xml</a>
+        <a href="${project_repository_url}/coding-standards/hippo-eclipse-formatting.xml">hippo-eclipse-formatting.xml</a>
         and load it into Eclipse using <i>Window -> Preferences -> Java -> Code style -> Formatter -> Import</i>.
         Formatting a Java file is done in Eclipse by hitting Ctrl-Shift-F 
       </p>

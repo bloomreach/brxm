@@ -62,15 +62,17 @@
 
       <subsection name="Get the Hippo ECM source">
         <p>
-          The source can be found at <a href="http://svn.hippocms.org/repos/hippo/hippo-ecm">http://svn.hippocms.org/repos/hippo/hippo-ecm</a>
+          The source can be found at <a href="${project_source_url}">${project_source_url}</a>
           and can be anonymously checked out using any <a href="http://subversion.tigris.org/">Subversion</a> client.
           Instructions on Subversion use can be found at <a href="http://svnbook.red-bean.com/">http://svnbook.red-bean.com/</a>.
           The following command checks out the trunk to a directory called 'hippo-ecm'
         </p>
           <source>
-~/> svn co http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk hippo-ecm
+~/> svn co ${project_source_url}/trunk hippo-ecm
           </source>
       </subsection>
+
+ <span class='update'>~/hippo-ecm for the checkout of cms+repository?</span>
 
       <subsection name="Build">
         <p>
@@ -86,6 +88,7 @@
           This will build the packages and leave them in the target
           directories of your maven build.  For instance the produced EAR
           containing all the applications is available in
+ <span class='update'>package ear</span>
           <code>hippo-ecm/package/ear/target/hippo-ecm-package-ear-2.01.00.13536.ear</code>.
         </p>
       </subsection>
