@@ -33,6 +33,7 @@ import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -47,30 +48,16 @@ public class ContentExportDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private boolean skipBinary = true;
+    private boolean skipBinary = false;
 
     public ContentExportDialog(MenuPlugin plugin) {
         setModel(plugin.getModel());
 
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
-        Model skipBinaryModel = new Model(skipBinary);
-        CheckBox includeBinaries = new CheckBox("skip-binaries", skipBinaryModel) {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected boolean wantOnSelectionChangedNotifications() {
-                return true;
-            }
-
-            @Override
-            protected void onSelectionChanged(Object newSelection) {
-                skipBinary = ((Boolean)newSelection).booleanValue();
-            }
-
-        };
-        add(includeBinaries);
-
+        IModel skipBinaryModel = new PropertyModel(this, "skipBinary");
+        CheckBox skipBinaries = new CheckBox("skip-binaries", skipBinaryModel);
+        add(skipBinaries);
+        
         DownloadExportLink link = new DownloadExportLink("download-link", nodeModel, skipBinaryModel);
         link.add(new Label("download-link-text", "Download"));
         add(link);
