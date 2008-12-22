@@ -450,9 +450,9 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 
 /* Reorder Plugin*/
 /* ================================================ */
-.hippo-reorder table {width: 377px; margin-right: 40px;}
-.hippo-reorder .hippo-reorder-border{border: 1px solid #32629b; padding: 5px;}
-.hippo-reorder .hippo-reorder-buttons{float: right; width: 40px;}
+.hippo-reorder table {width: 480px;}
+.hippo-reorder .hippo-reorder-border{border: 1px solid #32629b; padding: 5px; height: 272px; overflow: auto; position: relative}
+.hippo-reorder .hippo-reorder-buttons{position: absolute; right: 0px; top: 1px; width: 30px;}
 
 .hippo-reorder .folderlist h3{font-weight: normal; padding: 2px; padding-left: 6px; padding-bottom: 5px;}
 .hippo-reorder table tr td {padding: 0px;}
