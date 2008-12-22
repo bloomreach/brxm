@@ -58,7 +58,7 @@
                  
           Only Hippo developers and some partners can open issues in the issue tracker, but 
           anyone can contact the developers by email. They are listed as administrators of the Hippo issue
-          tracker at the <a href="http://issues.hippo.nl">Hippo issue tracker homepage</a>, with their
+          tracker at the <a href="${issue_tracker_homepage}">Hippo issue tracker homepage</a>, with their
           email adresses (see the bottom of the Login box).
    </td>
   </tr>
