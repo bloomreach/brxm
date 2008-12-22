@@ -31,7 +31,6 @@ import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
-import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -147,10 +146,6 @@ public class Group implements Comparable<Group>, IClusterable {
         return external;
     }
 
-    public void setExternal(boolean external) {
-        this.external = external;
-    }
-
     public String getGroupname() {
         return groupname;
     }
@@ -163,8 +158,10 @@ public class Group implements Comparable<Group>, IClusterable {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String description) throws RepositoryException {
         this.description = description;
+        node.setProperty(PROP_DESCRIPTION, description);
+        node.save();
     }
 
 
@@ -178,7 +175,7 @@ public class Group implements Comparable<Group>, IClusterable {
         this.node = node;
         
         if (node.isNodeType(HippoNodeType.NT_EXTERNALGROUP)) {
-            setExternal(true);
+            external = true;
         }
 
         if (node.hasProperty(PROP_DESCRIPTION)) {
@@ -196,25 +193,23 @@ public class Group implements Comparable<Group>, IClusterable {
         }
     }
 
-    public Set<String> getMembers() {
-        return members;
+    public List<String> getMembers() {
+        return new ArrayList<String>(members);
     }
-    
 
     //-------------------- persistence helpers ----------//
     
-    public void removeMembership(User user) throws RepositoryException {
-        members.remove(user.getUsername());
+    public void removeMembership(String user) throws RepositoryException {
+        members.remove(user);
         node.setProperty(HippoNodeType.HIPPO_MEMBERS, members.toArray(new String[members.size()]));
         node.save();
     }
 
-    public void addMembership(User user) throws RepositoryException {
-        members.add(user.getUsername());
+    public void addMembership(String user) throws RepositoryException {
+        members.add(user);
         node.setProperty(HippoNodeType.HIPPO_MEMBERS, members.toArray(new String[members.size()]));
         node.save();
     }
-    
 
     //--------------------- default object -------------------//
     /**

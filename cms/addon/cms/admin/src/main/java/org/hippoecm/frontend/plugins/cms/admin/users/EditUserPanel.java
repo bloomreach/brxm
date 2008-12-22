@@ -89,7 +89,6 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
                     user.save();
                     log.info("User '" + username + "' saved by "
                             + ((UserSession) Session.get()).getCredentials().getStringValue("username"));
-                    UserDataProvider.countMinusOne();
                     Session.get().info(getString("user-saved", model));
                     // one up
                     List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();

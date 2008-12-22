@@ -68,7 +68,7 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 try {
-                    selectedGroup.addMembership(user);
+                    selectedGroup.addMembership(user.getDisplayName());
                     info(getString("user-membership-added", new DetachableGroup(selectedGroup)));
                     localList.removeAll();
                     target.addComponent(localList);
@@ -128,7 +128,7 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     try {
-                        model.getGroup().removeMembership(user);
+                        model.getGroup().removeMembership(user.getDisplayName());
                         info(getString("user-membership-removed", model));
                         localList.removeAll();
                         target.addComponent(localList);
