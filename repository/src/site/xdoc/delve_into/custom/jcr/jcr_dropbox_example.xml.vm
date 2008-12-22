@@ -61,15 +61,15 @@
                 </p>
               <p>
                 The code is available from the SVN repository:
-                <a href="http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/dropbox/">hippo-ecm/trunk/tools/dropbox/</a>.
+                <a href="${project_source_url}/trunk/tools/dropbox/">hippo-ecm/trunk/tools/dropbox/</a>.
                 The classes of particular interest are:
               </p>
               <ul>
                 <li>
-                  <a href="http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/dropbox/src/main/java/org/hippoecm/tools/dropbox/Dropbox.java">Dropbox.java</a>
+                  <a href="${project_source_url}/trunk/tools/dropbox/src/main/java/org/hippoecm/tools/dropbox/Dropbox.java">Dropbox.java</a>
                 </li>
                 <li>
-                  <a href="http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/dropbox/src/main/java/org/hippoecm/tools/dropbox/DropboxExt.java">DropboxExt</a>
+                  <a href="${project_source_url}/trunk/tools/dropbox/src/main/java/org/hippoecm/tools/dropbox/DropboxExt.java">DropboxExt</a>
                 </li>
               </ul>
             </subsection>
@@ -80,7 +80,7 @@
                 <a href="../../core/building/maven.html">build it using  Maven 2</a>.
                 </p>
 <source>
-svn co http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk hippo-ecm
+svn co ${project_source_url}/trunk hippo-ecm
 cd hippo-ecm/
 mvn clean install
 </source>
