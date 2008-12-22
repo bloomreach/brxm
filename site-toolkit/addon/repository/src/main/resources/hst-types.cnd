@@ -80,6 +80,14 @@
 
 [hst:primarydomain] mixin
 
+[hst:hostconfig]
+- hst:showport (boolean)
+- hst:port (long)  
+- hst:showcontextpath (boolean)
+- hst:binarylocations (string) multiple 
++ * (hst:domainmapping) 
+
+
 [hst:reaction] mixin
 - hst:reactionto (String) mandatory
 - hst:reactiondate (date)

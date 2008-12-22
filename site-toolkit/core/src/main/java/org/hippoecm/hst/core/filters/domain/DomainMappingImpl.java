@@ -37,6 +37,7 @@ public class DomainMappingImpl implements DomainMapping{
     private String scheme;
     private boolean isPortInUrl;
     private int port;
+    
     private Map cache = Collections.synchronizedMap(new LRUMap(500));
     
     // TODO for now hardcoded paths to binary location. This information is needed to rewrite urls to subsites with another domain
@@ -57,6 +58,11 @@ public class DomainMappingImpl implements DomainMapping{
         // regardless wether initialization succeeds the domain mapping is initialized. If failing, the hst will run without domain mapping
         setInitialized(true);
         
+
+        // default settings
+        this.setServletContextPathInUrl(true);
+        this.setPortInUrl(true);
+        
         if(domainMappingLocation == null) {
             throw new DomainMappingException("No domainMappingLocation configured in web.xml");
         }
@@ -73,6 +79,18 @@ public class DomainMappingImpl implements DomainMapping{
             // get the domain mapping node
             try {
                 Node domainMappingNode = session.getRootNode().getNode(domainMappingLocation);
+                
+                if(domainMappingNode.hasProperty("hst:showport")) {
+                    this.setPortInUrl(domainMappingNode.getProperty("hst:showport").getBoolean());
+                }
+                if(domainMappingNode.hasProperty("hst:showcontextpath")) {
+                    this.setServletContextPathInUrl(domainMappingNode.getProperty("hst:showcontextpath").getBoolean());
+                }
+                
+                if(domainMappingNode.hasProperty("hst:port")) {
+                    this.setPort((int)domainMappingNode.getProperty("hst:port").getLong());
+                }
+                
                 createDomainPatterns(domainMappingNode, domains, "", 1, new ArrayList<String>());
                 orderedDomains = domains.toArray(new Domain[domains.size()]);
                 Arrays.sort(orderedDomains);
@@ -98,7 +116,7 @@ public class DomainMappingImpl implements DomainMapping{
     private void createDomainPatterns(Node domainMappingNode, Set<Domain> domains, String domainPattern, int depth, ArrayList<String> repositorypaths) throws RepositoryException {
         
         NodeIterator mappings = domainMappingNode.getNodes();
-        if(depth > 6) {
+        if(depth > 8) {
             log.warn("Reached the maximum depth for domain mapping. Skipping deeper paths");
         }
         

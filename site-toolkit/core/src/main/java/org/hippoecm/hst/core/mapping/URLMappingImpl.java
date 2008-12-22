@@ -532,8 +532,8 @@ public class URLMappingImpl implements URLMapping {
         
         if(domainMapping.isPortInUrl()) {
             externalLink.append(":").append(domainMapping.getPort());
-            externalLink.append(rewrite);
         }
+        externalLink.append(rewrite);
         return externalLink.toString();
     }
     

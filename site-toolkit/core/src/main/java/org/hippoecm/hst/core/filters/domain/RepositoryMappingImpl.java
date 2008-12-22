@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 public class RepositoryMappingImpl implements RepositoryMapping {
     
+    
+
     private static final Logger log = LoggerFactory.getLogger(RepositoryMappingImpl.class);
     
     private static final String DEFAULT_RELATIVE_CONTENT = "content";
@@ -23,14 +25,34 @@ public class RepositoryMappingImpl implements RepositoryMapping {
     private int depth;
     private Domain domain;
     private DomainMapping domainMapping;
-    
+    private boolean template;
+ 
+
     public RepositoryMappingImpl(Session session, DomainMapping domainMapping, Domain domain, String prefix, String path) throws RepositoryMappingException{
         this.prefix = prefix;
         this.path = path;
         this.depth = prefix.split("/").length;
         this.domain = domain;
         this.domainMapping = domainMapping;
-            
+        
+        if(prefix.contains(PATH_WILDCARD) || path.contains(PATH_WILDCARD)) {
+            if(!(prefix.contains(PATH_WILDCARD) && path.contains(PATH_WILDCARD))) {
+                throw new RepositoryMappingException("If the prefix or the path in the hst:repositorypath ends with a *, then both have to end with a *. Ignore this mapping");
+            }
+            if(prefix.equals(PATH_WILDCARD) || path.equals(PATH_WILDCARD)) {
+                throw new RepositoryMappingException("The hst:repositorypath is not allowed to have a prefix or path only consisting of '"+PATH_WILDCARD+"'. Skipping mapping");
+            }
+            log.debug("Repository mapping '{}' for domain '{}' functions as a template", prefix+":"+path, domain.getPattern());
+            this.template = true;
+        } else {
+            this.template = false;
+            init(session);
+        }
+        
+        
+    }
+    
+    private void init(Session session) throws RepositoryMappingException {
         try {
             Item item = session.getItem(this.getContentPath());
             if(item.isNode()) {
@@ -54,16 +76,29 @@ public class RepositoryMappingImpl implements RepositoryMapping {
         } catch (RepositoryException e) {
             throw new RepositoryMappingException("RepositoryException: Cannot create Repository Mapping because an exception  happened for '"+ this.getContentPath()+"'.", e);
         }
-        
     }
-    
+
     /* (non-Javadoc)
      * @see org.hippoecm.hst.core.filters.domain.RepositoryMapping#match(java.lang.String)
      */
     public boolean match(String uri) {
+        if(uri == null) {
+            return false;
+        }
         if(uri.startsWith(prefix)) {
             return true;
         }
+        
+        if(isTemplate()) {
+           if(prefix.contains(PATH_WILDCARD) && !prefix.equals(PATH_WILDCARD)) {
+               if(uri.startsWith(prefix.substring(0, prefix.indexOf(PATH_WILDCARD)-1))) {
+                   // the template matches
+                   log.debug("The repository mapping '{}' matches '{}' as a template. A non template Repository Mapping will be created", prefix+":"+path, uri);
+                   return true;
+               }
+           }
+        }
+        
         return false;
     }
     
@@ -74,6 +109,12 @@ public class RepositoryMappingImpl implements RepositoryMapping {
                 return -1;
             } else if(this.depth < repositoryMappingImpl.depth) {
                 return 1;
+            } else if(this.depth == repositoryMappingImpl.depth) {
+                if(this.isTemplate()) {
+                    return 1;
+                } else if(repositoryMappingImpl.isTemplate()){
+                    return -1;
+                }
             }
         }
         return 0;
@@ -85,12 +126,20 @@ public class RepositoryMappingImpl implements RepositoryMapping {
     public String getPrefix() {
         return prefix;
     }
-
+   
+    public boolean isTemplate() {
+        return template;
+    }
+    
     /* (non-Javadoc)
      * @see org.hippoecm.hst.core.filters.domain.RepositoryMapping#getMapping()
      */
     public String getPath() {
         return path;
+    }
+
+    public int getDepth() {
+        return depth;
     }
 
     public Domain getDomain() {

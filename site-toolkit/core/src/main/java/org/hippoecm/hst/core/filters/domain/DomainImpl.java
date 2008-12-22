@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.Session;
+import javax.servlet.FilterConfig;
 
+import org.hippoecm.hst.jcr.JcrSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +56,6 @@ public class DomainImpl implements Domain {
         Arrays.sort(repoMappingsArr);
         return repoMappingsArr;
     }
-
 
     public DomainMapping getDomainMapping() {
         return this.domainMapping;
@@ -106,11 +107,41 @@ public class DomainImpl implements Domain {
     }
 
 
-    public RepositoryMapping getRepositoryMapping(String ctxStrippedUri) {
+    public RepositoryMapping getRepositoryMapping(String ctxStrippedUri, FilterConfig filterConfig) {
         for(RepositoryMapping repositoryMapping : repositoryMappings) {
             if(repositoryMapping.match(ctxStrippedUri)) {
                 // return the first match because we have sorted the mappings already
-                return repositoryMapping;
+                
+                // when the repository mapping is a 'template', create an actual repository mapping out of the template.
+                if(repositoryMapping.isTemplate()) {
+                    Session session = new JcrSessionFactory(filterConfig).getSession();
+                    
+                    int prefixDepth = repositoryMapping.getDepth();
+                    String[] segments = ctxStrippedUri.split("/");
+                    if(segments.length < prefixDepth) {
+                        log.warn("Cannot create repository mapping from template");
+                        continue;
+                    }
+                    String prefix = repositoryMapping.getPrefix().substring(0,repositoryMapping.getPrefix().indexOf(RepositoryMapping.PATH_WILDCARD))+segments[prefixDepth - 1];
+                    String path = repositoryMapping.getPath().substring(0,repositoryMapping.getPath().indexOf(RepositoryMapping.PATH_WILDCARD))+segments[prefixDepth - 1];
+                    
+                    RepositoryMapping repositoryMappingFromTemplate = null;
+                    try {
+                        repositoryMappingFromTemplate = new RepositoryMappingImpl(session, this.domainMapping, this, prefix, path);
+                        
+                        // if succesfully created, let's add it to the existing repository mappings of this domain.
+                        List<RepositoryMapping> repoMappingsList =  new ArrayList<RepositoryMapping>(Arrays.asList(this.repositoryMappings));
+                        repoMappingsList.add(repositoryMappingFromTemplate);
+                        this.repositoryMappings = repoMappingsList.toArray(new RepositoryMapping[repoMappingsList.size()]);      
+                        Arrays.sort(repositoryMappings);
+                        log.debug("Added new repositoryMapping to domain. Domain now is: {}", this);
+                        return repositoryMappingFromTemplate;
+                    } catch (RepositoryMappingException e) {
+                        log.warn("Failed to create repository mapping from template: {}", e.getMessage());
+                    }
+                } else {
+                    return repositoryMapping;
+                }
             }
         }
         return null;

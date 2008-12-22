@@ -1,5 +1,7 @@
 package org.hippoecm.hst.core.filters.domain;
 
+import javax.servlet.FilterConfig;
+
 
 public interface Domain extends Comparable<Domain>{ 
 
@@ -11,7 +13,7 @@ public interface Domain extends Comparable<Domain>{
     
     public String getPattern();
     
-    public RepositoryMapping getRepositoryMapping(String ctxStippedUri);
+    public RepositoryMapping getRepositoryMapping(String ctxStippedUri, FilterConfig filterConfig);
     
     public RepositoryMapping[] getRepositoryMappings();
     

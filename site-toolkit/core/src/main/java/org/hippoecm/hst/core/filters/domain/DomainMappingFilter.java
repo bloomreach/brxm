@@ -85,7 +85,7 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
             HstRequestContext hstRequestContext) throws IOException, ServletException {
         
         CacheKey cacheKey = new CacheKey("DomainMapping", this.getClass());
-        Cache cache = CacheManagerImpl.getCache(this.getClass().getName(), EventCacheImpl.class.getName());;
+        Cache cache = CacheManagerImpl.getCache(this.getClass().getName(), EventCacheImpl.class.getName());
         
         Object o = cache.get(cacheKey);
         if(o != null && o instanceof CachedResponse) {
@@ -94,7 +94,7 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
         } else {
             // if domain mapping is recreated, flush all caches (to avoid cached wrong links)
             CacheManagerImpl.getCaches().clear();
-            
+            cache = CacheManagerImpl.getCache(this.getClass().getName(), EventCacheImpl.class.getName());
             domainMapping = new DomainMappingImpl(domainMappingLocation, filterConfig);
             // put it in the eventcache
             SourceValidity sourceValidity = new EventValidity(new NamedEvent(domainMappingLocation));
@@ -104,14 +104,12 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
         
         if(!this.domainMapping.isInitialized()) {
             try {
-                domainMapping.init();
-
-                // TODO try to find from the original request headers whether the context path should be kept
+                
                 domainMapping.setServletContextPath(req.getContextPath());
-                domainMapping.setServletContextPathInUrl(true);
-                domainMapping.setScheme("http");
-                domainMapping.setPortInUrl(true);
-                domainMapping.setPort(8085);
+                domainMapping.setScheme(req.getScheme());
+                domainMapping.setPort(req.getServerPort());
+                
+                domainMapping.init();
                 
             } catch (DomainMappingException e) {
                 log.warn("Exception during initializing domainMapping", e.getMessage());
@@ -143,12 +141,13 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
             } else {
                 log.debug("Matching domain found. Wrapping the request.");
                 String ctxStrippedUri =  req.getRequestURI().replaceFirst(req.getContextPath(), "");
-                RepositoryMapping repositoryMapping = matchingDomain.getRepositoryMapping(ctxStrippedUri);
+                RepositoryMapping repositoryMapping = matchingDomain.getRepositoryMapping(ctxStrippedUri, this.filterConfig);
                 
                 if(repositoryMapping == null) {
                     log.warn("repositoryMapping is null. Cannot process request further");
                     ((HttpServletResponse)response).sendError(HttpServletResponse.SC_NOT_FOUND);
                 }
+                
                 // set the repositoryMapping on the hstRequestContext. This repositoryMapping gives access to the entire domain + domainMapping
                 hstRequestContext.setRepositoryMapping(repositoryMapping);
                 
