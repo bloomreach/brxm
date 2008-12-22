@@ -2,7 +2,7 @@ function CreateExternalLink(editor, args) {
     this.editor = editor;
     var cfg = editor.config;
     var self = this;
-    editor.config.registerButton('createexternallink', 'Create external link', [_editor_url + cfg.imgURL + "ed_buttons_main.png",5,1], false, function() { self.show(self._getSelectedAnchor()); });
+    editor.config.registerButton('createexternallink', this._lc('External link'), [_editor_url + cfg.imgURL + "ed_buttons_main.png",5,1], false, function() { self.show(self._getSelectedAnchor()); });
 }
 
 CreateExternalLink._pluginInfo = {
@@ -21,7 +21,7 @@ Xinha.Config.prototype.CreateExternalLink= {
 };
 
 CreateExternalLink.prototype._lc = function(string) {
-    return Xinha._lc(string, 'Xinha');
+    return Xinha._lc(string, {url : _editor_url + 'plugins/CreateExternalLink/lang/', context:"CreateExternalLink"});
 };
 
 CreateExternalLink.prototype.onGenerateOnce = function()
