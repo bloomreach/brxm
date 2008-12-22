@@ -280,7 +280,13 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
                     Node node = iter.nextNode();
                     canonical = ((HippoNode) node).getCanonicalNode();
                     if (canonical != null && canonical.isSame(node)) {
-                        Node child = destNode.addNode(node.getName(), node.getPrimaryNodeType().getName());
+                        Node child;
+                        // check if the subnode is autocreated
+                        if (node.getDefinition().isAutoCreated() && destNode.hasNode(node.getName())) {
+                            child = destNode.getNode(node.getName());
+                        } else {
+                            child = destNode.addNode(node.getName(), node.getPrimaryNodeType().getName());
+                        }
                         copy(node, child);
                     }
                 }
