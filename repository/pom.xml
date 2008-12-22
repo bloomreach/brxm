@@ -27,7 +27,7 @@
   </description>
   <packaging>pom</packaging>
 
-  <url>http://docs.onehippo.org/cms7/</url>
+  <url>http://www.onehippo.org/cms7/</url>
   <prerequisites>
     <maven>2.0</maven>
   </prerequisites>
@@ -110,9 +110,9 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html 
   -->
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk</url>
   </scm>
 
   <!-- Where to publish the project data, especially the documentation site -->
@@ -145,7 +145,7 @@
   -->
   <issueManagement>
     <system>Jira</system>
-    <url>http://issues.hippo.nl/browse/HREPTWO</url>
+    <url>http://issues.onehippo.org/browse/HREPTWO</url>
   </issueManagement>
 
   <inceptionYear>2007</inceptionYear>
