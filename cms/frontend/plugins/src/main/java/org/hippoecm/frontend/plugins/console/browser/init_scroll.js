@@ -14,13 +14,26 @@
  *  limitations under the License.
  */
 if(!Hippo_scroll_registered) {
-	var func1 = function() {
-		Hippo_scroll_savePosition('${id}');
+    var getEl = function() {
+        var classname = 'hippo-tree';
+        var node = document.getElementById('${id}');
+        var re = new RegExp('\\b' + classname + '\\b');
+        var els = node.getElementsByTagName("*");
+        for(var i=0,j=els.length; i<j; i++) {
+            if(re.test(els[i].className)) {
+                return els[i];
+            }
+        }
+        return null;
+    }
+
+    var func1 = function() {
+		Hippo_scroll_savePosition(getEl());
 	}
 	Wicket.Ajax.registerPreCallHandler(func1);
 	
 	var func2 = function() {
-		Hippo_scroll_loadPosition('${id}');
+		Hippo_scroll_loadPosition(getEl());
 	}
 	Wicket.Ajax.registerPostCallHandler(func2);
 	Hippo_scroll_registered = true;
