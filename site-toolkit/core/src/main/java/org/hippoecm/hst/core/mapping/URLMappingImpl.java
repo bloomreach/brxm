@@ -274,7 +274,7 @@ public class URLMappingImpl implements URLMapping {
                  * the latter has info about displaying the ContextPath, Port number, Scheme, etc
                  */
                 DomainMapping domainMapping = this.repositoryMapping.getDomainMapping();
-                RepositoryMapping matchingRepositoryMapping = domainMapping.getRepositoryMapping(path, this.repositoryMapping.getDomain());
+                RepositoryMapping matchingRepositoryMapping = domainMapping.getRepositoryMapping(path, this.repositoryMapping);
                 if (matchingRepositoryMapping != null) {
                     try {
                         URLMappingImpl newUrlMapping = (URLMappingImpl) this.urlMappingManager.getUrlMapping(
@@ -287,7 +287,9 @@ public class URLMappingImpl implements URLMapping {
                         }
                         
                         // set second try to true to avoid recusive possible loop
-                        return newUrlMapping.rewriteLocation(node, sitemap, true, hstRequestContext, external, matchingRepositoryMapping);
+                        Link link =  newUrlMapping.rewriteLocation(node, sitemap, true, hstRequestContext, external, matchingRepositoryMapping);
+                        this.rewriteLRUCache.put(cacheKey, link);
+                        return link;
                     } catch (URLMappingException e) {
                         log.warn("Exception while getting url mapping for '{}' : {}", matchingRepositoryMapping.getHstConfigPath(), e.getMessage());
                     }
@@ -544,13 +546,13 @@ public class URLMappingImpl implements URLMapping {
 
     private String computeCacheKey(String name, boolean externalize, boolean secondTry, String precedence, HstRequestContext hstRequestContext) {
         StringBuffer key = new StringBuffer();
-        key.append(this.repositoryMapping.getDomain().getPattern().hashCode());
-        key.append(hstRequestContext.getRequest().getServerName().hashCode());
+        key.append(hstRequestContext.getRequest().getServerName());
         key.append("_");
         key.append(name);
         key.append("_").append(externalize);
         key.append("_").append(secondTry);
         key.append("_").append(precedence);
+        key.append("_").append(this.repositoryMapping.getDomain().hashCode());
         return key.toString();
     }
     private class RewriteLRUCache {
@@ -574,7 +576,6 @@ public class URLMappingImpl implements URLMapping {
         }
 
         private void put(String key, Link rewrite) {
-            // TODO enable this
             cache.put(key, rewrite);
         }
     }

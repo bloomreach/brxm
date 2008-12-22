@@ -37,8 +37,9 @@ public class DomainMappingImpl implements DomainMapping{
     private String scheme;
     private boolean isPortInUrl;
     private int port;
-    
-    private Map cache = Collections.synchronizedMap(new LRUMap(500));
+
+    private Map domainsCache = Collections.synchronizedMap(new LRUMap(500));
+    private Map repositoryMappingCache = Collections.synchronizedMap(new LRUMap(500));
     
     // TODO for now hardcoded paths to binary location. This information is needed to rewrite urls to subsites with another domain
     private String[] binaryLocations = new String[]{"/content/gallery", "/content/assets"};
@@ -190,8 +191,8 @@ public class DomainMappingImpl implements DomainMapping{
     }
 
     public Domain match(String serverName){
-        Object d = cache.get(serverName);
-        if(d != null)
+        Object d = domainsCache.get(serverName);
+        if(d != null && d instanceof Domain)
         {
             return (Domain)d;
         }
@@ -204,7 +205,7 @@ public class DomainMappingImpl implements DomainMapping{
         for(Domain domain : orderedDomains) {
             if(domain.match(serverName.toLowerCase(), serverName.split(Domain.DELIMITER))) {
                 log.debug("found matching domain for '{}' --> '{}'", serverName, domain.getPattern());
-                cache.put(serverName, domain);
+                domainsCache.put(serverName, domain);
                 return domain;
             }
         } 
@@ -234,42 +235,144 @@ public class DomainMappingImpl implements DomainMapping{
     /**
      * Method that returns you the best matching repository mapping for a repository path. For example, /preview/mysite repository path
      * can occur in multiple domains. First, the current domain is checked. If the current domain does not have a RepositoryMapping with this
-     * repository path, the entire DomainMapping will be scanned, and 'the best' domain is returned. Only domains with an exact host, thus no 
-     * wildcards are taken into account. The best match is computed by how good the current domain pattern matches. For each segment that matches,
-     * the score is +1. So, www.mysite.com and subsite.mysite.com have 2 segments in common.
+     * repository path, the entire DomainMapping will be scanned, and 'the best' repository mapping is returned. Only domains with an exact host and prefix plus path, thus no 
+     * wildcards are taken into account. The best match is computed by how well the current domain pattern matches. For each segment that matches,
+     * the score is +1. So, www.mysite.com and subsite.mysite.com have 2 segments in common so a score of 2. By equal score, the domain with 
+     * the most segments is chosen.
      * 
      */
     
-    public RepositoryMapping getRepositoryMapping(String repositoryPath, Domain currentDomain) {
+    public RepositoryMapping getRepositoryMapping(String repositoryPath, RepositoryMapping currentRepositoryMapping) {
         if(repositoryPath == null) {
             log.warn("Cannot find a Domain belonging to repositoryPath which is null");
             return null;
+        }
+        Domain currentDomain = currentRepositoryMapping.getDomain();
+        String cacheKey = currentDomain.hashCode() + "_"+ repositoryPath;
+        Object cached = repositoryMappingCache.get(cacheKey);
+        if(cached != null && cached instanceof RepositoryMapping) {
+            return (RepositoryMapping)cached;
         }
         if(currentDomain != null) {
             for(RepositoryMapping repositoryMapping : currentDomain.getRepositoryMappings()) {
                 if(repositoryMapping.getCanonicalContentPath()!=null && repositoryPath.startsWith(repositoryMapping.getCanonicalContentPath())) {
                     log.debug("The current Domain also has a mapping for repository path '{}'. Returning the matching repository mapping from the current domain", repositoryPath);
+                    repositoryMappingCache.put(cacheKey, repositoryMapping);
                     return repositoryMapping;
                 }
             }
             log.debug("The current Domain does not have a mapping for repository path '{}'. Searching for a matching domain in all Domains", repositoryPath);
         }
         
+        Set<RepositoryMapping> matchingRepositoryMapping =  new HashSet<RepositoryMapping>();
+        int bestMatchDepth = 0;
         for(Domain domain : orderedDomains) {
             // we are not interested in domains with a wildcard in them because we can only rewrite to exact hosts
             if(domain.isExactHost() && !domain.isRedirect()) {
+                // first collect all repositoryMappings that match and have an 'equal' matching depth.
                 for(RepositoryMapping repositoryMapping : domain.getRepositoryMappings()) {
                     if(!repositoryMapping.isTemplate() && repositoryPath.startsWith(repositoryMapping.getCanonicalContentPath())) {
-                        log.debug("found a domain for repository path '{}' --> '{}' ", repositoryPath, domain.getPattern());
-                        return repositoryMapping;
+                        int crDepth = repositoryMapping.getCanonicalContentPath().split("/").length;
+                        if(crDepth > bestMatchDepth) {
+                            bestMatchDepth = crDepth;
+                            // restart collecting best mappings when a deeper match is found
+                            matchingRepositoryMapping.clear();
+                        }
+                        if(crDepth == bestMatchDepth) {
+                            log.debug("found a domain for repository path '{}' --> '{}' ", repositoryPath, domain.getPattern());
+                            matchingRepositoryMapping.add(repositoryMapping);
+                        } else {
+                            log.debug("found a domain '{}' which matches but already found a domain with a more specific repository path", domain.getPattern());
+                        }
                     }
                 }
             }
+        }
+        if(!matchingRepositoryMapping.isEmpty()) {
+            // find the repository mapping that belongs to the domain that best resembles the current domain. 
+            RepositoryMapping bestRepositoryMapping = null;
+            int bestScore = 0;
+            for(RepositoryMapping repositoryMapping : matchingRepositoryMapping)  {
+                if(bestRepositoryMapping == null) {
+                    bestRepositoryMapping = repositoryMapping;
+                }
+                int score = compare(repositoryMapping, currentRepositoryMapping);
+                if(score > bestScore) {
+                    bestScore = score;
+                    bestRepositoryMapping = repositoryMapping;
+                }
+            }
+            
+            repositoryMappingCache.put(cacheKey, bestRepositoryMapping);
+            return bestRepositoryMapping;
         }
         log.warn("No repository mapping with a host without wildcards can be found for '{}'", repositoryPath);
         return null;
     }
     
+    
+    /*
+     * compute how much repositoryMapping 1 looks like repositoryMapping 2. For each 'segment match (starting at the end) in  the pattern' the score increases by 100. The total number of segments in 
+     * pattern 1 is added to the score to favor a deeper pattern over a less deep pattern.
+     * 
+     * Furthermore, in the score the path is matched between the current repository mapping. This is to make sure, that a link in for example the preview of subsite A link
+     * to the preview of subsite B, and not 
+     */
+    private int compare(RepositoryMapping repositoryMapping1, RepositoryMapping repositoryMapping2) {
+        String[] segments1 = repositoryMapping1.getDomain().getPattern().split(Domain.DELIMITER);
+        String[] segments2 = repositoryMapping2.getDomain().getPattern().split(Domain.DELIMITER);
+        
+        int score = segments1.length;
+
+        int seg1length = segments1.length;
+        int seg2length = segments2.length;
+        
+        // case one
+        if(seg1length == seg2length) {
+            int offset = seg1length -1;
+            while(offset > -1 && segments1[offset].equals(segments2[offset])) {
+                offset--;
+                score += 100;
+            }
+        }
+        
+     // case two
+        if(seg1length < seg2length) {
+            int offset = seg1length -1;
+            int diff = seg2length - seg1length;
+            while(offset > -1 && segments1[offset].equals(segments2[offset+diff])) {
+                offset--;
+                score += 100;
+            }
+        }
+        
+     // case three
+        if(seg1length > seg2length) {
+            int offset = seg2length -1;
+            int diff = seg1length - seg2length;
+            while(offset > -1 && segments1[offset+diff].equals(segments2[offset])) {
+                offset--;
+                score += 100;
+            }
+        }
+
+        String[] paths1 = repositoryMapping1.getPath().split("/");
+        String[] paths2 = repositoryMapping2.getPath().split("/");
+        
+        int i = 0;
+        while(i < paths1.length && i < paths2.length) {
+            i++;
+            if(paths1[i].equals(paths2[i])) {
+                score += 100;
+            } else {
+                // stop further comparison
+                break;
+            }
+        }
+        
+        return score;
+    }
+
     public Domain getPrimaryDomain() {
         return primaryDomain;
     }

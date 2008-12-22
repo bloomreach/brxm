@@ -10,7 +10,7 @@ public interface DomainMapping {
     
     public Domain match(String serverName);
     
-    public RepositoryMapping getRepositoryMapping(String repositoryPath, Domain currentDomain);
+    public RepositoryMapping getRepositoryMapping(String repositoryPath, RepositoryMapping currentRepositoryMapping);
     
     public Domain getPrimaryDomain();
     

@@ -52,7 +52,7 @@ public class URLMappingManagerImpl implements URLMappingManager {
         if(userId == null) {
             userId = "anonymous";
         }
-        String key = userId+"_"+repositoryMapping.getHstConfigPath() +"_"+repositoryMapping.getDomain().getPattern();
+        String key = userId+"_"+repositoryMapping.getHstConfigPath()+ "_" +  repositoryMapping.getPrefix() +"_"+repositoryMapping.getDomain().getPattern();
         CacheKey cacheKey = new CacheKey(key, URLMappingImpl.class);
         
         // TODO do not access through static but through the CacheManagerImpl instance
