@@ -290,7 +290,7 @@ public class SecurityManager {
         statement.append("SELECT * FROM ").append(HippoNodeType.NT_AUTHROLE);
         statement.append(" WHERE");
         statement.append(" jcr:path LIKE '/").append(domainsPath).append("/%").append("'");
-        statement.append(" AND");
+        statement.append(" AND ");
         statement.append(HippoNodeType.HIPPO_USERS).append(" = '").append(userId).append("'");
         try {
             Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.SQL);
@@ -302,11 +302,10 @@ public class SecurityManager {
                 log.debug("Domain '{}' found for user: {}", domain.getName(), userId);
                 domains.add(domain);
             }
-            return domains;
         } catch (RepositoryException e) {
             log.error("Error while searching for domains for user: " + userId, e);
-            return null;
         }
+        return domains;
     }
 
     /**
@@ -320,7 +319,7 @@ public class SecurityManager {
         statement.append("SELECT * FROM ").append(HippoNodeType.NT_AUTHROLE);
         statement.append(" WHERE");
         statement.append(" jcr:path LIKE '/").append(domainsPath).append("/%").append("'");
-        statement.append(" AND");
+        statement.append(" AND ");
         statement.append(HippoNodeType.HIPPO_GROUPS).append(" = '").append(groupId).append("'");
         try {
             Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.SQL);
@@ -332,11 +331,10 @@ public class SecurityManager {
                 log.debug("Domain '{}' found for group: {}", domain.getName(), groupId);
                 domains.add(domain);
             }
-            return domains;
         } catch (RepositoryException e) {
             log.error("Error while searching for domains for group: " + groupId, e);
-            return null;
         }
+        return domains;
     }
 
     /**
