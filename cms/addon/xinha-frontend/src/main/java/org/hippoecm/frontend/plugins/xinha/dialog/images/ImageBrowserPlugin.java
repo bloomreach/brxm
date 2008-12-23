@@ -25,6 +25,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.browse.BrowserPlugin;
+import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImage;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
@@ -44,13 +45,14 @@ public class ImageBrowserPlugin extends BrowserPlugin {
         super(context, config);
 
         add(form = new Form("form1"));
-        form.add(new TextFieldWidget("alt", getBean().getPropertyModel(XinhaImage.ALT)) {
+        form.add(new TextFieldWidget("alt", getDialogModel().getPropertyModel(XinhaImage.ALT)) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                if (!ok.isEnabled() && getBean().getNodeModel() != null) {
-                    enableOk(true);
+                boolean submit = getDialogModel().isSubmittable();
+                if (ok.isEnabled() != submit) {
+                    enableOk(submit);
                 }
             }
         });

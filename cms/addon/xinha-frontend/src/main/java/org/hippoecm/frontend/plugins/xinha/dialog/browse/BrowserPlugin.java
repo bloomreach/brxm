@@ -16,14 +16,13 @@
 
 package org.hippoecm.frontend.plugins.xinha.dialog.browse;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.browse.AbstractBrowseView;
-import org.hippoecm.frontend.plugins.xinha.dialog.JsBean;
+import org.hippoecm.frontend.plugins.xinha.dialog.IDialogModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,18 +40,9 @@ public abstract class BrowserPlugin extends AbstractBrowserPlugin {
     public BrowserPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        JsBean bean = getBean();
-        if (bean == null) {
-            initialModel = null;
-        } else {
-            initialModel = bean.getNodeModel();
-        }
-        JcrNodeModel selectedNode = initialModel;
-        if (initialModel == null) {
-            String path = config.getString("model.folder.root", "/");
-            selectedNode = new JcrNodeModel(path);
-        }
-        browseView = new BrowseView(context, config, selectedNode) {
+        initialModel = getDialogModel().getNodeModel();
+        
+        browseView = new BrowseView(context, config, initialModel) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -61,42 +51,29 @@ public abstract class BrowserPlugin extends AbstractBrowserPlugin {
             }
         };
     }
-    
+
     protected void onDocumentChanged(IModel model) {
         JcrNodeModel newModel = findNewModel(model);
-        JsBean bean = getBean();
-        if (newModel == null || bean == null) {
-            return;
-        }
-        
-        JcrNodeModel currentModel = bean.getNodeModel();
-        if (initialModel == null && currentModel == null) {
-            bean.setNodeModel(newModel);
-            enableOk(true);
-        } else if (!newModel.equals(currentModel)) {
-            bean.setNodeModel(newModel);
-            if (!newModel.equals(initialModel)) {
-                enableOk(true);
-            } else {
-                enableOk(false);
+        if (newModel != null) {
+            IDialogModel dialogModel = getDialogModel();
+            if (!newModel.equals(dialogModel.getNodeModel())) {
+                dialogModel.setNodeModel(newModel); //TODO: replace with setNodeModel
             }
-        } else {
-            enableOk(false);
         }
+        checkState();
     }
 
-    protected JsBean getBean() {
-        return (JsBean) getModelObject();
+    protected void checkState() {
+        enableOk(getDialogModel().isSubmittable());
     }
-    
-    @Override
-    protected void enableOk(boolean state) {
-        AjaxRequestTarget.get().addComponent(ok.setEnabled(state));
+
+    protected IDialogModel getDialogModel() {
+        return (IDialogModel) getModel();
     }
     
     @Override
     protected boolean hasRemoveButton() {
-        return initialModel != null;
+        return getDialogModel().isDetacheable();
     }
     
     protected abstract JcrNodeModel findNewModel(IModel model);

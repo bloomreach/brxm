@@ -27,6 +27,9 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.browse.BrowserPlugin;
+import org.hippoecm.frontend.plugins.xinha.services.links.InternalXinhaLink;
+import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLink;
+import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -34,32 +37,45 @@ import org.slf4j.LoggerFactory;
 
 public class DocumentBrowserPlugin extends BrowserPlugin {
     private static final long serialVersionUID = 1L;
-    
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(DocumentBrowserPlugin.class);
-    
+
     private final Form form;
-    
+
     public DocumentBrowserPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
+
         add(form = new Form("form1"));
-        form.add(new TextFieldWidget("title", getBean().getPropertyModel(XinhaLink.TITLE)) {
+
+        InternalXinhaLink link = (InternalXinhaLink) getDialogModel();
+
+        form.add(new TextFieldWidget("title", link.getPropertyModel(XinhaLink.TITLE)) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                if (!ok.isEnabled() && getBean().getNodeModel() != null) {
-                    enableOk(true);
-                }
+                checkState();
+            }
+        });
+        
+        form.add(new BooleanFieldWidget("popup", link.getTargetModel()) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                checkState();
             }
         });
     }
 
     @Override
     protected JcrNodeModel findNewModel(IModel model) {
+        if(model == null) {
+            return null;
+        }
         JcrNodeModel nodeModel = (JcrNodeModel) model;
         Node node = nodeModel.getNode();
         if (node != null) {
@@ -74,11 +90,6 @@ public class DocumentBrowserPlugin extends BrowserPlugin {
             }
         }
         return null;
-    }
-    
-    @Override
-    protected boolean hasRemoveButton() {
-        return initialModel != null;
     }
 
 }

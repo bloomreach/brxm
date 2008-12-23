@@ -18,10 +18,11 @@ package org.hippoecm.frontend.plugins.xinha.dialog.links;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.browse.AbstractBrowserPlugin;
+import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
+import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLink;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
@@ -38,7 +39,7 @@ public class ExternalLinkPlugin extends AbstractBrowserPlugin {
 
         add(form = new Form("form1"));
 
-        form.add(new TextFieldWidget("href", getBean().getPropertyModel(XinhaLink.HREF)) {
+        form.add(new TextFieldWidget("href", getLink().getPropertyModel(XinhaLink.HREF)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -47,7 +48,7 @@ public class ExternalLinkPlugin extends AbstractBrowserPlugin {
             }
         });
 
-        form.add(new TextFieldWidget("title", getBean().getPropertyModel(XinhaLink.TITLE)) {
+        form.add(new TextFieldWidget("title", getLink().getPropertyModel(XinhaLink.TITLE)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -56,7 +57,7 @@ public class ExternalLinkPlugin extends AbstractBrowserPlugin {
             }
         });
 
-        form.add(new BooleanFieldWidget("popup", new PopupModel(getBean().getPropertyModel(XinhaLink.TARGET))) {
+        form.add(new BooleanFieldWidget("popup", getLink().getTargetModel()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -65,56 +66,18 @@ public class ExternalLinkPlugin extends AbstractBrowserPlugin {
             }
         });
     }
-    
+
     @Override
     protected boolean hasRemoveButton() {
-        String href = getBean().getHref();
-        return href != null && !"".equals(href);
+        return getLink().isDetacheable();
     }
-    
+
     private void update() {
-        if (!ok.isEnabled() && (getBean().getHref() != null && getBean().getHref().length() > 0)) {
-            enableOk(true);
-            AjaxRequestTarget.get().addComponent(ok);
-        }
+        enableOk(getLink().isSubmittable());
     }
 
-    private XinhaLink getBean() {
-        return (XinhaLink) getModelObject();
-    }
-
-    class PopupModel implements IModel {
-        private static final long serialVersionUID = 1L;
-
-        private static final String NEW_WINDOW = "_blank";
-
-        private IModel wrapped;
-
-        public PopupModel(IModel wrapped) {
-            this.wrapped = wrapped;
-        }
-
-        public Object getObject() {
-            String value = (String) wrapped.getObject();
-            if (value != null && value.equals(NEW_WINDOW)) {
-                return true;
-            }
-            return false;
-        }
-
-        public void setObject(Object object) {
-            Boolean test = (Boolean) object;
-            if (test) {
-                wrapped.setObject(NEW_WINDOW);
-            } else {
-                wrapped.setObject("");
-            }
-        }
-
-        public void detach() {
-            wrapped.detach();
-        }
-
+    private ExternalXinhaLink getLink() {
+        return (ExternalXinhaLink) getModel();
     }
 
 }

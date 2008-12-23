@@ -20,9 +20,11 @@ import java.util.HashMap;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.XinhaLinkService;
-import org.hippoecm.frontend.plugins.xinha.dialog.JsBean;
+import org.hippoecm.frontend.plugins.xinha.dialog.IDialogModel;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
+import org.hippoecm.frontend.plugins.xinha.services.links.InternalXinhaLink;
+import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLink;
+import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLinkService;
 
 public class InternalLinkBehavior extends XinhaDialogBehavior {
 
@@ -38,28 +40,25 @@ public class InternalLinkBehavior extends XinhaDialogBehavior {
     @Override
     protected void configureModal(final ModalWindow modal) {
         super.configureModal(modal);
-        modal.setCookieName(null);
         modal.setInitialHeight(455);
         modal.setInitialWidth(850);
-        modal.setResizable(false);
     }
 
     @Override
-    protected JsBean newDialogModelObject(HashMap<String, String> p) {
+    protected IDialogModel newDialogModel(HashMap<String, String> p) {
         return getLinkService().create(p);
     }
 
     @Override
-    protected void onOk(JsBean bean) {
-        XinhaLink link = (XinhaLink) bean;
-        String url = getLinkService().attach(link);
-        if (url != null) {
-            link.setHref(url);
-        }
+    protected void onOk(IDialogModel model) {
+        InternalXinhaLink link = (InternalXinhaLink) model;
+        getLinkService().attach(link);
     }
 
-    private XinhaLinkService getLinkService() {
-        return context.getService(clusterServiceId + ".links", XinhaLinkService.class);
+    @Override
+    protected void onRemove(IDialogModel model) {
+        XinhaLink link = (XinhaLink) model;
+        getLinkService().detach(link);
     }
 
     @Override
@@ -67,12 +66,8 @@ public class InternalLinkBehavior extends XinhaDialogBehavior {
         return "internallinks";
     }
 
-    @Override
-    protected void onRemove(JsBean bean) {
-        XinhaLink link = (XinhaLink) bean;
-        if (getLinkService().detach(link)) {
-            link.reset();
-        }
+    private XinhaLinkService getLinkService() {
+        return context.getService(clusterServiceId + ".links", XinhaLinkService.class);
     }
 
 }

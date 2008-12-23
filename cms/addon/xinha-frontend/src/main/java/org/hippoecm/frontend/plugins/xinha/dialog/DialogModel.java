@@ -16,41 +16,103 @@
 
 package org.hippoecm.frontend.plugins.xinha.dialog;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
-public class JsBean implements IClusterable {
+public abstract class DialogModel implements IDialogModel {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private Map<String, String> initialValues;
     protected Map<String, String> values;
-    private JcrNodeModel nodeModel;
 
-    public JsBean(Map<String, String> values) {
+    private JcrNodeModel initialModel;
+    private JcrNodeModel selectedModel;
+
+    public DialogModel(Map<String, String> values, JcrNodeModel parentModel) {
         this.values = values;
-    }
-
-    public JcrNodeModel getNodeModel() {
-        return nodeModel;
-    }
-
-    public void setNodeModel(JcrNodeModel nodeModel) {
-        this.nodeModel = nodeModel;
+        
+        initialValues = new HashMap<String, String>();
+        for (Entry<String, String> e : values.entrySet()) {
+            initialValues.put(e.getKey(), e.getValue());
+        }
+        initialModel = selectedModel = createInitialModel(parentModel);
     }
     
-    public void reset() {
-        for(Entry<String, String> entry : values.entrySet()) {
-            entry.setValue("");
+    protected abstract JcrNodeModel createInitialModel(JcrNodeModel parentModel);
+
+    public boolean isSubmittable() {
+        if (selectedModel == null) {
+            return false;
+        } else if (selectedModel.equals(initialModel)) {
+            return valuesChanged();
         }
-        nodeModel = null;
+        return true;
+    }
+    
+    protected boolean valuesChanged() {
+        return !values.equals(initialValues);
     }
 
+    public boolean isDetacheable() {
+        return initialModel != null;
+    }
+    
+    public boolean isReplacing() {
+        if (selectedModel != null && initialModel != null && !selectedModel.equals(initialModel)) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isAttacheable() {
+        return initialModel == null || isReplacing();
+    }
+    
+    public JcrNodeModel getNodeModel() {
+        return selectedModel;
+    }
+    
+    public void setNodeModel(JcrNodeModel model) {
+        this.selectedModel = model;
+    }
+    
+    public JcrNodeModel getInitialModel() {
+        return initialModel;
+    }
+
+    public Map<String, String> getInitialValues() {
+        return initialValues;
+    }
+    
+    public Object getObject() {
+        return values;
+    }
+
+    public void setObject(Object object) {
+        if (object instanceof Map) {
+            values = (Map<String, String>) object;
+        }
+    }
+
+    public IModel getPropertyModel(String key) {
+        return new MapModel(key);
+    }
+
+    public void reset() {
+        for (Entry<String, String> entry : values.entrySet()) {
+            entry.setValue("");
+        }
+        initialModel = selectedModel = null;
+    }
+    
+    
     public String toJsString() {
         StringBuilder sb = new StringBuilder();
         sb.append('{');
@@ -68,11 +130,7 @@ public class JsBean implements IClusterable {
         return sb.toString();
     }
 
-    public IModel getPropertyModel(String key) {
-        return new MapModel(key);
-    }
-
-    class MapModel implements IModel {
+    private class MapModel implements IModel {
         private static final long serialVersionUID = 1L;
 
         private String key;
@@ -97,6 +155,9 @@ public class JsBean implements IClusterable {
         public void detach() {
         }
 
+    }
+
+    public void detach() {
     }
 
 }
