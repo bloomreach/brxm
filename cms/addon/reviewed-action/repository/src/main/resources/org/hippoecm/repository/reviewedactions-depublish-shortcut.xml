@@ -32,4 +32,7 @@
   <sv:property sv:name="label.title" sv:type="String">
     <sv:value>title-depublish</sv:value>
   </sv:property>
+  <sv:property sv:name="workaround" sv:type="Long">
+    <sv:value>7</sv:value>
+  </sv:property>
 </sv:node>

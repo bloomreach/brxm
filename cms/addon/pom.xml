@@ -45,6 +45,7 @@
     <module>yui</module>
     <module>cms</module>
     <module>gallery</module>
+    <module>gotolink</module>
     <module>sample</module>
     <module>search</module>
     <module>defaultcontent</module>

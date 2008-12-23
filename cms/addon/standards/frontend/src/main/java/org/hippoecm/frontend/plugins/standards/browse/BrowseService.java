@@ -41,13 +41,7 @@ public class BrowseService implements IBrowseService<IModel>, IDetachable {
     private ModelService<JcrNodeModel> folderService;
     private DocumentModelService documentService;
 
-    private IPluginContext ctx;
-    private IPluginConfig cfg;
-
     public BrowseService(final IPluginContext context, final IPluginConfig config, JcrNodeModel document) {
-
-        ctx = context;
-        cfg = config;
 
         document = findDocument(document);
 
