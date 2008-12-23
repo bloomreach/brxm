@@ -291,7 +291,7 @@ public class SecurityManager {
         statement.append(" WHERE");
         statement.append(" jcr:path LIKE '/").append(domainsPath).append("/%").append("'");
         statement.append(" AND");
-        statement.append(" CONTAINS(").append(HippoNodeType.HIPPO_USERS).append(",'").append(userId).append("')");
+        statement.append(HippoNodeType.HIPPO_USERS).append(" = '").append(userId).append("'");
         try {
             Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.SQL);
             QueryResult result = q.execute();
@@ -321,7 +321,7 @@ public class SecurityManager {
         statement.append(" WHERE");
         statement.append(" jcr:path LIKE '/").append(domainsPath).append("/%").append("'");
         statement.append(" AND");
-        statement.append(" CONTAINS(").append(HippoNodeType.HIPPO_GROUPS).append(",'").append(groupId).append("')");
+        statement.append(HippoNodeType.HIPPO_GROUPS).append(" = '").append(groupId).append("'");
         try {
             Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.SQL);
             QueryResult result = q.execute();
