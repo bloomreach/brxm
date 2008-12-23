@@ -119,7 +119,7 @@
       <sv:value>reviewedactions-publish-shortcut.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-shortcuts</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts</sv:value>
     </sv:property>
   </sv:node>
 
@@ -134,7 +134,7 @@
       <sv:value>reviewedactions-depublish-shortcut.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-shortcuts</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts</sv:value>
     </sv:property>
   </sv:node>
 

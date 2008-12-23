@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="cms-shortcuts" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+<sv:node sv:name="cms-dashshortcuts" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
   xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
   xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.2"
   xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.2"
@@ -23,6 +23,36 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:plugincluster</sv:value>
   </sv:property>
+  <sv:property sv:name="frontend:overrides" sv:type="String">
+    <sv:value>model.document</sv:value>
+  </sv:property>
+
+  <sv:node sv:name="gotoShortcut">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.gotolink.GotolinkDocumentsShortcutPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>shortcut</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>model.browse.folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="gotolink.default" sv:type="String">
+      <sv:value>/content</sv:value>
+    </sv:property>
+    <sv:property sv:name="model.document" sv:type="String">
+      <sv:value>${model.document}</sv:value>
+    </sv:property>
+    <sv:property sv:name="browser.id" sv:type="String">
+      <sv:value>BrowserPerspective</sv:value>
+    </sv:property>
+    <sv:property sv:name="workaround" sv:type="Long">
+      <sv:value>1</sv:value>
+    </sv:property>
+  </sv:node>
 
   <sv:node sv:name="documentShortcut">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -55,6 +85,9 @@
     <sv:property sv:name="browser.id" sv:type="String">
       <sv:value>BrowserPerspective</sv:value>
     </sv:property>
+    <sv:property sv:name="workaround" sv:type="Long">
+      <sv:value>2</sv:value>
+    </sv:property>
   </sv:node>
 
   <sv:node sv:name="imageGalleryShortcut">
@@ -82,6 +115,9 @@
     <sv:property sv:name="gallery.thumbnail.size" sv:type="Long">
       <sv:value>60</sv:value>
     </sv:property>
+    <sv:property sv:name="workaround" sv:type="Long">
+      <sv:value>3</sv:value>
+    </sv:property>
   </sv:node>
 
   <sv:node sv:name="assetGalleryShortcut">
@@ -105,6 +141,9 @@
     </sv:property>
     <sv:property sv:name="gallery.text" sv:type="String">
       <sv:value>add-file-label</sv:value>
+    </sv:property>
+    <sv:property sv:name="workaround" sv:type="Long">
+      <sv:value>4</sv:value>
     </sv:property>
   </sv:node>
 

@@ -307,8 +307,6 @@ padding-right: 9px;
 .hippo-header-shortcuts {padding: 4px; position: absolute; top: 0px; right: 300px}
 .hippo-header-shortcuts div div{float: left; margin-right: 8px;}
 .hippo-header-shortcuts div div a{color: white}
-.hippo-header-shortcuts div div a.publish-16{display: none;}
-.hippo-header-shortcuts div div a.depublish-16{display: none;}
 .hippo-header-shortcuts div div a.document-16{background: none}
 .hippo-header-shortcuts div div a.website-add-16{background: none}
 .hippo-header-shortcuts div div a.image-add{background: none}

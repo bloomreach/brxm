@@ -90,7 +90,7 @@
     </sv:node>
     
     <!-- CMS shortcuts perspective -->
-    <sv:node sv:name="cms-shortcuts">
+    <sv:node sv:name="cms-headshortcuts">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:initializeitem</sv:value>
         </sv:property>
@@ -98,7 +98,23 @@
             <sv:value>901</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentresource" sv:type="String">
-            <sv:value>cms-shortcuts.xml</sv:value>
+            <sv:value>cms-headshortcuts.xml</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentroot" sv:type="String">
+            <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
+        </sv:property>
+    </sv:node>
+
+    <!-- CMS shortcuts perspective -->
+    <sv:node sv:name="cms-dashshortcuts">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:initializeitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:sequence" sv:type="Double">
+            <sv:value>901</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentresource" sv:type="String">
+            <sv:value>cms-dashshortcuts.xml</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentroot" sv:type="String">
             <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
