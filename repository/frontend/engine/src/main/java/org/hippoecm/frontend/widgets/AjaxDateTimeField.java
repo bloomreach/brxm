@@ -15,18 +15,13 @@
  */
 package org.hippoecm.frontend.widgets;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.yui.calendar.DateTimeField;
-import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
@@ -37,7 +32,6 @@ public class AjaxDateTimeField extends DateTimeField {
 
     private static final long serialVersionUID = 1L;
 
-    private String amPm = "AM";
 
     public AjaxDateTimeField(String id, IModel model) {
         super(id, model);
@@ -47,25 +41,7 @@ public class AjaxDateTimeField extends DateTimeField {
         get("minutes").add(new ChangeBehaviour());
         get("amOrPmChoice").add(new ChangeBehaviour());
 
-        Calendar cal = Calendar.getInstance();
-        cal.setTime((Date) getModelObject());
-        if (cal.get(Calendar.HOUR_OF_DAY) >= 12) {
-            amPm = "PM";
-        }
-        String[] ampm = new String[] { "AM", "PM" };
-        replace(new DropDownChoice("amOrPmChoice", new PropertyModel(this, "amPm"), Arrays.asList(ampm))
-                .add(new ChangeBehaviour()));
-
         setOutputMarkupId(true);
-    }
-
-    // override Wicket methods; we don't use the convertedinput field
-    @Override
-    protected void convertInput() {
-    }
-
-    @Override
-    public void updateModel() {
     }
 
     // callback that the ChangeBehaviour calls when one of the composing fields updates
@@ -81,13 +57,9 @@ public class AjaxDateTimeField extends DateTimeField {
                 date.setZone(DateTimeZone.forTimeZone(zone));
             }
 
-            boolean use12HourFormat = use12HourFormat();
             if (hours != null) {
-                date.set(DateTimeFieldType.hourOfDay(), hours.intValue() % (use12HourFormat ? 12 : 24));
+                date.set(DateTimeFieldType.hourOfDay(), hours.intValue() % 24);
                 date.setMinuteOfHour((minutes != null) ? minutes.intValue() : 0);
-            }
-            if (use12HourFormat) {
-                date.set(DateTimeFieldType.halfdayOfDay(), amPm.equals("PM") ? 1 : 0);
             }
 
             // the date will be in the server's timezone
@@ -104,6 +76,11 @@ public class AjaxDateTimeField extends DateTimeField {
 
     private FormComponent getField(String id) {
         return (FormComponent) get(id);
+    }
+
+    @Override
+    protected boolean use12HourFormat() {
+        return false;
     }
 
     class ChangeBehaviour extends AjaxFormComponentUpdatingBehavior {
