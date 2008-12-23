@@ -111,7 +111,7 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
         nodeModel = (JcrNodeModel) plugin.getModel();
 
         final FileUploadForm simpleUploadForm = new FileUploadForm("simpleUpload");
-        add(simpleUploadForm);
+        addToForm(simpleUploadForm);
         try {
             msgText = new Model("Import content from a file to node: " + nodeModel.getNode().getPath());
             message = new Label("message", msgText);
