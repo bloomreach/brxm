@@ -86,10 +86,15 @@ public class LinkRewriter {
                 log.debug("Translated canonical path '{}' into virtual relative path '{}'", node.getPath(), newLocation);
                 return newLocation.toString();
             } else {
-                log.debug("node path ('{}')  does not start with the canonical path of repository mapping ('{}') so no rewriting.", path, pathPrefix);
+                log.debug("node path ('{}')  does not start with the canonical path of repository mapping ('{}') so no rewriting to content context path. Most like we are dealing with a binary.", path, pathPrefix);
             }
         }
-        return linkRewrite + path;
+        String prefix = "";
+        if(this.repositoryMapping.getDomainMapping().isServletContextPathInUrl()) {
+            prefix =  repositoryMapping.getDomainMapping().getServletContextPath();
+        }
+        
+        return prefix + linkRewrite + path;
     }
     
     /**
