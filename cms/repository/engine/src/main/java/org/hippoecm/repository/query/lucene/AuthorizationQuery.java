@@ -57,7 +57,7 @@ public class AuthorizationQuery {
     /**
      * The logger instance for this class
      */
-    private static final Logger log = LoggerFactory.getLogger(FacetsQuery.class);
+    private static final Logger log = LoggerFactory.getLogger(AuthorizationQuery.class);
 
     /**
      * The lucene query
@@ -69,11 +69,13 @@ public class AuthorizationQuery {
     private final Set<String> memberships = new HashSet<String>();
     private final SessionImpl session;
     private final static String MESSAGE_ZEROMATCH_QUERY = "returning a match zero nodes query";
-
+    
     public AuthorizationQuery(Subject subject, NamespaceMappings nsMappings,
             ServicingIndexingConfiguration indexingConfig, NodeTypeManager ntMgr, Session session)
             throws RepositoryException {
 
+        // set the max clauses for booleans higher than the default 1024.
+        BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
         this.nsMappings = nsMappings;
         this.indexingConfig = indexingConfig;
         this.ntMgr = ntMgr;
@@ -85,8 +87,9 @@ public class AuthorizationQuery {
         for(GroupPrincipal groupPrincipal : subject.getPrincipals(GroupPrincipal.class)) {
             memberships.add(groupPrincipal.getName());
         }
+        log.debug("----START CREATION AUTHORIZATION QUERY---------");
         this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class));
-
+        log.debug("----END CREATION AUTHORIZATION QUERY-----------");
     }
 
     private BooleanQuery initQuery(Set<FacetAuthPrincipal> facetAuths) {
@@ -97,7 +100,6 @@ public class AuthorizationQuery {
             // TODO test for facetAuthPrincipal wether 'read' is bit is set to 1 in ROLE
             FacetAuthPrincipal facetAuthPrincipal = facetAuthsIt.next();
             Iterator<DomainRule> domainRulesIt = facetAuthPrincipal.getRules().iterator();
-
             while (domainRulesIt.hasNext()) {
                 DomainRule domainRule = domainRulesIt.next();
                 Iterator<FacetRule> facetRuleIt = domainRule.getFacetRules().iterator();
@@ -112,6 +114,8 @@ public class AuthorizationQuery {
                     if (q instanceof MatchAllDocsQuery) {
                         hasMatchAllDocsQuery = true;
                     }
+                    log.debug("Adding to FacetQuery: FacetRuleQuery = {}", q);
+                    log.debug("FacetRuleQuery has {} clauses.", (q instanceof BooleanQuery)? ((BooleanQuery)q).getClauses().length : 1   );
                     facetQuery.add(q, Occur.MUST);
                 }
                 if (domainRule.getFacetRules().size() == 1 && hasMatchAllDocsQuery) {
@@ -123,9 +127,15 @@ public class AuthorizationQuery {
                             + "MatchAllDocsQuery: return empty booleanQuery because user is allowed to see all");
                     return new BooleanQuery(true);
                 }
+                log.debug("Adding to Authorization query: FacetQuery = {}", facetQuery);
+                log.debug("FacetQuery has {} clauses.", facetQuery.getClauses().length);
                 authQuery.add(facetQuery, Occur.SHOULD);
             }
         }
+
+        log.debug("Authorization query is : " + authQuery);
+        log.debug("Authorization query has {} clauses", authQuery.getClauses().length);
+        
         return authQuery;
     }
 
