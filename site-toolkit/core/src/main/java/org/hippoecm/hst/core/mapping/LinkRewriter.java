@@ -63,7 +63,15 @@ public class LinkRewriter {
         depth = this.path.split("/").length;
     }
 
-    public String getLocation(Node node) throws RepositoryException{
+    public String getLocation(Node node, boolean isBinary) throws RepositoryException{
+        String path = node.getPath();
+        if(isBinary) {
+            String prefix = "";
+            if(this.repositoryMapping.getDomainMapping().isServletContextPathInUrl()) {
+                prefix =  repositoryMapping.getDomainMapping().getServletContextPath();
+            }
+            return prefix + linkRewrite + path;
+        }
         if(isExactMatch || !isPrefix) {
             StringBuffer newLocation = new StringBuffer(repositoryMapping.getPrefix());
             if(this.repositoryMapping.getDomainMapping().isServletContextPathInUrl()) {
@@ -72,7 +80,7 @@ public class LinkRewriter {
             newLocation.append(linkRewrite);
             return newLocation.toString();
         } 
-        String path = node.getPath();
+        
         String pathPrefix = repositoryMapping.getCanonicalContentPath();
         if(pathPrefix != null) {
             if(path.startsWith(pathPrefix)) {

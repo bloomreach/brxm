@@ -219,7 +219,6 @@ public class URLMappingImpl implements URLMapping {
     }
 
     private Link rewriteLocation(Node node, String sitemap, boolean secondTry, HstRequestContext hstRequestContext, boolean external, RepositoryMapping newRepositoryMapping) {
-        long start = System.currentTimeMillis();
         String rewritePath = null;
         String path = "";
         String rewrite = null;
@@ -352,7 +351,7 @@ public class URLMappingImpl implements URLMapping {
                 if (bestRewriter == null) {
                     log.warn("No matching linkrewriter found for path '" + path + "'. Return node path.");
                 } else {
-                    rewrite = bestRewriter.getLocation(node);
+                    rewrite = bestRewriter.getLocation(node, isBinary);
                 }
             }
 
