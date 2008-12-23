@@ -38,7 +38,7 @@ public class JcrTreeNode extends AbstractTreeNode {
 
     private static final long serialVersionUID = 1L;
 
-    private final static int MAXCOUNT = 250;
+    private final static int MAXCOUNT = 1000;
 
     private JcrTreeNode parent;
 
