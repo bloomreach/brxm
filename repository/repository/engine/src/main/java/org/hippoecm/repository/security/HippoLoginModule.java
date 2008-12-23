@@ -317,9 +317,11 @@ public class HippoLoginModule implements LoginModule {
             }
             log.info("User {} has perms {} for domain {} ", new Object[] { userId, perms, domain.getName() });
 
-            // create and add facet auth principal
-            FacetAuthPrincipal fap = new FacetAuthPrincipal(domain.getName(), domain.getDomainRules(), roles, perms);
-            principals.add(fap);
+            if (perms > 0) {
+                // create and add facet auth principal
+                FacetAuthPrincipal fap = new FacetAuthPrincipal(domain.getName(), domain.getDomainRules(), roles, perms);
+                principals.add(fap);
+            }
         }
     }
 }
