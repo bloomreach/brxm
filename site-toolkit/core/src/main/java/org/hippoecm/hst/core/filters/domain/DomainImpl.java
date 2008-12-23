@@ -71,7 +71,7 @@ public class DomainImpl implements Domain {
         }
         
         if (pattern.equals(serverName)) {
-            log.debug("Found an exact host match for {}  --> {} ", pattern , serverName );
+            log.info("Found an exact host match for {}  --> {} ", pattern , serverName );
             return true;
         }
         
@@ -91,7 +91,7 @@ public class DomainImpl implements Domain {
             int testUntill = serverNameParts.length - segments.length;
             for(int i = serverNameParts.length-1; i >=testUntill; i--) {
                 if(i == testUntill && segments[i-testUntill].equals(Domain.WILDCARD)) {
-                   log.debug("Match: ServerName '{}' does match pattern '{}'", serverName, pattern);
+                   log.info("Match: ServerName '{}' does match pattern '{}'", serverName, pattern);
                    return true;
                 }
                 else if(serverNameParts[i].equals(segments[i-testUntill]) || segments[i-testUntill].equals(Domain.WILDCARD)){

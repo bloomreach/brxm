@@ -38,8 +38,8 @@ public class DomainMappingImpl implements DomainMapping{
     private boolean isPortInUrl;
     private int port;
 
-    private Map domainsCache = Collections.synchronizedMap(new LRUMap(500));
-    private Map repositoryMappingCache = Collections.synchronizedMap(new LRUMap(500));
+    private Map domainsCache = Collections.synchronizedMap(new LRUMap(1000));
+    private Map repositoryMappingCache = Collections.synchronizedMap(new LRUMap(2000));
     
     // TODO for now hardcoded paths to binary location. This information is needed to rewrite urls to subsites with another domain
     private String[] binaryLocations = new String[]{"/content/gallery", "/content/assets"};
@@ -91,8 +91,10 @@ public class DomainMappingImpl implements DomainMapping{
                 if(domainMappingNode.hasProperty("hst:port")) {
                     this.setPort((int)domainMappingNode.getProperty("hst:port").getLong());
                 }
-                
+                long start = System.currentTimeMillis();
                 createDomainPatterns(domainMappingNode, domains, "", 1, new ArrayList<String>());
+                
+                log.debug("Creating all domain patterns took {} ms.", System.currentTimeMillis()-start);
                 orderedDomains = domains.toArray(new Domain[domains.size()]);
                 Arrays.sort(orderedDomains);
                 if(this.primaryDomain == null) {
@@ -120,10 +122,11 @@ public class DomainMappingImpl implements DomainMapping{
         if(depth > 8) {
             log.warn("Reached the maximum depth for domain mapping. Skipping deeper paths");
         }
-        
+        int i = 0;
         while(mappings.hasNext()) {
             Node mappingNode = mappings.nextNode();
             if(mappingNode != null) {
+                long start = System.currentTimeMillis();
                 if( !(mappingNode.isNodeType("hst:domainmapping") || mappingNode.isNodeType("hst:redirectmapping"))) {
                     log.warn("Skipping node '{}' because node is not of type 'hst:domainmapping' or 'hst:redirectmapping' " , mappingNode.getPath());
                     continue;
@@ -186,6 +189,7 @@ public class DomainMappingImpl implements DomainMapping{
                 } catch(DomainException e){
                     log.warn("DomainException Skipping domain mapping node '{}' : {}", mappingNode.getPath(), e.getMessage());
                 }
+                log.debug("Creating domain took {} ms", System.currentTimeMillis() - start);
             }
         }
     }
@@ -196,16 +200,22 @@ public class DomainMappingImpl implements DomainMapping{
         {
             return (Domain)d;
         }
+        long start = System.currentTimeMillis();
         if(serverName == null) {
             log.warn("Cannot match serverName because is null");
             return null;
         }
         log.debug("Trying to find a matching domain for '{}'", serverName);
         
+        // do the lowercase and split outside the loop for performance.
+        String lCaseName = serverName.toLowerCase();
+        String[] splittedServerName = serverName.split(Domain.DELIMITER);
+        
         for(Domain domain : orderedDomains) {
-            if(domain.match(serverName.toLowerCase(), serverName.split(Domain.DELIMITER))) {
-                log.debug("found matching domain for '{}' --> '{}'", serverName, domain.getPattern());
+            if(domain.match(lCaseName, splittedServerName)) {
+                log.info("found matching domain for '{}' --> '{}'", serverName, domain.getPattern());
                 domainsCache.put(serverName, domain);
+                log.debug("Matching serverName {} to domain {} took " +(System.currentTimeMillis() - start)+ " ms.", serverName, domain.getPattern());
                 return domain;
             }
         } 
@@ -289,6 +299,7 @@ public class DomainMappingImpl implements DomainMapping{
             }
         }
         if(!matchingRepositoryMapping.isEmpty()) {
+            
             // find the repository mapping that belongs to the domain that best resembles the current domain. 
             RepositoryMapping bestRepositoryMapping = null;
             int bestScore = 0;
@@ -302,8 +313,9 @@ public class DomainMappingImpl implements DomainMapping{
                     bestRepositoryMapping = repositoryMapping;
                 }
             }
-            
             repositoryMappingCache.put(cacheKey, bestRepositoryMapping);
+            log.info("For repositorypath {} and domain: {} \nwe found a the following best mapping: " , repositoryPath, currentDomain);
+            log.info("Domain {} \nRepository mapping: {}" , bestRepositoryMapping.getDomain(), bestRepositoryMapping.getPrefix()+":"+bestRepositoryMapping.getPath());
             return bestRepositoryMapping;
         }
         log.warn("No repository mapping with a host without wildcards can be found for '{}'", repositoryPath);
