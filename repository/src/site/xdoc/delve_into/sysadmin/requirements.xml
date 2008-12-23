@@ -34,78 +34,35 @@
    <td>
      <span class='admin-48 icon-48'/>
    </td>
-          <td>
+   <td>
+    <p>   
               Hippo CMS runs on all modern operating systems
               that run <a href='http://www.sun.com/'>Sun</a>'s 
               <span class='expires'>Java 6 (or 5)</span> 
               correctly.
-    </td>
-         </tr>
-
-
-         <tr>
-          <td>
-           Tested
-          </td>
-   <td>
-     <span class='tested-48 icon-48'/>
-   </td>
-          <td>Hippo continuously tests Hippo CMS on 
+    </p>
   <ul>
+   <img src='/images/windows_icon.png' alt='MS windows logo'/>
    <li><a href='http://www.microsoft.com/windows/windows-xp/default.aspx'>Microsoft Windows XP</a></li>
-   <li>and Linux: 
+   <li><a href='http://www.microsoft.com/windows/TODO'>Microsoft Server 2003</a></li>
+   <li>and <a href='http://www.linux.org/'>Linux</a> with a kernel >= 2.6: 
     <ul>
-      <li><a href='http://www.ubuntu.com/'>Ubuntu</a>,</li> 
-      <li><a href='http://www.slackware.com/'>Slackware</a> and</li> 
-      <li><a href='http://www.debian.org'>Debian</a>.</li>
+      <li>
+       <a href='http://www.redhat.com/rhel/'><img src='../../../images/redhat_icon.png' alt='Redhat logo'/></a>
+       <a href='http://www.redhat.com/rhel/'>Redhat Enterprise Linux 5</a>
+      </li>
+      <li>
+       <a href='http://www.novell.com/products/desktop/'><img src='../../images/suse_icon.png' alt='Suse logo'/></a>
+       <a href='http://www.novell.com/products/desktop/'>SUSE Linux Enterprise Desktop 10</a></li> 
+      <li><a href='http://www.ubuntu.com/'>Ubuntu 8.10 (newest) and 8.04 LTS (Long Term Support version)</a></li>
+      <li><a href='http://www.debian.org'>Debian 4.0</a></li>
+      <li><a href='http://www.slackware.com/'>Slackware 12.2</a></li> 
     </ul>
    </li>
-   <li>Hippo CMS is also tested on other systems.</li>
   </ul>
           </td>
      </tr>
 
-
-         <tr>
-          <td>Support
-          </td>
-   <td>
-     <span class='support-48 icon-48'/>
-   </td>
-
-          <td>Hippo will support running Hippo CMS on all 
-              modern 
-              <a href='http://www.microsoft.com'>Microsoft</a> Windows 
-              and 
-              <a href='http://www.linux.org/'>Linux</a> 
-              systems:
-
-            <ul>
-             <li><a href='http://www.microsoft.com/windows/windows-xp/default.aspx'>Microsoft XP</a>, 
-             </li>
-             <li><a href='http://www.microsoft.com/windows/windows-vista/default.aspx'>Microsoft Vista</a>, 
-             </li>
-             <li><a href='http://technet.microsoft.com/en-us/windowsserver/2000/default.aspx'>Microsoft 2000</a>, 
-             </li>
-             <li><a href='http://www.microsoft.com/windowsserver2003/default.mspx'>MicrosoftServer 2003</a>, 
-             </li>
-             <li><a href='http://www.linux.org/'>Linux</a>: 
-             </li>
-             <li><a href='http://www.ubuntu.com/'>Ubuntu</a>, 
-             </li>
-             <li><a href='http://www.debian.org'>Debian</a>, 
-             </li>
-             <li><a href='http://www.slackware.com/'>Slackware</a>, 
-             </li>
-             <li><a href='http://www.redhat.com/'>Redhat</a>, 
-             </li>
-             <li><a href='http://www.novell.com/linux/'>Suse</a>, etc... 
-             </li>
-             <li>Support for other systems is also possible.
-             </li>
-        </ul>
-          </td>
-    </tr>
     </table>
       </subsection>
 
@@ -124,22 +81,10 @@
           The Java Development Kit (JDK) contains the JVM.
    </td>
     </tr>
-         <tr>
-          <td>
-           Tested
-          </td>
-   <td>
-     <span class='tested-48 icon-48'/>
-   </td>
-          <td>Hippo continuously tests Hippo CMS with 
-              <a href='http://java.com/en/download/index.jsp'>Java JVM 5 and 6 as 
-              supplied by Sun Microsystems</a>. 
-          </td>
-    </tr>
-      <tr>
-       <td>
-         Acquire
-       </td>
+    <tr>
+     <td>
+       Acquire
+     </td>
    <td>
      <span class='acquire-48 icon-48'/>
    </td>
