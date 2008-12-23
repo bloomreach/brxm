@@ -75,7 +75,7 @@
   </release>
 
 
-  <release version="1.0.0" date="2008-12-19" description="First public release">   
+  <release version="7.0" date="2008-12-19" description="First public release">   
 
    <action type="update" dev="acahn">
     Scheduled publication, an improved publication feature for CMS editors.
@@ -96,27 +96,27 @@
    <action type='fix' issue='HREPTWO-1913' dev='acahn'>Fixed: Upgradability improvements regarding issues surfaced on customer data.</action>
    <action type='fix' issue='HREPTWO-1918' dev='acahn'>Fixed: Prototypes containing facetselect give error in the CMS when new document is created.</action>
    <action type='fix' issue='HREPTWO-1919' dev='acahn'>Fixed: Layoutmanager miscalculates available dimensions in browser window.</action>
-   <action type='fix' issue='HREPTWO-1920' dev='acahn'>Fixed: Refactor YuiBehaviors.</action>
+   <action type='fix' issue='HREPTWO-1920' dev='acahn'>YuiBehaviors Refactored.</action>
    <action type='fix' issue='HREPTWO-1921' dev='acahn'>Fixed: YuiHeaderContributor falsely assumes registered YuiContext's are rendered in order registered.</action>
-   <action type='fix' issue='HREPTWO-1923' dev='acahn'>Fixed: TabbedPanel should output markupId.</action>
-   <action type='fix' issue='HREPTWO-1924' dev='acahn'>Fixed: Remove YUI 2.5.2 sources from YUI subprojects.</action>
+   <action type='fix' issue='HREPTWO-1923' dev='acahn'>TabbedPanel now outputs markupId.</action>
+   <action type='fix' issue='HREPTWO-1924' dev='acahn'>YUI 2.5.2 sources from YUI subprojects removed.</action>
    <action type='add' issue='HREPTWO-1926' dev='acahn'>Add node name encode / decode.</action>
-   <action type='fix' issue='HREPTWO-1927' dev='acahn'>Fixed: YuiJavascript Setting class should provide custom equals method.</action>
+   <action type='add' issue='HREPTWO-1927' dev='acahn'>YuiJavascript Setting class now provides custom equals method.</action>
    <action type='fix' issue='HREPTWO-1928' dev='acahn'>Improved access check on deleted nodes.</action>
    <action type='fix' issue='HREPTWO-1930' dev='acahn'>Fixed: Initialization in LocalHippoRepository falsely ignores nodes with only contentdelete.</action>
    <action type='fix' issue='HREPTWO-1933' dev='acahn'>Support for user and group names with spaces.</action>
-   <action type='fix' issue='HREPTWO-1934' dev='acahn'>Fixed: Make ldap usernames case insensitive.</action>
+   <action type='fix' issue='HREPTWO-1934' dev='acahn'>ldap usernames now case insensitive.</action>
    <action type='fix' issue='HREPTWO-1936' dev='acahn'>Fixed: Mirrors are not inherited correctly for preview / live documents.</action>
-   <action type='fix' issue='HREPTWO-1938' dev='acahn'>Fixed: Encode/decode node name in CMS using NodeNameCodec to encode characters only when needed.</action>
+   <action type='fix' issue='HREPTWO-1938' dev='acahn'>Encode/decode of node name in CMS using NodeNameCodec to encode characters now only when needed.</action>
    <action type='fix' issue='HREPTWO-1941' dev='acahn'>Fixed: Properly use ldap connection pooling.</action>
    <action type='fix' issue='HREPTWO-1942' dev='acahn'>Fixed: Performance of checked decorating layer repository has significant performance impact.</action>
    <action type='fix' issue='HREPTWO-1944' dev='acahn'>All function now published as current solution.</action>
    <action type='fix' issue='HREPTWO-1949' dev='acahn'>Fixed: Default Xinha plugins should load buttons into Xinha toolbar according to Xinha.plugins property.</action>
-   <action type='fix' issue='HREPTWO-1950' dev='acahn'>Fixed: Reduce CPU usage serialization wicket.</action>
+   <action type='fix' issue='HREPTWO-1950' dev='acahn'>CPU usage of serialization wicket is reduced.</action>
    <action type='fix' issue='HREPTWO-1953' dev='acahn'>Fixed: Prevent NPE in LdapUtils and lower default save interval to prevent hickups.</action>
-   <action type='fix' issue='HREPTWO-1955' dev='acahn'>Fixed: Disabled virtual layer during startup as prevention measure and to suppress warnings.</action>
+   <action type='fix' issue='HREPTWO-1955' dev='acahn'>Disabled virtual layer during startup as prevention measure and to suppress warnings.</action>
    <action type='fix' issue='HREPTWO-1965' dev='acahn'>Security backends now case aware and case configurable.</action>
-   <action type='fix' issue='HREPTWO-1967' dev='acahn'>Fixed: Fix JackRabbit version to 1.4 to overcome wrong maven release of 1.5.</action>
+   <action type='fix' issue='HREPTWO-1967' dev='acahn'>Fixed JackRabbit version to 1.4 to overcome wrong maven release of 1.5.</action>
    <action type='fix' issue='HREPTWO-1969' dev='acahn'>Fixed: When user/groupname length relative small then user/group created in the wrong place.</action>
    <action type='fix' issue='HREPTWO-1970' dev='acahn'>Editor role now has write permissions by default.</action>
    <action type='fix' issue='HREPTWO-1971' dev='acahn'>Image picker now handles names with hash sign in them.</action>
