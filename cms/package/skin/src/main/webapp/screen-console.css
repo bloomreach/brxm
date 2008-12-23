@@ -16,7 +16,7 @@ body{padding: 15px;}
 
 .hippo-console-editor{overflow: auto; height: 900px;}
 
-.hippo-console-tree .hippo-tree{overflow: auto; height: 900px; padding-bottom: 30px; font-size: 13px; width: 465px; padding-top: 4px;}
+.hippo-console-tree .hippo-tree{overflow: auto; height: 900px; padding-bottom: 30px; font-size: 13px; width: 465px; padding-top: 24px;}
 .hippo-console-tree .wicket-tree a{color: #666666}
 .hippo-console-tree .wicket-tree a:hover{color: #32629b}
 .hippo-console .wicket-tree *{font-family: monospace}
