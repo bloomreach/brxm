@@ -24,7 +24,6 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.IModel;
@@ -45,12 +44,16 @@ public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
 
     static final Logger log = LoggerFactory.getLogger(CndImportDialog.class);
 
+    private FileUploadField fileUploadField;
+
     Component message;
     Model msgText;
 
     public CndImportDialog(MenuPlugin plugin) {
-        final FileUploadForm simpleUploadForm = new FileUploadForm("simpleUpload");
-        add(simpleUploadForm);
+        setMultiPart(true);
+        setAjaxSubmit(false);
+        add(fileUploadField = new FileUploadField("fileInput"));
+
         msgText = new Model("Import a CND file.");
         message = new Label("message", msgText);
         cancel.setVisible(false);
@@ -61,49 +64,34 @@ public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
         return new Model("Import node type definition file");
     }
 
+    @Override
+    protected void onSubmit() {
+        final FileUpload upload = fileUploadField.getFileUpload();
+        if (upload != null) {
+            msgText.setObject("File uploaded.");
 
-    /**
-     * Form the upload.
-     */
-    private class FileUploadForm extends Form {
-        private static final long serialVersionUID = 1L;
+            // create initialize node
+            try {
+                Node rootNode = ((UserSession) Session.get()).getJcrSession().getRootNode();
+                Node initNode = rootNode.getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH);
 
-        private FileUploadField fileUploadField;
-
-        public FileUploadForm(String name) {
-            super(name);
-            setMultiPart(true);
-            add(fileUploadField = new FileUploadField("fileInput"));
-        }
-
-        @Override
-        protected void onSubmit() {
-            final FileUpload upload = fileUploadField.getFileUpload();
-            if (upload != null) {
-                msgText.setObject("File uploaded.");
-
-                // create initialize node
-                try {
-                    Node rootNode = ((UserSession) Session.get()).getJcrSession().getRootNode();
-                    Node initNode = rootNode.getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH);
-
-                    if (initNode.hasNode("import-cnd")) {
-                        initNode.getNode("import-cnd").remove();
-                    }
-                    Node node = initNode.addNode("import-cnd", HippoNodeType.NT_INITIALIZEITEM);
-
-                    try {
-                        node.setProperty(HippoNodeType.HIPPO_NODETYPES, new BufferedInputStream(upload.getInputStream()));
-                        rootNode.getSession().save();
-                        msgText.setObject("initialize node saved.");
-                    } catch (IOException e) {
-                        msgText.setObject("initialize node saved.");
-
-                    }
-                } catch (RepositoryException e) {
-                    log.error("Error while creating nodetypes initialization node: ", e);
-                    throw new RuntimeException(e.getMessage());
+                if (initNode.hasNode("import-cnd")) {
+                    initNode.getNode("import-cnd").remove();
                 }
+                Node node = initNode.addNode("import-cnd", HippoNodeType.NT_INITIALIZEITEM);
+
+                try {
+                    node.setProperty(HippoNodeType.HIPPO_NODETYPES, new BufferedInputStream(upload.getInputStream()));
+                    rootNode.getSession().save();
+                    msgText.setObject("initialize node saved.");
+                } catch (IOException e) {
+                    msgText.setObject("initialize node saved.");
+
+                }
+                closeDialog();
+            } catch (RepositoryException e) {
+                log.error("Error while creating nodetypes initialization node: ", e);
+                error("Error while creating nodetypes initialization node.");
             }
         }
     }

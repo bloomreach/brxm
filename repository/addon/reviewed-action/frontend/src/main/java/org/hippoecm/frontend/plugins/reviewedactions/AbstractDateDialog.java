@@ -18,11 +18,13 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 import java.util.Date;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.widgets.AjaxDateTimeField;
@@ -35,7 +37,7 @@ public abstract class AbstractDateDialog extends AbstractWorkflowDialog {
 
     protected Date date;
 
-    protected AjaxLink now;
+    protected Button now;
 
     public AbstractDateDialog(AbstractWorkflowPlugin workflowPlugin, IModel question, Date date) {
         super(workflowPlugin);
@@ -45,11 +47,11 @@ public abstract class AbstractDateDialog extends AbstractWorkflowDialog {
 
         add(new AjaxDateTimeField("value", new PropertyModel(this, "date")));
 
-        now = new AjaxLink("now") {
+        now = new AjaxButton(getButtonId()) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onSubmit(AjaxRequestTarget target, Form form) {
                 AbstractDateDialog.this.date = null;
                 try {
                     ok();
@@ -60,36 +62,12 @@ public abstract class AbstractDateDialog extends AbstractWorkflowDialog {
                     if (log.isDebugEnabled()) {
                         log.debug("Error from repository: ", e);
                     }
-                    setException(msg);
-                    target.addComponent(exceptionLabel);
+                    error(msg);
                     e.printStackTrace();
                 }
             }
-
-            @Override
-            protected IAjaxCallDecorator getAjaxCallDecorator() {
-                return new IAjaxCallDecorator() {
-                    private static final long serialVersionUID = 1L;
-
-                    public CharSequence decorateOnFailureScript(CharSequence script) {
-                        return getScript("none") + script;
-                    }
-
-                    public CharSequence decorateOnSuccessScript(CharSequence script) {
-                        return getScript("none") + script;
-                    }
-
-                    public CharSequence decorateScript(CharSequence script) {
-                        return getScript("block") + script;
-                    }
-
-                    private String getScript(String state) {
-                        String id = indicator.getMarkupId();
-                        return "document.getElementById('" + id + "').style.display = '" + state + "';";
-                    }
-                };
-            }
         };
-        add(now);
+        now.add(new Label("label", new ResourceModel("now")));
+        addButton(now);
     }
 }

@@ -27,6 +27,7 @@ import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
+import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -126,7 +127,8 @@ class UploadForm extends Form {
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 try {
                     Node galleryNode = uploadDialog.getGalleryNode();
-                    GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(this.uploadDialog.getWorkflowCategory(), galleryNode);
+                    GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(this.uploadDialog
+                            .getWorkflowCategory(), galleryNode);
                     Document document = workflow.createGalleryItem(NodeNameCodec.encode(filename, true), type);
                     Node node = (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
                     Item item = node.getPrimaryItem();
@@ -159,22 +161,17 @@ class UploadForm extends Form {
                     uploadDialog.getWizardModel().next();
                 } catch (MappingException ex) {
                     Gallery.log.error(ex.getMessage());
-                    this.uploadDialog.setException(new StringResourceModel("workflow-error-label", this, null)
-                            .getString()
-                            + ex.getMessage());
+                    error(new StringResourceModel("workflow-error-label", this, null).getString());
                 } catch (RepositoryException ex) {
                     Gallery.log.error(ex.getMessage());
-                    this.uploadDialog.setException(new StringResourceModel("workflow-error-label", this, null)
-                            .getString()
-                            + ex.getMessage());
+                    error(new StringResourceModel("workflow-error-label", this, null).getString());
                 }
             } catch (IOException ex) {
                 Gallery.log.info("upload of image truncated");
-                this.uploadDialog.setException((new StringResourceModel("upload-failed-label", this, null).getString())
-                        + " " + ex.getMessage());
+                error((new StringResourceModel("upload-failed-label", this, null).getString()));
             }
         } else {
-            this.uploadDialog.setException(new StringResourceModel("no-file-uploaded-label", this, null).getString());
+            error(new StringResourceModel("no-file-uploaded-label", this, null).getString());
         }
     }
 
