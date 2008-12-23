@@ -23,15 +23,12 @@
     <div class="hippo-window">
       <div class="hippo-root">
         <form wicket:id="form">
+          <div wicket:id="feedback"/>
           <wicket:child/>
           <div class="hippo-window-buttons">
-            <div class="hippo-window-exception" wicket:id="exception"/>
-            <button wicket:id="ok">
-              <wicket:message key="ok"/>
-            </button>
-            <button wicket:id="cancel">
-              <wicket:message key="cancel"/>
-            </button>
+            <wicket:container wicket:id="buttons">
+              <button wicket:id="button"><span wicket:id="label"></span></button>
+            </wicket:container>
           </div>
         </form>
       </div>

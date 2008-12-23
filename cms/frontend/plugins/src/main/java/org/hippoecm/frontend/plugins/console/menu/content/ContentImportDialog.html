@@ -15,37 +15,40 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <span wicket:id="message"></span>
-    <br/>
-    <br/>
-    <form wicket:id="simpleUpload">
-    
     <p>
-          <legend><strong>UUID resolution: </strong></legend>
-          <fieldset>
-            <select wicket:id="uuidBehaviors"/>
-          </fieldset>
+      <legend>
+        <strong>UUID resolution: </strong>
+      </legend>
+      <fieldset>
+        <select wicket:id="uuidBehaviors"/>
+      </fieldset>
     </p>
     <p>
-          <legend><strong>Merge behavior: </strong></legend>
-          <fieldset>
-            <select wicket:id="mergeBehaviors"/>
-          </fieldset>
+      <legend>
+        <strong>Merge behavior: </strong>
+      </legend>
+      <fieldset>
+        <select wicket:id="mergeBehaviors"/>
+      </fieldset>
     </p>
     <p>
-          <legend><strong>References resolution: </strong></legend>
-          <fieldset>
-            <select wicket:id="derefBehaviors"/>
-          </fieldset>
+      <legend>
+        <strong>References resolution: </strong>
+      </legend>
+      <fieldset>
+        <select wicket:id="derefBehaviors"/>
+      </fieldset>
     </p>
     <p>
-            <legend><strong>Upload form: </strong></legend>
-          <fieldset>
-                <label for="upload"><strong>File: </strong></label>
-                <input wicket:id="fileInput" id="upload" type="file"/>
-            <input type="submit" value="Import"/>
-          </fieldset>
+      <legend>
+        <strong>Upload form: </strong>
+      </legend>
+      <fieldset>
+        <label for="upload">
+          <strong>File: </strong>
+        </label>
+        <input wicket:id="fileInput" id="upload" type="file"/>
+      </fieldset>
     </p>
-    </form>
   </wicket:extend>
 </html>
