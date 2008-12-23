@@ -15,14 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.xinha.dialog;
 
-import java.io.Serializable;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IPluginControl;
@@ -114,10 +111,6 @@ public abstract class DialogBehavior extends AbstractDefaultAjaxBehavior impleme
 
     protected abstract String getServiceId();
 
-    protected IModel newDialogModel() {
-        return new Model(newDialogModelObject());
-    }
-    
-    protected abstract Serializable newDialogModelObject();
+    protected abstract IDialogModel newDialogModel();
 
 }

@@ -20,9 +20,10 @@ import java.util.HashMap;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.XinhaImageService;
-import org.hippoecm.frontend.plugins.xinha.dialog.JsBean;
+import org.hippoecm.frontend.plugins.xinha.dialog.IDialogModel;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
+import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImage;
+import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImageService;
 
 public class ImagePickerBehavior extends XinhaDialogBehavior {
     @SuppressWarnings("unused")
@@ -39,11 +40,10 @@ public class ImagePickerBehavior extends XinhaDialogBehavior {
         super.configureModal(modal);
         modal.setInitialHeight(455);
         modal.setInitialWidth(850);
-        modal.setResizable(false);
     }
     
     @Override
-    protected JsBean newDialogModelObject(HashMap<String, String> p) {
+    protected IDialogModel newDialogModel(HashMap<String, String> p) {
         return getImageService().createXinhaImage(p);
     }
 
@@ -53,17 +53,14 @@ public class ImagePickerBehavior extends XinhaDialogBehavior {
     }
 
     @Override
-    protected void onOk(JsBean bean) {
-        XinhaImage xi = (XinhaImage) bean;
-        String url = getImageService().attach(xi);
-        if (url != null) {
-            xi.setUrl(url);
-        }
+    protected void onOk(IDialogModel model) {
+        XinhaImage xi = (XinhaImage) model;
+        getImageService().attach(xi);
     }
 
     @Override
-    protected void onRemove(JsBean bean) {
-        XinhaImage img = (XinhaImage)bean;
+    protected void onRemove(IDialogModel model) {
+        XinhaImage img = (XinhaImage) model;
         if (getImageService().detach(img)) {
             img.reset();
         }

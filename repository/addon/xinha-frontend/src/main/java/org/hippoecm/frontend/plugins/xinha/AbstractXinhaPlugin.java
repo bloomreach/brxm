@@ -54,6 +54,8 @@ import org.hippoecm.frontend.plugins.xinha.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.ExternalLinkBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.InternalLinkBehavior;
 import org.hippoecm.frontend.plugins.xinha.dragdrop.XinhaDropBehavior;
+import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImageService;
+import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLinkService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -116,10 +118,26 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             String serviceId = context.getReference(this).getServiceId();
             context.registerService(dialog, serviceId + ".dialog");
 
-            imageService = new XinhaImageService(configuration, nodeModel);
+            imageService = new XinhaImageService(nodeModel) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected String getXinhaName() {
+                    return configuration.getName();
+                }
+
+            };
             context.registerService(imageService, serviceId + ".images");
 
-            linkService = new XinhaLinkService(configuration, nodeModel);
+            linkService = new XinhaLinkService(nodeModel) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected String getXinhaName() {
+                    return configuration.getName();
+                }
+
+            };
             context.registerService(linkService, serviceId + ".links");
 
             fragment.add(imagePickerBehavior = new ImagePickerBehavior(context, config, serviceId));

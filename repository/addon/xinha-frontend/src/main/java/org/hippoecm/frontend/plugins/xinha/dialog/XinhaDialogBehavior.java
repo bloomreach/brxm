@@ -1,13 +1,11 @@
 package org.hippoecm.frontend.plugins.xinha.dialog;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.wicket.Request;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -23,7 +21,7 @@ public abstract class XinhaDialogBehavior extends DialogBehavior {
     @Override
     protected void configureModal(final ModalWindow modal) {
         modal.setResizable(false);
-        modal.setCookieName("XinhaDialog" + getId());
+        modal.setCookieName(null);
     }
 
     @Override
@@ -32,7 +30,7 @@ public abstract class XinhaDialogBehavior extends DialogBehavior {
     }
 
     @Override
-    protected Serializable newDialogModelObject() {
+    protected IDialogModel newDialogModel() {
         Request request = RequestCycle.get().getRequest();
         HashMap<String, String> p = new HashMap<String, String>();
         Map<String, String> requestParams = request.getRequestParameters().getParameters();
@@ -41,24 +39,23 @@ public abstract class XinhaDialogBehavior extends DialogBehavior {
                 p.put(key.substring(AbstractXinhaPlugin.XINHA_PARAM_PREFIX.length()), request.getParameter(key));
             }
         }
-        return newDialogModelObject(p);
+        return newDialogModel(p);
     }
 
-    private JsBean getBean() {
-        IModel model = modelService.getModel();
-        return (JsBean) model.getObject();
+    private IDialogModel getDialogModel() {
+        return (IDialogModel) modelService.getModel();
     }
     
     public String onDialogOk() {
-        JsBean bean = getBean();
-        onOk(bean);
-        return bean.toJsString();
+        IDialogModel model = getDialogModel();
+        onOk(model);
+        return model.toJsString();
     }
 
     public String onDialogRemove() {
-        JsBean bean = getBean();
-        onRemove(bean);
-        return bean.toJsString();
+        IDialogModel model = getDialogModel();
+        onRemove(model);
+        return model.toJsString();
     }
     
     @Override
@@ -66,11 +63,11 @@ public abstract class XinhaDialogBehavior extends DialogBehavior {
         return "cms-pickers/" + getId();
     }
     
-    protected abstract JsBean newDialogModelObject(HashMap<String, String> p);
+    protected abstract IDialogModel newDialogModel(HashMap<String, String> p);
 
-    protected abstract void onOk(JsBean bean);
+    protected abstract void onOk(IDialogModel model);
 
-    protected abstract void onRemove(JsBean bean);
+    protected abstract void onRemove(IDialogModel model);
 
     protected abstract String getId();
 

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.xinha.dialog.images;
+package org.hippoecm.frontend.plugins.xinha.services.images;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +54,7 @@ public class ImageItemFactory implements IClusterable {
     public ImageItem createImageItem(Map<String, String> values) {
         String urlValue = values.get(XinhaImage.URL);
         if (urlValue != null) {
+            urlValue = XinhaUtil.decode(urlValue);
             if (urlValue.startsWith(BINARIES_PREFIX)) {
                 // find the nodename of the facetselect
                 String resourcePath = urlValue.substring(BINARIES_PREFIX.length());
@@ -63,7 +64,9 @@ public class ImageItemFactory implements IClusterable {
                     try {
                         Node imageNode = linkedImageModel.getNode().getCanonicalNode();
                         if (imageNode != null) {
-                            return createImageItem(imageNode);
+                            ImageItem item = createImageItem(imageNode);
+                            item.setFacetName(virtualImageNode.getParent().getName());
+                            return item;
                         }
                     } catch (RepositoryException e) {
                         log.error("Error retrieving canonical node for imageNode[" + resourcePath + "]", e);
@@ -91,6 +94,7 @@ public class ImageItemFactory implements IClusterable {
                 resourceDefinitions.add(nd.getName());
             }
         }
+        String path = node.getPath();
         return new ImageItem(node.getPath(), node.getParent().getUUID(), node.getPrimaryItem().getName(), node
                 .getName(), resourceDefinitions, nodeModel.getNode().getPath());
     }
@@ -102,6 +106,7 @@ public class ImageItemFactory implements IClusterable {
         private String path;
         private String uuid;
         private String nodeName;
+        private String facetName;
         private String primaryItemName;
         private List<String> resourceDefinitions;
         private String selectedResourceDefinition;
@@ -111,6 +116,7 @@ public class ImageItemFactory implements IClusterable {
             this.path = path;
             this.uuid = uuid;
             this.primaryItemName = primaryItemName;
+            this.facetName = nodeName;
             this.nodeName = nodeName;
             this.parentPath = nodePath;
             this.resourceDefinitions = resourceDefinitions != null ? resourceDefinitions : new ArrayList<String>();
@@ -142,9 +148,17 @@ public class ImageItemFactory implements IClusterable {
         public void setSelectedResourceDefinition(String selectedResourceDefinition) {
             this.selectedResourceDefinition = selectedResourceDefinition;
         }
-
+        
+        public void setFacetName(String facet) {
+            this.facetName = facet;
+        }
+        
+        public String getFacetName() {
+            return facetName;
+        }
+        
         public String getUrl() {
-            String url = "binaries" + parentPath + "/" + nodeName;
+            String url = "binaries" + parentPath + "/" + facetName;
             if (selectedResourceDefinition != null) {
                 return XinhaUtil.encode(url + "/" + nodeName + "/" + selectedResourceDefinition);
             }

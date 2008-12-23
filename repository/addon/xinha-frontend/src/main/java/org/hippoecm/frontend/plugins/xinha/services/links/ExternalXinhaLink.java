@@ -13,33 +13,42 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.xinha.dialog.links;
+
+package org.hippoecm.frontend.plugins.xinha.services.links;
 
 import java.util.Map;
 
-import org.hippoecm.frontend.plugins.xinha.dialog.JsBean;
+import org.hippoecm.frontend.model.JcrNodeModel;
 
-public class XinhaLink extends JsBean {
+public class ExternalXinhaLink extends XinhaLink {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    public static final String HREF = "f_href";
-    public static final String TITLE = "f_title";
-    public static final String TARGET = "f_target";
-    public static final String OTHER_TARGET = "f_other_target";
+    public ExternalXinhaLink(Map<String, String> values, JcrNodeModel parentModel) {
+        super(values, parentModel);
+    }
 
-    public XinhaLink(Map<String, String> values) {
-        super(values);
+    @Override
+    protected JcrNodeModel createInitialModel(JcrNodeModel parentModel) {
+        return null;
+    }
+
+    @Override
+    public boolean isSubmittable() {
+        if (getHref() == null || "".equals(getHref())) {
+            return false;
+        }
+        return valuesChanged();
     }
     
-    public String getHref() {
-        return values.get(HREF);
-    }
-
-    public void setHref(String href) {
-        values.put(HREF, href);
+    @Override
+    public boolean isDetacheable() {
+        if (getHref() != null && !getHref().equals("")) {
+            return true;
+        }
+        return false;
     }
     
 }

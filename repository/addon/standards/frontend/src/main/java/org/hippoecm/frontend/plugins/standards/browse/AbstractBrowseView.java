@@ -36,6 +36,10 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
     protected AbstractBrowseView(IPluginContext context, IPluginConfig config, JcrNodeModel document) {
         this.config = config;
         this.context = context;
+        
+        if (document == null) {
+            document = new JcrNodeModel(config.getString("model.folder.root", "/"));
+        }
 
         browseService = new BrowseService(context, config, document);
         context.registerService(new IModelListener() {

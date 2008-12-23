@@ -21,8 +21,9 @@ import java.util.HashMap;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.dialog.JsBean;
+import org.hippoecm.frontend.plugins.xinha.dialog.IDialogModel;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
+import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
 
 public class ExternalLinkBehavior extends XinhaDialogBehavior {
     private static final long serialVersionUID = 1L;
@@ -39,26 +40,25 @@ public class ExternalLinkBehavior extends XinhaDialogBehavior {
         super.configureModal(modal);
         modal.setInitialHeight(200);
         modal.setInitialWidth(400);
-        modal.setResizable(false);
     }
     
-    @Override
-    protected JsBean newDialogModelObject(HashMap<String, String> p) {
-        return new XinhaLink(p);
-    }
-
-    @Override
-    protected void onOk(JsBean bean) {
-    }
-
     @Override
     protected String getId() {
         return "externallinks";
     }
 
     @Override
-    protected void onRemove(JsBean bean) {
-        bean.reset();
+    protected IDialogModel newDialogModel(HashMap<String, String> p) {
+        return new ExternalXinhaLink(p, null);
+    }
+
+    @Override
+    protected void onOk(IDialogModel model) {
+    }
+
+    @Override
+    protected void onRemove(IDialogModel model) {
+        model.reset();
     }
 
 }
