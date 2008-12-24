@@ -25,6 +25,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.mapping.RelativeURLMappingImpl;
 import org.hippoecm.hst.core.mapping.URLMapping;
+import org.hippoecm.hst.core.template.node.el.ContentELNode;
 import org.hippoecm.hst.core.template.node.el.ELNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ public class LinkTag extends SimpleTagSupport {
     private ELNode item;
     private String sitemap;
     private boolean externalize;
+    private boolean explicitExternalize = false;
     
 
     @Override
@@ -61,7 +63,15 @@ public class LinkTag extends SimpleTagSupport {
                 href =  RelativeURLMappingImpl.computeRelativeUrl(staticattr, request.getRequestURI());
             }
         } else {
+            
             if(item!= null) {
+                if(!explicitExternalize) {
+                    // since we do not have explicitly set whether the link has to be externalized, look at ELNode, and if it is of type
+                    // ContentELNode, we take the 'externalize' from the 
+                    if(item instanceof ContentELNode) {
+                        externalize = ((ContentELNode)item).isExternalize();
+                    }
+                }
                 href = urlMapping.rewriteLocation(item.getJcrNode(), sitemap, hstRequestContext, externalize).getUri();
             } else if(location != null ) {
             	// location must be a sitemapNodeName
@@ -126,6 +136,7 @@ public class LinkTag extends SimpleTagSupport {
     }
 
     public void setExternalize(boolean externalize) {
+        this.explicitExternalize = true;
         this.externalize = externalize;
     }
     

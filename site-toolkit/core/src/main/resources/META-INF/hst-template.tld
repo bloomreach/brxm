@@ -230,12 +230,6 @@
         <tagclass>org.hippoecm.hst.core.template.tag.ExternalizerTag</tagclass>
         <body-content>empty</body-content>
         <attribute>
-            <description>A tag meant to wrap a ELNode and make all links in the content external</description>
-            <name>var</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
             <description>The ELNode to externalize</description>
             <name>item</name>
             <required>true</required>

@@ -38,22 +38,17 @@ import org.slf4j.LoggerFactory;
 public class ExternalizerTag extends SimpleTagSupport {
     private static final Logger log = LoggerFactory.getLogger(LinkTag.class);
 
-    private String var;
     private ELNode item;
     
 
     @Override
     public void doTag() throws JspException, IOException {
-        PageContext pageContext = (PageContext) getJspContext();
-        
         if(item instanceof ContentELNode) {
             log.debug("Externalizing ContentELNode. From now on, links are rewritten to external urls");
            ((ContentELNode)item).setExternalize(true);
         } else {
             log.warn("Cannot externalize an item that is not of type ContentElNode");
         }
-        
-        pageContext.setAttribute(getVar(), item);
     }
 
     public ELNode getItem(){
@@ -64,13 +59,4 @@ public class ExternalizerTag extends SimpleTagSupport {
         this.item = item;
     }
 
-    public String getVar() {
-        return var;
-    }
-
-    public void setVar(String var) {
-        this.var = var;
-    }
-    
-  
 }
