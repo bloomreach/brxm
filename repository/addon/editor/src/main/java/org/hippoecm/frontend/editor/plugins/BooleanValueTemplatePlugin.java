@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.editor.plugins;
 
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -35,8 +39,16 @@ public class BooleanValueTemplatePlugin extends RenderPlugin {
         super(context, config);
 
         JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
-        add(new BooleanFieldWidget("value", valueModel));
+        if ("edit".equals(config.getString("mode", "view"))) {
+            add(new BooleanFieldWidget("value", valueModel));
+        } else {
+            Fragment fragment = new Fragment("value", "view", this);
+            add(fragment);
 
+            CheckBox checkbox = new CheckBox("checkbox", valueModel);
+            checkbox.add(new AttributeModifier("disabled", true, new Model(Boolean.TRUE)));
+            fragment.add(checkbox);
+        }
         setOutputMarkupId(true);
     }
 

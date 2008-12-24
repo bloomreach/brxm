@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.editor.plugins;
 
+import org.apache.wicket.datetime.StyleDateConverter;
+import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -35,7 +37,11 @@ public class DatePickerPlugin extends RenderPlugin {
         super(context, config);
 
         JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
-        add(new DateFieldWidget("value", valueModel));
+        if ("edit".equals(config.getString("mode", "view"))) {
+            add(new DateFieldWidget("value", valueModel));
+        } else {
+            add(new DateLabel("value", valueModel, new StyleDateConverter(true)));
+        }
         setOutputMarkupId(true);
     }
 
