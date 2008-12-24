@@ -47,7 +47,7 @@ public abstract class AbstractDateDialog extends AbstractWorkflowDialog {
 
         add(new AjaxDateTimeField("value", new PropertyModel(this, "date")));
 
-        now = new AjaxButton(getButtonId()) {
+        now = new AjaxButton(getButtonId(), this) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -66,7 +66,7 @@ public abstract class AbstractDateDialog extends AbstractWorkflowDialog {
                     e.printStackTrace();
                 }
             }
-        };
+        }.setDefaultFormProcessing(false);
         now.add(new Label("label", new ResourceModel("now")));
         addButton(now);
     }

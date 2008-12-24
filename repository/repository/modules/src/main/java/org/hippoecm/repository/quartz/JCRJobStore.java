@@ -96,6 +96,7 @@ public class JCRJobStore implements JobStore {
             Calendar cal = Calendar.getInstance();
             cal.setTime(newTrigger.getNextFireTime());
             triggerNode.setProperty("hipposched:nextFireTime", cal);
+            triggerNode.setProperty("hipposched:fireTime", cal);
             triggerNode.setProperty("hipposched:data", new ByteArrayInputStream(objectToBytes(newTrigger)));
             jobNode.getParent().save();
         } catch (RepositoryException ex) {
@@ -438,6 +439,7 @@ public class JCRJobStore implements JobStore {
                     triggerNode.checkout();
                 }
                 triggerNode.setProperty("hipposched:nextFireTime", cal);
+                triggerNode.setProperty("hipposched:fireTime", cal);
                 triggerNode.save();
             } else {
                 if(jobNode != null) {

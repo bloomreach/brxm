@@ -15,10 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.util.Date;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -41,10 +44,15 @@ public class CancelWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private boolean cancelable = true;
 
+    private String state = "unknown";
+    private Date schedule = null;
+
     public CancelWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         onModelChanged();
+
+        add(new Label("status", new StringResourceModel("state-"+state, this, null, new Object[] {  (schedule!=null ? schedule.toString() : "??") }, "unknown")));
 
         addWorkflowAction("cancelRequest-dialog", new StringResourceModel("cancel-request", this, null),
                 new Visibility() {
@@ -68,6 +76,8 @@ public class CancelWorkflowPlugin extends AbstractWorkflowPlugin {
     public void onModelChanged() {
         super.onModelChanged();
         WorkflowsModel model = (WorkflowsModel) getModel();
+        state = "unknown";
+        schedule = null;
         try {
             Node node = model.getNodeModel().getNode();
             Node child = null;
@@ -87,6 +97,28 @@ public class CancelWorkflowPlugin extends AbstractWorkflowPlugin {
             if (node == null || !node.isNodeType(HippoNodeType.NT_REQUEST)) {
                 node = null;
                 cancelable = false;
+            }
+            if (node != null && node.isNodeType("hipposched:job")) {
+                if(node.hasProperty("hipposched:data")) {
+                    String data = node.getProperty("hipposched:data").getString();
+                    if(data.contains("java.lang.reflect.Method") && data.contains("java.util.ArrayList")) {
+                        data = data.substring(data.indexOf("java.lang.reflect.Method")+"java.lang.reflect.Method".length(), data.indexOf("java.util.ArrayList"));
+                    } else {
+                        data = "";
+                    }
+                    if(data.contains("depublish")) {
+                        state = "depublish";
+                    } else if(data.contains("publish")) {
+                        state = "publish";
+                    } else {
+                        state = "unknown";
+                    }
+                }
+                if(node.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
+                    schedule = node.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
+                } else if(node.hasProperty("reqdate")) {
+                    schedule = new Date(node.getProperty("reqdate").getLong());
+                }
             }
         } catch (RepositoryException ex) {
             // status unknown, maybe there are legit reasons for this, so don't emit a warning

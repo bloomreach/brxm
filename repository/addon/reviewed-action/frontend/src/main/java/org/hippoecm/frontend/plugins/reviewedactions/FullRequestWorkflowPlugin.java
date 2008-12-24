@@ -15,10 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.util.Date;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 
@@ -38,16 +40,19 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    private String state = "UNKNOWN";
+    private String state = "unknown";
+    private Date schedule = null;
 
     public FullRequestWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         onModelChanged();
 
+        add(new Label("status", new StringResourceModel("state-"+state, this, null, new Object[] { (schedule!=null ? schedule.toString() : "??") }, "unknown")));
+
         IModel acceptModel = new StringResourceModel("accept-request", this, null);
         addWorkflowDialog("acceptRequest-dialog", acceptModel, acceptModel,
-                new StringResourceModel("reject-message", this, null), new Visibility() {
+                new StringResourceModel("accept-message", this, null), new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
@@ -86,6 +91,7 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
     public void onModelChanged() {
         super.onModelChanged();
         WorkflowsModel model = (WorkflowsModel) getModel();
+        schedule = null;
         try {
             JcrNodeModel nodeModel = model.getNodeModel();
             Node node = nodeModel.getNode();
@@ -105,8 +111,15 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
             } else if(node.isNodeType(HippoNodeType.NT_REQUEST)) {
                 child = node;
             }
-            if (child != null && child.hasProperty("type")) {
-                state = node.getProperty("type").getString();
+            if (child != null) {
+                if(child.hasProperty("type")) {
+                    state = node.getProperty("type").getString();
+                }
+                if(child.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
+                    schedule = child.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
+                } else if(node.hasProperty("reqdate")) {
+                    schedule = new Date(node.getProperty("reqdate").getLong());
+                }
             }
         } catch (RepositoryException ex) {
             // unknown, maybe there are legit reasons for this, so don't emit a warning

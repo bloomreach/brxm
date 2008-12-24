@@ -15,11 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.util.Date;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -28,8 +36,7 @@ import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -39,12 +46,16 @@ public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
 
+    private String state = "unknown";
+    private Date schedule = null;
     private boolean cancelable = true;
 
     public BasicRequestWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         onModelChanged();
+
+        add(new Label("status", new StringResourceModel("state-"+state, this, null, new Object[] {  (schedule!=null ? schedule.toString() : "??") }, "unknown")));
 
         addWorkflowAction("cancelRequest-dialog", new StringResourceModel("cancel-request", this, null),
                 new Visibility() {
@@ -68,6 +79,7 @@ public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
     public void onModelChanged() {
         super.onModelChanged();
         WorkflowsModel model = (WorkflowsModel) getModel();
+        schedule = null;
         try {
             Node node = model.getNodeModel().getNode();
             Node child = null;
@@ -91,6 +103,12 @@ public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
                 node = null;
                 cancelable = false;
             } else {
+                state = node.getProperty("type").getString();
+                if(node.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
+                    schedule = node.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
+                } else if(node.hasProperty("reqdate")) {
+                    schedule = new Date(node.getProperty("reqdate").getLong());
+                }
                 if (node.hasProperty("username")
                         && node.getProperty("username").getString().equals(node.getSession().getUserID())) {
                     cancelable = true;
