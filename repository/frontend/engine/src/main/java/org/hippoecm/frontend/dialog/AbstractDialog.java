@@ -219,11 +219,10 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         } catch (Exception e) {
             String msg = e.getClass().getName() + ": " + e.getMessage();
             log.error(msg);
-            error(msg);
+            error(e.getMessage());
             if (log.isDebugEnabled()) {
                 log.debug("Error from repository: ", e);
             }
-            e.printStackTrace();
         }
     }
 

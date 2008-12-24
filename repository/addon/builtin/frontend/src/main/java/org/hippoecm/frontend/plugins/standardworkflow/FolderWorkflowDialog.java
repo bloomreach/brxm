@@ -20,10 +20,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
@@ -32,8 +31,6 @@ import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
@@ -57,15 +54,9 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
         this.category = category;
         this.prototypes = prototypes;
 
-        TextFieldWidget text;
-        add(text = new TextFieldWidget("name", new PropertyModel(this, "name")) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                enableButtons();
-            }
-        });
+        TextField text = new TextField("name", new PropertyModel(this, "name"));
+        text.setRequired(true);
+        add(text);
 
         Label typelabel = new Label("typelabel", new StringResourceModel("document-type", this, null));
         add(typelabel);
@@ -76,14 +67,6 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
             DropDownChoice folderChoice;
             add(folderChoice = new DropDownChoice("prototype", new PropertyModel(this, "prototype"), prototypesList,
                     new TypeChoiceRenderer(this)));
-            folderChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onUpdate(AjaxRequestTarget target) {
-                    enableButtons();
-                }
-            });
             folderChoice.setNullValid(false);
             folderChoice.setRequired(true);
 
@@ -113,26 +96,10 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
             text.setVisible(false);
             typelabel.setVisible(false);
         }
-
-        enableButtons();
     }
     
     public IModel getTitle() {
         return title;
-    }
-
-    private void enableButtons() {
-        AbstractFolderWorkflowPlugin folderWorkflowPlugin = (AbstractFolderWorkflowPlugin) getPlugin();
-        WorkflowsModel model = (WorkflowsModel) folderWorkflowPlugin.getModel();
-        boolean enable = name != null && !"".equals(name) && model.getNodeModel().getNode() != null
-                && prototype != null;
-        if (ok.isEnabled() != enable) {
-            ok.setEnabled(enable);
-            AjaxRequestTarget target = AjaxRequestTarget.get();
-            if (target != null) {
-                target.addComponent(ok);
-            }
-        }
     }
 
     @Override
