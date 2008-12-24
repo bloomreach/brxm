@@ -33,7 +33,7 @@
     <!--
     -->
     <wagon.ftp.version>1.0-alpha-6</wagon.ftp.version>
-    <hippoecm.version>2.01.04</hippoecm.version>
+    <hippoecm.version>2.02.01</hippoecm.version>
   </properties>
 
   <!-- 
