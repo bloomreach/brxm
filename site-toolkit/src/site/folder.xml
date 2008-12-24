@@ -2,225 +2,225 @@
 <?xml-stylesheet type="text/xsl" href="../stylesheets/folder.xsl"?>
  <folder rootpath='/home/rita/werk/hst/src/site/xdoc'>.
   <folder>about
-   <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+   <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='about/architecture.xml'
    relpath='about'
   >architecture</file>
-   <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+   <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='about/features.xml'
    relpath='about'
   >features</file>
-   <file ext='xml' mimetype='text/xml' valid='yes'
+   <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='about/term_index.xml'
    relpath='about'
   >term_index</file>
-   <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+   <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='about/use_cases.xml'
    relpath='about'
   >use_cases</file>
   </folder>
   <folder>delve_into
-   <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+   <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/how_does_hst2_work.xml'
    relpath='delve_into'
   >how_does_hst2_work</file>
    <folder>howto
-    <file ext='xml~' mimetype='text/xml' note='todo'
+    <file ext='xml~' mimetype='text/html charset=us-ascii' note='todo'
    fullname='delve_into/howto/advanced_search.xml~'
    relpath='delve_into/howto'
   >advanced_search</file>
-    <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/howto/facebook.xml'
    relpath='delve_into/howto'
   >facebook</file>
-    <file ext='xml' mimetype='text/xml' valid='yes'
+    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/howto/form.xml'
    relpath='delve_into/howto'
   >form</file>
-    <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/howto/free_meta_search.xml'
    relpath='delve_into/howto'
   >free_meta_search</file>
-    <file ext='xml' mimetype='text/xml' valid='yes'
+    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/howto/free_text_search.xml'
    relpath='delve_into/howto'
   >free_text_search</file>
-    <file ext='xml~' mimetype='text/xml'
+    <file ext='xml~' mimetype='text/html charset=us-ascii'
    fullname='delve_into/howto/free_text_search.xml~'
    relpath='delve_into/howto'
   >free_text_search</file>
-    <file ext='xml' mimetype='text/xml' valid='yes'
+    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/howto/hello_world.xml'
    relpath='delve_into/howto'
   >hello_world</file>
-    <file ext='xml' mimetype='text/xml' valid='yes'
+    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/howto/index.xml'
    relpath='delve_into/howto'
   >index</file>
-    <file ext='xml' mimetype='text/xml' valid='yes'
+    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/howto/start_project.xml'
    relpath='delve_into/howto'
   >start_project</file>
    </folder>
-   <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+   <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/quickstart.xml'
    relpath='delve_into'
   >quickstart</file>
-   <file ext='xml~' mimetype='text/xml' note='todo'
+   <file ext='xml~' mimetype='text/html charset=us-ascii' note='todo'
    fullname='delve_into/quickstart.xml~'
    relpath='delve_into'
   >quickstart</file>
    <folder>reference
     <folder>components
-     <file ext='xml' mimetype='text/xml' valid='yes'
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/binaries.xml'
    relpath='delve_into/reference/components'
   >binaries</file>
-     <file ext='xml' mimetype='text/xml' valid='yes'
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/el-index.xml'
    relpath='delve_into/reference/components'
   >el-index</file>
-     <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/reference/components/el-queries.xml'
    relpath='delve_into/reference/components'
   >el-queries</file>
-     <file ext='xml~' mimetype='text/xml'
+     <file ext='xml~' mimetype='text/html charset=us-ascii'
    fullname='delve_into/reference/components/el-queries.xml~'
    relpath='delve_into/reference/components'
   >el-queries</file>
-     <file ext='xml' mimetype='text/xml' valid='yes'
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/filters.xml'
    relpath='delve_into/reference/components'
   >filters</file>
-     <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/reference/components/index.xml'
    relpath='delve_into/reference/components'
   >index</file>
-     <file ext='xml' mimetype='text/xml' valid='yes'
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/jsp-taglib.xml'
    relpath='delve_into/reference/components'
   >jsp-taglib</file>
-     <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/reference/components/modules.xml'
    relpath='delve_into/reference/components'
   >modules</file>
-     <file ext='xml~' mimetype='text/xml' note='todo'
+     <file ext='xml~' mimetype='text/html charset=us-ascii' note='todo'
    fullname='delve_into/reference/components/modules.xml~'
    relpath='delve_into/reference/components'
   >modules</file>
      <folder>tag
-      <file ext='xml' mimetype='text/xml' valid='yes'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/tag/container-tag.xml'
    relpath='delve_into/reference/components/tag'
   >container-tag</file>
-      <file ext='xml' mimetype='text/xml' valid='yes'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/tag/content-tag.xml'
    relpath='delve_into/reference/components/tag'
   >content-tag</file>
-      <file ext='xml' mimetype='text/xml' valid='yes'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/tag/context-tag.xml'
    relpath='delve_into/reference/components/tag'
   >context-tag</file>
-      <file ext='xml' mimetype='text/plain; charset=us-ascii' valid='yes'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/tag/documents-tag.xml'
    relpath='delve_into/reference/components/tag'
   >documents-tag</file>
-      <file ext='xml' mimetype='text/plain; charset=us-ascii' valid='yes'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/tag/encodeurl-tag.xml'
    relpath='delve_into/reference/components/tag'
   >encodeurl-tag</file>
-      <file ext='xml' mimetype='text/xml' valid='yes'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/tag/include-tag.xml'
    relpath='delve_into/reference/components/tag'
   >include-tag</file>
-      <file ext='xml' mimetype='text/xml' valid='yes'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/tag/link-tag.xml'
    relpath='delve_into/reference/components/tag'
   >link-tag</file>
-      <file ext='xml' mimetype='text/plain; charset=us-ascii' valid='yes'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/tag/menu-tag.xml'
    relpath='delve_into/reference/components/tag'
   >menu-tag</file>
-      <file ext='xml' mimetype='text/xml' valid='yes'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/tag/moduleParameter-tag.xml'
    relpath='delve_into/reference/components/tag'
   >moduleParameter-tag</file>
-      <file ext='xml' mimetype='text/xml' valid='yes'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/tag/module-tag.xml'
    relpath='delve_into/reference/components/tag'
   >module-tag</file>
-      <file ext='xml' mimetype='text/xml' valid='yes'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/tag/node-tag.xml'
    relpath='delve_into/reference/components/tag'
   >node-tag</file>
-      <file ext='xml' mimetype='text/plain; charset=us-ascii' valid='yes'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/tag/sitemap-tag.xml'
    relpath='delve_into/reference/components/tag'
   >sitemap-tag</file>
      </folder>
-     <file ext='xml' mimetype='text/xml' valid='yes'
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/url-mapping.xml'
    relpath='delve_into/reference/components'
   >url-mapping</file>
     </folder>
-    <file ext='xml' mimetype='text/xml' valid='yes'
+    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/concepts.xml'
    relpath='delve_into/reference'
   >concepts</file>
     <folder>configuration
-     <file ext='xml' mimetype='text/xml' valid='yes'
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/configuration/hstproperties.xml'
    relpath='delve_into/reference/configuration'
   >hstproperties</file>
-     <file ext='xml' mimetype='text/xml' valid='yes'
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/configuration/index.xml'
    relpath='delve_into/reference/configuration'
   >index</file>
-     <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/reference/configuration/website.xml'
    relpath='delve_into/reference/configuration'
   >website</file>
-     <file ext='xml' mimetype='text/xml' valid='yes'
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/configuration/webxml.xml'
    relpath='delve_into/reference/configuration'
   >webxml</file>
     </folder>
-    <file ext='xml' mimetype='text/xml' valid='yes'
+    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/index.xml'
    relpath='delve_into/reference'
   >index</file>
-    <file ext='xml' mimetype='text/xml' valid='yes'
+    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/synonyms.xml'
    relpath='delve_into/reference'
   >synonyms</file>
-    <file ext='xml~' mimetype='text/xml'
+    <file ext='xml~' mimetype='text/html charset=us-ascii'
    fullname='delve_into/reference/synonyms.xml~'
    relpath='delve_into/reference'
   >synonyms</file>
    </folder>
   </folder>
-  <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+  <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='errorlist.xml'
    relpath='.'
   >errorlist</file>
-  <file ext='xml' mimetype='text/xml' valid='yes'
+  <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='index.xml'
    relpath='.'
   >index</file>
   <folder>support
-   <file ext='xml.vm' mimetype='text/xml' valid='yes'
+   <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='support/community.xml.vm'
    relpath='support'
   >community</file>
-   <file ext='xml.vm~' mimetype='text/xml'
+   <file ext='xml.vm~' mimetype='text/html charset=us-ascii'
    fullname='support/community.xml.vm~'
    relpath='support'
   >community</file>
-   <file ext='xml.vm' mimetype='text/xml' valid='yes'
+   <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='support/contributing.xml.vm'
    relpath='support'
   >contributing</file>
-   <file ext='xml.vm~' mimetype='text/xml'
+   <file ext='xml.vm~' mimetype='text/html charset=us-ascii'
    fullname='support/contributing.xml.vm~'
    relpath='support'
   >contributing</file>
