@@ -37,7 +37,7 @@ public class ValueTemplatePlugin extends RenderPlugin {
         super(context, config);
 
         JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
-        String mode = config.getString("mode");
+        String mode = config.getString("mode", "view");
         if (ITemplateEngine.EDIT_MODE.equals(mode)) {
             TextFieldWidget widget = new TextFieldWidget("value", valueModel);
             if (config.getString("size") != null) {

@@ -16,12 +16,14 @@
 package org.hippoecm.frontend.model.properties;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
+import javax.jcr.ValueFactory;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -104,7 +106,18 @@ public class JcrPropertyValueModel extends Model {
         try {
             load();
             if (value != null) {
-                return value.getString();
+                switch (type) {
+                case PropertyType.BOOLEAN:
+                    return value.getBoolean();
+                case PropertyType.DATE:
+                    return value.getDate().getTime();
+                case PropertyType.DOUBLE:
+                    return value.getDouble();
+                case PropertyType.LONG:
+                    return value.getLong();
+                default:
+                    return value.getString();
+                }
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
@@ -116,8 +129,26 @@ public class JcrPropertyValueModel extends Model {
     public void setObject(final Serializable object) {
         load();
         try {
-            String string = object == null ? "" : object.toString();
-            value = propertyModel.getProperty().getSession().getValueFactory().createValue(string, (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
+            ValueFactory factory = propertyModel.getProperty().getSession().getValueFactory();
+            switch (type) {
+            case PropertyType.BOOLEAN:
+                value = factory.createValue((Boolean) object);
+                break;
+            case PropertyType.DATE:
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime((Date) object);
+                value = factory.createValue(calendar);
+                break;
+            case PropertyType.DOUBLE:
+                value = factory.createValue((Double) object);
+                break;
+            case PropertyType.LONG:
+                value = factory.createValue((Long) object);
+                break;
+            default:
+                String string = object == null ? "" : object.toString();
+                value = factory.createValue(string, (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
+            }
         } catch (RepositoryException ex) {
             log.info(ex.getMessage());
             return;

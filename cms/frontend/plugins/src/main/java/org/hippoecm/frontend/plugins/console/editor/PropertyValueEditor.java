@@ -20,6 +20,7 @@ import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +30,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -72,9 +74,10 @@ class PropertyValueEditor extends DataView {
                 item.add(new Label("value", valueModel));
 
             } else {
-                String asString = valueModel.getValue().getString();
+                StringConverter stringModel = new StringConverter(valueModel);
+                String asString = stringModel.getObject();
                 if (asString.contains("\n")) {
-                    TextAreaWidget editor = new TextAreaWidget("value", valueModel);
+                    TextAreaWidget editor = new TextAreaWidget("value", stringModel);
                     String[] lines = StringUtils.splitByWholeSeparator(asString, "\n");
                     int rowCount = lines.length;
                     int columnCount = 1;
@@ -94,13 +97,13 @@ class PropertyValueEditor extends DataView {
                     item.add(editor);
 
                 } else if (asString.length() > textAreaMaxColumns) {
-                    TextAreaWidget editor = new TextAreaWidget("value", valueModel);
+                    TextAreaWidget editor = new TextAreaWidget("value", stringModel);
                     editor.setCols(String.valueOf(textAreaMaxColumns));
                     editor.setRows(String.valueOf((asString.length() / 80)));
                     item.add(editor);
 
                 } else {
-                    TextAreaWidget editor = new TextAreaWidget("value", valueModel);
+                    TextAreaWidget editor = new TextAreaWidget("value", stringModel);
                     editor.setCols(String.valueOf(textAreaMaxColumns));
                     editor.setRows("1");
                     item.add(editor);
@@ -110,7 +113,7 @@ class PropertyValueEditor extends DataView {
             //Remove value link
             if (propertyModel.getProperty().getDefinition().isMultiple()
                     && !propertyModel.getProperty().getDefinition().isProtected()) {
-                item.add(new AjaxLink("remove", valueModel) {
+                item.add(new AjaxLink("remove") {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -130,13 +133,49 @@ class PropertyValueEditor extends DataView {
                     }
                 });
             } else {
-                item.add(new Label("remove", ""));
+                item.add(new Label("remove").setVisible(false));
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
             item.add(new Label("value", e.getClass().getName() + ":" + e.getMessage()));
             item.add(new Label("remove", ""));
         }
+    }
+
+    private static class StringConverter implements IModel {
+        private static final long serialVersionUID = 1L;
+
+        private JcrPropertyValueModel decorated;
+
+        StringConverter(JcrPropertyValueModel valueModel) {
+            decorated = valueModel;
+        }
+
+        public String getObject() {
+            try {
+                return decorated.getValue().getString();
+            } catch (RepositoryException ex) {
+                log.info(ex.getMessage());
+            }
+            return null;
+        }
+
+        public void setObject(Object object) {
+            try {
+                Property property = decorated.getJcrPropertymodel().getProperty();
+                ValueFactory factory = property.getSession().getValueFactory();
+                String string = object == null ? "" : object.toString();
+                decorated.setValue(factory.createValue(string, property.getType()));
+            } catch (RepositoryException ex) {
+                log.info(ex.getMessage());
+                return;
+            }
+        }
+
+        public void detach() {
+            decorated.detach();
+        }
+
     }
 
 }
