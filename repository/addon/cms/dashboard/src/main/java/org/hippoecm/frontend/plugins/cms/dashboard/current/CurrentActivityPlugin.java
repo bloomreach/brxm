@@ -109,7 +109,11 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
 
                 Calendar nodeCal = Calendar.getInstance();
                 nodeCal.setTime(new Date(Long.parseLong(node.getName())));
-                String timestamp = relativeTime(nodeCal);
+                String timestamp = "";
+                try {
+                    timestamp = relativeTime(nodeCal);
+                } catch(IllegalArgumentException ex) {
+                }
 
                 // Best effort algoritm to create a 'browse' link to a document.
 
@@ -158,7 +162,7 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
 
                 if (path != null) {
                 	 // We have a path to a document variant, so we can link to it!
-                    String label = new StringResourceModel(timestamp, this, null).getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString(), new NodeTranslator(new JcrNodeModel(path)).getNodeName().getObject()  }).getString();
+                    String label = new StringResourceModel(timestamp, this, null, "").getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString(), new NodeTranslator(new JcrNodeModel(path)).getNodeName().getObject()  }).getString();
                     BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", path, label);
                  	item.add(link);
                 	return;
@@ -170,13 +174,13 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
                         String handle = StringUtils.substringBeforeLast(sourceVariant, "/");
                         if (session.itemExists(handle)) {
                             
-                            String label = new StringResourceModel(timestamp, this, null).getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString(), new NodeTranslator(new JcrNodeModel(handle)).getNodeName().getObject()  }).getString();
+                            String label = new StringResourceModel(timestamp, this, null, "").getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString(), new NodeTranslator(new JcrNodeModel(handle)).getNodeName().getObject()  }).getString();
                             BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", handle, label);
                             item.add( link );
                             return;
                         } else {
                         	// No path, so we're just rendering a label without a link
-                            String label = new StringResourceModel(timestamp, this, null).getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString() }).getString();
+                            String label = new StringResourceModel(timestamp, this, null, "").getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString() }).getString();
                             item.add(new Label("entry", label));
                             return;
                         }
@@ -185,7 +189,7 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
 
                 //Apparently the log item wasn't created by a Workflow step
                 //on a document.
-                String label = new StringResourceModel(timestamp, this, null).getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString() }).getString();
+                String label = new StringResourceModel(timestamp, this, null, "").getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString() }).getString();
                 Label entryLabel = new Label("entry", label );
                 entryLabel.setEscapeModelStrings(false);
                 item.add(entryLabel);
