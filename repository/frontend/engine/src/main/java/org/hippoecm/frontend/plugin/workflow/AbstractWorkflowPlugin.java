@@ -96,7 +96,7 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog() {
-                return new AbstractWorkflowDialog(AbstractWorkflowPlugin.this) {
+                return new AbstractWorkflowDialog(AbstractWorkflowPlugin.this, text) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
