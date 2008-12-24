@@ -23,7 +23,7 @@
     </properties>
     <body>
         <section name="Synonyms">
-            <span class="shortdesc">List of synonyms used in discussions of the Hippo CMS.</span>
+            <span class="shortdesc">List of synonyms used in discussions about Hippo CMS.</span>
 
          <subsection name='Hippo CMS plugin'>
           <ul>

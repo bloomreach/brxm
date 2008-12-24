@@ -47,7 +47,7 @@ The EAR package takes advantage of the extra possibilities of application server
                   The procedure to deploy an EAR package in an application server is similar but 
                   slightly different for different application servers.
                   The procedure will be shown for a few application servers.
-                  The differences are not due to the Hippo ECM, so if you have an other application server,
+                  The differences are not due to Hippo ECM, so if you have an other application server,
                   consult its documentation.   
                 </p>
             </subsection>
@@ -117,7 +117,7 @@ http://localhost:8080/
 
             <subsection name="Deploying in JBoss">
               <p>
-                To deploy the Hippo Repository in <span class='index' id='jboss'>JBoss</span> the port number of the repository-address context parameter has to be adjusted.
+                To deploy Hippo Repository in <span class='index' id='jboss'>JBoss</span> the port number of the repository-address context parameter has to be adjusted.
               </p>
 <source>
     &lt;context-param&gt;

@@ -28,7 +28,7 @@
    <section>Architecture</section>
   </document></folder><folder>building
    
-   <document ext="xml" filename="eclipse" relpath="delve_into/core/building">Introduction
+   <document ext="xml.vm" filename="eclipse" relpath="delve_into/core/building">Introduction
    <section>Introduction</section>
    <section>Prepare</section>
    <section>Create Eclipse projects</section>
@@ -37,7 +37,7 @@
    <section>Keeping up</section>
   </document><document ext="xml" filename="index" relpath="delve_into/core/building">Building Hippo ECM
    <section>Building Hippo ECM</section>
-  </document><document ext="xml" filename="maven" relpath="delve_into/core/building">Building with Maven
+  </document><document ext="xml.vm" filename="maven" relpath="delve_into/core/building">Building with Maven
    <section>Building with Maven</section>
    <subsection>Install Maven</subsection>
    <subsection>Get the Hippo ECM source</subsection>
@@ -187,7 +187,7 @@
   </document><document ext="xml" filename="index" relpath="delve_into/custom/jcr">JCR Interface
    <section>JCR Interface</section>
    <shortdesc>Direct access to your content through the JCR API.</shortdesc>
-  </document><document ext="xml" filename="jcr_dropbox_example" relpath="delve_into/custom/jcr">Demo on interfacing with Hippo ECM Repository
+  </document><document ext="xml.vm" filename="jcr_dropbox_example" relpath="delve_into/custom/jcr">Demo on interfacing with Hippo ECM Repository
    <section>Demo on interfacing with Hippo ECM Repository</section>
    <subsection>Intro</subsection>
    <img/>
@@ -270,7 +270,7 @@
   </document></folder></folder><document ext="xml" filename="schemas" relpath="delve_into/custom">
   </document><document ext="xml" filename="synonyms" relpath="delve_into/custom">Synonyms
    <section>Synonyms</section>
-   <shortdesc>List of synonyms used in discussions of the Hippo CMS.</shortdesc>
+   <shortdesc>List of synonyms used in discussions about Hippo CMS.</shortdesc>
    <subsection>Hippo CMS plugin</subsection>
    <index>Frontend plugin</index>
    <subsection>Document type</subsection>
@@ -436,10 +436,21 @@
   </document></folder><document ext="xml" filename="requirements" relpath="delve_into/sysadmin">Requirements
    <section>Requirements</section>
    <shortdesc>What do you need to run Hippo CMS?</shortdesc>
-   <subsection>Operating System</subsection>
-   <subsection>Java</subsection>
-   <subsection>Java Servlet Container</subsection>
-   <subsection>Relational Database</subsection>
+   <img>Firefox logo</img>
+   <img>internet explorer logo</img>
+   <img>MS windows logo</img>
+   <img>MS windows logo</img>
+   <img>Redhat logo</img>
+   <img>Suse logo</img>
+   <img>Java logo</img>
+   <img>Sun logo</img>
+   <img>Tux logo</img>
+   <img>Java logo</img>
+   <img>Jetty logo</img>
+   <img>Tomcat logo</img>
+   <img>Glassfish logo</img>
+   <img>Derby logo</img>
+   <img>Oracle logo</img>
   </document></folder><folder>user
    
    <folder>cms_admins
@@ -961,12 +972,13 @@
   </document></folder></folder></folder><document ext="xml" filename="errorlist" relpath=".">
   </document><document ext="xml" filename="index" relpath=".">What is Hippo CMS?
    <section>What is Hippo CMS?</section>
-   <shortdesc>What part of the Hippo ECM is it, what are its tasks?</shortdesc>
-  </document><document ext="xml" filename="releasing" relpath=".">Performing a release of the Hippo-ECM suite
-   <section>Performing a release of the Hippo-ECM suite</section>
+   <shortdesc>What part of Hippo ECM is it, what are its tasks?</shortdesc>
+  </document><document ext="xml" filename="releasing" relpath=".">Performing a release of the Hippo ECM suite
+   <section>Performing a release of the Hippo ECM suite</section>
    <subsection>Preparing a release</subsection>
    <subsection>Releasing in subversion</subsection>
    <subsection>Deploying the targets</subsection>
+   <section>Branching</section>
   </document><folder>support
    
    <document ext="xml.vm" filename="community" relpath="support">Community Support
