@@ -24,6 +24,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
@@ -52,7 +54,6 @@ public class LinkPickerPlugin extends RenderPlugin implements IJcrNodeModelListe
     private JcrPropertyValueModel valueModel;
 
     private List<String> nodetypes = new ArrayList<String>();
-    private DialogLink link;
 
     static final Logger log = LoggerFactory.getLogger(LinkPickerPlugin.class);
 
@@ -62,34 +63,59 @@ public class LinkPickerPlugin extends RenderPlugin implements IJcrNodeModelListe
         IDialogService dialogService = getDialogService();
         valueModel = (JcrPropertyValueModel) getModel();
 
-        if (config.getStringArray("nodetypes") != null) {
-            String[] nodeTypes = config.getStringArray("nodetypes");
-            nodetypes.addAll(Arrays.asList(nodeTypes));
-        }
-        if (nodetypes.size() == 0) {
-            log.debug("No configuration specified for filtering on nodetypes. No filtering will take place.");
-        }
-
-        DocumentListFilter filter = new DocumentListFilter(config);
-        final AbstractTreeNode rootNode = new FolderTreeNode(new JcrNodeModel(config.getString("path", "/")), filter);
-
-        Model linkText = new Model(getValue());
-        IDialogFactory dialogFactory = new IDialogFactory() {
+        IModel displayModel = new Model() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
-                return new LinkPickerDialog(context, valueModel, nodetypes, rootNode);
+            public Object getObject() {
+                String docbaseUUID = (String) valueModel.getObject();
+                if (docbaseUUID == null || docbaseUUID.equals("")) {
+                    return "[...]";
+                }
+                try {
+                    return ((UserSession) Session.get()).getJcrSession().getNodeByUUID(docbaseUUID).getPath();
+                } catch (ValueFormatException e) {
+                    log.warn("Invalid value format for docbase " + e.getMessage());
+                    log.debug("Invalid value format for docbase ", e);
+                } catch (PathNotFoundException e) {
+                    log.warn("Docbase not found " + e.getMessage());
+                    log.debug("Docbase not found ", e);
+                } catch (RepositoryException e) {
+                    log.error("Invalid docbase" + e.getMessage(), e);
+                }
+                return "[...]";
             }
         };
-        add(link = new DialogLink("value", linkText, dialogFactory, dialogService));
 
-        context.registerService(this, IJcrService.class.getName());
+        if ("edit".equals(config.getString("mode", "view"))) {
+            if (config.getStringArray("nodetypes") != null) {
+                String[] nodeTypes = config.getStringArray("nodetypes");
+                nodetypes.addAll(Arrays.asList(nodeTypes));
+            }
+            if (nodetypes.size() == 0) {
+                log.debug("No configuration specified for filtering on nodetypes. No filtering will take place.");
+            }
+    
+            DocumentListFilter filter = new DocumentListFilter(config);
+            final AbstractTreeNode rootNode = new FolderTreeNode(new JcrNodeModel(config.getString("path", "/")), filter);
+    
+            IDialogFactory dialogFactory = new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
+    
+                public AbstractDialog createDialog() {
+                    return new LinkPickerDialog(context, valueModel, nodetypes, rootNode);
+                }
+            };
+            add(new DialogLink("value", displayModel, dialogFactory, dialogService));
+    
+            context.registerService(this, IJcrService.class.getName());
+        } else {
+            add(new Label("value", valueModel));
+        }
         setOutputMarkupId(true);
     }
 
     @Override
     public void onModelChanged() {
-        link.setModelObject(getValue());
         redraw();
     }
 
@@ -99,24 +125,4 @@ public class LinkPickerPlugin extends RenderPlugin implements IJcrNodeModelListe
             modelChanged();
         }
     }
-
-    private String getValue() {
-        String docbaseUUID = (String) valueModel.getObject();
-        if (docbaseUUID == null || docbaseUUID.equals("")) {
-            return "[...]";
-        }
-        try {
-            return ((UserSession) Session.get()).getJcrSession().getNodeByUUID(docbaseUUID).getPath();
-        } catch (ValueFormatException e) {
-            log.warn("Invalid value format for docbase " + e.getMessage());
-            log.debug("Invalid value format for docbase ", e);
-        } catch (PathNotFoundException e) {
-            log.warn("Docbase not found " + e.getMessage());
-            log.debug("Docbase not found ", e);
-        } catch (RepositoryException e) {
-            log.error("Invalid docbase" + e.getMessage(), e);
-        }
-        return "[...]";
-    }
-
 }
