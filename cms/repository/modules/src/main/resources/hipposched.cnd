@@ -19,10 +19,11 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.2'>
-<hipposched='http://www.hippoecm.org/hipposched/nt/1.0'>
+<hipposched='http://www.hippoecm.org/hipposched/nt/1.1'>
 
 [hipposched:trigger] > nt:base, mix:referenceable
 - hipposched:nextFireTime (date)
+- hipposched:fireTime (date)
 - hipposched:data (binary)
 
 [hipposched:triggers] > nt:base
