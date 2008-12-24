@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">154 errors and/or todos in 80 out of 182 documents (43%).</span>
+      <span class="shortdesc">161 errors and/or todos in 81 out of 182 documents (44%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -32,6 +32,8 @@
      </li>
         <li>8 unlinked documents.
        </li>
+        <li>0 documents out of date (needing update).
+     </li>
         <li>1 documents with typo's.
      </li>
         <li>3 documents to review.
@@ -40,7 +42,7 @@
      </li>
         <li>3 empty documents.
      </li>
-        <li>5 documents to rewrite.
+        <li>8 documents to rewrite.
      </li>
         <li>3 documents requiring additions.
      </li>
@@ -50,7 +52,7 @@
      </li>
         <li>12 documents with bad text.
      </li>
-        <li>11 multisection documents.
+        <li>12 multisection documents.
      </li>
       </ul>
       <subsection name="Documents with dummy references: 1">
@@ -126,7 +128,7 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents with empty elements: 11">
+      <subsection name="Documents with empty elements: 12">
         <ol>
           <li>
             <a href="./delve_into/core/building/netbeans.html">netbeans: Building with Netbeans</a>
@@ -177,6 +179,14 @@
             <ul>
               <li>...&lt;span class='to_index' id='tomcat_5.5'/&gt;.
      .../&lt;td&gt;<br xmlns=""/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/sysadmin/requirements.html">requirements: Requirements</a>
+            <ul>
+              <li>&lt;td/&gt;</li>
+              <li>&lt;td/&gt;</li>
+              <li>&lt;td/&gt;</li>
             </ul>
           </li>
           <li>
@@ -546,7 +556,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./releasing.html">releasing: Performing a release of the Hippo-ECM suite</a>
+            <a href="./releasing.html">releasing: Performing a release of the Hippo ECM suite</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
@@ -581,8 +591,20 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="rewrite documents: 5">
+      <subsection name="rewrite documents: 8">
         <ol>
+          <li>
+            <a href="./delve_into/core/building/eclipse.html">eclipse: Introduction</a>
+            <ul>
+              <li>org.hippoecm.frontend.Home</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/core/building/maven.html">maven: Building with Maven</a>
+            <ul>
+              <li>~/hippo-ecm for the checkout of cms+repository?</li>
+            </ul>
+          </li>
           <li>
             <a href="./delve_into/custom/concepts/index.html">index: Change to the document title</a>
             <ul>
@@ -593,6 +615,12 @@ repository is;
             <a href="./delve_into/custom/concepts/repository_plugins.html">repository_plugins: Change to the document title</a>
             <ul>
               <li>this whole document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/custom/howto/workflow.html">workflow: Developing workflows</a>
+            <ul>
+              <li>http://www.hippoecm.org/nt/1.2 is out of date. There are also instances of this adres in other files.</li>
             </ul>
           </li>
           <li>
@@ -730,7 +758,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="multisection documents: 11">
+      <subsection name="multisection documents: 12">
         <ol>
           <li>
             <a href="./delve_into/core/building/eclipse.html">eclipse: Introduction</a>
@@ -796,6 +824,12 @@ repository is;
             <a href="./delve_into/web/add-ons/howto/packaging.html">packaging: Creating your own WAR package</a>
             <ul>
               <li>Has 4 sections.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./releasing.html">releasing: Performing a release of the Hippo ECM suite</a>
+            <ul>
+              <li>Has 2 sections.</li>
             </ul>
           </li>
         </ol>
@@ -872,7 +906,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./releasing.html">releasing: Performing a release of the Hippo-ECM suite</a>
+            <a href="./releasing.html">releasing: Performing a release of the Hippo ECM suite</a>
             <ul>
               <li>The first formally released version must be 2.01.01 because of the<span xmlns="" class="bad"> current </span>numbering scheme</li>
               <li>followed by the SVN revision number of the then<span xmlns="" class="bad"> current </span>trunk. For example a version might be</li>

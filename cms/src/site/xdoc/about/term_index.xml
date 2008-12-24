@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 680 terms</span>
+      <span class="shortdesc">Term index, 692 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -378,6 +378,12 @@
               <a href="../delve_into/custom/reference/repository/repository_bootstrap.html#Bootstrapping_the_repository">Bootstrapping the repository</a>
             </td>
             <td>Bootstrapping the repository</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../releasing.html#Branching">Branching</a>
+            </td>
+            <td>Performing a release of the Hippo ECM suite</td>
           </tr>
           <tr>
             <td>
@@ -1008,13 +1014,19 @@
             <td>
               <a href="../releasing.html#Deploying_the_targets">Deploying the targets</a>
             </td>
-            <td>Performing a release of the Hippo-ECM suite</td>
+            <td>Performing a release of the Hippo ECM suite</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/custom/howto/workflow.html#Deploying_the_workflow">Deploying the workflow</a>
             </td>
             <td>Howto: Developing workflows</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/requirements.html#Derby_logo">Derby logo</a>
+            </td>
+            <td>Requirements</td>
           </tr>
           <tr>
             <td>
@@ -1408,6 +1420,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/requirements.html#Firefox_logo">Firefox logo</a>
+            </td>
+            <td>Requirements</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/concepts/index.html#First_subsection_title">First subsection title</a>
             </td>
             <td>Welcome: Change to the document title</td>
@@ -1598,6 +1616,12 @@
               <a href="../delve_into/sysadmin/installation/index.html#glassfish_logo">glassfish logo</a>
             </td>
             <td>Welcome: Installation</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/requirements.html#Glassfish_logo">Glassfish logo</a>
+            </td>
+            <td>Requirements</td>
           </tr>
           <tr>
             <td>
@@ -2450,6 +2474,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/requirements.html#internet_explorer_logo">internet explorer logo</a>
+            </td>
+            <td>Requirements</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/jcr/jcr_dropbox_example.html#Intro">Intro</a>
             </td>
             <td>Demo on interfacing with Hippo ECM Repository</td>
@@ -2474,27 +2504,27 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/requirements.html#Java">Java</a>
-            </td>
-            <td>Requirements</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/sysadmin/installation/index.html#Java_application_server">Java application server</a>
             </td>
             <td>Welcome: Installation</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/installation/index.html#Java_servlet_container">Java servlet container</a>
+              <a href="../delve_into/sysadmin/requirements.html#Java_logo">Java logo</a>
             </td>
-            <td>Welcome: Installation</td>
+            <td>Requirements</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/requirements.html#Java_Servlet_Container">Java Servlet Container</a>
+              <a href="../delve_into/sysadmin/requirements.html#Java_logo">Java logo</a>
             </td>
             <td>Requirements</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/installation/index.html#Java_servlet_container">Java servlet container</a>
+            </td>
+            <td>Welcome: Installation</td>
           </tr>
           <tr>
             <td>
@@ -2531,6 +2561,12 @@
               <a href="../delve_into/sysadmin/installation/index.html#jetty_logo">jetty logo</a>
             </td>
             <td>Welcome: Installation</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/requirements.html#Jetty_logo">Jetty logo</a>
+            </td>
+            <td>Requirements</td>
           </tr>
           <tr>
             <td>
@@ -2576,7 +2612,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/synonyms.html#List_of_synonyms_used_in_discussions_of_the_Hippo_CMS_">List of synonyms used in discussions of the Hippo CMS.</a>
+              <a href="../delve_into/custom/synonyms.html#List_of_synonyms_used_in_discussions_about_Hippo_CMS_">List of synonyms used in discussions about Hippo CMS.</a>
             </td>
             <td>Synonyms</td>
           </tr>
@@ -2723,6 +2759,18 @@
               <a href="../delve_into/web/add-ons/introduction.html#More">More</a>
             </td>
             <td>Introduction to content add-on development</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/requirements.html#MS_windows_logo">MS windows logo</a>
+            </td>
+            <td>Requirements</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/requirements.html#MS_windows_logo">MS windows logo</a>
+            </td>
+            <td>Requirements</td>
           </tr>
           <tr>
             <td>
@@ -3134,7 +3182,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/requirements.html#Operating_System">Operating System</a>
+              <a href="../delve_into/sysadmin/requirements.html#Oracle_logo">Oracle logo</a>
             </td>
             <td>Requirements</td>
           </tr>
@@ -3188,9 +3236,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../releasing.html#Performing_a_release_of_the_Hippo-ECM_suite">Performing a release of the Hippo-ECM suite</a>
+              <a href="../releasing.html#Performing_a_release_of_the_Hippo_ECM_suite">Performing a release of the Hippo ECM suite</a>
             </td>
-            <td>Performing a release of the Hippo-ECM suite</td>
+            <td>Performing a release of the Hippo ECM suite</td>
           </tr>
           <tr>
             <td>
@@ -3238,7 +3286,7 @@
             <td>
               <a href="../releasing.html#Preparing_a_release">Preparing a release</a>
             </td>
-            <td>Performing a release of the Hippo-ECM suite</td>
+            <td>Performing a release of the Hippo ECM suite</td>
           </tr>
           <tr>
             <td>
@@ -3272,7 +3320,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/requirements.html#Relational_Database">Relational Database</a>
+              <a href="../delve_into/sysadmin/requirements.html#Redhat_logo">Redhat logo</a>
             </td>
             <td>Requirements</td>
           </tr>
@@ -3280,7 +3328,7 @@
             <td>
               <a href="../releasing.html#Releasing_in_subversion">Releasing in subversion</a>
             </td>
-            <td>Performing a release of the Hippo-ECM suite</td>
+            <td>Performing a release of the Hippo ECM suite</td>
           </tr>
           <tr>
             <td>
@@ -3680,9 +3728,21 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/requirements.html#Sun_logo">Sun logo</a>
+            </td>
+            <td>Requirements</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/jcr/reference/derived_data.html#Supplying_the_method_that_computes_the_derived_property">Supplying the method that computes the derived property</a>
             </td>
             <td>Derived Data</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/requirements.html#Suse_logo">Suse logo</a>
+            </td>
+            <td>Requirements</td>
           </tr>
           <tr>
             <td>
@@ -3777,6 +3837,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/requirements.html#Tomcat_logo">Tomcat logo</a>
+            </td>
+            <td>Requirements</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/web/toolkits/index.html#Toolkits">Toolkits</a>
             </td>
             <td>Welcome: Toolkits</td>
@@ -3798,6 +3864,12 @@
               <a href="../delve_into/custom/jcr/jcr_dropbox_example.html#Try_out_yourself">Try out yourself</a>
             </td>
             <td>Demo on interfacing with Hippo ECM Repository</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/requirements.html#Tux_logo">Tux logo</a>
+            </td>
+            <td>Requirements</td>
           </tr>
           <tr>
             <td>
@@ -4011,7 +4083,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../index.html#What_part_of_the_Hippo_ECM_is_it,_what_are_its_tasks_">What part of the Hippo ECM is it, what are its tasks?</a>
+              <a href="../index.html#What_part_of_Hippo_ECM_is_it,_what_are_its_tasks_">What part of Hippo ECM is it, what are its tasks?</a>
             </td>
             <td>Welcome: What is Hippo CMS?</td>
           </tr>

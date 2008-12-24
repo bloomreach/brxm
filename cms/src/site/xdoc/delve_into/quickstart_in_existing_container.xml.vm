@@ -61,7 +61,7 @@
 <p>
 Below you find how to deploy the application in Tomcat, GlassFish or other
 application contains.  Once the application has been deployed and started, you
-can access the Hippo CMS under the URL:
+can access your Hippo CMS under the URL:
 </p>
 
   <source>

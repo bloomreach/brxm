@@ -57,7 +57,7 @@ pre-defining a namespace, and node-types</a>;</li>
 
 <p>
 These repository plugins are add-ons for Hippo ECM and can be developed without
-having the source available of the Hippo ECM.  Building the add-on should
+having the source available of Hippo ECM.  Building the add-on should
 result in a self-contained JAR file which is placed in the classpath of the
 repository.  There are a number of ways this can be accomplished.
 </p>

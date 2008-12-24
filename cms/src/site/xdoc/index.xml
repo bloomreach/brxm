@@ -23,7 +23,7 @@
   </properties>
   <body>
     <section name="What is Hippo CMS?">
-      <span class='shortdesc'>What part of the Hippo ECM is it, what are its tasks?</span>
+      <span class='shortdesc'>What part of Hippo ECM is it, what are its tasks?</span>
 
       <span class='add'>Enlightning diagram?</span>
       <span class='review'>all text: move short features list to feature document?</span>
@@ -31,7 +31,7 @@
       <span class='listrank'>1</span>
       <p>
         Hippo CMS (Hippo Content Management System) is the web-based graphical user interface to the content in the 
-        repository of the Hippo ECM. It provides an easy way to create and manage your content, i.e. to 
+        repository of Hippo ECM. It provides an easy way to create and manage your content, i.e. to 
         write or upload, share, print, search, refer to, edit and structure content, assign rights to do so, 
         have content automatically validated against your business rules and restore previous versions of the content. 
       </p>
@@ -113,7 +113,7 @@
 
    <m:inconsistent>
     <m:statement>Hippo CMS is a product containing the repository.</m:statement>
-    <m:statement>Hippo CMS is a component of the Hippo ECM which does not contain the repository.</m:statement>
+    <m:statement>Hippo CMS is a component of Hippo ECM which does not contain the repository.</m:statement>
    <m:inconsistent>
 
         For examples of uses see
