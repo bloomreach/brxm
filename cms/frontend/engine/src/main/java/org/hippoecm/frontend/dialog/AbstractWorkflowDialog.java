@@ -20,6 +20,8 @@ import java.util.Map;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.i18n.SearchingTranslatorPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -51,7 +53,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog implements I
     private AbstractWorkflowPlugin plugin;
     private ITranslateService translator;
 
-    public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin) {
+    public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IModel message) {
         this.model = (WorkflowsModel) plugin.getModel();
         this.plugin = plugin;
 
@@ -59,9 +61,21 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog implements I
             ok.setVisible(false);
         }
 
+        Label notification = new Label("notification");
+        if(message != null) {
+            notification.setModel(message);
+        } else {
+            notification.setVisible(false);
+        }
+        add(notification);
+        
         // FIXME: refactor the plugin so that we can use a service instead here
         IPluginContext context = plugin.getPluginContext();
         translator = new SearchingTranslatorPlugin(context, null);
+    }
+
+    public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin) {
+        this(plugin, null);
     }
 
     @Override

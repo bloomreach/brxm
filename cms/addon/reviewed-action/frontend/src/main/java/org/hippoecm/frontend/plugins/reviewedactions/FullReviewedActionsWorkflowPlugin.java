@@ -149,7 +149,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
         IModel deleteLabel = new StringResourceModel("delete-label", this, null);
         addWorkflowDialog("delete-dialog", deleteLabel, deleteLabel, new StringResourceModel("delete-message", this,
-                null), new WorkflowAction() {
+                null, new Object[] { caption }), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             // Workaround for HREPTWO-1328
