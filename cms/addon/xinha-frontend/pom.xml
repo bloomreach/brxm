@@ -51,12 +51,71 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
       <version>2.03.00-SNAPSHOT</version>
-    </dependency>	
+    </dependency>
+    <dependency>
+      <groupId>hippo</groupId>
+      <artifactId>htmlcleaner</artifactId>
+      <version>1.01.02</version>
+      <scope>compile</scope>
+    </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-yui</artifactId>
       <version>2.03.00-SNAPSHOT</version>
       <scope>compile</scope>
+    </dependency>
+
+	<!-- test  -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <!-- Testing needs a JTA implementation -->
+    <dependency>
+      <groupId>com.atomikos</groupId>
+      <artifactId>transactions-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.atomikos</groupId>
+      <artifactId>transactions</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.atomikos</groupId>
+      <artifactId>transactions-jta</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.atomikos</groupId>
+      <artifactId>atomikos-util</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-repository-engine</artifactId>
+      <version>2.03.00-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
+      <version>2.03.00-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+      <version>[4.4,)</version>
     </dependency>
   </dependencies>
 
@@ -72,6 +131,14 @@
           <include>**/*.html</include>
           <include>**/*.css</include>
           <include>**/*.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*.cnd</include>
+          <include>**/*.xml</include>
         </includes>
       </resource>
     </resources>
@@ -95,4 +162,23 @@
    </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>tests</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.hippoecm</groupId>
+          <artifactId>hippo-ecm-repository-engine</artifactId>
+          <version>2.03.00-SNAPSHOT</version>
+          <type>jar</type>
+          <classifier>tests</classifier>
+          <scope>test</scope>
+          <optional>true</optional>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>

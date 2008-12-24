@@ -30,6 +30,9 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import nl.hippo.htmlcleaner.HtmlCleaner;
+import nl.hippo.htmlcleaner.HtmlCleanerTemplate;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Page;
@@ -44,6 +47,7 @@ import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -54,6 +58,7 @@ import org.hippoecm.frontend.plugins.xinha.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.ExternalLinkBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.InternalLinkBehavior;
 import org.hippoecm.frontend.plugins.xinha.dragdrop.XinhaDropBehavior;
+import org.hippoecm.frontend.plugins.xinha.htmlcleaner.JCRHtmlCleanerTemplateBuilder;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImageService;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLinkService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
@@ -86,6 +91,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     private final String mode;
     private TextArea editor;
     private Configuration configuration;
+    private HtmlCleanerTemplate htmlCleanerTemplate;
     private AbstractDefaultAjaxBehavior postBehavior;
 
     private XinhaDialog dialog;
@@ -104,9 +110,18 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
         if ("edit".equals(mode)) {
             fragment.add(createEditor(config));
+            IPluginConfig htmlCleanerConfig = config.getPluginConfig("cleaner.config");
+            if (htmlCleanerConfig != null){
+                try{
+                    htmlCleanerTemplate = new JCRHtmlCleanerTemplateBuilder().buildTemplate(htmlCleanerConfig);
+                } catch (Exception ex){
+                    log.error("Exception whole creating HTMLCleaner template:",ex);
+                }
+            }
             configuration = new Configuration(config);
             context.registerService(configuration, Configuration.class.getName());
-
+            
+            
             JcrPropertyValueModel propertyValueModel = getValueModel();
             String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
             JcrNodeModel nodeModel = new JcrNodeModel(nodePath);
@@ -289,9 +304,37 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         super.render(target);
     }
 
+    protected String clean(final String value) throws Exception {
+        if (htmlCleanerTemplate != null){
+             return new HtmlCleaner(htmlCleanerTemplate).cleanToString(value);
+        } else {
+            return value;    
+        }    	
+    }
+
     private Component createEditor(final IPluginConfig config) {
-        JcrPropertyValueModel valueModel = getValueModel();
-        editor = new TextArea("value", valueModel) {
+        final JcrPropertyValueModel valueModel = getValueModel();
+        editor = new TextArea("value", new IModel() {
+			private static final long serialVersionUID = 1L;
+
+			public Object getObject() {
+				return valueModel.getObject();
+			}
+
+			public void setObject(Object value) {
+			    try{
+			        valueModel.setObject(clean((String) value));    
+			    } catch (Exception e){
+			        error(e.getMessage());
+			        log.error("Exception caught while setting object value:",e);
+			    }				
+			}
+
+			public void detach() {
+				valueModel.detach();
+			}
+        	
+        }) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -520,7 +563,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         public void addProperty(String keyValue) {
             int equalsIndex = keyValue.indexOf("=");
             if (equalsIndex == -1) {
-                throw new IllegalArgumentException("Invalid key/value argument, no seperator found: " + keyValue);
+                throw new IllegalArgumentException("Invalid key/value argument, no separator found: " + keyValue);
             }
             addProperty(keyValue.substring(0, equalsIndex), keyValue.substring(equalsIndex + 1));
         }
