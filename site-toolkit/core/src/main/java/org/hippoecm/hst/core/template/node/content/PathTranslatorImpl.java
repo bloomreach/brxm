@@ -35,22 +35,22 @@ public class PathTranslatorImpl implements PathTranslator {
         this.pathToSrcTranslator = pathToSrcTranslator;
     }
     
-    public String documentPathToHref(Node node, String documentPath) {
+    public String documentPathToHref(Node node, String documentPath,boolean externalize) {
         if(pathToHrefTranslator == null) {
             log.debug("pathToHrefTranslator is null, returning untranslated href");
             return documentPath;
         } else {
-           return pathToHrefTranslator.documentPathToHref(node, documentPath);
+           return pathToHrefTranslator.documentPathToHref(node, documentPath, externalize);
         }
         
     }
 
-    public String documentPathToSrc(Node node, String documentPath) {
+    public String documentPathToSrc(Node node, String documentPath,boolean externalize) {
         if(pathToSrcTranslator == null) {
             log.debug("pathToSrcTranslator is null, returning untranslated href");
             return documentPath;
         } else {
-            return pathToSrcTranslator.documentPathToSrc(node, documentPath);
+            return pathToSrcTranslator.documentPathToSrc(node, documentPath, externalize);
         }
     }
 

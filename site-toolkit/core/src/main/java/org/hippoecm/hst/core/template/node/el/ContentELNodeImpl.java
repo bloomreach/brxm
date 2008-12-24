@@ -37,9 +37,12 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
 
     private final Logger log = LoggerFactory.getLogger(ContentELNodeImpl.class);
 
+    private HstRequestContext hstRequestContext;
+    
     private boolean rewriteContents = true;
 
-    private HstRequestContext hstRequestContext;
+    private boolean externalize = false;
+    
     /*
      * If you want a custom source rewriter, use this constructor
      */
@@ -52,7 +55,10 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
 
     public ELNode newInstance(Node jcrNode, ELNode elNode){
         if(elNode instanceof ContentELNodeImpl) {
-            return new ContentELNodeImpl(jcrNode, ((ContentELNodeImpl)elNode).hstRequestContext );
+            ContentELNodeImpl contentELNodeImpl = new ContentELNodeImpl(jcrNode, ((ContentELNodeImpl)elNode).hstRequestContext );
+            contentELNodeImpl.setExternalize(this.externalize);
+            contentELNodeImpl.setRewriteContents(this.rewriteContents);
+            return contentELNodeImpl;
         } else {
             log.warn("Cannot create instance that is not of type ContentELNodeImpl");
             return null;
@@ -130,8 +136,8 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                 } else {
                     log.debug("parsing string property for source rewriting for property: {}", prop);
                     // only rewrite sources if isRewriteSources(). Default true
-                    if(isRewriteSources()) {
-                        return hstRequestContext.getContentRewriter().replace(node, val.getString());
+                    if(isRewriteContents()) {
+                        return hstRequestContext.getContentRewriter().replace(node, val.getString(), externalize);
                     } else {
                         return val.getString();
                     }
@@ -322,8 +328,21 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
         }
     }
 
-    public boolean isRewriteSources() {
+    public boolean isRewriteContents() {
         return rewriteContents;
+    }
+    
+    public void setRewriteContents(boolean rewriteContents) {
+        this.rewriteContents = rewriteContents;
+    }
+    
+    public boolean isExternalize() {
+        return externalize;
+    }
+
+
+    public void setExternalize(boolean externalize) {
+        this.externalize = externalize;
     }
 
 }

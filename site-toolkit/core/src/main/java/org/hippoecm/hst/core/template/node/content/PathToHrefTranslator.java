@@ -18,5 +18,5 @@ package org.hippoecm.hst.core.template.node.content;
 import javax.jcr.Node;
 
 public interface PathToHrefTranslator extends Translator{
-    public String documentPathToHref(Node node,String documentPath);
+    public String documentPathToHref(Node node,String documentPath,boolean externalize);
 }

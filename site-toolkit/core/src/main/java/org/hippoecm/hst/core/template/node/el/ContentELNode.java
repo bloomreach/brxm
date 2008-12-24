@@ -20,4 +20,9 @@ import java.util.Map;
 public interface ContentELNode extends ELNode{
     public Map getResourceUrl();
     public Map getHasResourceUrl();
+    
+    public boolean isRewriteContents();
+    public void setRewriteContents(boolean rewriteContents);
+    public boolean isExternalize();
+    public void setExternalize(boolean externalize);
 }

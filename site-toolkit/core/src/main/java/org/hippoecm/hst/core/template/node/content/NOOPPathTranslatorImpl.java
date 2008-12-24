@@ -20,11 +20,11 @@ import javax.jcr.Node;
 
 public class NOOPPathTranslatorImpl implements PathTranslator {
 
-    public String documentPathToHref(Node node, String documentPath) {
+    public String documentPathToHref(Node node, String documentPath,boolean externalize) {
         return documentPath;
     }
 
-    public String documentPathToSrc(Node node, String documentPath) {
+    public String documentPathToSrc(Node node, String documentPath,boolean externalize) {
         return documentPath;
     }
 

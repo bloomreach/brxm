@@ -41,7 +41,7 @@ public class PathToHrefTranslatorImpl implements PathToHrefTranslator{
        this.hstRequestContext = hstRequestContext; 
     }
 
-    public String documentPathToHref(Node node, String documentPath) {
+    public String documentPathToHref(Node node, String documentPath,boolean externalize) {
         
         for(String prefix: Translator.EXTERNALS){
             if(documentPath.startsWith(prefix)) {
@@ -72,8 +72,8 @@ public class PathToHrefTranslatorImpl implements PathToHrefTranslator{
                         uuid = facetSelectNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                         Session session = node.getSession();
                         Node deref = session.getNodeByUUID(uuid);
-                        log.debug("rewrite '{}' --> '{}'", deref.getPath(), hstRequestContext.getUrlMapping().rewriteLocation(deref, hstRequestContext, false).getUri());
-                        return hstRequestContext.getUrlMapping().rewriteLocation(deref, hstRequestContext, false).getUri();
+                        log.debug("rewrite '{}' --> '{}'", deref.getPath(), hstRequestContext.getUrlMapping().rewriteLocation(deref, hstRequestContext, externalize).getUri());
+                        return hstRequestContext.getUrlMapping().rewriteLocation(deref, hstRequestContext, externalize).getUri();
                     } else {
                         log.warn("relative node as link, but the node is not a facetselect. Unable to rewrite this to a URL");
                     }

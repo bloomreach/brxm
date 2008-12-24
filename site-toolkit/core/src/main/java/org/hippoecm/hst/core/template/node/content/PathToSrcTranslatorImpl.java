@@ -42,7 +42,7 @@ public class PathToSrcTranslatorImpl implements PathToSrcTranslator {
     }
 
     
-    public String documentPathToSrc(Node node, String documentPath) {
+    public String documentPathToSrc(Node node, String documentPath, boolean externalize) {
         Session session = null;
         try {
             session = node.getSession();
@@ -89,9 +89,9 @@ public class PathToSrcTranslatorImpl implements PathToSrcTranslator {
                         if(postfix.startsWith("/")) {
                             postfix = postfix.substring(1);
                         }
-                        return hstRequestContext.getUrlMapping().rewriteLocation(deref.getNode(postfix), hstRequestContext, false).getUri();
+                        return hstRequestContext.getUrlMapping().rewriteLocation(deref.getNode(postfix), hstRequestContext, externalize).getUri();
                     } else {
-                        return hstRequestContext.getUrlMapping().rewriteLocation(deref.getNode(deref.getName()), hstRequestContext, false).getUri();
+                        return hstRequestContext.getUrlMapping().rewriteLocation(deref.getNode(deref.getName()), hstRequestContext, externalize).getUri();
                     }
 
                 } else {

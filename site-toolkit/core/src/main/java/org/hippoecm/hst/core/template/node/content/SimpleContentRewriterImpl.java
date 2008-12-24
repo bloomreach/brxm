@@ -56,7 +56,7 @@ public class SimpleContentRewriterImpl implements ContentRewriter {
     /* (non-Javadoc)
      * @see org.hippoecm.hst.core.template.node.content.SourceRewriter#replace(javax.jcr.Session, java.lang.String)
      */
-    public String replace(final Node node,String content) {
+    public String replace(final Node node,String content, boolean externalize) {
         long start = System.currentTimeMillis();
         // only create if really needed
         StringBuffer sb = null;
@@ -83,7 +83,7 @@ public class SimpleContentRewriterImpl implements ContentRewriter {
                 if(hrefIndexEnd > hrefIndexStart) {
                     String documentPath = content.substring(hrefIndexStart, hrefIndexEnd);
                     log.debug("trying to translate document path : " + documentPath );
-                    String url = pathTranslator.documentPathToHref(node, documentPath);
+                    String url = pathTranslator.documentPathToHref(node, documentPath, externalize);
                     log.debug("translated '" + documentPath + "' --> '" + url +"'");
                     offset = endTag; 
                     sb.append(content.substring(globalOffset, hrefIndexStart));
@@ -126,7 +126,7 @@ public class SimpleContentRewriterImpl implements ContentRewriter {
                 if(srcIndexEnd > srcIndexStart) {
                     String documentPath = content.substring(srcIndexStart, srcIndexEnd);
                     log.debug("translating document path : " + documentPath );
-                    String src = pathTranslator.documentPathToSrc(node, documentPath);
+                    String src = pathTranslator.documentPathToSrc(node, documentPath, externalize);
                     log.debug("translated '" + documentPath + "' --> '" + src +"'");
                     offset = endTag;
                     sb.append(content.substring(globalOffset, srcIndexStart));

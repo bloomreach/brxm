@@ -22,5 +22,5 @@ public interface ContentRewriter {
     /**
      * Search content for hrefs/src's and replace them with a translated value
      */
-    public String replace(Node node, String content);
+    public String replace(Node node, String content, boolean externalize);
 }
