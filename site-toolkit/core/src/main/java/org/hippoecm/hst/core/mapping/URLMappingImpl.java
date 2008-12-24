@@ -385,7 +385,7 @@ public class URLMappingImpl implements URLMapping {
 
     public Link rewriteLocation(String sitemapNodeName, HstRequestContext hstRequestContext, boolean external) {
         long start = System.currentTimeMillis();
-        String cacheKey = computeCacheKey(sitemapNodeName, false, false, null, hstRequestContext);
+        String cacheKey = computeCacheKey(sitemapNodeName, external, false, null, hstRequestContext);
         Link rewritten = this.rewriteLRUCache.get(cacheKey);
         String path = "" ;
         if (rewritten != null) {
