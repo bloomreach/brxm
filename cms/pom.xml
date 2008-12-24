@@ -22,7 +22,7 @@
   <version>2.03.00-SNAPSHOT</version>
 
   <name>Hippo ECM</name>
-  <description>The core of the Hippo ECM, i.e. repository 2, plus an advanced webbased userinterface for content management: CMS, 
+  <description>The core of Hippo ECM, i.e. repository 2, plus an advanced webbased userinterface for content management: CMS, 
     plus a simple webbased userinterface to access the repository: console.
   </description>
   <packaging>pom</packaging>
