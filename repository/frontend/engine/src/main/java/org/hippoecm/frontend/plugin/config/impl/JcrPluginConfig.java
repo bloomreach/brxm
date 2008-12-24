@@ -397,6 +397,9 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
                         case PropertyType.BOOLEAN:
                             result = new Boolean[values.length];
                             break;
+                        case PropertyType.LONG:
+                            result = new Long[values.length];
+                            break;
                         case PropertyType.STRING:
                         default:
                             result = new String[values.length];
@@ -575,6 +578,8 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
         switch (value.getType()) {
         case PropertyType.BOOLEAN:
             return new Boolean(value.getBoolean());
+        case PropertyType.LONG:
+            return new Long(value.getLong());
         case PropertyType.STRING:
         default:
             return value.getString();
