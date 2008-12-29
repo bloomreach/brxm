@@ -80,7 +80,7 @@ public class User implements IClusterable {
         return ((UserSession) Session.get()).getQueryManager();
     }
 
-    public static boolean userExists(String username) {
+    public static boolean exists(String username) {
         String queryString = QUERY_USER_EXISTS.replace("{}", username);
         try {
             Query query = getQueryManager().createQuery(queryString, Query.SQL);
@@ -283,7 +283,7 @@ public class User implements IClusterable {
      * @throws RepositoryException
      */
     public void create() throws RepositoryException {
-        if (userExists(getUsername())) {
+        if (exists(getUsername())) {
             throw new RepositoryException("User already exists");
         }
 

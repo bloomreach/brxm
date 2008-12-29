@@ -25,7 +25,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.PasswordTextField;
@@ -58,10 +57,6 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
     public CreateUserPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-
-
-        // title
-//        add(new Label("title", new StringResourceModel("user-create-title", userModel)));
 
         // add form with markup id setter so it can be updated via ajax
         form = new Form("form", new CompoundPropertyModel(userModel));
@@ -142,7 +137,7 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
         @Override
         protected void onValidate(IValidatable validatable) {
             String username = (String) validatable.getValue();
-            if (User.userExists(username)) {
+            if (User.exists(username)) {
                 error(validatable);
             }
         }
