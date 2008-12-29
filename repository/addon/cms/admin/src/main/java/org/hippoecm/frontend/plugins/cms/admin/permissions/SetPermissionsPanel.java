@@ -129,11 +129,10 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
-                    System.out.println("Remove group " + group + " " + role + " in domain " + domain.getName());
                     try {
                         domain.removeGroupFromRole(role, group);
                         info(getString("permissions-group-removed", model));
-                        log.info("Revoke " + selectedRole + " role from group " + selectedGroup.getGroupname() + " for domain " + domain.getName());
+                        log.info("Revoke " + selectedRole + " role from group " + group + " for domain " + domain.getName());
                         this.removeAll();
                         target.addComponent(roleList);
                     } catch (RepositoryException e) {

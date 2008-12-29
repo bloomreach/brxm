@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.domains;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -28,8 +26,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
-import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 
@@ -37,7 +33,7 @@ public class Domain implements IClusterable {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static final long serialVersionUID = 1L;
 
     private final static String PROP_DESCRIPTION = "hippo:description";
@@ -56,7 +52,7 @@ public class Domain implements IClusterable {
         private SortedSet<String> groupnames = new TreeSet<String>();
 
         private transient Node authRoleNode;
-        
+
         public AuthRole(final Node node) throws RepositoryException {
             this.authRoleNode = node;
             this.role = node.getProperty(HippoNodeType.HIPPO_ROLE).getString();
@@ -77,11 +73,11 @@ public class Domain implements IClusterable {
         public String getRole() {
             return role;
         }
-        
+
         public SortedSet<String> getUsernames() {
             return usernames;
         }
-        
+
         public SortedSet<String> getGroupnames() {
             return groupnames;
         }
@@ -102,7 +98,7 @@ public class Domain implements IClusterable {
     public SortedMap<String, AuthRole> getAuthRoles() {
         return authRoles;
     }
-    
+
     public String getDescription() {
         return description;
     }
@@ -118,8 +114,6 @@ public class Domain implements IClusterable {
     public String getPath() {
         return path;
     }
-    
-    
 
     public Domain(final Node node) throws RepositoryException {
         this.path = node.getPath().substring(1);
@@ -140,28 +134,30 @@ public class Domain implements IClusterable {
             }
         }
     }
-    
-
 
     //-------------------- persistence helpers ----------//
+    public AuthRole createAuthRole(String role) throws RepositoryException {
+        Node roleNode = node.addNode(HippoNodeType.NT_AUTHROLE, HippoNodeType.NT_AUTHROLE);
+        roleNode.setProperty(HippoNodeType.HIPPO_ROLE, role);
+        node.save();
+        AuthRole ar = new AuthRole(roleNode);
+        authRoles.put(role, ar);
+        return ar;
+    }
 
     public void addGroupToRole(String role, String group) throws RepositoryException {
-        for (Domain.AuthRole authRole : getAuthRoles().values()) {
-            if (role.equals(authRole.getRole())) {
-                authRole.addGroup(group);
-            }
+        if (getAuthRoles().containsKey(role)) {
+            getAuthRoles().get(role).addGroup(group);
+        } else {
+            createAuthRole(role).addGroup(group);
         }
     }
 
     public void removeGroupFromRole(String role, String group) throws RepositoryException {
-        for (Domain.AuthRole authRole : getAuthRoles().values()) {
-            if (role.equals(authRole.getRole())) {
-                authRole.removeGroup(group);
-            }
+        if (getAuthRoles().containsKey(role)) {
+            getAuthRoles().get(role).removeGroup(group);
         }
-        
     }
-    
 
     //--------------------- default object -------------------//
     /**
