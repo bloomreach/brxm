@@ -18,6 +18,8 @@ package org.hippoecm.frontend.dialog;
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.frontend.service.PluginRequestTarget;
 
 public interface IDialogService extends IClusterable {
     final static String SVN_ID = "$Id$";
@@ -27,13 +29,19 @@ public interface IDialogService extends IClusterable {
     interface Dialog {
 
         void setDialogService(IDialogService service);
-        
+
+        void render(PluginRequestTarget target);
+
         Component getComponent();
 
         IModel getTitle();
 
         void onClose();
+        
+        IValueMap getProperties();
     }
+
+    void render(PluginRequestTarget target);
 
     void show(Dialog dialog);
 

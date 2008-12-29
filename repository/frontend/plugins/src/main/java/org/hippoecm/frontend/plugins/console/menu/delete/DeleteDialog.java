@@ -38,22 +38,26 @@ public class DeleteDialog extends AbstractDialog {
     }
 
     @Override
-    public void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
-        JcrNodeModel parentModel = nodeModel.getParentModel();
+    public void onOk() {
+        try {
+            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+            JcrNodeModel parentModel = nodeModel.getParentModel();
 
-        //The actual JCR remove
-        nodeModel.getNode().remove();
+            //The actual JCR remove
+            nodeModel.getNode().remove();
 
-        //set the parent model as current model
-        plugin.setModel(parentModel);
+            //set the parent model as current model
+            plugin.setModel(parentModel);
 
-        //flush the JCR tree
-        plugin.flushNodeModel(parentModel.findRootModel());
+            //flush the JCR tree
+            plugin.flushNodeModel(parentModel.findRootModel());
+        } catch (RepositoryException ex) {
+            error(ex.getMessage());
+        }
     }
 
     public IModel getTitle() {
-        JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         String title;
         try {
             title = "Delete " + nodeModel.getNode().getPath();

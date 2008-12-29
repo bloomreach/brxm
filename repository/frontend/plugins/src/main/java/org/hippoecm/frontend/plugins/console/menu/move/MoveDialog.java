@@ -108,28 +108,32 @@ public class MoveDialog extends LookupDialog {
     }
 
     @Override
-    public void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+    public void onOk() {
+        try {
+            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
 
-        JcrNodeModel selectedNode = getSelectedNode().getNodeModel();
-        if (selectedNode != null && name != null && !"".equals(name)) {
-            JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
-            String targetPath = targetNodeModel.getNode().getPath();
-            if (!targetPath.endsWith("/")) {
-                targetPath += "/";
+            JcrNodeModel selectedNode = getSelectedNode().getNodeModel();
+            if (selectedNode != null && name != null && !"".equals(name)) {
+                JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
+                String targetPath = targetNodeModel.getNode().getPath();
+                if (!targetPath.endsWith("/")) {
+                    targetPath += "/";
+                }
+                targetPath += name;
+
+                // The actual move
+                UserSession wicketSession = (UserSession) getSession();
+                HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
+                String sourcePath = nodeModel.getNode().getPath();
+                jcrSession.move(sourcePath, targetPath);
+
+                Node rootNode = nodeModel.getNode().getSession().getRootNode();
+                Node targetNode = rootNode.getNode(targetPath.substring(1));
+                plugin.setModel(new JcrNodeModel(targetNode));
+                plugin.flushNodeModel(new JcrNodeModel(rootNode));
             }
-            targetPath += name;
-
-            // The actual move
-            UserSession wicketSession = (UserSession) getSession();
-            HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
-            String sourcePath = nodeModel.getNode().getPath();
-            jcrSession.move(sourcePath, targetPath);
-
-            Node rootNode = nodeModel.getNode().getSession().getRootNode();
-            Node targetNode = rootNode.getNode(targetPath.substring(1));
-            plugin.setModel(new JcrNodeModel(targetNode));
-            plugin.flushNodeModel(new JcrNodeModel(rootNode));
+        } catch (RepositoryException ex) {
+            error(ex.getMessage());
         }
     }
 

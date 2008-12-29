@@ -69,13 +69,17 @@ public class ResetDialog extends AbstractDialog {
     }
 
     @Override
-    public void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
-        Node rootNode = nodeModel.getNode().getSession().getRootNode();
-        // always refresh regardless of the local changes, so external changes
-        // can also be exposed.
-        rootNode.refresh(false);
-        plugin.flushNodeModel(new JcrNodeModel(rootNode));
+    public void onOk() {
+        try {
+            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+            Node rootNode = nodeModel.getNode().getSession().getRootNode();
+            // always refresh regardless of the local changes, so external changes
+            // can also be exposed.
+            rootNode.refresh(false);
+            plugin.flushNodeModel(new JcrNodeModel(rootNode));
+        } catch (RepositoryException ex) {
+            error(ex.getMessage());
+        }
     }
 
     public IModel getTitle() {

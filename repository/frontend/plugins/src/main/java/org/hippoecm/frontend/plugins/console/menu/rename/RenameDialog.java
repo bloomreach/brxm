@@ -59,25 +59,29 @@ public class RenameDialog extends AbstractDialog {
     }
 
     @Override
-    protected void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+    protected void onOk() {
+        try {
+            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
 
-        if (nodeModel.getParentModel() != null) {
-            JcrNodeModel parentModel = nodeModel.getParentModel();
+            if (nodeModel.getParentModel() != null) {
+                JcrNodeModel parentModel = nodeModel.getParentModel();
 
-            //The actual JCR move
-            String oldPath = nodeModel.getNode().getPath();
-            String newPath = parentModel.getNode().getPath();
-            if (!newPath.endsWith("/")) {
-                newPath += "/";
+                //The actual JCR move
+                String oldPath = nodeModel.getNode().getPath();
+                String newPath = parentModel.getNode().getPath();
+                if (!newPath.endsWith("/")) {
+                    newPath += "/";
+                }
+                newPath += getName();
+                Session jcrSession = ((UserSession) getSession()).getJcrSession();
+                jcrSession.move(oldPath, newPath);
+
+                plugin.flushNodeModel(parentModel);
+                JcrNodeModel newNodeModel = new JcrNodeModel(parentModel.getNode().getNode(getName()));
+                plugin.setModel(newNodeModel);
             }
-            newPath += getName();
-            Session jcrSession = ((UserSession) getSession()).getJcrSession();
-            jcrSession.move(oldPath, newPath);
-
-            plugin.flushNodeModel(parentModel);
-            JcrNodeModel newNodeModel = new JcrNodeModel(parentModel.getNode().getNode(getName()));
-            plugin.setModel(newNodeModel);
+        } catch (RepositoryException ex) {
+            error(ex.getMessage());
         }
     }
 

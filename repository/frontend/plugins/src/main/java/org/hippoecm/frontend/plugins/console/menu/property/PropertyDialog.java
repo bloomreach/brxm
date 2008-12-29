@@ -69,23 +69,27 @@ public class PropertyDialog extends AbstractDialog {
     }
 
     @Override
-    public void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
-        Node node = nodeModel.getNode();
+    public void onOk() {
+        try {
+            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+            Node node = nodeModel.getNode();
 
-        Value jcrValue = getJcrValue();
-        if (isMultiple.booleanValue()) {
-            if (jcrValue == null || value.equals("")) {
-                jcrValue = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("...",
-                        PropertyType.STRING);
+            Value jcrValue = getJcrValue();
+            if (isMultiple.booleanValue()) {
+                if (jcrValue == null || value.equals("")) {
+                    jcrValue = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("...",
+                            PropertyType.STRING);
+                }
+                node.setProperty(name, new Value[] { jcrValue });
+            } else {
+                node.setProperty(name, jcrValue);
             }
-            node.setProperty(name, new Value[] { jcrValue });
-        } else {
-            node.setProperty(name, jcrValue);
-        }
 
-        JcrNodeModel newNodeModel = new JcrNodeModel(node);
-        plugin.setModel(newNodeModel);
+            JcrNodeModel newNodeModel = new JcrNodeModel(node);
+            plugin.setModel(newNodeModel);
+        } catch (RepositoryException ex) {
+            error(ex.getMessage());
+        }
     }
 
     public IModel getTitle() {

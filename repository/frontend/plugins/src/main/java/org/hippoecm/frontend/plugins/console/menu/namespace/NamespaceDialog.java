@@ -48,12 +48,12 @@ public class NamespaceDialog  extends AbstractDialog implements ITitleDecorator 
     }
 
     @Override
-    protected void ok() throws RepositoryException {
+    protected void onOk() {
         if (namespaceName == null) {
-            throw new IllegalArgumentException("Namespace name cannot be empty.");
+            error("Namespace name cannot be empty.");
         }
         if (namespaceUri == null) {
-            throw new IllegalArgumentException("Namespace uri cannot be empty.");
+            error("Namespace uri cannot be empty.");
         }
         log.info("Trying to add namespace initialization node: " + namespaceName + " => " + namespaceUri);
 

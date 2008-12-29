@@ -44,6 +44,8 @@ import org.slf4j.LoggerFactory;
  *
  */
 public abstract class AbstractWorkflowDialog extends AbstractDialog implements IStringResourceProvider {
+    private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -62,13 +64,13 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog implements I
         }
 
         Label notification = new Label("notification");
-        if(message != null) {
+        if (message != null) {
             notification.setModel(message);
         } else {
             notification.setVisible(false);
         }
         add(notification);
-        
+
         // FIXME: refactor the plugin so that we can use a service instead here
         IPluginContext context = plugin.getPluginContext();
         translator = new SearchingTranslatorPlugin(context, null);
@@ -105,25 +107,35 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog implements I
     }
 
     @Override
-    protected void ok() throws Exception {
-        JcrNodeModel handle = model.getNodeModel();
-        while (handle != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
-            handle = handle.getParentModel();
-        }
-        if (handle == null) {
-            handle = model.getNodeModel().getParentModel();
-            if (handle == null) {
-                handle = model.getNodeModel();
+    protected void onOk() {
+        try {
+            JcrNodeModel handle = model.getNodeModel();
+            while (handle != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+                handle = handle.getParentModel();
             }
-        }
-        handle.getNode().save();
-        execute();
+            if (handle == null) {
+                handle = model.getNodeModel().getParentModel();
+                if (handle == null) {
+                    handle = model.getNodeModel();
+                }
+            }
+            handle.getNode().save();
+            execute();
 
-        ((UserSession) Session.get()).getJcrSession().refresh(true);
+            ((UserSession) Session.get()).getJcrSession().refresh(true);
 
-        IJcrService jcrService = plugin.getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
-        if (jcrService != null) {
-            jcrService.flush(handle);
+            IJcrService jcrService = plugin.getPluginContext().getService(IJcrService.class.getName(),
+                    IJcrService.class);
+            if (jcrService != null) {
+                jcrService.flush(handle);
+            }
+        } catch (Exception e) {
+            String msg = e.getClass().getName() + ": " + e.getMessage();
+            log.error(msg);
+            error(msg);
+            if (log.isDebugEnabled()) {
+                log.debug("Error from repository: ", e);
+            }
         }
     }
 

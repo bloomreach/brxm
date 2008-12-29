@@ -19,6 +19,7 @@ import java.util.LinkedList;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.Page;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
@@ -33,6 +34,7 @@ import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -41,6 +43,9 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.string.AppendingStringBuffer;
+import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,6 +108,7 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
     private IDialogService dialogService;
     private Panel container;
     private AjaxFormSubmitBehavior ajaxSubmit;
+    protected boolean cancelled = false;
 
     public AbstractDialog() {
         super("form");
@@ -130,7 +136,17 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
             }
         });
 
-        ok = new Button(getButtonId());
+        ok = new Button(getButtonId()) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onSubmit() {
+                onOk();
+                if (!hasError()) {
+                    closeDialog();
+                }
+            }
+        };
         ok.add(new Label("label", new ResourceModel("ok")));
         buttons.add(ok);
 
@@ -141,7 +157,8 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                cancel();
+                cancelled = true;
+                onCancel();
                 closeDialog();
             }
         }.setDefaultFormProcessing(false);
@@ -166,12 +183,10 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
 
                     @Override
                     protected void onError(AjaxRequestTarget target) {
-                        target.addComponent(feedback);
                     }
 
                     @Override
                     protected void onSubmit(AjaxRequestTarget target) {
-                        target.addComponent(feedback);
                     }
                 });
             }
@@ -187,12 +202,8 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         this.dialogService = dialogService;
     }
 
-    protected IDialogService getDialogService() {
-        return dialogService;
-    }
-
     protected final void closeDialog() {
-        getDialogService().close();
+        dialogService.close();
     }
 
     protected String getButtonId() {
@@ -206,37 +217,44 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
             log.error("Failed to add button: component id is not '{}'", getButtonId());
         }
     }
-    
+
     protected void removeButton(Button button) {
         buttons.remove(button);
     }
-    
+
     @Override
-    protected void onSubmit() {
-        try {
-            ok();
-            closeDialog();
-        } catch (Exception e) {
-            String msg = e.getClass().getName() + ": " + e.getMessage();
-            log.error(msg);
-            error(e.getMessage());
-            if (log.isDebugEnabled()) {
-                log.debug("Error from repository: ", e);
+    protected final void onSubmit() {
+        Page page = (Page) findParent(Page.class);
+        if (page != null) {
+            IFormSubmittingComponent submitButton = findSubmittingButton();
+            if (submitButton == null) {
+                onOk();
+                if (!hasError()) {
+                    closeDialog();
+                }
             }
         }
     }
 
-    protected void ok() throws Exception {
+    protected void onOk() {
     }
 
-    protected void cancel() {
+    protected void onCancel() {
     }
 
     public Component getComponent() {
         return container;
     }
 
+    public void render(PluginRequestTarget target) {
+        target.addComponent(feedback);
+    }
+
     public void onClose() {
+    }
+
+    public IValueMap getProperties() {
+        return new ValueMap();
     }
 
 }
