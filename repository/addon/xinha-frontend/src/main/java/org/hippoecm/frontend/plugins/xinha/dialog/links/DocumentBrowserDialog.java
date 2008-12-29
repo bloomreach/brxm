@@ -21,12 +21,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.dialog.browse.BrowserPlugin;
+import org.hippoecm.frontend.plugins.xinha.dialog.browse.AbstractBrowserDialog;
 import org.hippoecm.frontend.plugins.xinha.services.links.InternalXinhaLink;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLink;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
@@ -35,24 +35,20 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentBrowserPlugin extends BrowserPlugin {
+public class DocumentBrowserDialog extends AbstractBrowserDialog {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    static final Logger log = LoggerFactory.getLogger(DocumentBrowserPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(DocumentBrowserDialog.class);
 
-    private final Form form;
+    public DocumentBrowserDialog(IPluginContext context, IPluginConfig config, IModel model) {
+        super(context, config, model);
 
-    public DocumentBrowserPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        InternalXinhaLink link = (InternalXinhaLink) getModelObject();
 
-        add(form = new Form("form1"));
-
-        InternalXinhaLink link = (InternalXinhaLink) getDialogModel();
-
-        form.add(new TextFieldWidget("title", link.getPropertyModel(XinhaLink.TITLE)) {
+        add(new TextFieldWidget("title", new PropertyModel(link, XinhaLink.TITLE)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -60,8 +56,8 @@ public class DocumentBrowserPlugin extends BrowserPlugin {
                 checkState();
             }
         });
-        
-        form.add(new BooleanFieldWidget("popup", link.getTargetModel()) {
+
+        add(new BooleanFieldWidget("popup", new PropertyModel(link, "target")) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -73,7 +69,7 @@ public class DocumentBrowserPlugin extends BrowserPlugin {
 
     @Override
     protected JcrNodeModel findNewModel(IModel model) {
-        if(model == null) {
+        if (model == null) {
             return null;
         }
         JcrNodeModel nodeModel = (JcrNodeModel) model;
@@ -90,6 +86,21 @@ public class DocumentBrowserPlugin extends BrowserPlugin {
             }
         }
         return null;
+    }
+
+    protected void onOk() {
+        InternalXinhaLink link = (InternalXinhaLink) getModelObject();
+        link.save();
+    }
+
+    protected void onRemove() {
+        InternalXinhaLink link = (InternalXinhaLink) getModelObject();
+        link.delete();
+    }
+
+    @Override
+    protected String getName() {
+        return "internallinks";
     }
 
 }

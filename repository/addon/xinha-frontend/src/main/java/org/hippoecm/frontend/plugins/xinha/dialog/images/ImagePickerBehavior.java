@@ -15,14 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.xinha.dialog.images;
 
-import java.util.HashMap;
-
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.dialog.IDialogModel;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
-import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImage;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImageService;
 
 public class ImagePickerBehavior extends XinhaDialogBehavior {
@@ -30,43 +27,17 @@ public class ImagePickerBehavior extends XinhaDialogBehavior {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    public ImagePickerBehavior(IPluginContext context, IPluginConfig config, String serviceId) {
-        super(context, config, serviceId);
-    }
-
-    @Override
-    protected void configureModal(final ModalWindow modal) {
-        super.configureModal(modal);
-        modal.setInitialHeight(455);
-        modal.setInitialWidth(850);
-    }
     
-    @Override
-    protected IDialogModel newDialogModel(HashMap<String, String> p) {
-        return getImageService().createXinhaImage(p);
+    private XinhaImageService imageService;
+
+    public ImagePickerBehavior(IPluginContext context, IPluginConfig config, XinhaImageService service) {
+        super(context, config);
+        imageService = service;
     }
 
     @Override
-    protected String getId() {
-        return "imagepicker";
+    protected void respond(AjaxRequestTarget target) {
+        getDialogService().show(new ImageBrowserDialog(context, config, new Model(imageService.createXinhaImage(getParameters()))));
     }
 
-    @Override
-    protected void onOk(IDialogModel model) {
-        XinhaImage xi = (XinhaImage) model;
-        getImageService().attach(xi);
-    }
-
-    @Override
-    protected void onRemove(IDialogModel model) {
-        XinhaImage img = (XinhaImage) model;
-        if (getImageService().detach(img)) {
-            img.reset();
-        }
-    }
-
-    private XinhaImageService getImageService() {
-        return context.getService(clusterServiceId + ".images", XinhaImageService.class);
-    }
 }

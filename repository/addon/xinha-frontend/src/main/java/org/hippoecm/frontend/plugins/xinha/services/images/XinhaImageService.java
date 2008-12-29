@@ -54,40 +54,39 @@ public abstract class XinhaImageService implements IClusterable {
         ImageItem item = createImageItem(model);
         if (attachImageItem(item)) {
             StringBuilder sb = new StringBuilder();
-            sb.append("xinha_editors.").append(getXinhaName()).append(
-                    ".plugins.InsertImage.instance.insertImage(").append('{').append(XinhaImage.URL).append(": '")
-                    .append(item.getUrl()).append("'}, false)");
+            sb.append("xinha_editors.").append(getXinhaName()).append(".plugins.InsertImage.instance.insertImage(")
+                    .append('{').append(XinhaImage.URL).append(": '").append(item.getUrl()).append("'}, false)");
             return sb.toString();
         }
         return null;
     }
-    
+
     protected abstract String getXinhaName();
 
-    public void attach(XinhaImage xi) {
-        if (xi.isAttacheable()) {
-            if (xi.isReplacing()) {
-                ImageItem remove = createImageItem(xi.getInitialValues());
-                detachImageItem(remove);
-            }
-            ImageItem item = createImageItem(xi.getNodeModel());
-            if (attachImageItem(item)) {
-                xi.setUrl(item.getUrl());
-            }
-        }
-    }
-    
-    public boolean detach(XinhaImage xi) {
-        Map<String, String> values = (Map<String, String>) xi.getObject();
-        ImageItem item = createImageItem(values);
-        if (detachImageItem(item)) {
-            return true;
-        }
-        return false;
-    }
+    public XinhaImage createXinhaImage(Map<String, String> p) {
+        return new XinhaImage(p, nodeModel) {
+            private static final long serialVersionUID = 1L;
 
-    public XinhaImage createXinhaImage(HashMap<String, String> p) {
-        return new XinhaImage(p, nodeModel);
+            public void save() {
+                if (isAttacheable()) {
+                    if (isReplacing()) {
+                        ImageItem remove = createImageItem(getInitialValues());
+                        detachImageItem(remove);
+                    }
+                    ImageItem item = createImageItem(getNodeModel());
+                    if (attachImageItem(item)) {
+                        setUrl(item.getUrl());
+                    }
+                }
+            }
+
+            public void delete() {
+                ImageItem item = createImageItem(this);
+                detachImageItem(item);
+                setUrl("");
+            }
+
+        };
     }
 
     private ImageItem createImageItem(Map<String, String> values) {
@@ -114,7 +113,7 @@ public abstract class XinhaImageService implements IClusterable {
         Node node = nodeModel.getNode();
         try {
             String facet = helper.createFacet(node, item.getNodeName(), item.getUuid());
-            if(facet != null && !facet.equals("")) {
+            if (facet != null && !facet.equals("")) {
                 item.setFacetName(facet);
                 return true;
             }
@@ -124,7 +123,7 @@ public abstract class XinhaImageService implements IClusterable {
         return false;
     }
 
-    private boolean detachImageItem(ImageItem item) {
+    private void detachImageItem(ImageItem item) {
         if (item.getUuid() != null) {
             Node node = nodeModel.getNode();
             String facet = item.getFacetName();
@@ -133,12 +132,10 @@ public abstract class XinhaImageService implements IClusterable {
                     Node imgNode = node.getNode(facet);
                     imgNode.remove();
                     node.save();
-                    return true;
                 }
             } catch (RepositoryException e) {
                 log.error("An error occured while trying to save new image facetSelect[" + item.getNodeName() + "]", e);
             }
         }
-        return false;
     }
 }

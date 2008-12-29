@@ -41,19 +41,21 @@ import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractHeaderContributor;
+import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialog;
+import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.ExternalLinkBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.InternalLinkBehavior;
@@ -94,7 +96,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     private HtmlCleanerTemplate htmlCleanerTemplate;
     private AbstractDefaultAjaxBehavior postBehavior;
 
-    private XinhaDialog dialog;
     private InternalLinkBehavior linkPickerBehavior;
     private ExternalLinkBehavior externalLinkBehavior;
     private ImagePickerBehavior imagePickerBehavior;
@@ -111,27 +112,23 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         if ("edit".equals(mode)) {
             fragment.add(createEditor(config));
             IPluginConfig htmlCleanerConfig = config.getPluginConfig("cleaner.config");
-            if (htmlCleanerConfig != null){
-                try{
+            if (htmlCleanerConfig != null) {
+                try {
                     htmlCleanerTemplate = new JCRHtmlCleanerTemplateBuilder().buildTemplate(htmlCleanerConfig);
-                } catch (Exception ex){
-                    log.error("Exception whole creating HTMLCleaner template:",ex);
+                } catch (Exception ex) {
+                    log.error("Exception whole creating HTMLCleaner template:", ex);
                 }
             }
             configuration = new Configuration(config);
             context.registerService(configuration, Configuration.class.getName());
-            
-            
+
             JcrPropertyValueModel propertyValueModel = getValueModel();
             String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
             JcrNodeModel nodeModel = new JcrNodeModel(nodePath);
 
-            //biedt aan als service
-            dialog = new XinhaDialog("modalwindow");
-            fragment.add(dialog.getModal());
-
-            String serviceId = context.getReference(this).getServiceId();
-            context.registerService(dialog, serviceId + ".dialog");
+            // dialog functionality for plugins
+            add(HeaderContributor.forJavaScript(new JavascriptResourceReference(XinhaDialogBehavior.class,
+                    "xinha-modal.js")));
 
             imageService = new XinhaImageService(nodeModel) {
                 private static final long serialVersionUID = 1L;
@@ -142,7 +139,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 }
 
             };
-            context.registerService(imageService, serviceId + ".images");
+            fragment.add(imagePickerBehavior = new ImagePickerBehavior(context, config, imageService));
 
             linkService = new XinhaLinkService(nodeModel) {
                 private static final long serialVersionUID = 1L;
@@ -153,12 +150,10 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 }
 
             };
-            context.registerService(linkService, serviceId + ".links");
+            fragment.add(linkPickerBehavior = new InternalLinkBehavior(context, config, linkService));
 
-            fragment.add(imagePickerBehavior = new ImagePickerBehavior(context, config, serviceId));
-            fragment.add(linkPickerBehavior = new InternalLinkBehavior(context, config, serviceId));
-            fragment.add(externalLinkBehavior = new ExternalLinkBehavior(context, config, serviceId));
-            
+            fragment.add(externalLinkBehavior = new ExternalLinkBehavior(context, config));
+
             add(new XinhaDropBehavior(context, config) {
                 private static final long serialVersionUID = 1L;
 
@@ -289,51 +284,41 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             Page page = (Page) findParent(Page.class);
             if (page == null) {
                 configuration.setName(null);
-            } else {
-                if (imagePickerBehavior != null) {
-                    imagePickerBehavior.render(target);
-                }
-                if (linkPickerBehavior != null) {
-                    linkPickerBehavior.render(target);
-                }
-                if (externalLinkBehavior != null) {
-                    externalLinkBehavior.render(target);
-                }
             }
         }
         super.render(target);
     }
 
     protected String clean(final String value) throws Exception {
-        if (htmlCleanerTemplate != null){
-             return new HtmlCleaner(htmlCleanerTemplate).cleanToString(value);
+        if (htmlCleanerTemplate != null) {
+            return new HtmlCleaner(htmlCleanerTemplate).cleanToString(value);
         } else {
-            return value;    
-        }    	
+            return value;
+        }
     }
 
     private Component createEditor(final IPluginConfig config) {
         final JcrPropertyValueModel valueModel = getValueModel();
         editor = new TextArea("value", new IModel() {
-			private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-			public Object getObject() {
-				return valueModel.getObject();
-			}
+            public Object getObject() {
+                return valueModel.getObject();
+            }
 
-			public void setObject(Object value) {
-			    try{
-			        valueModel.setObject(clean((String) value));    
-			    } catch (Exception e){
-			        error(e.getMessage());
-			        log.error("Exception caught while setting object value:",e);
-			    }				
-			}
+            public void setObject(Object value) {
+                try {
+                    valueModel.setObject(clean((String) value));
+                } catch (Exception e) {
+                    error(e.getMessage());
+                    log.error("Exception caught while setting object value:", e);
+                }
+            }
 
-			public void detach() {
-				valueModel.detach();
-			}
-        	
+            public void detach() {
+                valueModel.detach();
+            }
+
         }) {
             private static final long serialVersionUID = 1L;
 

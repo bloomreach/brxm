@@ -19,46 +19,41 @@ package org.hippoecm.frontend.plugins.xinha.dialog.images;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.dialog.browse.BrowserPlugin;
+import org.hippoecm.frontend.plugins.xinha.dialog.IPersistedMap;
+import org.hippoecm.frontend.plugins.xinha.dialog.browse.AbstractBrowserDialog;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImage;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageBrowserPlugin extends BrowserPlugin {
+public class ImageBrowserDialog extends AbstractBrowserDialog {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    static final Logger log = LoggerFactory.getLogger(ImageBrowserPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(ImageBrowserDialog.class);
 
-    private final Form form;
+    public ImageBrowserDialog(IPluginContext context, IPluginConfig config, final IModel model) {
+        super(context, config, model);
 
-    public ImageBrowserPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);
-
-        add(form = new Form("form1"));
-        form.add(new TextFieldWidget("alt", getDialogModel().getPropertyModel(XinhaImage.ALT)) {
+        add(new TextFieldWidget("alt", new PropertyModel(model, XinhaImage.ALT)) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                boolean submit = getDialogModel().isSubmittable();
-                if (ok.isEnabled() != submit) {
-                    enableOk(submit);
-                }
+                IPersistedMap link = (IPersistedMap) model.getObject();
+                enableOk(link.isValid() && link.hasChanged());
             }
         });
     }
-
-    @Override
+    
     protected JcrNodeModel findNewModel(IModel model) {
         JcrNodeModel nodeModel = (JcrNodeModel) model;
         HippoNode node = nodeModel.getNode();
@@ -71,9 +66,26 @@ public class ImageBrowserPlugin extends BrowserPlugin {
                 }
             } catch (RepositoryException e) {
                 log.error("Error during hippo:handle check", e);
-            }            
+            }
         }
         return null;
     }
-   
+
+    @Override
+    protected void onOk() {
+        XinhaImage xi = (XinhaImage) getModelObject();
+        xi.save();
+    }
+
+    @Override
+    protected void onRemove() {
+        XinhaImage img = (XinhaImage) getModelObject();
+        img.delete();
+    }
+
+    @Override
+    protected String getName() {
+        return "imagepicker";
+    }
+
 }

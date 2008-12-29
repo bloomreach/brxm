@@ -16,12 +16,10 @@
 
 package org.hippoecm.frontend.plugins.xinha.dialog.links;
 
-import java.util.HashMap;
-
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.dialog.IDialogModel;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
 import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
 
@@ -31,34 +29,23 @@ public class ExternalLinkBehavior extends XinhaDialogBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    public ExternalLinkBehavior(IPluginContext context, IPluginConfig config, String serviceId) {
-        super(context, config, serviceId);
+    public ExternalLinkBehavior(IPluginContext context, IPluginConfig config) {
+        super(context, config);
     }
-    
+
+    /*
     @Override
     protected void configureModal(final ModalWindow modal) {
         super.configureModal(modal);
         modal.setInitialHeight(200);
         modal.setInitialWidth(400);
     }
-    
-    @Override
-    protected String getId() {
-        return "externallinks";
-    }
+    */
 
     @Override
-    protected IDialogModel newDialogModel(HashMap<String, String> p) {
-        return new ExternalXinhaLink(p, null);
-    }
-
-    @Override
-    protected void onOk(IDialogModel model) {
-    }
-
-    @Override
-    protected void onRemove(IDialogModel model) {
-        model.reset();
+    protected void respond(AjaxRequestTarget target) {
+        getDialogService().show(
+                new ExternalLinkDialog(context, config, new Model(new ExternalXinhaLink(getParameters()))));
     }
 
 }
