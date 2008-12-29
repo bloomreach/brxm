@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,8 +89,7 @@ public final class DetachableGroup extends LoadableDetachableModel {
     @Override
     protected Group load() {
         if (path == null) {
-            return null;
-            //return new Group();
+            return new Group();
         }
         // loads group from jcr
         try {

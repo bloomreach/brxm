@@ -21,7 +21,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.groups.GroupsPanel;
+import org.hippoecm.frontend.plugins.cms.admin.groups.ListGroupsPanel;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionsPanel;
 import org.hippoecm.frontend.plugins.cms.admin.system.SystemInfoPanel;
 import org.hippoecm.frontend.plugins.cms.admin.system.SystemPropertiesPanel;
@@ -37,7 +37,7 @@ public class AdminPanel extends AdminBreadCrumbPanel {
         super(id, breadCrumbModel);
 
         add(new AjaxBreadCrumbPanelLink("users", context, this, ListUsersPanel.class));
-        add(new AjaxBreadCrumbPanelLink("groups", context, this, GroupsPanel.class));
+        add(new AjaxBreadCrumbPanelLink("groups", context, this, ListGroupsPanel.class));
         add(new AjaxBreadCrumbPanelLink("permissions", context, this, PermissionsPanel.class));
         add(new AjaxBreadCrumbPanelLink("system-info", context, this, SystemInfoPanel.class));
         add(new AjaxBreadCrumbPanelLink("system-properties", context, this, SystemPropertiesPanel.class));

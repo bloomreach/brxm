@@ -45,6 +45,7 @@ public class GroupDataProvider extends SortableDataProvider {
     private static final String QUERY_GROUP_LIST = "SELECT * FROM hippo:group";
 
     private static int totalCount = -1;
+    private static String sessionId = "none";
 
     public GroupDataProvider() {
         setSort("nodename", true);
@@ -89,18 +90,27 @@ public class GroupDataProvider extends SortableDataProvider {
 
     public int size() {
         // just count once, until there is an option to do authorized queries
-        if (totalCount > -1) {
+        if (totalCount > -1 && sessionId.equals(Session.get().getId())) {
             return totalCount;
         }
         try {
             HippoQuery countQuery = (HippoQuery) getQueryManager().createQuery(QUERY_GROUP_LIST, Query.SQL);
             // must return int instead of long
             totalCount = (int) countQuery.execute().getNodes().getSize();
+            sessionId = Session.get().getId();
             return totalCount;
         } catch (RepositoryException e) {
             log.error("Unable to count the total number of groups, returning 0", e);
             return 0;
         }
+    }
+
+    public static void countMinusOne() {
+        totalCount--;
+    }
+
+    public static void countPlusOne() {
+        totalCount++;
     }
 
     public void detach() {
