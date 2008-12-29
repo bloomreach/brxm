@@ -34,12 +34,11 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.users.CreateUserPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxBreadCrumbPanelLink;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 
-public class GroupsPanel extends AdminBreadCrumbPanel {
+public class ListGroupsPanel extends AdminBreadCrumbPanel {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -48,11 +47,11 @@ public class GroupsPanel extends AdminBreadCrumbPanel {
 
     private AdminDataTable table;
 
-    public GroupsPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
+    public ListGroupsPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
-        add(new AjaxBreadCrumbPanelLink("create-group", context, this, CreateUserPanel.class));
+        add(new AjaxBreadCrumbPanelLink("create-group", context, this, CreateGroupPanel.class));
 
         List<IColumn> columns = new ArrayList<IColumn>();
 

@@ -49,6 +49,8 @@ public class Group implements Comparable<Group>, IClusterable {
     private final static String QUERY_ALL_LOCAL = "select * from hippo:group where hippo:securityprovider='internal'";
     private final static String QUERY_ALL = "select * from hippo:group";
     private final static String QUERY_ALL_ROLES = "select * from hippo:role";
+    private final static String QUERY_GROUP_EXISTS = "SELECT * FROM hippo:group WHERE fn:name()='{}'";
+
         
     private String path;
     private String groupname;
@@ -64,6 +66,21 @@ public class Group implements Comparable<Group>, IClusterable {
         return ((UserSession) Session.get()).getQueryManager();
     }
     
+
+    public static boolean exists(String groupname) {
+        String queryString = QUERY_GROUP_EXISTS.replace("{}", groupname);
+        try {
+            Query query = getQueryManager().createQuery(queryString, Query.SQL);
+            if (query.execute().getNodes().getSize() > 0) {
+                return true;
+            }
+        } catch (RepositoryException e) {
+            log.error("Unable to check if group '{}' exists, returning true", groupname, e);
+            return true;
+        }
+        return false;
+    }
+
     public static List<Group> getLocalGroups() {
         List<Group> groups = new ArrayList<Group>();
         NodeIterator iter;
@@ -150,6 +167,10 @@ public class Group implements Comparable<Group>, IClusterable {
         return groupname;
     }
 
+    public void setGroupname(String groupname) {
+        this.groupname = groupname;
+    }
+
     public String getPath() {
         return path;
     }
@@ -198,7 +219,52 @@ public class Group implements Comparable<Group>, IClusterable {
     }
 
     //-------------------- persistence helpers ----------//
-    
+    /**
+     * Create a new group
+     * @throws RepositoryException
+     */
+    public void create() throws RepositoryException {
+        if (exists(getGroupname())) {
+            throw new RepositoryException("Group already exists");
+        }
+
+        // FIXME: should be delegated to a groupmanager
+        StringBuilder relPath = new StringBuilder();
+        relPath.append(HippoNodeType.CONFIGURATION_PATH);
+        relPath.append("/");
+        relPath.append(HippoNodeType.GROUPS_PATH);
+        relPath.append("/");
+        relPath.append(NodeNameCodec.encode(getGroupname(), true));
+
+        node = ((UserSession) Session.get()).getRootNode().addNode(relPath.toString(), HippoNodeType.NT_GROUP);
+        node.setProperty(PROP_DESCRIPTION, getDescription());
+        // save parent when adding a node
+        node.getParent().save();
+    }
+
+    /**
+     * save the current group
+     * @throws RepositoryException
+     */
+    public void save() throws RepositoryException {
+        if (node.isNodeType(HippoNodeType.NT_GROUP)) {
+            node.setProperty(PROP_DESCRIPTION, getDescription());
+            node.save();
+        } else {
+            throw new RepositoryException("Only hippo:group's can be edited.");
+        }
+    }
+
+    /**
+     * Delete the current group
+     * @throws RepositoryException
+     */
+    public void delete() throws RepositoryException {
+        Node parent = node.getParent();
+        node.remove();
+        parent.save();
+    }
+
     public void removeMembership(String user) throws RepositoryException {
         members.remove(user);
         node.setProperty(HippoNodeType.HIPPO_MEMBERS, members.toArray(new String[members.size()]));

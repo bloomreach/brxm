@@ -16,6 +16,21 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <table class="hippo-controlpanel-groups hippo-list-details" cellspacing="0" wicket:id="table">[table]</table>
+      <form class="hippo-controlpanel-form" wicket:id="form">
+      <table>
+        <tr>
+          <td><wicket:message key="group-groupname"/>: </td>
+          <td><input type="text" wicket:id="groupname"/></td>
+        </tr>
+        <tr>
+          <td><wicket:message key="group-description"/>: </td>
+          <td><input type="text" wicket:id="description"/></td>
+        </tr>
+      </table>
+        <div class="hippo-controlpanel-actions">
+          <input type="submit" value="Create" wicket:id="create-button"/>
+          <input type="submit" value="Cancel" wicket:id="cancel-button"/>
+        </div>
+    </form>
   </wicket:panel>
 </html>
