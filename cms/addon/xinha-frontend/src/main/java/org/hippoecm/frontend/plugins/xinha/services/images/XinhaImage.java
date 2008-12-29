@@ -24,13 +24,13 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.xinha.XinhaUtil;
-import org.hippoecm.frontend.plugins.xinha.dialog.DialogModel;
+import org.hippoecm.frontend.plugins.xinha.dialog.DocumentLink;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XinhaImage extends DialogModel {
+public abstract class XinhaImage extends DocumentLink {
     private static final long serialVersionUID = 1L;
 
     final static String SVN_ID = "$Id$";
@@ -54,13 +54,13 @@ public class XinhaImage extends DialogModel {
     }
 
     public void setUrl(String url) {
-        values.put(URL, url);
+        put(URL, url);
     }
 
     public String getUrl() {
-        return values.get(URL);
+        return (String) get(URL);
     }
-
+    
     @Override
     protected JcrNodeModel createInitialModel(JcrNodeModel parentModel) {
         String url = getUrl();

@@ -16,7 +16,7 @@
 
 package org.hippoecm.frontend.plugins.xinha.services.links;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -44,22 +44,10 @@ public abstract class XinhaLinkService implements IClusterable {
         this.nodeModel = nodeModel;
     }
 
-    public InternalXinhaLink create(HashMap<String, String> p) {
-        return new InternalXinhaLink(p, nodeModel);
+    public InternalXinhaLink create(Map<String, String> p) {
+        return new InternalLink(p, nodeModel);
     }
 
-    public void attach(InternalXinhaLink link) {
-        if (link.isAttacheable()) {
-            if (link.isReplacing()) {
-                detach(new InternalXinhaLink(link.getInitialValues(), nodeModel));
-            }
-            String url = createLink(link.getNodeModel());
-            if (url != null) {
-                link.setHref(url);
-            }
-        }
-    }
-        
     public String attach(JcrNodeModel model) {
         String href = createLink(model);
         if (href != null) {
@@ -69,22 +57,6 @@ public abstract class XinhaLinkService implements IClusterable {
         }
         return null;
     }
-    
-    public void detach(XinhaLink link) {
-        String relPath = link.getHref();
-        Node node = nodeModel.getNode();
-        try {
-            if (node.hasNode(relPath)) {
-                Node linkNode = node.getNode(relPath);
-                linkNode.remove();
-                node.save();
-                link.reset();
-            }
-        } catch (RepositoryException e) {
-            log.error("Error during remove of internal link node[" + relPath + "]", e);
-        }
-    }
-
 
     private String createLink(JcrNodeModel nodeModel) {
         try {
@@ -114,7 +86,7 @@ public abstract class XinhaLinkService implements IClusterable {
         private String displayName;
         private boolean isHandle;
         private String nodeName;
-        
+
         public NodeItem(Node listNode) throws RepositoryException {
             this(listNode, null);
         }
@@ -155,7 +127,43 @@ public abstract class XinhaLinkService implements IClusterable {
             return displayName;
         }
     }
-    
+
+    private class InternalLink extends InternalXinhaLink {
+        private static final long serialVersionUID = 1L;
+
+
+        public InternalLink(Map<String, String> values, JcrNodeModel parentModel) {
+            super(values, parentModel);
+        }
+
+        public void save() {
+            if (isAttacheable()) {
+                if (isReplacing()) {
+                    new InternalLink(getInitialValues(), nodeModel).delete();
+                }
+                String url = createLink(getNodeModel());
+                if (url != null) {
+                    setHref(url);
+                }
+            }
+        }
+
+        public void delete() {
+            String relPath = getHref();
+            Node node = nodeModel.getNode();
+            try {
+                if (node.hasNode(relPath)) {
+                    Node linkNode = node.getNode(relPath);
+                    linkNode.remove();
+                    node.save();
+                }
+            } catch (RepositoryException e) {
+                log.error("Error during remove of internal link node[" + relPath + "]", e);
+            }
+        }
+
+    }
+
     protected abstract String getXinhaName();
 
 }

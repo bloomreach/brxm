@@ -33,12 +33,16 @@
       <sv:value>service.dialog.id</sv:value>
     </sv:property>
     
+    <sv:property sv:name="model.id" sv:type="String">
+      <sv:value>${cluster.id}.model</sv:value>
+    </sv:property>
+    
      <sv:node sv:name="imageBrowser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.xinha.dialog.images.ImageBrowserPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.xinha.dialog.browse.BrowserPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.modal.content</sv:value>
@@ -316,35 +320,6 @@
     </sv:node>
   </sv:node>
 
-  <!-- External Linkpicker configuration -->
-    <sv:node sv:name="externallinks">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugincluster</sv:value>
-    </sv:property>
-  
-    <sv:property sv:name="frontend.overrides" sv:type="String">
-      <sv:value>service.dialog.id</sv:value>
-    </sv:property>
-    
-     <sv:node sv:name="externalLinkPicker">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.xinha.dialog.links.ExternalLinkPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>service.modal.content</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>${model.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="service.dialog.id" sv:type="String">
-        <sv:value>${service.dialog.id}</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  
   <!-- Internal Linkpicker configuration -->  
   <sv:node sv:name="internallinks">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -355,12 +330,16 @@
       <sv:value>service.dialog.id</sv:value>
     </sv:property>
     
+    <sv:property sv:name="model.id" sv:type="String">
+      <sv:value>${cluster.id}.model</sv:value>
+    </sv:property>
+    
      <sv:node sv:name="internalLinkPicker">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.xinha.dialog.links.DocumentBrowserPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.xinha.dialog.browse.BrowserPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.modal.content</sv:value>

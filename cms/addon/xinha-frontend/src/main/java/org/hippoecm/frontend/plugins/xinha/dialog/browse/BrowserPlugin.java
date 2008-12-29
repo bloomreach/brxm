@@ -22,11 +22,11 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.browse.AbstractBrowseView;
-import org.hippoecm.frontend.plugins.xinha.dialog.IDialogModel;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BrowserPlugin extends AbstractBrowserPlugin {
+public class BrowserPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -35,14 +35,11 @@ public abstract class BrowserPlugin extends AbstractBrowserPlugin {
     static final Logger log = LoggerFactory.getLogger(BrowserPlugin.class);
     
     protected final BrowseView browseView;
-    protected final JcrNodeModel initialModel;
     
     public BrowserPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        initialModel = getDialogModel().getNodeModel();
-        
-        browseView = new BrowseView(context, config, initialModel) {
+        browseView = new BrowseView(context, config, (JcrNodeModel) getModel()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -51,33 +48,7 @@ public abstract class BrowserPlugin extends AbstractBrowserPlugin {
             }
         };
     }
-
-    protected void onDocumentChanged(IModel model) {
-        JcrNodeModel newModel = findNewModel(model);
-        if (newModel != null) {
-            IDialogModel dialogModel = getDialogModel();
-            if (!newModel.equals(dialogModel.getNodeModel())) {
-                dialogModel.setNodeModel(newModel); //TODO: replace with setNodeModel
-            }
-        }
-        checkState();
-    }
-
-    protected void checkState() {
-        enableOk(getDialogModel().isSubmittable());
-    }
-
-    protected IDialogModel getDialogModel() {
-        return (IDialogModel) getModel();
-    }
-    
-    @Override
-    protected boolean hasRemoveButton() {
-        return getDialogModel().isDetacheable();
-    }
-    
-    protected abstract JcrNodeModel findNewModel(IModel model);
-    
+ 
     abstract public class BrowseView extends AbstractBrowseView {
         private static final long serialVersionUID = 1L;
 
@@ -85,9 +56,10 @@ public abstract class BrowserPlugin extends AbstractBrowserPlugin {
             super(context, config, document);
 
             context.registerService(new IModelListener() {
+                private static final long serialVersionUID = 1L;
 
                 public void updateModel(IModel model) {
-                    onDocumentChanged(model);
+                    BrowserPlugin.this.setModel(model);
                 }
 
             }, config.getString("model.document"));

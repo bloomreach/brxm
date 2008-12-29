@@ -27,7 +27,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.xinha.XinhaUtil;
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class InternalXinhaLink extends XinhaLink {
+public abstract class InternalXinhaLink extends XinhaLink {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")

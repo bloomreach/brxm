@@ -17,19 +17,20 @@ package org.hippoecm.frontend.plugins.xinha.services.links;
 
 import java.util.Map;
 
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.xinha.dialog.DialogModel;
+import org.hippoecm.frontend.plugins.xinha.dialog.DocumentLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class XinhaLink extends DialogModel {
+public abstract class XinhaLink extends DocumentLink {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(XinhaLink.class);
+    
+    public static final String NEW_WINDOW = "_blank";
 
     public static final String HREF = "f_href";
     public static final String TITLE = "f_title";
@@ -41,42 +42,27 @@ public abstract class XinhaLink extends DialogModel {
     }
 
     public String getHref() {
-        return values.get(HREF);
+        return (String) get(HREF);
     }
 
     public void setHref(String href) {
-        values.put(HREF, href);
-    }
-    
-    
-    public IModel getTargetModel() {
-        return new LinkTargetModel();
+        put(HREF, href);
     }
 
-    private class LinkTargetModel implements IModel {
-        private static final long serialVersionUID = 1L;
-
-        private static final String NEW_WINDOW = "_blank";
-
-        public Object getObject() {
-            String value = values.get(TARGET);
-            if (value != null && value.equals(NEW_WINDOW)) {
-                return true;
-            }
-            return false;
+    public boolean getTarget() {
+        String value = (String) get(TARGET);
+        if (value != null && value.equals(NEW_WINDOW)) {
+            return true;
         }
-
-        public void setObject(Object object) {
-            Boolean test = (Boolean) object;
-            if (test) {
-                values.put(TARGET, NEW_WINDOW);
-            } else {
-                values.put(TARGET, "");
-            }
-        }
-
-        public void detach() {
-        }
-
+        return false;
     }
+
+    public void setTarget(boolean object) {
+        if (object) {
+            put(TARGET, NEW_WINDOW);
+        } else {
+            put(TARGET, "");
+        }
+    }
+
 }
