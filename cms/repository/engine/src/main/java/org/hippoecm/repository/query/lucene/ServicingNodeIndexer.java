@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.query.lucene.DoubleField;
+import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.LongField;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.NodeIndexer;
@@ -85,6 +86,27 @@ public class ServicingNodeIndexer extends NodeIndexer {
         // plus index our facet specifics
 
         // TODO : only index facets for hippo:document + subtypes
+        try{
+        if (node.getParentId() == null) {
+            // root node
+        } else {
+            NodeState parent = (NodeState) stateProvider.getItemState(node.getParentId());
+            NodeState.ChildNodeEntry child = parent.getChildNodeEntry(node.getNodeId());
+            if (child == null) {
+                throw new RepositoryException("Missing child node entry " +
+                        "for node with id: " + node.getNodeId());
+            }
+            doc.add(new Field(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, child.getName().getLocalName(), Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
+        }
+        } catch (NoSuchItemStateException e) {
+            throwRepositoryException(e);
+        } catch (ItemStateException e) {
+            throwRepositoryException(e);
+        } catch (NamespaceException e) {
+            // will never happen, because this.mappings will dynamically add
+            // unknown uri<->prefix mappings
+        }
+        
         Set props = node.getPropertyNames();
         for (Iterator it = props.iterator(); it.hasNext();) {
             Name propName = (Name) it.next();

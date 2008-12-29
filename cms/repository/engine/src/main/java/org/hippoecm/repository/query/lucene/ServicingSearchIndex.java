@@ -40,9 +40,11 @@ import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.NodeState.ChildNodeEntry;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
+import org.apache.lucene.search.SortField;
 import org.hippoecm.repository.jackrabbit.HippoNodeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,6 +158,19 @@ public class ServicingSearchIndex extends SearchIndex {
         return doc;
     }
 
+    @Override
+    protected SortField[] createSortFields(Name[] orderProps, boolean[] orderSpecs) {
+            SortField[] sortFields = super.createSortFields(orderProps, orderSpecs);
+            for (int i = 0; i < orderProps.length; i++) {
+                if (orderProps[i].equals(NameConstants.JCR_NAME)) {
+                     // replace the one created by the one from Jackrabbit, because the jackrabbit cannot sort on jcr:name (core < 1.4.6) 
+                    sortFields[i] = new SortField(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, orderSpecs[i]);
+                }   
+            }
+            return sortFields;
+        
+    }
+    
     private void mergeHippoStandardAggregates(NodeState state, Document doc,IndexFormatVersion indexFormatVersion) {
 
         if(this.getIndexingConfig() instanceof ServicingIndexingConfiguration) {
