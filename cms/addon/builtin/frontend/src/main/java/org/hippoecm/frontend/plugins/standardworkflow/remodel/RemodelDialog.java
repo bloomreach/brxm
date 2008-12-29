@@ -80,7 +80,7 @@ public class RemodelDialog extends AbstractWorkflowDialog {
     }
 
     void remodel() throws Exception {
-        ok();
+        onOk();
     }
 
     @Override

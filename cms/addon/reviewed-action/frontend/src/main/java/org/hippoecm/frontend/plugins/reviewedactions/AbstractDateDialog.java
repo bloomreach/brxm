@@ -53,17 +53,9 @@ public abstract class AbstractDateDialog extends AbstractWorkflowDialog {
             @Override
             public void onSubmit(AjaxRequestTarget target, Form form) {
                 AbstractDateDialog.this.date = null;
-                try {
-                    ok();
+                onOk();
+                if (!hasError()) {
                     closeDialog();
-                } catch (Exception e) {
-                    String msg = e.getClass().getName() + ": " + e.getMessage();
-                    log.error(msg);
-                    if (log.isDebugEnabled()) {
-                        log.debug("Error from repository: ", e);
-                    }
-                    error(msg);
-                    e.printStackTrace();
                 }
             }
         }.setDefaultFormProcessing(false);

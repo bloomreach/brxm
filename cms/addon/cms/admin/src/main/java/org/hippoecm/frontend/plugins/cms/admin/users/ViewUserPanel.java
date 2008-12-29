@@ -122,7 +122,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
                             private static final long serialVersionUID = 1L;
 
                             @Override
-                            protected void ok() {
+                            protected void onOk() {
                                 deleteUser(model);
                             }
 

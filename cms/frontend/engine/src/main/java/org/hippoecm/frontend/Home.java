@@ -48,6 +48,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     private PluginManager mgr;
     private PluginContext context;
     private IRenderService root;
+    private DialogService dialogService;
     private IPluginConfigService pluginConfigService;
 
     public Home() {
@@ -78,7 +79,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         };
         context.registerService(jcrService, IJcrService.class.getName());
 
-        DialogService dialogService = new DialogService();
+        dialogService = new DialogService();
         dialogService.init(context, IDialogService.class.getName(), "dialog");
         add(dialogService);
 
@@ -111,6 +112,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         if (root != null) {
             root.render(target);
         }
+        dialogService.render(target);
     }
 
     public void focus(IRenderService child) {

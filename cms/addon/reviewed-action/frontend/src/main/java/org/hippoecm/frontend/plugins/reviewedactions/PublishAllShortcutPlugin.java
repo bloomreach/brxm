@@ -138,7 +138,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
         }
 
         @Override
-        public void ok() {
+        public void onOk() {
             try {
                 Session session = ((UserSession) getSession()).getJcrSession();
                 WorkflowManager wfMgr = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();

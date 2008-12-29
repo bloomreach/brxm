@@ -48,8 +48,8 @@ public class LinkPickerDialog extends LookupDialog {
     private List<String> nodetypes;
     private Label label;
 
-    public LinkPickerDialog(IPluginContext context, 
-            JcrPropertyValueModel valueModel, List<String> nodetypes, AbstractTreeNode rootNode) {
+    public LinkPickerDialog(IPluginContext context, JcrPropertyValueModel valueModel, List<String> nodetypes,
+            AbstractTreeNode rootNode) {
         super(rootNode);
         this.context = context;
         this.nodetypes = nodetypes;
@@ -124,18 +124,22 @@ public class LinkPickerDialog extends LookupDialog {
     }
 
     @Override
-    public void ok() throws RepositoryException {
-        JcrNodeModel sourceNodeModel = new JcrNodeModel(valueModel.getJcrPropertymodel().getItemModel()
-                .getParentModel());
-        if (sourceNodeModel.getParentModel() != null) {
-            JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
-            String targetUUID = targetNodeModel.getNode().getUUID();
-            valueModel.setObject(targetUUID);
+    public void onOk() {
+        try {
+            JcrNodeModel sourceNodeModel = new JcrNodeModel(valueModel.getJcrPropertymodel().getItemModel()
+                    .getParentModel());
+            if (sourceNodeModel.getParentModel() != null) {
+                JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
+                String targetUUID = targetNodeModel.getNode().getUUID();
+                valueModel.setObject(targetUUID);
 
-            IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
-            if (jcrService != null) {
-                jcrService.flush(sourceNodeModel);
+                IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
+                if (jcrService != null) {
+                    jcrService.flush(sourceNodeModel);
+                }
             }
+        } catch (RepositoryException ex) {
+            error(ex.getMessage());
         }
     }
 

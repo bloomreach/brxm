@@ -70,13 +70,17 @@ public class SaveDialog extends AbstractDialog {
     }
 
     @Override
-    public void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
-        Node rootNode = nodeModel.getNode().getSession().getRootNode();
-        if (hasPendingChanges) {
-            rootNode.save();
-            plugin.flushNodeModel(new JcrNodeModel(rootNode));
-        }
+    public void onOk() {
+        try {
+	        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+	        Node rootNode = nodeModel.getNode().getSession().getRootNode();
+	        if (hasPendingChanges) {
+	            rootNode.save();
+	            plugin.flushNodeModel(new JcrNodeModel(rootNode));
+	        }
+	    } catch (RepositoryException ex) {
+	        error(ex.getMessage());
+	    }
     }
 
     public IModel getTitle() {

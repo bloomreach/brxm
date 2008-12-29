@@ -22,6 +22,8 @@ import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.frontend.service.PluginRequestTarget;
 
 public class DialogWindow extends ModalWindow implements IDialogService {
     @SuppressWarnings("unused")
@@ -41,14 +43,12 @@ public class DialogWindow extends ModalWindow implements IDialogService {
             dialog.onClose();
             if (pending.size() > 0) {
                 Dialog dialog = pending.remove(0);
-                setContent(dialog.getComponent());
-                setTitle(dialog.getTitle());
-                setWindowClosedCallback(new Callback(dialog));
-                show(target);
+                internalShow(dialog);
             }
         }
     }
 
+    private Dialog shown;
     private List<Dialog> pending;
 
     public DialogWindow(String id) {
@@ -61,24 +61,40 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         if (isShown()) {
             pending.add(dialog);
         } else {
-            dialog.setDialogService(this);
-            setContent(dialog.getComponent());
-            setTitle(dialog.getTitle());
-            setWindowClosedCallback(new Callback(dialog));
-
-            IRequestTarget target = RequestCycle.get().getRequestTarget();
-            if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
-                show((AjaxRequestTarget) target);
-            }
+            internalShow(dialog);
         }
     }
 
     public void close() {
+        shown = null;
         IRequestTarget target = RequestCycle.get().getRequestTarget();
         if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
             close((AjaxRequestTarget) target);
         }
         remove(getContentId());
+    }
+
+    public void render(PluginRequestTarget target) {
+        if (shown != null) {
+            shown.render(target);
+        }
+    }
+
+    private void internalShow(Dialog dialog) {
+        shown = dialog;
+        dialog.setDialogService(this);
+        setContent(dialog.getComponent());
+        setTitle(dialog.getTitle());
+        setWindowClosedCallback(new Callback(dialog));
+        
+        IValueMap properties = dialog.getProperties();
+        setInitialHeight(properties.getInt("height", 455));
+        setInitialWidth(properties.getInt("width", 850));
+
+        IRequestTarget target = RequestCycle.get().getRequestTarget();
+        if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
+            show((AjaxRequestTarget) target);
+        }
     }
 
 }

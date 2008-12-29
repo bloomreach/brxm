@@ -65,7 +65,7 @@ public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
     }
 
     @Override
-    protected void onSubmit() {
+    protected void onOk() {
         final FileUpload upload = fileUploadField.getFileUpload();
         if (upload != null) {
             msgText.setObject("File uploaded.");
@@ -88,7 +88,6 @@ public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
                     msgText.setObject("initialize node saved.");
 
                 }
-                closeDialog();
             } catch (RepositoryException e) {
                 log.error("Error while creating nodetypes initialization node: ", e);
                 error("Error while creating nodetypes initialization node.");

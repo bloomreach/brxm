@@ -440,6 +440,7 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
         @Override
         public void onServiceAdded(IRenderService service, String name) {
             list.add(service);
+            redraw();
         }
 
         @Override
@@ -449,6 +450,7 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
         @Override
         public void onRemoveService(IRenderService service, String name) {
             list.remove(service);
+            redraw();
         }
     }
 }

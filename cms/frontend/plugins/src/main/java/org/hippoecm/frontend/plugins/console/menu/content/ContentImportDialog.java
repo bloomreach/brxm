@@ -137,14 +137,7 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
     }
 
     @Override
-    protected void ok() throws Exception {
-        plugin.setModel(nodeModel);
-        plugin.flushNodeModel(nodeModel);
-    }
-
-
-    @Override
-    protected void onSubmit() {
+    protected void onOk() {
         final FileUpload upload = fileUploadField.getFileUpload();
 
         int uuidOpt = uuidOpts.getFirstKey(uuidBehavior).intValue();
@@ -162,6 +155,10 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
 
                 ((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
                 info("Import done.");
+		
+		        plugin.setModel(nodeModel);
+		        plugin.flushNodeModel(nodeModel);
+
             } catch (PathNotFoundException ex) {
                 log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
                 error("Import failed: " + ex.getMessage());

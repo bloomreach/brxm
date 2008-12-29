@@ -73,11 +73,11 @@ public class WorkflowDialog extends AbstractDialog {
     }
 
     @Override
-    public void ok() {
+    public void onOk() {
     }
 
     @Override
-    public void cancel() {
+    public void onCancel() {
     }
 
     public IModel getTitle() {

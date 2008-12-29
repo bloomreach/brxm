@@ -46,12 +46,12 @@ public class LogoutDialog extends AbstractDialog implements ITitleDecorator {
     }
 
     @Override
-    protected void ok() throws Exception {
+    protected void onOk() {
         logout = true;
     }
 
     @Override
-    protected void cancel() {
+    protected void onCancel() {
         logout = false;
     }
 
