@@ -20,12 +20,15 @@
 
     <wicket:message key="permissions-set"/>
     <form wicket:id="form">
-      <select wicket:id="groups-select">
-        <option>group1</option>
-      </select>
+      Grant role 
       <select wicket:id="roles-select">
         <option>role1</option>
       </select>
+       to group 
+      <select wicket:id="groups-select">
+        <option>group1</option>
+      </select>
+       
       <input type="button" value="add" wicket:id="submit"/>
     </form>
     
@@ -39,15 +42,15 @@
       </tr>
       </thead>
       <tbody>
-      <tr wicket:id="role-row"  style="border: thin solid black; padding: 4px;">
+      <tr wicket:id="role-row"  style="border: thin solid black; margin: 2px; padding: 2px;">
         <td style="border: thin solid black;"><label wicket:id="role" /></td>
         <td style="border: thin solid black;">
         <table>
           <tr class="admin-role-group-edit" wicket:id="groups">
-            <td>
+            <td style="padding: 2px;">
               <span wicket:id="group-label"/>
             </td>
-            <td>
+            <td style="padding: 2px;">
               <label wicket:id="group-remove"/>
             </td>
           </tr>
