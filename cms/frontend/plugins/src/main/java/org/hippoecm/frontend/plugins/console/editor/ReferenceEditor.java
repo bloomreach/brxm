@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -30,12 +31,14 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 
 class ReferenceEditor extends Panel {
     @SuppressWarnings("unused")
@@ -95,7 +98,13 @@ class ReferenceEditor extends Panel {
     static boolean isReference(JcrPropertyValueModel valueModel) {
         try {
             String asString = valueModel.getValue().getString();
-            return pattern.matcher(asString).matches();
+            Property property = valueModel.getJcrPropertymodel().getProperty();
+            if ((property.getType() == PropertyType.REFERENCE || property.getName().equals(HippoNodeType.HIPPO_DOCBASE)) &&
+                pattern.matcher(asString).matches()) {
+                return true;
+            } else {
+                return false;
+            }
         } catch (RepositoryException e) {
             NodeEditor.log.error(e.getMessage());
             return false;
@@ -113,7 +122,12 @@ class ReferenceEditor extends Panel {
             } else {
                 asString = property.getString();
             }
-            return pattern.matcher(asString).matches();
+            if ((property.getType() == PropertyType.REFERENCE || property.getName().equals(HippoNodeType.HIPPO_DOCBASE)) &&
+                pattern.matcher(asString).matches()) {
+                return true;
+            } else {
+                return false;
+            }
         } catch (RepositoryException e) {
             NodeEditor.log.error(e.getMessage());
             return false;
