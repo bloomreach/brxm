@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -35,6 +36,7 @@ import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.Context;
+import org.hippoecm.repository.FacetedNavigationEngine.Count;
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
 import org.hippoecm.repository.FacetedNavigationEngine.Query;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -182,8 +184,18 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
             propState.setMultiValued(false);
             state.addPropertyName(countName);
 
-            for (Map.Entry<String, FacetedNavigationEngine.Count> facetValue : facetSearchResult.entrySet()) {
-                if (facetValue.getKey().length() > 1) {
+            // facetSearchResult logicals default order is the natural descending order of the count. Therefore, we need to create sort the facetSearchResult first.
+            FacetSearchEntry[] facetSearchEntry = new FacetSearchEntry[facetSearchResult.size()];
+            int i = 0;
+            for (Map.Entry<String, FacetedNavigationEngine.Count> entry : facetSearchResult.entrySet()) {
+                facetSearchEntry[i] = new FacetSearchEntry(entry.getKey(), entry.getValue());
+                i++;
+            }
+            // sort according count
+            Arrays.sort(facetSearchEntry);
+            
+            for(FacetSearchEntry entry : facetSearchEntry) {
+                if (entry.facetValue.length() > 1) {
                     String[] newFacets = new String[Math.max(0, facets.length - 1)];
                     if (facets.length > 1) {
                         System.arraycopy(facets, 1, newFacets, 0, facets.length - 1);
@@ -193,9 +205,9 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
                         System.arraycopy(search, 0, newSearch, 0, search.length);
                     }
                     // nextTerm is the next facet value to search for (skip last char because this is the facet type constant)
-                    String nextFacet = facetValue.getKey().substring(0, facetValue.getKey().length() - 1);
-                    Character facetTypeConstant = facetValue.getKey().charAt(facetValue.getKey().length() - 1);
-                    ;
+                    String nextFacet = entry.facetValue.substring(0, entry.facetValue.length() - 1);
+                    Character facetTypeConstant = entry.facetValue.charAt(entry.facetValue.length() - 1);
+                    
                     if (facets[0].indexOf("#") == -1) {
                         newSearch[newSearch.length - 1] = "@" + facets[0] + "='" + nextFacet + "'";
                     } else {
@@ -212,7 +224,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
                         childNodeId.docbase = docbase;
                         childNodeId.facets = newFacets;
                         childNodeId.search = newSearch;
-                        childNodeId.count = facetValue.getValue().count;
+                        childNodeId.count = entry.count.count;
                     } catch (RepositoryException ex) {
                         log.warn("cannot add virtual child in facet search: " + ex.getMessage());
                     }
@@ -220,6 +232,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
                     log.error("facet value with only facet type constant found. Skip result");
                 }
             }
+            
         }
 
         FacetResultSetProvider.FacetResultSetNodeId childNodeId;
@@ -308,5 +321,23 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
             return nextFacet;
         }
 
+    }
+    
+    public class FacetSearchEntry implements Comparable {
+        private String facetValue;
+        private Count count;
+        public FacetSearchEntry(String facetValue, Count count) {
+            this.facetValue = facetValue;
+            this.count = count;
+        }
+
+        public int compareTo(Object entry) {
+            if(entry instanceof FacetSearchEntry) {
+                // The highest counts first
+                return ((FacetSearchEntry)entry).count.count - this.count.count; 
+            }
+            return 0;
+        }
+        
     }
 }
