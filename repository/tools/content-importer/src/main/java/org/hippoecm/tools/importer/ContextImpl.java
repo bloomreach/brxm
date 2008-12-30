@@ -51,7 +51,11 @@ public class ContextImpl implements Context {
             String path = mapping.getPath();
             String parentPath = PathHelper.getParent(path);
             if (parentPath != null && !"".equals(parentPath)) {
-                parent = root.getNode(PathHelper.encodePath(parentPath.substring(1)));
+                if (parentPath.startsWith("/")) {
+                    parent = root.getNode(PathHelper.encodePath(parentPath.substring(1)));
+                } else {
+                    parent = root.getNode(PathHelper.encodePath(parentPath));
+                }
             } else {
                 parent = root;
             }
