@@ -74,6 +74,19 @@
     </resources>
     <plugins>
       <plugin>
+        <groupId>org.hippoecm</groupId>
+        <artifactId>hippo-ecm-tools-maven-js-plugin</artifactId>
+        <!--version>1.01.00</version-->
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>compress</goal>
+            </goals>
+          </execution>
+        </executions>        
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>

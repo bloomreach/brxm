@@ -15,6 +15,7 @@
  */
 
 /**
+ * @module hippoautocomplete
  * @class a YAHOO.widget.Autocomplete extension
  * @requires autocomplete, get
  * @extends YAHOO.widget.AutoComplete
