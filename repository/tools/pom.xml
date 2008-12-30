@@ -40,6 +40,7 @@
     <module>testutils</module>
     <module>dropbox</module>
     <module>eclipse</module>
+    <module>maven</module>
   </modules>
 
   <build>
