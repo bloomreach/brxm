@@ -23,6 +23,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.PropertyId;
+import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.DoubleField;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.LongField;
@@ -57,9 +58,11 @@ public class ServicingNodeIndexer extends NodeIndexer {
      */
     protected ServicingIndexingConfiguration servicingIndexingConfig;
 
+    private QueryHandlerContext queryHandlerContext;
 
-    public ServicingNodeIndexer(NodeState node, ItemStateManager stateProvider, NamespaceMappings mappings, TextExtractor extractor) {
-        super(node, stateProvider, mappings, extractor);
+    public ServicingNodeIndexer(NodeState node, QueryHandlerContext queryHandlerContext, NamespaceMappings mappings, TextExtractor extractor) {
+        super(node, queryHandlerContext.getItemStateManager(), mappings, extractor);
+        this.queryHandlerContext = queryHandlerContext;
     }
 
 
@@ -96,16 +99,16 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 throw new RepositoryException("Missing child node entry " +
                         "for node with id: " + node.getNodeId());
             }
-            doc.add(new Field(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, child.getName().getLocalName(), Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
+            String nodename = child.getName().getLocalName();
+            if(child.getName().getNamespaceURI() != null && !"".equals(child.getName().getNamespaceURI())) {
+                String prefix = queryHandlerContext.getNamespaceRegistry().getPrefix(child.getName().getNamespaceURI());
+                nodename = prefix+":"+nodename;
+            }
+            doc.add(new Field(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, nodename , Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
         }
-        } catch (NoSuchItemStateException e) {
-            throwRepositoryException(e);
         } catch (ItemStateException e) {
             throwRepositoryException(e);
-        } catch (NamespaceException e) {
-            // will never happen, because this.mappings will dynamically add
-            // unknown uri<->prefix mappings
-        }
+        } 
         
         Set props = node.getPropertyNames();
         for (Iterator it = props.iterator(); it.hasNext();) {
