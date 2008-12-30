@@ -166,7 +166,12 @@ public class ExternalContentImport {
 
         Context context = new ContextImpl(baseNode, mapping, overwrite);
 
-        Node childNode = converter.convert(context, content);
+        try {
+            Node childNode = converter.convert(context, content);
+        } catch (Exception e) {
+            // keep going!
+            log.error("Unexpected exception while importing. Skipping: " + content.getName(), e);
+        }
 
         if (content.isFolder()) {
             Iterator<Content> contents = content.getChildren();
