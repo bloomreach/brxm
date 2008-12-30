@@ -43,6 +43,7 @@
     <module>repository</module>
     <module>addon</module>
     <module>package</module>
+    <module>quickstart</module>
     <module>tools</module>
     <module>archetypes</module>
   </modules>
