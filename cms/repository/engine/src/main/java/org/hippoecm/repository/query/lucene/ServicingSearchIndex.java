@@ -70,6 +70,7 @@ public class ServicingSearchIndex extends SearchIndex {
      */
     public ServicingSearchIndex() {
         super();
+       
     }
 
     /**
@@ -145,8 +146,7 @@ public class ServicingSearchIndex extends SearchIndex {
                                       IndexFormatVersion indexFormatVersion) throws RepositoryException
     {
         ServicingNodeIndexer indexer = new ServicingNodeIndexer(node,
-                getContext().getItemStateManager(), nsMappings, super.getTextExtractor());
-
+                getContext(), nsMappings, super.getTextExtractor());
 
         indexer.setSupportHighlighting(super.getSupportHighlighting());
         // indexer.setIndexingConfiguration(indexingConfig);
@@ -158,6 +158,7 @@ public class ServicingSearchIndex extends SearchIndex {
         return doc;
     }
 
+    // TODO remove when jackrabbit supports sorting on nodename
     @Override
     protected SortField[] createSortFields(Name[] orderProps, boolean[] orderSpecs) {
             SortField[] sortFields = super.createSortFields(orderProps, orderSpecs);
