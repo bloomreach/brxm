@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+\<?xml version="1.0" encoding="UTF-8"?><!--
   Copyright 2007-2008 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,7 +40,6 @@
     <module>testutils</module>
     <module>dropbox</module>
     <module>eclipse</module>
-    <module>maven</module>
   </modules>
 
   <build>
