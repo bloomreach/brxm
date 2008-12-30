@@ -21,7 +21,7 @@
  * </p>
  * @namespace YAHOO.hippo
  * @requires dragdropmodel, functionqueue, hashmap
- * @module drapdropmanager
+ * @module dragdropmanager
  */
 
 YAHOO.namespace('hippo');

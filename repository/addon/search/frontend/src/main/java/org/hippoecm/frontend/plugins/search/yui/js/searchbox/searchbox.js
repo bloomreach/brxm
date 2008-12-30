@@ -15,6 +15,7 @@
  */
 
 /**
+ * @module searchbox
  * @class a YAHOO.hippo.HippoAutocomplete extension
  * @requires hippoautocomplete
  * @extends YAHOO.hippo.HippoAutoComplete

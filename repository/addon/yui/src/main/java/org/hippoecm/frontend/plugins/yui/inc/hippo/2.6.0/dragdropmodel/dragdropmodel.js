@@ -15,6 +15,7 @@
  */
 
 /**
+ * @module dragdropmodel
  * @class a YAHOO.util.DDProxy extension
  * @requires dragdrop, hashmap
  * @extends YAHOO.util.DDProxy
