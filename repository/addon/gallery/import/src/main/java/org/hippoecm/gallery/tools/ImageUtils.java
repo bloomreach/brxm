@@ -39,8 +39,12 @@ import org.slf4j.LoggerFactory;
 public class ImageUtils {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    static final Logger log = LoggerFactory.getLogger(ImageUtils.class);
+    private final static Logger log = LoggerFactory.getLogger(ImageUtils.class);
 
+    // minimum with or height for a thumbnail. Will distort the aspect ration
+    private final static int MIN_THUMB_SIZE = 5;
+    
+    
     private static Map<String, ImageReader> readersMap = new HashMap<String, ImageReader>();
     private static Map<String, ImageWriter> writersMap = new HashMap<String, ImageWriter>();
 
@@ -109,9 +113,15 @@ public class ImageUtils {
             BufferedImage scaledImage;
             if (ratio < 1.0d) {
                 transformation = AffineTransform.getScaleInstance(ratio, ratio);
-                double scaledWidth = originalWidth * ratio;
-                double scaledHeight = originalHeight * ratio;
-                scaledImage = new BufferedImage((int) scaledWidth, (int) scaledHeight, BufferedImage.TYPE_INT_RGB);
+                int scaledWidth = (int) Math.round(originalWidth * ratio);
+                int scaledHeight = (int) Math.round(originalHeight * ratio);
+                if (scaledHeight < MIN_THUMB_SIZE) {
+                    scaledHeight = MIN_THUMB_SIZE;
+                }
+                if (scaledWidth < MIN_THUMB_SIZE) {
+                    scaledWidth = MIN_THUMB_SIZE;
+                }
+                scaledImage = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_RGB);
             } else {
                 transformation = new AffineTransform();
                 scaledImage = new BufferedImage((int) originalWidth, (int) originalHeight, BufferedImage.TYPE_INT_RGB);
