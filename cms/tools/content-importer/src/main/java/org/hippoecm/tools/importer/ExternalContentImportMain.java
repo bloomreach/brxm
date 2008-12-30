@@ -58,18 +58,13 @@ public class ExternalContentImportMain {
         if (log.isDebugEnabled()) {
             log.debug("Content import starting.");
         }
-
         parseCommandLine(args);
-
-        log.info("Content import configured and started.");
-
         try {
+            log.info("Content import configured and started.");
             ExternalContentImport eci = new ExternalContentImport(config);
         } finally {
-
+            log.info("Content import finished.");
         }
-
-        log.info("Content import finished.");
     }
 
 
@@ -96,7 +91,7 @@ public class ExternalContentImportMain {
 
             boolean valid = true;
 
-            String configFile = cmd.getOptionValue("c", DEFAULT_CONFIG);
+            String configFile = cmd.getOptionValue("config", DEFAULT_CONFIG);
             File f = new File(configFile);
             if (!f.exists()) {
                 log.error("Config file not found: " + configFile);
