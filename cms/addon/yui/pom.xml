@@ -74,9 +74,9 @@
     </resources>
     <plugins>
       <plugin>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-tools-maven-js-plugin</artifactId>
-        <!--version>1.01.00</version-->
+        <groupId>org.hippoecm.maven.plugins</groupId>
+        <artifactId>maven-yuicompressor-plugin</artifactId>
+        <version>1.01.00</version>
         <executions>
           <execution>
             <phase>compile</phase>
