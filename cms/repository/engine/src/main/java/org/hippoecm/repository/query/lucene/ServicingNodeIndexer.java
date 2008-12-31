@@ -25,12 +25,10 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.DoubleField;
-import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.LongField;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.NodeIndexer;
 import org.apache.jackrabbit.core.state.ItemStateException;
-import org.apache.jackrabbit.core.state.ItemStateManager;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
@@ -42,6 +40,7 @@ import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.FacetTypeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +52,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
     /** The logger instance for this class */
     private static final Logger log = LoggerFactory.getLogger(ServicingNodeIndexer.class);
 
+    private Name excludeName;
     /**
      * The indexing configuration or <code>null</code> if none is available.
      */
@@ -63,6 +63,15 @@ public class ServicingNodeIndexer extends NodeIndexer {
     public ServicingNodeIndexer(NodeState node, QueryHandlerContext queryHandlerContext, NamespaceMappings mappings, TextExtractor extractor) {
         super(node, queryHandlerContext.getItemStateManager(), mappings, extractor);
         this.queryHandlerContext = queryHandlerContext;
+        try {
+            String name = HippoNodeType.HIPPO_PATHS.substring(HippoNodeType.HIPPO_PATHS.indexOf(":")+1);
+            String prefix = HippoNodeType.HIPPO_PATHS.substring(0,HippoNodeType.HIPPO_PATHS.indexOf(":"));
+            String hippo_ns = this.queryHandlerContext.getNamespaceRegistry().getURI(prefix);
+            excludeName = NameFactoryImpl.getInstance().create(hippo_ns,name);
+        } catch (NamespaceException e1) {
+            log.warn("Error creating exclude name for hippo:paths");
+        }
+        
     }
 
 
@@ -74,7 +83,6 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     @Override
     protected boolean isIncludedInNodeIndex(Name propertyName) {
-        Name excludeName = NameFactoryImpl.getInstance().create("http://www.hippoecm.org/nt/1.2","paths");
         if(excludeName.equals(propertyName)){
             return false;
         }
@@ -87,7 +95,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
         // index the jackrabbit way
         Document doc = super.createDoc();
         // plus index our facet specifics
-
+        
         // TODO : only index facets for hippo:document + subtypes
         try{
         if (node.getParentId() == null) {
