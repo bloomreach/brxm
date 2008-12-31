@@ -61,7 +61,7 @@ public class ExternalContentImport {
     private String filepath;
     private boolean overwrite;
 
-    private final Session session;
+    private Session session = null;
     private final Node baseNode;
 
     private Mapper mapper;
@@ -147,11 +147,18 @@ public class ExternalContentImport {
                 contentImport(childContent);
             }
             session.save();
-
         } catch (IOException ex) {
             throw new ImportException("Import failed due to IO exception", ex);
         } catch (RepositoryException ex) {
             throw new ImportException("Import failed", ex);
+        } finally {
+            if (session != null) {
+                try {
+                    session.logout();
+                } catch (Exception e) {
+                    log.error("Logout failed.",e);
+                }
+            }
         }
     }
 
