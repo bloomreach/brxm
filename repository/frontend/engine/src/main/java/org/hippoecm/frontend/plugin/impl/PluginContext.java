@@ -162,8 +162,9 @@ public class PluginContext implements IPluginContext, IDetachable {
             list.remove(service);
             manager.unregisterService(service, controlId);
             manager.unregisterService(service, name);
-        } else if (running) {
-            log.warn("unregistering service that wasn't registered.");
+            if (list.size() == 0) {
+                services.remove(list);
+            }
         }
     }
 
@@ -189,8 +190,6 @@ public class PluginContext implements IPluginContext, IDetachable {
             if (!initializing) {
                 manager.unregisterTracker(listener, name);
             }
-        } else if (running) {
-            log.warn("unregistering tracker that wasn't registered.");
         }
     }
 
@@ -207,20 +206,17 @@ public class PluginContext implements IPluginContext, IDetachable {
         } else {
             log.warn("context was already initialized");
         }
-        running = true;
     }
 
     void stop() {
-        running = false;
-
         if (!initializing) {
             for (Map.Entry<String, List<IServiceTracker>> entry : listeners.entrySet()) {
                 for (IServiceTracker service : entry.getValue()) {
                     manager.unregisterTracker(service, entry.getKey());
                 }
             }
-            listeners = new HashMap<String, List<IServiceTracker>>();
         }
+        listeners = new HashMap<String, List<IServiceTracker>>();
 
         for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
             for (IClusterable service : entry.getValue()) {

@@ -124,12 +124,7 @@ public class PluginManager {
     }
 
     public void registerService(IClusterable service, String name) {
-        if (name == null) {
-            log.error("service name is null");
-            return;
-        } else {
-            log.debug("registering " + service + " as " + name);
-        }
+        log.debug("registering " + service + " as " + name);
 
         Map.Entry<Integer, RefCount> entry = internalGetReference(service);
         if (entry == null) {
@@ -142,36 +137,36 @@ public class PluginManager {
             entry.getValue().addRef();
         }
 
-        internalRegisterService(service, name);
+        if (name != null) {
+            internalRegisterService(service, name);
+        }
     }
 
     public void unregisterService(IClusterable service, String name) {
-        if (name == null) {
-            log.error("service name is null");
-            return;
-        } else {
-            log.debug("unregistering " + service + " from " + name);
+        log.debug("unregistering " + service + " from " + name);
+        if (name != null) {
+            List<IClusterable> list = services.get(name);
+            if (list != null) {
+                internalUnregisterService(service, name);
+
+            } else {
+                log.error("Unknown service name {}.", name);
+            }
         }
 
-        List<IClusterable> list = services.get(name);
-        if (list != null) {
-            internalUnregisterService(service, name);
-
-            Map.Entry<Integer, RefCount> entry = internalGetReference(service);
+        Map.Entry<Integer, RefCount> entry = internalGetReference(service);
+        if (entry != null) {
             RefCount ref = entry.getValue();
-            if(ref != null) {
-                if (ref.release()) {
-                    Integer id = entry.getKey();
-                    String serviceId = SERVICES + id;
-                    internalUnregisterService(service, serviceId);
-                    referenced.remove(id);
-                }
-            } else {
-                log.error("unregistering a service that wasn't registered.");
+            if (ref.release()) {
+                Integer id = entry.getKey();
+                String serviceId = SERVICES + id;
+                internalUnregisterService(service, serviceId);
+                referenced.remove(id);
             }
         } else {
             log.error("unregistering a service that wasn't registered.");
         }
+
     }
 
     public void registerTracker(IServiceTracker listener, String name) {
@@ -222,7 +217,7 @@ public class PluginManager {
 
     <T extends IClusterable> T getService(ServiceReference<T> ref) {
         List<IClusterable> list = services.get(ref.getServiceId());
-        if(list.size() > 0) {
+        if (list.size() > 0) {
             return (T) list.get(0);
         }
         return null;
