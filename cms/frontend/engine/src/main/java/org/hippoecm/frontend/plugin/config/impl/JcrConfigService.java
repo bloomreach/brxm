@@ -44,18 +44,15 @@ public class JcrConfigService implements IPluginConfigService {
     }
 
     public IClusterConfig getCluster(String key) {
-        IClusterConfig cluster;
+        IClusterConfig cluster = null;
         try {
             if (model.getNode().hasNode(key)) {
                 Node clusterNode = model.getNode().getNode(key);
                 JcrNodeModel clusterNodeModel = new JcrNodeModel(clusterNode);
                 cluster = new JcrClusterConfig(clusterNodeModel);
-            } else {
-                cluster = getDefaultCluster();
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
-            cluster = getDefaultCluster();
         }
         return cluster;
     }

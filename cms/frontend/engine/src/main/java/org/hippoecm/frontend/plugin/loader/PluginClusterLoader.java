@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugin.loader;
 
+import java.util.List;
+
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -35,13 +37,14 @@ public class PluginClusterLoader implements IPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(PluginClusterLoader.class);
 
-    public static final String PLUGIN_CLUSTER = "cluster.name";
+    public static final String CLUSTER_NAME = "cluster.name";
+    public static final String CLUSTER_PARAMETERS = "cluster.config";
 
     public PluginClusterLoader(IPluginContext context, IPluginConfig config) {
         IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                 IPluginConfigService.class);
 
-        String clusterName = config.getString(PLUGIN_CLUSTER);
+        String clusterName = config.getString(CLUSTER_NAME);
         if (clusterName == null) {
             log.warn("cluster.name not found. Check your configuration in the console.");
         } else {
@@ -49,6 +52,15 @@ public class PluginClusterLoader implements IPlugin {
             if (cluster == null) {
                 log.warn("Unable to find cluster '" + clusterName + "'. Does it exist in repository?");
             } else {
+                IPluginConfig parameters = config.getPluginConfig(CLUSTER_PARAMETERS);
+                List<String> overrides = cluster.getOverrides();
+                if (parameters != null && overrides != null) {
+	                for (String key : overrides) {
+	                    if (parameters.get(key) != null) {
+	                        cluster.put(key, parameters.get(key));
+	                    }
+	                }
+                }
                 context.start(cluster);
             }
         }
