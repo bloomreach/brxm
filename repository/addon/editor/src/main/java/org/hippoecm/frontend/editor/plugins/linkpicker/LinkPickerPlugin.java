@@ -25,27 +25,23 @@ import javax.jcr.ValueFormatException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.IJcrNodeModelListener;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
-import org.hippoecm.frontend.plugins.standards.FolderTreeNode;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LinkPickerPlugin extends RenderPlugin implements IJcrNodeModelListener {
+public class LinkPickerPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: LinkPickerPlugin.java 12039 2008-06-13 09:27:05Z bvanhalderen $";
 
@@ -94,19 +90,40 @@ public class LinkPickerPlugin extends RenderPlugin implements IJcrNodeModelListe
             if (nodetypes.size() == 0) {
                 log.debug("No configuration specified for filtering on nodetypes. No filtering will take place.");
             }
-    
-            DocumentListFilter filter = new DocumentListFilter(config);
-            final AbstractTreeNode rootNode = new FolderTreeNode(new JcrNodeModel(config.getString("path", "/")), filter);
-    
+
             IDialogFactory dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
-    
+
                 public AbstractDialog createDialog() {
-                    return new LinkPickerDialog(context, valueModel, nodetypes, rootNode);
+                    return new LinkPickerDialog(context, getPluginConfig(), new IChainingModel() {
+                        private static final long serialVersionUID = 1L;
+
+                        public Object getObject() {
+                            return valueModel.getObject();
+                        }
+
+                        public void setObject(Object object) {
+                            valueModel.setObject(object);
+                            redraw();
+                        }
+
+                        public IModel getChainedModel() {
+                            return valueModel;
+                        }
+
+                        public void setChainedModel(IModel model) {
+                            throw new UnsupportedOperationException("Value model cannot be changed");
+                        }
+
+                        public void detach() {
+                            valueModel.detach();
+                        }
+
+                    }, nodetypes);
                 }
             };
             add(new DialogLink("value", displayModel, dialogFactory, dialogService));
-    
+
             context.registerService(this, IJcrService.class.getName());
         } else {
             add(new Label("value", valueModel));
@@ -119,10 +136,4 @@ public class LinkPickerPlugin extends RenderPlugin implements IJcrNodeModelListe
         redraw();
     }
 
-    public void onFlush(JcrNodeModel nodeModel) {
-        if (valueModel.getJcrPropertymodel().getItemModel().hasAncestor(nodeModel.getItemModel())) {
-            valueModel.detach();
-            modelChanged();
-        }
-    }
 }

@@ -29,18 +29,12 @@ public class ExternalLinkBehavior extends XinhaDialogBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    public ExternalLinkBehavior(IPluginContext context, IPluginConfig config) {
-        super(context, config);
-    }
+    private final IPluginConfig config;
 
-    /*
-    @Override
-    protected void configureModal(final ModalWindow modal) {
-        super.configureModal(modal);
-        modal.setInitialHeight(200);
-        modal.setInitialWidth(400);
+    public ExternalLinkBehavior(IPluginContext context, IPluginConfig config) {
+        super(context);
+        this.config = config;
     }
-    */
 
     @Override
     protected void respond(AjaxRequestTarget target) {

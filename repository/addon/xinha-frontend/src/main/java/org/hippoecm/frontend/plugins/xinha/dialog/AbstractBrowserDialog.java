@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.xinha.dialog.browse;
+package org.hippoecm.frontend.plugins.xinha.dialog;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -50,8 +50,6 @@ public abstract class AbstractBrowserDialog extends AbstractDialog {
 
     static final Logger log = LoggerFactory.getLogger(AbstractBrowserDialog.class);
 
-    private static final String CONTENT_PANEL_SERVICE_ID = "service.modal.content";
-
     protected final IPluginContext context;
     protected final IPluginConfig config;
     private ModelService<IModel> modelService;
@@ -59,9 +57,10 @@ public abstract class AbstractBrowserDialog extends AbstractDialog {
     protected IRenderService dialogRenderer;
 
     public AbstractBrowserDialog(IPluginContext context, IPluginConfig config, IModel model) {
+        super(model);
+
         this.context = context;
         this.config = config;
-        setModel(model);
 
         final Button remove = new AjaxButton("button") {
             private static final long serialVersionUID = 1L;
@@ -91,10 +90,10 @@ public abstract class AbstractBrowserDialog extends AbstractDialog {
                 IPluginConfigService.class);
 
         //Lookup clusterConfig from IPluginContext
-        IClusterConfig config = pluginConfigService.getCluster("cms-pickers/" + getName());
+        IClusterConfig clusterConfig = pluginConfigService.getCluster(config.getString("cluster.name"));
 
         //save modelServiceId and dialogServiceId in cluster config
-        String modelServiceId = config.getString("model.id");
+        String modelServiceId = clusterConfig.getString("model.id");
         IModel model = ((DocumentLink) getModelObject()).getNodeModel();
         modelService = new ModelService<IModel>(modelServiceId, model) {
             private static final long serialVersionUID = 1L;
@@ -115,9 +114,9 @@ public abstract class AbstractBrowserDialog extends AbstractDialog {
         };
         modelService.init(context);
 
-        control = context.start(config);
+        control = context.start(clusterConfig);
 
-        dialogRenderer = context.getService(CONTENT_PANEL_SERVICE_ID, IRenderService.class);
+        dialogRenderer = context.getService(clusterConfig.getString("wicket.id"), IRenderService.class);
         dialogRenderer.bind((IRenderService) getComponent().findParent(XinhaPlugin.class), contentId);
         return dialogRenderer.getComponent();
     }
@@ -148,15 +147,13 @@ public abstract class AbstractBrowserDialog extends AbstractDialog {
     }
 
     public IModel getTitle() {
-        return new StringResourceModel(getName() + "-dialog-title", this, null);
+        return new StringResourceModel("dialog-title", this, null);
     }
-    
+
     @Override
     public IValueMap getProperties() {
         return new ValueMap("width=850,height=455");
     }
-
-    protected abstract String getName();
 
     protected abstract JcrNodeModel findNewModel(IModel model);
 
@@ -185,7 +182,7 @@ public abstract class AbstractBrowserDialog extends AbstractDialog {
     }
 
     protected void enableOk(boolean state) {
-        AjaxRequestTarget.get().addComponent(ok.setEnabled(state));
+        ok.setEnabled(state);
     }
 
 }

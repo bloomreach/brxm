@@ -29,10 +29,12 @@ public class InternalLinkBehavior extends XinhaDialogBehavior {
 
     private static final long serialVersionUID = 1L;
 
+    private IPluginConfig config;
     private XinhaLinkService linkService;
 
     public InternalLinkBehavior(IPluginContext context, IPluginConfig config, XinhaLinkService service) {
-        super(context, config);
+        super(context);
+        this.config = config;
         this.linkService = service;
     }
 

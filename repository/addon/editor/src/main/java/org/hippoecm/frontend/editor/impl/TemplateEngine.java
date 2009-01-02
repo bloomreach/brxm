@@ -96,7 +96,9 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
     public IClusterConfig getTemplate(ITypeDescriptor type, String mode) {
         IClusterConfig cluster = templateStore.getCluster(type.getName() + "/" + mode);
         if (cluster != null) {
-            cluster.put(ITemplateEngine.ENGINE, serviceId);
+            if (cluster.getOverrides().contains(ITemplateEngine.ENGINE)) {
+                cluster.put(ITemplateEngine.ENGINE, serviceId);
+            }
         }
         return cluster;
     }

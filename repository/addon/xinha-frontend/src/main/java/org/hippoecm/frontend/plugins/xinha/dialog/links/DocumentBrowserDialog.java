@@ -26,7 +26,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.dialog.browse.AbstractBrowserDialog;
+import org.hippoecm.frontend.plugins.xinha.dialog.AbstractBrowserDialog;
 import org.hippoecm.frontend.plugins.xinha.services.links.InternalXinhaLink;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLink;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
@@ -65,6 +65,8 @@ public class DocumentBrowserDialog extends AbstractBrowserDialog {
                 checkState();
             }
         });
+
+        checkState();
     }
 
     @Override
@@ -90,17 +92,16 @@ public class DocumentBrowserDialog extends AbstractBrowserDialog {
 
     protected void onOk() {
         InternalXinhaLink link = (InternalXinhaLink) getModelObject();
-        link.save();
+        if (link.isValid()) {
+            link.save();
+        } else {
+            error("Please select a document");
+        }
     }
 
     protected void onRemove() {
         InternalXinhaLink link = (InternalXinhaLink) getModelObject();
         link.delete();
-    }
-
-    @Override
-    protected String getName() {
-        return "internallinks";
     }
 
 }

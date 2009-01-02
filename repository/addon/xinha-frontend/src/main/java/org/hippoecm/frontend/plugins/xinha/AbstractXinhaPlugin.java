@@ -30,9 +30,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import nl.hippo.htmlcleaner.HtmlCleaner;
-import nl.hippo.htmlcleaner.HtmlCleanerTemplate;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Page;
@@ -60,7 +57,6 @@ import org.hippoecm.frontend.plugins.xinha.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.ExternalLinkBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.InternalLinkBehavior;
 import org.hippoecm.frontend.plugins.xinha.dragdrop.XinhaDropBehavior;
-import org.hippoecm.frontend.plugins.xinha.htmlcleaner.JCRHtmlCleanerTemplateBuilder;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImageService;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLinkService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
@@ -93,7 +89,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     private final String mode;
     private TextArea editor;
     private Configuration configuration;
-    private HtmlCleanerTemplate htmlCleanerTemplate;
     private AbstractDefaultAjaxBehavior postBehavior;
 
     private InternalLinkBehavior linkPickerBehavior;
@@ -111,14 +106,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
         if ("edit".equals(mode)) {
             fragment.add(createEditor(config));
-            IPluginConfig htmlCleanerConfig = config.getPluginConfig("cleaner.config");
-            if (htmlCleanerConfig != null) {
-                try {
-                    htmlCleanerTemplate = new JCRHtmlCleanerTemplateBuilder().buildTemplate(htmlCleanerConfig);
-                } catch (Exception ex) {
-                    log.error("Exception whole creating HTMLCleaner template:", ex);
-                }
-            }
             configuration = new Configuration(config);
             context.registerService(configuration, Configuration.class.getName());
 
@@ -139,7 +126,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 }
 
             };
-            fragment.add(imagePickerBehavior = new ImagePickerBehavior(context, config, imageService));
+            fragment.add(imagePickerBehavior = new ImagePickerBehavior(context, config
+                    .getPluginConfig("Xinha.plugins.InsertImage"), imageService));
 
             linkService = new XinhaLinkService(nodeModel) {
                 private static final long serialVersionUID = 1L;
@@ -150,7 +138,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 }
 
             };
-            fragment.add(linkPickerBehavior = new InternalLinkBehavior(context, config, linkService));
+            fragment.add(linkPickerBehavior = new InternalLinkBehavior(context, config
+                    .getPluginConfig("Xinha.plugins.CreateLink"), linkService));
 
             fragment.add(externalLinkBehavior = new ExternalLinkBehavior(context, config));
 
@@ -290,8 +279,10 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     }
 
     protected String clean(final String value) throws Exception {
-        if (htmlCleanerTemplate != null) {
-            return new HtmlCleaner(htmlCleanerTemplate).cleanToString(value);
+        IHtmlCleanerService cleaner = getPluginContext().getService(IHtmlCleanerService.class.getName(),
+                IHtmlCleanerService.class);
+        if (cleaner != null) {
+            return cleaner.clean(value);
         } else {
             return value;
         }
@@ -325,18 +316,12 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             @Override
             protected void onComponentTag(final ComponentTag tag) {
                 StringBuilder sb = new StringBuilder();
-                String width = config.getString("width");
-                if (width == null) {
-                    width = "500px";
-                }
+                String width = config.getString("width", "500px");
                 sb.append("width: ");
                 sb.append(width);
                 sb.append(";");
 
-                String height = config.getString("height");
-                if (height == null) {
-                    height = "200px";
-                }
+                String height = config.getString("height", "200px");
                 sb.append("height: ");
                 sb.append(height);
                 sb.append(";");
@@ -430,8 +415,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     class Configuration extends BaseConfiguration {
         private static final long serialVersionUID = 1L;
 
-        //        private static final String XINHA_PREFIX = "Xinha.";
-        //        private static final String XINHA_CONFIG_PREFIX = "Xinha.config.";
         private static final String XINHA_PLUGINS = "Xinha.plugins";
         private static final String XINHA_TOOLBAR = "Xinha.config.toolbar";
         private static final String XINHA_CSS = "Xinha.config.css";
@@ -475,28 +458,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 }
             }
 
-            /*
-             * FIXME: there is no way to obtain the keys from the IPluginConfig
-             *
-            for (String paramKey : config.keySet()) {
-                if (paramKey.startsWith(XINHA_PREFIX)) {
-                    List<String> paramValues = parameters.get(paramKey).getStrings();
-                    for (String propertyValue : paramValues) {
-                        int equalsIndex = propertyValue.indexOf("=");
-                        if (equalsIndex > -1) {
-                            addProperty(propertyValue.substring(0, equalsIndex), propertyValue
-                                    .substring(equalsIndex + 1));
-                        } else {
-                            String propertyKey = paramKey.substring(XINHA_CONFIG_PREFIX.length());
-                            if (getProperties().containsKey(propertyKey)) {
-                                addProperty(propertyKey, getProperty(propertyKey) + "," + propertyValue);
-                            } else {
-                                addProperty(propertyKey, propertyValue);
-                            }
-                        }
-                    }
-                }
-            } */
         }
 
         public List<String> getToolbarItems() {
@@ -509,12 +470,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
         public String getSkin() {
             return skin;
-        }
-
-        public void setPluginConfigurations(Set<PluginConfiguration> plugins) {
-            for (PluginConfiguration conf : plugins) {
-                addPluginConfiguration(conf);
-            }
         }
 
         public void addPluginConfiguration(PluginConfiguration config) {

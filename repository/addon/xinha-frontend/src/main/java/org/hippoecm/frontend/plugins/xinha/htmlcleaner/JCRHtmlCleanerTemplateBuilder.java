@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.xinha.htmlcleaner;
 
+import java.util.List;
 import java.util.Map;
 
 import nl.hippo.htmlcleaner.HtmlCleanerTemplate;
@@ -135,7 +136,7 @@ public class JCRHtmlCleanerTemplateBuilder {
         }
     }
 
-    protected void handleAllowedElements(HtmlCleanerTemplate template, Map[] elements) throws Exception {
+    protected void handleAllowedElements(HtmlCleanerTemplate template, List<? extends Map> elements) throws Exception {
         if (elements != null){
             for (Map elMap : elements) {
                 String name = getRequiredStringValue("allowed element ("+CLEANUP_ELEMENT+")",elMap, NAME);
@@ -165,14 +166,14 @@ public class JCRHtmlCleanerTemplateBuilder {
         // Process alternate source attribute voor IMG elements
         handleImgAlternateSrcAttr(template, (String) c.get(IMG_ALTERNATE_SRC_ATTR));
         // Process allowed HTML elements
-        handleAllowedElements(template,(Map[]) c.get(CLEANUP_ELEMENT));
+        handleAllowedElements(template, (List<? extends Map>) c.get(CLEANUP_ELEMENT));
     }
 
     protected void handleLineWidth(HtmlCleanerTemplate template, int lineWidth){
         template.setMaxLineWidth(lineWidth);
     }
     
-    protected void handleSerializationElements(HtmlCleanerTemplate template, Map[] elements) throws Exception {
+    protected void handleSerializationElements(HtmlCleanerTemplate template, List<? extends Map> elements) throws Exception {
         if (elements != null){
             for (Map m : elements) {
                 String name = getRequiredStringValue("allowed element ("+CLEANUP_ELEMENT+")",m, NAME);
@@ -204,7 +205,7 @@ public class JCRHtmlCleanerTemplateBuilder {
         
         handleLineWidth(template,c.getInt(LINEWIDTH));
         // Process serialization elements 
-        handleSerializationElements(template,(Map[])c.get(SERIALIZATION_ELEMENT));
+        handleSerializationElements(template, (List<? extends Map>) c.get(SERIALIZATION_ELEMENT));
     }
 
 }

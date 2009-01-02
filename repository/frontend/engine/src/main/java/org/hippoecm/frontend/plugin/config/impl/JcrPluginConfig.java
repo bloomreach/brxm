@@ -15,22 +15,17 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import java.util.Collection;
-import java.util.HashMap;
+import java.lang.reflect.Array;
+import java.util.AbstractList;
+import java.util.AbstractMap;
 import java.util.LinkedHashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
@@ -40,12 +35,12 @@ import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.model.map.JcrMap;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
+public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -53,6 +48,8 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
 
     private static final Logger log = LoggerFactory.getLogger(JcrPluginConfig.class);
 
+    protected final JcrNodeModel nodeModel;
+    private transient Set<Entry<String, Object>> entries;
     private IPluginConfig overrides;
 
     public JcrPluginConfig(JcrNodeModel nodeModel) {
@@ -60,37 +57,14 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
     }
 
     public JcrPluginConfig(JcrNodeModel nodeModel, boolean mutable) {
-        super(nodeModel);
+        this.nodeModel = nodeModel;
         if (!mutable) {
             this.overrides = new JavaPluginConfig();
         }
     }
-
-    public void clear() {
-        try {
-            Node node = getNodeModel().getNode();
-            if (node != null) {
-                NodeIterator children = node.getNodes();
-                while (children.hasNext()) {
-                    Node child = children.nextNode();
-                    if (!child.getDefinition().isProtected()) {
-                        child.remove();
-                    }
-                }
-
-                PropertyIterator properties = node.getProperties();
-                while (properties.hasNext()) {
-                    Property property = properties.nextProperty();
-                    if (!property.getDefinition().isProtected()) {
-                        property.remove();
-                    }
-                }
-            } else {
-                log.warn("Node model is not valid");
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
+    
+    public JcrNodeModel getNodeModel() {
+        return nodeModel;
     }
 
     public boolean getBoolean(String key) throws StringValueConversionException {
@@ -191,6 +165,7 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
         return StringValue.valueOf(getString(key));
     }
 
+    @Override
     public Object put(Object key, Object value) {
         if (overrides != null) {
             Object obj;
@@ -202,143 +177,7 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
             }
             return obj;
         }
-        Object result = get(key);
-        if (key instanceof String) {
-            String strKey = (String) key;
-            try {
-                Node node = getNodeModel().getNode();
-                if (value instanceof IPluginConfig[]) {
-                    JcrPluginConfig[] current = (JcrPluginConfig[]) result;
-                    HashMap<String, Node> paths = new HashMap<String, Node>();
-                    for (JcrPluginConfig config : current) {
-                        paths.put(config.getNodeModel().getItemModel().getPath(), config.getNodeModel().getNode());
-                    }
-                    for (IPluginConfig config : (IPluginConfig[]) value) {
-                        if (config instanceof JcrPluginConfig) {
-                            paths.remove(((JcrPluginConfig) config).getNodeModel().getItemModel().getPath());
-                        }
-                    }
-                    for (Map.Entry<String, Node> entry : paths.entrySet()) {
-                        entry.getValue().remove();
-                    }
-                    for (IPluginConfig config : (IPluginConfig[]) value) {
-                        if (!(config instanceof JcrPluginConfig)) {
-                            Node child = node.addNode(strKey);
-                            JcrPluginConfig model = new JcrPluginConfig(new JcrNodeModel(child));
-                            for (Map.Entry<String, Object> entry : (Set<Map.Entry<String, Object>>) config.entrySet()) {
-                                model.put(entry.getKey(), entry.getValue());
-                            }
-                        }
-                    }
-                    for (JcrPluginConfig config : (JcrPluginConfig[]) get(key)) {
-                        config.detach();
-                    }
-                } else {
-                    if (value instanceof Boolean) {
-                        node.setProperty(strKey, (Boolean) value);
-                    } else if (value instanceof String) {
-                        node.setProperty(strKey, (String) value);
-                    } else if (value instanceof String[]) {
-                        node.setProperty(strKey, (String[]) value);
-                    } else if (value instanceof Double) {
-                        node.setProperty(strKey, (Double) value);
-                    }
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-        } else {
-            log.warn("Key " + key + " is not a String");
-        }
-        return result;
-    }
-
-    public void putAll(Map map) {
-        Iterator<Map.Entry> iter = map.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = iter.next();
-            put(entry.getKey(), entry.getValue());
-        }
-    }
-
-    public Object remove(Object key) {
-        if (key instanceof String) {
-            String strKey = (String) key;
-            try {
-                Object result = get(key);
-                Node node = getNodeModel().getNode();
-                if (node != null) {
-                    if (node.hasProperty(strKey)) {
-                        node.getProperty(strKey).remove();
-                    } else if (node.getNodes(strKey).getSize() > 0) {
-                        NodeIterator nodes = node.getNodes(strKey);
-                        while (nodes.hasNext()) {
-                            Node child = nodes.nextNode();
-                            child.remove();
-                        }
-                    }
-                } else {
-                    log.warn("Node model is invalid");
-                }
-                return result;
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-        } else {
-            log.error("Key " + key + " is not a String");
-        }
-        return null;
-    }
-
-    public boolean containsKey(Object key) {
-        if (key instanceof String) {
-            String strKey = (String) key;
-            try {
-                Node node = getNodeModel().getNode();
-                if (node != null) {
-                    if (node.hasProperty(strKey)) {
-                        return true;
-                    } else if (node.getNodes(strKey).getSize() > 0) {
-                        return true;
-                    }
-                } else {
-                    log.error("Node model is invalid");
-                }
-                return false;
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-        } else {
-            log.error("Key " + key + " is not a String");
-        }
-        return false;
-    }
-
-    public boolean containsValue(Object value) {
-        for (Map.Entry entry : (Set<Map.Entry>) entrySet()) {
-            if (entry.getValue().equals(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Set entrySet() {
-        LinkedHashSet<Map.Entry<String, Object>> entries = new LinkedHashSet<Map.Entry<String, Object>>();
-        for (final String key : (Set<String>) keySet()) {
-            entries.add(new Map.Entry<String, Object>() {
-                public String getKey() {
-                    return key;
-                }
-                public Object getValue() {
-                    return get(key);
-                }
-                public Object setValue(Object value) {
-                    return put(key, value);
-                }
-            });
-        }
-        return entries;
+        return super.put(key, value);
     }
 
     public IPluginConfig getPluginConfig(Object key) {
@@ -348,7 +187,7 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
         if (key instanceof String) {
             String strKey = (String) key;
             try {
-                Node node = getNodeModel().getNode();
+                Node node = nodeModel.getNode();
                 if (node.hasNode(strKey)) {
                     Node child = node.getNode(strKey);
                     return new JcrPluginConfig(new JcrNodeModel(child), overrides == null);
@@ -365,8 +204,8 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
     public Set<IPluginConfig> getPluginConfigSet() {
         Set<IPluginConfig> configs = new LinkedHashSet<IPluginConfig>();
         try {
-            NodeIterator children = getNodeModel().getNode().getNodes();
-            for (int i=0; children.hasNext(); i++) {
+            NodeIterator children = nodeModel.getNode().getNodes();
+            for (int i = 0; children.hasNext(); i++) {
                 Node child = children.nextNode();
                 if (child != null) {
                     configs.add(new JcrPluginConfig(new JcrNodeModel(child), overrides == null));
@@ -374,158 +213,15 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
-       }
-       return configs;
-     }
+        }
+        return configs;
+    }
 
     public Object get(Object key) {
         if (overrides != null && overrides.containsKey(key)) {
             return overrides.get(key);
         }
-        if (key instanceof String) {
-            String strKey = (String) key;
-            try {
-                Node node = getNodeModel().getNode();
-                if (node.hasProperty(strKey)) {
-                    Property property = node.getProperty(strKey);
-                    int type = property.getDefinition().getRequiredType();
-
-                    Object[] result = null;
-                    if (property.getDefinition().isMultiple()) {
-                        Value[] values = property.getValues();
-                        switch (type) {
-                        case PropertyType.BOOLEAN:
-                            result = new Boolean[values.length];
-                            break;
-                        case PropertyType.LONG:
-                            result = new Long[values.length];
-                            break;
-                        case PropertyType.STRING:
-                        default:
-                            result = new String[values.length];
-                            break;
-                        }
-
-                        int i = 0;
-                        for (Value current : values) {
-                            result[i++] = getValue(current);
-                        }
-
-                        return result;
-                    } else {
-                        return getValue(property.getValue());
-                    }
-                } else if (node.hasNode(strKey)) {
-                    NodeIterator children = node.getNodes(strKey);
-                    Vector<JcrPluginConfig> result = new Vector<JcrPluginConfig>();
-                    while (children.hasNext()) {
-                        Node child = children.nextNode();
-                          if (child != null) {
-                              result.add(new JcrPluginConfig(new JcrNodeModel(child)));
-                          }
-                    }
-                    return result.toArray(new JcrPluginConfig[result.size()]);
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-        } else {
-            log.warn("Key " + key + " is not a String");
-        }
-        return null;
-    }
-
-    public boolean isEmpty() {
-        return size() == 0;
-    }
-
-    public Set keySet() {
-        LinkedHashSet<String> result = new LinkedHashSet<String>();
-        try {
-            Node node = getNodeModel().getNode();
-            if (node != null) {
-                PropertyIterator properties = node.getProperties();
-                while (properties.hasNext()) {
-                    Property property = properties.nextProperty();
-                    result.add(property.getName());
-                }
-
-                NodeIterator nodes = node.getNodes();
-                while (nodes.hasNext()) {
-                    Node child = nodes.nextNode();
-                    result.add(child.getName());
-                }
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        return result;
-    }
-
-    public int size() {
-        try {
-            Node node = getNodeModel().getNode();
-            if (node != null) {
-                LinkedHashSet<String> names = new LinkedHashSet<String>();
-                NodeIterator nodes = node.getNodes();
-                while (nodes.hasNext()) {
-                    Node child = nodes.nextNode();
-                    names.add(child.getName());
-                }
-                return names.size() + (int) node.getProperties().getSize();
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        return 0;
-    }
-
-    public Collection values() {
-        LinkedHashSet<Object> result = new LinkedHashSet<Object>();
-        try {
-            Node node = getNodeModel().getNode();
-            if (node != null) {
-                PropertyIterator properties = node.getProperties();
-                while (properties.hasNext()) {
-                    Property property = properties.nextProperty();
-                    if (property.getDefinition().isMultiple()) {
-                        Value[] values = property.getValues();
-                        Object[] entry = new Object[values.length];
-                        int i = 0;
-                        for (Value value : values) {
-                            entry[i++] = getValue(value);
-                        }
-                        result.add(entry);
-                    } else {
-                        result.add(getValue(property.getValue()));
-                    }
-                }
-
-                HashMap<String, List<JcrPluginConfig>> map = new HashMap<String, List<JcrPluginConfig>>();
-                NodeIterator nodes = node.getNodes();
-                while (nodes.hasNext()) {
-                    Node child = nodes.nextNode();
-                    List<JcrPluginConfig> list = map.get(child.getName());
-                    if (list == null) {
-                        list = new LinkedList<JcrPluginConfig>();
-                        map.put(child.getName(), list);
-                    }
-                    list.add(new JcrPluginConfig(new JcrNodeModel(child), overrides == null));
-                }
-
-                for (Map.Entry<String, List<JcrPluginConfig>> entry : map.entrySet()) {
-                    JcrPluginConfig[] array = new JcrPluginConfig[entry.getValue().size()];
-                    int i = 0;
-                    for (JcrPluginConfig config : entry.getValue()) {
-                        array[i++] = config;
-                    }
-                    result.add(array);
-                }
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        return result;
+        return super.get(key);
     }
 
     public CharSequence getCharSequence(String key) {
@@ -562,8 +258,63 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
         throw new UnsupportedOperationException("not implemented yet");
     }
 
+    public void detach() {
+        nodeModel.detach();
+        entries = null;
+    }
+
+    @Override
+    public Set<Map.Entry<String, Object>> entrySet() {
+        if (entries == null) {
+            final JcrMap jcrMap = new JcrMap(nodeModel.getNode());
+            final Set<Map.Entry<String, Object>> orig = jcrMap.entrySet();
+            entries = new LinkedHashSet<Map.Entry<String, Object>>();
+            for (final Map.Entry<String, Object> entry : orig) {
+                entries.add(new Map.Entry<String, Object>() {
+
+                    public String getKey() {
+                        return entry.getKey();
+                    }
+
+                    public Object getValue() {
+                        Object obj = entry.getValue();
+                        Object result;
+                        if (obj.getClass().isArray()) {
+                            int size = Array.getLength(obj);
+                            Class<?> componentType = obj.getClass().getComponentType();
+                            result = Array.newInstance(componentType, size);
+                            for (int i = 0; i < size; i++) {
+                                Array.set(result, i, filter(Array.get(obj, i)));
+                            }
+                        } else {
+                            result = filter(obj);
+                        }
+                        return result;
+                    }
+
+                    public Object setValue(Object value) {
+                        return jcrMap.put(entry.getKey(), value);
+                    }
+                });
+            }
+        }
+        return entries;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof JcrPluginConfig) {
+            return ((JcrPluginConfig) other).nodeModel.equals(nodeModel);
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return 521 * nodeModel.hashCode();
+    }
+
     private Property getProperty(String key) throws RepositoryException {
-        Node node = getNodeModel().getNode();
+        Node node = nodeModel.getNode();
         if (node != null) {
             if (node.hasProperty(key)) {
                 return node.getProperty(key);
@@ -574,15 +325,32 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
         return null;
     }
 
-    private Object getValue(Value value) throws RepositoryException {
-        switch (value.getType()) {
-        case PropertyType.BOOLEAN:
-            return new Boolean(value.getBoolean());
-        case PropertyType.LONG:
-            return new Long(value.getLong());
-        case PropertyType.STRING:
-        default:
-            return value.getString();
+    private Object filter(Object value) {
+        if (value instanceof JcrMap) {
+            JcrMap map = (JcrMap) value;
+            try {
+                Node node = map.getNode();
+                if (node.isNodeType("frontend:pluginconfig")) {
+                    return new JcrPluginConfig(new JcrNodeModel(map.getNode()));
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        } else if (value instanceof List) {
+            final List list = (List) value;
+            return new AbstractList() {
+
+                @Override
+                public Object get(int index) {
+                    return filter(list.get(index));
+                }
+
+                @Override
+                public int size() {
+                    return list.size();
+                }
+            };
         }
+        return value;
     }
 }
