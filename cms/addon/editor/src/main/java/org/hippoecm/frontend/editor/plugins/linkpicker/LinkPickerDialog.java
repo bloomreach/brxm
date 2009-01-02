@@ -20,22 +20,26 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.Component;
+import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.dialog.lookup.LookupDialog;
+import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-import org.hippoecm.frontend.model.tree.AbstractTreeNode;
+import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.service.IJcrService;
+import org.hippoecm.frontend.plugin.IPluginControl;
+import org.hippoecm.frontend.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.service.PluginRequestTarget;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LinkPickerDialog extends LookupDialog {
+public class LinkPickerDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: LinkPickerDialog.java 12039 2008-06-13 09:27:05Z bvanhalderen $";
 
@@ -43,72 +47,68 @@ public class LinkPickerDialog extends LookupDialog {
 
     static final Logger log = LoggerFactory.getLogger(LinkPickerDialog.class);
 
-    protected IPluginContext context;
-    protected JcrPropertyValueModel valueModel;
     private List<String> nodetypes;
-    private Label label;
 
-    public LinkPickerDialog(IPluginContext context, JcrPropertyValueModel valueModel, List<String> nodetypes,
-            AbstractTreeNode rootNode) {
-        super(rootNode);
+    protected final IPluginContext context;
+    protected final IPluginConfig config;
+    protected IRenderService dialogRenderer;
+    private ModelService<IModel> modelService;
+    private IPluginControl control;
+    private IModel selectedNode;
+
+    public LinkPickerDialog(IPluginContext context, IPluginConfig config, IModel model, List<String> nodetypes) {
+        super(model);
+
         this.context = context;
+        this.config = config;
         this.nodetypes = nodetypes;
-        this.valueModel = valueModel;
+
+        ok.setEnabled(false);
+        try {
+            String uuid = (String) model.getObject();
+            if (uuid != null && !"".equals(uuid)) {
+                selectedNode = new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByUUID(uuid));
+                ok.setEnabled(true);
+            }
+        } catch(RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
 
         setOutputMarkupId(true);
 
-        String path = "no path selected";
-        try {
-            if (getSelectedNode() != null) {
-                path = getSelectedNode().getNodeModel().getNode().getPath();
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        add(label = new Label("info", new Model(path)));
-        label.setOutputMarkupId(true);
-        ok.setEnabled(false);
+        add(createContentPanel("content"));
     }
 
     public IModel getTitle() {
         return new StringResourceModel("link-picker", this, null);
     }
 
-    @Override
-    public void onSelect(JcrNodeModel model) {
-        try {
-            label.setModelObject(model.getNode().getPath());
-            AjaxRequestTarget target = AjaxRequestTarget.get();
-            if (target != null) {
-                target.addComponent(label);
-                target.addComponent(ok);
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-    }
-
-    @Override
-    protected boolean isValidSelection(AbstractTreeNode targetModel) {
-        Node targetNode = targetModel.getNodeModel().getNode();
-
+    protected boolean isValidSelection(IModel targetModel) {
+        boolean isLinkable;
         boolean validType = false;
-        if (nodetypes.size() == 0) {
-            validType = true;
+
+        if (targetModel == null || targetModel.getObject() == null) {
+            return false;
         }
-        for (int i = 0; i < nodetypes.size(); i++) {
-            try {
-                if (targetNode.isNodeType(nodetypes.get(i))) {
+
+        try {
+            Node targetNode = (Node) targetModel.getObject();
+
+            Node testNode = targetNode;
+            if (targetNode.isNodeType(HippoNodeType.NT_HANDLE) && targetNode.hasNode(targetNode.getName())) {
+                testNode = targetNode.getNode(targetNode.getName());
+            }
+
+            if (nodetypes.size() == 0) {
+                validType = true;
+            }
+            for (int i = 0; i < nodetypes.size(); i++) {
+                if (testNode.isNodeType(nodetypes.get(i))) {
                     validType = true;
                     break;
                 }
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
             }
-        }
 
-        boolean isLinkable;
-        try {
             // do not enable linking to not referenceable nodes
             isLinkable = targetNode.isNodeType("mix:referenceable");
             // do not enable linking to hippo documents below hippo handle
@@ -117,27 +117,76 @@ public class LinkPickerDialog extends LookupDialog {
                             HippoNodeType.NT_HANDLE));
         } catch (RepositoryException e) {
             log.error(e.getMessage());
+            error("Failed to determine validity of selection");
             isLinkable = false;
         }
 
         return validType && isLinkable;
     }
 
+    protected Component createContentPanel(String contentId) {
+        //Get PluginConfigService
+        IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
+                IPluginConfigService.class);
+
+        //Lookup clusterConfig from IPluginContext
+        IClusterConfig clusterConfig = pluginConfigService.getCluster(config.getString("cluster.name"));
+        IPluginConfig parameters = config.getPluginConfig("cluster.options");
+        for (String key : clusterConfig.getOverrides()) {
+            Object value = parameters.get(key);
+            if (value != null) {
+                clusterConfig.put(key, parameters.get(key));
+            }
+        }
+
+        //save modelServiceId and dialogServiceId in cluster config
+        String modelServiceId = clusterConfig.getString("model.id");
+        modelService = new ModelService<IModel>(modelServiceId, selectedNode) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void setModel(IModel model) {
+                if (isValidSelection(model)) {
+                    selectedNode = model;
+                    ok.setEnabled(true);
+                } else {
+                    ok.setEnabled(false);
+                }
+                super.setModel(model);
+            }
+        };
+        modelService.init(context);
+
+        control = context.start(clusterConfig);
+
+        dialogRenderer = context.getService(clusterConfig.getString("wicket.id"), IRenderService.class);
+        dialogRenderer.bind(null, contentId);
+        return dialogRenderer.getComponent();
+    }
+
+    public final void onClose() {
+        dialogRenderer.unbind();
+        dialogRenderer = null;
+        control.stopPlugin();
+        modelService.destroy();
+    }
+    
+    @Override
+    public void render(PluginRequestTarget target) {
+        if (dialogRenderer != null) {
+            dialogRenderer.render(target);
+        }
+        super.render(target);
+    }
+
     @Override
     public void onOk() {
+        if (selectedNode == null) {
+            error("No node selected");
+            return;
+        }
         try {
-            JcrNodeModel sourceNodeModel = new JcrNodeModel(valueModel.getJcrPropertymodel().getItemModel()
-                    .getParentModel());
-            if (sourceNodeModel.getParentModel() != null) {
-                JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
-                String targetUUID = targetNodeModel.getNode().getUUID();
-                valueModel.setObject(targetUUID);
-
-                IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
-                if (jcrService != null) {
-                    jcrService.flush(sourceNodeModel);
-                }
-            }
+            getModel().setObject(((Node) selectedNode.getObject()).getUUID());
         } catch (RepositoryException ex) {
             error(ex.getMessage());
         }

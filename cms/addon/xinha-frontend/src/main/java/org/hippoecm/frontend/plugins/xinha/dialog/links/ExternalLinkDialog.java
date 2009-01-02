@@ -24,6 +24,8 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -40,6 +42,8 @@ public class ExternalLinkDialog extends AbstractDialog {
     private final static String SVN_ID = "$Id$";
 
     public ExternalLinkDialog(IPluginContext context, IPluginConfig config, IModel model) {
+        super(model);
+
         add(new TextFieldWidget("href", new PropertyModel(getLink(), XinhaLink.HREF)) {
             private static final long serialVersionUID = 1L;
 
@@ -67,7 +71,7 @@ public class ExternalLinkDialog extends AbstractDialog {
             }
         });
 
-        final Button remove =  new AjaxButton("button") {
+        final Button remove = new AjaxButton("button") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -88,8 +92,17 @@ public class ExternalLinkDialog extends AbstractDialog {
     protected boolean hasRemoveButton() {
         return getLink().isExisting();
     }
-    
+
     protected void onRemove() {
+    }
+
+    public IModel getTitle() {
+        return new StringResourceModel("dialog-title", this, null);
+    }
+
+    @Override
+    public IValueMap getProperties() {
+        return new ValueMap("width=400,height=200");
     }
 
     private void update(AjaxRequestTarget target) {
@@ -102,10 +115,6 @@ public class ExternalLinkDialog extends AbstractDialog {
 
     private ExternalXinhaLink getLink() {
         return (ExternalXinhaLink) getModel();
-    }
-
-    public IModel getTitle() {
-        return new StringResourceModel("externallinks-dialog-title", this, null);
     }
 
 }

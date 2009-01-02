@@ -20,15 +20,14 @@
     <sv:value>frontend:clusterfolder</sv:value>
   </sv:property>
 
-  <sv:node sv:name="imagepicker">
+  <sv:node sv:name="images">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
     </sv:property>
 
-    <sv:property sv:name="frontend:overrides" sv:type="String">
-      <sv:value>service.dialog.id</sv:value>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>${cluster.id}.wicket</sv:value>
     </sv:property>
-
     <sv:property sv:name="model.id" sv:type="String">
       <sv:value>${cluster.id}.model</sv:value>
     </sv:property>
@@ -38,10 +37,10 @@
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.xinha.dialog.browse.BrowserPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.standards.browse.BrowserPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>service.modal.content</sv:value>
+        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.id}</sv:value>
@@ -57,9 +56,6 @@
       </sv:property>
       <sv:property sv:name="browser.viewers" sv:type="String">
         <sv:value>cms-folder-views</sv:value>
-      </sv:property>
-      <sv:property sv:name="service.dialog.id" sv:type="String">
-        <sv:value>${service.dialog.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.extensions" sv:type="String">
         <sv:value>extension.shortcuts</sv:value>
@@ -114,7 +110,7 @@
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.xinha.dialog.browse.BreadcrumbPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.standards.browse.BreadcrumbPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${cluster.id}.model.folder</sv:value>
@@ -157,16 +153,14 @@
     </sv:node>
   </sv:node>
 
-  <!-- Internal Linkpicker configuration -->
-  <sv:node sv:name="internallinks">
+  <sv:node sv:name="documents">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
     </sv:property>
 
-    <sv:property sv:name="frontend:overrides" sv:type="String">
-      <sv:value>service.dialog.id</sv:value>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>${cluster.id}.wicket</sv:value>
     </sv:property>
-
     <sv:property sv:name="model.id" sv:type="String">
       <sv:value>${cluster.id}.model</sv:value>
     </sv:property>
@@ -176,10 +170,10 @@
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.xinha.dialog.browse.BrowserPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.standards.browse.BrowserPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>service.modal.content</sv:value>
+        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.id}</sv:value>
@@ -195,9 +189,6 @@
       </sv:property>
       <sv:property sv:name="browser.viewers" sv:type="String">
         <sv:value>cms-folder-views</sv:value>
-      </sv:property>
-      <sv:property sv:name="service.dialog.id" sv:type="String">
-        <sv:value>${service.dialog.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.extensions" sv:type="String">
         <sv:value>extension.shortcuts</sv:value>
@@ -265,7 +256,7 @@
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.xinha.dialog.browse.BreadcrumbPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.standards.browse.BreadcrumbPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.dialog.breadcrumb</sv:value>

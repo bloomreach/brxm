@@ -15,12 +15,16 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
+import java.lang.reflect.Array;
+import java.util.AbstractList;
 import java.util.AbstractSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hippoecm.frontend.model.map.AbstractValueMap;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
@@ -29,6 +33,111 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
+    private class PluginConfigDecorator extends AbstractValueMap implements IPluginConfig {
+        private static final long serialVersionUID = 1L;
+
+        private IPluginConfig conf;
+
+        PluginConfigDecorator(IPluginConfig conf) {
+            this.conf = conf;
+        }
+
+        public IPluginConfig getPluginConfig(Object key) {
+            return (IPluginConfig) filter(conf.getPluginConfig(key));
+        }
+
+        public Set<IPluginConfig> getPluginConfigSet() {
+            Set<IPluginConfig> result = new LinkedHashSet<IPluginConfig>();
+            for (IPluginConfig config : conf.getPluginConfigSet()) {
+                result.add((IPluginConfig) filter(config));
+            }
+            return result;
+        }
+
+        public void detach() {
+            ClusterConfigDecorator.this.detach();
+            conf.detach();
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other instanceof PluginConfigDecorator) {
+                PluginConfigDecorator that = (PluginConfigDecorator) other;
+                return this.conf.equals(that.conf);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * conf.hashCode();
+        }
+
+        @Override
+        public Set entrySet() {
+            final Set orig = conf.entrySet();
+            return new AbstractSet() {
+
+                @Override
+                public Iterator iterator() {
+                    final Iterator origIter = orig.iterator();
+                    return new Iterator() {
+
+                        public boolean hasNext() {
+                            return origIter.hasNext();
+                        }
+
+                        public Object next() {
+                            final Entry entry = (Map.Entry) origIter.next();
+                            if (entry != null) {
+                                return new Map.Entry() {
+
+                                    public Object getKey() {
+                                        return entry.getKey();
+                                    }
+
+                                    public Object getValue() {
+                                        Object obj = entry.getValue();
+                                        Object result;
+                                        if (obj.getClass().isArray()) {
+                                            int size = Array.getLength(obj);
+                                            Class<?> componentType = obj.getClass().getComponentType();
+                                            result = Array.newInstance(componentType, size);
+                                            for (int i = 0; i < size; i++) {
+                                                Array.set(result, i, filter(Array.get(obj, i)));
+                                            }
+                                        } else {
+                                            result = filter(obj);
+                                        }
+                                        return result;
+                                    }
+
+                                    public Object setValue(Object value) {
+                                        return conf.put(entry.getKey(), value);
+                                    }
+                                    
+                                };
+                            }
+                            return null;
+                        }
+
+                        public void remove() {
+                            origIter.remove();
+                        }
+                        
+                    };
+                }
+
+                @Override
+                public int size() {
+                    return orig.size();
+                }
+                
+            };
+        }
+
+    }
 
     private IClusterConfig upstream;
     private List<String> overrides;
@@ -40,62 +149,24 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
         this.clusterId = clusterId;
 
         List<IPluginConfig> configs = upstream.getPlugins();
-        for (final IPluginConfig conf : configs) {
-            addPlugin(new JavaPluginConfig() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public Object get(Object key) {
-                    Object obj = conf.get(key);
-                    if (obj != null) {
-                        if (obj instanceof String) {
-                            return filter((String) obj);
-                        } else if (obj.getClass().isArray()) {
-                            Object[] list = (Object[]) obj;
-                            Object[] result = new Object[list.length];
-                            int i = 0;
-                            for (Object item : list) {
-                                if (item != null && item instanceof String) {
-                                    result[i++] = filter((String) item);
-                                } else {
-                                    result[i++] = item;
-                                }
-                            }
-                            return result;
-                        }
-                    }
-                    return obj;
-                }
-
-                @Override
-                public Object put(Object key, Object value) {
-                    return conf.put(key, value);
-                }
-
-                @Override
-                public void detach() {
-                    ClusterConfigDecorator.this.detach();
-                    conf.detach();
-                    super.detach();
-                }
-            });
+        for (IPluginConfig conf : configs) {
+            addPlugin(new PluginConfigDecorator(conf));
         }
     }
 
     @Override
     public Object get(Object key) {
         Object obj = super.get(key);
-        if (obj != null) {
-            return obj;
+        if (obj == null) {
+            obj = upstream.get(key);
         }
 
-        obj = upstream.get(key);
-        if ((obj != null) && (obj instanceof String)) {
+        if (obj != null) {
             // Intercept values of the form "${" + variable + "}" + ...
             // These values are rewritten using the variables
-            return filter((String) obj);
+            return filter(obj);
         }
-        return obj;
+        return null;
     }
 
     @Override
@@ -120,23 +191,44 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
         super.detach();
     }
 
-    private Object filter(String value) {
-        if (value.length() > 2 && value.charAt(0) == '$' && value.charAt(1) == '{') {
-            String variable = value.substring(2, value.lastIndexOf('}'));
-            String remainder = value.substring(value.lastIndexOf('}') + 1);
-            if ("cluster.id".equals(variable)) {
-                return clusterId + remainder;
-            } else {
-                Object result = ClusterConfigDecorator.this.get(variable);
-                if (result instanceof String) {
-                    return ((String) result) + remainder;
+    private Object filter(Object object) {
+        if (object instanceof String) {
+            String value = (String) object;
+            if (value.length() > 2 && value.charAt(0) == '$' && value.charAt(1) == '{') {
+                String variable = value.substring(2, value.lastIndexOf('}'));
+                String remainder = value.substring(value.lastIndexOf('}') + 1);
+                if ("cluster.id".equals(variable)) {
+                    return clusterId + remainder;
                 } else {
-                    return result;
+                    Object result = ClusterConfigDecorator.this.get(variable);
+                    if (result instanceof String) {
+                        return ((String) result) + remainder;
+                    } else {
+                        return result;
+                    }
                 }
+                // unreachable
             }
-            // unreachable
+            return value;
+        } else if (object instanceof IPluginConfig) {
+            return new PluginConfigDecorator((IPluginConfig) object);
+        } else if (object instanceof List) {
+            final List list = (List) object;
+            return new AbstractList() {
+
+                @Override
+                public Object get(int index) {
+                    return filter(list.get(index));
+                }
+
+                @Override
+                public int size() {
+                    return list.size();
+                }
+                
+            };
         }
-        return value;
+        return object;
     }
 
 }

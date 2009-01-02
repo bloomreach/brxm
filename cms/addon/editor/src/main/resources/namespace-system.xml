@@ -609,6 +609,9 @@
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
           </sv:property>
+          <sv:property sv:name="cluster.name" sv:type="String">
+            <sv:value>cms-pickers/documents</sv:value>
+          </sv:property>
         </sv:node>
 
       </sv:node>
@@ -660,8 +663,6 @@
         <sv:property sv:name="frontend:overrides" sv:type="String">
           <sv:value>wicket.id</sv:value>
           <sv:value>mode</sv:value>
-          <sv:value>filters</sv:value>
-          <sv:value>path</sv:value>
           <sv:value>nodetypes</sv:value>
         </sv:property>
 
@@ -692,11 +693,8 @@
           <sv:property sv:name="nodetypes" sv:type="String">
             <sv:value>${nodetypes}</sv:value>
           </sv:property>
-          <sv:property sv:name="filters" sv:type="String">
-            <sv:value>${filters}</sv:value>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>${path}</sv:value>
+          <sv:property sv:name="cluster.name" sv:type="String">
+            <sv:value>cms-pickers/documents</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>

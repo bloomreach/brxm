@@ -24,8 +24,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.dialog.IPersistedMap;
-import org.hippoecm.frontend.plugins.xinha.dialog.browse.AbstractBrowserDialog;
+import org.hippoecm.frontend.plugins.xinha.dialog.AbstractBrowserDialog;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImage;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNode;
@@ -48,12 +47,13 @@ public class ImageBrowserDialog extends AbstractBrowserDialog {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                IPersistedMap link = (IPersistedMap) model.getObject();
-                enableOk(link.isValid() && link.hasChanged());
+                checkState();
             }
         });
+
+        checkState();
     }
-    
+
     protected JcrNodeModel findNewModel(IModel model) {
         JcrNodeModel nodeModel = (JcrNodeModel) model;
         HippoNode node = nodeModel.getNode();
@@ -74,18 +74,17 @@ public class ImageBrowserDialog extends AbstractBrowserDialog {
     @Override
     protected void onOk() {
         XinhaImage xi = (XinhaImage) getModelObject();
-        xi.save();
+        if (xi.isValid()) {
+            xi.save();
+        } else {
+            error("Please select an image");
+        }
     }
 
     @Override
     protected void onRemove() {
         XinhaImage img = (XinhaImage) getModelObject();
         img.delete();
-    }
-
-    @Override
-    protected String getName() {
-        return "imagepicker";
     }
 
 }

@@ -114,10 +114,11 @@ public class JcrTreeNode extends AbstractTreeNode {
 
     @Override
     public String renderNode() {
-        String result = (String) new NodeTranslator(getNodeModel()).getNodeName().getObject();
+        String result = "unknown";
         HippoNode node = getNodeModel().getNode();
         if (node != null) {
             try {
+                result = node.getDisplayName();
                 if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
                 }

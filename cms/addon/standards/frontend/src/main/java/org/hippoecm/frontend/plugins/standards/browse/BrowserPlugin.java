@@ -14,14 +14,13 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.xinha.dialog.browse;
+package org.hippoecm.frontend.plugins.standards.browse;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.browse.AbstractBrowseView;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

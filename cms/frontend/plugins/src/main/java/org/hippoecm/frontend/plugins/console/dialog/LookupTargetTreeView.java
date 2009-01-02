@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.dialog.lookup;
+package org.hippoecm.frontend.plugins.console.dialog;
 
 import java.util.ArrayList;
 import java.util.Collections;

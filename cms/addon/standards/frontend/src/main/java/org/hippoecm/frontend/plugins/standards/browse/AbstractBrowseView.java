@@ -68,16 +68,19 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
                         viewerName = null;
                     }
 
-                    IPluginConfig parameters = config.getPluginConfig("browser.options");
                     IPluginConfigService pluginConfig = context.getService(IPluginConfigService.class.getName(),
                             IPluginConfigService.class);
                     IClusterConfig cluster = pluginConfig.getCluster(config.getString(VIEWERS) + "/" + type);
                     cluster.put("wicket.id", getExtensionPoint());
                     cluster.put("model.folder", config.getString("model.folder"));
                     cluster.put("model.document", config.getString("model.document"));
-                    for (String override : cluster.getOverrides()) {
-                        if (parameters.containsKey(override)) {
-                            cluster.put(override, parameters.get(override));
+
+                    IPluginConfig parameters = config.getPluginConfig("browser.options");
+                    if (parameters != null) {
+                        for (String override : cluster.getOverrides()) {
+                            if (parameters.containsKey(override)) {
+                                cluster.put(override, parameters.get(override));
+                            }
                         }
                     }
                     viewer = context.start(cluster);

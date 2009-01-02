@@ -39,6 +39,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.resource.IResourceStream;
@@ -93,7 +94,7 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
                         exceptionMessage("Markup of type '"
                                 + getMarkupType()
                                 + "' for component '"
-                                + getClass().getName()
+                                + AbstractDialog.this.getClass().getName()
                                 + "' not found."
                                 + " Enable debug messages for org.apache.wicket.util.resource to get a list of all filenames tried"),
                         ex);
@@ -111,7 +112,10 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
     protected boolean cancelled = false;
 
     public AbstractDialog() {
-        super("form");
+        this(null);
+    }
+    public AbstractDialog(IModel model) {
+        super("form", model);
 
         setOutputMarkupId(true);
 
@@ -248,6 +252,7 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
 
     public void render(PluginRequestTarget target) {
         target.addComponent(feedback);
+        target.addComponent(ok);
     }
 
     public void onClose() {

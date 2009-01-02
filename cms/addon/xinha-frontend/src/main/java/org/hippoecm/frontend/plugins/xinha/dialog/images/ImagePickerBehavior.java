@@ -27,17 +27,20 @@ public class ImagePickerBehavior extends XinhaDialogBehavior {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
+    private final IPluginConfig config;
     private XinhaImageService imageService;
 
     public ImagePickerBehavior(IPluginContext context, IPluginConfig config, XinhaImageService service) {
-        super(context, config);
+        super(context);
+        this.config = config;
         imageService = service;
     }
 
     @Override
     protected void respond(AjaxRequestTarget target) {
-        getDialogService().show(new ImageBrowserDialog(context, config, new Model(imageService.createXinhaImage(getParameters()))));
+        getDialogService().show(
+                new ImageBrowserDialog(context, config, new Model(imageService.createXinhaImage(getParameters()))));
     }
 
 }

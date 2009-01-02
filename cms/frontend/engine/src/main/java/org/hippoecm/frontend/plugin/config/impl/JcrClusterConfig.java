@@ -76,7 +76,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
     public List<String> getOverrides() {
         List<String> result = new LinkedList<String>();
         try {
-            Node node = getNodeModel().getNode();
+            Node node = nodeModel.getNode();
             if (node.hasProperty("frontend:overrides")) {
                 for (Value value : node.getProperty("frontend:overrides").getValues()) {
                     result.add(value.getString());

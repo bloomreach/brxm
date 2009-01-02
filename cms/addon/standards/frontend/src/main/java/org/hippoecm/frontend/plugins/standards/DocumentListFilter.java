@@ -83,14 +83,17 @@ public class DocumentListFilter implements IClusterable {
     public DocumentListFilter(IPluginConfig config) {
         filters = new Vector<FilterDefinition>();
 
-        for (IPluginConfig filter : config.getPluginConfig("filters").getPluginConfigSet()) {
-            filters.add(new FilterDefinition(filter.getString("state", ""),
-                                            filter.getString("path", ""),
-                                            filter.getString("parent", ""),
-                                            filter.getString("child", ""),
-                                            filter.getString("target", ""),
-                                            filter.containsKey("display") ? filter.getBoolean("display") : true,
-                                            filter.getString("name", "")));
+        IPluginConfig filterConfig = config.getPluginConfig("filters");
+        if (filterConfig != null) {
+            for (IPluginConfig filter : filterConfig.getPluginConfigSet()) {
+                filters.add(new FilterDefinition(filter.getString("state", ""),
+                                                filter.getString("path", ""),
+                                                filter.getString("parent", ""),
+                                                filter.getString("child", ""),
+                                                filter.getString("target", ""),
+                                                filter.containsKey("display") ? filter.getBoolean("display") : true,
+                                                filter.getString("name", "")));
+            }
         }
 
         if(log.isDebugEnabled()) {

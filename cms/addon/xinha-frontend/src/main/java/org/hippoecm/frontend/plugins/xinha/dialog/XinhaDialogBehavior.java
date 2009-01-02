@@ -8,20 +8,17 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.AbstractXinhaPlugin;
 
 public abstract class XinhaDialogBehavior extends AbstractDefaultAjaxBehavior {
     private static final long serialVersionUID = 1L;
-    
-    protected final IPluginContext context;
-    protected final IPluginConfig config;
 
-    public XinhaDialogBehavior(IPluginContext context, IPluginConfig config) {
+    protected final IPluginContext context;
+
+    public XinhaDialogBehavior(IPluginContext context) {
         this.context = context;
-        this.config = config;
     }
-    
+
     protected IDialogService getDialogService() {
         return context.getService(IDialogService.class.getName(), IDialogService.class);
     }

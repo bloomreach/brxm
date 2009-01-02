@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.xinha.dialog.browse;
+package org.hippoecm.frontend.plugins.standards.browse;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -93,7 +93,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
             }
         };
         up.setModel(new StringResourceModel("dialog-breadcrumb-up", this, null));
-        if (roots.contains(nodeModel.getItemModel().getPath())) {
+        if (nodeModel == null || roots.contains(nodeModel.getItemModel().getPath())) {
             up.setEnabled(false);
         }
         add(up);
@@ -113,16 +113,18 @@ public class BreadcrumbPlugin extends RenderPlugin {
 
     private ListView getListView(JcrNodeModel model) {
         final List<NodeItem> list = new LinkedList<NodeItem>();
-        //add current folder as disabled
-        list.add(new NodeItem(model, false));
-        if (!roots.contains(model.getItemModel().getPath())) {
-            model = model.getParentModel();
-            while (model != null) {
-                list.add(new NodeItem(model, true));
-                if (roots.contains(model.getItemModel().getPath())) {
-                    model = null;
-                } else {
-                    model = model.getParentModel();
+        if (model != null) {
+            //add current folder as disabled
+            list.add(new NodeItem(model, false));
+            if (!roots.contains(model.getItemModel().getPath())) {
+                model = model.getParentModel();
+                while (model != null) {
+                    list.add(new NodeItem(model, true));
+                    if (roots.contains(model.getItemModel().getPath())) {
+                        model = null;
+                    } else {
+                        model = model.getParentModel();
+                    }
                 }
             }
         }
@@ -131,7 +133,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(ListItem item) {
+            protected void populateItem(final ListItem item) {
                 final NodeItem nodeItem = (NodeItem) item.getModelObject();
                 AjaxLink link = new AjaxLink("link") {
                     private static final long serialVersionUID = 1L;
@@ -146,16 +148,24 @@ public class BreadcrumbPlugin extends RenderPlugin {
                 link.setEnabled(nodeItem.enabled);
                 item.add(link);
                 
-                String css = nodeItem.enabled ? "enabled" : "disabled";
-                
-                if (list.size() == 1) {
-                    css += " firstlast";
-                } else if (item.getIndex() == 0) {
-                    css += " first";
-                } else if (item.getIndex() == (list.size() - 1)) {
-                    css += " last";
-                }
-                item.add(new AttributeAppender("class", new Model(css), " "));
+                IModel css = new Model() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public String getObject() {
+                        String css = nodeItem.enabled ? "enabled" : "disabled";
+                        
+                        if (list.size() == 1) {
+                            css += " firstlast";
+                        } else if (item.getIndex() == 0) {
+                            css += " first";
+                        } else if (item.getIndex() == (list.size() - 1)) {
+                            css += " last";
+                        }
+                        return css;
+                    }
+                };
+                item.add(new AttributeAppender("class", css, " "));
             }
         };
         return listview;

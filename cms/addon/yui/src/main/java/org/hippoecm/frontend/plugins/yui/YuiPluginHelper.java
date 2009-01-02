@@ -17,7 +17,7 @@ package org.hippoecm.frontend.plugins.yui;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.javascript.Settings;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public class YuiPluginHelper {
@@ -33,6 +33,10 @@ public class YuiPluginHelper {
     }
 
     public static IPluginConfig getConfig(IPluginConfig config) {
-        return config.getPluginConfig(CONFIG_ID);
+        IPluginConfig subConfig = config.getPluginConfig(CONFIG_ID);
+        if (subConfig == null) {
+            return new JavaPluginConfig();
+        }
+        return subConfig;
     }
 }
