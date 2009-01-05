@@ -101,7 +101,7 @@
             <sv:value>gettingstarted:body</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>Html</sv:value>
+            <sv:value>hippostd:html</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -121,9 +121,6 @@
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>fa531385-aba3-4780-9e9a-9b02089e994a</sv:value>
         </sv:property>
-        <sv:property sv:name="gettingstarted:body" sv:type="String">
-          <sv:value/>
-        </sv:property>
         <sv:property sv:name="gettingstarted:date" sv:type="Date">
           <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
         </sv:property>
@@ -141,6 +138,14 @@
         <sv:property sv:name="hippostd:stateSummary" sv:type="String">
           <sv:value>new</sv:value>
         </sv:property>
+        <sv:node sv:name="gettingstarted:body">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippostd:html</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:content" sv:type="String">
+            <sv:value/>
+          </sv:property>    
+        </sv:node>
       </sv:node>
     </sv:node>
     <sv:node sv:name="hippo:template">
@@ -255,7 +260,7 @@
             <sv:value/>
           </sv:property>
           <sv:property sv:name="template.width" sv:type="String">
-            <sv:value/>
+            <sv:value>100%</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${cluster.id}.field</sv:value>
@@ -281,13 +286,13 @@
             <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="template.height" sv:type="String">
             <sv:value/>
           </sv:property>
           <sv:property sv:name="template.width" sv:type="String">
-            <sv:value/>
+            <sv:value>100%</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${cluster.id}.field</sv:value>
