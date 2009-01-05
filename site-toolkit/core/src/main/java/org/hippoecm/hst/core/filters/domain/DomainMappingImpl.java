@@ -210,15 +210,16 @@ public class DomainMappingImpl implements DomainMapping{
         // do the lowercase and split outside the loop for performance.
         String lCaseName = serverName.toLowerCase();
         String[] splittedServerName = serverName.split(Domain.DELIMITER);
-        
-        for(Domain domain : orderedDomains) {
+        if(orderedDomains!=null){
+          for(Domain domain : orderedDomains) {
             if(domain.match(lCaseName, splittedServerName)) {
                 log.info("found matching domain for '{}' --> '{}'", serverName, domain.getPattern());
                 domainsCache.put(serverName, domain);
                 log.debug("Matching serverName {} to domain {} took " +(System.currentTimeMillis() - start)+ " ms.", serverName, domain.getPattern());
                 return domain;
             }
-        } 
+          } 
+        }
         return null;
     }
     

@@ -111,9 +111,10 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
                 
                 domainMapping.init();
                 
-            } catch (DomainMappingException e) {
-                log.warn("Exception during initializing domainMapping", e.getMessage());
-                log.debug("Exception during initializing domainMapping", e);
+            } catch (DomainMappingException e) {            	
+                log.error("Exception during initializing domainMapping", e);
+                ((HttpServletResponse)response).sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
             }
         }
         
