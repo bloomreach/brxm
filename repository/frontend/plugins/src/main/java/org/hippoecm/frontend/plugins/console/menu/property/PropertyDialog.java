@@ -76,7 +76,7 @@ public class PropertyDialog extends AbstractDialog {
 
             Value jcrValue = getJcrValue();
             if (isMultiple.booleanValue()) {
-                if (jcrValue == null || value.equals("")) {
+                if (jcrValue == null || value == null || value.equals("")) {
                     jcrValue = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("...",
                             PropertyType.STRING);
                 }
