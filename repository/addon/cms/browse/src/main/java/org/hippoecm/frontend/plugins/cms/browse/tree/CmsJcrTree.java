@@ -84,6 +84,9 @@ public abstract class CmsJcrTree extends JcrTree {
     }
 
     private boolean isVirtual(Node jcrNode) {
+        if (jcrNode == null) {
+            return false;
+        }
         HippoNode hippoNode = (HippoNode) jcrNode;
         try {
             Node canonical = hippoNode.getCanonicalNode();
