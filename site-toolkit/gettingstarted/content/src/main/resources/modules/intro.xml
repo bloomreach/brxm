@@ -4,7 +4,7 @@
     <sv:value>hst:module</sv:value>
   </sv:property>
   <sv:property sv:name="hst:contentlocation" sv:type="String">
-    <sv:value>/content/intro/intro</sv:value>
+    <sv:value>intro/intro</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>/jsp/modules/intro.jsp</sv:value>

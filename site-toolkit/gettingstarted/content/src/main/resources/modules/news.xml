@@ -18,7 +18,7 @@
     <sv:value>hst:module</sv:value>
   </sv:property>
   <sv:property sv:name="hst:contentlocation" sv:type="String">
-    <sv:value>/content/news</sv:value>
+    <sv:value>news</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>/jsp/modules/news.jsp</sv:value>
