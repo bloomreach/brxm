@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.DoubleField;
+import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.LongField;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.NodeIndexer;
@@ -35,12 +36,15 @@ import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.extractor.TextExtractor;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.NameFactory;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.jackrabbit.FacetTypeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +56,16 @@ public class ServicingNodeIndexer extends NodeIndexer {
     /** The logger instance for this class */
     private static final Logger log = LoggerFactory.getLogger(ServicingNodeIndexer.class);
 
+    /**
+     * Hardcoded nodescope indexing exluded properties. Currently hippo:paths
+     */
     private Name excludeName;
+    
+    /**
+     * The hippo namespace, derived from the prefix 'hippo', hence still valid after bumbing the hippo namespace to a next version
+     */
+    private String hippo_ns;
+    
     /**
      * The indexing configuration or <code>null</code> if none is available.
      */
@@ -66,10 +79,10 @@ public class ServicingNodeIndexer extends NodeIndexer {
         try {
             String name = HippoNodeType.HIPPO_PATHS.substring(HippoNodeType.HIPPO_PATHS.indexOf(":")+1);
             String prefix = HippoNodeType.HIPPO_PATHS.substring(0,HippoNodeType.HIPPO_PATHS.indexOf(":"));
-            String hippo_ns = this.queryHandlerContext.getNamespaceRegistry().getURI(prefix);
+            hippo_ns = this.queryHandlerContext.getNamespaceRegistry().getURI(prefix);
             excludeName = NameFactoryImpl.getInstance().create(hippo_ns,name);
         } catch (NamespaceException e1) {
-            log.warn("Error creating exclude name for hippo:paths");
+            log.warn("Error creating exclude name for hippo:paths ", e1.getMessage());
         }
         
     }
@@ -98,6 +111,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
         
         // TODO : only index facets for hippo:document + subtypes
         try{
+          
         if (node.getParentId() == null) {
             // root node
         } else {
@@ -108,11 +122,21 @@ public class ServicingNodeIndexer extends NodeIndexer {
                         "for node with id: " + node.getNodeId());
             }
             String nodename = child.getName().getLocalName();
+            String prefix = null;
             if(child.getName().getNamespaceURI() != null && !"".equals(child.getName().getNamespaceURI())) {
-                String prefix = queryHandlerContext.getNamespaceRegistry().getPrefix(child.getName().getNamespaceURI());
+                prefix = queryHandlerContext.getNamespaceRegistry().getPrefix(child.getName().getNamespaceURI());
                 nodename = prefix+":"+nodename;
             }
+            // index the nodename to sort on
             doc.add(new Field(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, nodename , Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
+            
+            /**
+             * index the nodename to search on. We index this as hippo:_localname, a pseudo property which does not really exist but
+             * only meant to search on
+             */
+            
+            indexNodeName(doc, prefix ,child.getName().getLocalName());
+            
         }
         } catch (ItemStateException e) {
             throwRepositoryException(e);
@@ -140,6 +164,33 @@ public class ServicingNodeIndexer extends NodeIndexer {
             }
         }
         return doc;
+    }
+
+    
+    private void indexNodeName(Document doc, String prefix, String localName) {
+     // simple String
+        String hippo_ns_prefix = null;
+        try {
+            hippo_ns_prefix = this.mappings.getPrefix(hippo_ns);
+        } catch (NamespaceException e) {
+           log.warn("Cannot get 'hippo' lucene prefix. ", e.getMessage());
+           return;
+        }
+        String fieldName = hippo_ns_prefix + ":" + FieldNames.FULLTEXT_PREFIX + "_localname"; 
+        Field localNameField = new Field(fieldName, localName, Field.Store.NO, Field.Index.TOKENIZED, Field.TermVector.NO);
+        localNameField.setBoost(5);
+        doc.add(localNameField);
+        
+        // also create fulltext index of this value
+        Field localNameFullTextField;
+        if (supportHighlighting) {
+            localNameFullTextField = new Field(FieldNames.FULLTEXT, localName, Field.Store.NO, Field.Index.TOKENIZED,
+                    Field.TermVector.WITH_OFFSETS);
+        } else {
+            localNameFullTextField = new Field(FieldNames.FULLTEXT, localName, Field.Store.NO, Field.Index.TOKENIZED,
+                    Field.TermVector.NO);
+        }
+        doc.add(localNameFullTextField);
     }
 
     // below: When the QName is configured to be a facet, also index like one
