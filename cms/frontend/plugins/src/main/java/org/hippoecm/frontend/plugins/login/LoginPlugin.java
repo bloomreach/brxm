@@ -158,7 +158,6 @@ public class LoginPlugin extends RenderPlugin {
                 private static final long serialVersionUID = 1L;
                 protected void onUpdate(AjaxRequestTarget target) {
                 	credentials.put("password", this.getComponent().getModelObjectAsString());
-                	System.out.println(credentials.getString("password"));
                 }
             });
 
