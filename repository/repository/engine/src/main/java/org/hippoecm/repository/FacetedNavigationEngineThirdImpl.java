@@ -152,7 +152,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                 (ServicingIndexingConfiguration) getIndexingConfig());
 
         /*
-         * initialQuery: get the query for initialQuery
+         * initialQuery: get the query for initialQuery. This is the hippo:docbase value. 
          */
         org.apache.lucene.search.Query initialLuceneQuery = null;
         if (initialQuery != null && !initialQuery.xpath.equals("")) {
@@ -165,7 +165,6 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
          */
 
         BooleanQuery searchQuery = new BooleanQuery(true);
-
         if (facetsQuery.getQuery().clauses().size() > 0) {
             searchQuery.add(facetsQuery.getQuery(), Occur.MUST);
         }
@@ -184,7 +183,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         try {
             /*
              * if getIndexReader(true) you will also get version storage index which
-             * cannot be used for facet searches, therefore set 'false'
+             * should not be used for facet searches, therefore set 'false'
              */
             //indexReader = getIndex().getIndexReader();
             indexReader = getIndexReader(false);
@@ -219,6 +218,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                     searcher.search(searchQuery, collector);
                     // set the numHits value
                     collector.setNumhits(numHits);
+                    
                     if (log.isDebugEnabled()) {
                         log.debug("lucene query with collector took: \t" + (System.currentTimeMillis() - start)
                                 + " ms for #" + collector.getNumhits() + ". Query: " + searchQuery.toString());
