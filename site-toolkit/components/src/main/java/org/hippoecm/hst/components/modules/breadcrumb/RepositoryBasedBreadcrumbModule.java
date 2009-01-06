@@ -66,7 +66,13 @@ public class RepositoryBasedBreadcrumbModule extends RepositoryBasedNavigationMo
             if (pn.getRelativeContentPath() != null) {
                 selectedLocation = pn.getRelativeContentPath().substring(currentLocation.length());
             }
-
+            
+            log.debug("Current selected location : {} ",selectedLocation);
+            
+            if(selectedLocation.startsWith("/")) {
+            	selectedLocation = selectedLocation.substring(1);
+            }
+            
             ArrayList<String> selectedItemsList = new ArrayList<String>();
             if (selectedLocation != null) {
                 String[] selectedItems = selectedLocation.split("/");
@@ -74,18 +80,23 @@ public class RepositoryBasedBreadcrumbModule extends RepositoryBasedNavigationMo
                     selectedItemsList.add(selectedItems[i]);
                 }
             }
+            log.debug("Current selected items : {} ",selectedItemsList);
+            
+            
             Node n = hstRequestContext.getContentContextBase().getRelativeNode(path);
             if(n == null ){
                 log.warn("repository path '" + path + "' not found");
                 pageContext.setAttribute(getVar(), new ArrayList<NavigationItem>());
                 return;
             }
-            Node subNode = null;
+            Node subNode = null;            
             for (int i = 0; i < selectedItemsList.size(); i++) {
-                try {
+                try {                	
                     if (subNode == null) {
-                        subNode = n.getNode(selectedItemsList.get(i).toString());
+                    	log.debug("Trying to fetch node {} from {}",selectedItemsList.get(i).toString(),n.getPath());
+                        subNode = n.getNode(selectedItemsList.get(i).toString());                        
                     } else {
+                    	log.debug("Trying to fetch node {} from {}",selectedItemsList.get(i).toString(),subNode.getPath());
                         subNode = subNode.getNode(selectedItemsList.get(i).toString());
                     }
                     if (!subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
