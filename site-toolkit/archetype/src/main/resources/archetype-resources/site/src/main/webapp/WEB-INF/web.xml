@@ -27,92 +27,118 @@
     <param-name>configurationFiles</param-name>
     <param-value>/WEB-INF/hst.properties</param-value>
   </context-param>
+  
   <listener>
     <listener-class>org.hippoecm.hst.core.HSTConfiguration</listener-class>
-  </listener>
+  </listener>  
   
   <filter>
-    <filter-name>ContextBaseFilter</filter-name>
-    <filter-class>org.hippoecm.hst.core.filters.URIFragmentContextBaseFilter</filter-class>    
-    <init-param>      
-      <param-name>levels</param-name>
-      <param-value>1</param-value>    
-    </init-param>
-    <init-param>      
-      <param-name>contentBase</param-name>
-      <param-value>/</param-value>    
-    </init-param>
-    <init-param>      
+    <filter-name>HstStartRequestFilter</filter-name>
+    <filter-class>org.hippoecm.hst.core.filters.base.HstStartRequestFilter</filter-class>
+    <init-param>
       <param-name>ignorePaths</param-name>
-      <param-value>/static,/binaries,/jvmStatus,/resources,/favicon.ico</param-value>
-    </init-param>
+      <param-value>/binaries,/jvmStatus</param-value>
+    </init-param> 
+    <init-param>
+      <param-name>ignoreTypes</param-name>
+      <param-value>gif,png,jpg,css,js,ico,swf,mp3</param-value>
+    </init-param> 
   </filter>
+  
+  <filter-mapping>
+    <filter-name>HstStartRequestFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+  
+  <filter>
+    <filter-name>RepositoryObservationFilter</filter-name>
+    <filter-class>org.hippoecm.hst.core.filters.observation.RepositoryObservationFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+    <filter-name>RepositoryObservationFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+  
+  <filter>
+    <filter-name>JcrSessionFilter</filter-name>
+    <filter-class>org.hippoecm.hst.core.filters.jcrsession.JcrSessionFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+    <filter-name>JcrSessionFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+  
+  <filter>
+    <filter-name>DomainMappingFilter</filter-name>
+    <filter-class>org.hippoecm.hst.core.filters.domain.DomainMappingFilter</filter-class>
+    <init-param>
+      <param-name>domainmapping</param-name>
+      <param-value>/default-vhosts</param-value>
+    </init-param> 
+  </filter>
+  
+  <filter-mapping>
+    <filter-name>DomainMappingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+  
+  <filter>
+    <filter-name>URLMappingFilter</filter-name>
+    <filter-class>org.hippoecm.hst.core.filters.urlmapping.URLMappingFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+    <filter-name>URLMappingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
   
   <filter>
     <filter-name>TemplateContext</filter-name>
     <filter-class>org.hippoecm.hst.core.filters.URLMappingTemplateContextFilter</filter-class>    
     <init-param>      
-      <param-name>hstConfigurationUrl</param-name>
-      <param-value>/hst:configuration/hst:configuration</param-value>    
-    </init-param>
-    <init-param>      
-      <param-name>ignorePaths</param-name>
-      <param-value>/static,/binaries,/jvmStatus,/resources,/favicon.ico</param-value>     
+      <param-name>attributeName</param-name>
+      <param-value>context</param-value>    
     </init-param>
   </filter>
-
+  
   <filter-mapping>
-    <filter-name>ContextBaseFilter</filter-name>
+    <filter-name>TemplateContext</filter-name>
     <url-pattern>/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
-  </filter-mapping> 
-  <filter-mapping>
-    
-  <filter-name>TemplateContext</filter-name>
-    <url-pattern>/*</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
-  </filter-mapping> 
-
-
+  </filter-mapping>
+  
   <!-- Installation of a servlet serving binaries from repository. -->
   <servlet>
     <servlet-name>BinariesServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.core.BinariesServlet</servlet-class>
+    <servlet-class>org.hippoecm.hst.core.servlets.BinariesServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>
     <servlet-name>BinariesServlet</servlet-name>
     <url-pattern>/binaries/*</url-pattern>
   </servlet-mapping>
-
+  
   <servlet>
     <servlet-name>StatusServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.core.StatusServlet</servlet-class>   
+    <servlet-class>org.hippoecm.hst.core.servlets.StatusServlet</servlet-class>
+    <load-on-startup>3</load-on-startup>
   </servlet>
   
   <servlet-mapping>
     <servlet-name>StatusServlet</servlet-name>
     <url-pattern>/jvmStatus/*</url-pattern>
-  </servlet-mapping>  
+  </servlet-mapping>
   
   <!-- Timeout in minutes -->
   <session-config>
-    <session-timeout>0</session-timeout>
+    <session-timeout>30</session-timeout>
   </session-config>
 
-  <welcome-file-list>
-    <welcome-file>index.jsp</welcome-file>
-  </welcome-file-list>
-
-  <!--<error-page>
-    <error-code>404</error-code>
-    <location>/jsp/error/notfound.jsp</location>
-  </error-page>
--->
- <!-- <error-page>
-    <exception-type>javax.servlet.ServletException</exception-type>
-    <location>/jsp/error/error.jsp</location>
-  </error-page>
-  -->
 </web-app>
-

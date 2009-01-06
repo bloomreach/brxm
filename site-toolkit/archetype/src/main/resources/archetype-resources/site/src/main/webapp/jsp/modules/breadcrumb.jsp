@@ -8,15 +8,18 @@
   
 <hst-tmpl:module name="breadcrumb" var="result" className="org.hippoecm.hst.components.modules.breadcrumb.RepositoryBasedBreadcrumbModule" execute="false" render="true"/>
 
-<div class="breadcrumb">
-<a href="/" title="Home">Home</a> &#62;
-<c:forEach var="item" items="${dollar}{result}" varStatus="resultStatus">
+<div id="breadcrumb">
+<hst-tmpl:link var="homeLink" location="homepage"/>
+ 
+<a href="${dollar}{homeLink.href}" title="Home">Home</a> &#62;
+<c:forEach var="item" items="${result}" varStatus="resultStatus">
   <c:choose>
     <c:when test="${dollar}{resultStatus.last == true}">
       <span>${dollar}{item.decodedName}</span>
     </c:when>
     <c:otherwise>
-      <a href="${dollar}{pageContext.request.contextPath}${dollar}{requestScope.currentUrlbase}/page${dollar}{item.path}" title="${dollar}{item.decodedName}">${dollar}{item.decodedName}</a> &#62;
+      <hst-tmpl:link var="link" item="${dollar}{item}"/>
+      <a href="${dollar}{link.href}" title="${dollar}{item.decodedName}">${dollar}{item.decodedName}</a> &#62;
     </c:otherwise>
   </c:choose>   
 </c:forEach>

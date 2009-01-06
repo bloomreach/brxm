@@ -25,7 +25,7 @@
         <sv:value>/page</sv:value>
     </sv:property>
     <sv:property sv:name="hst:nodepath" sv:type="String">
-        <sv:value>/content/*</sv:value>
+        <sv:value>/content/pagecontent/*</sv:value>
     </sv:property>
     <sv:property sv:name="hst:nodetype" sv:type="String">
         <sv:value>hippo:document</sv:value>
