@@ -181,8 +181,6 @@ public class Group implements Comparable<Group>, IClusterable {
 
     public void setDescription(String description) throws RepositoryException {
         this.description = description;
-        node.setProperty(PROP_DESCRIPTION, description);
-        node.save();
     }
 
 
