@@ -52,7 +52,7 @@ ________________________________________________________________________________
    <ul>
   <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
     <li><a href='./goto_folder.html'>goto another folder (list its contents)</a>.</li>
-    <li><a href='./logout.html'>Logout (continue tour)<a/></li>
+    <li><a href='./logout.html'>Logout (continue tour)</a></li>
    </ul>       
   </subsection>
 
