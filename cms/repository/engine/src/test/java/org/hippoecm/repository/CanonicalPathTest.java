@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -28,11 +25,15 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.junit.Test;
 
 public class CanonicalPathTest extends TestCase {
     @SuppressWarnings("unused")

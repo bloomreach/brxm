@@ -15,6 +15,15 @@
  */
 package org.hippoecm.repository.jackrabbit.version;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.PropertyImpl;
@@ -32,15 +41,7 @@ import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.uuid.UUID;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
 
 /**
  * This Class provides some basic node operations directly on the node state.
@@ -288,10 +289,8 @@ public class NodeStateEx {
         // build effective node type of mixins & primary type
         // existing mixin's
         HashSet set = new HashSet((nodeState).getMixinTypeNames());
-        // primary type
-        set.add(nodeState.getNodeTypeName());
         try {
-            return ntReg.getEffectiveNodeType((Name[]) set.toArray(new Name[set.size()]));
+            return ntReg.getEffectiveNodeType(nodeState.getNodeTypeName(), set);
         } catch (NodeTypeConflictException ntce) {
             String msg = "internal error: failed to build effective node type for node " + nodeState.getNodeId();
             throw new RepositoryException(msg, ntce);
@@ -329,7 +328,7 @@ public class NodeStateEx {
      */
     public boolean removeNode(Name name, int index) throws RepositoryException {
         try {
-            NodeState.ChildNodeEntry entry = nodeState.getChildNodeEntry(name, index);
+            ChildNodeEntry entry = nodeState.getChildNodeEntry(name, index);
             if (entry == null) {
                 return false;
             } else {
@@ -365,7 +364,7 @@ public class NodeStateEx {
         // remove child nodes
         iter = state.getChildNodeEntries().iterator();
         while (iter.hasNext()) {
-            NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
+            ChildNodeEntry entry = (ChildNodeEntry) iter.next();
             removeNode(entry.getId());
         }
         state.removeAllChildNodeEntries();
@@ -408,7 +407,7 @@ public class NodeStateEx {
      * @throws RepositoryException
      */
     public NodeStateEx getNode(Name name, int index) throws RepositoryException {
-        NodeState.ChildNodeEntry entry = nodeState.getChildNodeEntry(name, index);
+        ChildNodeEntry entry = nodeState.getChildNodeEntry(name, index);
         if (entry == null) {
             return null;
         }
@@ -484,7 +483,7 @@ public class NodeStateEx {
             List entries = nodeState.getChildNodeEntries();
             NodeStateEx[] children = new NodeStateEx[entries.size()];
             for (int i = 0; i < entries.size(); i++) {
-                NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) entries.get(i);
+                ChildNodeEntry entry = (ChildNodeEntry) entries.get(i);
                 NodeState state = (NodeState) stateMgr.getItemState(entry.getId());
                 children[i] = new NodeStateEx(stateMgr, ntReg, state, entry.getName());
             }
@@ -530,7 +529,7 @@ public class NodeStateEx {
             // now store all child node entries
             List nodes = state.getChildNodeEntries();
             for (int i = 0; i < nodes.size(); i++) {
-                NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) nodes.get(i);
+                ChildNodeEntry entry = (ChildNodeEntry) nodes.get(i);
                 NodeState nstate = (NodeState) stateMgr.getItemState(entry.getId());
                 store(nstate);
             }
@@ -575,7 +574,7 @@ public class NodeStateEx {
             // now reload all child node entries
             List nodes = state.getChildNodeEntries();
             for (int i = 0; i < nodes.size(); i++) {
-                NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) nodes.get(i);
+                ChildNodeEntry entry = (ChildNodeEntry) nodes.get(i);
                 NodeState nstate = (NodeState) stateMgr.getItemState(entry.getId());
                 reload(nstate);
             }

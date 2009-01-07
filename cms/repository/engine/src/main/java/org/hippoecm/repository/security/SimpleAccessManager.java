@@ -20,9 +20,13 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.RepositoryException;
 
+import javax.security.auth.Subject;
+import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.security.AMContext;
 import org.apache.jackrabbit.core.security.AccessManager;
+import org.apache.jackrabbit.core.security.AnonymousPrincipal;
+import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -32,13 +36,18 @@ import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.jackrabbit.HippoHierarchyManager;
 
 @Deprecated
-public class SimpleAccessManager extends org.apache.jackrabbit.core.security.SimpleAccessManager implements AccessManager {
+public class SimpleAccessManager extends org.apache.jackrabbit.core.security.simple.SimpleAccessManager implements AccessManager {
 
     /** SVN id placeholder */
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private boolean initialized;
+    
+    private Subject subject;
+    private HierarchyManager hierMgr;
+    private boolean system;
+    private boolean anonymous;
 
     /**
      * Empty constructor
@@ -59,7 +68,12 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
             throw new IllegalStateException("already initialized");
         }
         super.init(context);
-
+        
+        subject = context.getSubject();
+        anonymous = !subject.getPrincipals(AnonymousPrincipal.class).isEmpty();
+        system = !subject.getPrincipals(SystemPrincipal.class).isEmpty();
+        hierMgr = context.getHierarchyManager();
+        
         initialized = true;
     }
 

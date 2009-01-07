@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import javax.jcr.NamespaceException;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
@@ -25,7 +26,9 @@ import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
+import org.apache.jackrabbit.spi.Path;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.Context;
@@ -42,9 +45,7 @@ public interface DataProviderContext {
 
     public void registerProviderProperty(Name propName);
 
-    public NodeTypeRegistry getNodeTypeRegistry();
-
-    public NamespaceResolver getNamespaceResolver();
+    public NodeTypeRegistry getNodeTypeRegistry();;
 
     public HierarchyManager getHierarchyManager();
 
@@ -59,4 +60,10 @@ public interface DataProviderContext {
     public NodeState createNew(NodeId nodeId, Name nodeTypeName, NodeId parentId);
 
     public PropertyState createNew(Name propName, NodeId parentId);
+    
+    public Name getQName(String name) throws IllegalNameException, NamespaceException;
+    
+    public Path getQPath(String path) throws MalformedPathException, IllegalNameException, NamespaceException;
+    
+    public boolean isEnabled(); // FIXME HREPTWO-2125
 }

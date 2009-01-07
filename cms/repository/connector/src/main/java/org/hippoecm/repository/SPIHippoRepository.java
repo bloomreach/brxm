@@ -79,6 +79,10 @@ class SPIHippoRepository extends HippoRepositoryImpl {
             public org.apache.jackrabbit.jcr2spi.config.CacheBehaviour getCacheBehaviour() {
                 return org.apache.jackrabbit.jcr2spi.config.CacheBehaviour.OBSERVATION;
             }
+
+            public int getItemCacheSize() {
+                return 1000;
+            }
         });
         repository = new DecoratorFactoryImpl(clientService, adapterFactory, clientRepository).getRepositoryDecorator(repository);
     }

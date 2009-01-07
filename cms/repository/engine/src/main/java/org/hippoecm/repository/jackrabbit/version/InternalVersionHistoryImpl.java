@@ -20,7 +20,7 @@ import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
-import org.apache.jackrabbit.core.state.NodeState.ChildNodeEntry;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.uuid.UUID;
@@ -513,13 +513,12 @@ class InternalVersionHistoryImpl extends InternalVersionItemImpl implements Inte
      * @return
      * @throws RepositoryException
      */
-    static InternalVersionHistoryImpl create(AbstractVersionManager vMgr,
-                                             NodeStateEx parent,
-                                             NodeId historyId, Name name,
-                                             NodeState nodeState)
-            throws RepositoryException {
+    static NodeStateEx create(
+            AbstractVersionManager vMgr, NodeStateEx parent, Name name,
+            NodeState nodeState) throws RepositoryException {
 
         // create history node
+        NodeId historyId = new NodeId(UUID.randomUUID());
         NodeStateEx pNode = parent.addNode(name, NameConstants.NT_VERSIONHISTORY, historyId, true);
 
         // set the versionable uuid
@@ -534,7 +533,7 @@ class InternalVersionHistoryImpl extends InternalVersionItemImpl implements Inte
         NodeStateEx vNode = pNode.addNode(NameConstants.JCR_ROOTVERSION, NameConstants.NT_VERSION, versionId, true);
 
         // initialize 'created' and 'predecessors'
-        vNode.setPropertyValue(NameConstants.JCR_CREATED, InternalValue.create(Calendar.getInstance()));
+        vNode.setPropertyValue(NameConstants.JCR_CREATED, InternalValue.create(getCurrentTime()));
         vNode.setPropertyValues(NameConstants.JCR_PREDECESSORS, PropertyType.REFERENCE, InternalValue.EMPTY_ARRAY);
         vNode.setPropertyValues(NameConstants.JCR_SUCCESSORS, PropertyType.REFERENCE, InternalValue.EMPTY_ARRAY);
 
@@ -557,6 +556,18 @@ class InternalVersionHistoryImpl extends InternalVersionItemImpl implements Inte
         }
 
         parent.store();
-        return new InternalVersionHistoryImpl(vMgr, pNode);
+        return pNode;
+    }
+    private static final Calendar CURRENT_TIME = Calendar.getInstance();
+    static Calendar getCurrentTime() {
+        long time = System.currentTimeMillis();
+        synchronized (CURRENT_TIME) {
+            if (time > CURRENT_TIME.getTimeInMillis()) {
+                CURRENT_TIME.setTimeInMillis(time);
+            } else {
+                CURRENT_TIME.add(Calendar.MILLISECOND, 1);
+            }
+            return (Calendar) CURRENT_TIME.clone();
+        }
     }
 }

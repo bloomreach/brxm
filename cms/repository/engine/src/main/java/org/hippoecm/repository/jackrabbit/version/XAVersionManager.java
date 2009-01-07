@@ -63,6 +63,7 @@ import org.apache.jackrabbit.core.version.InternalVersion;
 import org.apache.jackrabbit.core.version.InternalVersionHistory;
 import org.apache.jackrabbit.core.version.InternalVersionItem;
 import org.apache.jackrabbit.core.version.VersionHistoryImpl;
+import org.apache.jackrabbit.core.version.VersionHistoryInfo;
 import org.apache.jackrabbit.core.version.VersionManager;
 
 /**
@@ -149,15 +150,50 @@ public class XAVersionManager extends org.apache.jackrabbit.core.version.XAVersi
     /**
      * {@inheritDoc}
      */
-    public VersionHistory createVersionHistory(Session session, NodeState node)
+    public VersionHistoryInfo createVersionHistory(Session session, NodeState node)
             throws RepositoryException {
-
         if (isInXA()) {
-            InternalVersionHistory history = createVersionHistory(node);
-            xaItems.put(history.getId(), history);
-            return (VersionHistory) ((SessionImpl) session).getNodeById(history.getId());
+            NodeStateEx state = createVersionHistory(node);
+            InternalVersionHistory history =
+                new InternalVersionHistoryImpl(vMgr, state);
+            xaItems.put(state.getNodeId(), history);
+            Name root = NameConstants.JCR_ROOTVERSION;
+            return new VersionHistoryInfo(
+                    state.getNodeId(),
+                    state.getState().getChildNodeEntry(root, 1).getId());
         }
         return vMgr.createVersionHistory(session, node);
+    }
+
+    NodeStateEx createVersionHistory(NodeState node)
+            throws RepositoryException {
+        WriteOperation operation = startWriteOperation();
+        try {
+            // create deep path
+            String uuid = node.getNodeId().getUUID().toString();
+            NodeStateEx parent = getParentNode(uuid, true);
+            Name name = getName(uuid);
+            if (parent.hasNode(name)) {
+                // already exists
+                return null;
+            }
+
+            // create new history node in the persistent state
+            NodeStateEx history =
+                InternalVersionHistoryImpl.create(this, parent, name, node);
+
+            // end update
+            operation.save();
+
+            log.debug(
+                    "Created new version history " + history.getNodeId()
+                    + " for " + node + ".");
+            return history;
+        } catch (ItemStateException e) {
+            throw new RepositoryException(e);
+        } finally {
+            operation.close();
+        }
     }
 
     /**
@@ -537,7 +573,6 @@ public class XAVersionManager extends org.apache.jackrabbit.core.version.XAVersi
                 Map vItems = (Map) tx.getAttribute(ITEMS_ATTRIBUTE_NAME);
                 if (!vItems.isEmpty()) {
                     vMgr.acquireWriteLock();
-                    vMgr.getSharedStateMgr().setNoLockHack(true);
                     vmgrLocked = true;
                 }
             }
@@ -584,7 +619,6 @@ public class XAVersionManager extends org.apache.jackrabbit.core.version.XAVersi
 
             private void internalReleaseWriteLock() {
                 if (vmgrLocked) {
-                    vMgr.getSharedStateMgr().setNoLockHack(false);
                     vMgr.releaseWriteLock();
                     vmgrLocked = false;
                 }
@@ -833,18 +867,52 @@ public class XAVersionManager extends org.apache.jackrabbit.core.version.XAVersi
     /**
      * {@inheritDoc}
      */
-    public VersionHistory getVersionHistory(Session session, NodeState node)
+    public VersionHistoryInfo getVersionHistory(Session session, NodeState node)
             throws RepositoryException {
+         VersionHistoryInfo info = null;
+
         acquireReadLock();
         try {
-            NodeId vhId = getVersionHistoryId(node);
-            if (vhId == null) {
-                return null;
+            String uuid = node.getNodeId().getUUID().toString();
+            Name name = getName(uuid);
+
+            NodeStateEx parent = getParentNode(uuid, false);
+            if (parent != null && parent.hasNode(name)) {
+                NodeStateEx history = parent.getNode(name, 1);
+                Name root = NameConstants.JCR_ROOTVERSION;
+                info = new VersionHistoryInfo(
+                        history.getNodeId(),
+                        history.getState().getChildNodeEntry(root, 1).getId());
             }
-            return (VersionHistory) ((SessionImpl) session).getNodeById(vhId);
         } finally {
             releaseReadLock();
         }
+
+        if (info == null) {
+            info = createVersionHistory(session, node);
+        }
+
+        return info;
+    }
+    private Name getName(String name) {
+        return NameFactoryImpl.getInstance().create(Name.NS_DEFAULT_URI, name);
+    }
+    private NodeStateEx getParentNode(String uuid, boolean create)
+            throws RepositoryException {
+        NodeStateEx n = historyRoot;
+        for (int i = 0; i < 3; i++) {
+            Name name = getName(uuid.substring(i * 2, i * 2 + 2));
+            if (n.hasNode(name)) {
+                n = n.getNode(name, 1);
+            } else if (create) {
+                n.addNode(name, NameConstants.REP_VERSIONSTORAGE, null, false);
+                n.store();
+                n = n.getNode(name, 1);
+            } else {
+                return null;
+            }
+        }
+        return n;
     }
 
     /**
@@ -853,7 +921,8 @@ public class XAVersionManager extends org.apache.jackrabbit.core.version.XAVersi
      * @param node the node for which the version history is to be initialized
      * @return the newly created version history.
      * @throws javax.jcr.RepositoryException
-     */
+     *
+    // FIXME HREPTWO-2098
     public InternalVersionHistory createVersionHistory(NodeState node)
             throws RepositoryException {
         WriteOperation operation = startWriteOperation();
@@ -893,7 +962,7 @@ public class XAVersionManager extends org.apache.jackrabbit.core.version.XAVersi
         } finally {
             operation.close();
         }
-    }
+    }*/
 
     /**
      * Returns the id of the version history associated with the given node

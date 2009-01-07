@@ -72,6 +72,12 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <!-- Testing needs a JTA implementation -->
     <dependency>
       <groupId>com.atomikos</groupId>

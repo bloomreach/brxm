@@ -35,10 +35,10 @@ import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationEntityResolv
 import org.apache.jackrabbit.core.query.lucene.MultiIndex;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
-import org.apache.jackrabbit.core.state.NodeState.ChildNodeEntry;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.lucene.document.Document;

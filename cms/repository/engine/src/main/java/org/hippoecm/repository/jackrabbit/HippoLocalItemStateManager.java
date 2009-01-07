@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 
@@ -46,7 +47,9 @@ import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
 import org.apache.jackrabbit.core.state.XAItemStateManager;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
+import org.apache.jackrabbit.spi.Path;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +59,7 @@ import org.hippoecm.repository.FacetedNavigationEngine.Context;
 import org.hippoecm.repository.FacetedNavigationEngine.Query;
 import org.hippoecm.repository.Modules;
 
-class HippoLocalItemStateManager extends XAItemStateManager implements DataProviderContext {
+public class HippoLocalItemStateManager extends XAItemStateManager implements DataProviderContext {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -77,7 +80,7 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
     static final int ITEM_TYPE_VIRTUAL  = 0x02;
 
     NodeTypeRegistry ntReg;
-    NamespaceResolver nsResolver;
+    protected org.apache.jackrabbit.core.SessionImpl session;
     protected HierarchyManager hierMgr;
     FacetedNavigationEngine<Query, Context> facetedEngine;
     FacetedNavigationEngine.Context facetedContext;
@@ -88,25 +91,35 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
     protected Set<Name> virtualPropertyNames;
     private Set<ItemState> virtualStates = new HashSet<ItemState>();
     private Map<NodeId,ItemState> virtualNodes = new HashMap<NodeId,ItemState>();
-
+    private NodeId rootNodeId;
     private boolean virtualLayerEnabled = false;
 
     public HippoLocalItemStateManager(SharedItemStateManager sharedStateMgr, EventStateCollectionFactory factory,
-                                      ItemStateCacheFactory cacheFactory, NodeTypeRegistry ntReg, boolean enabled) {
+                                      ItemStateCacheFactory cacheFactory, NodeTypeRegistry ntReg, boolean enabled,
+                                      NodeId rootNodeId) {
         super(sharedStateMgr, factory, cacheFactory);
         this.ntReg = ntReg;
         this.virtualLayerEnabled = enabled;
+        this.rootNodeId = rootNodeId;
         virtualProviders = new HashMap<String,HippoVirtualProvider>();
         virtualNodeNames = new HashMap<Name,HippoVirtualProvider>();
         virtualPropertyNames = new HashSet<Name>();
     }
 
+    int removal = 0;
+    public boolean isEnabled() {
+        return virtualLayerEnabled && removal==0;
+    }
+    public void setEnabled(boolean enabled) {
+        if(enabled) {
+            --removal;
+        } else {
+            ++removal;
+        }
+    }
+    
     public NodeTypeRegistry getNodeTypeRegistry() {
         return ntReg;
-    }
-
-    public NamespaceResolver getNamespaceResolver() {
-        return nsResolver;
     }
 
     public HierarchyManager getHierarchyManager() {
@@ -140,12 +153,20 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
     public HippoVirtualProvider lookupProvider(Name nodeTypeName) {
         return virtualNodeNames.get(nodeTypeName);
     }
+    
+    public Name getQName(String name) throws IllegalNameException, NamespaceException {
+        return session.getQName(name);
+    }
+    
+    public Path getQPath(String path) throws MalformedPathException, IllegalNameException, NamespaceException {
+        return session.getQPath(path);
+    }
 
-    void initialize(NamespaceResolver nsResolver, HierarchyManager hierMgr,
+    void initialize(org.apache.jackrabbit.core.SessionImpl session,
                     FacetedNavigationEngine<Query, Context> facetedEngine,
                     FacetedNavigationEngine.Context facetedContext) {
-        this.nsResolver = nsResolver;
-        this.hierMgr = hierMgr;
+        this.session = session;
+        this.hierMgr = session.getHierarchyManager();
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
 
@@ -226,9 +247,20 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
                 NodeState nodeState;
                 if(state != null) {
                     nodeState = (NodeState) state;
-                    nodeState = ((HippoNodeId)id).populate(nodeState);
+                    if(isEnabled() || true) { // FIXME HREPTWO-2125
+                        nodeState = ((HippoNodeId)id).populate(nodeState);
+                    } else {
+                        // keep nodestate as is
+                    }
                 } else {
-                    nodeState = ((HippoNodeId)id).populate();
+                    if(isEnabled() || true) { // FIXME HREPTWO-2125
+                        nodeState = ((HippoNodeId)id).populate();
+                    } else {
+                        nodeState = populate((HippoNodeId)id);
+                    }
+                }
+                if (nodeState == null) {
+                    throw new NoSuchItemStateException(id.toString());
                 }
 
                 Name nodeTypeName = nodeState.getNodeTypeName();
@@ -300,7 +332,12 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
             state = (NodeState) virtualNodes.get(id);
         } else if(state == null && id instanceof HippoNodeId) {
             edit();
-            NodeState nodeState = ((HippoNodeId)id).populate();
+            NodeState nodeState;
+            if (isEnabled() || true) { // FIXME HREPTWO-2125
+                nodeState = ((HippoNodeId)id).populate();
+            } else {
+                nodeState = populate((HippoNodeId)id);
+            }
 
             virtualNodes.put((HippoNodeId)id, nodeState);
             store(nodeState);
@@ -334,6 +371,15 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
         return super.getPropertyState(id);
     }
 
+    
+    private NodeState populate(HippoNodeId nodeId) throws NoSuchItemStateException, ItemStateException {
+        NodeState dereference = getNodeState(rootNodeId);
+        NodeState state = createNew(nodeId, dereference.getNodeTypeName(), nodeId.parentId);
+        state.setNodeTypeName(dereference.getNodeTypeName());
+        state.setDefinitionId(dereference.getDefinitionId());
+        return state;
+    }
+    
     int isVirtual(ItemState state) {
         if(state.isNode()) {
             int type = ITEM_TYPE_REGULAR;
@@ -534,6 +580,5 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
                 actualIterator.remove();
             }
         }
-
     }
 }

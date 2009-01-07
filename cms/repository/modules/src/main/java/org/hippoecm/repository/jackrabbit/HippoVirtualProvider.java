@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
-import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.NodeDef;
 import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
 import org.apache.jackrabbit.core.nodetype.PropDef;
@@ -37,18 +36,10 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.NameFactory;
 import org.apache.jackrabbit.spi.Path;
-import org.apache.jackrabbit.spi.PathFactory;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
-import org.apache.jackrabbit.spi.commons.conversion.NameParser;
-import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
-import org.apache.jackrabbit.spi.commons.conversion.ParsingNameResolver;
-import org.apache.jackrabbit.spi.commons.conversion.PathParser;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
-import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
-import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 
 public abstract class HippoVirtualProvider implements DataProviderModule
 {
@@ -56,9 +47,6 @@ public abstract class HippoVirtualProvider implements DataProviderModule
     private final static String SVN_ID = "$Id$";
 
     private DataProviderContext stateMgr;
-    private NameFactory nameFactory;
-    private PathFactory pathFactory;
-    private NameResolver nameResolver;
 
     private Name externalNodeName;
     private Name virtualNodeName;
@@ -75,12 +63,11 @@ public abstract class HippoVirtualProvider implements DataProviderModule
         throw new RepositoryException("required property "+propName+" in nodetype "+nodeTypeName+" not or badly defined");
     }
 
-    protected final NodeDef lookupNodeDef(NodeState parent, Name nodeTypeName, Name nodeName) throws RepositoryException {
-        EffectiveNodeType effNodeType;
+    protected final NodeDef lookupNodeDef(NodeState parent, org.apache.jackrabbit.spi.Name nodeTypeName, org.apache.jackrabbit.spi.Name nodeName) throws RepositoryException {
+        org.apache.jackrabbit.core.nodetype.EffectiveNodeType effNodeType;
         try {
             HashSet set = new HashSet(parent.getMixinTypeNames());
-            set.add(parent.getNodeTypeName());
-            effNodeType = stateMgr.getNodeTypeRegistry().getEffectiveNodeType((Name[]) set.toArray(new Name[set.size()]));
+            effNodeType = stateMgr.getNodeTypeRegistry().getEffectiveNodeType(parent.getNodeTypeName(), set);
             try {
                 return effNodeType.getApplicableChildNodeDef(nodeName, nodeTypeName, stateMgr.getNodeTypeRegistry());
             } catch (RepositoryException re) {
@@ -102,9 +89,6 @@ public abstract class HippoVirtualProvider implements DataProviderModule
 
     public void initialize(DataProviderContext stateMgr) throws RepositoryException {
         this.stateMgr = stateMgr;
-        nameFactory = NameFactoryImpl.getInstance();
-        pathFactory = PathFactoryImpl.getInstance();
-        nameResolver = new ParsingNameResolver(nameFactory, stateMgr.getNamespaceResolver());
         initialize();
     }
 
@@ -122,11 +106,11 @@ public abstract class HippoVirtualProvider implements DataProviderModule
     }
 
     protected final Name resolveName(String name) throws IllegalNameException, NamespaceException {
-        return name != null ? NameParser.parse(name, stateMgr.getNamespaceResolver(), nameFactory) : null;
+        return stateMgr.getQName(name);
     }
 
     protected final Path resolvePath(String path) throws IllegalNameException, NamespaceException, MalformedPathException {
-        return path != null ? PathParser.parse((String)path, nameResolver, (PathFactory)pathFactory) : null;
+        return stateMgr.getQPath(path);
     }
 
     public NodeState populate(NodeState state) throws RepositoryException {
@@ -225,5 +209,9 @@ public abstract class HippoVirtualProvider implements DataProviderModule
             }
             throw new RepositoryException(ex.getMessage(), ex);
         }
+    }
+
+    public boolean isEnabled() {
+        return stateMgr.isEnabled(); // FIXME HREPTWO-2125
     }
 }

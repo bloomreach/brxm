@@ -27,7 +27,8 @@ import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
-import junit.framework.TestCase;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 import org.hippoecm.frontend.model.FrontendNodeTypes;
 import org.hippoecm.repository.HippoRepository;
@@ -40,19 +41,19 @@ import org.hippoecm.repository.api.WorkflowException;
 
 import com.atomikos.icatch.jta.UserTransactionManager;
 
-public class SampleWorkflowTest extends TestCase {
+public class SampleWorkflowTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private HippoRepository server;
 
-    @Override
+    @Before
     public void setUp() throws Exception {
         System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties");
         server = HippoRepositoryFactory.getHippoRepository();
     }
 
-    @Override
+    @After
     public void tearDown() throws Exception {
         server.close();
     }

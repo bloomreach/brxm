@@ -20,6 +20,8 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.Set;
 
+import org.apache.jackrabbit.core.security.AccessManager;
+import org.apache.jackrabbit.core.security.authorization.Permission;
 import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.security.domain.DomainRule;
 
@@ -117,17 +119,28 @@ public class FacetAuthPrincipal implements Serializable, Principal {
     }
 
     /**
-     * Get the JCR permissions
-     * @return the JCR permissions the user has for the domain
+     * Match the JCR permissions
+     * @param requestedPermissions the permissions the users requests
+     * @return wether the permissions are granted within the domain
      */
-    public int getPermissions() {
-        return permissions;
+    public boolean matchPermissions(int requestedPermissions) {
+        if((requestedPermissions & Permission.READ) != 0) {
+            if((permissions&AccessManager.READ) != AccessManager.READ) {
+                return false;
+            }
+        }
+        if((requestedPermissions & (Permission.ADD_NODE|Permission.SET_PROPERTY)) != 0) {
+            if((permissions&AccessManager.WRITE) != AccessManager.WRITE) {
+                return false;
+            }
+        }
+        if((requestedPermissions & (Permission.REMOVE_PROPERTY|Permission.REMOVE_NODE)) != 0) {
+            if((permissions&AccessManager.REMOVE) != AccessManager.REMOVE) {
+                return false;
+            }
+        }
+        return true;
     }
-
-
-
-
-
 
     /**
      * String for pretty printing and generating the hashcode

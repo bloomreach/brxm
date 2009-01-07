@@ -73,6 +73,7 @@ import org.apache.jackrabbit.core.version.InternalVersion;
 import org.apache.jackrabbit.core.version.InternalVersionHistory;
 import org.apache.jackrabbit.core.version.InternalVersionItem;
 import org.apache.jackrabbit.core.version.VersionHistoryImpl;
+import org.apache.jackrabbit.core.version.VersionHistoryInfo;
 import org.apache.jackrabbit.core.version.VersionImpl;
 import org.apache.jackrabbit.core.version.VersionItemStateManager;
 import org.apache.jackrabbit.core.version.VersionManager;
@@ -229,19 +230,22 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
     }
 
     @Override
-    public VersionHistory createVersionHistory(Session session, final NodeState node)
+    public VersionHistoryInfo createVersionHistory(Session session, final NodeState node)
             throws RepositoryException {
-        InternalVersionHistory history = (InternalVersionHistory)
-                escFactory.doSourced((SessionImpl) session, new SourcedTarget(){
+        NodeStateEx state = (NodeStateEx)
+                escFactory.doSourced((SessionImpl) session, new SourcedTarget() {
             public Object run() throws RepositoryException {
                 return createVersionHistory(node);
             }
         });
 
-        if (history == null) {
+        if (state == null) {
             throw new VersionException("History already exists for node " + node.getNodeId());
         }
-        return (VersionHistory) ((SessionImpl) session).getNodeById(history.getId());
+        Name root = NameConstants.JCR_ROOTVERSION;
+        return new VersionHistoryInfo(
+                state.getNodeId(),
+                state.getState().getChildNodeEntry(root, 1).getId());
     }
 
     @Override
@@ -703,18 +707,52 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
     /**
      * {@inheritDoc}
      */
-    public VersionHistory getVersionHistory(Session session, NodeState node)
+    public VersionHistoryInfo getVersionHistory(Session session, NodeState node)
             throws RepositoryException {
+        VersionHistoryInfo info = null;
+
         acquireReadLock();
         try {
-            NodeId vhId = getVersionHistoryId(node);
-            if (vhId == null) {
-                return null;
+            String uuid = node.getNodeId().getUUID().toString();
+            Name name = getName(uuid);
+
+            NodeStateEx parent = getParentNode(uuid, false);
+            if (parent != null && parent.hasNode(name)) {
+                NodeStateEx history = parent.getNode(name, 1);
+                Name root = NameConstants.JCR_ROOTVERSION;
+                info = new VersionHistoryInfo(
+                        history.getNodeId(),
+                        history.getState().getChildNodeEntry(root, 1).getId());
             }
-            return (VersionHistory) ((SessionImpl) session).getNodeById(vhId);
         } finally {
             releaseReadLock();
         }
+
+        if (info == null) {
+            info = createVersionHistory(session, node);
+        }
+
+        return info;
+    }
+    private Name getName(String name) {
+        return NameFactoryImpl.getInstance().create(Name.NS_DEFAULT_URI, name);
+    }
+    private NodeStateEx getParentNode(String uuid, boolean create)
+            throws RepositoryException {
+        NodeStateEx n = historyRoot;
+        for (int i = 0; i < 3; i++) {
+            Name name = getName(uuid.substring(i * 2, i * 2 + 2));
+            if (n.hasNode(name)) {
+                n = n.getNode(name, 1);
+            } else if (create) {
+                n.addNode(name, NameConstants.REP_VERSIONSTORAGE, null, false);
+                n.store();
+                n = n.getNode(name, 1);
+            } else {
+                return null;
+            }
+        }
+        return n;
     }
 
     /**
@@ -724,7 +762,7 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
      * @return the newly created version history.
      * @throws javax.jcr.RepositoryException
      */
-    public InternalVersionHistory createVersionHistory(NodeState node)
+    public NodeStateEx createVersionHistory(NodeState node)
             throws RepositoryException {
         WriteOperation operation = startWriteOperation();
         try {
@@ -749,13 +787,12 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
             }
 
             // create new history node in the persistent state
-            InternalVersionHistoryImpl hist = InternalVersionHistoryImpl.create(
-                    this, root, new NodeId(UUID.randomUUID()), historyNodeName, node);
+            NodeStateEx hist = InternalVersionHistoryImpl.create(
+                    this, root, historyNodeName, node);
 
             // end update
             operation.save();
 
-            log.debug("Created new version history " + hist.getId() + " for " + node + ".");
             return hist;
 
         } catch (ItemStateException e) {

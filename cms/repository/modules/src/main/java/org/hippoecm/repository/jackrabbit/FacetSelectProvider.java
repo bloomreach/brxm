@@ -23,6 +23,7 @@ import java.util.Vector;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.uuid.UUID;
@@ -75,7 +76,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
         } catch (IllegalArgumentException e) {
             log.error("invalid docbase '" + docbase[0] + "' because not a valid UUID ");
         }
-        if(dereference != null) {
+        if(dereference != null && isEnabled()) {
             boolean singledView = false;
             LinkedHashMap<Name,String> view = new LinkedHashMap<Name,String>();
             LinkedHashMap<Name,String> order = null;
@@ -127,7 +128,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
                 // since the order is not null, we first have to sort all childs according the order. We only order below a handle
                 Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
                 for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ){
-                    NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
+                    ChildNodeEntry entry = (ChildNodeEntry) iter.next();
                     ViewNodeId childNodeId = subNodesProvider. new ViewNodeId(state.getNodeId(), entry.getId(), entry.getName(), view, order, singledView);
                     children.add(childNodeId . new Child(entry.getName(), childNodeId));
                 }
@@ -139,7 +140,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
 
             } else {
                 for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
-                    NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
+                    ChildNodeEntry entry = (ChildNodeEntry) iter.next();
                     if(subNodesProvider.match(view, entry.getId())) {
                         /*
                          * below we check on the entry's nodestate wether the node type is hippo:request,

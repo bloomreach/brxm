@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.jackrabbit.version;
 
-import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.spi.Name;
@@ -28,6 +27,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.version.InternalFrozenNode;
 import org.apache.jackrabbit.core.version.InternalVersion;
 import org.apache.jackrabbit.core.version.InternalVersionHistory;
@@ -122,7 +122,7 @@ class InternalVersionImpl extends InternalVersionItemImpl implements InternalVer
      * {@inheritDoc}
      */
     public NodeId getFrozenNodeId() {
-        NodeState.ChildNodeEntry entry = node.getState().getChildNodeEntry(NameConstants.JCR_FROZENNODE, 1);
+        ChildNodeEntry entry = node.getState().getChildNodeEntry(NameConstants.JCR_FROZENNODE, 1);
         if (entry == null) {
             throw new InternalError("version has no frozen node: " + getId());
         }

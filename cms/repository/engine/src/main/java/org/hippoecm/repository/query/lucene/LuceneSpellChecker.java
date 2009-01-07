@@ -21,12 +21,13 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.core.query.QueryHandler;
-import org.apache.jackrabbit.core.query.QueryRootNode;
-import org.apache.jackrabbit.core.query.RelationQueryNode;
-import org.apache.jackrabbit.core.query.TraversingQueryNodeVisitor;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
+import org.apache.jackrabbit.spi.commons.query.QueryRootNode;
+import org.apache.jackrabbit.spi.commons.query.RelationQueryNode;
+import org.apache.jackrabbit.spi.commons.query.TraversingQueryNodeVisitor;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.index.IndexReader;
@@ -143,6 +144,7 @@ public class LuceneSpellChecker
     /**
      * {@inheritDoc}
      */
+    @Override
     public String check(QueryRootNode aqt) throws IOException {
         String stmt = getFulltextStatement(aqt);
         if (stmt == null) {
@@ -166,9 +168,10 @@ public class LuceneSpellChecker
      * @return the fulltext statement or <code>null</code>.
      */
     private String getFulltextStatement(QueryRootNode aqt) {
+        try {
         final String[] stmt = new String[1];
         aqt.accept(new TraversingQueryNodeVisitor() {
-            public Object visit(RelationQueryNode node, Object o) {
+            public Object visit(RelationQueryNode node, Object o) throws RepositoryException {
                 if (stmt[0] == null && node.getOperation() == RelationQueryNode.OPERATION_SPELLCHECK) {
                     stmt[0] = node.getStringValue();
                 }
@@ -176,6 +179,9 @@ public class LuceneSpellChecker
             }
         }, null);
         return stmt[0];
+        } catch(RepositoryException ex) {
+            return null;
+        }
     }
 
     private final class InternalSpellChecker {

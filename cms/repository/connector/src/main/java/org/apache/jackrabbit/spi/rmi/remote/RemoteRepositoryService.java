@@ -45,11 +45,6 @@ import org.apache.jackrabbit.rmi.remote.RemoteSession;
  * {@link org.apache.jackrabbit.spi.RepositoryService}.
  */
 public interface RemoteRepositoryService extends Remote {
-    public boolean exists(RemoteSessionInfo sessionInfo, ItemId id)
-            throws RepositoryException, RemoteException;
-    public NodeId getRootId(RemoteSessionInfo sessionInfo)
-            throws RepositoryException, RemoteException;
-
     /**
      * @return key-value pairs for repository descriptor keys and values.
      * @throws RemoteException on RMI errors.
@@ -364,7 +359,7 @@ public interface RemoteRepositoryService extends Remote {
      * @throws RemoteException if an error occurs.
      * @see org.apache.jackrabbit.spi.RepositoryService#checkin(org.apache.jackrabbit.spi.SessionInfo, org.apache.jackrabbit.spi.NodeId)
      */
-    public void checkin(RemoteSessionInfo sessionInfo, NodeId nodeId)
+    public NodeId checkin(RemoteSessionInfo sessionInfo, NodeId nodeId)
             throws RepositoryException, RemoteException;
 
     /**

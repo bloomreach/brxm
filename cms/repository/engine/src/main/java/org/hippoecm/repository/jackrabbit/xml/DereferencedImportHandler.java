@@ -18,13 +18,15 @@ package org.hippoecm.repository.jackrabbit.xml;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
+import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.xml.ImportHandler;
 import org.apache.jackrabbit.core.xml.Importer;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -41,7 +43,7 @@ public class DereferencedImportHandler extends ImportHandler {
 
     protected final Importer importer;
     protected final NamespaceRegistryImpl nsReg;
-    protected final NamespaceResolver nsResolver;
+    protected final SessionImpl session;
 
     /**
      * The local namespace mappings reported by
@@ -53,12 +55,11 @@ public class DereferencedImportHandler extends ImportHandler {
 
     private DereferencedSysViewImportHandler targetHandler;
 
-    public DereferencedImportHandler(Importer importer, NamespaceResolver nsResolver,
-                         NamespaceRegistryImpl nsReg) {
-        super(importer, nsResolver, nsReg);
+    public DereferencedImportHandler(Importer importer, SessionImpl session, NamespaceRegistryImpl nsReg) throws RepositoryException {
+        super(importer, session);
         this.importer = importer;
-        this.nsResolver = nsResolver;
         this.nsReg = nsReg;
+        this.session = session;
     }
 
     //---------------------------------------------------------< ErrorHandler >
@@ -103,8 +104,7 @@ public class DereferencedImportHandler extends ImportHandler {
             localNamespaceMappings = new HashMap<String, String>();
             String[] uris = nsReg.getURIs();
             for (int i = 0; i < uris.length; i++) {
-                localNamespaceMappings.put(
-                        nsResolver.getPrefix(uris[i]), uris[i]);
+                localNamespaceMappings.put(session.getPrefix(uris[i]), uris[i]);
             }
         } catch (RepositoryException re) {
             throw new SAXException(re);
@@ -136,7 +136,14 @@ public class DereferencedImportHandler extends ImportHandler {
         localNamespaceMappings.put(prefix, uri);
         try {
             // Register the namespace unless already registered
-            nsReg.safeRegisterNamespace(prefix, uri);
+            String existingURI = null;
+            try {
+                existingURI = nsReg.getURI(prefix);
+            } catch(NamespaceException ex) {
+                nsReg.registerNamespace(prefix, uri);
+            }
+            if(existingURI != null && !existingURI.equals(uri))
+                throw new NamespaceException("prefix already mapped to different URI");
         } catch (RepositoryException re) {
             throw new SAXException(re);
         }

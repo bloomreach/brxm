@@ -20,7 +20,8 @@ import java.io.IOException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import junit.framework.TestCase;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
@@ -28,24 +29,25 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 
-public class SamplePersistencyTest extends TestCase {
+public class SamplePersistencyTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private HippoRepository server;
 
-    @Override
+    @Before
     public void setUp() throws RepositoryException, IOException {
         server = HippoRepositoryFactory.getHippoRepository();
         SampleWorkflowSetup.commonStart(server);
     }
 
-    @Override
+    @After
     public void tearDown() throws RepositoryException {
         SampleWorkflowSetup.commonEnd(server);
         server.close();
     }
 
+    @Test
     public void testAuthorDocument() throws RepositoryException {
         Session session = server.login("dummy","dummy".toCharArray());
 

@@ -24,6 +24,7 @@ import java.util.Vector;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.uuid.UUID;
@@ -128,12 +129,15 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
 
     @Override
     public NodeState populate(NodeState state) throws RepositoryException {
-        String docbase = getProperty(state.getNodeId(), docbaseName)[0];
-        NodeState dereference = getNodeState(new NodeId(new UUID(docbase)));
-        LinkedHashMap<Name,String> view = new LinkedHashMap<Name,String>();
-        if(dereference != null) {
+        NodeState dereference = null;
+        String[] docbase = getProperty(state.getNodeId(), docbaseName);
+        if(docbase != null) {
+            dereference = getNodeState(new NodeId(new UUID(docbase[0])));
+        }
+        if(isEnabled() && dereference != null) {
+            LinkedHashMap<Name,String> view = new LinkedHashMap<Name,String>();
             for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
-                NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
+                ChildNodeEntry entry = (ChildNodeEntry) iter.next();
                 if(this.match(view, entry.getId())) {
                     NodeId childNodeId = this . new ViewNodeId(state.getNodeId(),entry.getId(),entry.getName(),view,null,false);
                     state.addChildNodeEntry(entry.getName(), childNodeId);
@@ -167,7 +171,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
         boolean isHandle = state.getNodeTypeName().equals(handleName);
         Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
-            NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
+            ChildNodeEntry entry = (ChildNodeEntry) iter.next();
             if (!isHandle || match(viewId.view, entry.getId())) {
                 /*
                  * below we check on the entry's nodestate wether the node type is hippo:request,
