@@ -74,7 +74,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
         try {
             dereference = getNodeState(new NodeId(new UUID(docbase[0])));
         } catch (IllegalArgumentException e) {
-            log.error("invalid docbase '" + docbase[0] + "' because not a valid UUID ");
+            log.warn("invalid docbase '" + docbase[0] + "' because not a valid UUID ");
         }
         if(dereference != null && isEnabled()) {
             boolean singledView = false;
