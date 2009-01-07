@@ -34,7 +34,7 @@ import org.junit.runners.Suite;
   org.hippoecm.repository.TrivialServerTest.class,
   org.hippoecm.repository.FacetedAuthorizationTest.class,
   org.hippoecm.repository.RepositoryLoginTest.class,
-  org.hippoecm.repository.ConfigurationTest.class,
+  //org.hippoecm.repository.ConfigurationTest.class,
   org.hippoecm.repository.CopyNodeTest.class,
   org.hippoecm.repository.DerivedDataTest.class,
   org.hippoecm.repository.FacetedNavigationChildNameTest.class,
