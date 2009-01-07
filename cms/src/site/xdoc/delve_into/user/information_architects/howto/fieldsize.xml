@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to define the size for a field in a document type.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/fieldsize.png" alt='Fieldsize screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/fieldsize.png" alt='Fieldsize screenshot'/> 
      <p>
       In the document type 'upcoming', titles may be no more than 60 characters.
      </p>

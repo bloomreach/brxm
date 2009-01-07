@@ -69,13 +69,16 @@
      </td>
      <td>
       <ul>
-       <li>
+        <li>
           Intel Pentium 4
        </li>
        <li>
            512 MB Memory
        </li>
        <li>
+          1024x768 screen resolution
+       </li>
+        <li>
          200 MB of available hard-disk space (not to be used by Hippo CMS, but to prevent the system from becoming too slow for Hippo CMS).
        </li>
       </ul>

@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to logout</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/editors/hippo_logout_Janine.png" alt='logout screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/editors/hippo_logout_Janine.png" alt='logout screenshot'/> 
      <p>
        Click the logout button to logout. The <a href='./login.html'>login</a> dialog will reapear.
      </p>

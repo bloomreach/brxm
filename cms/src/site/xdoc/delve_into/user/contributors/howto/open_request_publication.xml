@@ -22,34 +22,37 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Save Document</title>
+    <title>Request Publication of Document</title>
   </properties>
 
   <body>
-    <section name="Save Document">
-      <span class="shortdesc">How to save the changes you made to a document.</span>
+    <section name="Request Publication of Document">
+      <span class="shortdesc">How to ask the editor to publish a document?</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/screenshots/cms_M9/contribs/save_document.png" alt='save document screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/contribs/goto_request_schedule_publication.png" alt='request schedule publication screenshot'/> 
      <p>
-      Saving the changes to document 'multibazaar2009', by pressing
-      'save and close'. The changes can be discarded by pressing 'close without saving'.
+      Requesting publication of the document 'multibazaar2009'. 
+      A window will popup where you can 
+
+      The editor will be notified and accept or reject this request.
      </p>
    </div>
 
    <p>
-    After editing a document 
-   (e.g. <a href='./fill_markuped_text_in_document.html'>writing marked-up text</a>),
-    click the 'save and close' button at the top to save your last changes or click the
-    'close without saving' to discard your last changes.
+    In a document in <a href='../concepts/view_mode.html'>view mode</a>, e.g. after
+    <a href='./save_document.html'>saving that document</a>, 
+    click the 'schedule publication (request)' 
+    button at the top to request that the document be published.
+
+    The editor will be notified and accept or reject your request.
    </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./request_publication.html'>Request publication (continue tour)</a>.</li>
- <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
-    <li><a href='./goto_folder.html'>Open another folder (list its contents)</a>.</li>
-    <li><a href='./logout.html'>Logout</a>.</li>
+  <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
+    <li><a href='./goto_folder.html'>goto another folder (list its contents)</a>.</li>
+    <li><a href='./logout.html'>Logout (continue tour)<a/></li>
    </ul>       
   </subsection>
 

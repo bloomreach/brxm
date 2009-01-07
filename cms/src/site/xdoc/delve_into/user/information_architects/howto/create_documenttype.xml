@@ -31,7 +31,7 @@ ________________________________________________________________________________
          of a class of similar documents.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/create_documenttype.png" alt='Create document type screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/create_documenttype.png" alt='Create document type screenshot'/> 
      <p>
       Creation of <a href='../concepts/documenttype.html'>document type</a> with name `upcoming',
       in namespace 'sar'. The namespace 'sar' already contains the document type 'myhobby'.      

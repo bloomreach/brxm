@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to create a namespace to gather document types in.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/create_namespace.png" alt='Create namespace screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/create_namespace.png" alt='Create namespace screenshot'/> 
      <p>
       Creation of <a href='../concepts/namespace.html'>namespace</a> with short name `sar', 
       the name of the organization's online newspaper. 

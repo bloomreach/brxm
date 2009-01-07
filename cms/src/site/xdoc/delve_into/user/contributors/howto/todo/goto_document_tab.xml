@@ -22,39 +22,36 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Fill date in Document</title>
+    <title>Goto a Document</title>
   </properties>
 
   <body>
-    <section name="Fill date in Document">
-      <span class="shortdesc">How to fill a date field in a document.</span>
+    <section name="Goto a Document">
+      <span class="shortdesc">How to get to a screen to manipulate a particular document.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/screenshots/cms_M9/contribs/fill_date_field.png" alt='Fill date screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/contribs/open_documentstab.png" alt='document tab screenshot'/> 
      <p>
-       Filling in the 'Upcoming Date' for the document 'multibazaar2009', using the
-       calendar after clicking the little calendar button.
+      Opened the tab for the document 'multibazaar2008', which is a document in the folder
+      'sar newspaper'. For the document, there are subtabs 'Edit' and 'Publish request' and 'Delete request'. 
+      The 'multibazaar2008' document has a structure definition containing the fields:
+      Date of happening, Title, Indoors?, Recurring? and Description. Except for Description, they
+      all are mandatory (this is shown by the * signs).
      </p>
    </div>
 
    <p>
-    <a href='../concepts/set_edit_mode.html'>Set the document in</a>
-    <a href='edit_mode'>edit mode</a>. 
-    In a date field in the document, type the date and time. The date can also be chosen
-    from a calendar and AM/PM is chosen from a little pull down menu.
-   </p>
-   <p>
-     <a href='./learn_meaning_of_inputfield.html'>Ensure 
-        that you know the meaning of the date inputfield</a> and fill in the correct date!
+    While a <a href='./goto_folder.html'>folder is selected</a>,
+    click on a document name in the list at middle right. The document tab opens to the right.
    </p>
 
   <subsection name='Next'>
    <ul>
+    <li><a href='./fill_date_field_in_document.html'>Fill a date field in a document</a>.</li>
     <li><a href='./fill_string_field_in_document.html'>Fill a string field in a document</a>.</li>
     <li><a href='./fill_boolean_field_in_document.html'>Fill a boolean field in a document</a>.</li>
     <li><a href='./fill_markuped_text_in_document.html'>Write marked-up text in a document</a>.</li>
-    <li><a href='./save_document.html'>Save the changes to the document</a>.</li>
-    </ul>       
+   </ul>       
   </subsection>
 
    </section>

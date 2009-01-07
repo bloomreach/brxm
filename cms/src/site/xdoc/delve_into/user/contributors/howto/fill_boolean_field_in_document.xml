@@ -30,22 +30,26 @@ ________________________________________________________________________________
       <span class="shortdesc">How to answer a yes/no question in a document.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/contribs/fill_boolean_field.png" alt='Fill boolean screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/contribs/fill_boolean_field.png" alt='Fill boolean screenshot'/> 
      <p>
-       Two boolean fields, 'Indoors?' and 'Recurring?'. 
-       They are in the document 'multibazaar2008', which is of documenttype 'upcoming', but this is not shown. 
-       They stand for yes/no questions. The first is if the upcoming happening is indoors. The multicultural bazaar 2008
-       which this article is about is not indoors, therefor
-       the checkbox is not checked. The second yes/no question is if the upcoming happening is a recurring happening,
-       i.e. if such a happening was been organized before. This is true, the same organizers organized multicultural 
-       bazaars in the same place with the same intensions before, so that checkbox is checked.
+       This document contains two boolean fields, 'Indoors?' and 'Recurring?'. 
+       They stand for yes/no questions. 
+       The first was answered with 'no' by not checking that box, the second with
+       'yes' by checking that box. 
      </p>
    </div>
 
    <p>
-    Open the <a href='./goto_document_tab.html'>document</a> for editing. 
-    Below the caption of a boolean field, check the checkbox to answer 'yes'. If you leave the checkbox unchecked, it means
-    'no'. Clicking the checkbox checks and unchecks the checkbox alternately.  
+    <a href='../concepts/set_edit_mode.html'>Set the document in</a>
+    <a href='edit_mode'>edit mode</a>.  
+    Below the caption of a boolean field, check the checkbox to answer 'yes'. 
+    If you leave the checkbox unchecked, it means
+    'no'. Clicking the checkbox checks and unchecks the checkbox alternately.      
+   </p>
+   <p>
+     <a href='./learn_meaning_of_inputfield.html'>Ensure 
+      that you know the meaning of the boolean inputfield</a> and answer the
+      question it stands for correctly!
    </p>
 
   <subsection name='Next'>

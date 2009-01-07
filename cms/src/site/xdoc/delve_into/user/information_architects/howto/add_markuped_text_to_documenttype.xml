@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to add a marked-up text field to a document type.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/add_markuped_text_to_documenttype.png" alt='Add markuped text to document type screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/add_markuped_text_to_documenttype.png" alt='Add markuped text to document type screenshot'/> 
      <p>
       Adding optional marked-up text field sar:description with caption 'Description' 
       to document type `upcoming'.      

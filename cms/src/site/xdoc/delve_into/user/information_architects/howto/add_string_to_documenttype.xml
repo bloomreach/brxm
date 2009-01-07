@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to add a string field to a document type.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/add_string_to_documenttype.png" alt='Add string to documenttype screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/add_string_to_documenttype.png" alt='Add string to documenttype screenshot'/> 
      <p>
       Adding mandatory string field sar:title with caption 'Title' 
       to document type `upcoming'.      

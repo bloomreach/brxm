@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to add a boolean to a document type.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/add_boolean_to_documenttype.png" alt='Add boolean to document type screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/add_boolean_to_documenttype.png" alt='Add boolean to document type screenshot'/> 
      <p>
       Adding mandatory <a href='../concepts/boolean.html'>boolean</a> field sar:indoors with caption 'Indoors?' 
       to document type `upcoming'.      

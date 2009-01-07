@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to get to a screen to manipulate a particular document type.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/documenttype_tab.png" alt='documenttype tab screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/documenttype_tab.png" alt='documenttype tab screenshot'/> 
      <p>
       Opened the tab for the document type 'upcoming', which is a document type in the namespace
       'sar'. For the document type, there are subtabs 'Edit' and 'Copy'. 

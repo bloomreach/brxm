@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to create a folder for contributors to put content in.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/editors/create_folder.png" alt='Create folder screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/editors/create_folder.png" alt='Create folder screenshot'/> 
      <p>
       Creation of a <a href='../concepts/folder.html'>folder</a> with name `sar newspaper', 
       which is a folder for documents. 

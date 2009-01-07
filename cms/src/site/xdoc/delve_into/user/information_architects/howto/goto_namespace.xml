@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to get to a namespace, to view the document types in it.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/namespace_tab.png" alt='Go to namespace screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/namespace_tab.png" alt='Go to namespace screenshot'/> 
      <p>
       Opened list of documenttypes in <a href='../concepts/namespace.html'>namespace</a> 'sar'.
       The namespace 'sar' contains te document types 'myhobby' and 'upcoming'.
