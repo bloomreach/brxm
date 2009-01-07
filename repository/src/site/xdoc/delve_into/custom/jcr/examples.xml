@@ -103,7 +103,7 @@ if(document.isNodeType("hippo:document") &amp;&amp;
 <p>
 Note that because nodes are typed, you can inspect and check that nodes are of
 a specific type, or derived from a specific type.  Because type definitions
-are inherited, line in Java, you should use isNodeType rather then checking
+are inherited, like in Java, you should use isNodeType rather then checking
 the name directly.  All documents in a Hippo Repository managed system should
 be derived of the type hippo:document.  Mix-in types like the type
 hippostd:languageable can be used as a marker that a documents is available in
