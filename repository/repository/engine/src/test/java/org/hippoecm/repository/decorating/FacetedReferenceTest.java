@@ -129,6 +129,7 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
     @Test
     public void testPreferenceOrder() throws Exception {
         Node node = traverse(session, "/test/prefer/articles/war-of-the-worlds");
+        assertNotNull(node);
         NodeIterator iter = node.getNodes(node.getName());
         assertTrue(iter.hasNext());
         node = iter.nextNode();

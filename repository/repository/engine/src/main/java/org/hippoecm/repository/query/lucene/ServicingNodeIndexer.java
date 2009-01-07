@@ -29,6 +29,7 @@ import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.LongField;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.NodeIndexer;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
@@ -116,7 +117,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
             // root node
         } else {
             NodeState parent = (NodeState) stateProvider.getItemState(node.getParentId());
-            NodeState.ChildNodeEntry child = parent.getChildNodeEntry(node.getNodeId());
+            ChildNodeEntry child = parent.getChildNodeEntry(node.getNodeId());
             if (child == null) {
                 throw new RepositoryException("Missing child node entry " +
                         "for node with id: " + node.getNodeId());

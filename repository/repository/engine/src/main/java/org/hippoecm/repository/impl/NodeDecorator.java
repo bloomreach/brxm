@@ -30,12 +30,17 @@ import javax.jcr.query.RowIterator;
 import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.core.NodeImpl;
+import org.apache.jackrabbit.core.WorkspaceImpl;
 import org.hippoecm.repository.DerivedDataEngine;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.DecoratorFactory;
+import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
 import org.hippoecm.repository.jackrabbit.HippoNodeId;
+import org.hippoecm.repository.jackrabbit.ItemManager;
+import org.hippoecm.repository.jackrabbit.SessionImpl;
+import org.hippoecm.repository.jackrabbit.XASessionImpl;
 
 public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecorator implements HippoNode {
     @SuppressWarnings("unused")
@@ -49,8 +54,14 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
 
     @Override
     public Node getCanonicalNode() throws RepositoryException {
-        if (hasProperty("hippo:uuid")) {
-            return getSession().getNodeByUUID(getProperty("hippo:uuid").getString());
+        // FIXME HREPTWO-2127
+        String p = null;
+        try {
+        p = getProperty("hippo:uuid").getString();
+        } catch(RepositoryException ex) {
+        }
+        if (p != null) {
+            return getSession().getNodeByUUID(p);
         } else if(((NodeImpl)node).getId() instanceof HippoNodeId) {
             return null;
         } else {
@@ -63,7 +74,7 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
             ReferentialIntegrityException, VersionException, LockException, RepositoryException {
         if(item.isNode()) {
-            ((SessionDecorator)getSession()).derivedEngine.save((Node)item);
+            ((SessionDecorator)getSession()).postSave((Node)item);
         }
         super.save();
     }
@@ -71,10 +82,12 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
     /** {@inheritDoc} */
     @Override
     public void remove() throws VersionException, LockException, RepositoryException {
+        ((SessionDecorator)getSession()).postMountEnabled(false);
         if(isNode()) {
             DerivedDataEngine.removal(this);
         }
         super.remove();
+        ((SessionDecorator)getSession()).postMountEnabled(true);
     }
 
     @Override

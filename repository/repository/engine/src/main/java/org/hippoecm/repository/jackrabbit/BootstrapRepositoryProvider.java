@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.nodetype.PropDefId;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.spi.Name;
@@ -70,7 +71,7 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
         String docbase = getProperty(nodeId, docbaseName)[0];
         NodeState upstream = getNodeState(new NodeId(new UUID(docbase)));
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
-            NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
+            ChildNodeEntry entry = (ChildNodeEntry) iter.next();
             NodeId childNodeId = new BootstrapNodeId(nodeId, entry.getId(), entry.getName());
             state.addChildNodeEntry(entry.getName(), childNodeId);
         }
@@ -114,7 +115,7 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
 
     protected void populateChildren(NodeId nodeId, NodeState state, NodeState upstream) {
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
-            NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
+            ChildNodeEntry entry = (ChildNodeEntry) iter.next();
             BootstrapNodeId childNodeId = new BootstrapNodeId(nodeId, entry.getId(), entry.getName());
             state.addChildNodeEntry(entry.getName(), childNodeId);
         }

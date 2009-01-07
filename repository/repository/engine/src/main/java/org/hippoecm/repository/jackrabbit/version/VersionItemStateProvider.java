@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.jackrabbit.version;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
@@ -28,8 +30,7 @@ import org.apache.jackrabbit.core.virtual.VirtualItemStateProvider;
 import org.apache.jackrabbit.core.virtual.VirtualNodeState;
 import org.apache.jackrabbit.core.virtual.VirtualPropertyState;
 import org.apache.jackrabbit.spi.Name;
-
-import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.state.ChangeLog;
 import org.apache.jackrabbit.core.version.VersionItemStateManager;
 
 /**
@@ -117,7 +118,7 @@ class VersionItemStateProvider implements VirtualItemStateProvider, ItemStateLis
     /**
      * @inheritDoc
      */
-    public boolean setNodeReferences(NodeReferences refs) {
+    public boolean setNodeReferences(ChangeLog refs) {
         return stateMgr.setNodeReferences(refs);
     }
 

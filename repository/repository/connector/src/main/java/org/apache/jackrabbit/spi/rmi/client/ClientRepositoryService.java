@@ -105,22 +105,6 @@ public class ClientRepositoryService implements RepositoryService {
         this.remoteService = remoteService;
     }
 
-    public boolean exists(SessionInfo sessionInfo, ItemId id) throws RepositoryException {
-        try {
-            return remoteService.exists(getRemoteSessionInfo(sessionInfo), id);
-        } catch (RemoteException e) {
-            throw new RemoteRepositoryException(e);
-        }
-    }
-
-    public NodeId getRootId(SessionInfo sessionInfo) throws RepositoryException {
-        try {
-            return remoteService.getRootId(getRemoteSessionInfo(sessionInfo));
-        } catch (RemoteException e) {
-            throw new RemoteRepositoryException(e);
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -467,10 +451,10 @@ public class ClientRepositoryService implements RepositoryService {
     /**
      * {@inheritDoc}
      */
-    public void checkin(SessionInfo sessionInfo, NodeId nodeId)
+    public NodeId checkin(SessionInfo sessionInfo, NodeId nodeId)
             throws VersionException, UnsupportedRepositoryOperationException, InvalidItemStateException, LockException, RepositoryException {
         try {
-            remoteService.checkin(getRemoteSessionInfo(sessionInfo), nodeId);
+            return remoteService.checkin(getRemoteSessionInfo(sessionInfo), nodeId);
         } catch (RemoteException e) {
             throw new RemoteRepositoryException(e);
         }

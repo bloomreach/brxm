@@ -16,9 +16,7 @@
 package org.hippoecm.repository.security;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -36,7 +34,6 @@ import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.security.auth.Subject;
 
-import org.apache.commons.collections.map.LRUMap;
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
@@ -45,6 +42,9 @@ import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
+import org.apache.jackrabbit.core.security.authorization.AccessControlProvider;
+import org.apache.jackrabbit.core.security.authorization.Permission;
+import org.apache.jackrabbit.core.security.authorization.WorkspaceAccessManager;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
@@ -57,13 +57,10 @@ import org.apache.jackrabbit.spi.commons.conversion.CachingNameResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NameException;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
-import org.apache.jackrabbit.spi.commons.conversion.ParsingNameResolver;
 import org.apache.jackrabbit.spi.commons.conversion.ParsingPathResolver;
 import org.apache.jackrabbit.spi.commons.conversion.PathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
-import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
-import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.HippoHierarchyManager;
 import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
@@ -115,11 +112,6 @@ public class HippoAccessManager implements AccessManager {
      * NodeTypeManager for resolving superclass node types
      */
     private NodeTypeManager ntMgr;
-
-    /**
-     * NamespaceResolver
-     */
-    private NamespaceResolver nsRes;
 
     /**
      * NamePathResolver
@@ -216,12 +208,19 @@ public class HippoAccessManager implements AccessManager {
     /**
      * {@inheritDoc}
      */
+    public void init(AMContext context, AccessControlProvider acProvider, WorkspaceAccessManager wspAccessMgr)
+            throws AccessDeniedException, Exception {
+        init(context);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void init(AMContext context) throws AccessDeniedException, Exception {
         if (initialized) {
             throw new IllegalStateException("already initialized");
         }
         subject = context.getSubject();
-        nsRes = context.getNamespaceResolver();
         hierMgr = (HippoHierarchyManager) context.getHierarchyManager();
         if (context instanceof HippoAMContext) {
             ntMgr = ((HippoAMContext) context).getNodeTypeManager();
@@ -229,7 +228,7 @@ public class HippoAccessManager implements AccessManager {
             // This will be part of the new AMContext in JR 1.5
             npRes = ((HippoAMContext) context).getNamePathResolver();
         }
-        nRes = new CachingNameResolver(new ParsingNameResolver(NameFactoryImpl.getInstance(), nsRes));
+        nRes = new CachingNameResolver(context.getNamePathResolver());
 
         // Shortcuts for checks
         isSystem = !subject.getPrincipals(SystemPrincipal.class).isEmpty();
@@ -292,7 +291,6 @@ public class HippoAccessManager implements AccessManager {
         hierMgr = null;
         itemMgr = null;
         ntMgr = null;
-        nsRes = null;
         npRes = null;
         nRes = null;
     }
@@ -387,7 +385,7 @@ public class HippoAccessManager implements AccessManager {
             }
 
             // Does the user has the correct permissions for the Domain
-            if ((permissions & fap.getPermissions()) == permissions) {
+            if ((fap.matchPermissions(permissions))) {
                 // is the node part of one of the domain rules
                 if (isNodeInDomain(nodeState, fap)) {
                     allowed = true;
@@ -558,6 +556,44 @@ public class HippoAccessManager implements AccessManager {
         return true;
     }
 
+    public boolean canRead(Path path) throws RepositoryException {
+        return isGranted(hierMgr.resolvePath(path), Permission.READ);
+    }
+
+    public boolean isGranted(Path path, Name name, int permissions) throws RepositoryException {
+        if((permissions & Permission.SET_PROPERTY) != 0) {
+            return isGranted(path, Permission.SET_PROPERTY);
+        } else if((permissions & Permission.ADD_NODE) != 0) {
+            return isGranted(path, Permission.ADD_NODE);
+        } else if((permissions & Permission.REMOVE_PROPERTY) != 0) {
+            return isGranted(path, Permission.SET_PROPERTY);
+        } else if((permissions & Permission.REMOVE_NODE) != 0) {
+            return isGranted(path, Permission.ADD_NODE);
+        } else {
+            return isGranted(PathFactoryImpl.getInstance().create(path, name, true), permissions);
+        }
+    }
+
+    public boolean isGranted(Path path, int permissions) throws RepositoryException {
+        ItemId itemId = hierMgr.resolvePath(path);
+        if (itemId != null) {
+            return isGranted(itemId, permissions);
+        } else {
+            Path parent = path.getAncestor(1);
+            if((permissions & Permission.SET_PROPERTY) != 0) {
+                return isGranted(parent, Permission.SET_PROPERTY);
+            } else if((permissions & Permission.ADD_NODE) != 0) {
+                return isGranted(parent, Permission.ADD_NODE);
+            } else if((permissions & Permission.REMOVE_PROPERTY) != 0) {
+                return isGranted(parent, Permission.SET_PROPERTY);
+            } else if((permissions & Permission.REMOVE_NODE) != 0) {
+                return isGranted(parent, Permission.ADD_NODE);
+            }
+            return true;
+        }
+    }
+
+    
     /**
      * {@inheritDoc}
      */
@@ -568,6 +604,9 @@ public class HippoAccessManager implements AccessManager {
         if (log.isTraceEnabled()) {
             log.trace("Checking [" + pString(permissions) + "] for: " + id);
         }
+        if (!(id instanceof NodeId)) {
+            return true;
+        }
         if (isSystem) {
             if (log.isTraceEnabled()) {
                 log.trace("Granted [" + pString(permissions) + "] for: " + id + " to system user");
@@ -577,7 +616,7 @@ public class HippoAccessManager implements AccessManager {
 
         // handle properties
         if (!id.denotesNode()) {
-            if ((permissions & REMOVE) == REMOVE) {
+            if ((permissions & (Permission.REMOVE_NODE|Permission.REMOVE_PROPERTY)) != 0) {
                 // Don't check remove on properties. A write check on the node itself is done.
                 return true;
             }
@@ -585,7 +624,7 @@ public class HippoAccessManager implements AccessManager {
         }
 
         // Check read access cache
-        if ((permissions & READ) == READ) {
+        if ((permissions & Permission.READ) != 0) {
             Boolean allowRead = readAccessCache.get(id);
             if (allowRead != null) {
                 if (log.isTraceEnabled()) {
@@ -614,7 +653,7 @@ public class HippoAccessManager implements AccessManager {
             boolean isGranted = canAccessNode(nodeState, permissions);
 
             // update read access cache
-            if ((permissions & READ) == READ) {
+            if ((permissions & Permission.READ) != 0) {
                 readAccessCache.put(id, isGranted);
             }
 
@@ -746,21 +785,21 @@ public class HippoAccessManager implements AccessManager {
         StringBuffer buf = new StringBuffer();
 
         // narrow down permissions
-        if ((permissions & READ) == READ) {
+        if ((permissions & Permission.READ) != 0) {
             buf.append('r');
         } else {
             buf.append('-');
         }
 
         // narrow down permissions
-        if ((permissions & WRITE) == WRITE) {
+        if ((permissions & (Permission.ADD_NODE|Permission.SET_PROPERTY)) != 0) {
             buf.append('w');
         } else {
             buf.append('-');
         }
 
         // narrow down permissions
-        if ((permissions & REMOVE) == REMOVE) {
+        if ((permissions & (Permission.REMOVE_NODE|Permission.REMOVE_PROPERTY)) != 0) {
             buf.append('d');
         } else {
             buf.append('-');

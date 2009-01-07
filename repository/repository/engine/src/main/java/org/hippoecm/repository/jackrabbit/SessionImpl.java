@@ -36,22 +36,21 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
+
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.config.AccessManagerConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.security.AccessManager;
-import org.apache.jackrabbit.core.security.AuthContext;
+import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-import org.apache.jackrabbit.core.version.VersionManager;
-import org.hippoecm.repository.jackrabbit.version.VersionManagerImpl;
-import org.hippoecm.repository.jackrabbit.version.XAVersionManager;
+
 import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
 import org.hippoecm.repository.security.HippoAMContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.ContentHandler;
 
 public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     @SuppressWarnings("unused")
@@ -93,13 +92,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
         try {
             HippoAMContext ctx = new HippoAMContext(new File(((RepositoryImpl)rep).getConfig().getHomeDir()),
                     ((RepositoryImpl)rep).getFileSystem(),
-                    subject,
-                    hierMgr,
-                    getItemStateManager(),
-                    ((RepositoryImpl)rep).getNamespaceRegistry(),
-                    getWorkspace().getName(),
-                    ntMgr,
-                    getNamePathResolver());
+                    this, subject, hierMgr, this, getWorkspace().getName(), ntMgr, getItemStateManager());
             AccessManager accessMgr = (AccessManager)amConfig.newInstance();
             accessMgr.init(ctx);
             return accessMgr;
@@ -114,7 +107,10 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
 
     @Override
     public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
-        super.checkPermission(absPath, actions);
+        try {
+            super.checkPermission(absPath, actions);
+        } catch(IllegalArgumentException ex) {
+        }
         helper.checkPermission(absPath, actions);
     }
 
@@ -127,7 +123,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
 
     @Override
     protected SessionItemStateManager createSessionItemStateManager(LocalItemStateManager manager) {
-        return new HippoSessionItemStateManager(((RepositoryImpl)rep).getRootNodeId(), manager, getNamePathResolver(), ((RepositoryImpl)rep).getNodeTypeRegistry());
+        return new HippoSessionItemStateManager(((RepositoryImpl)rep).getRootNodeId(), manager, ((RepositoryImpl)rep).getNodeTypeRegistry());
     }
 
     @Override
@@ -148,7 +144,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
         return helper.getUserPrincipals();
     }
 
-    public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,                                                                      NoSuchNodeTypeException, RepositoryException {
+    public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException, NoSuchNodeTypeException, RepositoryException {
         return helper.pendingChanges(node, nodeType, prune);
     }
 
@@ -165,5 +161,11 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
         ContentHandler handler =
             getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
         new DefaultContentHandler(handler).parse(in);
+    }
+
+
+    @Override
+    public SessionItemStateManager getItemStateManager() {
+        return super.getItemStateManager();
     }
 }

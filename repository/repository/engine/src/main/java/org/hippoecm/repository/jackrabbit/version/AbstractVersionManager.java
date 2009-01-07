@@ -15,31 +15,18 @@
  */
 package org.hippoecm.repository.jackrabbit.version;
 
-import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
-import EDU.oswego.cs.dl.util.concurrent.ReentrantWriterPreferenceReadWriteLock;
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.NodeImpl;
-import org.apache.jackrabbit.core.SessionImpl;
-import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
-import org.apache.jackrabbit.core.state.ItemStateException;
-import org.apache.jackrabbit.core.state.LocalItemStateManager;
-import org.apache.jackrabbit.core.state.NodeState;
-import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.uuid.UUID;
-import org.apache.jackrabbit.spi.commons.name.NameConstants;
-import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.InvalidItemStateException;
 import javax.jcr.version.VersionException;
-import javax.jcr.version.VersionHistory;
+
+import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.NodeImpl;
+import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.core.version.InternalVersion;
 import org.apache.jackrabbit.core.version.InternalVersionHistory;
 import org.apache.jackrabbit.core.version.InternalVersionItem;
+import org.apache.jackrabbit.core.version.VersionHistoryInfo;
 import org.apache.jackrabbit.core.version.VersionManager;
 
 /**
@@ -60,11 +47,10 @@ public interface AbstractVersionManager extends VersionManager {
     public void releaseWriteLock();
     public void acquireReadLock();
     public void releaseReadLock();
-    public VersionHistory getVersionHistory(Session session, NodeState node) throws RepositoryException;
+    public VersionHistoryInfo getVersionHistory(Session session, NodeState node) throws RepositoryException;
     public InternalVersionItem getItem(NodeId id) throws RepositoryException;
     public boolean hasItem(NodeId id);
     public boolean hasItemReferences(InternalVersionItem item) throws RepositoryException;
-    public InternalVersionHistory createVersionHistory(NodeState node) throws RepositoryException;
     public InternalVersion checkin(InternalVersionHistoryImpl history, NodeImpl node) throws RepositoryException;
     public String calculateCheckinVersionName(InternalVersionHistoryImpl history, NodeImpl node) throws RepositoryException;
     public void removeVersion(InternalVersionHistoryImpl history, Name name) throws VersionException, RepositoryException;

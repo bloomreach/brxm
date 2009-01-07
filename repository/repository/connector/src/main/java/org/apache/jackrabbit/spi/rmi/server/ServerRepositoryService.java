@@ -125,16 +125,6 @@ public class ServerRepositoryService extends ServerObject implements RemoteRepos
         return jcrSession;
     }
 
-    public boolean exists(RemoteSessionInfo sessionInfo, ItemId id)
-            throws RepositoryException, RemoteException {
-        return service.exists(getSessionInfo(sessionInfo), id);
-    }
-
-    public NodeId getRootId(RemoteSessionInfo sessionInfo)
-            throws RepositoryException, RemoteException {
-        return service.getRootId(getSessionInfo(sessionInfo));
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -514,10 +504,10 @@ public class ServerRepositoryService extends ServerObject implements RemoteRepos
     /**
      * {@inheritDoc}
      */
-    public void checkin(RemoteSessionInfo sessionInfo, NodeId nodeId)
+    public NodeId checkin(RemoteSessionInfo sessionInfo, NodeId nodeId)
             throws RepositoryException, RemoteException {
         try {
-            service.checkin(getSessionInfo(sessionInfo), nodeId);
+            return service.checkin(getSessionInfo(sessionInfo), nodeId);
         } catch (RepositoryException e) {
             throw getRepositoryException(e);
         }

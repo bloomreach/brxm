@@ -18,10 +18,10 @@ package org.hippoecm.repository.query.lucene;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.query.PropertyTypeRegistry;
-import org.apache.jackrabbit.core.query.QueryRootNode;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.SynonymProvider;
 import org.apache.jackrabbit.core.state.ItemStateManager;
+import org.apache.jackrabbit.spi.commons.query.QueryRootNode;
 import org.apache.lucene.analysis.Analyzer;
 
 /**

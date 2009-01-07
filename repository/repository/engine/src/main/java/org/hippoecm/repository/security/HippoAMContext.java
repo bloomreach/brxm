@@ -17,6 +17,7 @@ package org.hippoecm.repository.security;
 
 import java.io.File;
 
+import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.security.auth.Subject;
 
@@ -26,7 +27,6 @@ import org.apache.jackrabbit.core.security.AMContext;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
-import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 
 /**
  * An <code>AMContext</code> is used to provide context information for an
@@ -35,7 +35,6 @@ import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
  * @see AccessManager#init(AMContext)
  */
 public class HippoAMContext extends AMContext {
-
     /** SVN id placeholder */
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -51,11 +50,6 @@ public class HippoAMContext extends AMContext {
     private final SessionItemStateManager itemMgr;
 
     /**
-     * NamePathResolver
-     */
-    private final NamePathResolver npResolver;
-
-    /**
      * Creates a new <code>AMContext</code>.
      *
      * @param physicalHomeDir the physical home directory
@@ -67,17 +61,16 @@ public class HippoAMContext extends AMContext {
      */
     public HippoAMContext(File physicalHomeDir,
                      FileSystem fs,
+                     Session session,
                      Subject subject,
                      HierarchyManager hierMgr,
-                     SessionItemStateManager itemMgr,
-                     NamespaceResolver nsResolver,
+                     NamePathResolver npResolver,
                      String workspaceName,
                      NodeTypeManager ntMgr,
-                     NamePathResolver npResolver) {
-        super(physicalHomeDir, fs, subject, hierMgr, nsResolver, workspaceName);
+                     SessionItemStateManager itemMgr) {
+        super(physicalHomeDir, fs, session, subject, hierMgr, npResolver, workspaceName);
         this.ntMgr = ntMgr;
         this.itemMgr = itemMgr;
-        this.npResolver = npResolver;
     }
 
     /**
@@ -95,9 +88,5 @@ public class HippoAMContext extends AMContext {
      */
     public SessionItemStateManager getSessionItemStateManager() {
         return itemMgr;
-    }
-
-    public NamePathResolver getNamePathResolver() {
-        return npResolver;
     }
 }

@@ -22,11 +22,11 @@ package org.hippoecm.repository.jackrabbit;
 public interface FacetTypeConstants {
     final static String SVN_ID = "$Id$";
 
-    public final static Character STRING_POSTFIX = '\uFFFF';
-    public final static Character BOOLEAN_POSTFIX = '\uFFFE';
-    public final static Character LONG_POSTFIX = '\uFFFD';
-    public final static Character DOUBLE_POSTFIX = '\uFFFC';
-    public final static Character DATE_POSTFIX = '\uFFFB';
+    public final static Character STRING_POSTFIX = '\uFAFA';
+    public final static Character BOOLEAN_POSTFIX = '\uFAFE';
+    public final static Character LONG_POSTFIX = '\uFAFD';
+    public final static Character DOUBLE_POSTFIX = '\uFAFC';
+    public final static Character DATE_POSTFIX = '\uFAFB';
     public final static Character[] POSTFIXES = {STRING_POSTFIX,BOOLEAN_POSTFIX,LONG_POSTFIX,DOUBLE_POSTFIX,DATE_POSTFIX};
 
     public final static int STRING = 0;

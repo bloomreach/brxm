@@ -42,7 +42,7 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.DelegatingObservationDispatcher;
 import org.apache.jackrabbit.core.persistence.PMContext;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
-import org.apache.jackrabbit.core.security.AuthContext;
+import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.state.ISMLocking;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -89,8 +89,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         FacetedNavigationEngine<FacetedNavigationEngine.Query,FacetedNavigationEngine.Context> facetedEngine = getFacetedNavigationEngine();
         FacetedNavigationEngine.Context facetedContext;
         facetedContext = facetedEngine.prepare(session.getUserID(), subject, null, session);
-        stateMgr.initialize(session.getNamespaceResolver(), session.getHierarchyManager(), facetedEngine,
-                facetedContext);
+        stateMgr.initialize(session, facetedEngine, facetedContext);
     }
 
     @Override
@@ -100,15 +99,25 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         return new HippoSharedItemStateManager(this, persistMgr, rootNodeId, ntReg, true, cacheFactory, locking);
     }
 
-    @Override
+    /*@Override
     protected org.apache.jackrabbit.core.SessionImpl createSessionInstance(AuthContext loginContext,
             WorkspaceConfig wspConfig) throws AccessDeniedException, RepositoryException {
+        return new XASessionImpl(this, loginContext, wspConfig);
+    }*/
+    
+    @Override
+    protected org.apache.jackrabbit.core.SessionImpl createSessionInstance(AuthContext loginContext,
+                                                WorkspaceConfig wspConfig)
+            throws AccessDeniedException, RepositoryException {
+
         return new XASessionImpl(this, loginContext, wspConfig);
     }
 
     @Override
-    protected org.apache.jackrabbit.core.SessionImpl createSessionInstance(Subject subject, WorkspaceConfig wspConfig)
+    protected org.apache.jackrabbit.core.SessionImpl createSessionInstance(Subject subject,
+                                                WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
+
         return new XASessionImpl(this, subject, wspConfig);
     }
 
@@ -175,7 +184,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
                                                       DelegatingObservationDispatcher delegatingDispatcher)
             throws RepositoryException {
 
-        FileSystem fs = vConfig.getFileSystemConfig().createFileSystem();
+        FileSystem fs = vConfig.getFileSystem();
         PersistenceManager pm = createPersistenceManager(vConfig.getHomeDir(),
                 fs,
                 vConfig.getPersistenceManagerConfig(), getRootNodeId(), getNamespaceRegistry(),

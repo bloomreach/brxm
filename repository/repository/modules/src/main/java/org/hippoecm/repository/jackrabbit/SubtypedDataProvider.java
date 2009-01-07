@@ -29,9 +29,7 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.NameFactory;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
-import org.apache.jackrabbit.spi.commons.conversion.NameParser;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
-import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -45,21 +43,19 @@ public class SubtypedDataProvider implements DataProviderModule {
 
     public void initialize(DataProviderContext context) {
         NodeTypeRegistry ntReg = context.getNodeTypeRegistry();
-        NamespaceResolver nsRes = context.getNamespaceResolver();
         NameFactory nameFactory = NameFactoryImpl.getInstance();
 
         Map<Name, String> subtyping = new TreeMap<Name, String>();
         try {
-            subtyping.put(NameParser.parse(HippoNodeType.NT_FACETSELECT, nsRes, nameFactory),
-                    "org.hippoecm.repository.jackrabbit.FacetSelectProvider");
+
+            subtyping.put(context.getQName(HippoNodeType.NT_FACETSELECT), "org.hippoecm.repository.jackrabbit.FacetSelectProvider");
         } catch (IllegalNameException ex) {
             log.warn("Error registering subnodes: " + ex.getClass().getName() + ": " + ex.getMessage());
         } catch (NamespaceException ex) {
             log.warn("Error registering subnodes: " + ex.getClass().getName() + ": " + ex.getMessage());
         }
         try {
-            subtyping.put(NameParser.parse(HippoNodeType.NT_FACETSEARCH, nsRes, nameFactory),
-                    "org.hippoecm.repository.jackrabbit.FacetSearchProvider");
+            subtyping.put(context.getQName(HippoNodeType.NT_FACETSEARCH), "org.hippoecm.repository.jackrabbit.FacetSearchProvider");
         } catch (IllegalNameException ex) {
             log.warn("Error registering subnodes: " + ex.getClass().getName() + ": " + ex.getMessage());
         } catch (NamespaceException ex) {

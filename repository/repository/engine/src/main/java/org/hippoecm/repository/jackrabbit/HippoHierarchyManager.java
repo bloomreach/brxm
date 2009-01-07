@@ -68,6 +68,10 @@ public class HippoHierarchyManager implements HierarchyManager {
         return hierMgr.getName(id);
     }
 
+    public Name getName(NodeId id, NodeId parentId) throws ItemNotFoundException, RepositoryException {
+        return hierMgr.getName(id, parentId);
+    }
+    
     public int getDepth(ItemId id) throws ItemNotFoundException, RepositoryException {
         return hierMgr.getDepth(id);
     }
@@ -78,5 +82,14 @@ public class HippoHierarchyManager implements HierarchyManager {
 
     public boolean isAncestor(NodeId nodeId, ItemId itemId) throws ItemNotFoundException, RepositoryException {
         return hierMgr.isAncestor(nodeId, itemId);
+    }
+
+    public boolean isShareAncestor(NodeId ancestor, NodeId descendant)
+            throws ItemNotFoundException, RepositoryException {
+        return hierMgr.isShareAncestor(ancestor, descendant);
+    }
+
+    public int getShareRelativeDepth(NodeId ancestorId, ItemId descendantId) throws ItemNotFoundException, RepositoryException {
+        return hierMgr.getShareRelativeDepth(ancestorId, descendantId);
     }
 }

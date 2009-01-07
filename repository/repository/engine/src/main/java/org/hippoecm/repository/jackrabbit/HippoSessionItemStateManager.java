@@ -45,8 +45,8 @@ public class HippoSessionItemStateManager extends SessionItemStateManager {
     HippoLocalItemStateManager localStateMgr;
     NodeId rootNodeId;
 
-    HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager mgr, PathResolver resolver, NodeTypeRegistry ntReg) {
-        super(rootNodeId, mgr, resolver, ntReg);
+    HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager mgr, NodeTypeRegistry ntReg) {
+        super(rootNodeId, mgr, ntReg);
         this.rootNodeId = rootNodeId;
         this.localStateMgr = (HippoLocalItemStateManager) mgr;
         if (wrappedHierMgr == null) {

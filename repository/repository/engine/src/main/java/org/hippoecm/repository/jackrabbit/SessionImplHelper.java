@@ -209,11 +209,8 @@ abstract class SessionImplHelper {
                     if (!mixins.contains(ntName)) {
                         // build effective node type of mixins & primary type
                         NodeTypeRegistry ntReg = ntMgr.getNodeTypeRegistry();
-                        Name[] types = new Name[mixins.size()+1];
-                        mixins.toArray(types);
-                        types[types.length-1] = state.getNodeTypeName();
                         try {
-                            if (!ntReg.getEffectiveNodeType(types).includesNodeType(ntName))
+                            if (!ntReg.getEffectiveNodeType(state.getNodeTypeName(),mixins).includesNodeType(ntName))
                                 continue;
                         } catch (NodeTypeConflictException ntce) {
                             String msg = "internal error: failed to build effective node type";
@@ -348,7 +345,6 @@ abstract class SessionImplHelper {
         }
 
         DereferencedSessionImporter importer = new DereferencedSessionImporter(parent, sessionImpl, uuidBehavior, referenceBehavior, mergeBehavior);
-        //return new ImportHandler(importer, sessionImpl.getNamespaceResolver(), rep.getNamespaceRegistry());
-        return new DereferencedImportHandler(importer, sessionImpl.getNamespaceResolver(), rep.getNamespaceRegistry());
+        return new DereferencedImportHandler(importer, sessionImpl, rep.getNamespaceRegistry());
     }
 }

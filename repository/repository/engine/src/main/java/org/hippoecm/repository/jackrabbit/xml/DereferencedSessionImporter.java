@@ -37,6 +37,8 @@ import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.xml.Importer;
 import org.apache.jackrabbit.core.xml.NodeInfo;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
+import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.repository.api.ImportMergeBehavior;
@@ -57,6 +59,7 @@ public class DereferencedSessionImporter implements Importer {
     private final int referenceBehavior;
     private final int mergeBehavior;
     private final String importPath;
+    private NamePathResolver resolver;
 
     private boolean isRootReferenceable;
 
@@ -83,6 +86,7 @@ public class DereferencedSessionImporter implements Importer {
         this.uuidBehavior = uuidBehavior;
         this.mergeBehavior = mergeBehavior;
         this.referenceBehavior = referenceBehavior;
+        this.resolver = resolver = new DefaultNamePathResolver(session, true);
 
         isRootReferenceable = false;
         try {
@@ -353,7 +357,7 @@ public class DereferencedSessionImporter implements Importer {
         Iterator iter = propInfos.iterator();
         while (iter.hasNext()) {
             PropInfo propInfo = (PropInfo) iter.next();
-            propInfo.apply(node, session.getNamePathResolver(), derefNodes, importPath, referenceBehavior);
+            propInfo.apply(node, resolver, derefNodes, importPath, referenceBehavior);
         }
 
         parents.push(node);
