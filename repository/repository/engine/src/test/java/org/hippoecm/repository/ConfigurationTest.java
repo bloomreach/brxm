@@ -19,11 +19,17 @@ import static org.junit.Assert.assertTrue;
 
 import javax.jcr.Node;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class ConfigurationTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+    }
 
     @Test
     public void testConfiguration() throws Exception {
@@ -33,7 +39,8 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentroot", "/test");
         session.save();
 
-        Thread.sleep(1000);
+        Thread.sleep(3000);
+        session.refresh(false);
 
         assertTrue(root.getNode("test").hasNode("testnode"));
     }

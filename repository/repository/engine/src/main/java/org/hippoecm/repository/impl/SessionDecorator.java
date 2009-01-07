@@ -64,6 +64,7 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.decorating.NodeIteratorDecorator;
+import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
 import org.hippoecm.repository.jackrabbit.SessionImpl;
 import org.hippoecm.repository.jackrabbit.XASessionImpl;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSysViewSAXEventGenerator;
@@ -86,6 +87,14 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     SessionDecorator(DecoratorFactory factory, Repository repository, XASession session) throws RepositoryException {
         super(factory, repository, session);
         derivedEngine = new DerivedDataEngine(this);
+    }
+
+    void postSave(Node node) throws VersionException, LockException, ConstraintViolationException, RepositoryException {
+        derivedEngine.save(node);
+    }
+
+    void postMountEnabled(boolean enabled) {
+        ((HippoLocalItemStateManager)((org.apache.jackrabbit.core.WorkspaceImpl)session.getWorkspace()).getItemStateManager()).setEnabled(enabled);
     }
 
     String[] getQPath(String absPath) throws NamespaceException, RepositoryException {

@@ -33,6 +33,6 @@ public class XAWorkspaceImpl extends org.apache.jackrabbit.core.XAWorkspace {
     }
 
     protected LocalItemStateManager createItemStateManager(SharedItemStateManager shared) {
-        return new HippoLocalItemStateManager(shared, this, rep.getItemStateCacheFactory(), ((RepositoryImpl)rep).getNodeTypeRegistry(), ((RepositoryImpl)rep).isStarted());
+        return new HippoLocalItemStateManager(shared, this, rep.getItemStateCacheFactory(), ((RepositoryImpl)rep).getNodeTypeRegistry(), ((RepositoryImpl)rep).isStarted(), ((RepositoryImpl)rep).getRootNodeId());
     }
 }
