@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to change a field in a document type.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/change_field_in_documenttype.png" alt='change field screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/change_field_in_documenttype.png" alt='change field screenshot'/> 
      <p>
       In a document type, fields can be changed by clicking on them in the documenttype (not in the
       list of possible field types!). Then, all properties of the field can be changed just like

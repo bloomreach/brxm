@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to get to the document types tab, to add and change document types.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/documenttypes_tab.png" alt='Go to document types tab screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/documenttypes_tab.png" alt='Go to document types tab screenshot'/> 
      <p>
       Opened <a href='../concepts/documenttype.html'>document types</a> folder shown. 
       It is a subfolder of the configuration folder. 

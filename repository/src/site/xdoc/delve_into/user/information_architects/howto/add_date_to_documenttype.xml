@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to add a date field to a document type.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/add_date_to_documenttype.png" alt='Add date to documenttype screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/add_date_to_documenttype.png" alt='Add date to documenttype screenshot'/> 
      <p>
       Adding mandatory datefield sar:date_of_happening with caption 'Date of happening' 
       to document type `upcoming'.      

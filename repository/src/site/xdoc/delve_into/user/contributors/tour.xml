@@ -40,54 +40,145 @@
     <table>
   
      <tr>
-      <td>Browser</td>
+      <td><a href="http://localhost:8080/cms/">Browser</a></td>
       <td>
        <span class='web-48 icon-48'/> 
       </td>
       <td>
-        Open the Hippo CMS site 
+        Marc opens the Hippo CMS site 
         <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in 
-        your browser. 
+        his browser. 
       </td>
      </tr>
    
      <tr>
-      <td>Login</td>
+      <td><a href="./howto/login.html">Login CMS</a></td>
       <td>
        <span class='login-48 icon-48'/> 
       </td>
       <td> 
-         <a href="./howto/login.html">Login to Hippo CMS</a> in the CMS account given to you by your 
-          CMS administrator. Marc logs in with his name. His password is only known to him, so you do
-          not get to see it.
+       Marc received a username and
+       password from his CMS administrator, to login to the CMS,
+       i.e. to get access to the CMS. 
+       <br/>  
+        To login to the CMS,
+        Marc types his username and password in the appropiate inputfields. 
+        His password is only known to him, so you do not get to see it.
       </td>
      </tr>
 
     <tr>
-      <td>Folder</td>
+      <td><a href="./howto/goto_folder.html">Goto Folder</a></td>
       <td>
        <span class='user-48 icon-48'/> 
       </td>
       <td> 
-         <a href="./howto/goto_folder.html">Goto to the folder to add your document in</a>.
          Marc learned that all articles for Saraswatia's online newspaper are supposed to
-         go in the 'sar newspaper' document folder, so he selects that.
+         go in the 'newspaper' document folder, so he goes to that folder to add his new 
+         document in.  
       </td>
      </tr>
 
      <tr>
-      <td>Create document</td>
+      <td><a href="./howto/create_document.html">Create document</a></td>
+      <td>
+       <span class='user-48 icon-48'/> 
+      </td>
+      <td>
+         For the article about the upcoming multicultural bazaar, Marc creates a
+         document named 'multibazar2009'. He selects for it the document type 'upcoming',
+         because that is the type for upcoming happenings, like the bazaar.
+      </td>
+     </tr>
+ 
+     <tr>
+      <td><a href="./howto/fill_date_field_in_document.html">fill date</a></td>
       <td>
        <span class='user-48 icon-48'/> 
       </td>
       <td> 
-         <a href="./howto/create_document.html">Create a document</a> to write in.
-         For the article about the upcoming multicultural bazaar, Marc creates a
-         document named 'multibazar2008'. He selects for it the document type 'upcoming',
-         because that is the type for upcoming happenings, like the bazaar.
+         Marc sees that he is supposed to fill in on what date the happening, which
+         in his case is the bazaar, will be. So he looks up the date and fills it in the document.
       </td>
      </tr>
 
+     <tr>
+      <td><a href="./howto/fill_string_field_in_document.html">fill string</a></td>
+      <td>
+       <span class='user-48 icon-48'/> 
+      </td>
+      <td> 
+         Marc sees that he is supposed to type a title for the happening, which
+         in his case is the bazaar, and he types 'Multicultural Bazaar 2009' as the title.
+      </td>
+     </tr>
+
+     <tr>
+      <td><a href="./howto/fill_date_field_in_document.html">fill boolean</a></td>
+      <td>
+       <span class='user-48 icon-48'/> 
+      </td>
+      <td> 
+         Marc sees that he is supposed to answer the question whether the happening is
+         indoors. Marc knows that the bazaar is not indoors and he adds that information
+         in the document.
+         He also is supposed to answer the question whether the happening is
+         a recurring happening, i.e. a happening that has occurred before. 
+         This is the case, so Marc also adds that information to the document. 
+      </td>
+     </tr>
+
+     <tr>
+      <td><a href="./howto/fill_markuped_text_in_document.html">fill markuped text</a></td>
+      <td>
+       <span class='user-48 icon-48'/> 
+      </td>
+      <td> 
+         Marc sees that he can also write a description of the happening and he
+         writes an informative text about the upcoming multicultural bazaar.
+         He includes the place where the bazaar will be in this description,
+         because there is no separate field for it and people need to know.
+      </td>
+     </tr>
+
+     <tr>
+      <td><a href="./howto/fill_markuped_text_in_document.html">save document</a></td>
+      <td>
+       <span class='user-48 icon-48'/> 
+      </td>
+      <td> 
+         Marc finished his article about the upcoming multicultural bazaar, so
+         he saves the document.
+      </td>
+     </tr>
+
+     <tr>
+      <td><a href="./howto/request_publication.html">request publication</a></td>
+      <td>
+       <span class='user-48 icon-48'/> 
+      </td>
+      <td> 
+         Marc now requests publication of his article. Janine is the editor and she
+         will receive this request and accept or reject it.
+      </td>
+     </tr>
+
+     <tr>
+      <td><a href="./howto/logout.html">Logout</a></td>
+      <td>
+       <span class='logout-48 icon-48'/> 
+      </td>
+      <td> 
+         Marc quits for today.          
+      </td>
+     </tr>
+ 
+    </table>
+   </blockquote>
+
+
+ <!--
+   For a tour in which marc changes an existing document.
      <tr>
       <td>Open document</td>
       <td>
@@ -98,98 +189,7 @@
          Marc opens the document named 'multibazar2008'.
       </td>
      </tr>
- 
-     <tr>
-      <td>fill date</td>
-      <td>
-       <span class='user-48 icon-48'/> 
-      </td>
-      <td> 
-         <a href="./howto/fill_date_field_in_document.html">Fill a date field</a>.
-         Marc sees that he is supposed to fill in on what date the happening, which
-         in his case is the bazaar, will be. So he looks up the date and fills it in the document.
-      </td>
-     </tr>
-
-     <tr>
-      <td>fill string</td>
-      <td>
-       <span class='user-48 icon-48'/> 
-      </td>
-      <td> 
-         <a href="./howto/fill_string_field_in_document.html">Fill a string field</a>.
-         Marc sees that he is supposed to type a title for the happening, which
-         in his case is the bazaar, and he types 'Multicultural Bazaar 2008' as the title.
-      </td>
-     </tr>
-
-     <tr>
-      <td>fill boolean</td>
-      <td>
-       <span class='user-48 icon-48'/> 
-      </td>
-      <td> 
-         <a href="./howto/fill_boolean_field_in_document.html">Fill a boolean field</a>.
-         Marc sees that he is supposed to answer the question whether the happening is
-         indoors. 
-         The bazaar is not indoors, so he does not check that checkbox.
-         He also is supposed to answer the question whether the happening is
-         a recurring happening, i.e. a happening that has occurred before. This is the case,
-         so he checks that checkbox.
-      </td>
-     </tr>
-
-     <tr>
-      <td>fill markuped text</td>
-      <td>
-       <span class='user-48 icon-48'/> 
-      </td>
-      <td> 
-         <a href="./howto/fill_markuped_text_in_document.html">Fill marked-up text</a>.
-         Marc sees that he can also write a description of the happening and he
-         writes an informative text about the upcoming multicultural bazaar.
-         He includes the place where the bazaar will be in this description,
-         because there is no separate field for it and people need to know.
-      </td>
-     </tr>
-
-     <tr>
-      <td>save document</td>
-      <td>
-       <span class='user-48 icon-48'/> 
-      </td>
-      <td> 
-         <a href="./howto/save_document.html">Save document</a>.
-         Marc finished his article about the upcoming multicultural bazaar, so
-         he saves the document.
-      </td>
-     </tr>
-
-    <tr>
-      <td>request publication</td>
-      <td>
-       <span class='user-48 icon-48'/> 
-      </td>
-      <td> 
-         <a href="./howto/request_publication.html">Request publication</a>.
-         Marc now requests publication of his article. Janine is the editor and she
-         will receive this request and accept or reject it.
-      </td>
-     </tr>
-
-     <tr>
-      <td>Logout</td>
-      <td>
-       <span class='logout-48 icon-48'/> 
-      </td>
-      <td> 
-         <a href="./howto/logout.html">Logout</a>. 
-         Marc quits for today.          
-      </td>
-     </tr>
- 
-    </table>
-   </blockquote>
+ -->
        
     </section>
   </body>

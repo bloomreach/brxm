@@ -20,6 +20,8 @@
 ____________________________________________________________________________________________
 
 -->
+
+
 <document>
   <properties>
     <title>Goto a Folder</title>
@@ -27,31 +29,36 @@ ________________________________________________________________________________
 
   <body>
     <section name="Goto a Folder">
-      <span class="shortdesc">How to get folder, to add or change content in it.</span>
+      <span class="shortdesc">How to get to a folder, to add or change content in it.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/contribs/folder_tab.png" alt='Goto folder screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/contribs/goto_folder.png" alt='Goto folder screenshot'/>
      <p>
-      Opened list of documents in <a href='../concepts/folder.html'>folder</a> 'sar newspaper'.
-      The 'sar newspaper' folder is a subfolder of the documents main folder.
-      The folder 'sar newspaper' contains the document 'multibazar2008'.
-     </p>
+        Clicking on the name 'newspaper', to go to that folder, to see the 
+        <a href='../concepts/document.html'>documents</a> in it.      
+    </p>
    </div>
 
    <p>
-    In the lists of document folders
-    (in the tree view in the  
-    <a href='./goto_content_browse_tab.html'>content browse tab</a>, at middle-left), 
-    click on the folder you want to open.
+      In the <a href='../concepts/content_navigation_panel.html'>content navigation panel</a>,
+      within the <a href='../concepts/document_slider.html'>document slider</a>, the names of all folders
+      for <a href='../concepts/document.html'>documents</a> are shown.
+      <span class='add'>Document about navigation in folder tree and reference from here.</span>
+   </p>
+   <p>
+      Clicking on a foldername will bring you to the folder, to see its contents.
+      The contents of the folder will appear in the <a href='../concepts/content_listing_panel.html'></a>
+      content listing panel.
    </p>
 
   <subsection name='Next'>
    <ul>
     <li><a href='./create_document.html'>Create a document</a>.</li>
-    <li><a href='./goto_document_tab.html'>Goto document tab</a>.</li>
+    <!-- <li><a href='./goto_document_tab.html'>Goto document tab</a>.</li> -->
    </ul>       
   </subsection>
-
+ 
    </section>
   </body>
-</document>        
+</document>
+

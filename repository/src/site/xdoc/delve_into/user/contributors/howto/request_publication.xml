@@ -30,12 +30,14 @@ ________________________________________________________________________________
       <span class="shortdesc">How to ask the editor to publish a document?</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/contribs/request_publication.png" alt='request publication screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/contribs/request_schedule_publication.png" alt='request schedule publication screenshot'/> 
      <p>
-      Requesting publication of the document 'multibazaar2008'. The editor will be notified
+      Requesting publication of the document 'multibazaar2009'. The editor will be notified
       and accept or reject this request.
      </p>
    </div>
+
+  <span class='add'>reference to opening it</span>
 
    <p>
     In a <a href='./goto_document_tab.html'>document's tab</a>, e.g. after

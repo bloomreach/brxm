@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to define a field as mandatory or as optional.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/mandatory_or_optional.png" alt='Mandatory or optional screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/mandatory_or_optional.png" alt='Mandatory or optional screenshot'/> 
      <p>
       In a document type, a mandatory field (which is a date field).
      </p>

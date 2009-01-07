@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to remove a field from a document type.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/remove_field_from_documenttype.png" alt='remove field screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/remove_field_from_documenttype.png" alt='remove field screenshot'/> 
      <p>
       In a document type, fields can be removed by clicking on the remove buttons.
      </p>

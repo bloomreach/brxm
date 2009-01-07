@@ -30,17 +30,26 @@ ________________________________________________________________________________
       <span class="shortdesc">How to fill a string field in a document.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/contribs/fill_string_field.png" alt='Fill string screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/contribs/fill_string_field.png" alt='Fill string screenshot'/> 
      <p>
-       Filled in the 'Title' for the document 'multibazaar2008'. The title is 'Multicultural Bazaar 2008'.
+       Filled in the 'Title' for the document 'multibazaar2009'. 
+       The title is 'Multicultural Bazaar 2009'.
      </p>
    </div>
 
    <p>
-    Open the <a href='./goto_document_tab.html'>document</a> for editing. 
-    Click in the single line text box below a caption to type the value for that caption, which
-    may not consist of more than one line. In fact, there is some limit to how many characters you
-    can type. 
+    <a href='../concepts/set_edit_mode.html'>Set the document in</a>
+    <a href='edit_mode'>edit mode</a>.  
+     Click in the single line text <a href='../concepts/inputfield.html'>inputfield</a>
+     below the name of that inputfield, and type a value for it, which
+     may not consist of more than one line. In fact, there is some limit to how many characters you
+     can type. 
+   </p>
+
+  <p>
+     <a href='./learn_meaning_of_inputfield.html'>Ensure 
+      that you know the meaning of the <a href='../concepts/string.html'>string</a> 
+      inputfield</a> and fill in the correct value for it!
    </p>
 
   <subsection name='Next'>

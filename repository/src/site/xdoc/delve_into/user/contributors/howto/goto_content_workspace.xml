@@ -22,31 +22,25 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login</title>
+    <title>Goto Content workspace</title>
   </properties>
 
   <body>
-    <section name="Login">
-      <span class="shortdesc">How to login to Hippo CMS.</span>
-     
+    <section name="Goto Content workspace">
+      <span class="shortdesc">How to get to the content workspace.</span>
+
    <div class='screenshot'>
-     <img src="../../../../images/screenshots/cms_M9/inars/hippo_login_alice.png" alt='Hippo login screenshot'/>
-      <p>Alice logs in to Hippo CMS. She has typed her password, but only bullets are shown,
-       to prevent someone looking over her shoulder from reading it. She chose the Hippo CMS to
-       be in English. Now she is about to press the button marked `sign in'.
-      </p>
+     <img src="../../../../images/screenshots/cms_M9/contribs/goto_content_workspace.png" alt='goto content workspace screenshot'/>      
    </div>
 
     <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a>, you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. This must been given to you by your CMS administrator and
-     he must have known that you are supposed to work in Hippo CMS as information architect, because he
-     has to set the appropiate rights for you.
+     In the <a href='../concepts/workspace_navigation_panel.png'>workspace navigation panel</a>,
+     click on the content workspace icon (an image of a folder): <span class='content_browse-16'/>.
     </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./goto_documenttypes_tab.html'>Go to document types tab</a>.</li>
+    <li><a href='./goto_folder.html'>Goto folder, i.e. list its contents (resume tour)</a>.</li>
    </ul>       
   </subsection>
 

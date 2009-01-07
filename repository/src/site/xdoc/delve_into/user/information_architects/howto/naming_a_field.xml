@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to name a field of a document type.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/add_date_to_documenttype.png" alt='Naming a field screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/add_date_to_documenttype.png" alt='Naming a field screenshot'/> 
      <p>
       In a document type, a field with name sar:date_of_happening (which is a date field).
      </p>

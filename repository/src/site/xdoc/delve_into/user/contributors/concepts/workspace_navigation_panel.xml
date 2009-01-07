@@ -22,31 +22,26 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login</title>
+    <title>Content Navigation Panel</title>
   </properties>
 
   <body>
-    <section name="Login">
-      <span class="shortdesc">How to login to Hippo CMS.</span>
-     
+    <section name="Workspace Navigation Panel">
+      <span class="shortdesc">What and where is the workspace navigation panel?</span>
+
    <div class='screenshot'>
-     <img src="../../../../images/screenshots/cms_M9/inars/hippo_login_alice.png" alt='Hippo login screenshot'/>
-      <p>Alice logs in to Hippo CMS. She has typed her password, but only bullets are shown,
-       to prevent someone looking over her shoulder from reading it. She chose the Hippo CMS to
-       be in English. Now she is about to press the button marked `sign in'.
-      </p>
+     <img src="../../../../images/screenshots/cms_M9/contribs/content_navigation_panel.png" alt='workspace navigation panel screenshot'/>      
    </div>
 
     <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a>, you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. This must been given to you by your CMS administrator and
-     he must have known that you are supposed to work in Hippo CMS as information architect, because he
-     has to set the appropiate rights for you.
+     The workspace navigation panel is a panel 
+     containing buttons to go to different <a href='./workspace'>workspaces</a>.
+     It is a thin, high panel at the left of the CMS window. 
     </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./goto_documenttypes_tab.html'>Go to document types tab</a>.</li>
+    <li><a href='../howto/goto_content_workspace.html'>Goto content workspace (resume tour)</a>.</li>
    </ul>       
   </subsection>
 
