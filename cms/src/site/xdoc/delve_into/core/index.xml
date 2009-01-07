@@ -19,10 +19,12 @@
 -->
 <document>
     <properties>
-        <title>Development Guide</title>
+      <title>Hacking the core</title>
     </properties>
     <body>
-      <section name="Development Guide">
+      <section name="Hacking the core">
+        
+        <span class='shortdesc'>Take a deep dive into core Hippo CMS development.</span>
 
         <p>
           Hippo CMS is open source software. All source code is available from our SVN repository 
@@ -42,8 +44,8 @@
             - Learn how to build from source on the command line, and how to use different IDEs.
           </li>
           <li>
-            <a href="concepts/index.html">Concepts</a>
-            - Read about the conceptual ideas behind the code.
+            <a href="fundamentals/index.html">Fundamentals</a>
+            - Read about the fundamental ideas behind the code.
           </li>
           <li>
             <a href="architecture/index.html">Architecture</a>

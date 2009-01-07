@@ -24,10 +24,12 @@
   <body>
 
     <section name="Building with Maven">
+    
+      <span class='shortdesc'>Build Hippo CMS from the command line using Maven.</span>
 
       <subsection name="Install Maven">
         <p>
-          Hippo ECM is built using Maven 2 (version 2.0.9 or newer). Follow the
+          Hippo CMS is built using Maven 2 (version 2.0.9 or newer). Follow the
           <a href="http://maven.apache.org/download.html">Maven installation instructions</a>.
         </p>
 
@@ -60,7 +62,7 @@
 
       </subsection>
 
-      <subsection name="Get the Hippo ECM source">
+      <subsection name="Get the Hippo CMS source">
         <p>
           The source can be found at <a href="${project_source_url}">${project_source_url}</a>
           and can be anonymously checked out using any <a href="http://subversion.tigris.org/">Subversion</a> client.
@@ -76,9 +78,9 @@
 
       <subsection name="Build">
         <p>
-          Assuming that you have checked out the Hippo ECM source in the
+          Assuming that you have checked out the Hippo CMS source in the
           directory <code>~/hippo-ecm</code>.  If you want to build the Hippo
-          ECM packages you should run the command:
+          CMS packages you should run the command:
         </p>
         <source>
 ~/> cd hippo-ecm
@@ -95,11 +97,11 @@
 
       <subsection name="Run">
         <p>
-          The preferred way of running Hippo ECM is by <a href="../../sysadmin/installation/in_servlet_container.html">
+          The preferred way of running Hippo CMS is by <a href="../../sysadmin/installation/in_servlet_container.html">
           deploying the application wars in an application server</a>.
         </p>
         <p>
-          To facilitate development it is also possible to run Hippo ECM from the commandline using Jetty.
+          To facilitate development it is also possible to run Hippo CMS from the commandline using Jetty.
           To start a sample application from the command line, execute the following commands:
         </p>
         <source>
@@ -118,7 +120,7 @@
         </p>
     <p>
       Note that in the sample application started from the command line is a quickstart version of
-      the Hippo ECM suite.  If you require a production build, want to extend Hippo ECM or just
+      the Hippo CMS suite.  If you require a production build, want to extend Hippo CMS or just
       want a clean start you should use the hippo-ecm/package/war of hippo-ecm/package/ear project.
     </p>
       </subsection>

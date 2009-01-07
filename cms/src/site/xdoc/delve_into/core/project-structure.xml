@@ -24,6 +24,9 @@
   <body>
 
     <section name="Project Structure">
+      
+      <span class='shortdesc'>Find your way in the Hippo CMS project.</span>
+      
       <p>
         Hippo ECM is a <a href="http://maven.apache.org/">Maven 2</a> project consisting of
         <a href="http://maven.apache.org/guides/getting-started/index.html#How_do_I_build_more_than_one_project_at_once">

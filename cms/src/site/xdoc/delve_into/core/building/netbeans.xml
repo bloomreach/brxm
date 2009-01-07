@@ -23,42 +23,41 @@
     </properties>
     <body>
 
-      <section name="Building with Netbeans"></section>
+      <section name="Building with Netbeans">
+        <span class='shortdesc'>How to import and work with the Hippo CMS project in the Netbeans IDE.</span>
 
-        <section name="Prepare">
+        <subsection name="Prepare">
             <p>
                 Follow all steps documented on the <a href="maven.html">Developing with Maven</a> page.
                 Don't continue with the instructions on this page before you have seen a running application.
             </p>
-        </section>
+        </subsection>
 
-        <section name="Configure Netbeans">
-            <subsection name="Install the Subversion Plugin">
-                <ol>
-                    <li><p>Tools -&gt; Update Center</p></li>
-                    <li><p>Select Netbeans Update Center</p></li>
-                    <li><p>Continue to next screen</p></li>
-                    <li><p>Select the Subversion feature</p></li>
-                    <li><p>Finish the wizard</p></li>
-                </ol>
-            </subsection>
+        <subsection name="Configure Netbeans">
+            <h4>Install the Subversion Plugin</h4>
+            <ol>
+                <li><p>Tools -&gt; Update Center</p></li>
+                <li><p>Select Netbeans Update Center</p></li>
+                <li><p>Continue to next screen</p></li>
+                <li><p>Select the Subversion feature</p></li>
+                <li><p>Finish the wizard</p></li>
+            </ol>
 
-            <subsection name="Install the Mevenide2 Plugin">
-                <p>This section assumes that you're using Netbeans 5.5.  In version 6.0 the plugin is available
-                    as a feature in the Netbeans Update Center.</p>
-                <ol>
-                    <li><p>Select "Tools &gt; Options" menu item, click the "Advanced Options" button</p></li>
-                    <li><p>Right Click on "IDE Configuration &gt; System &gt; Autoupdate Types", select "new &gt; General Update Center"</p></li>
-                    <li><p>Enter "Mevenide2 Update Center" for the object name</p></li>
-                    <li><p>Copy/paste the following URL in "Server URL" field :
-                        <a href="http://mevenide.codehaus.org/nbm_release2/NBM_AutoUpdate.xml">http://mevenide.codehaus.org/nbm_release2/NBM_AutoUpdate.xml</a></p></li>
-                    <li><p>Select "Tools &gt; Update Center" menu item and select "Mevenide2 Update Center"</p></li>
-                    <li><p>Click the "addAll &gt;&gt;" modules button</p></li>
-                </ol>
-            </subsection>
-        </section>
+            <h4>Install the Mevenide2 Plugin</h4>
+            <p>This section assumes that you're using Netbeans 5.5.  In version 6.0 the plugin is available
+                as a feature in the Netbeans Update Center.</p>
+            <ol>
+                <li><p>Select "Tools &gt; Options" menu item, click the "Advanced Options" button</p></li>
+                <li><p>Right Click on "IDE Configuration &gt; System &gt; Autoupdate Types", select "new &gt; General Update Center"</p></li>
+                <li><p>Enter "Mevenide2 Update Center" for the object name</p></li>
+                <li><p>Copy/paste the following URL in "Server URL" field :
+                    <a href="http://mevenide.codehaus.org/nbm_release2/NBM_AutoUpdate.xml">http://mevenide.codehaus.org/nbm_release2/NBM_AutoUpdate.xml</a></p></li>
+                <li><p>Select "Tools &gt; Update Center" menu item and select "Mevenide2 Update Center"</p></li>
+                <li><p>Click the "addAll &gt;&gt;" modules button</p></li>
+            </ol>
+        </subsection>
 
-        <section name="Run / Debug">
+        <subsection name="Run / Debug">
             <p>
                 Projects that produce a WAR can be run inside the Tomcat container included with Netbeans.  If you want
                 to run several projects concurrently, each should get a separate context path.  You can e.g. run the frontend
@@ -74,8 +73,8 @@
                 <b>Note:</b> project dependencies are not automatically handled.  I.e. if a source file changes, all projects that use the
                 containing package must be rebuilt in the correct order (Maven itself has the same limitation).
             </p>
-        </section>
-
+        </subsection>
+      </section>
     </body>
 
 </document>

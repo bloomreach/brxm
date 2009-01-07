@@ -19,13 +19,15 @@
 -->
 <document>
     <properties>
-        <title>Concepts</title>
+        <title>Fundamentals</title>
     </properties>
     <body>
-      <section name="Concepts">
+      <section name="Fundamentals">
+
+        <span class='shortdesc'>The fundamental ideas behind the code explained.</span>
 
         <p>
-          TODO: concepts behind the code explained
+          TODO
         </p>
 
       </section>
