@@ -603,12 +603,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/core/concepts/index.html#Concepts">Concepts</a>
-            </td>
-            <td>Welcome: Concepts</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/sysadmin/configuration/index.html#Configuration">Configuration</a>
             </td>
             <td>Welcome: Configuration</td>
@@ -1537,6 +1531,12 @@
               <a href="../delve_into/web/add-ons/howto/packaging.html#Full_pom_xml">Full pom.xml</a>
             </td>
             <td>Howto: Creating your own WAR package</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/core/fundamentals/index.html#Fundamentals">Fundamentals</a>
+            </td>
+            <td>Welcome: Fundamentals</td>
           </tr>
           <tr>
             <td>

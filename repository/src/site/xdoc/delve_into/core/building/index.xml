@@ -19,13 +19,15 @@
 -->
 <document>
     <properties>
-        <title>Building Hippo ECM</title>
+        <title>Building Hippo CMS</title>
     </properties>
     <body>
-      <section name="Building Hippo ECM">
+      <section name="Building Hippo CMS">
+        
+        <span class='shortdesc'>Build Hippo CMS from source using your tool of choice.</span>
 
         <p>
-          Getting the Hippo ECM source code and building it is easy. Hippo ECM
+          Getting the Hippo CMS source code and building it is easy. Hippo CMS
           uses a <a href="http://maven.apache.org/">Maven</a> build environment,
           but it is also possible to use a Java IDE like <a href="http://www.eclipse.org/">Eclipse</a>
           or <a href="http://www.netbeans.org/">Netbeans</a>.

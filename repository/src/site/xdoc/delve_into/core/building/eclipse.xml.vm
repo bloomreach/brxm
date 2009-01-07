@@ -19,19 +19,23 @@
 -->
 <document>
   <properties>
-    <title>Developing Hippo ECM with Eclipse</title>
+    <title>Developing Hippo CMS with Eclipse</title>
   </properties>
   <body>
+
+    <section name="Developing Hippo CMS with Eclipse">
+        <span class='shortdesc'>How to import and work with the Hippo CMS project in the Eclipse IDE.</span>
+        
+    <subsection name="Introduction">
     
-    <section name="Introduction">
       <p>
         This chapter is meant as a guide for setting up and managing a debugging environment
         for Hippo ECM inside Eclipse. By the time you have finished reading you will be able to
         run and debug every aspect of Hippo ECM from within Eclipse.
       </p>
-    </section>
+    </subsection>
     
-    <section name="Prepare">
+    <subsection name="Prepare">
       <p>Follow all steps documented on the <a href="maven.html">Building with Maven</a> page.
         Don't continue with the instructions on this page before you have seen a running application
         using just Maven.</p>
@@ -136,9 +140,9 @@
           </p>
         </li>
       </ul>
-    </section>
+    </subsection>
     
-    <section name="Create Eclipse projects">
+    <subsection name="Create Eclipse projects">
       <div style="border:1px solid black; padding:1em;"> NOTE: Make sure that there is no
         .project file in the toplevel (hippo-ecm) directory before proceding. If there is
         one the Eclipse import projects wizard will fail. 
@@ -193,9 +197,9 @@
         the projects by hand, see the script for what it does.  
         <br/><br/>
       </p>      
-    </section>
+    </subsection>
     
-    <section name="Run">
+    <subsection name="Run">
       <p>
         <a href="http://code.google.com/p/run-jetty-run/">Create Run-Jetty-Run configuration</a>
       </p>
@@ -225,9 +229,9 @@
         of org.hippoecm.frontend.Home, start the Run-Jetty-Run launcher in debug mode,
         open your browser and go to <a href="http://localhost:8080/cms">http://localhost:8080/cms</a></p>
       <br/>
-    </section>
+    </subsection>
     
-    <section name="Code formatting">
+    <subsection name="Code formatting">
       <p>
         Before committing java code, please make sure that it has been formatted
         using the standard Hippo code formatting rules. Download
@@ -235,9 +239,9 @@
         and load it into Eclipse using <i>Window -> Preferences -> Java -> Code style -> Formatter -> Import</i>.
         Formatting a Java file is done in Eclipse by hitting Ctrl-Shift-F 
       </p>
-    </section>
+    </subsection>
     
-    <section name="Keeping up">
+    <subsection name="Keeping up">
       <p>
         Hippo ECM is a very active project with many updates every day. 'Ordinary' updates can be digested
         by using the Eclipse Synchronization perspective and simple dependency changes can be fixed
@@ -261,6 +265,7 @@
         these steps, often one or more steps can be skipped. Choose your strategy depending on the type of update.
         <br/><br/>
       </p>
+    </subsection>
     </section>
   </body>
 </document>

@@ -323,7 +323,7 @@
           <item name="Building with Eclipse" href="/delve_into/core/building/eclipse.html"/>
           <item name="Building with Netbeans" href="/delve_into/core/building/netbeans.html"/>
         </item>
-        <item name="Concepts" href="/delve_into/core/concepts/index.html"/>
+        <item name="Fundamentals" href="/delve_into/core/fundamentals/index.html"/>
         <item name="Architecture" href="/delve_into/core/architecture/index.html"/>
       </item>
 
