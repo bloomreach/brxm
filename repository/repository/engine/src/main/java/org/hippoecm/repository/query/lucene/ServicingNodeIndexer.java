@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.query.lucene;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -37,15 +38,10 @@ import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.extractor.TextExtractor;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.NameFactory;
-import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
-import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.jackrabbit.FacetTypeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,14 +54,24 @@ public class ServicingNodeIndexer extends NodeIndexer {
     private static final Logger log = LoggerFactory.getLogger(ServicingNodeIndexer.class);
 
     /**
-     * Hardcoded nodescope indexing exluded properties. Currently hippo:paths
+     * Set of exclude nodescope fieldNames
      */
-    private Name excludeName;
+    private Set<String> excludeFieldNamesFromNodeScope;
     
     /**
-     * The hippo namespace, derived from the prefix 'hippo', hence still valid after bumbing the hippo namespace to a next version
+     * boolean indicating all excluded names have been added
      */
-    private String hippo_ns;
+    private boolean addedAllExcludeFieldNames = false;
+    
+    /**
+     * Set of exclude properties for index single term
+     */
+    private Set<String> excludePropertiesSingleIndexTerm;
+    
+    /**
+     * boolean indicating all excluded properties have been added
+     */
+    private boolean addedAllExcludePropertiesSingleIndexTerm = false;
     
     /**
      * The indexing configuration or <code>null</code> if none is available.
@@ -77,15 +83,6 @@ public class ServicingNodeIndexer extends NodeIndexer {
     public ServicingNodeIndexer(NodeState node, QueryHandlerContext queryHandlerContext, NamespaceMappings mappings, TextExtractor extractor) {
         super(node, queryHandlerContext.getItemStateManager(), mappings, extractor);
         this.queryHandlerContext = queryHandlerContext;
-        try {
-            String name = HippoNodeType.HIPPO_PATHS.substring(HippoNodeType.HIPPO_PATHS.indexOf(":")+1);
-            String prefix = HippoNodeType.HIPPO_PATHS.substring(0,HippoNodeType.HIPPO_PATHS.indexOf(":"));
-            hippo_ns = this.queryHandlerContext.getNamespaceRegistry().getURI(prefix);
-            excludeName = NameFactoryImpl.getInstance().create(hippo_ns,name);
-        } catch (NamespaceException e1) {
-            log.warn("Error creating exclude name for hippo:paths ", e1.getMessage());
-        }
-        
     }
 
 
@@ -94,16 +91,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
         this.servicingIndexingConfig = config;
     }
 
-
-    @Override
-    protected boolean isIncludedInNodeIndex(Name propertyName) {
-        if(excludeName.equals(propertyName)){
-            return false;
-        }
-        return super.isIncludedInNodeIndex(propertyName);
-    }
-
-
+    
     @Override
     protected Document createDoc() throws RepositoryException {
         // index the jackrabbit way
@@ -112,7 +100,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
         
         // TODO : only index facets for hippo:document + subtypes
         try{
-          
+        
         if (node.getParentId() == null) {
             // root node
         } else {
@@ -153,9 +141,9 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 if(isHippoPath(propName)){
                     indexPath(doc,values,propState.getName());
                 }
-                if(isFacet(propName)){
+                else if(isFacet(propName)){
                     for (int i = 0; i < values.length; i++) {
-                        addValue(doc, values[i], propState.getName());
+                        addFacetValue(doc, values[i], propState.getName());
                     }
                 }
             } catch (NoSuchItemStateException e) {
@@ -172,7 +160,8 @@ public class ServicingNodeIndexer extends NodeIndexer {
      // simple String
         String hippo_ns_prefix = null;
         try {
-            hippo_ns_prefix = this.mappings.getPrefix(hippo_ns);
+            // TODO avoid hard-coded namespace
+            hippo_ns_prefix = this.mappings.getPrefix("http://www.hippoecm.org/nt/1.2");
         } catch (NamespaceException e) {
            log.warn("Cannot get 'hippo' lucene prefix. ", e.getMessage());
            return;
@@ -195,7 +184,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
 
     // below: When the QName is configured to be a facet, also index like one
-    private void addValue(Document doc, InternalValue value, Name name) {
+    private void addFacetValue(Document doc, InternalValue value, Name name) {
         String fieldName = name.getLocalName();
         try {
             fieldName = resolver.getJCRName(name);
@@ -229,7 +218,12 @@ public class ServicingNodeIndexer extends NodeIndexer {
             case PropertyType.STRING:
                 // never index uuid as facet
                 if (!name.equals(NameConstants.JCR_UUID)) {
-                    indexFacet(doc,fieldName,value.toString()+FacetTypeConstants.STRING_POSTFIX);
+                    String str = value.toString();
+                    if(str.length() > 255) {
+                        log.debug("truncating facet value because string length exceeds 255 chars. This is useless for facets");
+                        str = str.substring(0,255);
+                    }
+                    indexFacet(doc,fieldName,str+FacetTypeConstants.STRING_POSTFIX);
                 }
                 break;
             case PropertyType.NAME:
@@ -245,6 +239,76 @@ public class ServicingNodeIndexer extends NodeIndexer {
         }
     }
 
+    @Override
+    protected void addStringValue(Document doc, String fieldName, Object internalValue, boolean tokenized,
+            boolean includeInNodeIndex, float boost) {
+        
+        if(!addedAllExcludeFieldNames) {
+           // init only when not all excluded nodenames have been resolved before
+            synchronized (this) {
+                int excCount = 0;
+                excludeFieldNamesFromNodeScope = new HashSet<String>();
+                for(Name n : servicingIndexingConfig.getExcludedFromNodeScope()) {
+                    try {
+                        excludeFieldNamesFromNodeScope.add(resolver.getJCRName(n));
+                    } catch (NamespaceException e) {
+                        excCount++;
+                        log.debug("Cannot (yet) add name " + n + " to the exlude set from nodescope. Most likely the namespace still has to be registered.", e.getMessage());
+                    }
+                }
+                if(excCount == 0) {
+                    addedAllExcludeFieldNames = true;
+                }
+            }
+        }
+        if(!addedAllExcludePropertiesSingleIndexTerm) {
+            // init only when not all excluded properties have been resolved before
+            synchronized (this) {
+                int excCount = 0;
+                excludePropertiesSingleIndexTerm = new HashSet<String>();
+                for(Name n : servicingIndexingConfig.getExcludePropertiesSingleIndexTerm()) {
+                    try {
+                        excludePropertiesSingleIndexTerm.add(resolver.getJCRName(n));
+                    } catch (NamespaceException e) {
+                        excCount++;
+                        log.debug("Cannot (yet) add name " + n + " to the exlude set for properties not to index a single term from. Most likely the namespace still has to be registered.", e.getMessage());
+                    }
+                }
+                if(excCount == 0) {
+                    addedAllExcludePropertiesSingleIndexTerm = true;
+                }
+            }
+        }
+        
+        if(excludeFieldNamesFromNodeScope.contains(fieldName)){
+            log.debug("Do not nodescope/tokenize fieldName : {}", fieldName);
+            super.addStringValue(doc, fieldName, internalValue, false, false, boost);
+        } else if(excludePropertiesSingleIndexTerm.contains(fieldName)) {
+            // 
+            String stringValue = (String) internalValue;
+            if (stringValue.length() == 0) {
+                return;
+            }
+            // create fulltext index on property
+            int idx = fieldName.indexOf(':');
+            fieldName = fieldName.substring(0, idx + 1)
+                    + FieldNames.FULLTEXT_PREFIX + fieldName.substring(idx + 1);
+            Field f = new Field(fieldName, stringValue,
+                    Field.Store.NO,
+                    Field.Index.TOKENIZED,
+                    Field.TermVector.NO);
+            f.setBoost(boost);
+            doc.add(f);
+            // also create fulltext index of this value
+            doc.add(createFulltextField(stringValue));
+        }
+        else {
+            super.addStringValue(doc, fieldName, internalValue, tokenized, includeInNodeIndex, boost);
+        }
+    }
+
+
+    
     private void indexFacet(Document doc, String fieldName, String value) {
         doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET,fieldName,Field.Store.NO,Field.Index.NO_NORMS, Field.TermVector.NO));
         int idx = fieldName.indexOf(':');

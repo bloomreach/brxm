@@ -21,4 +21,18 @@
     <aggregates>
         <nodetype>hippostd:html</nodetype>
     </aggregates>
+    
+    <excludefromnodescope>
+        <nodetype>hippo:paths</nodetype>
+        <nodetype>hippo:docbase</nodetype>
+    </excludefromnodescope>
+    
+    <nosingleindexterm>
+        <property>hippostd:content</property>
+    </nosingleindexterm>
+    
+    <facets>
+        <excludeproperty>hippostd:content</excludeproperty>
+    </facets>
+    
 </configuration>
