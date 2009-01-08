@@ -145,6 +145,13 @@ public class ServicingSearchIndex extends SearchIndex {
     protected Document createDocument(NodeState node, NamespaceMappings nsMappings,
                                       IndexFormatVersion indexFormatVersion) throws RepositoryException
     {
+        
+        if(node.getId() instanceof HippoNodeId) {
+            log.warn("Indexing a virtual node should never happen, and not be possible. Return an empty lucene doc");
+            Document doc = new Document();
+            return doc;
+        }
+        
         ServicingNodeIndexer indexer = new ServicingNodeIndexer(node,
                 getContext(), nsMappings, super.getTextExtractor());
 

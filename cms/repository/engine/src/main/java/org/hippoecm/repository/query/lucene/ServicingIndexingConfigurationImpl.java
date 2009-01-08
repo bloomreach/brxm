@@ -53,7 +53,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
     /**
      * Set of properties that are configured to be facets
      */
-    private Set<Name> facetProperties = new HashSet<Name>();
+    private Set<Name> excludePropertiesForFacet = new HashSet<Name>();
 
     /**
      * QName Hippo Path qualified name
@@ -64,6 +64,17 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
      * QName's of all the child node that should be aggregated
      */
     private Name[] hippoAggregates;
+    
+    /**
+     * set of QName's that should not be nodescoped indexed and not tokenized (for example hippo:path)
+     */
+    private Set<Name> excludeNamesFromNodeScope = new HashSet<Name>();
+    
+    /**
+     * set of QName's of properties that are not allowed to be indexed as a single term (for example hippostd:content)
+     */
+    
+    private Set<Name> excludePropertiesSingleIndexTerm = new HashSet<Name>();
 
     @Override
     public void init(Element config, QueryHandlerContext context, NamespaceMappings nsMappings) throws Exception {
@@ -80,10 +91,10 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                 NodeList propertyChildNodes = configNode.getChildNodes();
                 for (int k = 0; k < propertyChildNodes.getLength(); k++) {
                     Node propertyNode = propertyChildNodes.item(k);
-                    if (propertyNode.getNodeName().equals("property")) {
+                    if (propertyNode.getNodeName().equals("excludeproperty")) {
                         // get property name
                         Name propName = resolver.getQName(getTextContent(propertyNode));
-                        facetProperties.add(propName);
+                        excludePropertiesForFacet.add(propName);
                         log.debug("Added property '"+propName.getNamespaceURI()+":"+propName.getLocalName()+"' to be indexed as facet.");
                     }
                 }
@@ -100,6 +111,34 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                     }
                 }
             }
+            
+            if (configNode.getNodeName().equals("excludefromnodescope")) {
+                NodeList nameChildNodes = configNode.getChildNodes();
+                for (int k = 0; k < nameChildNodes.getLength(); k++) {
+                    Node nodeTypeNode = nameChildNodes.item(k);
+                    if (nodeTypeNode.getNodeName().equals("nodetype")) {
+                        // get property name
+                        Name nodeTypeName = resolver.getQName(getTextContent(nodeTypeNode));
+                        excludeNamesFromNodeScope.add(nodeTypeName);
+                        log.debug("nodetype '"+nodeTypeName.getNamespaceURI()+":"+nodeTypeName.getLocalName()+"' will not be indexed in the nodescope.");
+                    }
+                }
+            }
+            if (configNode.getNodeName().equals("nosingleindexterm")) {
+                NodeList nameChildNodes = configNode.getChildNodes();
+                for (int k = 0; k < nameChildNodes.getLength(); k++) {
+                    Node nodeTypeProperty = nameChildNodes.item(k);
+                    if (nodeTypeProperty.getNodeName().equals("property")) {
+                        // get property name
+                        Name nodeTypePropertyName = resolver.getQName(getTextContent(nodeTypeProperty));
+                        excludePropertiesSingleIndexTerm.add(nodeTypePropertyName);
+                        log.debug("property '"+nodeTypePropertyName.getNamespaceURI()+":"+nodeTypePropertyName.getLocalName()+"' will not be indexed as a single term.");
+                    }
+                }
+            }
+            
+            
+            
         }
         hippoPath = resolver.getQName(HippoNodeType.HIPPO_PATHS);
 
@@ -109,9 +148,9 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
     }
 
     public boolean isFacet(Name propertyName) {
-        // TODO for now, all fields that are possible to index as a facet are index
-        // as a facet by the '|| true' part. When the indexing_configuration is maintainable
-        // through the repository, we can change this to only index facet properties as facets
+        if(this.excludePropertiesForFacet.contains(propertyName)) {
+            return false;
+        }
         return true;
     }
 
@@ -159,6 +198,14 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
 
     public Name[] getHippoAggregates() {
         return hippoAggregates;
+    }
+
+    public Set<Name> getExcludedFromNodeScope(){
+        return this.excludeNamesFromNodeScope;
+    }
+    
+    public Set<Name> getExcludePropertiesSingleIndexTerm(){
+        return this.excludePropertiesSingleIndexTerm;
     }
 
 }
