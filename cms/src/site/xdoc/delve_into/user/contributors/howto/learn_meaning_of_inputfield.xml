@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+    
+____________________________________________________________________________________________
+
+-->
+<document>
+  <properties>
+    <title>Learn meaning of inputfield</title>
+  </properties>
+
+  <body>
+    <section name="Learn meaning of inputfield">
+      <span class="shortdesc">Why and how to learn the meaning of an inputfield?</span>
+
+  <div class='group'>
+   <div class='screenshot'>
+     <img src="../../../../images/screenshots/cms_M9/contribs/fill_boolean_field.png" alt='Fill boolean screenshot'/> 
+   </div>
+   <p>
+     It is not immediately clear what is meant by the <a href='boolean'>booleans</a> 'indoors?' and 'recurring?'
+     Should a happening be considered recurring if such a happening is intended to occur more often or only if it 
+     already has occurred at least once? And if so, what if such happenings did occur in the past, but were
+     organized by another organization, does that count as 'already occurred'? It is clear that such a
+     short caption may leave some questions. However, if you already know what is meant, a short caption 
+     is better, as the document looks cleaner and you see the structure in one grasp.
+   </p>
+  </div>
+
+   <p>
+    The <a href='../concepts/document_type.html'>document types</a> used in your organization, were
+    created by an information architect with the intent that every <a href='contributor'>contributor</a> would
+    ...<span class='add'>more info</span>.
+   </p>
+     
+   </section>
+  </body>
+</document>        

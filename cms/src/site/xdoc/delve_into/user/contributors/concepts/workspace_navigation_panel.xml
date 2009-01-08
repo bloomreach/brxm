@@ -30,12 +30,12 @@ ________________________________________________________________________________
       <span class="shortdesc">What and where is the workspace navigation panel?</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/screenshots/cms_M9/contribs/content_navigation_panel.png" alt='workspace navigation panel screenshot'/>      
+     <img src="../../../../images/screenshots/cms_M9/contribs/workspace_navigation_panel.png" alt='workspace navigation panel screenshot'/>      
    </div>
 
     <p>
      The workspace navigation panel is a panel 
-     containing buttons to go to different <a href='./workspace'>workspaces</a>.
+     containing buttons to go to different <a href='./workspace.html'>workspaces</a>.
      It is a thin, high panel at the left of the CMS window. 
     </p>
 

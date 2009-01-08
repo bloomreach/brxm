@@ -22,25 +22,26 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Start CMS</title>
+    <title>Folder navigation panel</title>
   </properties>
 
   <body>
-    <section name="Start CMS">
-      <span class="shortdesc">How to start a CMS session in your browser</span>
+    <section name="Folder navigation panel">
+      <span class="shortdesc">What and where is the folder navigation panel?</span>
 
-   <p>
-        Open the Hippo CMS site 
-        <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in 
-        your browser. 
-   </p>
+   <div class='screenshot'>
+     <img src="../../../../images/screenshots/cms_M9/contribs/folder_navigation_panel.png" 
+     alt='Folder navigation panel screenshot'/>
+     <p>
+      The folder navigation panel. 
+     </p>   
+   </div>
 
-
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./login.html'>Login (continue tour)</a>.</li>
-   </ul>       
-  </subsection>
+    <p>
+     The folder navigation panel is the panel in the <a href='./content_workspace.html'>content workspace</a> where you can
+     navigate in the folder tree, to go to a particular folder, which will become the 
+     <a href='./current_folder'>current folder</a>.  
+    </p>    
 
    </section>
   </body>

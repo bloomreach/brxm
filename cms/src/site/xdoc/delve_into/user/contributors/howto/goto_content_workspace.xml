@@ -34,13 +34,13 @@ ________________________________________________________________________________
    </div>
 
     <p>
-     In the <a href='../concepts/workspace_navigation_panel.png'>workspace navigation panel</a>,
+     In the <a href='../concepts/workspace_navigation_panel.html'>workspace navigation panel</a>,
      click on the content workspace icon (an image of a folder): <span class='content_browse-16'/>.
     </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./goto_folder.html'>Goto folder, i.e. list its contents (resume tour)</a>.</li>
+    <li><a href='./goto_folder.html'>Go to folder, i.e. make it the current folder (continue tour)</a>.</li>
    </ul>       
   </subsection>
 

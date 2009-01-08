@@ -22,24 +22,27 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Start CMS</title>
+    <title>Home workspace</title>
   </properties>
 
   <body>
-    <section name="Start CMS">
-      <span class="shortdesc">How to start a CMS session in your browser</span>
+    <section name="Home Workspace">
+      <span class="shortdesc">What and where is the home workspace?</span>
 
-   <p>
-        Open the Hippo CMS site 
-        <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in 
-        your browser. 
-   </p>
+   <div class='screenshot'>
+     <img src="../../../../images/screenshots/cms_M9/contribs/home_workspace.png" alt='home workspace'/>      
+    <p>
+      The home <a href='./workspace.html'>workspace</a>. 
+     </p>   
+   </div>
 
-
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./login.html'>Login (continue tour)</a>.</li>
-   </ul>       
+    <p>
+     The home workspace is the <a href='./workspace.html'>workspace</a> where you can
+     work with general aspects, like your todo list and the history list of actions of all users. 
+    </p>
+    
+  <subsection name='Alternative'>
+   In the <a href='./content_workspace.html'>content workspace</a> you can work with <a href='content'>content</a>.  
   </subsection>
 
    </section>

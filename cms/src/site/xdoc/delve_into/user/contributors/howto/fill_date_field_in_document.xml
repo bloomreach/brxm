@@ -50,7 +50,7 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./fill_string_field_in_document.html'>Fill a string field in a document</a>.</li>
+    <li><a href='./fill_string_field_in_document.html'>Fill a string field in a document (continue tour)</a>.</li>
     <li><a href='./fill_boolean_field_in_document.html'>Fill a boolean field in a document</a>.</li>
     <li><a href='./fill_markuped_text_in_document.html'>Write marked-up text in a document</a>.</li>
     <li><a href='./save_document.html'>Save the changes to the document</a>.</li>

@@ -34,7 +34,7 @@ ________________________________________________________________________________
      <img src="../../../../images/screenshots/cms_M9/contribs/hippo_login_marc.png" alt='Hippo login screenshot'/>
       <p>Marc logs in to Hippo CMS. He has typed his password, but only bullets are shown,
        to prevent someone looking over his shoulder from reading it. He chose the Hippo CMS to
-       be in English. Now he is about to press the button marked `sign in'.
+       be in English. Now he is about to press the button marked `login'.
       </p>
    </div>
 
@@ -58,7 +58,7 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./goto_folder.html'>Goto the document folder to add your document in</a>.</li>
+    <li><a href='./goto_content_workspace.html'>Go to the content workspace (continue tour)</a>.</li>
    </ul>       
   </subsection>
 

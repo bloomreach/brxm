@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+    
+____________________________________________________________________________________________
+
+-->
+<document>
+  <properties>
+    <title>Content tabulation panel</title>
+  </properties>
+
+  <body>
+   <section name="Content tabulation panel">
+      <span class="shortdesc">What and where is the content tabulation panel?</span>
+
+    <div class='screenshot'>
+     <img src="../../../../images/screenshots/cms_M9/contribs/content_tabulation_panel.png" 
+     alt='content tabulation panel screenshot'/>
+     <p>
+      The content tabulation panel. 
+      <!-- Note that the left part of the content tabulation panel
+       will be hidden under the   
+       <a href='documents_panel.html'>documents_panel</a>, if any document is .........
+      -->
+     </p>   
+    </div>
+
+    <p>
+     The content tabulation panel is the panel where the content of the 
+     <a href='current_folder.html'>current folder</a> is tabulated.
+     The 'name' column of this table gives the names of all items of content 
+     while the other columns give more information on each item:
+     In the first column an icon indicates the type of the item 
+     and in the third column an icon indicates the state of the item:
+     if it is published on the web or not.
+
+     <span class='add'>more on publish states</span>
+
+   </section>
+  </body>
+</document>        
