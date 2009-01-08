@@ -18,9 +18,13 @@ out.clear();
 println "$metadata.menuName started\n";
 
 addProjectDependency('hippo-ecm-quickstart-war', 'hippo-ecm-repository-application');
+addProjectDependency('hippo-ecm-quickstart-war', 'hippo-ecm-frontend-application');
 addProjectDependency('hippo-ecm-package-war', 'hippo-ecm-repository-application');
+addProjectDependency('hippo-ecm-package-war', 'hippo-ecm-frontend-application');
+
 removeClasspathEntry('hippo-ecm-repository-engine', 'src/test/resources');
 removeClasspathEntry('hippo-ecm-addon-standards-frontend', 'src/test/resources');
+removeClasspathEntry('hippo-ecm-addon-xinha-frontend', 'src/test/resources');
 
 println "\n$metadata.menuName finished";
 
