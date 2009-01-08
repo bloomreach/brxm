@@ -29,15 +29,17 @@ ________________________________________________________________________________
     <section name="Fill boolean field in Document">
       <span class="shortdesc">How to answer a yes/no question in a document.</span>
 
+  <div class='group'>
    <div class='screenshot'>
      <img src="../../../../images/screenshots/cms_M9/contribs/fill_boolean_field.png" alt='Fill boolean screenshot'/> 
+   </div>
      <p>
        This document contains two boolean fields, 'Indoors?' and 'Recurring?'. 
        They stand for yes/no questions. 
        The first was answered with 'no' by not checking that box, the second with
        'yes' by checking that box. 
      </p>
-   </div>
+  </div>
 
    <p>
     <a href='../concepts/set_edit_mode.html'>Set the document in</a>
@@ -54,7 +56,7 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./fill_markuped_text_in_document.html'>Write marked-up text in a document</a>.</li>
+    <li><a href='./fill_markuped_text_in_document.html'>Write marked-up text in a document (continue tour)</a>.</li>
     <li><a href='./fill_date_field_in_document.html'>Fill a date field in a document</a>.</li>
     <li><a href='./fill_string_field_in_document.html'>Fill a string field in a document</a>.</li>
     <li><a href='./save_document.html'>Save the changes to the document</a>.</li>

@@ -68,8 +68,8 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul> 
+    <li><a href='./fill_date_field_in_document.xml'>fill date field in document (continue tour)</a>.</li>
     <li><a href='./fill_string_field_in_document.xml'>fill string field in document</a>.</li>
-    <li><a href='./fill_date_field_in_document.xml'>fill date field in document</a>.</li>
     <li><a href='./fill_boolean_field_in_document.xml'>fill boolean field in document</a>.</li> 
     <li><a href='./fill_markuped_text_in_document.xml'>fill markedup text in document</a>.</li>
     <!--  <li><a href='./create_document.html'>Create another document</a>.</li> -->
