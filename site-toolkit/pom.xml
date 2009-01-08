@@ -241,9 +241,20 @@
           <tagBase>https://svn.hippocms.org/repos/hippo/ecm/site-toolkit/tags</tagBase>
         </configuration>
       </plugin>
+      <plugin>
+        <inherited>true</inherited>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
 
   <reporting>
     <plugins>
