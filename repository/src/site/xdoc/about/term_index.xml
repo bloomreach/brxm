@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 692 terms</span>
+      <span class="shortdesc">Term index, 746 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -42,12 +42,6 @@
               <a href="../delve_into/user/cms_admins/howto/index.html#A_collection_of_howto's_for_small_tasks_a_CMS_admin_may_want_to_do_">A collection of howto's for small tasks a CMS admin may want to do.</a>
             </td>
             <td>Welcome: CMS admin Howto</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/howto/index.html#A_collection_of_howto's_for_small_tasks_a_contributor_may_want_to_do_">A collection of howto's for small tasks a contributor may want to do.</a>
-            </td>
-            <td>Welcome: CMS Contributor Howto</td>
           </tr>
           <tr>
             <td>
@@ -219,7 +213,25 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/content_workspace.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Content Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/home_workspace.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Home Workspace</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/index.html#Alternative">Alternative</a>
+            </td>
+            <td>Welcome: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/index.html#Alternative">Alternative</a>
             </td>
             <td>Welcome: </td>
           </tr>
@@ -405,9 +417,21 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/core/building/index.html#Building_Hippo_ECM">Building Hippo ECM</a>
+              <a href="../delve_into/core/building/index.html#Build_Hippo_CMS_from_source_using_your_tool_of_choice_">Build Hippo CMS from source using your tool of choice.</a>
             </td>
-            <td>Welcome: Building Hippo ECM</td>
+            <td>Welcome: Building Hippo CMS</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/core/building/maven.html#Build_Hippo_CMS_from_the_command_line_using_Maven_">Build Hippo CMS from the command line using Maven.</a>
+            </td>
+            <td>Building with Maven</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/core/building/index.html#Building_Hippo_CMS">Building Hippo CMS</a>
+            </td>
+            <td>Welcome: Building Hippo CMS</td>
           </tr>
           <tr>
             <td>
@@ -549,12 +573,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/index.html#CMS_Contributor_Howto">CMS Contributor Howto</a>
-            </td>
-            <td>Welcome: CMS Contributor Howto</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/editors/concepts/editor.html#CMS_editor">CMS editor</a>
             </td>
             <td>Concept: CMS editor</td>
@@ -581,7 +599,7 @@
             <td>
               <a href="../delve_into/core/building/eclipse.html#Code_formatting">Code formatting</a>
             </td>
-            <td>Introduction</td>
+            <td>Developing Hippo CMS with Eclipse</td>
           </tr>
           <tr>
             <td>
@@ -675,12 +693,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/goto_content_browse_tab.html#content_browse_screenshot">content browse screenshot</a>
-            </td>
-            <td>Howto: Goto Content Browse Tab</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/editors/howto/goto_content_browse_tab.html#content_browse_screenshot">content browse screenshot</a>
             </td>
             <td>Howto: Goto Content Browse Tab</td>
@@ -690,6 +702,30 @@
               <a href="../delve_into/user/information_architects/howto/goto_content_browse_tab.html#content_browse_screenshot">content browse screenshot</a>
             </td>
             <td>Howto: Go to content browse tab</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/content_tabulation_panel.html#Content_tabulation_panel">Content tabulation panel</a>
+            </td>
+            <td>Concept: Content tabulation panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/content_tabulation_panel.html#content_tabulation_panel_screenshot">content tabulation panel screenshot</a>
+            </td>
+            <td>Concept: Content tabulation panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/content_workspace.html#Content_Workspace">Content Workspace</a>
+            </td>
+            <td>Concept: Content Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/content_workspace.html#content_workspace">content workspace</a>
+            </td>
+            <td>Concept: Content Workspace</td>
           </tr>
           <tr>
             <td>
@@ -780,7 +816,7 @@
             <td>
               <a href="../delve_into/core/building/eclipse.html#Create_Eclipse_projects">Create Eclipse projects</a>
             </td>
-            <td>Introduction</td>
+            <td>Developing Hippo CMS with Eclipse</td>
           </tr>
           <tr>
             <td>
@@ -835,6 +871,18 @@
               <a href="../delve_into/web/add-ons/howto/packaging.html#Creating_your_own_WAR_package">Creating your own WAR package</a>
             </td>
             <td>Howto: Creating your own WAR package</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/current_folder.html#Current_folder">Current folder</a>
+            </td>
+            <td>Concept: Current folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/current_folder.html#current_folder_screenshot">current folder screenshot</a>
+            </td>
+            <td>Concept: Current folder</td>
           </tr>
           <tr>
             <td>
@@ -1036,15 +1084,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/howto/workflow.html#Developing_workflows">Developing workflows</a>
+              <a href="../delve_into/core/building/eclipse.html#Developing_Hippo_CMS_with_Eclipse">Developing Hippo CMS with Eclipse</a>
             </td>
-            <td>Howto: Developing workflows</td>
+            <td>Developing Hippo CMS with Eclipse</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/core/index.html#Development_Guide">Development Guide</a>
+              <a href="../delve_into/custom/howto/workflow.html#Developing_workflows">Developing workflows</a>
             </td>
-            <td>Welcome: Development Guide</td>
+            <td>Howto: Developing workflows</td>
           </tr>
           <tr>
             <td>
@@ -1072,21 +1120,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/configuration/#database_server.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+              <a href="../delve_into/user/contributors/concepts/document_card.html#Document_card">Document card</a>
             </td>
-            <td/>
+            <td>Concept: Document card</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/web/add-ons/howto/#editing_template.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+              <a href="../delve_into/user/contributors/concepts/document_card.html#document_cards">document cards</a>
             </td>
-            <td>Howto: </td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/web/add-ons/howto/#packaging.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
-            </td>
-            <td>Howto: </td>
+            <td>Concept: Document card</td>
           </tr>
           <tr>
             <td>
@@ -1096,9 +1138,27 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/document_panel.html#Document_panel">Document panel</a>
+            </td>
+            <td>Concept: Document panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/document_panel.html#document_panel">document panel</a>
+            </td>
+            <td>Concept: Document panel</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/goto_document_tab.html#document_tab_screenshot">document tab screenshot</a>
             </td>
             <td>Howto: Goto a Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/todo/goto_document_tab.html#document_tab_screenshot">document tab screenshot</a>
+            </td>
+            <td>Goto a Document</td>
           </tr>
           <tr>
             <td>
@@ -1372,6 +1432,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/learn_meaning_of_inputfield.html#Fill_boolean_screenshot">Fill boolean screenshot</a>
+            </td>
+            <td>Howto: Learn meaning of inputfield</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/fill_date_field_in_document.html#Fill_date_in_Document">Fill date in Document</a>
             </td>
             <td>Howto: Fill date in Document</td>
@@ -1405,6 +1471,12 @@
               <a href="../delve_into/user/contributors/howto/fill_string_field_in_document.html#Fill_string_screenshot">Fill string screenshot</a>
             </td>
             <td>Howto: Fill string in Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/core/project-structure.html#Find_your_way_in_the_Hippo_CMS_project_">Find your way in the Hippo CMS project.</a>
+            </td>
+            <td>Project Structure</td>
           </tr>
           <tr>
             <td>
@@ -1483,6 +1555,30 @@
               <a href="../delve_into/user/editors/concepts/folder.html#Folder">Folder</a>
             </td>
             <td>Concept: Folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/folder_action_menu.html#Folder_action_menu">Folder action menu</a>
+            </td>
+            <td>Concept: Folder action menu</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/folder_action_menu.html#Folder_action_menu_screenshot">Folder action menu screenshot</a>
+            </td>
+            <td>Concept: Folder action menu</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/folder_navigation_panel.html#Folder_navigation_panel">Folder navigation panel</a>
+            </td>
+            <td>Concept: Folder navigation panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/folder_navigation_panel.html#Folder_navigation_panel_screenshot">Folder navigation panel screenshot</a>
+            </td>
+            <td>Concept: Folder navigation panel</td>
           </tr>
           <tr>
             <td>
@@ -1571,7 +1667,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/core/building/maven.html#Get_the_Hippo_ECM_source">Get the Hippo ECM source</a>
+              <a href="../delve_into/core/building/maven.html#Get_the_Hippo_CMS_source">Get the Hippo CMS source</a>
             </td>
             <td>Building with Maven</td>
           </tr>
@@ -1667,21 +1763,33 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/todo/goto_document_tab.html#Goto_a_Document">Goto a Document</a>
+            </td>
+            <td>Goto a Document</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/goto_folder.html#Goto_a_Folder">Goto a Folder</a>
             </td>
             <td>Howto: Goto a Folder</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/goto_content_browse_tab.html#Goto_Content_Browse_Tab">Goto Content Browse Tab</a>
+              <a href="../delve_into/user/editors/howto/goto_content_browse_tab.html#Goto_Content_Browse_Tab">Goto Content Browse Tab</a>
             </td>
             <td>Howto: Goto Content Browse Tab</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/editors/howto/goto_content_browse_tab.html#Goto_Content_Browse_Tab">Goto Content Browse Tab</a>
+              <a href="../delve_into/user/contributors/howto/goto_content_workspace.html#Goto_Content_workspace">Goto Content workspace</a>
             </td>
-            <td>Howto: Goto Content Browse Tab</td>
+            <td>Howto: Goto Content workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/goto_content_workspace.html#goto_content_workspace_screenshot">goto content workspace screenshot</a>
+            </td>
+            <td>Howto: Goto Content workspace</td>
           </tr>
           <tr>
             <td>
@@ -1748,6 +1856,12 @@
               <a href="../delve_into/user/information_architects/index.html#Guide_for_Hippo_CMS_users_to_perform_the_role_of_Information_Architect_">Guide for Hippo CMS users to perform the role of Information Architect.</a>
             </td>
             <td>Welcome: Information Architects Guide</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/core/index.html#Hacking_the_core">Hacking the core</a>
+            </td>
+            <td>Welcome: Hacking the core</td>
           </tr>
           <tr>
             <td>
@@ -1955,6 +2069,18 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/home_workspace.html#Home_Workspace">Home Workspace</a>
+            </td>
+            <td>Concept: Home Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/home_workspace.html#home_workspace">home workspace</a>
+            </td>
+            <td>Concept: Home Workspace</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/howto/add_boolean_to_documenttype.html#How_to_add_a_boolean_to_a_document_type_">How to add a boolean to a document type.</a>
             </td>
             <td>Howto: Add boolean to document type</td>
@@ -2000,6 +2126,12 @@
               <a href="../delve_into/custom/howto/customize_skin.html#How_to_apply_a_skin">How to apply a skin</a>
             </td>
             <td>Howto: Frontend skin customization</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/open_request_publication.html#How_to_ask_the_editor_to_publish_a_document_">How to ask the editor to publish a document?</a>
+            </td>
+            <td>Howto: Request Publication of Document</td>
           </tr>
           <tr>
             <td>
@@ -2124,7 +2256,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/goto_folder.html#How_to_get_folder,_to_add_or_change_content_in_it_">How to get folder, to add or change content in it.</a>
+              <a href="../delve_into/user/contributors/howto/goto_folder.html#How_to_get_to_a_folder,_to_add_or_change_content_in_it_">How to get to a folder, to add or change content in it.</a>
             </td>
             <td>Howto: Goto a Folder</td>
           </tr>
@@ -2148,9 +2280,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/goto_content_browse_tab.html#How_to_get_to_the_content_browse_tab_">How to get to the content browse tab.</a>
+              <a href="../delve_into/user/contributors/howto/todo/goto_document_tab.html#How_to_get_to_a_screen_to_manipulate_a_particular_document_">How to get to a screen to manipulate a particular document.</a>
             </td>
-            <td>Howto: Goto Content Browse Tab</td>
+            <td>Goto a Document</td>
           </tr>
           <tr>
             <td>
@@ -2163,6 +2295,12 @@
               <a href="../delve_into/user/information_architects/howto/goto_content_browse_tab.html#How_to_get_to_the_content_browse_tab_">How to get to the content browse tab.</a>
             </td>
             <td>Howto: Go to content browse tab</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/goto_content_workspace.html#How_to_get_to_the_content_workspace_">How to get to the content workspace.</a>
+            </td>
+            <td>Howto: Goto Content workspace</td>
           </tr>
           <tr>
             <td>
@@ -2193,6 +2331,18 @@
               <a href="../delve_into/user/editors/howto/handle_request.html#How_to_handle_a_request_">How to handle a request.</a>
             </td>
             <td>Howto: Handle request</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/core/building/eclipse.html#How_to_import_and_work_with_the_Hippo_CMS_project_in_the_Eclipse_IDE_">How to import and work with the Hippo CMS project in the Eclipse IDE.</a>
+            </td>
+            <td>Developing Hippo CMS with Eclipse</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/core/building/netbeans.html#How_to_import_and_work_with_the_Hippo_CMS_project_in_the_Netbeans_IDE_">How to import and work with the Hippo CMS project in the Netbeans IDE.</a>
+            </td>
+            <td>Building with Netbeans</td>
           </tr>
           <tr>
             <td>
@@ -2488,7 +2638,7 @@
             <td>
               <a href="../delve_into/core/building/eclipse.html#Introduction">Introduction</a>
             </td>
-            <td>Introduction</td>
+            <td>Developing Hippo CMS with Eclipse</td>
           </tr>
           <tr>
             <td>
@@ -2572,7 +2722,7 @@
             <td>
               <a href="../delve_into/core/building/eclipse.html#Keeping_up">Keeping up</a>
             </td>
-            <td>Introduction</td>
+            <td>Developing Hippo CMS with Eclipse</td>
           </tr>
           <tr>
             <td>
@@ -2609,6 +2759,12 @@
               <a href="../delve_into/web/add-ons/howto/index.html#Learn_how_to_make_your_own_content_add-ons_">Learn how to make your own content add-ons.</a>
             </td>
             <td>Welcome: Howto</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/learn_meaning_of_inputfield.html#Learn_meaning_of_inputfield">Learn meaning of inputfield</a>
+            </td>
+            <td>Howto: Learn meaning of inputfield</td>
           </tr>
           <tr>
             <td>
@@ -2804,6 +2960,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/custom/jcr/jcr.html#Next">Next</a>
+            </td>
+            <td>JCR Basics</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/quickstart.html#Next">Next</a>
             </td>
             <td>Quickstart Steps</td>
@@ -2900,6 +3062,30 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/content_workspace.html#Next">Next</a>
+            </td>
+            <td>Concept: Content Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/slider.html#Next">Next</a>
+            </td>
+            <td>Concept: Slider</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/workspace_navigation_panel.html#Next">Next</a>
+            </td>
+            <td>Concept: Workspace Navigation Panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/workspace.html#Next">Next</a>
+            </td>
+            <td>Concept: Workspace</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/create_document.html#Next">Next</a>
             </td>
             <td>Howto: Create Document</td>
@@ -2930,9 +3116,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/goto_content_browse_tab.html#Next">Next</a>
+              <a href="../delve_into/user/contributors/howto/goto_content_workspace.html#Next">Next</a>
             </td>
-            <td>Howto: Goto Content Browse Tab</td>
+            <td>Howto: Goto Content workspace</td>
           </tr>
           <tr>
             <td>
@@ -2960,6 +3146,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/open_request_publication.html#Next">Next</a>
+            </td>
+            <td>Howto: Request Publication of Document</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/request_publication.html#Next">Next</a>
             </td>
             <td>Howto: Request Publication of Document</td>
@@ -2975,6 +3167,12 @@
               <a href="../delve_into/user/contributors/howto/start_CMS.html#Next">Next</a>
             </td>
             <td>Howto: Start CMS</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/todo/goto_document_tab.html#Next">Next</a>
+            </td>
+            <td>Goto a Document</td>
           </tr>
           <tr>
             <td>
@@ -3274,7 +3472,7 @@
             <td>
               <a href="../delve_into/core/building/eclipse.html#Prepare">Prepare</a>
             </td>
-            <td>Introduction</td>
+            <td>Developing Hippo CMS with Eclipse</td>
           </tr>
           <tr>
             <td>
@@ -3386,13 +3584,25 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/open_request_publication.html#Request_Publication_of_Document">Request Publication of Document</a>
+            </td>
+            <td>Howto: Request Publication of Document</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/request_publication.html#Request_Publication_of_Document">Request Publication of Document</a>
             </td>
             <td>Howto: Request Publication of Document</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/request_publication.html#request_publication_screenshot">request publication screenshot</a>
+              <a href="../delve_into/user/contributors/howto/open_request_publication.html#request_schedule_publication_screenshot">request schedule publication screenshot</a>
+            </td>
+            <td>Howto: Request Publication of Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/request_publication.html#request_schedule_publication_screenshot">request schedule publication screenshot</a>
             </td>
             <td>Howto: Request Publication of Document</td>
           </tr>
@@ -3430,7 +3640,7 @@
             <td>
               <a href="../delve_into/core/building/eclipse.html#Run">Run</a>
             </td>
-            <td>Introduction</td>
+            <td>Developing Hippo CMS with Eclipse</td>
           </tr>
           <tr>
             <td>
@@ -3668,6 +3878,18 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/slider.html#Slider">Slider</a>
+            </td>
+            <td>Concept: Slider</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/slider.html#sliders">sliders</a>
+            </td>
+            <td>Concept: Slider</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/cms_admins/howto/start_CMS.html#Start_CMS">Start CMS</a>
             </td>
             <td>Howto: Start CMS</td>
@@ -3752,6 +3974,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/core/index.html#Take_a_deep_dive_into_core_Hippo_CMS_development_">Take a deep dive into core Hippo CMS development.</a>
+            </td>
+            <td>Welcome: Hacking the core</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/reference/index.html#Technical_documentation_on_add-on_development_">Technical documentation on add-on development.</a>
             </td>
             <td>Welcome: Add-on Reference</td>
@@ -3797,6 +4025,12 @@
               <a href="../delve_into/user/information_architects/howto/document_types/editor.html#The_Document_Type_Editor">The Document Type Editor</a>
             </td>
             <td>The Document Type Editor</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/core/fundamentals/index.html#The_fundamental_ideas_behind_the_code_explained_">The fundamental ideas behind the code explained.</a>
+            </td>
+            <td>Welcome: Fundamentals</td>
           </tr>
           <tr>
             <td>
@@ -3999,6 +4233,60 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/document_card.html#What_and_where_are_document_cards_">What and where are document cards?</a>
+            </td>
+            <td>Concept: Document card</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/slider.html#What_and_where_are_sliders_">What and where are sliders?</a>
+            </td>
+            <td>Concept: Slider</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/content_tabulation_panel.html#What_and_where_is_the_content_tabulation_panel_">What and where is the content tabulation panel?</a>
+            </td>
+            <td>Concept: Content tabulation panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/content_workspace.html#What_and_where_is_the_content_workspace_">What and where is the content workspace?</a>
+            </td>
+            <td>Concept: Content Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/document_panel.html#What_and_where_is_the_document_panel_">What and where is the document panel?</a>
+            </td>
+            <td>Concept: Document panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/folder_action_menu.html#What_and_where_is_the_folder_action_menu_">What and where is the folder action menu?</a>
+            </td>
+            <td>Concept: Folder action menu</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/folder_navigation_panel.html#What_and_where_is_the_folder_navigation_panel_">What and where is the folder navigation panel?</a>
+            </td>
+            <td>Concept: Folder navigation panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/home_workspace.html#What_and_where_is_the_home_workspace_">What and where is the home workspace?</a>
+            </td>
+            <td>Concept: Home Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/workspace_navigation_panel.html#What_and_where_is_the_workspace_navigation_panel_">What and where is the workspace navigation panel?</a>
+            </td>
+            <td>Concept: Workspace Navigation Panel</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/sysadmin/requirements.html#What_do_you_need_to_run_Hippo_CMS_">What do you need to run Hippo CMS?</a>
             </td>
             <td>Requirements</td>
@@ -4071,9 +4359,21 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/workspace.html#What_is_a_workspace_">What is a workspace?</a>
+            </td>
+            <td>Concept: Workspace</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../index.html#What_is_Hippo_CMS_">What is Hippo CMS?</a>
             </td>
             <td>Welcome: What is Hippo CMS?</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/current_folder.html#What_is_the_current_folder_">What is the current folder?</a>
+            </td>
+            <td>Concept: Current folder</td>
           </tr>
           <tr>
             <td>
@@ -4104,6 +4404,12 @@
               <a href="../delve_into/custom/jcr/jcr_dropbox_example.html#What's_the_demo_all_about">What's the demo all about</a>
             </td>
             <td>Demo on interfacing with Hippo ECM Repository</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/learn_meaning_of_inputfield.html#Why_and_how_to_learn_the_meaning_of_an_inputfield_">Why and how to learn the meaning of an inputfield?</a>
+            </td>
+            <td>Howto: Learn meaning of inputfield</td>
           </tr>
           <tr>
             <td>
@@ -4155,6 +4461,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/workspace.html#Workspace">Workspace</a>
+            </td>
+            <td>Concept: Workspace</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/sysadmin/configuration/repository/workspace.html#Workspace_configuration">Workspace configuration</a>
             </td>
             <td>Workspace configuration</td>
@@ -4164,6 +4476,18 @@
               <a href="../delve_into/sysadmin/configuration/repository/index.html#Workspace_element">Workspace element</a>
             </td>
             <td>Welcome: Repository configuration</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/workspace_navigation_panel.html#Workspace_Navigation_Panel">Workspace Navigation Panel</a>
+            </td>
+            <td>Concept: Workspace Navigation Panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/workspace_navigation_panel.html#workspace_navigation_panel_screenshot">workspace navigation panel screenshot</a>
+            </td>
+            <td>Concept: Workspace Navigation Panel</td>
           </tr>
           <tr>
             <td>
