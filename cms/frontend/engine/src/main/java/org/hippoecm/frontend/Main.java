@@ -138,25 +138,6 @@ public class Main extends WebApplication {
             }
         });
 
-        // delegate i18n caching to providers
-        resourceSettings.setLocalizer(new Localizer() {
-            @Override
-            protected String getCacheKey(String key, Component component) {
-                IStringResourceProvider provider;
-                if (component instanceof IStringResourceProvider) {
-                    provider = (IStringResourceProvider) component;
-                } else {
-                    provider = (IStringResourceProvider) component
-                        .findParent(IStringResourceProvider.class);
-                }
-                if (provider != null) {
-                    return null;
-                } else {
-                    return super.getCacheKey(key, component);
-                }
-            }
-        });
-
         // replace current loaders with own list, starting with component-specific
         List<IStringResourceLoader> loaders = new ArrayList<IStringResourceLoader>(resourceSettings
                 .getStringResourceLoaders());
