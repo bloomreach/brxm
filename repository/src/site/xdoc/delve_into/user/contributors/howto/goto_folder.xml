@@ -53,7 +53,7 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./create_document.html'>Create a document (continue tour)</a>.</li>
+    <li><a href='./create_document.html'>Create a document (continue</a> <a href='../concepts/tour.html'>tour)</a>.</li>
     <!-- <li><a href='./goto_document_tab.html'>Goto document tab</a>.</li> -->
    </ul>       
   </subsection>

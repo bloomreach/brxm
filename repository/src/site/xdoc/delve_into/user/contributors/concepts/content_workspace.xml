@@ -29,21 +29,29 @@ ________________________________________________________________________________
     <section name="Content Workspace">
       <span class="shortdesc">What and where is the content workspace?</span>
 
-   <div class='screenshot'>
+   <div class='group'>
+    <div class='screenshot'>
      <img src="../../../../images/screenshots/cms_M9/contribs/content_workspace.png" alt='content workspace'/>
-     <p>
+    </div>
+    <p>
       The content <a href='./workspace.html'>workspace</a>. 
-     </p>   
+    </p>   
    </div>
 
     <p>
-     The content workspace is the <a href='./workspace.html'>workspace</a> where you can
+     The <i>content workspace</i> is the <a href='./workspace.html'>workspace</a> where you can
      work with <span href='content'>content</span>.
     </p>    
 
   <subsection name='Alternative'>
-   In the <a href='./home_workspace.html'>home workspace</a> you can work with your todo list, or see the history of actions of all users.  
+   In the <a href='./home_workspace.html'>home workspace</a> you can work with your 
+   <span href='./todo_panel.html'>todo list</span>, or see the 
+   <span href='./hisory_panel.html'>history of actions of all users</span>.  
   </subsection>
+
+    <subsection name='Next'>
+     If you are doing the tour, use the back button of your browser to resume the tour.
+    </subsection>
 
    </section>
   </body>

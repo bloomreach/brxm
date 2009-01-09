@@ -35,12 +35,15 @@ ________________________________________________________________________________
 
     <p>
      In the <a href='../concepts/workspace_navigation_panel.html'>workspace navigation panel</a>,
-     click on the content workspace icon (an image of a folder): <span class='content_browse-16'/>.
+     click on the <a href='../concepts/content_workspace.html'>content workspace</a> icon 
+     (an image of a folder): <span class='content-workspace-16 icon-16'/>.
     </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./goto_folder.html'>Go to folder, i.e. make it the current folder (continue tour)</a>.</li>
+    <li><a href='./goto_folder.html'>Go to folder</a>, i.e. make it 
+      the <a href='../concepts/current_folder.html'>current folder</a> 
+      (<a href='./goto_folder.html'>continue</a> <a href='../tour.html'>tour</a>).</li>
    </ul>       
   </subsection>
 

@@ -29,14 +29,16 @@ ________________________________________________________________________________
     <section name="Request Publication of Document">
       <span class="shortdesc">How to ask the editor to publish a document?</span>
 
-   <div class='screenshot'>
-     <img src="../../../../images/screenshots/cms_M9/contribs/goto_request_schedule_publication.png" alt='request schedule publication screenshot'/> 
-     <p>
+   <div class='group'>
+    <div class='screenshot'>
+     <img src="../../../../images/screenshots/cms_M9/contribs/goto_request_schedule_publication.png" alt='request schedule publication screenshot'/>
+    </div> 
+    <p>
       Requesting publication of the document 'multibazaar2009'. 
       A window will popup where you can 
 
       The editor will be notified and accept or reject this request.
-     </p>
+    </p>
    </div>
 
    <p>
@@ -52,7 +54,7 @@ ________________________________________________________________________________
    <ul>
   <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
     <li><a href='./goto_folder.html'>goto another folder (list its contents)</a>.</li>
-    <li><a href='./logout.html'>Logout (continue tour)<a/></li>
+    <li><a href='./logout.html'>Logout (continue tour)</a></li>
    </ul>       
   </subsection>
 

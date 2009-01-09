@@ -29,9 +29,11 @@ ________________________________________________________________________________
    <section name="Content tabulation panel">
       <span class="shortdesc">What and where is the content tabulation panel?</span>
 
-    <div class='screenshot'>
-     <img src="../../../../images/screenshots/cms_M9/contribs/content_tabulation_panel.png" 
-     alt='content tabulation panel screenshot'/>
+    <div class='group'>
+     <div class='screenshot'>
+      <img src="../../../../images/screenshots/cms_M9/contribs/content_tabulation_panel.png" 
+       alt='content tabulation panel screenshot'/>
+     </div>
      <p>
       The content tabulation panel. 
       <!-- Note that the left part of the content tabulation panel
@@ -51,6 +53,7 @@ ________________________________________________________________________________
      if it is published on the web or not.
 
      <span class='add'>more on publish states</span>
+    </p>
 
    </section>
   </body>
