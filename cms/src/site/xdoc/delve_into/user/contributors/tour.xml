@@ -25,13 +25,13 @@
   <section name="Hippo CMS Contributor Tour">
     <span class='shortdesc'>To get introduced to the role of CMS Contributor, take the following tour.</span> 
 
-     <p>To get introduced to the role of CMS contributor, you will look over the shoulder of
-        Marc, who is a member of the imaginary organization Saraswatia,
+     <p>To get introduced to the role of CMS <a href='./concepts/contributor.html'>contributor</a>, 
+        you will look over the shoulder of Marc, 
+        who is a member of the imaginary organization Saraswatia,
         an organization of people very interested in music, art and knowledge. We did not imagine an
         answer to the question whether Saraswatia is a commercial organization, a hobby organization, or both. 
     </p>
-    <p>Saraswatia decided to publish an online newspaper about music, art and knowledge. The name will be Sar, which
-        is just an abbreviation of `Saraswatia Articles'. 
+    <p>Saraswatia decided to publish an online newspaper about music, art and knowledge. 
     </p>
     <p>Marc will add an article about an upcoming multicultural Bazaar.
     </p>
@@ -40,7 +40,7 @@
     <table>
   
      <tr>
-      <td><a href="http://localhost:8080/cms/">Browser</a></td>
+      <td><a href="./howto/start_CMS.html">Browser</a></td>
       <td>
        <span class='web-48 icon-48'/> 
       </td>
@@ -68,6 +68,18 @@
      </tr>
 
     <tr>
+      <td><a href="./howto/goto_content_workspace.html">Goto workspace</a></td>
+      <td>
+       <span class='user-48 icon-48'/> 
+      </td>
+      <td> 
+         Because Marc wants to work on 
+         <span href='./concepts/content.html'>content</span>, 
+         he first goes to the <a href='./concepts/content_workspace.html'>content workspace</a>.  
+      </td>
+    </tr>
+
+    <tr>
       <td><a href="./howto/goto_folder.html">Goto Folder</a></td>
       <td>
        <span class='user-48 icon-48'/> 
@@ -86,8 +98,10 @@
       </td>
       <td>
          For the article about the upcoming multicultural bazaar, Marc creates a
-         document named 'multibazar2009'. He selects for it the document type 'upcoming',
-         because that is the type for upcoming happenings, like the bazaar.
+         <a href='./concepts/document.html'>document</a> named 'multibazar2009'. 
+         He gives it the <a href='./concepts/document_type.html'>document type</a> 'upcoming',
+         because that is in Saraswatia the <a href='./concepts/document_type.html'>document type</a> 
+         for upcoming happenings, like the bazaar.
       </td>
      </tr>
  
