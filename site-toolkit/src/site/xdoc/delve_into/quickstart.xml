@@ -66,9 +66,10 @@
           <span class='download-48 icon-48'/>
 	 </td>
          <td>
-           <a href='http://docs.onehippo.org/hippo-ecm/SNAPSHOT/delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat'>
-            ...
-           </a>
+           Follow the instruction for the installing the plain CMS package:
+           <a href='http://www.onehippo.org/cms7/delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat'>
+            plain CMS package install</a>, but don't install the plain CMS package, but the package with additions for
+            the hst, see the next step.
 	 </td>
 	</tr>
           <tr>

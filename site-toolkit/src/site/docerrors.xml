@@ -8,43 +8,30 @@
    
    <folder>about
    
-   <document ext="xml" filename="architecture" relpath="about">Change to the document title
-    <unlinked> The file file:///home/rita/werk/hst/target/site/about/architecture.html is never referenced in the site, not even from the menu.</unlinked>
+   <document ext="xml" filename="architecture" relpath="about">Change to the document title<linkto_unchecked/>
     <empty>Document has template content: 'Change to the browser title'.</empty>
     <empty>Document has template content: 'Change to the document title'.</empty>
     <empty>Document has template content: 'Change to document short description'.</empty>
-    <rewrite>this whole document.</rewrite></document><document ext="xml" filename="features" relpath="about">Change to the document title
-    <unlinked> The file file:///home/rita/werk/hst/target/site/about/features.html is never referenced in the site, not even from the menu.</unlinked>
+    <rewrite>this whole document.</rewrite></document><document ext="xml" filename="features" relpath="about">Change to the document title<linkto_unchecked/>
     <empty>Document has template content: 'Change to the browser title'.</empty>
     <empty>Document has template content: 'Change to the document title'.</empty>
     <empty>Document has template content: 'Change to document short description'.</empty>
-    <rewrite>this whole document.</rewrite></document><document ext="xml" filename="term_index" relpath="about">
-    <unlinked> The file file:///home/rita/werk/hst/target/site/about/term_index.html is never referenced in the site, not even from the menu.</unlinked>
+    <rewrite>this whole document.</rewrite></document><document ext="xml" filename="term_index" relpath="about"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="use_cases" relpath="about">Change to the document title
-    <unlinked> The file file:///home/rita/werk/hst/target/site/about/use_cases.html is never referenced in the site, not even from the menu.</unlinked>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="use_cases" relpath="about">Change to the document title<linkto_unchecked/>
     <empty>Document has template content: 'Change to the browser title'.</empty>
     <empty>Document has template content: 'Change to the document title'.</empty>
     <empty>Document has template content: 'Change to document short description'.</empty>
     <rewrite>this whole document.</rewrite></document></folder><folder>delve_into
    
-   <document ext="xml" filename="how_does_hst2_work" relpath="delve_into">How does Hippo Site Toolkit 2 work?
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/how_does_hst2_work.html is never referenced in the site, not even from the menu.</unlinked>
+   <document ext="xml" filename="how_does_hst2_work" relpath="delve_into">How does Hippo Site Toolkit 2 work?<linkto_unchecked/>
     <add>More introduction</add>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><folder>howto
    
-   <document ext="xml" filename="facebook" relpath="delve_into/howto">Create a Facebook
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/howto/facebook.html is never referenced in the site, not even from the menu.</unlinked></document><document ext="xml" filename="form" relpath="delve_into/howto">Form Handling
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/howto/form.html is never referenced in the site, not even from the menu.</unlinked></document><document ext="xml" filename="free_meta_search" relpath="delve_into/howto">Free Meta Search
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/howto/free_meta_search.html is never referenced in the site, not even from the menu.</unlinked>
-    <rewrite>this whole document.</rewrite></document><document ext="xml" filename="free_text_search" relpath="delve_into/howto">Free Text Search
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/howto/free_text_search.html is never referenced in the site, not even from the menu.</unlinked></document><document ext="xml" filename="hello_world" relpath="delve_into/howto">Hello World
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/howto/hello_world.html is never referenced in the site, not even from the menu.</unlinked>
-    <multisection>Has 2 sections.</multisection></document><document ext="xml" filename="index" relpath="delve_into/howto">Howto
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/howto/index.html is never referenced in the site, not even from the menu.</unlinked></document><document ext="xml" filename="start_project" relpath="delve_into/howto">Start a project
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/howto/start_project.html is never referenced in the site, not even from the menu.</unlinked>
-    <multisection>Has 2 sections.</multisection></document></folder><document ext="xml" filename="quickstart" relpath="delve_into">Quickstart
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/quickstart.html is never referenced in the site, not even from the menu.</unlinked>
+   <document ext="xml" filename="facebook" relpath="delve_into/howto">Create a Facebook<linkto_unchecked/></document><document ext="xml" filename="form" relpath="delve_into/howto">Form Handling<linkto_unchecked/></document><document ext="xml" filename="free_meta_search" relpath="delve_into/howto">Free Meta Search<linkto_unchecked/>
+    <rewrite>this whole document.</rewrite></document><document ext="xml" filename="free_text_search" relpath="delve_into/howto">Free Text Search<linkto_unchecked/></document><document ext="xml" filename="hello_world" relpath="delve_into/howto">Hello World<linkto_unchecked/>
+    <multisection>Has 2 sections.</multisection></document><document ext="xml" filename="index" relpath="delve_into/howto">Howto<linkto_unchecked/></document><document ext="xml" filename="start_project" relpath="delve_into/howto">Start a project<linkto_unchecked/>
+    <multisection>Has 2 sections.</multisection></document></folder><document ext="xml" filename="quickstart" relpath="delve_into">Quickstart<linkto_unchecked/>
     <rewrite>For CMS the quickstart package is called quickstart and this one gettingstarted, while `hst' is not part of the package name. 
              I think all quickstart packages should have `quickstart' in their name and they also all should contain the project (product) name in their name.
              Or maybe there is some other consistent and clear naming scheme.
@@ -56,91 +43,60 @@
    
    <folder>components
    
-   <document ext="xml" filename="binaries" relpath="delve_into/reference/components">Serving binaries with the BinariesServlet
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/binaries.html is never referenced in the site, not even from the menu.</unlinked>
+   <document ext="xml" filename="binaries" relpath="delve_into/reference/components">Serving binaries with the BinariesServlet<linkto_unchecked/>
     <badtext>property of your<span class="bad"> current </span>item. In the following example</badtext>
     <badtext>is a subnode of the<span class="bad"> current </span>pageNode:</badtext>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="el-index" relpath="delve_into/reference/components">HST2 Expression Language
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/el-index.html is never referenced in the site, not even from the menu.</unlinked>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="el-index" relpath="delve_into/reference/components">HST2 Expression Language<linkto_unchecked/>
     <badtext>An HST2 web filter provides an object in request scope that is able to access the<span class="bad"> current </span>pageNode. This object, by default identified by the name</badtext>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="el-queries" relpath="delve_into/reference/components">Change to the document title
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/el-queries.html is never referenced in the site, not even from the menu.</unlinked>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="el-queries" relpath="delve_into/reference/components">Change to the document title<linkto_unchecked/>
     <empty>Document has template content: 'Change to the browser title'.</empty>
     <empty>Document has template content: 'Change to the document title'.</empty>
-    <rewrite>this whole document.</rewrite></document><document ext="xml" filename="filters" relpath="delve_into/reference/components">HST2 Filters
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/filters.html is never referenced in the site, not even from the menu.</unlinked>
+    <rewrite>this whole document.</rewrite></document><document ext="xml" filename="filters" relpath="delve_into/reference/components">HST2 Filters<linkto_unchecked/>
     <badtext>The URLMappingTemplateContextFilter will examine the<span class="bad"> current </span>request and will try to resolve the current pageNode. The pageNode contains all information on the current request and will gather all information about it's sub elements on the current page:</badtext>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="index" relpath="delve_into/reference/components">Components
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/index.html is never referenced in the site, not even from the menu.</unlinked>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="index" relpath="delve_into/reference/components">Components<linkto_unchecked/>
     <todo><span class="bad"> TODO </span></todo>
     <todo>-<span class="bad"> TODO </span></todo>
     <todo>-<span class="bad"> TODO </span></todo>
     <todo>-<span class="bad"> TODO </span></todo>
     <todo>-<span class="bad"> TODO </span></todo>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="jsp-taglib" relpath="delve_into/reference/components">The JSP tag library
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/jsp-taglib.html is never referenced in the site, not even from the menu.</unlinked>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="jsp-taglib" relpath="delve_into/reference/components">The JSP tag library<linkto_unchecked/>
     <badtext>Exposes the<span class="bad"> current </span>pageNode (selected document) to the JSP file.</badtext>
     <badtext>Creates a rewritten link for the<span class="bad"> current </span>document, based on the urlmapping.</badtext>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="modules" relpath="delve_into/reference/components">Modules
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/modules.html is never referenced in the site, not even from the menu.</unlinked>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="modules" relpath="delve_into/reference/components">Modules<linkto_unchecked/>
     <todo><span class="bad"> TODO </span></todo>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><folder>tag
    
-   <document ext="xml" filename="container-tag" relpath="delve_into/reference/components/tag">The &lt;hst-tmpl:container&gt; tag
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/tag/container-tag.html is never referenced in the site, not even from the menu.</unlinked>
+   <document ext="xml" filename="container-tag" relpath="delve_into/reference/components/tag">The &lt;hst-tmpl:container&gt; tag<linkto_unchecked/>
     <badtext>allows you to provide additional parameters to the<span class="bad"> current </span>module.</badtext>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="content-tag" relpath="delve_into/reference/components/tag">The &lt;hst:content&gt; tag
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/tag/content-tag.html is never referenced in the site, not even from the menu.</unlinked>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="context-tag" relpath="delve_into/reference/components/tag">The &lt;hst:context&gt; tag
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/tag/context-tag.html is never referenced in the site, not even from the menu.</unlinked>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="content-tag" relpath="delve_into/reference/components/tag">The &lt;hst:content&gt; tag<linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="context-tag" relpath="delve_into/reference/components/tag">The &lt;hst:context&gt; tag<linkto_unchecked/>
     <badtext>The required string location relative to the<span class="bad"> current </span>context from which a new context is created.</badtext>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="documents-tag" relpath="delve_into/reference/components/tag">The &lt;hst:documents&gt; tag and derived tags
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/tag/documents-tag.html is never referenced in the site, not even from the menu.</unlinked>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="encodeurl-tag" relpath="delve_into/reference/components/tag">The &lt;hst:encodeURL&gt; tag
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/tag/encodeurl-tag.html is never referenced in the site, not even from the menu.</unlinked>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="include-tag" relpath="delve_into/reference/components/tag">The &lt;hst:include&gt; tag
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/tag/include-tag.html is never referenced in the site, not even from the menu.</unlinked>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="link-tag" relpath="delve_into/reference/components/tag">The &lt;hst-tmpl:link&gt; tag
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/tag/link-tag.html is never referenced in the site, not even from the menu.</unlinked>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="menu-tag" relpath="delve_into/reference/components/tag">The &lt;hst:menu&gt; tag
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/tag/menu-tag.html is never referenced in the site, not even from the menu.</unlinked>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="moduleParameter-tag" relpath="delve_into/reference/components/tag">The &lt;hst-tmpl:moduleParameter&gt; tag
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/tag/moduleParameter-tag.html is never referenced in the site, not even from the menu.</unlinked>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="documents-tag" relpath="delve_into/reference/components/tag">The &lt;hst:documents&gt; tag and derived tags<linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="encodeurl-tag" relpath="delve_into/reference/components/tag">The &lt;hst:encodeURL&gt; tag<linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="include-tag" relpath="delve_into/reference/components/tag">The &lt;hst:include&gt; tag<linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="link-tag" relpath="delve_into/reference/components/tag">The &lt;hst-tmpl:link&gt; tag<linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="menu-tag" relpath="delve_into/reference/components/tag">The &lt;hst:menu&gt; tag<linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="moduleParameter-tag" relpath="delve_into/reference/components/tag">The &lt;hst-tmpl:moduleParameter&gt; tag<linkto_unchecked/>
     <badtext>allows you to provide additional parameters to the<span class="bad"> current </span>module.</badtext>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="module-tag" relpath="delve_into/reference/components/tag">The &lt;hst-tmpl:module&gt; tag
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/tag/module-tag.html is never referenced in the site, not even from the menu.</unlinked>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="module-tag" relpath="delve_into/reference/components/tag">The &lt;hst-tmpl:module&gt; tag<linkto_unchecked/>
     <badtext>instanties the<span class="bad"> current </span>module and based on the attributes renders or executes the modules businesslogic.</badtext>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="node-tag" relpath="delve_into/reference/components/tag">The &lt;hst-tmpl:node&gt; tag
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/tag/node-tag.html is never referenced in the site, not even from the menu.</unlinked>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="node-tag" relpath="delve_into/reference/components/tag">The &lt;hst-tmpl:node&gt; tag<linkto_unchecked/>
     <badtext>exposes the<span class="bad"> current </span>pageNode to the current JSP pageContext. Within the JSP you can use the pageNode to retrieve the content of the selected document.</badtext>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="sitemap-tag" relpath="delve_into/reference/components/tag">The &lt;hst:siteMap&gt; tag
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/tag/sitemap-tag.html is never referenced in the site, not even from the menu.</unlinked>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="url-mapping" relpath="delve_into/reference/components">URL mapping
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/components/url-mapping.html is never referenced in the site, not even from the menu.</unlinked>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="concepts" relpath="delve_into/reference">Concepts
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/concepts.html is never referenced in the site, not even from the menu.</unlinked></document><folder>configuration
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="sitemap-tag" relpath="delve_into/reference/components/tag">The &lt;hst:siteMap&gt; tag<linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="url-mapping" relpath="delve_into/reference/components">URL mapping<linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="concepts" relpath="delve_into/reference">Concepts<linkto_unchecked/></document><folder>configuration
    
-   <document ext="xml" filename="hstproperties" relpath="delve_into/reference/configuration">HST Configuration in hst.properties
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/hstproperties.html is never referenced in the site, not even from the menu.</unlinked>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="index" relpath="delve_into/reference/configuration">Configuration
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/index.html is never referenced in the site, not even from the menu.</unlinked></document><document ext="xml" filename="website" relpath="delve_into/reference/configuration">Website Configuration
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/website.html is never referenced in the site, not even from the menu.</unlinked>
+   <document ext="xml" filename="hstproperties" relpath="delve_into/reference/configuration">HST Configuration in hst.properties<linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="index" relpath="delve_into/reference/configuration">Configuration<linkto_unchecked/></document><document ext="xml" filename="website" relpath="delve_into/reference/configuration">Website Configuration<linkto_unchecked/>
     <todo><span class="bad"> TODO </span></todo>
     <empty_elem>&lt;td/&gt;</empty_elem>
     <empty_elem>&lt;td/&gt;</empty_elem>
-    <empty_elem>&lt;td/&gt;</empty_elem></document><document ext="xml" filename="webxml" relpath="delve_into/reference/configuration">HST Configuration in web.xml
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/webxml.html is never referenced in the site, not even from the menu.</unlinked>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="index" relpath="delve_into/reference">Reference
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/index.html is never referenced in the site, not even from the menu.</unlinked></document><document ext="xml" filename="synonyms" relpath="delve_into/reference">Synonyms
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/synonyms.html is never referenced in the site, not even from the menu.</unlinked></document></folder></folder><document ext="xml" filename="errorlist" relpath=".">
-    <unlinked> The file file:///home/rita/werk/hst/target/site/errorlist.html is never referenced in the site, not even from the menu.</unlinked>
+    <empty_elem>&lt;td/&gt;</empty_elem></document><document ext="xml" filename="webxml" relpath="delve_into/reference/configuration">HST Configuration in web.xml<linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="index" relpath="delve_into/reference">Reference<linkto_unchecked/></document><document ext="xml" filename="synonyms" relpath="delve_into/reference">Synonyms<linkto_unchecked/></document></folder></folder><document ext="xml" filename="errorlist" relpath="."><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="index" relpath=".">What is Hippo Site Toolkit 2?
-    <unlinked> The file file:///home/rita/werk/hst/target/site/index.html is never referenced in the site, not even from the menu.</unlinked>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="index" relpath=".">What is Hippo Site Toolkit 2?<linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><folder>support
    
-   <document ext="xml.vm" filename="community" relpath="support">Community Support
-    <unlinked> The file file:///home/rita/werk/hst/target/site/support/community.html is never referenced in the site, not even from the menu.</unlinked>
-    <badtext>: Read here what issues the developers of ${product_name} have been and are<span class="bad"> current </span>ly working on.</badtext></document><document ext="xml.vm" filename="contributing" relpath="support">Contributing
-    <unlinked> The file file:///home/rita/werk/hst/target/site/support/contributing.html is never referenced in the site, not even from the menu.</unlinked></document></folder></folder>
+   <document ext="xml.vm" filename="community" relpath="support">Community Support<linkto_unchecked/>
+    <badtext>: Read here what issues the developers of ${product_name} have been and are<span class="bad"> current </span>ly working on.</badtext></document><document ext="xml.vm" filename="contributing" relpath="support">Contributing<linkto_unchecked/></document></folder></folder>
 </document_list>
