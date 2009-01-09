@@ -24,13 +24,14 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">161 errors and/or todos in 81 out of 182 documents (44%).</span>
+      <span class="shortdesc">351 errors and/or todos in 193 out of 193 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
         <li>1 documents using dummy references.
      </li>
-        <li>8 unlinked documents.
+        <li> 
+        Checking if documents are linked to was not possible (no previous, readable linkreport to compare to).
        </li>
         <li>0 documents out of date (needing update).
      </li>
@@ -38,21 +39,21 @@
      </li>
         <li>3 documents to review.
      </li>
-        <li>47 documents missing required info.
+        <li>41 documents missing required info.
      </li>
         <li>3 empty documents.
      </li>
-        <li>8 documents to rewrite.
+        <li>9 documents to rewrite.
      </li>
-        <li>3 documents requiring additions.
+        <li>8 documents requiring additions.
      </li>
         <li>10 documents with unidentified TODO strings.
      </li>
-        <li>4 not valid XML documents.
+        <li>1 not valid XML documents.
      </li>
-        <li>12 documents with bad text.
+        <li>13 documents with bad text.
      </li>
-        <li>12 multisection documents.
+        <li>10 multisection documents.
      </li>
       </ul>
       <subsection name="Documents with dummy references: 1">
@@ -66,62 +67,10 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="Unlinked documents (compared to previous linkreport): 8">
-        <ol>
-          <li>
-            <a href="./delve_into/custom/schemas.html">schemas: </a>
-            <ul>
-              <li> The file file:///home/rita/werk/cms/target/site/delve_into/custom/schemas.html is never referenced in the site, not even from the menu.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/cms_admins/howto/schemas.html">schemas: </a>
-            <ul>
-              <li> The file file:///home/rita/werk/cms/target/site/delve_into/user/cms_admins/howto/schemas.html is never referenced in the site, not even from the menu.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/information_architects/howto/document_types/editor.html">editor: The Document Type Editor</a>
-            <ul>
-              <li> The file file:///home/rita/werk/cms/target/site/delve_into/user/information_architects/howto/document_types/editor.html is never referenced in the site, not even from the menu.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/information_architects/howto/document_types/examples.html">examples: Examples of document types</a>
-            <ul>
-              <li> The file file:///home/rita/werk/cms/target/site/delve_into/user/information_architects/howto/document_types/examples.html is never referenced in the site, not even from the menu.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/information_architects/howto/document_types/fieldtypes.html">fieldtypes: Field Types Reference</a>
-            <ul>
-              <li> The file file:///home/rita/werk/cms/target/site/delve_into/user/information_architects/howto/document_types/fieldtypes.html is never referenced in the site, not even from the menu.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/information_architects/howto/document_types/index.html">index: Document Types</a>
-            <ul>
-              <li> The file file:///home/rita/werk/cms/target/site/delve_into/user/information_architects/howto/document_types/index.html is never referenced in the site, not even from the menu.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/information_architects/howto/document_types/tutorial.html">tutorial: Document Type Tutorial</a>
-            <ul>
-              <li> The file file:///home/rita/werk/cms/target/site/delve_into/user/information_architects/howto/document_types/tutorial.html is never referenced in the site, not even from the menu.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./errorlist.html">errorlist: </a>
-            <ul>
-              <li> The file file:///home/rita/werk/cms/target/site/errorlist.html is never referenced in the site, not even from the menu.</li>
-            </ul>
-          </li>
-        </ol>
-      </subsection>
       <subsection name="Documents with standard typos: 1">
         <ol>
           <li>
-            <a href="./delve_into/core/building/eclipse.html">eclipse: Introduction</a>
+            <a href="./delve_into/core/building/eclipse.html">eclipse: Developing Hippo CMS with Eclipse</a>
             <ul>
               <li>Select JPOX -&gt; Enhancer and enter 'BCEL' in<span xmlns="" class="bad"> the the </span>'Class Enhancer' field.</li>
             </ul>
@@ -130,12 +79,6 @@
       </subsection>
       <subsection name="Documents with empty elements: 12">
         <ol>
-          <li>
-            <a href="./delve_into/core/building/netbeans.html">netbeans: Building with Netbeans</a>
-            <ul>
-              <li>&lt;section name='Building with Netbeans'/&gt;</li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/core/project-structure.html">project-structure: Project Structure</a>
             <ul>
@@ -198,11 +141,16 @@
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/contributors/howto/goto_content_browse_tab.html">goto_content_browse_tab: Goto Content Browse Tab</a>
+            <a href="./delve_into/user/contributors/howto/goto_content_workspace.html">goto_content_workspace: Goto Content workspace</a>
             <ul>
-              <li>...&lt;span class='content_browse-16'/&gt;,
-     at the left of the screen. 
+              <li>...&lt;span class='content-workspace-16 icon-16'/&gt;.
     .../&lt;p&gt;<br xmlns=""/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/howto/goto_folder.html">goto_folder: Goto a Folder</a>
+            <ul>
+              <li>&lt;a href='../concepts/content_listing_panel.html'/&gt;</li>
             </ul>
           </li>
           <li>
@@ -268,7 +216,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents lacking some information: 47">
+      <subsection name="Documents lacking some information: 41">
         <ol>
           <li>
             <a href="./about/architecture.html">architecture: Architecture</a>
@@ -303,48 +251,6 @@ repository is;
           </li>
           <li>
             <a href="./delve_into/core/architecture/index.html">index: Architecture</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/core/building/eclipse.html">eclipse: Introduction</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/core/building/index.html">index: Building Hippo ECM</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/core/building/maven.html">maven: Building with Maven</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/core/building/netbeans.html">netbeans: Building with Netbeans</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/core/concepts/index.html">index: Concepts</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/core/index.html">index: Development Guide</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/core/project-structure.html">project-structure: Project Structure</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
@@ -505,6 +411,13 @@ repository is;
             </ul>
           </li>
           <li>
+            <a href="./delve_into/user/contributors/howto/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
             <a href="./delve_into/user/editors/concepts/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
@@ -591,10 +504,10 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="rewrite documents: 8">
+      <subsection name="rewrite documents: 9">
         <ol>
           <li>
-            <a href="./delve_into/core/building/eclipse.html">eclipse: Introduction</a>
+            <a href="./delve_into/core/building/eclipse.html">eclipse: Developing Hippo CMS with Eclipse</a>
             <ul>
               <li>org.hippoecm.frontend.Home</li>
             </ul>
@@ -639,6 +552,12 @@ repository is;
             </ul>
           </li>
           <li>
+            <a href="./delve_into/user/contributors/concepts/document_panel.html">document_panel: Document panel</a>
+            <ul>
+              <li>Is for content. Call it content panel?</li>
+            </ul>
+          </li>
+          <li>
             <a href="./delve_into/user/contributors/howto/restore_previous_version.html">restore_previous_version: Restoring a previous version of a document</a>
             <ul>
               <li>all text</li>
@@ -646,7 +565,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Add something to documents: 3">
+      <subsection name="Add something to documents: 8">
         <ol>
           <li>
             <a href="./delve_into/overview.html">overview: Delve into Hippo CMS</a>
@@ -661,6 +580,36 @@ repository is;
           Also see
            href="http://jackrabbit.apache.org/doc/arch/operate/index-readers.html" JackRabbit lucene implementation.
           </li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/concepts/content_tabulation_panel.html">content_tabulation_panel: Content tabulation panel</a>
+            <ul>
+              <li>more on publish states</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/concepts/document_card.html">document_card: Document card</a>
+            <ul>
+              <li>more about cards in the image</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/howto/goto_folder.html">goto_folder: Goto a Folder</a>
+            <ul>
+              <li>Document about navigation in folder tree and reference from here.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/howto/learn_meaning_of_inputfield.html">learn_meaning_of_inputfield: Learn meaning of inputfield</a>
+            <ul>
+              <li>more info</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/howto/request_publication.html">request_publication: Request Publication of Document</a>
+            <ul>
+              <li>reference to opening it</li>
             </ul>
           </li>
           <li>
@@ -704,9 +653,11 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/core/concepts/index.html">index: Concepts</a>
+            <a href="./delve_into/core/fundamentals/index.html">index: Fundamentals</a>
             <ul>
-              <li><span xmlns="" class="bad"> TODO </span>: concepts behind the code explained</li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
             </ul>
           </li>
           <li>
@@ -758,20 +709,8 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="multisection documents: 12">
+      <subsection name="multisection documents: 10">
         <ol>
-          <li>
-            <a href="./delve_into/core/building/eclipse.html">eclipse: Introduction</a>
-            <ul>
-              <li>Has 6 sections.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/core/building/netbeans.html">netbeans: Building with Netbeans</a>
-            <ul>
-              <li>Has 4 sections.</li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/core/project-structure.html">project-structure: Project Structure</a>
             <ul>
@@ -834,7 +773,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="badtext documents: 12">
+      <subsection name="badtext documents: 13">
         <ol>
           <li>
             <a href="./delve_into/custom/howto/customize_versioning.html">customize_versioning: Customize versioning</a>
@@ -871,6 +810,27 @@ repository is;
             </ul>
           </li>
           <li>
+            <a href="./delve_into/user/contributors/concepts/current_folder.html">current_folder: Current folder</a>
+            <ul>
+              <li>What is the<span xmlns="" class="bad"> current </span>folder?</li>
+              <li>The<span xmlns="" class="bad"> current </span>folder is marked bright yellow in the</li>
+              <li>The<span xmlns="" class="bad"> current </span>folder is one single folder at any time, which is chosen by the user, by clicking on its name in the</li>
+              <li>. The<span xmlns="" class="bad"> current </span>folder name is marked with a color in the</li>
+              <li>. At any time, the user can chose another folder to be the<span xmlns="" class="bad"> current </span>folder.</li>
+              <li>The content of the<span xmlns="" class="bad"> current </span>folder is tabulated in the</li>
+              <li>The names of the subfolders of the<span xmlns="" class="bad"> current </span>folder are listed under the current folder name in the</li>
+              <li>. This allows to proceed to one of the subfolders and make that the<span xmlns="" class="bad"> current </span>folder.</li>
+              <li>Particular actions are possible for the<span xmlns="" class="bad"> current </span>folder, such as: creating a document in it, creating a subfolder in it, deleting a subfolder from it. The actions that a particular user may do on particular folder can be different for different fold</li>
+              <li>. At any particular moment, only folder actions on the<span xmlns="" class="bad"> current </span>folder are possible.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/concepts/folder_action_menu.html">folder_action_menu: Folder action menu</a>
+            <ul>
+              <li>At any particular moment, only folder actions on the<span xmlns="" class="bad"> current </span>folder are possible.</li>
+            </ul>
+          </li>
+          <li>
             <a href="./delve_into/user/contributors/concepts/versioning.html">versioning: Versioning</a>
             <ul>
               <li>, to replace the<span xmlns="" class="bad"> current </span>content of a document with content the document had sometime in the past.</li>
@@ -883,12 +843,6 @@ repository is;
               <li>the version is shown. The name of the article is shown (which is constant over all versions, only the<span xmlns="" class="bad"> current </span>name is shown, renaming or moving a document is not part of the document history of the document itself but --if available-- part of the document in which a document is embedded).</li>
               <li>on number is indicated, which counts from 1, the first version of a document created towards the most<span xmlns="" class="bad"> current </span>document, which does not have a version number yet. It will show the date and time, when a historic version of the document was created and until when that version of the document was the most current</li>
               <li>Note that this is not the same as when the next<span xmlns="" class="bad"> current </span>document was created, as it may be that there was no current document in the document history.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/contributors/howto/index.html">index: CMS Contributor Howto</a>
-            <ul>
-              <li>How to replace the<span xmlns="" class="bad"> current </span>content of a document with content the document had sometime in the past?</li>
             </ul>
           </li>
           <li>
@@ -920,26 +874,8 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="notvalid documents: 4">
+      <subsection name="notvalid documents: 1">
         <ol>
-          <li>
-            <a href="./delve_into/sysadmin/configuration/#database_server.html">#database_server: </a>
-            <ul>
-              <li>Document is not a valid XML document.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/web/add-ons/howto/#editing_template.html">#editing_template: </a>
-            <ul>
-              <li>Document is not a valid XML document.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/web/add-ons/howto/#packaging.html">#packaging: </a>
-            <ul>
-              <li>Document is not a valid XML document.</li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/web/jcr/*.html">*: </a>
             <ul>

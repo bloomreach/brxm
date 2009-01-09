@@ -49,10 +49,10 @@
    relpath='delve_into/core/building'
   >netbeans</file>
     </folder>
-    <folder>concepts
+    <folder>fundamentals
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
-   fullname='delve_into/core/concepts/index.xml'
-   relpath='delve_into/core/concepts'
+   fullname='delve_into/core/fundamentals/index.xml'
+   relpath='delve_into/core/fundamentals'
   >index</file>
     </folder>
     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
@@ -229,10 +229,6 @@
    fullname='delve_into/sysadmin/configuration/console.xml'
    relpath='delve_into/sysadmin/configuration'
   >console</file>
-     <file ext='xml#' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/sysadmin/configuration/#database_server.xml#'
-   relpath='delve_into/sysadmin/configuration'
-  >#database_server</file>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/sysadmin/configuration/database_server.xml'
    relpath='delve_into/sysadmin/configuration'
@@ -456,24 +452,79 @@
   </subsection>
  </afterlist>
 </info>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+   fullname='delve_into/user/contributors/concepts/content_tabulation_panel.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >content_tabulation_panel</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+   fullname='delve_into/user/contributors/concepts/content_workspace.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >content_workspace</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/contributors/concepts/current_folder.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >current_folder</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+   fullname='delve_into/user/contributors/concepts/document_card.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >document_card</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+   fullname='delve_into/user/contributors/concepts/document_panel.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >document_panel</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/concepts/document.xml'
    relpath='delve_into/user/contributors/concepts'
   >document</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/contributors/concepts/folder_action_menu.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >folder_action_menu</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/contributors/concepts/folder_navigation_panel.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >folder_navigation_panel</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/concepts/folder.xml'
    relpath='delve_into/user/contributors/concepts'
   >folder</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+   fullname='delve_into/user/contributors/concepts/home_workspace.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >home_workspace</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/concepts/index.xml'
    relpath='delve_into/user/contributors/concepts'
   >index</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/contributors/concepts/slider.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >slider</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/concepts/versioning.xml'
    relpath='delve_into/user/contributors/concepts'
   >versioning</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/contributors/concepts/workspace_navigation_panel.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >workspace_navigation_panel</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/contributors/concepts/workspace.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >workspace</file>
      </folder>
      <folder>howto
+<info>
+ <title>CMS Contributor Howto</title>
+ <shortdesc>A collection of howto's for small tasks a contributor may want to do.</shortdesc>
+ <afterlist>  
+  <subsection name='Alternative'>
+     <p>
+      If you do not know where to start, take the <a href="../tour.html">Tour</a>.
+     </p>
+  </subsection>
+ </afterlist>
+</info>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/howto/browsing_history_of_document.xml'
    relpath='delve_into/user/contributors/howto'
@@ -499,14 +550,14 @@
    relpath='delve_into/user/contributors/howto'
   >fill_string_field_in_document</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
-   fullname='delve_into/user/contributors/howto/goto_content_browse_tab.xml'
+   fullname='delve_into/user/contributors/howto/goto_content_workspace.xml'
    relpath='delve_into/user/contributors/howto'
-  >goto_content_browse_tab</file>
+  >goto_content_workspace</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/howto/goto_document_tab.xml'
    relpath='delve_into/user/contributors/howto'
   >goto_document_tab</file>
-      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/user/contributors/howto/goto_folder.xml'
    relpath='delve_into/user/contributors/howto'
   >goto_folder</file>
@@ -514,6 +565,10 @@
    fullname='delve_into/user/contributors/howto/index.xml'
    relpath='delve_into/user/contributors/howto'
   >index</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+   fullname='delve_into/user/contributors/howto/learn_meaning_of_inputfield.xml'
+   relpath='delve_into/user/contributors/howto'
+  >learn_meaning_of_inputfield</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/howto/login.xml'
    relpath='delve_into/user/contributors/howto'
@@ -523,6 +578,10 @@
    relpath='delve_into/user/contributors/howto'
   >logout</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/contributors/howto/open_request_publication.xml'
+   relpath='delve_into/user/contributors/howto'
+  >open_request_publication</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/user/contributors/howto/request_publication.xml'
    relpath='delve_into/user/contributors/howto'
   >request_publication</file>
@@ -538,6 +597,12 @@
    fullname='delve_into/user/contributors/howto/start_CMS.xml'
    relpath='delve_into/user/contributors/howto'
   >start_CMS</file>
+      <folder>todo
+       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/contributors/howto/todo/goto_document_tab.xml'
+   relpath='delve_into/user/contributors/howto/todo'
+  >goto_document_tab</file>
+      </folder>
      </folder>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/index.xml'
@@ -796,10 +861,6 @@
    <folder>web
     <folder>add-ons
      <folder>howto
-      <file ext='html#' mimetype='text/html'
-   fullname='delve_into/web/add-ons/howto/#editing_template.html#'
-   relpath='delve_into/web/add-ons/howto'
-  >#editing_template</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/web/add-ons/howto/editing_template.xml'
    relpath='delve_into/web/add-ons/howto'
@@ -808,10 +869,6 @@
    fullname='delve_into/web/add-ons/howto/index.xml'
    relpath='delve_into/web/add-ons/howto'
   >index</file>
-      <file ext='html#' mimetype='text/html'
-   fullname='delve_into/web/add-ons/howto/#packaging.html#'
-   relpath='delve_into/web/add-ons/howto'
-  >#packaging</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/web/add-ons/howto/packaging.xml'
    relpath='delve_into/web/add-ons/howto'

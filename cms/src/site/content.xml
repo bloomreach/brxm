@@ -28,36 +28,44 @@
    <section>Architecture</section>
   </document></folder><folder>building
    
-   <document ext="xml.vm" filename="eclipse" relpath="delve_into/core/building">Introduction
-   <section>Introduction</section>
-   <section>Prepare</section>
-   <section>Create Eclipse projects</section>
-   <section>Run</section>
-   <section>Code formatting</section>
-   <section>Keeping up</section>
-  </document><document ext="xml" filename="index" relpath="delve_into/core/building">Building Hippo ECM
-   <section>Building Hippo ECM</section>
+   <document ext="xml.vm" filename="eclipse" relpath="delve_into/core/building">Developing Hippo CMS with Eclipse
+   <section>Developing Hippo CMS with Eclipse</section>
+   <shortdesc>How to import and work with the Hippo CMS project in the Eclipse IDE.</shortdesc>
+   <subsection>Introduction</subsection>
+   <subsection>Prepare</subsection>
+   <subsection>Create Eclipse projects</subsection>
+   <subsection>Run</subsection>
+   <subsection>Code formatting</subsection>
+   <subsection>Keeping up</subsection>
+  </document><document ext="xml" filename="index" relpath="delve_into/core/building">Building Hippo CMS
+   <section>Building Hippo CMS</section>
+   <shortdesc>Build Hippo CMS from source using your tool of choice.</shortdesc>
   </document><document ext="xml.vm" filename="maven" relpath="delve_into/core/building">Building with Maven
    <section>Building with Maven</section>
+   <shortdesc>Build Hippo CMS from the command line using Maven.</shortdesc>
    <subsection>Install Maven</subsection>
-   <subsection>Get the Hippo ECM source</subsection>
+   <subsection>Get the Hippo CMS source</subsection>
    <subsection>Build</subsection>
    <subsection>Run</subsection>
   </document><document ext="xml" filename="netbeans" relpath="delve_into/core/building">Building with Netbeans
    <section>Building with Netbeans</section>
-   <section>Prepare</section>
-   <section>Configure Netbeans</section>
-   <subsection>Install the Subversion Plugin</subsection>
-   <subsection>Install the Mevenide2 Plugin</subsection>
-   <section>Run / Debug</section>
-  </document></folder><folder>concepts
+   <shortdesc>How to import and work with the Hippo CMS project in the Netbeans IDE.</shortdesc>
+   <subsection>Prepare</subsection>
+   <subsection>Configure Netbeans</subsection>
+   <h4>Install the Subversion Plugin</h4>
+   <h4>Install the Mevenide2 Plugin</h4>
+   <subsection>Run / Debug</subsection>
+  </document></folder><folder>fundamentals
    
-   <document ext="xml" filename="index" relpath="delve_into/core/concepts">Concepts
-   <section>Concepts</section>
-  </document></folder><document ext="xml" filename="index" relpath="delve_into/core">Development Guide
-   <section>Development Guide</section>
+   <document ext="xml" filename="index" relpath="delve_into/core/fundamentals">Fundamentals
+   <section>Fundamentals</section>
+   <shortdesc>The fundamental ideas behind the code explained.</shortdesc>
+  </document></folder><document ext="xml" filename="index" relpath="delve_into/core">Hacking the core
+   <section>Hacking the core</section>
+   <shortdesc>Take a deep dive into core Hippo CMS development.</shortdesc>
   </document><document ext="xml" filename="project-structure" relpath="delve_into/core">Project Structure
    <section>Project Structure</section>
+   <shortdesc>Find your way in the Hippo CMS project.</shortdesc>
    <section>Why so many projects?</section>
    <section>Addon</section>
    <subsection>Dependencies between addons</subsection>
@@ -206,6 +214,7 @@
    <subsection>Working with JCR</subsection>
    <subsection>Dependencies</subsection>
    <subsection>Complete Example Class</subsection>
+   <subsection>Next</subsection>
   </document><folder>reference
    
    <document ext="xml" filename="derived_data" relpath="delve_into/custom/jcr/reference">Derived Data
@@ -304,7 +313,7 @@
    <document ext="xml" filename="console" relpath="delve_into/sysadmin/configuration">Console
    <section>Console</section>
    <img>Screenshot of the console</img>
-  </document><document ext="xml#" filename="#database_server" relpath="delve_into/sysadmin/configuration"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="database_server" relpath="delve_into/sysadmin/configuration">Database server configuration
+  </document><document ext="xml" filename="database_server" relpath="delve_into/sysadmin/configuration">Database server configuration
    <section>Database server configuration</section>
    <shortdesc>Configuration of the database server.</shortdesc>
    <subsection>Increase the maximum allowed asset size</subsection>
@@ -564,20 +573,75 @@
      </p>
   </subsection>
  </afterlist>
-   <document ext="xml" filename="document" relpath="delve_into/user/contributors/concepts">Document
+   <document ext="xml" filename="content_tabulation_panel" relpath="delve_into/user/contributors/concepts">Content tabulation panel
+   <section>Content tabulation panel</section>
+   <shortdesc>What and where is the content tabulation panel?</shortdesc>
+   <img>content tabulation panel screenshot</img>
+  </document><document ext="xml" filename="content_workspace" relpath="delve_into/user/contributors/concepts">Content Workspace
+   <section>Content Workspace</section>
+   <shortdesc>What and where is the content workspace?</shortdesc>
+   <img>content workspace</img>
+   <subsection>Alternative</subsection>
+   <subsection>Next</subsection>
+  </document><document ext="xml" filename="current_folder" relpath="delve_into/user/contributors/concepts">Current folder
+   <section>Current folder</section>
+   <shortdesc>What is the current folder?</shortdesc>
+   <img>current folder screenshot</img>
+  </document><document ext="xml" filename="document_card" relpath="delve_into/user/contributors/concepts">Document card
+   <section>Document card</section>
+   <shortdesc>What and where are document cards?</shortdesc>
+   <img>document cards</img>
+  </document><document ext="xml" filename="document_panel" relpath="delve_into/user/contributors/concepts">Document panel
+   <section>Document panel</section>
+   <shortdesc>What and where is the document panel?</shortdesc>
+   <img>document panel</img>
+  </document><document ext="xml" filename="document" relpath="delve_into/user/contributors/concepts">Document
    <section>Document</section>
    <shortdesc>What is a document?</shortdesc>
    <h4>Etymology</h4>
+  </document><document ext="xml" filename="folder_action_menu" relpath="delve_into/user/contributors/concepts">Folder action menu
+   <section>Folder action menu</section>
+   <shortdesc>What and where is the folder action menu?</shortdesc>
+   <img>Folder action menu screenshot</img>
+  </document><document ext="xml" filename="folder_navigation_panel" relpath="delve_into/user/contributors/concepts">Folder navigation panel
+   <section>Folder navigation panel</section>
+   <shortdesc>What and where is the folder navigation panel?</shortdesc>
+   <img>Folder navigation panel screenshot</img>
   </document><document ext="xml" filename="folder" relpath="delve_into/user/contributors/concepts">Folder
    <section>Folder</section>
    <shortdesc>What is a Folder?</shortdesc>
+  </document><document ext="xml" filename="home_workspace" relpath="delve_into/user/contributors/concepts">Home Workspace
+   <section>Home Workspace</section>
+   <shortdesc>What and where is the home workspace?</shortdesc>
+   <img>home workspace</img>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/user/contributors/concepts">
    <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="slider" relpath="delve_into/user/contributors/concepts">Slider
+   <section>Slider</section>
+   <shortdesc>What and where are sliders?</shortdesc>
+   <img>sliders</img>
+   <subsection>Next</subsection>
   </document><document ext="xml" filename="versioning" relpath="delve_into/user/contributors/concepts">Versioning
    <section>Versioning</section>
    <shortdesc>What is versioning to a content contributor?</shortdesc>
+  </document><document ext="xml" filename="workspace_navigation_panel" relpath="delve_into/user/contributors/concepts">Workspace Navigation Panel
+   <section>Workspace Navigation Panel</section>
+   <shortdesc>What and where is the workspace navigation panel?</shortdesc>
+   <img>workspace navigation panel screenshot</img>
+   <subsection>Next</subsection>
+  </document><document ext="xml" filename="workspace" relpath="delve_into/user/contributors/concepts">Workspace
+   <section>Workspace</section>
+   <shortdesc>What is a workspace?</shortdesc>
+   <subsection>Next</subsection>
   </document></folder><folder>howto
-   
+   <title>CMS Contributor Howto</title><shortdesc>A collection of howto's for small tasks a contributor may want to do.</shortdesc><afterlist>  
+  <subsection name="Alternative">
+     <p>
+      If you do not know where to start, take the <a href="../tour.html">Tour</a>.
+     </p>
+  </subsection>
+ </afterlist>
    <document ext="xml" filename="browsing_history_of_document" relpath="delve_into/user/contributors/howto">Browsing history of a document
    <section>Browsing history of a document</section>
    <shortdesc>How to browse the history of a document, i.e. to see the changes to the document over time?</shortdesc>
@@ -607,10 +671,10 @@
    <shortdesc>How to fill a string field in a document.</shortdesc>
    <img>Fill string screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="goto_content_browse_tab" relpath="delve_into/user/contributors/howto">Goto Content Browse Tab
-   <section>Goto Content Browse Tab</section>
-   <shortdesc>How to get to the content browse tab.</shortdesc>
-   <img>content browse screenshot</img>
+  </document><document ext="xml" filename="goto_content_workspace" relpath="delve_into/user/contributors/howto">Goto Content workspace
+   <section>Goto Content workspace</section>
+   <shortdesc>How to get to the content workspace.</shortdesc>
+   <img>goto content workspace screenshot</img>
    <subsection>Next</subsection>
   </document><document ext="xml" filename="goto_document_tab" relpath="delve_into/user/contributors/howto">Goto a Document
    <section>Goto a Document</section>
@@ -619,12 +683,15 @@
    <subsection>Next</subsection>
   </document><document ext="xml" filename="goto_folder" relpath="delve_into/user/contributors/howto">Goto a Folder
    <section>Goto a Folder</section>
-   <shortdesc>How to get folder, to add or change content in it.</shortdesc>
+   <shortdesc>How to get to a folder, to add or change content in it.</shortdesc>
    <img>Goto folder screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="index" relpath="delve_into/user/contributors/howto">CMS Contributor Howto
-   <section>CMS Contributor Howto</section>
-   <shortdesc>A collection of howto's for small tasks a contributor may want to do.</shortdesc>
+  </document><document ext="xml" filename="index" relpath="delve_into/user/contributors/howto">
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="learn_meaning_of_inputfield" relpath="delve_into/user/contributors/howto">Learn meaning of inputfield
+   <section>Learn meaning of inputfield</section>
+   <shortdesc>Why and how to learn the meaning of an inputfield?</shortdesc>
+   <img>Fill boolean screenshot</img>
   </document><document ext="xml" filename="login" relpath="delve_into/user/contributors/howto">Login as Contributor
    <section>Login as Contributor</section>
    <shortdesc>How to login to Hippo CMS as contributor 
@@ -636,10 +703,15 @@
    <shortdesc>How to logout</shortdesc>
    <img>logout screenshot</img>
    <subsection>Next</subsection>
+  </document><document ext="xml" filename="open_request_publication" relpath="delve_into/user/contributors/howto">Request Publication of Document
+   <section>Request Publication of Document</section>
+   <shortdesc>How to ask the editor to publish a document?</shortdesc>
+   <img>request schedule publication screenshot</img>
+   <subsection>Next</subsection>
   </document><document ext="xml" filename="request_publication" relpath="delve_into/user/contributors/howto">Request Publication of Document
    <section>Request Publication of Document</section>
    <shortdesc>How to ask the editor to publish a document?</shortdesc>
-   <img>request publication screenshot</img>
+   <img>request schedule publication screenshot</img>
    <subsection>Next</subsection>
   </document><document ext="xml" filename="restore_previous_version" relpath="delve_into/user/contributors/howto">Restoring a previous version of a document
    <section>Restoring a previous version of a document</section>
@@ -653,7 +725,14 @@
    <section>Start CMS</section>
    <shortdesc>How to start a CMS session in your browser</shortdesc>
    <subsection>Next</subsection>
-  </document></folder><document ext="xml" filename="index" relpath="delve_into/user/contributors">Contributors Guide
+  </document><folder>todo
+   
+   <document ext="xml" filename="goto_document_tab" relpath="delve_into/user/contributors/howto/todo">Goto a Document
+   <section>Goto a Document</section>
+   <shortdesc>How to get to a screen to manipulate a particular document.</shortdesc>
+   <img>document tab screenshot</img>
+   <subsection>Next</subsection>
+  </document></folder></folder><document ext="xml" filename="index" relpath="delve_into/user/contributors">Contributors Guide
    <section>Contributors Guide</section>
    <shortdesc>Guide for Hippo CMS users to perform the role of contributor.</shortdesc>
   </document><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour
@@ -926,7 +1005,7 @@
    
    <folder>howto
    
-   <document ext="html#" filename="#editing_template" relpath="delve_into/web/add-ons/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="editing_template" relpath="delve_into/web/add-ons/howto">Create an Editing Template Add-on
+   <document ext="xml" filename="editing_template" relpath="delve_into/web/add-ons/howto">Create an Editing Template Add-on
    <section>Create an Editing Template Add-on</section>
    <shortdesc>Learn how to create an add-on for a namespace.</shortdesc>
    <img>Fancy Document</img>
@@ -937,7 +1016,7 @@
   </document><document ext="xml" filename="index" relpath="delve_into/web/add-ons/howto">Howto
    <section>Howto</section>
    <shortdesc>Learn how to make your own content add-ons.</shortdesc>
-  </document><document ext="html#" filename="#packaging" relpath="delve_into/web/add-ons/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="packaging" relpath="delve_into/web/add-ons/howto">Creating your own WAR package
+  </document><document ext="xml" filename="packaging" relpath="delve_into/web/add-ons/howto">Creating your own WAR package
    <section>Creating your own WAR package</section>
    <shortdesc>Package Hippo CMS with your own add-on.</shortdesc>
    <section>Your own POM file</section>
