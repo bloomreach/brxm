@@ -193,13 +193,13 @@
                 <sv:value>hippo:facetrule</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:facet" sv:type="String">
-                <sv:value>wicket.id</sv:value>
+                <sv:value>cluster.name</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:type" sv:type="String">
                 <sv:value>String</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:value" sv:type="String">
-                <sv:value>service.browse.tree.configuration</sv:value>
+                <sv:value>cms-tree-views/configuration</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:equals" sv:type="Boolean">
                 <sv:value>false</sv:value>
@@ -283,7 +283,7 @@
                 <sv:value>hippo:facetrule</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:facet" sv:type="String">
-                <sv:value>wicket.id</sv:value>
+                <sv:value>cluster.name</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:type" sv:type="String">
                 <sv:value>String</sv:value>

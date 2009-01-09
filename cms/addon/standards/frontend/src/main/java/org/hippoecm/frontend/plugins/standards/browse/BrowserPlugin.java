@@ -62,6 +62,15 @@ public class BrowserPlugin extends RenderPlugin {
                 }
 
             }, config.getString("model.document"));
+
+            context.registerService(new IModelListener() {
+                private static final long serialVersionUID = 1L;
+
+                public void updateModel(IModel model) {
+                    BrowserPlugin.this.setModel(model);
+                }
+
+            }, config.getString("model.folder"));
         }
     }
 
