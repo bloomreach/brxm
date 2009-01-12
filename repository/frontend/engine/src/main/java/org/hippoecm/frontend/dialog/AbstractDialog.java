@@ -20,10 +20,14 @@ import java.util.LinkedList;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxIndicatorAware;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.ajax.markup.html.WicketAjaxIndicatorAppender;
 import org.apache.wicket.markup.DefaultMarkupCacheKeyProvider;
 import org.apache.wicket.markup.DefaultMarkupResourceStreamProvider;
 import org.apache.wicket.markup.IMarkupCacheKeyProvider;
@@ -50,7 +54,7 @@ import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractDialog extends Form implements IDialogService.Dialog {
+public abstract class AbstractDialog extends Form implements IDialogService.Dialog, IAjaxIndicatorAware {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -102,18 +106,23 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         }
     }
 
+    private final static ResourceReference AJAX_LOADER_GIF = new ResourceReference(AbstractDialog.class,
+            "ajax-loader.gif");
+
     protected FeedbackPanel feedback;
     private LinkedList<Button> buttons;
     protected final Button ok;
     protected final Button cancel;
     private IDialogService dialogService;
     private Panel container;
+    private WicketAjaxIndicatorAppender indicator;
     private AjaxFormSubmitBehavior ajaxSubmit;
     protected boolean cancelled = false;
 
     public AbstractDialog() {
         this(null);
     }
+
     public AbstractDialog(IModel model) {
         super("form", model);
 
@@ -168,6 +177,19 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         }.setDefaultFormProcessing(false);
         cancel.add(new Label("label", new ResourceModel("cancel")));
         buttons.add(cancel);
+
+        add(indicator = new WicketAjaxIndicatorAppender() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected CharSequence getIndicatorUrl() {
+                return RequestCycle.get().urlFor(AJAX_LOADER_GIF);
+            }
+        });
+    }
+
+    public String getAjaxIndicatorMarkupId() {
+        return indicator.getMarkupId();
     }
 
     @Override

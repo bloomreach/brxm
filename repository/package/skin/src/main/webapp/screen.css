@@ -132,8 +132,8 @@ padding-top: 8px;
 
 /* Wicket Ajaxloader */
 /* ================================================ */
-.hippo-root .wicket-ajax-indicator{position: absolute; top: 0px; left:0px; display: block; visiblity: visible; background:url("images/ajaxback.png") repeat-x; width: 25px; padding: 4px;}
-.hippo-root .wicket-ajax-indicator-dialog {position:absolute; bottom: 55px; right: 26px;}
+.hippo-root .wicket-ajax-indicator{position: absolute; top: 0px; left:0px; display: block; visibility: visible; background:url("images/ajaxback.png") repeat-x; width: 25px; padding: 4px;}
+.hippo-window .hippo-root .wicket-ajax-indicator{position:absolute; top: 6px; left: 16px; background:transparent;}
 
 /* Header */
 /* ================================================ */
