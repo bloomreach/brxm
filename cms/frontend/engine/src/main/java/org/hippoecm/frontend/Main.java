@@ -45,6 +45,7 @@ import org.apache.wicket.request.RequestParameters;
 import org.apache.wicket.request.target.coding.AbstractRequestTargetUrlCodingStrategy;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.session.ISessionStore;
+import org.apache.wicket.settings.IExceptionSettings;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.resource.IResourceStream;
@@ -105,7 +106,7 @@ public class Main extends WebApplication {
                 return Thread.currentThread().getContextClassLoader().loadClass(name);
             }
         });
-
+        
         IResourceSettings resourceSettings = getResourceSettings();
         final IResourceStreamLocator oldLocator = resourceSettings.getResourceStreamLocator();
         final String layout = "/WEB-INF/" + getConfigurationParameter("config", "default") + "/";
@@ -189,14 +190,6 @@ public class Main extends WebApplication {
             resourceSettings.addStringResourceLoader(loader);
         }
 
-        if (Application.DEVELOPMENT.equals(getConfigurationType())) {
-            // disable cache
-            resourceSettings.getLocalizer().setEnableCache(false);
-        } else {
-            // don't throw on missing resource
-            resourceSettings.setThrowExceptionOnMissingResource(false);
-        }
-
         mount(new AbstractRequestTargetUrlCodingStrategy("binaries") {
 
             public IRequestTarget decode(RequestParameters requestParameters) {
@@ -224,6 +217,17 @@ public class Main extends WebApplication {
                 return false;
             }
         });
+
+        if (Application.DEVELOPMENT.equals(getConfigurationType())) {
+            // disable cache
+            resourceSettings.getLocalizer().setEnableCache(false);
+        } else {
+            // don't throw on missing resource
+            resourceSettings.setThrowExceptionOnMissingResource(false);
+
+            // don't show exception page
+            getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_NO_EXCEPTION_PAGE);
+        }
     }
 
     @Override
