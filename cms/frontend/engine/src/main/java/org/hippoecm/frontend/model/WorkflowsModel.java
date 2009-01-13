@@ -125,20 +125,20 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
             if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
                 for (NodeIterator iter = handle.getNodes(); iter.hasNext();) {
                     Node child = iter.nextNode();
-                    if (child.isNodeType(HippoNodeType.NT_REQUEST) && !(child.hasProperty("type") && child.getProperty("type").equals("rejected"))) { // FIXME: dependency on knowledge of reviewed actions
+                    if (child.isNodeType(HippoNodeType.NT_REQUEST) && !(child.hasProperty("type") && child.getProperty("type").getString().equals("rejected"))) { // FIXME: dependency on knowledge of reviewed actions
                         WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, child);
                         if (workflowDescriptor != null) {
                                 String workflowRenderer = workflowDescriptor.getAttribute(FrontendNodeTypes.WORKFLOW_RENDERER);
                                 if(workflowRenderer != null && (renderer == null || renderer.equals(workflowRenderer))) {
-                              if (!workflows.containsKey(new Entry(workflowRenderer))) {
-                                workflows.put(new Entry(workflowRenderer, sequence++), new Vector<WorkflowDescriptor>());
-                              }
-                              workflows.get(new Entry(workflowRenderer)).add(workflowDescriptor);
+                                    if (!workflows.containsKey(new Entry(workflowRenderer))) {
+                                        workflows.put(new Entry(workflowRenderer, sequence++), new Vector<WorkflowDescriptor>());
+                                    }
+                                    workflows.get(new Entry(workflowRenderer)).add(workflowDescriptor);
                                 }
                         }
                     }
                 }
-            } else if (handle.isNodeType(HippoNodeType.NT_REQUEST) && !(handle.hasProperty("type") && handle.getProperty("type").equals("rejected"))) {
+            } else if (handle.isNodeType(HippoNodeType.NT_REQUEST)) {
                 WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, handle);
                 if (workflowDescriptor != null) {
                         String workflowRenderer = workflowDescriptor.getAttribute(FrontendNodeTypes.WORKFLOW_RENDERER);
