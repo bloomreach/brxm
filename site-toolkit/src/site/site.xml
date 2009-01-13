@@ -27,11 +27,13 @@
 
   <body>
     <links>
-      <item name="Hippo ECM" href="http://docs.onehippo.org"/>
-      <item name="Hippo CMS" href="http://docs.onehippo.org/cms7"/>
-      <item name="Hippo Site Toolkit" href="/index.html" />
-      <!-- <item name="Hippo Portal" href="http://docs.onehippo.org/portal2"/> -->
-      <item name="Hippo CMS 6.x" href="http://www.hippocms.org/"/>
+     <item name="Hippo ECM" href="http://docs.onehippo.org"/>
+     <item name="Hippo CMS" href="http://docs.onehippo.org/cms7"/>
+     <item name="Hippo Site Toolkit" href="/index.html" />
+     <item name="Hippo Forge" href='http://forge.onehippo.org/'/>
+     <item name="Hippo Portal 1.x" href="http://www.hippoportal.org/"/> 
+      <!-- <item name="Hippo Portal" href="http://www.onehippo.org/portal2"/> -->
+     <item name="Hippo CMS 6.x" href="http://www.hippocms.org/"/>
     </links>
     <menu name="About Hippo Site Toolkit 2">
       <item name="What is HST2?" href="/index.html"/>
