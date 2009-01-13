@@ -26,6 +26,19 @@
         <param-value>rmi://localhost:1099/hipporepository</param-value>
     </context-param>
 
+    <filter>
+        <filter-name>ConcurrentLogin</filter-name>
+        <filter-class>org.hippoecm.frontend.plugins.login.ConcurrentLoginFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>ConcurrentLogin</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <listener>
+        <listener-class>org.hippoecm.frontend.plugins.login.ConcurrentLoginListener</listener-class>
+    </listener>
+
     <!--Default application-->
     <servlet>
         <servlet-name>CMS</servlet-name>
