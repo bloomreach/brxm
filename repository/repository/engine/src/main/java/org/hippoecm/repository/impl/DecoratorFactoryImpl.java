@@ -36,29 +36,52 @@ public class DecoratorFactoryImpl extends org.hippoecm.repository.decorating.Dec
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private final Logger log = LoggerFactory.getLogger(DecoratorFactory.class);
+    private final static Logger log = LoggerFactory.getLogger(DecoratorFactory.class);
+
+    SessionDecorator decoratedSession;
+    WorkspaceDecorator decoratedWorkspace;
 
     public DecoratorFactoryImpl() {
+        this.decoratedSession = null;
     }
 
+    private DecoratorFactoryImpl(SessionDecorator session) {
+        this.decoratedSession = session;
+    }
+
+    @Override
     public Repository getRepositoryDecorator(Repository repository) {
         return new RepositoryDecorator(this, repository);
     }
 
-    public Session getSessionDecorator(Repository repository, Session session) {
-         if(session instanceof XASession) {
+    public static SessionDecorator getSessionDecorator(Session session) {
+        DecoratorFactoryImpl newFactory = new DecoratorFactoryImpl();
+        SessionDecorator decoratedSession = null;
+        RepositoryDecorator decoratedRepository = new RepositoryDecorator(newFactory, session.getRepository());
+        if (session instanceof XASession) {
             try {
-                return new SessionDecorator(this, repository, (XASession)session);
-            } catch(RepositoryException ex) {
+                decoratedSession = new SessionDecorator(newFactory, decoratedRepository, (XASession)session);
+            } catch (RepositoryException ex) {
                 log.error("cannot compose transactional session, reverting to regular session");
                 // fall through
             }
         }
-        return new SessionDecorator(this, repository, session);
+        if (decoratedSession == null) {
+            decoratedSession = new SessionDecorator(newFactory, decoratedRepository, session);
+        }
+        newFactory.decoratedSession = decoratedSession;
+        return decoratedSession;
+    }
+
+    public Session getSessionDecorator(Repository repository, Session session) {
+        return session;
     }
 
     public Workspace getWorkspaceDecorator(Session session, Workspace workspace) {
-        return new WorkspaceDecorator(this, session, workspace);
+        if (decoratedWorkspace == null) {
+            decoratedWorkspace = new WorkspaceDecorator(this, session, workspace);
+        }
+        return decoratedWorkspace;
     }
 
     public Node getBasicNodeDecorator(Session session, Node node) {
@@ -77,11 +100,12 @@ public class DecoratorFactoryImpl extends org.hippoecm.repository.decorating.Dec
         return new QueryDecorator(this, session, query);
     }
 
+    @Override
     public Query getQueryDecorator(Session session, Query query, Node node) {
         return new QueryDecorator(this, session, query, node);
     }
 
-
+    @Override
     public QueryManager getQueryManagerDecorator(Session session,
                                                  QueryManager queryManager) {
         return new QueryManagerDecorator(this, session, queryManager);

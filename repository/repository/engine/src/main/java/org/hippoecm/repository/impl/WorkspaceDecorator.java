@@ -15,34 +15,14 @@
  */
 package org.hippoecm.repository.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.jcr.AccessDeniedException;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.InvalidSerializedDataException;
-import javax.jcr.ItemExistsException;
-import javax.jcr.NamespaceRegistry;
-import javax.jcr.NoSuchWorkspaceException;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Workspace;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NodeTypeManager;
-import javax.jcr.observation.ObservationManager;
-import javax.jcr.query.QueryManager;
-import javax.jcr.version.Version;
-import javax.jcr.version.VersionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.xml.sax.ContentHandler;
 
 import org.hippoecm.repository.HierarchyResolverImpl;
 import org.hippoecm.repository.api.DocumentManager;
@@ -68,7 +48,6 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     protected DocumentManager documentManager;
     protected WorkflowManager workflowManager;
     private SessionDecorator rootSession;
-    private DocumentManagerImpl workflowDocumentManager;
 
     /**
      * Creates a workspace decorator.
@@ -87,6 +66,16 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     }
 
     @Override
+    protected void finalize() {
+        if(rootSession != null) {
+            if(rootSession.isLive()) {
+                rootSession.logout();
+            }
+            rootSession = null;
+        }
+    }
+    
+    @Override
     public DocumentManager getDocumentManager() throws RepositoryException {
         if (documentManager == null) {
             documentManager = new DocumentManagerImpl(session);
@@ -96,12 +85,11 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
 
     @Override
     public WorkflowManager getWorkflowManager() throws RepositoryException {
-
         if(rootSession == null) {
             Repository repository = RepositoryDecorator.unwrap(session.getRepository());
             try {
                 if(repository instanceof RepositoryImpl) {
-                    rootSession = (SessionDecorator) factory.getSessionDecorator(session.getRepository(), SessionDecorator.unwrap(session.impersonate(new SimpleCredentials("workflowuser", new char[] { })))); // FIXME: hardcoded workflowuser
+                    rootSession = (SessionDecorator) factory.getSessionDecorator(session.getRepository(), session.impersonate(new SimpleCredentials("workflowuser", new char[] { }))); // FIXME: hardcoded workflowuser
                 }
             } catch(RepositoryException ex) {
                 logger.error("No root session available "+ex.getClass().getName()+": "+ex.getMessage());
