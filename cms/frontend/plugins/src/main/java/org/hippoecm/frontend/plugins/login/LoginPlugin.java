@@ -29,6 +29,8 @@ import java.util.jar.Manifest;
 import javax.jcr.Repository;
 import javax.servlet.ServletContext;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
@@ -42,7 +44,9 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -124,6 +128,7 @@ public class LoginPlugin extends RenderPlugin {
         public String selectedLocale;
         private RequiredTextField usernameTextField;
         private PasswordTextField passwordTextField; 
+        private Label userLabel;
         
         public SignInForm(final String id) {
             super(id);
@@ -150,7 +155,15 @@ public class LoginPlugin extends RenderPlugin {
             usernameTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
                 protected void onUpdate(AjaxRequestTarget target) {
-                	credentials.put("username", this.getComponent().getModelObjectAsString());
+                    String username = this.getComponent().getModelObjectAsString();
+                    HttpSession session = ((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true);
+                    if(ConcurrentLoginFilter.isConcurrentSession(session, username)) {
+                        userLabel.setModel(new StringResourceModel("alreadylogin", LoginPlugin.this, null, new Object[] {username}));
+                    } else {
+                        userLabel.setModel(new Model(""));
+                    }
+                    target.addComponent(userLabel);
+                    credentials.put("username", username);
                 }
             });
 
@@ -162,6 +175,8 @@ public class LoginPlugin extends RenderPlugin {
             });
 
             add(new FeedbackPanel("feedback"));
+            add(userLabel = new Label("infouserlogin", ""));
+            userLabel.setOutputMarkupId(true);
             Button submit = new Button("submit", new ResourceModel("submit-label"));
             add(submit);
         }
@@ -169,6 +184,9 @@ public class LoginPlugin extends RenderPlugin {
         @Override
         public final void onSubmit() {
             UserSession userSession = (UserSession) getSession();
+            String username = usernameTextField.getModelObjectAsString();
+            HttpSession session = ((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true);
+            ConcurrentLoginFilter.validateSession(session, username, false);
             userSession.setJcrCredentials(credentials);
             userSession.setLocale(new Locale(selectedLocale));
             userSession.getJcrSession();

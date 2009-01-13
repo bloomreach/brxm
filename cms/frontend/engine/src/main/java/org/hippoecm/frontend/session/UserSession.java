@@ -21,7 +21,9 @@ import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.Request;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.RestartResponseException;
+import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Main;
@@ -63,6 +65,8 @@ public class UserSession extends WebSession {
 
     public void logout() {
         jcrSessionModel.logout();
+        ((WebRequest)RequestCycle.get().getRequest()).getHttpServletRequest().getSession(false).invalidate();
+        dirty();
         throw new RestartResponseException(((Main) Application.get()).getHomePage());
     }
 
