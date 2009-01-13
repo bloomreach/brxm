@@ -322,7 +322,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(true);
 
             // After initializing namespaces and nodetypes switch to the decorated session.
-            rootSession = (HippoSession) hippoRepositoryFactory.getSessionDecorator(repository, syncSession.impersonate(new SimpleCredentials("system", new char[]{})));
+            rootSession = DecoratorFactoryImpl.getSessionDecorator(syncSession.impersonate(new SimpleCredentials("system", new char[]{})));
 
             if (!rootSession.getRootNode().hasNode("hippo:configuration")) {
                 log.info("Initializing configuration content");
@@ -418,11 +418,8 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                     true, null, null, true);
 
             for(DaemonModule module : new Modules<DaemonModule>(Modules.getModules(), DaemonModule.class)) {
-                DecoratorFactoryImpl moduleDecoratorFactory = new DecoratorFactoryImpl();
-                javax.jcr.Repository moduleRepository = moduleDecoratorFactory.getRepositoryDecorator(repository);
-                Session moduleSession = moduleDecoratorFactory.getSessionDecorator(repository, jcrRootSession);
-                repository = new CheckedDecoratorFactory().getRepositoryDecorator(repository);
-                moduleSession = moduleSession.impersonate(new SimpleCredentials("system", new char[] {}));
+                Session moduleSession = syncSession.impersonate(new SimpleCredentials("system", new char[]{}));
+                moduleSession = DecoratorFactoryImpl.getSessionDecorator(moduleSession);
                 try {
                     module.initialize(moduleSession);
                     daemonModules.add(module);
