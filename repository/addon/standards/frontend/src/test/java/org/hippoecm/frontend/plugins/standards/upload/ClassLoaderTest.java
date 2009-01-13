@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008,2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,36 +19,32 @@ import java.net.URL;
 import java.util.Calendar;
 
 import javax.jcr.Node;
-import javax.jcr.Session;
 
-import junit.framework.TestCase;
-
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.impl.PluginClassLoader;
+import org.hippoecm.repository.TestCase;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.After;
+import static org.junit.Assert.*;
 
 public class ClassLoaderTest extends TestCase {
-
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
+
     private static final String JAR_FILE_ENTRY = "mock/aDir/anotherFile.txt";
 
-    private HippoRepository server;
-    private Session session;
     private PluginClassLoader loader;
 
+    @Before
     @Override
     public void setUp() throws Exception {
-        server = HippoRepositoryFactory.getHippoRepository();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-
-        loadRepository();
-        loader = new PluginClassLoader(session);
+        super.setUp();
+        session.getRootNode().addNode(HippoNodeType.PLUGIN_PATH, "nt:unstructured");
     }
 
+    @After
     @Override
     public void tearDown() throws Exception {
         if (loader != null) {
@@ -56,18 +52,12 @@ public class ClassLoaderTest extends TestCase {
         }
         session.getRootNode().getNode(HippoNodeType.PLUGIN_PATH).remove();
         session.save();
-        session.logout();
-        server.close();
+        super.tearDown();
     }
 
+    @Test
     public void testClassloader() throws Exception {
-        URL resource = loader.getResource(JAR_FILE_ENTRY);
-        assertNotNull("Resource " + JAR_FILE_ENTRY, resource);
-    }
-
-    protected void loadRepository() throws Exception {
-        Node root = session.getRootNode();
-        Node node = root.addNode(HippoNodeType.PLUGIN_PATH, "nt:unstructured");
+        Node node = session.getRootNode().getNode(HippoNodeType.PLUGIN_PATH);
         node = node.addNode("test-plugin", "nt:unstructured");
         node = node.addNode("mock.jar", "nt:resource");
 
@@ -80,5 +70,9 @@ public class ClassLoaderTest extends TestCase {
 
         JarExpander expander = new JarExpander(node);
         expander.extract();
+        loader = new PluginClassLoader(session);
+
+        URL resource = loader.getResource(JAR_FILE_ENTRY);
+        assertNotNull("Resource " + JAR_FILE_ENTRY, resource);
     }
 }
