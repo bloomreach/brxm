@@ -62,11 +62,12 @@ class ListCell extends Panel {
         }
 
         if (attributeModifier != null) {
-            AttributeModifier cellModifier = attributeModifier.getCellAttributeModifier(model);
-            if (cellModifier != null) {
-                add(cellModifier);
+            AttributeModifier[] cellModifiers = attributeModifier.getCellAttributeModifiers(model);
+            if (cellModifiers != null) {
+                for(AttributeModifier cellModifier : cellModifiers) {
+                    add(cellModifier);
+                }
             }
         }
     }
-
 }

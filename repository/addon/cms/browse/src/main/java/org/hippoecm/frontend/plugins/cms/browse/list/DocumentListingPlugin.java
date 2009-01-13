@@ -34,6 +34,7 @@ import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributeModifier;
@@ -65,6 +66,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
 
         column = new ListColumn(new StringResourceModel("doclisting-name", this, null), "name");
         column.setComparator(new NameComparator());
+        column.setAttributeModifier(new DocumentAttributeModifier());
         columns.add(column);
 
         column = new ListColumn(new StringResourceModel("doclisting-state", this, null), "state");

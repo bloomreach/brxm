@@ -19,7 +19,10 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.i18n.types.TypeTranslator;
+import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.repository.api.HippoNode;
 
 public class StateIconAttributeModifier extends AbstractNodeAttributeModifier {
@@ -31,22 +34,27 @@ public class StateIconAttributeModifier extends AbstractNodeAttributeModifier {
     private static final String PREFIX = "state-";
     private static final String SUFFIX = "-16";
 
-    @Override
-    public AttributeModifier getCellAttributeModifier(HippoNode node) throws RepositoryException {
-        String cssClass = "";
-        if (node.hasNode(node.getName())) {
-            HippoNode variant = (HippoNode) (node.getNode(node.getName()));
-            Node canonicalNode = variant.getCanonicalNode();
-            if (canonicalNode.hasProperty("hippostd:stateSummary")) {
-                cssClass = PREFIX + canonicalNode.getProperty("hippostd:stateSummary").getString() + SUFFIX;
-            }
-        }
-        return new CssClassAppender(new Model(cssClass));
-    }
 
     @Override
     public AttributeModifier getColumnAttributeModifier(HippoNode node) throws RepositoryException {
         return new CssClassAppender(new Model("icon-16"));
     }
 
+    @Override
+    public AttributeModifier[] getCellAttributeModifiers(HippoNode node) throws RepositoryException {
+        AttributeModifier[] attributes = new AttributeModifier[2];
+        String cssClass = "";
+        String summary = "";
+        if (node.hasNode(node.getName())) {
+            HippoNode variant = (HippoNode) (node.getNode(node.getName()));
+            Node canonicalNode = variant.getCanonicalNode();
+            if (canonicalNode.hasProperty("hippostd:stateSummary")) {
+                cssClass = PREFIX + canonicalNode.getProperty("hippostd:stateSummary").getString() + SUFFIX;
+            }
+            summary = canonicalNode.getProperty("hippostd:stateSummary").getString();
+        }
+        attributes[0] = new CssClassAppender(new Model(cssClass));
+        attributes[1] = new AttributeAppender("title", new TypeTranslator(new JcrNodeTypeModel("hippostd:publishableSummary")).getValueName("hippostd:stateSummary", new Model(summary)), " ");
+        return attributes;
+    }
 }
