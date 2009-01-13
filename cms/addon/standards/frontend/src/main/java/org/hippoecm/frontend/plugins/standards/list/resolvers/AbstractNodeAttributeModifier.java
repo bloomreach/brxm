@@ -32,12 +32,12 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
 
     private static final Logger log = LoggerFactory.getLogger(AbstractNodeAttributeModifier.class);
 
-    public AttributeModifier getCellAttributeModifier(IModel model) {
+    public AttributeModifier[] getCellAttributeModifiers(IModel model) {
         if (model instanceof JcrNodeModel) {
             try {
                 HippoNode node = (HippoNode) model.getObject();
                 if (node != null) {
-                    return getCellAttributeModifier(node);
+                    return getCellAttributeModifiers(node);
                 } else {
                     log.warn("Cannot render a null node");
                 }
@@ -48,15 +48,25 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
         return null;
     }
 
-    protected abstract AttributeModifier getCellAttributeModifier(HippoNode node) throws RepositoryException;
+    protected AttributeModifier getCellAttributeModifier(HippoNode node) throws RepositoryException {
+        return null;
+    }
 
+    protected AttributeModifier[] getCellAttributeModifiers(HippoNode node) throws RepositoryException {
+        AttributeModifier modifier = getCellAttributeModifier(node);
+        if(modifier != null) {
+            return new AttributeModifier[] { modifier };
+        } else {
+            return null;
+        }
+    }
 
-    public AttributeModifier getColumnAttributeModifier(IModel model) {
+    public AttributeModifier[] getColumnAttributeModifiers(IModel model) {
         if (model instanceof JcrNodeModel) {
             try {
                 HippoNode node = (HippoNode) model.getObject();
                 if (node != null) {
-                    return getColumnAttributeModifier(node);
+                    return getColumnAttributeModifiers(node);
                 } else {
                     log.warn("Cannot render a null node");
                 }
@@ -67,8 +77,17 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
         return null;
     }
 
-    protected abstract AttributeModifier getColumnAttributeModifier(HippoNode node) throws RepositoryException;
+    protected AttributeModifier getColumnAttributeModifier(HippoNode node) throws RepositoryException {
+        return null;
+    }
 
-
+    protected AttributeModifier[] getColumnAttributeModifiers(HippoNode node) throws RepositoryException {
+        AttributeModifier modifier = getColumnAttributeModifier(node);
+        if (modifier != null) {
+            return new AttributeModifier[] { modifier };
+        } else {
+            return null;
+        }
+    }
 }
 

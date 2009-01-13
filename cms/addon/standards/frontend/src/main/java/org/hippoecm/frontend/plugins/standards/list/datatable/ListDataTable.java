@@ -15,10 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.datatable;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -31,13 +27,8 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.i18n.types.TypeTranslator;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
+
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 
 public class ListDataTable extends DataTable {
     @SuppressWarnings("unused")
@@ -90,42 +81,10 @@ public class ListDataTable extends DataTable {
             }
         });
 
-        item.add(new AttributeAppender("title", getDocumentType(model), " "));
-
         return item;
     }
 
     public TableSelectionListener getSelectionListener() {
         return selectionListener;
     }
-
-    private IModel getDocumentType(IModel model) {
-        IModel documentType = new Model("unknown");
-        boolean isFolder = true;
-        if (model instanceof JcrNodeModel) {
-            HippoNode node = (HippoNode) model.getObject();
-            try {
-                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    isFolder = false;
-                    NodeIterator nodeIt = node.getNodes();
-                    while (nodeIt.hasNext()) {
-                        Node childNode = nodeIt.nextNode();
-                        if (childNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                            documentType = new TypeTranslator(new JcrNodeTypeModel(childNode.getPrimaryNodeType())).getTypeName();
-                            break;
-                        }
-                    }
-                } else {
-                    documentType = new TypeTranslator(new JcrNodeTypeModel(node.getPrimaryNodeType())).getTypeName();
-                }
-            } catch (RepositoryException e) {
-            }
-        }
-        if (isFolder) {
-            return new StringResourceModel("folder-title", this, null, new Object[] { documentType });
-        } else {
-            return new StringResourceModel("document-title", this, null, new Object[] { documentType });
-        }
-    }
-
 }

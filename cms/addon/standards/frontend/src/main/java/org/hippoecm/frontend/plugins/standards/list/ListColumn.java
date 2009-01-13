@@ -21,6 +21,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 
@@ -62,15 +63,15 @@ public class ListColumn extends AbstractColumn {
         return attributeModifier;
     }
 
-
     public void populateItem(Item item, String componentId, IModel model) {
         if (attributeModifier != null) {
-            AttributeModifier columnModifier = attributeModifier.getColumnAttributeModifier(model);
-            if (columnModifier != null) {
-                item.add(columnModifier);
+            AttributeModifier[] columnModifiers = attributeModifier.getColumnAttributeModifiers(model);
+            if (columnModifiers != null) {
+                for(AttributeModifier columnModifier : columnModifiers) {
+                    item.add(columnModifier);
+                }
             }
         }
         item.add(new ListCell(componentId, model, renderer, attributeModifier));
     }
-
 }

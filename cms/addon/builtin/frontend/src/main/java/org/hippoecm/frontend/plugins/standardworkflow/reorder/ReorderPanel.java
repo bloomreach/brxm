@@ -65,18 +65,18 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
         column.setAttributeModifier(new IListAttributeModifier() {
             private static final long serialVersionUID = 1L;
 
-            public AttributeModifier getCellAttributeModifier(IModel model) {
+            public AttributeModifier[] getCellAttributeModifiers(IModel model) {
                 if (model instanceof ListItem) {
                     ListItem item = (ListItem) model.getObject();
-                    return item.getCellModifier();
+                    return new AttributeModifier[] { item.getCellModifier() };
                 }
                 return null;
             }
 
-            public AttributeModifier getColumnAttributeModifier(IModel model) {
+            public AttributeModifier[] getColumnAttributeModifiers(IModel model) {
                 if (model instanceof ListItem) {
                     ListItem item = (ListItem) model.getObject();
-                    return item.getColumnModifier();
+                    return new AttributeModifier[] { item.getColumnModifier() };
                 }
                 return null;
             }
