@@ -119,7 +119,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog implements I
                     handle = model.getNodeModel();
                 }
             }
-            handle.getNode().save();
+            handle.getNode().getSession().save();
             execute();
 
             ((UserSession) Session.get()).getJcrSession().refresh(true);

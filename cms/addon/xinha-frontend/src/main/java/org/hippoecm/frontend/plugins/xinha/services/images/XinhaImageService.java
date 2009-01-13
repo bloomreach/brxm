@@ -131,7 +131,7 @@ public abstract class XinhaImageService implements IClusterable {
                 if (node.hasNode(facet)) {
                     Node imgNode = node.getNode(facet);
                     imgNode.remove();
-                    node.save();
+                    node.getSession().save();
                 }
             } catch (RepositoryException e) {
                 log.error("An error occured while trying to save new image facetSelect[" + item.getNodeName() + "]", e);

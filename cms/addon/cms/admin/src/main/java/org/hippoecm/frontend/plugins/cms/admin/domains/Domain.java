@@ -85,13 +85,13 @@ public class Domain implements IClusterable {
         public void removeGroup(String group) throws RepositoryException {
             groupnames.remove(group);
             authRoleNode.setProperty(HippoNodeType.HIPPO_GROUPS, groupnames.toArray(new String[groupnames.size()]));
-            authRoleNode.save();
+            authRoleNode.getSession().save();
         }
 
         public void addGroup(String group) throws RepositoryException {
             groupnames.add(group);
             authRoleNode.setProperty(HippoNodeType.HIPPO_GROUPS, groupnames.toArray(new String[groupnames.size()]));
-            authRoleNode.save();
+            authRoleNode.getSession().save();
         }
     }
 
@@ -139,7 +139,7 @@ public class Domain implements IClusterable {
     public AuthRole createAuthRole(String role) throws RepositoryException {
         Node roleNode = node.addNode(HippoNodeType.NT_AUTHROLE, HippoNodeType.NT_AUTHROLE);
         roleNode.setProperty(HippoNodeType.HIPPO_ROLE, role);
-        node.save();
+        node.getSession().save();
         AuthRole ar = new AuthRole(roleNode);
         authRoles.put(role, ar);
         return ar;

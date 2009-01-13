@@ -156,7 +156,7 @@ class UploadForm extends Form {
 
                         makeThumbnail(primaryChild, primaryChild.getProperty("jcr:data").getStream(), primaryChild
                                 .getProperty("jcr:mimeType").getString());
-                        node.save();
+                        node.getSession().save();
                     }
                     uploadDialog.getWizardModel().next();
                 } catch (MappingException ex) {

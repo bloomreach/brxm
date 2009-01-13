@@ -59,7 +59,7 @@ public class XinhaFacetHelper {
             facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] {});
             facetselect.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {});
             // need a node save (the draft so no problem)
-            node.save();
+            node.getSession().save();
         }
         return facetLink;
     }

@@ -113,7 +113,7 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
             while (n.isNew()) {
                 n = n.getParent();
             }
-            n.save();
+            n.getSession().save();
         } catch (RepositoryException e) {
             log.info(e.getClass().getName() + ": " + e.getMessage());
         }

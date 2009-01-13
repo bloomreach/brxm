@@ -98,7 +98,7 @@ public class NodeActionsPlugin extends RenderPlugin {
             try {
                 HippoNode node = nodeModel.getNode();
                 if (node.getSession().hasPendingChanges() && node.getParent() != null) {
-                    node.getParent().save();
+                    node.getParent().getSession().save();
                     info("Action " + ACTION_OK + " successfull.");
                     List<RenderPlugin> x = getPluginContext().getServices("service.management.node", RenderPlugin.class);
                     for (RenderPlugin y : x) {
