@@ -237,7 +237,7 @@ public class Group implements Comparable<Group>, IClusterable {
         node = ((UserSession) Session.get()).getRootNode().addNode(relPath.toString(), HippoNodeType.NT_GROUP);
         node.setProperty(PROP_DESCRIPTION, getDescription());
         // save parent when adding a node
-        node.getParent().save();
+        node.getParent().getSession().save();
     }
 
     /**
@@ -247,7 +247,7 @@ public class Group implements Comparable<Group>, IClusterable {
     public void save() throws RepositoryException {
         if (node.isNodeType(HippoNodeType.NT_GROUP)) {
             node.setProperty(PROP_DESCRIPTION, getDescription());
-            node.save();
+            node.getSession().save();
         } else {
             throw new RepositoryException("Only hippo:group's can be edited.");
         }
@@ -260,19 +260,19 @@ public class Group implements Comparable<Group>, IClusterable {
     public void delete() throws RepositoryException {
         Node parent = node.getParent();
         node.remove();
-        parent.save();
+        parent.getSession().save();
     }
 
     public void removeMembership(String user) throws RepositoryException {
         members.remove(user);
         node.setProperty(HippoNodeType.HIPPO_MEMBERS, members.toArray(new String[members.size()]));
-        node.save();
+        node.getSession().save();
     }
 
     public void addMembership(String user) throws RepositoryException {
         members.add(user);
         node.setProperty(HippoNodeType.HIPPO_MEMBERS, members.toArray(new String[members.size()]));
-        node.save();
+        node.getSession().save();
     }
 
     //--------------------- default object -------------------//

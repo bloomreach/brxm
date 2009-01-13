@@ -43,7 +43,7 @@ public abstract class WorkflowAction implements IClusterable {
     protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
         // save the handle so that the workflow uses the correct content
         Node handleNode = handleModel.getNode();
-        handleNode.save();
+        handleNode.getSession().save();
         handleNode.getSession().refresh(true);
     }
 

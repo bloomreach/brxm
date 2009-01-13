@@ -300,7 +300,7 @@ public class User implements IClusterable {
         node.setProperty(PROP_FIRSTNAME, getFirstName());
         node.setProperty(PROP_LASTNAME, getLastName());
         // save parent when adding a node
-        node.getParent().save();
+        node.getParent().getSession().save();
     }
 
     /**
@@ -313,7 +313,7 @@ public class User implements IClusterable {
             node.setProperty(PROP_FIRSTNAME, getFirstName());
             node.setProperty(PROP_LASTNAME, getLastName());
             node.setProperty(HippoNodeType.HIPPO_ACTIVE, isActive());
-            node.save();
+            node.getSession().save();
         } else {
             throw new RepositoryException("Only frontend:users can be edited.");
         }
@@ -326,7 +326,7 @@ public class User implements IClusterable {
     public void delete() throws RepositoryException {
         Node parent = node.getParent();
         node.remove();
-        parent.save();
+        parent.getSession().save();
     }
 
     /**
@@ -336,7 +336,7 @@ public class User implements IClusterable {
      */
     public void savePassword(String password) throws RepositoryException {
         node.setProperty(HippoNodeType.HIPPO_PASSWORD, createPasswordHash(password));
-        node.save();
+        node.getSession().save();
     }
 
     //--------------------- default object -------------------//

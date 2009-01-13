@@ -376,7 +376,7 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap {
 
     public void save() {
         try {
-            item.save();
+            item.getSession().save();
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }

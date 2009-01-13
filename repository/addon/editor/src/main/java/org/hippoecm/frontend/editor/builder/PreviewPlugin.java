@@ -230,7 +230,7 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
                     }
                 }
                 if (save) {
-                    prototype.save();
+                    prototype.getSession().save();
                 }
             }
         } catch (RepositoryException ex) {

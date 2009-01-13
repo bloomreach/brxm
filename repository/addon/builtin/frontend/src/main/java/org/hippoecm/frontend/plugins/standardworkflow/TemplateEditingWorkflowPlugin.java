@@ -69,7 +69,7 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implem
                 WorkflowsModel model = (WorkflowsModel) getModel();
                 final JcrNodeModel nodeModel = model.getNodeModel();
                 if (nodeModel.getNode() != null) {
-                    nodeModel.getNode().save();
+                    nodeModel.getNode().getSession().save();
 
                     IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
                     if (jcrService != null) {

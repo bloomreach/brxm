@@ -146,7 +146,7 @@ public class GroupsListPlugin extends AbstractManagementListingPlugin {
                     try {
                         addMultiValueProperty(groupNode, "hippo:members", myUsername);
                         if (groupNode.pendingChanges().hasNext()) {
-                            groupNode.save();
+                            groupNode.getSession().save();
                             onModelChanged();
                         }
                     } catch (RepositoryException e) {
