@@ -36,8 +36,13 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private Repository repository;
+    DecoratorFactory factory;
+
     public RepositoryDecorator(DecoratorFactory factory, Repository repository) {
         super(factory, repository);
+        this.repository = repository;
+        this.factory = factory;
     }
 
     /**
@@ -46,6 +51,7 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
      * @return decorated session
      * @see #login(Credentials, String)
      */
+    @Override
     public Session login(Credentials credentials) throws LoginException, NoSuchWorkspaceException, RepositoryException {
         return login(credentials, null);
     }
@@ -56,6 +62,7 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
      * @return decorated session
      * @see #login(Credentials, String)
      */
+    @Override
     public Session login(String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
         return login(null, workspaceName);
     }
@@ -66,8 +73,16 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
      * @return decorated session
      * @see #login(Credentials, String)
      */
+    @Override
     public Session login() throws LoginException, NoSuchWorkspaceException, RepositoryException {
         return login(null, null);
+    }
+
+    @Override
+    public Session login(Credentials credentials, String workspaceName) throws LoginException,
+            NoSuchWorkspaceException, RepositoryException {
+        Session session = repository.login(credentials, workspaceName);
+        return DecoratorFactoryImpl.getSessionDecorator(session);
     }
 
     @Override

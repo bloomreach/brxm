@@ -20,10 +20,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.Credentials;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
+import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
@@ -115,6 +117,12 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
     public XAResource getXAResource() {
         return ((XASession) session).getXAResource();
+    }
+
+    @Override
+    public Session impersonate(Credentials credentials) throws LoginException, RepositoryException {
+        Session newSession = session.impersonate(credentials);
+        return DecoratorFactoryImpl.getSessionDecorator(newSession);
     }
 
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
