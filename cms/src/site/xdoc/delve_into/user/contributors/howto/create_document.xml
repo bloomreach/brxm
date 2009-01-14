@@ -68,7 +68,7 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul> 
-    <li><a href='./fill_date_field_in_document.html'>fill date field in document (continue tour)</a>.</li>
+    <li><a href='./fill_date_field_in_document.html'>fill date field in document (continue</a> <a href='../tour.html'>tour</a>).</li>					
     <li><a href='./fill_string_field_in_document.html'>fill string field in document</a>.</li>
     <li><a href='./fill_boolean_field_in_document.html'>fill boolean field in document</a>.</li> 
     <li><a href='./fill_markuped_text_in_document.html'>fill markedup text in document</a>.</li>
@@ -76,6 +76,12 @@ ________________________________________________________________________________
    </ul>       
   </subsection>
 
-   </section>
-  </body>
+  <subsection name='Alternative'>
+   <ul>
+    <li><a href='./index.html'>Howto list.</a>.</li>
+   </ul>       
+  </subsection>
+
+  </section>
+ </body>
 </document>        
