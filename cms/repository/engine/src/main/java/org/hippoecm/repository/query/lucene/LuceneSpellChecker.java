@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
+
 import org.apache.jackrabbit.core.query.QueryHandler;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
@@ -144,7 +145,6 @@ public class LuceneSpellChecker
     /**
      * {@inheritDoc}
      */
-    @Override
     public String check(QueryRootNode aqt) throws IOException {
         String stmt = getFulltextStatement(aqt);
         if (stmt == null) {
@@ -171,6 +171,7 @@ public class LuceneSpellChecker
         try {
         final String[] stmt = new String[1];
         aqt.accept(new TraversingQueryNodeVisitor() {
+            @Override
             public Object visit(RelationQueryNode node, Object o) throws RepositoryException {
                 if (stmt[0] == null && node.getOperation() == RelationQueryNode.OPERATION_SPELLCHECK) {
                     stmt[0] = node.getStringValue();
