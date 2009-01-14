@@ -30,23 +30,45 @@ ________________________________________________________________________________
       <span class="shortdesc">How to ask the editor to publish a document?</span>
 
    <div class='group'>
-    <div class='screenshot'>
-     <img src="../../../../images/screenshots/cms_M9/contribs/goto_request_schedule_publication.png" alt='request schedule publication screenshot'/>
+    <div id='screenshot' class='screenshot' onclick='autoscroll()'>
+     <div onmouseover='autofull()' >
+      <img src="../../../../images/screenshots/cms_M9/contribs/goto_request_schedule_publication.png" alt='request schedule publication screenshot'/>
+     </div> 
     </div> 
     <p>
       Requesting publication of the document 'multibazaar2009'. 
-      A window will popup where you can 
+      <a href='./request_publication.html'>A window will popup</a> where you can schedule at 
+      what date and time you want the publication to occur.
 
       The editor will be notified and accept or reject this request.
     </p>
    </div>
+
+   <script type="text/javascript">
+    function autofull() {
+    var image=document.getElementById('screenshot');
+
+    image.style.width='inherit'; 
+    image.style.height='inherit';
+   };
+
+    function autoscroll() {
+      var image=document.getElementById('screenshot');
+
+      image.style.height='300px';
+      image.scrollLeft=300; 
+      image.scrollTop=94;   
+    };
+    autoscroll();
+   </script>
 
    <p>
     In a document in <a href='../concepts/view_mode.html'>view mode</a>, e.g. after
     <a href='./save_document.html'>saving that document</a>, 
     click the 'schedule publication (request)' 
     button at the top to request that the document be published.
-
+   </p>
+   <p>
     The editor will be notified and accept or reject your request.
    </p>
 
@@ -54,7 +76,13 @@ ________________________________________________________________________________
    <ul>
   <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
     <li><a href='./goto_folder.html'>goto another folder (list its contents)</a>.</li>
-    <li><a href='./logout.html'>Logout (continue tour)</a></li>
+    <li><a href='./logout.html'>Logout (continue</a> <a href='../tour.html'>tour</a>).</li>
+   </ul>       
+  </subsection>
+
+  <subsection name='Alternative'>
+   <ul>
+    <li><a href='./index.html'>Howto list</a>.</li>
    </ul>       
   </subsection>
 
