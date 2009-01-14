@@ -59,7 +59,11 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             throw new WorkflowException("cannot rename document with pending publication request");
         if(current2 != null)
             throw new WorkflowException("cannot rename document with pending depublication request");
-        doDepublish();
+        if(published != null)
+            throw new WorkflowException("cannot rename published document");
+        if(draft != null)
+            throw new WorkflowException("cannot rename document being edited");
+        // doDepublish();
         DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", unpublished);
         defaultWorkflow.rename(newName);
     }
