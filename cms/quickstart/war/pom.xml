@@ -341,8 +341,8 @@
               <exclusion>
                 <groupId>org.eclipse.jdt</groupId>
                 <artifactId>core</artifactId>
-	      </exclusion>
-	    </exclusions>
+              </exclusion>
+            </exclusions>
           </dependency>
           <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
           <dependency>

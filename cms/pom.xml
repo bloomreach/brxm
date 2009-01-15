@@ -458,11 +458,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
         <configuration>
-         <issueLinkTemplatePerSystem>
-          <Jira>%URL%/%ISSUE%</Jira>
-         </issueLinkTemplatePerSystem>
-         <issueLinkTemplate>%URL%/%ISSUE%</issueLinkTemplate>
-	</configuration>
+          <issueLinkTemplatePerSystem>
+            <Jira>%URL%/%ISSUE%</Jira>
+          </issueLinkTemplatePerSystem>
+          <issueLinkTemplate>%URL%/%ISSUE%</issueLinkTemplate>
+        </configuration>
         <executions>
           <execution>
             <id>validate-changes</id>
@@ -762,11 +762,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
         <configuration>
-         <issueLinkTemplatePerSystem>
-          <Jira>%URL%/%ISSUE%</Jira>
-         </issueLinkTemplatePerSystem>
-         <issueLinkTemplate>%URL%/%ISSUE%</issueLinkTemplate>
-	</configuration>
+          <issueLinkTemplatePerSystem>
+            <Jira>%URL%/%ISSUE%</Jira>
+            </issueLinkTemplatePerSystem>
+          <issueLinkTemplate>%URL%/%ISSUE%</issueLinkTemplate>
+        </configuration>
         <reportSets>
           <reportSet>
             <reports>
@@ -781,13 +781,13 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>taglist-maven-plugin</artifactId>
-	<configuration>
-	  <tags>
-	    <tag>TODO</tag>
-	    <tag>FIXME</tag>
-	    <tag>FUTURE</tag>
-	  </tags>
-	</configuration>
+        <configuration>
+          <tags>
+            <tag>TODO</tag>
+            <tag>FIXME</tag>
+            <tag>FUTURE</tag>
+          </tags>
+        </configuration>
       </plugin>
 
 

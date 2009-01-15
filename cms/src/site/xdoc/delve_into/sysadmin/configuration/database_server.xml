@@ -33,9 +33,9 @@
         <a name='increase_packet_size'/>
          Increase the <span class='index' id='max_allowed_packet'>max_allowed_packet</span> variable of your database server to allow 
          for larger assets. Be aware that this will reduce <a href='./performance_tuning.html'>performance</a>.           
-	</p>
+        </p>
 
-	</subsection>
+        </subsection>
 
       </section>
     </body>
