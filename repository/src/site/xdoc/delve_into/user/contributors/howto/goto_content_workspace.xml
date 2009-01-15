@@ -29,24 +29,35 @@ ________________________________________________________________________________
     <section name="Goto Content workspace">
       <span class="shortdesc">How to get to the content workspace.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=0;
+    heightpx=326;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/contribs/goto_content_workspace.png" alt='goto content workspace screenshot'/>      
-   </div>
-
+    </div></div> 
     <p>
      In the <a href='../concepts/workspace_navigation_panel.html'>workspace navigation panel</a>,
-     click on the <a href='../concepts/content_workspace.html'>content workspace</a> icon 
-     (an image of a folder): <span class='content-workspace-16 icon-16'/>.
+     click on the icon for the <a href='../concepts/content_workspace.html'>content workspace</a>.  
+     This icon is the image of a folder<span class='add'> image class='content-workspace-16 icon-16'</span>.
     </p>
+   </div>
 
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./goto_folder.html'>Go to folder</a>, i.e. make it 
+   <subsection name='Next'>
+    <ul>
+     <li><a href='./goto_folder.html'>Go to folder</a>, i.e. make it 
       the <a href='../concepts/current_folder.html'>current folder</a> 
       (<a href='./goto_folder.html'>continue</a> <a href='../tour.html'>tour</a>).</li>
-   </ul>       
-  </subsection>
+    </ul>       
+   </subsection>
 
-   </section>
-  </body>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>       
+   </subsection>
+  </section>
+ </body>
 </document>        

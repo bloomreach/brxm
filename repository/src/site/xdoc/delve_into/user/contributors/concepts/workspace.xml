@@ -34,8 +34,19 @@ ________________________________________________________________________________
        you can focus on your work.
     </p>
 
+   <script type="text/javascript">
+    leftpx=0;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
+     <img src="../../../../images/screenshots/cms_M9/contribs/content_workspace.png" alt='content workspace'/>
+    </div></div> 
     <p>
-     In the CMS, uses can perform many actions and the CMS can show many types of information.
+      An example of a workspace: the <a href='./content_workspace.html'>content workspace</a>. 
+    </p>   
+   </div>
+    <p>
+     In the CMS, users can perform many actions and the CMS can show many types of information.
      There are too many actions possible to fit buttons for all of them in a single window at once and
      there are too many types of information to fit panels for them one on a single window at once.
      It would also not be desirable to fit all in a single window at once, 
@@ -46,11 +57,25 @@ ________________________________________________________________________________
      Therefor, you see only one workspace at a time, which contains the buttons and panels you need
      for a particular kind of work.
     </p>
+    <p>A contributor can use the <a href='./content_workspace.html'>content workspace</a>
+       and the <a href='./home_workspace.html'>home workspace</a>.
+    </p>
 
-    <subsection name='Next'>
-     If you are doing the tour, use the back button of your browser to resume the tour.
-    </subsection>
+   <subsection name='Next'>
+    <ul>
+     <li>
+      If you are doing the <a href='../tour.html'>tour</a>, use the back button of your browser to continue.
+      (There is no hyperlink here, because you can get here from many different pages.)
+     </li>
+    </ul>       
+   </subsection>
 
-   </section>
-  </body>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./index.html'>Glossary.</a></li>
+     <li><a href='../howto/index.html'>Howto list.</a></li>
+    </ul>       
+   </subsection>
+  </section>
+ </body>
 </document>        
