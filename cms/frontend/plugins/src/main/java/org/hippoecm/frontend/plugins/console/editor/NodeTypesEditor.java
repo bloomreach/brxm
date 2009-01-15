@@ -72,9 +72,9 @@ class NodeTypesEditor extends CheckGroup {
     }
     
     @Override
-	protected boolean wantOnSelectionChangedNotifications() {
-		return true;
-	}
+    protected boolean wantOnSelectionChangedNotifications() {
+        return true;
+    }
 
     @Override
     protected void onSelectionChanged(Collection selection) {

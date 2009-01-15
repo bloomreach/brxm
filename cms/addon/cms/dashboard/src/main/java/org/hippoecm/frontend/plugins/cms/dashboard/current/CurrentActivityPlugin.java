@@ -161,11 +161,11 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
                 }
 
                 if (path != null) {
-                	 // We have a path to a document variant, so we can link to it!
+                     // We have a path to a document variant, so we can link to it!
                     String label = new StringResourceModel(timestamp, this, null, "").getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString(), new NodeTranslator(new JcrNodeModel(path)).getNodeName().getObject()  }).getString();
                     BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", path, label);
-                 	item.add(link);
-                	return;
+                    item.add(link);
+                    return;
                 }
                 else
                 {
@@ -179,7 +179,7 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
                             item.add( link );
                             return;
                         } else {
-                        	// No path, so we're just rendering a label without a link
+                            // No path, so we're just rendering a label without a link
                             String label = new StringResourceModel(timestamp, this, null, "").getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString() }).getString();
                             item.add(new Label("entry", label));
                             return;
@@ -208,9 +208,9 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
             }
         }
 
-		private String relativeTime(Calendar nodeCal) {
+        private String relativeTime(Calendar nodeCal) {
 
-			Calendar currentCal = Calendar.getInstance();
+            Calendar currentCal = Calendar.getInstance();
 
             Calendar yesterdayCal = Calendar.getInstance();
             yesterdayCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
@@ -253,7 +253,7 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
             if(nodeCal.before(thisEveningCal) && nodeCal.after(todayCal)) { return new String("evening"); }
             if(nodeCal.after(yesterdayCal)) { return new String("yesterday"); }
             return df.format(nodeCal);
-		}
+        }
     }
 
     String uuid2Path(String uuid) {

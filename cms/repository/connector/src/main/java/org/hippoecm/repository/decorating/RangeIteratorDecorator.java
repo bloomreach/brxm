@@ -124,7 +124,7 @@ public class RangeIteratorDecorator extends AbstractDecorator implements RangeIt
             return factory.getItemDecorator(session, (Item) object);
         } else if (object == null) {
             return null;
-	} else {
+        } else {
             throw new UnsupportedOperationException("No decorator available for " + object);
         }
     }

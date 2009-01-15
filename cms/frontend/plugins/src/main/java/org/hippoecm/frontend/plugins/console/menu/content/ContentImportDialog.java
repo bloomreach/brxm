@@ -155,9 +155,9 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
 
                 ((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
                 info("Import done.");
-		
-		        plugin.setModel(nodeModel);
-		        plugin.flushNodeModel(nodeModel);
+        
+                plugin.setModel(nodeModel);
+                plugin.flushNodeModel(nodeModel);
 
             } catch (PathNotFoundException ex) {
                 log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
