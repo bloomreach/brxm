@@ -15,12 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.dialog.AbstractDialog;
 
-public interface ICloseEditorListener extends IClusterable {
-    @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+class TooManyEditorsWarningDialog extends AbstractDialog {
+    private static final long serialVersionUID = 1L;
 
-    void onClose(IModel model);
+    TooManyEditorsWarningDialog() {
+        cancel.setVisible(false);
+    }
+
+    public IModel getTitle() {
+        return new StringResourceModel("too-many-editors-title", this, null);
+    }
 }

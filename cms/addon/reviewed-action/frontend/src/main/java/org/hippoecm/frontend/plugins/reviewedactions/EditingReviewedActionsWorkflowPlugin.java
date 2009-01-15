@@ -33,7 +33,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditService;
-import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
@@ -94,14 +93,10 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
 
     private void close() {
         IPluginContext context = getPluginContext();
-        IEditService viewer = context.getService(getPluginConfig().getString(IEditService.EDITOR_ID),
+        IEditService editor = context.getService(getPluginConfig().getString(IEditService.EDITOR_ID),
                 IEditService.class);
-        if (viewer != null) {
-            String serviceId = context.getReference(viewer).getServiceId();
-            IFactoryService factory = context.getService(serviceId, IFactoryService.class);
-            if (factory != null) {
-                factory.delete(viewer);
-            }
+        if (editor != null) {
+            editor.close(((WorkflowsModel) getModel()).getNodeModel());
         } else {
             log.warn("No editor service found");
         }

@@ -47,7 +47,7 @@
       <sv:value>${model.document}</sv:value>
     </sv:property>
     <sv:property sv:name="browser.id" sv:type="String">
-      <sv:value>BrowserPerspective</sv:value>
+      <sv:value>service.browse</sv:value>
     </sv:property>
     <sv:property sv:name="workaround" sv:type="Long">
       <sv:value>1</sv:value>
@@ -83,7 +83,7 @@
       <sv:value>service.edit</sv:value>
     </sv:property>
     <sv:property sv:name="browser.id" sv:type="String">
-      <sv:value>BrowserPerspective</sv:value>
+      <sv:value>service.browse</sv:value>
     </sv:property>
     <sv:property sv:name="workaround" sv:type="Long">
       <sv:value>2</sv:value>

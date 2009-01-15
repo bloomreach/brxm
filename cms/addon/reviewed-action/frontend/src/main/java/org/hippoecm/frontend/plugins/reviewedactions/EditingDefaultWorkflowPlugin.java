@@ -16,12 +16,12 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditService;
-import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.repository.api.Workflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,14 +49,10 @@ public class EditingDefaultWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private void close() {
         IPluginContext context = getPluginContext();
-        IEditService viewer = context.getService(getPluginConfig().getString(IEditService.EDITOR_ID),
+        IEditService editor = context.getService(getPluginConfig().getString(IEditService.EDITOR_ID),
                 IEditService.class);
-        if (viewer != null) {
-            String serviceId = context.getReference(viewer).getServiceId();
-            IFactoryService factory = context.getService(serviceId, IFactoryService.class);
-            if (factory != null) {
-                factory.delete(viewer);
-            }
+        if (editor != null) {
+            editor.close(((WorkflowsModel) getModel()).getNodeModel());
         } else {
             log.warn("No editor service found");
         }

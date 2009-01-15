@@ -15,55 +15,27 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.service.IEditService;
-import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.frontend.service.IRenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditPerspective extends Perspective implements IEditService {
+public class EditPerspective extends Perspective {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+    
+    private static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
-
-    private ModelService modelService;
-    private ModelService documentService;
-
     public EditPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        if (config.getString(RenderService.MODEL_ID) != null) {
-            modelService = new ModelService(config.getString(RenderService.MODEL_ID), new JcrNodeModel((Node) null));
-            modelService.init(context);
-        } else {
-            log.error("no model service ({}) specified", RenderService.MODEL_ID);
-        }
-
-        if (config.getString("model.document") != null) {
-            documentService = new ModelService(config.getString("model.document"), new JcrNodeModel((Node) null));
-            documentService.init(context);
-        } else {
-            log.error("no model service (model.document) specified");
-        }
-
-        if (config.getString(IEditService.EDITOR_ID) != null) {
-            context.registerService(this, config.getString(IEditService.EDITOR_ID));
-        }
-
-        onModelChanged();
     }
 
     @Override
@@ -71,25 +43,25 @@ public class EditPerspective extends Perspective implements IEditService {
         return new NodeTranslator((JcrNodeModel) getModel()).getNodeName();
     }
 
-    // IEditService
+    @Override
+    public void focus(IRenderService child) {
+        IPluginConfig config = getPluginConfig();
+        IPluginContext context = getPluginContext();
 
-    public void edit(IModel model) {
-        if (modelService != null) {
-            modelService.setModel(model);
-
-            if (documentService != null) {
-                JcrNodeModel nodeModel = (JcrNodeModel) model;
-                try {
-                    Node node = nodeModel.getNode();
-                    if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                        documentService.setModel(new JcrNodeModel(node.getParent()));
-                    } else {
-                        documentService.setModel(model);
-                    }
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
+        JcrNodeModel model = (JcrNodeModel) getModel();
+        if (model != null) {
+            if (config.getString("editor.id") != null) {
+                IEditService editor = context.getService(config.getString("editor.id"), IEditService.class);
+                if (editor != null) {
+                    editor.edit(model);
+                } else {
+                    log.warn("No edit service found");
                 }
+            } else {
+                log.warn("No edit service configure");
             }
+        } else {
+            log.warn("Cannot request focus without model");
         }
     }
 

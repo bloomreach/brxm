@@ -28,6 +28,7 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.IModelListener;
+import org.hippoecm.frontend.model.IModelService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.model.WorkflowsModel;
@@ -80,22 +81,27 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
                 StringBuffer sb = new StringBuffer();
                 sb.append("workflow showing categories");
                 for (String category : categories)
-                    sb.append(" "+category);
+                    sb.append(" " + category);
                 log.debug(new String(sb));
             }
         } else {
             log.warn("No categories ({}) defined", CATEGORIES);
         }
 
-        if (config.getString(RenderService.MODEL_ID) != null) {
-            context.registerService(this, config.getString(RenderService.MODEL_ID));
-        } else {
-            log.warn("");
-        }
-
         context.registerService(this, IJcrService.class.getName());
 
         serviceId = context.getReference(this).getServiceId();
+
+        if (config.getString(RenderService.MODEL_ID) != null) {
+            context.registerService(this, config.getString(RenderService.MODEL_ID));
+            IModelService modelService = context.getService(config.getString(RenderService.MODEL_ID),
+                    IModelService.class);
+            if (modelService != null) {
+                updateModel(modelService.getModel());
+            }
+        } else {
+            log.warn("");
+        }
     }
 
     // implement IModelListener
