@@ -68,7 +68,7 @@
                 <sv:value>model.report.current</sv:value>
             </sv:property>
           <sv:property sv:name="browser.id" sv:type="String">
-            <sv:value>BrowserPerspective</sv:value>
+            <sv:value>service.browse</sv:value>
           </sv:property>
         </sv:node>
     </sv:node>
@@ -113,7 +113,7 @@
                 <sv:value>model.report.todo</sv:value>
             </sv:property>
             <sv:property sv:name="browser.id" sv:type="String">
-                <sv:value>BrowserPerspective</sv:value>
+                <sv:value>service.browse</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>

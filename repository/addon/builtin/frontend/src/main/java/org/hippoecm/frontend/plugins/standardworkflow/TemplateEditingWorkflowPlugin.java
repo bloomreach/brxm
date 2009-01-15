@@ -32,7 +32,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditService;
-import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -168,11 +167,7 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implem
         IEditService viewer = context.getService(getPluginConfig().getString(IEditService.EDITOR_ID),
                 IEditService.class);
         if (viewer != null) {
-            String serviceId = context.getReference(viewer).getServiceId();
-            IFactoryService factory = context.getService(serviceId, IFactoryService.class);
-            if (factory != null) {
-                factory.delete(viewer);
-            }
+            viewer.close(((WorkflowsModel) getModel()).getNodeModel());
         } else {
             log.warn("No editor service found");
         }

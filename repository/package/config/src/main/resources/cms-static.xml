@@ -532,7 +532,7 @@
       <sv:value>service.search</sv:value>
     </sv:property>
     <sv:property sv:name="browser.id" sv:type="String">
-      <sv:value>BrowserPerspective</sv:value>
+      <sv:value>service.browse</sv:value>
     </sv:property>
     <sv:property sv:name="search.paths" sv:type="String">
       <sv:value>/content</sv:value>
@@ -827,10 +827,13 @@
       <sv:value>browse-perspective-title</sv:value>
     </sv:property>
     <sv:property sv:name="browser.id" sv:type="String">
-      <sv:value>BrowserPerspective</sv:value>
+      <sv:value>service.browse</sv:value>
     </sv:property>
     <sv:property sv:name="browser.viewers" sv:type="String">
       <sv:value>cms-folder-views</sv:value>
+    </sv:property>
+    <sv:property sv:name="editor.id" sv:type="String">
+      <sv:value>service.edit</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.navigator</sv:value>
@@ -1146,7 +1149,7 @@
       <sv:value>service.edit</sv:value>
     </sv:property>
     <sv:property sv:name="browser.id" sv:type="String">
-      <sv:value>BrowserPerspective</sv:value>
+      <sv:value>service.browse</sv:value>
     </sv:property>
     <sv:property sv:name="translator.id" sv:type="String">
       <sv:value>service.translator.search</sv:value>
@@ -1310,45 +1313,24 @@
     </sv:node>
   </sv:node>
     
-  <sv:node sv:name="previewPlugin">
+  <sv:node sv:name="editorManagerPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.edit.PreviewPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.cms.edit.EditorManagerPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
       <sv:value>model.browse.document</sv:value>
     </sv:property>
-    <sv:property sv:name="cluster.name" sv:type="String">
+    <sv:property sv:name="cluster.edit.name" sv:type="String">
+      <sv:value>cms-editor</sv:value>
+    </sv:property>
+    <sv:property sv:name="cluster.preview.name" sv:type="String">
       <sv:value>cms-preview</sv:value>
     </sv:property>
     <sv:property sv:name="editor.id" sv:type="String">
       <sv:value>service.edit</sv:value>
-    </sv:property>
-    <sv:property sv:name="editor.wrapped.id" sv:type="String">
-      <sv:value>service.edit.multi</sv:value>
-    </sv:property>
-    <sv:property sv:name="browser.id" sv:type="String">
-      <sv:value>BrowserPerspective</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="documentEditorPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.edit.MultiEditorPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="cluster.name" sv:type="String">
-      <sv:value>cms-editor</sv:value>
-    </sv:property>
-    <sv:property sv:name="editor.id" sv:type="String">
-      <sv:value>service.edit.multi</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.editor.tab</sv:value>
     </sv:property>
   </sv:node>
 

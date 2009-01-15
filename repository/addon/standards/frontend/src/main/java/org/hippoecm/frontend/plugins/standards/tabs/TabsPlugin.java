@@ -138,7 +138,7 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     void onSelect(Tab tabbie, AjaxRequestTarget target) {
-        tabbie.select();
+        tabbie.renderer.focus(null);
     }
 
     void onClose(Tab tabbie, AjaxRequestTarget target) {
@@ -183,6 +183,7 @@ public class TabsPlugin extends RenderPlugin {
                 }
                 tabbedPanel.setSelectedTab(tabs.indexOf(lastTab));
                 lastTab.lastSelected = ++TabsPlugin.this.selectCount;
+                lastTab.renderer.focus(null);
                 redraw();
             }
         }

@@ -16,11 +16,29 @@
 package org.hippoecm.frontend.plugins.cms.edit;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.service.IEditService;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public interface IEditorManager extends IClusterable {
+public class EditorFactory implements IClusterable {
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
 
-    void deleteEditor(IEditService service);
+    private static final long serialVersionUID = 1L;
+
+    public static final Logger log = LoggerFactory.getLogger(EditorFactory.class);
+
+    private IPluginContext context;
+    private String cluster;
+
+    public EditorFactory(IPluginContext context, String cluster) {
+        this.context = context;
+        this.cluster = cluster;
+    }
+
+    public Editor newEditor(final IModel model) throws EditorException {
+        return new Editor(context, cluster, model);
+    }
+
 }
