@@ -20,5 +20,7 @@ import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.model.IModel;
 
 public interface IAdminParticipant extends IBreadCrumbParticipant {
+    final static String SVN_ID = "$Id$";
+
     IModel getTitle(Component component);
 }

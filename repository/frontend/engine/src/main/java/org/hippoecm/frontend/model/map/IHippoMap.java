@@ -18,6 +18,7 @@ package org.hippoecm.frontend.model.map;
 import java.util.Map;
 
 public interface IHippoMap extends Map<String, Object> {
+    final static String SVN_ID = "$Id$";
 
     String getPrimaryType();
 

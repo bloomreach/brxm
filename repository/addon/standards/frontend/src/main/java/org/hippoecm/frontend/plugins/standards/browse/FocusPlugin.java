@@ -26,6 +26,9 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 public class FocusPlugin extends RenderPlugin implements IBrowseService<IModel>, IDetachable {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     public FocusPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         context.registerService(this, "focus.id");
