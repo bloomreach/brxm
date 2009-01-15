@@ -29,9 +29,9 @@
           <ul>
            <li>
             <span class='index' id='front'>Frontend plugin</span>: Hippo CMS is a frontend to the repository.
-	   </li>
-	  </ul>
-	 </subsection>
+           </li>
+          </ul>
+         </subsection>
 
          <subsection name='Document type'>
 
@@ -39,15 +39,15 @@
            <li>
             <span class='index' id='Backend_template'>Backend template</span>: The Hippo repository and its content is a
                                                                                backend to the HST.
-	   </li>
+           </li>
            <li>
             <span class='index' id='Editing_template'>Editing template</span>
-	   </li>
+           </li>
            <li>
             <span class='index' id='Documenttype'>Documenttype</span>
-	   </li>
-	  </ul>
-	 </subsection>
+           </li>
+          </ul>
+         </subsection>
  
         </section>
 

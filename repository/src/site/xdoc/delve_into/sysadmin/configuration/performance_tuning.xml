@@ -31,7 +31,7 @@
           The max_allowed_packet variable of your database server may be set to a larger
           value, to allow for larger assets, see <a href='./database_server.html#increase_packet_size'>increase packet size</a>.
           However, this will reduce performance.
-	</p>
+        </p>
        </subsection>
 
       </section>

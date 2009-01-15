@@ -166,10 +166,10 @@
        <ul>
         <li>
           Intel Pentium 4, 2.0 Ghz or higher (Dual 2.0 GHz recommended)
-	</li>
+        </li>
         <li>
           2GB of RAM (4.0 Gb recommended)
-	</li>
+        </li>
         <li>300 MB of available hard-disk space for system storage</li>
         <li>2 Gb of available hard-disk space for data storage (5 Gb or more recommended)</li>
        </ul>
@@ -192,36 +192,36 @@
        <tr>
         <td>
          <a href='http://java.com/en/download/index.jsp'><img src='../../images/sun_logo_tiny.png' alt='Sun logo'/></a>
-	</td>
+        </td>
         <td>
           <a href='http://java.com/en/download/index.jsp'>Sun Microsystems</a>
-	</td>
+        </td>
        </tr>
        <tr>
         <td>
          <a href='http://www.linux.org/'><img src='../../images/Tux_logo_tiny.png' alt='Tux logo'/></a>
-	</td>
+        </td>
         <td>
           Only Linux JRE packages that ask you to agree to Sun's licence terms contain Java from
           <a href='http://www.sun.com/'>Sun Microsystems</a> and will run Hippo ECM.
-	</td>
+        </td>
        </tr>
  <!--
        <tr>
         <td>
          <a href='http://packages.ubuntu.com/hardy/sun-java6-jre'><img src='../../images/Ubuntu_logo_tiny.png' alt='Ubuntu logo'/></a>
-	</td>
+        </td>
         <td>
           <a href='http://packages.ubuntu.com/'>Ubuntu</a> <a href='http://packages.ubuntu.com/hardy/sun-java6-jre'>JRE 6</a>.
-	</td>
+        </td>
        </tr>
        <tr>
         <td>
          <a href='http://packages.debian.org/lenny/sun-java6-jre'><img src='../../images/Debian_logo_tiny.png' alt='Debian logo'/></a>
-	</td>
+        </td>
         <td>
           <a href='http://www.debian.org/distrib/packages'>Debian</a> <a href='http://packages.debian.org/lenny/sun-java6-jre'>JRE 6</a>.
-	</td>
+        </td>
        </tr>
  -->
       </table>          
@@ -247,23 +247,23 @@
           <td>
            <a href='http://jetty.mortbay.com/jetty/'>Jetty</a> <a href='http://docs.codehaus.org/display/JETTY/Downloading+Jetty'>6.1</a>,
              also included in <a href='../quickstart.html'>Hippo CMS quickstart-bin package</a>.
-	  </td>
-	 </tr>
+          </td>
+         </tr>
          <tr>
           <td>
            <a href='http://tomcat.apache.org/'><img src='../../images/tomcat_logo_tiny.png' alt='Tomcat logo'/></a>
           </td>
           <td>
            <a href='http://tomcat.apache.org/'>Tomcat</a> <a href="http://tomcat.apache.org/download-60.cgi">6.0</a> and 5.5                
-	  </td>
-	 </tr>
+          </td>
+         </tr>
          <tr>
           <td>
            <a href='https://glassfish.dev.java.net/public/users.html'><img src='../../images/glassfish_logo_tiny.png' alt='Glassfish logo'/></a>
           </td>
           <td>
            <a href='https://glassfish.dev.java.net/public/users.html'>Sun GlassFish</a> V2 (<a href='http://packages.ubuntu.com/hardy/glassfishv2'>Linux Ubuntu package of Glassfish V2</a>). 
-	  </td>
+          </td>
          </tr>
         </table>
        </div>
@@ -286,33 +286,33 @@
           <td>
           <a href='http://db.apache.org/derby/'>Apache Derby</a> &gt; 10.0
             is embedded and configured as default and runs "out of the box".
-	  </td>
-	 </tr>
+          </td>
+         </tr>
          <tr>
           <td>
           </td>
           <td>
            <a href="http://www.mysql.com">MySQL 5.0</a> and <a href="http://www.mysql.com">5.1</a>
-	  </td>
-	 </tr>
+          </td>
+         </tr>
          <tr>
           <td>
           </td>
           <td>
             PosgreSQL 8.0 or newer
-	  </td>
-	 </tr>
+          </td>
+         </tr>
          <tr>
           <td>
            <a href='http://TODO'><img src='../../images/oracle_logo_tiny.png' alt='Oracle logo'/></a>
           </td>
           <td>Oracle 9.2, 10 and 11</td>
-	 </tr>
+         </tr>
          <tr>
           <td>
           </td>
           <td>MS SQLServer 2000 or newer</td>
-	 </tr>
+         </tr>
         </table>
        </div>
    </td>
