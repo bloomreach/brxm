@@ -100,7 +100,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        table = new AdminDataTable("table", columns, new GroupDataProvider(), 40);
+        table = new AdminDataTable("table", columns, new GroupDataProvider(), 20);
         add(table);
     }
 

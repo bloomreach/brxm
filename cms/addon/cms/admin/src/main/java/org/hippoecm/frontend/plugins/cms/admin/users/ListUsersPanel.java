@@ -102,7 +102,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        table = new AdminDataTable("table", columns, userDataProvider, 40);
+        table = new AdminDataTable("table", columns, userDataProvider, 20);
         table.setOutputMarkupId(true);
         add(table);
     }
