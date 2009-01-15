@@ -22,26 +22,54 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Start CMS</title>
+    <title>Start CMS site</title>
   </properties>
 
   <body>
-    <section name="Start CMS">
-      <span class="shortdesc">How to start a CMS session in your browser</span>
+    <section name="Start CMS site">
+      <span class="shortdesc">How to start a CMS session in your browser.</span>
+
+   <script type="text/javascript">
+    leftpx=0;
+    toppx=0;
+    heightpx=100;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
+     <img src="../../../../images/screenshots/cms_M9/contribs/goto_CMS_site.png" alt='goto CMS site'/> 
+    </div></div> 
+    <p>
+      Marc goes to the Hippo CMS site of Saraswatia. His CMS administrator told him
+      that the web address of the site is: http://saraswatia.org:8080/cms.
+    </p>     
+   </div>
 
    <p>
-        Open the Hippo CMS site 
-        <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in 
-        your browser. 
+      The Hippo CMS is accessed via your web browser.
+      Someone, e.g. your CMS administrator must have told you the web address of the site. 
+      For the saraswatia CMS site, the name is http://saraswatia.org:8080/cms.     
+      In most other cases, only 'saraswatia.org' will be replaced by some other name.
+      <span class='rewrite'>Check what are normal names and make new screenshot.</span>
+   </p>
+   <p>
+      In the special case that the Hippo CMS server program runs on your own computer, the web 
+      addresss of the Hippo CMS site will be:
+      <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a>. Note that this
+      link will only work in that special case.
    </p>
 
+   <subsection name='Next'>
+    <ul>
+     <li><a href='./login.html'>Login (continue</a> <a href='../tour.html'>tour).</a></li>
+    </ul>       
+   </subsection>
 
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./login.html'>Login (continue tour)</a>.</li>
-   </ul>       
-  </subsection>
-
-   </section>
-  </body>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>       
+   </subsection>
+  </section>
+ </body>
 </document>        

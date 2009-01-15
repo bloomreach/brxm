@@ -22,13 +22,12 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login as Contributor</title>
+    <title>Screenshots</title>
   </properties>
 
   <body>
-    <section name="Login as Contributor">
-      <span class="shortdesc">How to login to Hippo CMS as contributor 
-      of documents, images and/or files.</span>
+    <section name="Screenshots">
+      <span class="shortdesc">How to view screenshots in the userguide.</span>
 
    <script type="text/javascript">
     leftpx=236;
@@ -39,34 +38,33 @@ ________________________________________________________________________________
     <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/contribs/hippo_login_marc.png" alt='Hippo login screenshot'/>
     </div></div> 
-      <p>Marc logs in to Hippo CMS. He has typed his password, but only bullets are shown,
-       to prevent someone looking over his shoulder from reading it. He chose the Hippo CMS to
-       be in English. Now he is about to press the button marked `login'.
-       (<a href='./screenshots.html'>screenshots</a>)
+      <p>You see here a screenshot of Hippo CMS. You can try out the following instructions 
+         on this screenshot.
       </p>
    </div>
 
-    <p>Each time one starts working with Hippo CMS one has to login
-       to it, identifying oneselve. This ensures that no unauthorized
-       persons can get access to Hippo CMS.          
-    </p>
-
-    <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. 
-     These must been given to you by your Hippo CMS administrator. 
+    <p> 
+         The screenshots in this userguide
+         normally only show a small part of the screen, the part that is relevant for the
+	 text. 
     </p>
     <p>
-     If usernames are not yet defined for your Hippo CMS, then
-     you may use the default username and password: username=author, password=author.
-     Note that in this case, your Hippo CMS is not yet protected by the login procedure,
-     as anyone can read this.
-    </p>    
+	 Sometimes, you may want to see the rest of the screenshot, if you do not recognize
+	 where that part is in the total screen. You can see the complete screenshot:
+	 place the mouse pointer on the screenshot. The image will then become as
+	 large as possibly fits on your page and if not all fits, you can use 
+         the scrollbars with your mouse pointer to scroll over the screenshot.
+	 If you click on the screenshot, it becomes small again, showing the relevant part.
+	 In the small state, you also can use the scrollbar, as long as you only touch the
+	 scrollbars, not the image.
+    </p>
 
    <subsection name='Next'>
     <ul>
-     <li><a href='./goto_content_workspace.html'>Go to the 
-      content workspace (continue</a> <a href='../tour.html'>tour).</a></li>
+     <li>
+      If you are doing the <a href='../tour.html'>tour</a>, use the back button of your browser to continue.
+      (There is no hyperlink here, because you can get here from many different pages.)
+     </li>
     </ul>       
    </subsection>
 
@@ -76,6 +74,6 @@ ________________________________________________________________________________
      <li><a href='../concepts/index.html'>Glossary.</a></li>
     </ul>       
    </subsection>
-    </section>
-  </body>
+  </section>
+ </body>
 </document>        

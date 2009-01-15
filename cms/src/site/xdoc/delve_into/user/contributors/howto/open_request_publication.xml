@@ -28,13 +28,15 @@ ________________________________________________________________________________
   <body>
     <section name="Request Publication of Document">
       <span class="shortdesc">How to ask the editor to publish a document?</span>
-
+   
+   <script type="text/javascript">
+    leftpx=300;
+    heightpx=300;
+   </script>
    <div class='group'>
-    <div id='screenshot' class='screenshot' onclick='autoscroll()'>
-     <div onmouseover='autofull()' >
+    <div id='screenshot'><div>
       <img src="../../../../images/screenshots/cms_M9/contribs/goto_request_schedule_publication.png" alt='request schedule publication screenshot'/>
-     </div> 
-    </div> 
+    </div></div>
     <p>
       Requesting publication of the document 'multibazaar2009'. 
       <a href='./request_publication.html'>A window will popup</a> where you can schedule at 
@@ -43,24 +45,6 @@ ________________________________________________________________________________
       The editor will be notified and accept or reject this request.
     </p>
    </div>
-
-   <script type="text/javascript">
-    function autofull() {
-    var image=document.getElementById('screenshot');
-
-    image.style.width='inherit'; 
-    image.style.height='inherit';
-   };
-
-    function autoscroll() {
-      var image=document.getElementById('screenshot');
-
-      image.style.height='300px';
-      image.scrollLeft=300; 
-      image.scrollTop=94;   
-    };
-    autoscroll();
-   </script>
 
    <p>
     In a document in <a href='../concepts/view_mode.html'>view mode</a>, e.g. after
