@@ -28,6 +28,9 @@ import org.apache.wicket.model.Model;
 public class AdminBreadCrumbBar extends BreadCrumbBar {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final class BreadCrumbComponent extends Panel {
         private static final long serialVersionUID = 1L;
 

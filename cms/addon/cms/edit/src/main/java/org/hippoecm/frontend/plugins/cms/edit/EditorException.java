@@ -18,6 +18,9 @@ package org.hippoecm.frontend.plugins.cms.edit;
 class EditorException extends Exception {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     EditorException(String reason) {
         super(reason);
     }
