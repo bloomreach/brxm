@@ -40,39 +40,37 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class HtmlCleanerConfigTest extends TestCase {
-	@SuppressWarnings("unused")
-	private final static String SVN_ID = "$Id$";
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
-	Node root, cleanerConfigNode;
-	WorkflowManager manager;
+    Node root, cleanerConfigNode;
+    WorkflowManager manager;
 
-	@Before
-	public void setUp() throws Exception {
-		super.setUp(true);
-		root = session.getRootNode();
+    @Before
+    public void setUp() throws Exception {
+        super.setUp(true);
+        root = session.getRootNode();
+    }
 
-	}
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
 
-	@After
-	public void tearDown() throws Exception {
-		super.tearDown();
-	}
+    protected IPluginConfig getPluginConfig() throws Exception {
+        Node cleanerConfigNode = root.getNode("cleaner.config");
+        JcrNodeModel nodeModel = new JcrNodeModel(cleanerConfigNode);
+        return new JcrPluginConfig(nodeModel);
+    }
 
-	protected IPluginConfig getPluginConfig() throws Exception {
-		Node cleanerConfigNode = root
-				.getNode("cleaner.config");
-		JcrNodeModel nodeModel = new JcrNodeModel(cleanerConfigNode);
-		return new JcrPluginConfig(nodeModel);
-	}
-
-	@Test
-	public void testHtmlCleanerTemplateBuilder() throws Exception {
-		JCRHtmlCleanerTemplateBuilder builder = new JCRHtmlCleanerTemplateBuilder();
-		
-		HtmlCleanerTemplate template = builder.buildTemplate(getPluginConfig());
-		
-		Assert.assertEquals(JCRHtmlCleanerTemplateBuilder.SCHEMA_TRANSITIONAL,template.getXhtmlSchema());
-		Assert.assertEquals(5,template.getAllowedSpanClasses().size());
+    @Test
+    public void testHtmlCleanerTemplateBuilder() throws Exception {
+        JCRHtmlCleanerTemplateBuilder builder = new JCRHtmlCleanerTemplateBuilder();
+        
+        HtmlCleanerTemplate template = builder.buildTemplate(getPluginConfig());
+        
+        Assert.assertEquals(JCRHtmlCleanerTemplateBuilder.SCHEMA_TRANSITIONAL,template.getXhtmlSchema());
+        Assert.assertEquals(5,template.getAllowedSpanClasses().size());
         Assert.assertEquals(0,template.getAllowedDivClasses().size());
         Assert.assertEquals(3,template.getAllowedParaClasses().size());
         Assert.assertEquals(3,template.getAllowedPreClasses().size());
@@ -100,7 +98,5 @@ public class HtmlCleanerConfigTest extends TestCase {
         Assert.assertEquals(JCRHtmlCleanerTemplateBuilder.DEFAULT_INLINE, html.isInline());
         
         Assert.assertEquals(80,template.getMaxLineWidth());
-        
-	}
-
+    }
 }

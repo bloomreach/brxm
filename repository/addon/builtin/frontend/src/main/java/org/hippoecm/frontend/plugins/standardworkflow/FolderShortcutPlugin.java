@@ -377,35 +377,35 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 error("You need to enter a name");
             }
             try {
-	            IModel model = getModel();
-	            if (model != null && model instanceof WorkflowsModel) {
-	                Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
-	                WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
-	                FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow(((WorkflowsModel) model)
-	                        .getWorkflowDescriptor());
-	                if (prototype == null) {
-	                    error("You need to select a type");
-	                    return;
-	                }
-	                if (workflow != null) {
-	                    if (!templates.get(templateCategory).contains(prototype)) {
-	                        log.error("unknown folder type " + prototype);
-	                        error("Unknown folder type " + prototype);
-	                        return;
-	                    }
-	                    IJcrService jcrService = jcrServiceRef.getService();
-	                    jcrService.flush(((WorkflowsModel) getModel()).getNodeModel().getParentModel());
-	
-	                    String path = workflow.add(templateCategory, prototype, NodeNameCodec.encode(name, true));
-	                    JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
-	                    select(nodeModel, browseServiceRef, editServiceRef);
-	                } else {
-	                    log.error("no workflow defined on model for selected node");
-	                }
-	            }
-	        } catch (Exception ex) {
-	            error(ex.getMessage());
-	        }
+                IModel model = getModel();
+                if (model != null && model instanceof WorkflowsModel) {
+                    Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+                    WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
+                    FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow(((WorkflowsModel) model)
+                            .getWorkflowDescriptor());
+                    if (prototype == null) {
+                        error("You need to select a type");
+                        return;
+                    }
+                    if (workflow != null) {
+                        if (!templates.get(templateCategory).contains(prototype)) {
+                            log.error("unknown folder type " + prototype);
+                            error("Unknown folder type " + prototype);
+                            return;
+                        }
+                        IJcrService jcrService = jcrServiceRef.getService();
+                        jcrService.flush(((WorkflowsModel) getModel()).getNodeModel().getParentModel());
+    
+                        String path = workflow.add(templateCategory, prototype, NodeNameCodec.encode(name, true));
+                        JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
+                        select(nodeModel, browseServiceRef, editServiceRef);
+                    } else {
+                        log.error("no workflow defined on model for selected node");
+                    }
+                }
+            } catch (Exception ex) {
+                error(ex.getMessage());
+            }
         }
 
     }

@@ -55,11 +55,11 @@ public class PluginClusterLoader implements IPlugin {
                 IPluginConfig parameters = config.getPluginConfig(CLUSTER_PARAMETERS);
                 List<String> overrides = cluster.getOverrides();
                 if (parameters != null && overrides != null) {
-	                for (String key : overrides) {
-	                    if (parameters.get(key) != null) {
-	                        cluster.put(key, parameters.get(key));
-	                    }
-	                }
+                    for (String key : overrides) {
+                        if (parameters.get(key) != null) {
+                            cluster.put(key, parameters.get(key));
+                        }
+                    }
                 }
                 context.start(cluster);
             }

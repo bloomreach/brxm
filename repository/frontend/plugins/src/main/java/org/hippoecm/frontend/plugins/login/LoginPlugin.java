@@ -147,8 +147,8 @@ public class LoginPlugin extends RenderPlugin {
 
                 protected void onUpdate(AjaxRequestTarget target) {
                     //immediately set the locale when the user changes it
-                	getSession().setLocale(new Locale(selectedLocale));
-                	setResponsePage(this.getFormComponent().getPage());
+                    getSession().setLocale(new Locale(selectedLocale));
+                    setResponsePage(this.getFormComponent().getPage());
                 }
             });
 
@@ -170,7 +170,7 @@ public class LoginPlugin extends RenderPlugin {
             passwordTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
                 protected void onUpdate(AjaxRequestTarget target) {
-                	credentials.put("password", this.getComponent().getModelObjectAsString());
+                    credentials.put("password", this.getComponent().getModelObjectAsString());
                 }
             });
 

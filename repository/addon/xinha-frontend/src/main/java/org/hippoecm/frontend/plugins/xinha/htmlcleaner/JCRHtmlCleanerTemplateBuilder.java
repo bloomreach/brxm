@@ -62,10 +62,10 @@ public class JCRHtmlCleanerTemplateBuilder {
             handleCleanup(template, getRequiredNode(cleanerConfig,CLEANUP));
             handleSerialization(template, getRequiredNode(cleanerConfig,SERIALIZATION));
             
-            template.initialize();			
+            template.initialize();
         }
-		return template;
-	}
+        return template;
+    }
     
     /**
      *  XHTML Schema element: e.g. 'transitional' or 'strict'
