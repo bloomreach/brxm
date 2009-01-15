@@ -62,17 +62,9 @@ public class PreviewClusterConfig extends JcrClusterConfig {
 
                 result.add(previewWrapper);
 
-                result.add(new JavaPluginConfig() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public Object get(Object key) {
-                        if ("wicket.id".equals(key)) {
-                            return wrappedId;
-                        }
-                        return config.get(key);
-                    }
-                });
+                IPluginConfig wrappedPluginConfig = new JavaPluginConfig(config);
+                wrappedPluginConfig.put("wicket.id", wrappedId);
+                result.add(wrappedPluginConfig);
             } else {
                 result.add(config);
             }
