@@ -86,8 +86,6 @@ public class ProxyTest {
         session.save();
         ((ProxyHippoRepository)server).logout(session);
 
-        System.err.println("BERRY ----");
-
         session = ((ProxyHippoRepository)server).login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD, new FileInputStream("dump"));
         session.logout();
         server.close();
