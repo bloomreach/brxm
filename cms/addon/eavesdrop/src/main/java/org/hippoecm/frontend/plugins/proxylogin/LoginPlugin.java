@@ -87,19 +87,15 @@ public class LoginPlugin extends org.hippoecm.frontend.plugins.login.LoginPlugin
                         String username = credentials.getString("username");
                         String password = credentials.getString("password");
                         String dumpname = credentials.getString("dump");
-                        System.err.println("BERRY DUMP#1 "+dumpname);
                         dumpname = dumpComponent.getModelObjectAsString();
 
                         if (repository != null && username != null && password != null) {
-                        System.err.println("BERRY DUMP#2");
                             if (dumpname != null && !dumpname.trim().equals("")) {
                                 try {
                                     File dumpfile = new File(dumpname);
                                     if (dumpfile.exists()) {
-                        System.err.println("BERRY DUMP#3a");
                                         result = ((ProxyHippoRepository)repository).login(username, password.toCharArray(), new FileInputStream(dumpfile));
                                     } else {
-                                                                System.err.println("BERRY DUMP#3b");
                                         result = ((ProxyHippoRepository)repository).login(username, password.toCharArray(), new FileOutputStream(dumpfile));
                                     }
                                 } catch (FileNotFoundException ex) {

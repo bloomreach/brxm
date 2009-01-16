@@ -271,6 +271,7 @@ class ProxyHandler implements InvocationHandler {
 
         Object invoke() throws IllegalAccessException, InvocationTargetException {
             Object result = method.invoke(object, arguments);
+	    /*
             StringBuffer sb = new StringBuffer();
             sb.append(object.toString());
             sb.append(method.getName());
@@ -282,7 +283,7 @@ class ProxyHandler implements InvocationHandler {
                 sb.append(arguments[i].getClass().getName());
             }
             sb.append(")");
-            System.err.println("BERRY "+new String(sb));
+            */
             return result;
         }
     }
