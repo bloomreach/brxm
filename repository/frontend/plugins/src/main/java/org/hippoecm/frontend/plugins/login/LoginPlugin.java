@@ -49,6 +49,7 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -61,12 +62,13 @@ public class LoginPlugin extends RenderPlugin {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    private ValueMap credentials = new ValueMap();
+
+    protected ValueMap credentials = new ValueMap();
 
     public LoginPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new SignInForm("signInForm"));
+        add(createSignInForm("signInForm"));
         add(new Pinger("pinger"));
 
         Label versionLabel, buildLabel, repositoryLabel;
@@ -114,13 +116,17 @@ public class LoginPlugin extends RenderPlugin {
         }
     }
 
+    protected SignInForm createSignInForm(String id) {
+        return new SignInForm(id);
+    }
+
     @Override
     public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
         container.getHeaderResponse().renderOnLoadJavascript("document.forms.signInForm.username.focus();");
     }
 
-    private final class SignInForm extends Form {
+    protected class SignInForm extends Form {
         private static final long serialVersionUID = 1L;
         
         private DropDownChoice locale;
@@ -182,19 +188,19 @@ public class LoginPlugin extends RenderPlugin {
         }
 
         @Override
-        public final void onSubmit() {
+        public void onSubmit() {
             UserSession userSession = (UserSession) getSession();
             String username = usernameTextField.getModelObjectAsString();
             HttpSession session = ((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true);
             ConcurrentLoginFilter.validateSession(session, username, false);
-            userSession.setJcrCredentials(credentials);
+            userSession.setJcrSessionModel(new JcrSessionModel(credentials));
             userSession.setLocale(new Locale(selectedLocale));
             userSession.getJcrSession();
             setResponsePage(new Home());
         }
     }
 
-    private static class StringPropertyModel extends PropertyModel {
+    protected static class StringPropertyModel extends PropertyModel {
         private static final long serialVersionUID = 1L;
 
         public StringPropertyModel(Object modelObject, String expression) {

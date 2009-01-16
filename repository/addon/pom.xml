@@ -51,6 +51,7 @@
     <module>defaultcontent</module>
     <module>versioning</module>
     <module>ldap</module>
+    <module>eavesdrop</module>
   </modules>
 
   <build>
