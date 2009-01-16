@@ -29,8 +29,14 @@ ________________________________________________________________________________
     <section name="Request Publication of Document">
       <span class="shortdesc">How to ask the editor to publish a document?</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=300;
+    bottompx=225;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/contribs/request_schedule_publication.png" alt='request schedule publication screenshot'/> 
+    </div></div> 
      <p>
       Requesting publication of the document 'multibazaar2009'. The editor will be notified
       and accept or reject this request.

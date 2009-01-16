@@ -27,7 +27,7 @@ ________________________________________________________________________________
 
   <body>
     <section name="Start CMS site">
-      <span class="shortdesc">How to start a CMS session in your browser.</span>
+      <span class="shortdesc">How to goto the CMS site, i.e. start a CMS session, in your browser.</span>
 
    <script type="text/javascript">
     leftpx=0;
@@ -41,6 +41,8 @@ ________________________________________________________________________________
     <p>
       Marc goes to the Hippo CMS site of Saraswatia. His CMS administrator told him
       that the web address of the site is: http://saraswatia.org:8080/cms.
+      Coincidentially, the site he is currently viewing happens 
+      to be the Hippo CMS documentation site at www.onehippo.org.
     </p>     
    </div>
 

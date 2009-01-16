@@ -31,7 +31,7 @@ ________________________________________________________________________________
    
    <script type="text/javascript">
     leftpx=300;
-    heightpx=300;
+    bottompx=300;
    </script>
    <div class='group'>
     <div id='screenshot'><div>
@@ -56,20 +56,21 @@ ________________________________________________________________________________
     The editor will be notified and accept or reject your request.
    </p>
 
-  <subsection name='Next'>
-   <ul>
+   <subsection name='Next'>
+    <ul>
+     <li><a href='./logout.html'>Logout (continue</a> <a href='../tour.html'>tour</a>).</li>
   <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
-    <li><a href='./goto_folder.html'>goto another folder (list its contents)</a>.</li>
-    <li><a href='./logout.html'>Logout (continue</a> <a href='../tour.html'>tour</a>).</li>
-   </ul>       
-  </subsection>
+     <li><a href='./goto_folder.html'>goto another folder (list its contents)</a>.</li>
+    </ul>       
+   </subsection>
 
-  <subsection name='Alternative'>
-   <ul>
-    <li><a href='./index.html'>Howto list</a>.</li>
-   </ul>       
-  </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>       
+   </subsection>
 
-   </section>
-  </body>
+  </section>
+ </body>
 </document>        

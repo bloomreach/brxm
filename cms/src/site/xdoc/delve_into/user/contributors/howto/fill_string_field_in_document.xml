@@ -29,10 +29,14 @@ ________________________________________________________________________________
     <section name="Fill string in Document">
       <span class="shortdesc">How to fill a string field in a document.</span>
 
-  <div class='group'>
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=350;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/contribs/fill_string_field.png" alt='Fill string screenshot'/> 
-   </div>
+    </div></div> 
    <p>
      Filled in the 'Title' for the document 'multibazaar2009'. 
      The title is 'Multicultural Bazaar 2009'.
@@ -40,30 +44,36 @@ ________________________________________________________________________________
   </div>
 
    <p>
-    <a href='./set_edit_mode.html'>Set the document in</a>
-    <a href='../concepts/edit_mode'>edit mode</a>.  
+     Ensure that in some way you have <a href='./set_edit_mode.html'>set the document in</a>
+     <a href='../concepts/edit_mode'>edit mode</a>.  
      Click in the single line text <a href='../concepts/inputfield.html'>inputfield</a>
      below the name of that inputfield, and type a value for it, which
      may not consist of more than one line. In fact, there is some limit to how many characters you
      can type. 
    </p>
 
-  <p>
+   <p>
      <a href='./learn_meaning_of_inputfield.html'>Ensure 
       that you know the meaning of the</a> <a href='../concepts/string.html'>string</a> 
       inputfield and fill in the correct value for it!
    </p>
 
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./fill_boolean_field_in_document.html'>Fill a boolean field in a document (continue</a> 
-        <a href='../tour.html'>tour</a>).</li>
-    <li><a href='./fill_markuped_text_in_document.html'>Write marked-up text in a document</a>.</li>
-    <li><a href='./fill_date_field_in_document.html'>Fill a date field in a document</a>.</li>
-    <li><a href='./save_document.html'>Save the changes to the document</a>.</li>
+   <subsection name='Next'>
+    <ul>
+     <li><a href='./fill_boolean_field_in_document.html'>Fill a boolean field in a document (continue</a> 
+         <a href='../tour.html'>tour</a>).</li>
+     <li><a href='./fill_markuped_text_in_document.html'>Write marked-up text in a document</a>.</li>
+     <li><a href='./fill_date_field_in_document.html'>Fill a date field in a document</a>.</li>
+     <li><a href='./save_document.html'>Save the changes to the document</a>.</li>
     </ul>       
-  </subsection>
+   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>       
+   </subsection>
 
-   </section>
-  </body>
+  </section>
+ </body>
 </document>        

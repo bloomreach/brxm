@@ -26,29 +26,70 @@ ________________________________________________________________________________
   </properties>
 
   <body>
-    <section name="Learn meaning of inputfield">
-      <span class="shortdesc">Why and how to learn the meaning of an inputfield?</span>
+   <section name="Learn meaning of inputfield">
+    <span class="shortdesc">Why and how to learn the meaning of an inputfield?</span>
 
-  <div class='group'>
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=480;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/contribs/fill_boolean_field.png" alt='Fill boolean screenshot'/> 
-   </div>
+    </div></div> 
    <p>
-     It is not immediately clear what is meant by the <a href='boolean'>booleans</a> 'indoors?' and 'recurring?'
-     Should a happening be considered recurring if such a happening is intended to occur more often or only if it 
-     already has occurred at least once? And if so, what if such happenings did occur in the past, but were
-     organized by another organization, does that count as 'already occurred'? It is clear that such a
-     short caption may leave some questions. However, if you already know what is meant, a short caption 
-     is better, as the document looks cleaner and you see the structure in one grasp.
+      Consider as example the inputfield 'recurring?'.
+      This is a <a href='boolean'>boolean</a>, i.e. a yes/no question, and the caption
+      is 'recurring?'. So the question is whether the happening (that is what the document is about)
+      is recurring or not.
+      However, it is not immediately clear what exactly 'recurring' is supposed to mean.
+      Should a happening be considered recurring if such a happening 
+      is intended to occur more often or only if it 
+      already has occurred at least once? And if so, what if such happenings did occur in the past, but were
+      organized by another organization, does that count as 'already occurred'? It is clear that such a
+      short caption may leave some questions. However, if you already know what is meant, a short caption 
+      is better, as the document looks cleaner and you see the structure in one grasp.
    </p>
   </div>
 
    <p>
-    The <a href='../concepts/document_type.html'>document types</a> used in your organization, were
-    created by an information architect with the intent that every <a href='contributor'>contributor</a> would
-    ...<span class='add'>more info</span>.
+      The <a href='../concepts/document_type.html'>document types</a> used in your organization, were
+      created by an information architect with the 
+      intent that every <a href='contributor'>contributor</a> would
+      fill in information that answers exactly the same questions. 
+      We will call information that answers exactly the same question: similar information.
    </p>
+   <p>   
+      Ensuring that information is similar allows to use all similar information at once. 
+      It would for example be possible
+      to select all happenings that are recurring, or give statistics on how many of the happenings 
+      are recurring or if there are more recurring happenings this year than last year.
+   </p>
+   <p>
+      However, if not every contributor answered exactly the same question when he filled in the
+      'recurring?' inputfield, then the information is not really similar and a selection of all
+      happenings that are recurring could almost be a random selection, not usefull.
+      Likewise, the statistics will be meaningless numbers.
+   </p>
+   <p>
+      So, as a contributor, you have the responsibility to ensure that you answer all the questions
+      in a <a href='../concepts/document_type.html'>document type</a> as they are intended. 
+   </p>
+   <subsection name='Next'>
+    <ul>
+     <li>
+      If you are doing the <a href='../tour.html'>tour</a>, use the back button of your browser to continue.
+      (There is no hyperlink here, because you can get here from many different pages.)
+     </li>
+    </ul>       
+   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>       
+   </subsection>
      
-   </section>
-  </body>
+  </section>
+ </body>
 </document>        

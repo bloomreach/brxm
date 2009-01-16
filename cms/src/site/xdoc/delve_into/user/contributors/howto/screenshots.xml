@@ -51,12 +51,14 @@ ________________________________________________________________________________
     <p>
 	 Sometimes, you may want to see the rest of the screenshot, if you do not recognize
 	 where that part is in the total screen. You can see the complete screenshot:
-	 place the mouse pointer on the screenshot. The image will then become as
+	 double click with your mouse pointer on the screenshot. The image will then become as
 	 large as possibly fits on your page and if not all fits, you can use 
          the scrollbars with your mouse pointer to scroll over the screenshot.
-	 If you click on the screenshot, it becomes small again, showing the relevant part.
-	 In the small state, you also can use the scrollbar, as long as you only touch the
-	 scrollbars, not the image.
+         If you single click on the screenshot, it becomes small again, showing the relevant part.
+         In the small and relevant state, you also can use the scrollbar.
+         <!--  , as long as you only touch the
+              scrollbars, not the image.
+        -->
     </p>
 
    <subsection name='Next'>

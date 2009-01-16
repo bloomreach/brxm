@@ -31,16 +31,17 @@ ________________________________________________________________________________
 
    <script type="text/javascript">
     leftpx=0;
-    heightpx=326;
+    bottompx=359;
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/contribs/goto_content_workspace.png" alt='goto content workspace screenshot'/>      
     </div></div> 
     <p>
-     In the <a href='../concepts/workspace_navigation_panel.html'>workspace navigation panel</a>,
-     click on the icon for the <a href='../concepts/content_workspace.html'>content workspace</a>.  
-     This icon is the image of a folder<span class='add'> image class='content-workspace-16 icon-16'</span>.
+       To go to the <a href='../concepts/content_workspace.html'>content workspace</a>,
+       in the <a href='../concepts/workspace_navigation_panel.html'>workspace navigation panel</a>,
+       click on the icon for the <a href='../concepts/content_workspace.html'>content workspace</a>.  
+       This icon is the image of a folder<span class='add'> image class='content-workspace-16 icon-16'</span>.
     </p>
    </div>
 
