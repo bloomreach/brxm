@@ -1,0 +1,58 @@
+Index: frontend/engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/JavaConfigService.java
+===================================================================
+*** frontend/engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/JavaConfigService.java	(revision 15985)
+--- frontend/engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/JavaConfigService.java	(working copy)
+***************
+*** 59,65 ****
+          JavaClusterConfig plugins = new JavaClusterConfig();
+  
+          IPluginConfig config = new JavaPluginConfig();
+!         config.put("plugin.class", "org.hippoecm.frontend.plugins.login.LoginPlugin");
+          //FIXME: Hardcoded LoginPlugin skin, should be made configurable
+          config.put(RenderService.SKIN_ID, new String[] {"skin/screen.css"});
+          config.put("wicket.id", "service.root");
+--- 59,65 ----
+          JavaClusterConfig plugins = new JavaClusterConfig();
+  
+          IPluginConfig config = new JavaPluginConfig();
+!         config.put("plugin.class", "org.hippoecm.frontend.plugins.proxylogin.LoginPlugin");
+          //FIXME: Hardcoded LoginPlugin skin, should be made configurable
+          config.put(RenderService.SKIN_ID, new String[] {"skin/screen.css"});
+          config.put("wicket.id", "service.root");
+Index: quickstart/war/src/main/webapp/WEB-INF/web.xml
+===================================================================
+*** quickstart/war/src/main/webapp/WEB-INF/web.xml	(revision 15985)
+--- quickstart/war/src/main/webapp/WEB-INF/web.xml	(working copy)
+***************
+*** 47,52 ****
+--- 47,56 ----
+              <param-name>configuration</param-name>
+              <param-value>deployment</param-value>
+          </init-param>
++         <init-param>
++             <param-name>repository-address</param-name>
++             <param-value>proxy://rmi://localhost:1099/hipporepository</param-value>
++         </init-param>
+      </filter>
+  
+      <!--Builtin console-->
+Index: quickstart/war/pom.xml
+===================================================================
+*** quickstart/war/pom.xml	(revision 15985)
+--- quickstart/war/pom.xml	(working copy)
+***************
+*** 103,108 ****
+--- 103,115 ----
+        <type>jar</type>
+      </dependency>
+  
++     <dependency>
++       <groupId>org.hippoecm</groupId>
++       <artifactId>hippo-ecm-addon-eavesdrop</artifactId>
++       <version>2.03.00-SNAPSHOT</version>
++       <type>jar</type>
++     </dependency>
++ 
+      <!-- Builtin workflow plugins -->
+      <dependency>
+        <groupId>org.hippoecm</groupId>
