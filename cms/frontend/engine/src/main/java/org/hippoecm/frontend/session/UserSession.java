@@ -59,8 +59,8 @@ public class UserSession extends WebSession {
         return jcrSessionModel;
     }
 
-    public void setJcrCredentials(ValueMap credentials) {
-        jcrSessionModel = new JcrSessionModel(credentials);
+    public void setJcrSessionModel(JcrSessionModel model) {
+        jcrSessionModel = model;
     }
 
     public void logout() {
