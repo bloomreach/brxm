@@ -34,7 +34,6 @@ import javax.jcr.SimpleCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.hippoecm.repository.UserTransactionImpl;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.ValueMap;
 
