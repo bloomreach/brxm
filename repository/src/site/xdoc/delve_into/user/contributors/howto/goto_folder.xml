@@ -24,18 +24,28 @@ ________________________________________________________________________________
 
 <document>
   <properties>
-    <title>Goto a Folder</title>
+    <title>Goto a folder</title>
   </properties>
 
   <body>
     <section name="Goto a Folder">
       <span class="shortdesc">How to get to a folder, to add or change content in it.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=0;
+    bottompx=600;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/contribs/goto_folder.png" alt='Goto folder screenshot'/>
+    </div></div> 
      <p>
-        Clicking on the name 'newspaper', to go to that folder, to see the 
-        <a href='../concepts/document.html'>documents</a> in it.      
+        Marc clicks on the foldername 'newspaper', to go to that folder, i.e. make it the 
+        <a href='../concepts/current_folder.html'>current folder</a>.
+        He will see the ontent of the newspaper folder
+        tabulated in the <a href='../concepts/content_tabulation_panel.html'>
+        content tabulation panel</a> and he         
+        will be allowed to create a new document in that folder.
     </p>
    </div>
 
@@ -46,19 +56,29 @@ ________________________________________________________________________________
       <span class='add'>Document about navigation in folder tree and reference from here.</span>
    </p>
    <p>
-      Clicking on a foldername will bring you to the folder, to see its contents.
-      The contents of the folder will appear in the <a href='../concepts/content_listing_panel.html'></a>
-      content listing panel.
+      Clicking on a foldername will bring you to the folder, i.e. make it the 
+      <a href='../concepts/current_folder.html'>current folder</a>.
+      The contents of the current folder will appear in 
+      the <a href='../concepts/content_tabulation_panel.html'>
+      content tabulation panel.</a>
+      It is also possible to do 
+      <a href='../concepts/folder_action.html'>folder actions</a> on it, like
+      adding a new document.
    </p>
 
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./create_document.html'>Create a document (continue</a> <a href='../concepts/tour.html'>tour)</a>.</li>
-    <!-- <li><a href='./goto_document_tab.html'>Goto document tab</a>.</li> -->
-   </ul>       
-  </subsection>
- 
-   </section>
-  </body>
+   <subsection name='Next'>
+    <ul>
+     <li><a href='./create_document.html'>Create a document (continue</a> <a href='../concepts/tour.html'>tour)</a>.</li>
+     <!-- <li><a href='./goto_document_tab.html'>Goto document tab</a>.</li> -->
+    </ul>       
+   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>       
+   </subsection>
+  </section>
+ </body>
 </document>
 

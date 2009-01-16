@@ -29,10 +29,17 @@ ________________________________________________________________________________
     <section name="Create Document">
       <span class="shortdesc">How to create a document to write in.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=0;
+    bottompx=590;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/contribs/create_document.png" alt='Create document screenshot'/> 
-     <p>
-      Creating a <a href='../concepts/document.html'>document</a> with name `multibazar2009'. 
+    </div></div> 
+    <p>
+      Creating a <a href='../concepts/document.html'>document</a> with name `multibazar2009'
+      in the folder 'newspaper'.
       The <a href='../concepts/document_type.html'>document type</a> of this document
       will be 'upcoming',
       which is the document type used by
@@ -46,11 +53,11 @@ ________________________________________________________________________________
       <a href='../concepts/documents_panel.html'>documents panel</a>,
       in <a href='../concepts/edit_mode.html'>edit mode</a>, meaning that you may start
       filling the new document immediately.
-     </p>
+    </p>
    </div>
 
    <p>
-    While a <a href='./goto_folder.html'>folder is listed</a>,
+    To create a new document in the <a href='./current_folder.html'>current_folder</a>,     
     select 'create document' in the <a href='./folder_action_menu.html'>folder action menu.</a>
     A dialog window appears.
    </p>
@@ -75,12 +82,12 @@ ________________________________________________________________________________
     <!--  <li><a href='./create_document.html'>Create another document</a>.</li> -->
    </ul>       
   </subsection>
-
-  <subsection name='Alternative'>
-   <ul>
-    <li><a href='./index.html'>Howto list.</a>.</li>
-   </ul>       
-  </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>       
+   </subsection>
 
   </section>
  </body>

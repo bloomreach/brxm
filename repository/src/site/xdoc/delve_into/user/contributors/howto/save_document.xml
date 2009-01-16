@@ -29,30 +29,44 @@ ________________________________________________________________________________
     <section name="Save Document">
       <span class="shortdesc">How to save the changes you made to a document.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=155;
+    bottompx=225;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/contribs/save_document.png" alt='save document screenshot'/> 
+    </div></div> 
      <p>
-      Saving the changes to document 'multibazaar2009', by pressing
+      Persisting the changes to document 'multibazaar2009', by pressing
       'save and close'. The changes can be discarded by pressing 'close without saving'.
      </p>
    </div>
 
    <p>
-    After editing a document 
-   (e.g. <a href='./fill_markuped_text_in_document.html'>writing marked-up text</a>),
-    click the 'save and close' button at the top to save your last changes or click the
-    'close without saving' to discard your last changes.
+      After <a href='../concepts/editing.html'>editing</a> a document 
+      (e.g. <a href='./fill_markuped_text_in_document.html'>writing marked-up text</a>),
+      click the 'save and close' button at the top to save your last changes or click the
+      'close without saving' to discard your last changes. 
+      Both will close <a href='../concepts/edit_mode.html'>edit_mode</a> and
+      bring the document in <a href='../concepts/review_mode.html'>review_mode</a>.
    </p>
 
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./request_publication.html'>Request publication (continue</a> <a href='../tour.html'>tour</a>).</li>
- <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
-    <li><a href='./goto_folder.html'>Open another folder (list its contents)</a>.</li>
-    <li><a href='./logout.html'>Logout</a>.</li>
-   </ul>       
-  </subsection>
+   <subsection name='Next'>
+    <ul>
+     <li><a href='./open_request_publication.html'>Request publication (continue</a> <a href='../tour.html'>tour</a>).</li>
+     <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
+     <li><a href='./goto_folder.html'>Open another folder (list its contents)</a>.</li>
+     <li><a href='./logout.html'>Logout</a>.</li>
+    </ul>       
+   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>       
+   </subsection>
 
-   </section>
-  </body>
+  </section>
+ </body>
 </document>        

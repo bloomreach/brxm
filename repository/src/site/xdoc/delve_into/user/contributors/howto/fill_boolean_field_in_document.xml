@@ -29,21 +29,25 @@ ________________________________________________________________________________
     <section name="Fill boolean field in Document">
       <span class="shortdesc">How to answer a yes/no question in a document.</span>
 
-  <div class='group'>
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=480;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/contribs/fill_boolean_field.png" alt='Fill boolean screenshot'/> 
-   </div>
+    </div></div> 
      <p>
-       This document contains two boolean fields, 'Indoors?' and 'Recurring?'. 
-       They stand for yes/no questions. 
-       The first was answered with 'no' by not checking that box, the second with
-       'yes' by checking that box. 
+        This document contains two <a href='../concepts/boolean.html'>boolean</a> inputfields,
+        'Indoors?' and 'Recurring?'. They stand for yes/no questions. 
+        The first was answered with 'no' by not checking that box, the second with
+        'yes' by checking that box. 
      </p>
   </div>
 
    <p>
-    <a href='../concepts/set_edit_mode.html'>Set the document in</a>
-    <a href='edit_mode'>edit mode</a>.  
+     Ensure that in some way you have <a href='./set_edit_mode.html'>set the document in</a>
+     <a href='../concepts/edit_mode'>edit mode</a>.  
     Below the caption of a boolean field, check the checkbox to answer 'yes'. 
     If you leave the checkbox unchecked, it means
     'no'. Clicking the checkbox checks and unchecks the checkbox alternately.      
@@ -54,21 +58,22 @@ ________________________________________________________________________________
       question it stands for correctly!
    </p>
 
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./fill_markuped_text_in_document.html'>Write marked-up text in a document (continue</a> <a href='../tour.html'>tour</a>).</li>
-    <li><a href='./fill_date_field_in_document.html'>Fill a date field in a document</a>.</li>
-    <li><a href='./fill_string_field_in_document.html'>Fill a string field in a document</a>.</li>
-    <li><a href='./save_document.html'>Save the changes to the document</a>.</li>
-   </ul>       
-  </subsection>
+   <subsection name='Next'>
+    <ul>
+     <li><a href='./fill_markuped_text_in_document.html'>Write marked-up text in a document (continue</a> <a href='../tour.html'>tour</a>).</li>
+     <li><a href='./fill_date_field_in_document.html'>Fill a date field in a document</a>.</li>
+     <li><a href='./fill_string_field_in_document.html'>Fill a string field in a document</a>.</li>
+     <li><a href='./save_document.html'>Save the changes to the document</a>.</li>
+    </ul>       
+   </subsection>
 
-  <subsection name='Alternative'>
-   <ul>
-     <li><a href='./index.html'>Howto list.</a>.</li>
-   </ul>       
-  </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>       
+   </subsection>
 
-   </section>
-  </body>
+  </section>
+ </body>
 </document>        

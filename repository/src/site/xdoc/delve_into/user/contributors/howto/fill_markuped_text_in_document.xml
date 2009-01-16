@@ -29,8 +29,13 @@ ________________________________________________________________________________
     <section name="Fill marked-up text in Document">
       <span class="shortdesc">How to write marked-up text in a document.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=450;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/contribs/fill_markuped_text.png" alt='Fill marked-up text screenshot'/> 
+    </div></div> 
      <p>
        Wrote the description for the document 'multibazaar2009'. 
        The description contains 
@@ -42,29 +47,35 @@ ________________________________________________________________________________
    </div>
 
    <p>
-    <a href='../concepts/set_edit_mode.html'>Set the document in</a>
-    <a href='edit_mode'>edit mode</a>. 
-    Click in a marked-up text inputfield, which is a multiline inputfield with buttons
-    above it.      
-    The text you type may may consist of more than one line and also may contain markup,
-    which you may add using the markup buttons above the 
+     Ensure that in some way you have <a href='./set_edit_mode.html'>set the document in</a>
+     <a href='../concepts/edit_mode'>edit mode</a>.  
+     Click in a marked-up text inputfield, which is a multiline inputfield with clickable
+     letters ('buttons') above it, at least 'B' for boldface, 'I' for italic and 'U' for underline.      
+     The text you type may consist of more than one line and also may contain markup,
+     which you may add using the markup 'buttons' above the 
     <a href='../concepts/inputfield.html'>inputfield</a>. 
    </p>
   <p>
      <a href='./learn_meaning_of_inputfield.html'>Ensure 
-      that you know the meaning of the <a href='../concepts/marked-up-text.html'>marked-up text</a> 
+      that you know the meaning of the <a href='../concepts/marked_up_text.html'>marked-up text</a> 
       inputfield</a> and fill in an appriopiate piece of text.
   </p>
 
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./fill_date_field_in_document.html'>Fill a date field in a document</a>.</li>
-    <li><a href='./fill_string_field_in_document.html'>Fill a string field in a document</a>.</li>
-    <li><a href='./fill_boolean_field_in_document.html'>Fill a boolean field in a document</a>.</li>
-    <li><a href='./save_document.html'>Save the changes to the document (continue</a> <a href='../tour.html'>tour</a>).</li>
-   </ul>       
-  </subsection>
+   <subsection name='Next'>
+    <ul>
+     <li><a href='./save_document.html'>Save the changes to the document (continue</a> <a href='../tour.html'>tour</a>).</li>
+     <li><a href='./fill_date_field_in_document.html'>Fill a date field in a document</a>.</li>
+     <li><a href='./fill_string_field_in_document.html'>Fill a string field in a document</a>.</li>
+     <li><a href='./fill_boolean_field_in_document.html'>Fill a boolean field in a document</a>.</li>
+    </ul>       
+   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>       
+   </subsection>
 
-   </section>
-  </body>
+  </section>
+ </body>
 </document>        
