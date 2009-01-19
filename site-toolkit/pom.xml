@@ -33,6 +33,7 @@
     <!--
     -->
     <wagon.ftp.version>1.0-alpha-6</wagon.ftp.version>
+    <javax.jcr.version>1.0</javax.jcr.version>
     <hippoecm.version>2.02.01</hippoecm.version>
   </properties>
 
@@ -58,7 +59,9 @@
   </distributionManagement>
 
   <modules>
+    <module>api</module>
     <module>core</module>
+    <module>client</module>
     <module>addon</module>
     <module>components</module>
     <module>archetype</module>

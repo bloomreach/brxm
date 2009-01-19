@@ -8,10 +8,10 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Hippo Site Toolkit Core</name>
-  <description>Hippo Site Toolkit Core</description>
+  <name>Hippo Site Toolkit Client</name>
+  <description>Hippo Site Toolkit Client</description>
   <groupId>org.onehippo.ecm.hst</groupId>
-  <artifactId>site-toolkit-core</artifactId>
+  <artifactId>site-toolkit-client</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -30,33 +30,16 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
-      <version>1.1.2</version>
-      <type>jar</type>
-      <scope>compile</scope>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>site-toolkit-api</artifactId>
+      <version>${pom.version}</version>
+      <scope>provided</scope>
     </dependency>
-
-    <dependency>
-      <groupId>taglibs</groupId>
-      <artifactId>standard</artifactId>
-      <version>1.1.2</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-connector</artifactId>
       <version>${hippoecm.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>site-toolkit-api</artifactId>
-      <version>2.02.05-SNAPSHOT</version>
-    </dependency>
-
   </dependencies>
 
   <build>
