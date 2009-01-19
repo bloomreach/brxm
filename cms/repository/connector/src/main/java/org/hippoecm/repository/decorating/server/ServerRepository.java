@@ -48,9 +48,18 @@ public class ServerRepository extends org.apache.jackrabbit.rmi.server.ServerRep
     public RemoteRepositoryService getRepositoryService() throws RepositoryException, RemoteException {
         final ServerRepositoryService serverService = new ServerRepositoryService();
         BatchReadConfig cfg = new BatchReadConfig();
-        cfg.setDepth(NameFactoryImpl.getInstance().create("internal", "root"), 1);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.jcp.org/jcr/nt/1.0", "unstructured"), 1);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("nt", "unstructured"), 1);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("internal", "root"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.jcp.org/jcr/nt/1.0", "unstructured"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("nt", "unstructured"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("hippostd", "folder"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("hippostd", "directory"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippostd/nt/1.2", "folder"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippostd/nt/1.2", "directory"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("defaultcontent", "article"), -1);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/defaultcontent/1.2", "article"), -1);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("hippo", "document"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/nt/1.2", "document"), 3);
+
         Repository loginRepository = new Repository() {
 
             public Session login() throws LoginException, RepositoryException {
