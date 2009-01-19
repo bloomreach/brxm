@@ -19,7 +19,7 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.2'>
-<frontend='http://www.hippoecm.org/frontend/nt/1.2'>
+<frontend='http://www.hippoecm.org/frontend/nt/1.3'>
 
 [frontend:pluginconfig] > nt:base orderable
 - * (string)
@@ -33,7 +33,9 @@
 [frontend:plugin] > frontend:pluginconfig
 
 [frontend:plugincluster] > nt:base orderable
-- frontend:overrides (string) multiple
+- frontend:services (string) multiple
+- frontend:references (string) multiple
+- frontend:properties (string) multiple
 - * (string)
 + * (frontend:plugin) = frontend:plugin
 

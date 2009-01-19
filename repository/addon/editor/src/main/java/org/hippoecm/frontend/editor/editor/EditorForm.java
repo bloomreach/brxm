@@ -25,10 +25,11 @@ import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.impl.TemplateEngine;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -45,7 +46,7 @@ public class EditorForm extends Form {
 
     private IPluginContext context;
 
-    private IPluginControl template;
+    private IClusterControl cluster;
     private ModelService modelService;
     private ServiceTracker<IRenderService> fieldTracker;
     private List<IRenderService> fields;
@@ -69,7 +70,6 @@ public class EditorForm extends Form {
         engine = new TemplateEngine(context, typeStore);
         context.registerService(engine, ITemplateEngine.class.getName());
         engineId = context.getReference(engine).getServiceId();
-        engine.setId(engineId);
 
         fields = new LinkedList<IRenderService>();
         fieldTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
@@ -97,8 +97,8 @@ public class EditorForm extends Form {
     public void destroy() {
         context.unregisterService(engine, ITemplateEngine.class.getName());
         context.unregisterTracker(fieldTracker, engineId + ".wicket.root");
-        if (template != null) {
-            template.stopPlugin();
+        if (cluster != null) {
+            cluster.stop();
             modelService.destroy();
         }
     }
@@ -117,8 +117,8 @@ public class EditorForm extends Form {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        if (template != null) {
-            template.stopPlugin();
+        if (cluster != null) {
+            cluster.stop();
             modelService.destroy();
         }
         createTemplate();
@@ -136,13 +136,18 @@ public class EditorForm extends Form {
             ITypeDescriptor type = engine.getType(model);
 
             if (type != null) {
-                IClusterConfig clusterConfig = engine.getTemplate(type, ITemplateEngine.EDIT_MODE);
-                if (clusterConfig != null) {
-                    clusterConfig.put(RenderService.WICKET_ID, engineId + ".wicket.root");
-                    String modelId = clusterConfig.getString(RenderService.MODEL_ID);
+                IClusterConfig template = engine.getTemplate(type, ITemplateEngine.EDIT_MODE);
+                if (template != null) {
+                    IPluginConfig parameters = new JavaPluginConfig();
+                    parameters.put(RenderService.WICKET_ID, engineId + ".wicket.root");
+                    parameters.put(ITemplateEngine.ENGINE, engineId);
+                    cluster = context.newCluster(template, parameters);
+
+                    String modelId = cluster.getClusterConfig().getString(RenderService.MODEL_ID);
                     modelService = new ModelService(modelId, model);
                     modelService.init(context);
-                    template = context.start(clusterConfig);
+
+                    cluster.start();
                 }
             }
         }

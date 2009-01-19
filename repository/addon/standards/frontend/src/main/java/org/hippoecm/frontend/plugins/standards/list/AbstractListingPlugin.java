@@ -94,6 +94,10 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
             IModelService<IModel> documentService = getPluginContext().getService(config.getString("model.document"), IModelService.class);
             if (documentService != null) {
                 documentService.setModel(model);
+                if (model != dataTable.getModel() && (model == null || !model.equals(dataTable.getModel()))) {
+                    log.info("Did not receive model change notification for model.document ({})", config.getString("model.document"));
+                    updateSelection(model);
+                }
             } else {
                 updateSelection(model);
             }

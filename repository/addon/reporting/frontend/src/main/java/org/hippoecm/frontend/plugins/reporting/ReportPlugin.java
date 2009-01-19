@@ -55,7 +55,7 @@ public class ReportPlugin implements IPlugin {
 
             IClusterConfig renderer = getReportRenderer(reportNode);
             if (renderer != null) {
-                context.start(renderer);
+                context.newCluster(renderer, null).start();
             } else {
                 log.error("Failed to  create report: cannot create report plugin");
             }

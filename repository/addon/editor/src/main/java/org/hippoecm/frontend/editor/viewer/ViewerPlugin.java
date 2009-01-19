@@ -15,14 +15,15 @@
  */
 package org.hippoecm.frontend.editor.viewer;
 
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.impl.TemplateEngine;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -40,7 +41,7 @@ public class ViewerPlugin extends RenderPlugin {
     private static final Logger log = LoggerFactory.getLogger(ViewerPlugin.class);
 
     private ModelService modelService;
-    private IPluginControl template;
+    private IClusterControl cluster;
     private String engineId;
     private ITypeStore typeStore;
     private TemplateEngine engine;
@@ -52,7 +53,6 @@ public class ViewerPlugin extends RenderPlugin {
         engine = new TemplateEngine(context, typeStore);
         context.registerService(engine, ITemplateEngine.class.getName());
         engineId = context.getReference(engine).getServiceId();
-        engine.setId(engineId);
 
         addExtensionPoint("template");
 
@@ -67,31 +67,35 @@ public class ViewerPlugin extends RenderPlugin {
 
     @Override
     public void onModelChanged() {
-        if (template != null) {
+        if (cluster != null) {
             modelService.destroy();
             modelService = null;
-            template.stopPlugin();
-            template = null;
+            cluster.stop();
+            cluster = null;
         }
         createTemplate();
         redraw();
     }
 
     protected void createTemplate() {
-        JcrNodeModel model = (JcrNodeModel) getModel();
-        if (model != null && model.getNode() != null) {
+        IModel model = getModel();
+        if (model != null && model.getObject() != null) {
             ITypeDescriptor type = engine.getType(model);
             IPluginContext context = getPluginContext();
 
             if (type != null) {
-                IClusterConfig clusterConfig = engine.getTemplate(type, "view");
-                if (clusterConfig != null) {
-                    clusterConfig.put(RenderService.WICKET_ID, getPluginConfig().getString("template"));
-                    String modelId = clusterConfig.getString(RenderService.MODEL_ID);
+                IClusterConfig template = engine.getTemplate(type, "view");
+                if (template != null) {
+                    IPluginConfig parameters = new JavaPluginConfig();
+                    parameters.put(RenderService.WICKET_ID, getPluginConfig().getString("template"));
+                    parameters.put(ITemplateEngine.ENGINE, engineId);
+
+                    cluster = context.newCluster(template, parameters);
+                    String modelId = cluster.getClusterConfig().getString(RenderService.MODEL_ID);
                     if (modelId != null) {
                         modelService = new ModelService(modelId, model);
                         modelService.init(context);
-                        template = context.start(clusterConfig);
+                        cluster.start();
                     } else {
                         log.warn("No model specified in template for type " + type.getName());
                     }

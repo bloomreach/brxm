@@ -178,7 +178,7 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
         if (properties.getString(WICKET_ID) != null) {
             this.wicketServiceId = properties.getString(WICKET_ID);
         } else {
-            log.warn("No service id ({}) defined", WICKET_ID);
+            log.warn("No service id ({}) defined for {}", WICKET_ID, getClass().getName());
         }
 
         if (properties.getString(MODEL_ID) != null) {
@@ -276,6 +276,10 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
         IModelService service = context.getService(modelId, IModelService.class);
         if (service != null) {
             service.setModel(model);
+            if (model != getModel() && (model == null || !model.equals(getModel()))) {
+                log.info("Did not receive model change notification for wicket.model ({})", config.getString(MODEL_ID));
+                updateModel(model);
+            }
         } else {
             updateModel(model);
         }

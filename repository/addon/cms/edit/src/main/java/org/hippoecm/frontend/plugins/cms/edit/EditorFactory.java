@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.cms.edit;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,16 +30,18 @@ public class EditorFactory implements IClusterable {
 
     public static final Logger log = LoggerFactory.getLogger(EditorFactory.class);
 
+    private IPluginConfig config;
     private IPluginContext context;
     private String cluster;
 
-    public EditorFactory(IPluginContext context, String cluster) {
+    public EditorFactory(IPluginContext context, String cluster, IPluginConfig config) {
         this.context = context;
         this.cluster = cluster;
+        this.config = config;
     }
 
     public Editor newEditor(final IModel model) throws EditorException {
-        return new Editor(context, cluster, model);
+        return new Editor(context, cluster, config, model);
     }
 
 }

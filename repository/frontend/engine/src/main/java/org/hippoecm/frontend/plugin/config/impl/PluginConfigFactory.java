@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import java.util.List;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -27,7 +25,6 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
-import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -84,43 +81,11 @@ public class PluginConfigFactory implements IClusterable {
         } catch (RepositoryException e) {
             baseService = new JavaConfigService("login");
         }
-        pluginConfigService = new DecoratedConfigService(baseService);
+        pluginConfigService = baseService;
     }
 
     public IPluginConfigService getPluginConfigService() {
         return pluginConfigService;
-    }
-
-    private class DecoratedConfigService implements IPluginConfigService {
-        private static final long serialVersionUID = 1L;
-
-        private int count = 0;
-        private IPluginConfigService decoratedService;
-
-        DecoratedConfigService(IPluginConfigService configService) {
-            decoratedService = configService;
-        }
-
-        public IClusterConfig getDefaultCluster() {
-            return new ClusterConfigDecorator(decoratedService.getDefaultCluster(), "config.cluster." + (count++));
-        }
-
-        public IClusterConfig getCluster(String key) {
-            IClusterConfig upstream = decoratedService.getCluster(key);
-            if (upstream != null) {
-                return new ClusterConfigDecorator(upstream, "config.cluster." + (count++));
-            }
-            return null;
-        }
-
-        public List<String> listClusters(String folder) {
-            return decoratedService.listClusters(folder);
-        }
-
-        public void detach() {
-            decoratedService.detach();
-        }
-
     }
 
 }

@@ -26,15 +26,16 @@ import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.JcrTypeDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -48,11 +49,8 @@ public class JcrTypeHelper extends NodeModelWrapper {
 
     private static final Logger log = LoggerFactory.getLogger(JcrTypeHelper.class);
 
-    private String mode;
-
-    public JcrTypeHelper(JcrNodeModel nodeModel, String mode) {
+    public JcrTypeHelper(JcrNodeModel nodeModel) {
         super(nodeModel);
-        this.mode = mode;
     }
 
     public String getName() {
@@ -77,7 +75,7 @@ public class JcrTypeHelper extends NodeModelWrapper {
                 uri = "internal";
             } else {
                 name = prefix + ":" + baseNode.getName();
-                uri = getUri(prefix, baseNode.getSession());
+                uri = getUri(prefix);
             }
 
             Node ntHandle = baseNode.getNode(HippoNodeType.HIPPO_NODETYPE);
@@ -85,17 +83,12 @@ public class JcrTypeHelper extends NodeModelWrapper {
             Node typeNode = null;
             while (ntIter.hasNext()) {
                 Node node = ntIter.nextNode();
-                if ("edit".equals(mode)) {
-                    if (!node.isNodeType(HippoNodeType.NT_REMODEL)) {
-                        typeNode = node;
-                        break;
-                    }
+                if (!node.isNodeType(HippoNodeType.NT_REMODEL)) {
+                    typeNode = node;
+                    break;
                 } else {
-                    if (node.isNodeType(HippoNodeType.NT_REMODEL)) {
-                        if (node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
-                            typeNode = node;
-                            break;
-                        }
+                    if (node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
+                        typeNode = node;
                     }
                 }
             }
@@ -136,47 +129,39 @@ public class JcrTypeHelper extends NodeModelWrapper {
     }
 
     public JcrNodeModel storeTemplate(IClusterConfig cluster) {
-        if (cluster instanceof Map) {
-            try {
-                Node typeNode = getNodeModel().getNode();
-                Node node;
-                if (!typeNode.hasNode(HippoNodeType.HIPPO_TEMPLATE)) {
-                    node = typeNode.addNode(HippoNodeType.HIPPO_TEMPLATE, HippoNodeType.NT_HANDLE);
-                } else {
-                    node = typeNode.getNode(HippoNodeType.HIPPO_TEMPLATE);
-                }
-                node = node.addNode(HippoNodeType.HIPPO_TEMPLATE, "frontend:plugincluster");
-                JcrNodeModel templateModel = new JcrNodeModel(node);
-
-                JcrClusterConfig jcrConfig = new JcrClusterConfig(templateModel, true);
-                for (Map.Entry entry : (Set<Map.Entry>) ((Map) cluster).entrySet()) {
-                    jcrConfig.put(entry.getKey(), entry.getValue());
-                }
-
-                for (IPluginConfig plugin : cluster.getPlugins()) {
-                    String name = UUID.randomUUID().toString();
-                    Node child = node.addNode(name, "frontend:plugin");
-                    JcrPluginConfig pluginConfig = new JcrPluginConfig(new JcrNodeModel(child), true);
-                    for (Map.Entry entry : (Set<Map.Entry>) ((Map) plugin).entrySet()) {
-                        pluginConfig.put(entry.getKey(), entry.getValue());
-                    }
-                }
-
-                List<String> overrides = cluster.getOverrides();
-                Value[] values = new Value[overrides.size()];
-                int i = 0;
-                for (String override : overrides) {
-                    values[i++] = templateModel.getNode().getSession().getValueFactory().createValue(override);
-                }
-                node.setProperty("frontend:overrides", values);
-
-                return templateModel;
-
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
+        try {
+            Node typeNode = getNodeModel().getNode();
+            Node node;
+            if (!typeNode.hasNode(HippoNodeType.HIPPO_TEMPLATE)) {
+                node = typeNode.addNode(HippoNodeType.HIPPO_TEMPLATE, HippoNodeType.NT_HANDLE);
+            } else {
+                node = typeNode.getNode(HippoNodeType.HIPPO_TEMPLATE);
             }
-        } else {
-            log.error("Unable to save cluster config");
+            node = node.addNode(HippoNodeType.HIPPO_TEMPLATE, "frontend:plugincluster");
+            JcrNodeModel templateModel = new JcrNodeModel(node);
+
+            JcrClusterConfig jcrConfig = new JcrClusterConfig(templateModel);
+            for (Map.Entry entry : (Set<Map.Entry>) ((Map) cluster).entrySet()) {
+                jcrConfig.put(entry.getKey(), entry.getValue());
+            }
+
+            for (IPluginConfig plugin : cluster.getPlugins()) {
+                String name = UUID.randomUUID().toString();
+                Node child = node.addNode(name, "frontend:plugin");
+                JcrPluginConfig pluginConfig = new JcrPluginConfig(new JcrNodeModel(child));
+                for (Map.Entry entry : (Set<Map.Entry>) ((Map) plugin).entrySet()) {
+                    pluginConfig.put(entry.getKey(), entry.getValue());
+                }
+            }
+
+            node.setProperty("frontend:services", getValues(cluster.getServices()));
+            node.setProperty("frontend:references", getValues(cluster.getReferences()));
+            node.setProperty("frontend:properties", getValues(cluster.getProperties()));
+
+            return templateModel;
+
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
         }
         return null;
     }
@@ -186,30 +171,40 @@ public class JcrTypeHelper extends NodeModelWrapper {
             Node baseNode = getNodeModel().getNode();
             String prefix = baseNode.getParent().getName();
 
+            Node prototype = null;
             NodeIterator iter = getNodeModel().getNode().getNode(HippoNodeType.HIPPO_PROTOTYPE).getNodes(
                     HippoNodeType.HIPPO_PROTOTYPE);
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
-                if ("edit".equals(mode)) {
-                    if (node.isNodeType("nt:unstructured")) {
-                        return new JcrNodeModel(node);
-                    }
-                } else {
-                    String nt = node.getPrimaryNodeType().getName();
-                    if (prefix.equals(nt.substring(0, nt.indexOf(':')))) {
-                        return new JcrNodeModel(node);
-                    }
+                if (node.isNodeType("nt:unstructured")) {
+                    return new JcrNodeModel(node);
+                }
+                String nt = node.getPrimaryNodeType().getName();
+                if (prefix.equals(nt.substring(0, nt.indexOf(':')))) {
+                    prototype = node;
                 }
             }
-            throw new ItemNotFoundException("no prototype was not found");
+            if (prototype != null) {
+                return new JcrNodeModel(prototype);
+            }
+            throw new ItemNotFoundException("no prototype found");
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
         return null;
     }
 
-    private String getUri(String prefix, Session session) throws NamespaceException, RepositoryException {
-        NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
+    private Value[] getValues(List<String> list) throws RepositoryException {
+        Value[] values = new Value[list.size()];
+        int i = 0;
+        for (String override : list) {
+            values[i++] = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(override);
+        }
+        return values;
+    }
+
+    private String getUri(String prefix) throws NamespaceException, RepositoryException {
+        NamespaceRegistry nsReg = ((UserSession) Session.get()).getJcrSession().getWorkspace().getNamespaceRegistry();
         String[] prefixes = nsReg.getPrefixes();
         for (String pref : prefixes) {
             if (pref.equals(prefix)) {

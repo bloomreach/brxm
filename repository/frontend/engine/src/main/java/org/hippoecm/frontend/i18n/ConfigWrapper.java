@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.apache.wicket.util.value.IValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,10 +32,10 @@ public class ConfigWrapper implements ITranslation<IModel> {
 
     final static Logger log = LoggerFactory.getLogger(ConfigWrapper.class);
 
-    private IPluginConfig config;
+    private IValueMap config;
     private Set<String> matches;
 
-    ConfigWrapper(IPluginConfig config, Map<String, String> keys) {
+    ConfigWrapper(IValueMap config, Map<String, String> keys) {
         this.config = config;
 
         matches = new HashSet<String>();

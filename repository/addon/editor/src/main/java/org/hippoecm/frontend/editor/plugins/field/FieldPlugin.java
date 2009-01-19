@@ -26,10 +26,11 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.model.AbstractProvider;
 import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
@@ -145,26 +146,14 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
                 .getService(getPluginConfig().getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
     }
 
-    protected IClusterConfig getTemplate(C model) {
+    protected IClusterControl getTemplate(C model) {
         ITemplateEngine engine = getTemplateEngine();
-        IClusterConfig config = engine.getTemplate(engine.getType(field.getType()), mode);
-
-        if (config != null) {
-            configureTemplate(config);
-        }
-        return config;
-    }
-
-    protected void configureTemplate(IClusterConfig config) {
-        final IPluginConfig myConfig = getPluginConfig();
-        for (String property : config.getOverrides()) {
-            Object value = myConfig.get("template." + property);
-            if (value != null) {
-                config.put(property, value);
-            }
-        }
-
-        config.put(RenderService.WICKET_ID, getItemId());
+        IClusterConfig template = engine.getTemplate(engine.getType(field.getType()), mode);
+        IPluginConfig parameters = new JavaPluginConfig(getPluginConfig().getPluginConfig("cluster.options"));
+        parameters.put(ITemplateEngine.ENGINE, getPluginConfig().getString(ITemplateEngine.ENGINE));
+        parameters.put(RenderService.WICKET_ID, getItemId());
+        IClusterControl control = getPluginContext().newCluster(template, parameters);
+        return control;
     }
 
     protected C findModel(IRenderService renderer) {
@@ -174,11 +163,11 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     private class TemplateController implements IClusterable {
         private static final long serialVersionUID = 1L;
 
-        private Map<C, IPluginControl> plugins;
+        private Map<C, IClusterControl> plugins;
         private Map<C, ModelService> models;
 
         TemplateController() {
-            plugins = new HashMap<C, IPluginControl>();
+            plugins = new HashMap<C, IClusterControl>();
             models = new HashMap<C, ModelService>();
         }
 
@@ -196,11 +185,10 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         }
 
         C findModel(IRenderService renderer) {
-            for (Map.Entry<C, IPluginControl> entry : plugins.entrySet()) {
+            for (Map.Entry<C, IClusterControl> entry : plugins.entrySet()) {
                 IPluginContext context = getPluginContext();
-                String controlId = context.getReference(entry.getValue()).getServiceId();
-                List<IRenderService> services = getPluginContext().getServices(controlId, IRenderService.class);
-                if (services.contains(renderer)) {
+                String renderId = entry.getValue().getClusterConfig().getString("wicket.id");
+                if (renderer == context.getService(renderId, IRenderService.class)) {
                     return entry.getKey();
                 }
             }
@@ -208,23 +196,22 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         }
 
         private void addModel(final C model) {
-            IClusterConfig config = FieldPlugin.this.getTemplate(model);
-            if (config != null) {
-                String modelId = config.getString(RenderService.MODEL_ID);
+            IClusterControl control = FieldPlugin.this.getTemplate(model);
+            if (control != null) {
+                String modelId = control.getClusterConfig().getString(RenderService.MODEL_ID);
                 ModelService modelService = new ModelService(modelId, model);
                 models.put(model, modelService);
 
-                IPluginContext context = getPluginContext();
-                modelService.init(context);
-                IPluginControl plugin = context.start(config);
-                plugins.put(model, plugin);
+                modelService.init(getPluginContext());
+                control.start();
+                plugins.put(model, control);
             }
         }
 
         private void removeModel(C model) {
-            IPluginControl plugin = plugins.remove(model);
+            IClusterControl plugin = plugins.remove(model);
             if (plugin != null) {
-                plugin.stopPlugin();
+                plugin.stop();
             } else {
                 log.warn("Model " + model + " was not found in list of plugins");
             }

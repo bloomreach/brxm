@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend.editor.impl;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
@@ -28,7 +28,7 @@ import javax.jcr.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
-import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
+import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -43,13 +43,6 @@ public class JcrTemplateStore implements IPluginConfigService {
 
     private static final Logger log = LoggerFactory.getLogger(JcrTemplateStore.class);
 
-    private int count = 0;
-    private String serviceId;
-
-    public void setId(String id) {
-        serviceId = id;
-    }
-
     public IClusterConfig getCluster(String key) {
         IClusterConfig cluster;
         String type = key;
@@ -63,8 +56,7 @@ public class JcrTemplateStore implements IPluginConfigService {
         }
         Node templateNode = getTemplateNode(type);
         if (templateNode != null) {
-            cluster = new JcrClusterConfig(new JcrNodeModel(templateNode));
-            cluster = new ClusterConfigDecorator(cluster, serviceId + ".clusters." + (count++));
+            cluster = new JavaClusterConfig(new JcrClusterConfig(new JcrNodeModel(templateNode)));
             cluster.put("mode", mode);
         } else {
             cluster = null;

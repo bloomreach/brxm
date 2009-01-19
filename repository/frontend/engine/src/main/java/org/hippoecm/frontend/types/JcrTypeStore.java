@@ -73,6 +73,8 @@ public class JcrTypeStore implements ITypeStore {
                 if (typeNode != null) {
                     result = createTypeDescriptor(typeNode, name);
                     types.put(name, result);
+                } else {
+                    log.warn("No nodetype description found for " + name);
                 }
             } catch (RepositoryException e) {
                 log.error(e.getMessage());

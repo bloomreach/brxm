@@ -27,6 +27,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
@@ -101,7 +102,8 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         context.registerTracker(tracker, serviceId);
 
         IClusterConfig pluginCluster = pluginConfigService.getDefaultCluster();
-        context.start(pluginCluster);
+        IClusterControl clusterControl = context.newCluster(pluginCluster, null);
+        clusterControl.start();
     }
 
     public Component getComponent() {

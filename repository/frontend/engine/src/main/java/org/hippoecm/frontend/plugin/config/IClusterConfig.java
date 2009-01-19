@@ -22,6 +22,9 @@ public interface IClusterConfig extends IPluginConfig {
 
     List<IPluginConfig> getPlugins();
 
-    // FIXME: is this method necessary?
-    List<String> getOverrides();
+    List<String> getServices();
+
+    List<String> getReferences();
+
+    List<String> getProperties();
 }

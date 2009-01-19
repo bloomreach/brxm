@@ -29,11 +29,11 @@ import org.hippoecm.frontend.editor.impl.TemplateEngine;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -55,7 +55,7 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
     private static final Logger log = LoggerFactory.getLogger(PreviewPlugin.class);
 
     private ITypeStore typeStore;
-    private IPluginControl child;
+    private IClusterControl child;
     private ModelService helperModel;
     private Map<String, String> paths;
 
@@ -89,14 +89,14 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
         super.onModelChanged();
 
         if (child != null) {
-            child.stopPlugin();
+            child.stop();
             child = null;
         }
 
         updatePrototype();
 
         typeStore = null;
-        JcrTypeHelper typeHelper = new JcrTypeHelper((JcrNodeModel) getModel(), getPluginConfig().getString("mode"));
+        JcrTypeHelper typeHelper = new JcrTypeHelper((JcrNodeModel) getModel());
         ITypeDescriptor type = typeHelper.getTypeDescriptor();
         if (type != null) {
             String typeName = typeHelper.getName();
@@ -110,52 +110,60 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
             TemplateEngine engine = new TemplateEngine(context, typeStore);
             context.registerService(engine, ITemplateEngine.class.getName());
             String engineId = context.getReference(engine).getServiceId();
-            engine.setId(engineId);
 
-            IClusterConfig clusterConfig;
+            IClusterConfig template;
             JcrNodeModel templateModel = typeHelper.getTemplate();
             if (templateModel == null) {
                 BuiltinTemplateStore builtinStore = new BuiltinTemplateStore(typeStore, null);
                 if ("edit".equals(mode)) {
                     IClusterConfig cluster = builtinStore.getTemplate(type, "edit");
                     templateModel = typeHelper.storeTemplate(cluster);
-                    clusterConfig = new PreviewClusterConfig(context, templateModel, helperModel, engineId);
+                    template = new PreviewClusterConfig(context, templateModel, helperModel, engineId);
                 } else {
-                    clusterConfig = builtinStore.getTemplate(type, mode);
+                    template = builtinStore.getTemplate(type, mode);
                 }
             } else {
                 if ("edit".equals(mode)) {
-                    clusterConfig = new PreviewClusterConfig(context, templateModel, helperModel, engineId);
+                    template = new PreviewClusterConfig(context, templateModel, helperModel, engineId);
                 } else {
-                    clusterConfig = new JcrClusterConfig(templateModel);
+                    template = new JcrClusterConfig(templateModel);
                 }
             }
 
-            String uniqId = context.getReference(this).getServiceId();
-            IClusterConfig cluster = new ClusterConfigDecorator(clusterConfig, uniqId + ".cluster");
-            cluster.put(ITemplateEngine.ENGINE, engineId);
-            cluster.put(ITemplateEngine.MODE, mode);
-            cluster.put(RenderService.WICKET_ID, getPluginConfig().getString("template"));
+            IPluginConfig parameters = new JavaPluginConfig();
+            parameters.put(ITemplateEngine.ENGINE, engineId);
+            parameters.put(ITemplateEngine.MODE, mode);
+            parameters.put(RenderService.WICKET_ID, getPluginConfig().getString("template"));
 
-            String modelId = cluster.getString(RenderService.MODEL_ID);
+            final IClusterControl control = context.newCluster(template, parameters);
+            String modelId = control.getClusterConfig().getString(RenderService.MODEL_ID);
             JcrNodeModel prototypeModel = typeHelper.getPrototype();
             final ModelService modelService = new ModelService(modelId, prototypeModel);
-            modelService.init(context);
-            final IPluginControl control = context.start(cluster);
-            child = new IPluginControl() {
+
+            child = new IClusterControl() {
                 private static final long serialVersionUID = 1L;
 
-                public void stopPlugin() {
-                    control.stopPlugin();
+                public void stop() {
+                    control.stop();
                     modelService.destroy();
                 }
+
+                public IClusterConfig getClusterConfig() {
+                    return null;
+                }
+
+                public void start() {
+                    modelService.init(getPluginContext());
+                    control.start();
+                }
             };
+            child.start();
             redraw();
         }
     }
 
     private void updatePrototype() {
-        JcrTypeHelper typeHelper = new JcrTypeHelper((JcrNodeModel) getModel(), getPluginConfig().getString("mode"));
+        JcrTypeHelper typeHelper = new JcrTypeHelper((JcrNodeModel) getModel());
         JcrTypeDescriptor typeModel = typeHelper.getTypeDescriptor();
         ITemplateEngine engine = getPluginContext().getService(getPluginConfig().getString("engine"),
                 ITemplateEngine.class);
@@ -230,7 +238,7 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
                     }
                 }
                 if (save) {
-                    prototype.getSession().save();
+                    prototype.save();
                 }
             }
         } catch (RepositoryException ex) {
@@ -243,7 +251,9 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
         JcrNodeModel myModel = (JcrNodeModel) getModel();
         if (myModel.getItemModel().hasAncestor(nodeModel.getItemModel())
                 || nodeModel.getItemModel().hasAncestor(myModel.getItemModel())) {
-            typeStore.detach();
+            if (typeStore != null) {
+                typeStore.detach();
+            }
             onModelChanged();
         }
     }
