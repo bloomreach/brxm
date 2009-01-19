@@ -66,6 +66,15 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         return factory.getNodeDecorator(this, session.getRootNode().getNode(path.substring(1)));
     }
 
+    Node root;
+
+    public Node getRootNode() throws RepositoryException {
+        if(root == null) {
+            root = super.getRootNode();
+        }
+        return root;
+    }
+
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
                                                                             NoSuchNodeTypeException, RepositoryException {
         return new NodeIteratorPendingChanges(factory, this, remoteSession.pendingChanges(remoteSession.getRootNode().getNode(node.getPath().substring(1)), nodeType, prune));
