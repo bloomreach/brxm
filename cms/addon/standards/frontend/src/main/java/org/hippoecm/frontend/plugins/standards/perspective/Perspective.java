@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.standards.perspective;
 
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -30,24 +31,24 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
 
     public static final String TITLE = "perspective.title";
 
-    private String title = "title";
+    private IModel title = new Model("title");
 
     public Perspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         if (config.getString(TITLE) != null) {
-            title = config.getString(TITLE);
+            title = new StringResourceModel(config.getString(TITLE), this, null);
         }
     }
 
     // ITitleDecorator
 
     public IModel getTitle() {
-        return new StringResourceModel(title, this, null);
+        return title;
     }
 
     protected void setTitle(String title) {
-        this.title = title;
+        this.title.setObject(title);
     }
 
 }

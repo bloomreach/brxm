@@ -16,9 +16,14 @@
 package org.hippoecm.frontend.plugin;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.plugin.config.IClusterConfig;
 
-public interface IPluginControl extends IClusterable {
+public interface IClusterControl extends IClusterable {
     final static String SVN_ID = "$Id$";
 
-    void stopPlugin();
+    IClusterConfig getClusterConfig();
+    
+    void start();
+
+    void stop();
 }

@@ -17,7 +17,7 @@ package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.model.Model;
 
 public class ExceptionDialog extends AbstractDialog {
     @SuppressWarnings("unused")
@@ -33,7 +33,7 @@ public class ExceptionDialog extends AbstractDialog {
     }
 
     public IModel getTitle() {
-        return new StringResourceModel(exception.getMessage(), this, null, null, exception.getLocalizedMessage());
+        return new Model("exception");
     }
 
 }

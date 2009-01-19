@@ -94,10 +94,14 @@ public class PluginFactory implements IClusterable {
             // reset context, i.e. unregister everything that was registered so far
             context.stop();
 
-            IPluginConfig errorConfig = new JavaPluginConfig();
-            errorConfig.put(ErrorPlugin.ERROR_MESSAGE, message);
-            errorConfig.put(RenderService.WICKET_ID, config.getString(RenderService.WICKET_ID));
-            plugin = new ErrorPlugin(context, errorConfig);
+            if (config.getString(RenderService.WICKET_ID) != null) {
+                IPluginConfig errorConfig = new JavaPluginConfig();
+                errorConfig.put(ErrorPlugin.ERROR_MESSAGE, message);
+                errorConfig.put(RenderService.WICKET_ID, config.getString(RenderService.WICKET_ID));
+                plugin = new ErrorPlugin(context, errorConfig);
+            } else {
+                log.error(message);
+            }
         }
         return plugin;
     }

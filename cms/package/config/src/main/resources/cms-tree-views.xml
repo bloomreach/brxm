@@ -24,8 +24,11 @@
       <sv:value>frontend:plugincluster</sv:value>
     </sv:property>
     
-    <sv:property sv:name="frontend:overrides" sv:type="String">
+    <sv:property sv:name="frontend:services" sv:type="String">
       <sv:value>wicket.id</sv:value>
+      <sv:value>wicket.model</sv:value>
+    </sv:property>
+    <sv:property sv:name="frontend:references" sv:type="String">
       <sv:value>wicket.model</sv:value>
     </sv:property>
 
@@ -217,8 +220,11 @@
       <sv:value>frontend:plugincluster</sv:value>
     </sv:property>
     
-    <sv:property sv:name="frontend:overrides" sv:type="String">
+    <sv:property sv:name="frontend:services" sv:type="String">
       <sv:value>wicket.id</sv:value>
+      <sv:value>wicket.model</sv:value>
+    </sv:property>
+    <sv:property sv:name="frontend:references" sv:type="String">
       <sv:value>wicket.model</sv:value>
     </sv:property>
     
@@ -410,8 +416,11 @@
       <sv:value>frontend:plugincluster</sv:value>
     </sv:property>
     
-    <sv:property sv:name="frontend:overrides" sv:type="String">
+    <sv:property sv:name="frontend:services" sv:type="String">
       <sv:value>wicket.id</sv:value>
+      <sv:value>wicket.model</sv:value>
+    </sv:property>
+    <sv:property sv:name="frontend:references" sv:type="String">
       <sv:value>wicket.model</sv:value>
     </sv:property>
     
@@ -603,11 +612,14 @@
       <sv:value>frontend:plugincluster</sv:value>
     </sv:property>
     
-    <sv:property sv:name="frontend:overrides" sv:type="String">
+    <sv:property sv:name="frontend:services" sv:type="String">
       <sv:value>wicket.id</sv:value>
       <sv:value>wicket.model</sv:value>
     </sv:property>
-
+    <sv:property sv:name="frontend:references" sv:type="String">
+      <sv:value>wicket.model</sv:value>
+    </sv:property>
+    
     <sv:node sv:name="configurationBrowser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>

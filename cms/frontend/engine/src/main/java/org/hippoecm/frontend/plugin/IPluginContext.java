@@ -19,11 +19,12 @@ import java.util.List;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public interface IPluginContext extends IClusterable {
     final static String SVN_ID = "$Id$";
 
-    IPluginControl start(IClusterConfig cluster);
+    IClusterControl newCluster(IClusterConfig template, IPluginConfig parameters);
 
     <T extends IClusterable> T getService(String name, Class<T> clazz);
 
@@ -53,7 +54,7 @@ public interface IPluginContext extends IClusterable {
      * @param name
      * @param service
      */
-    void registerTracker(IServiceTracker listener, String name);
+    void registerTracker(IServiceTracker<? extends IClusterable> listener, String name);
 
     /**
      * Unregisters a service with the given name.
@@ -61,6 +62,6 @@ public interface IPluginContext extends IClusterable {
      * @param name
      * @param service
      */
-    void unregisterTracker(IServiceTracker listener, String name);
+    void unregisterTracker(IServiceTracker<? extends IClusterable> listener, String name);
 
 }

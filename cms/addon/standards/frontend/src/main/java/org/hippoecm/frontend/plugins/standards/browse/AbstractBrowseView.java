@@ -25,11 +25,12 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.IModelService;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
     public static final String VIEWERS = "browser.viewers";
 
     private String viewerName;
-    private IPluginControl viewer;
+    private IClusterControl viewer;
 
     private IPluginContext context;
     private IPluginConfig config;
@@ -81,7 +82,7 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
             if (node.isNodeType(type)) {
                 if (!type.equals(viewerName)) {
                     if (viewer != null) {
-                        viewer.stopPlugin();
+                        viewer.stop();
                         viewer = null;
                         viewerName = null;
                     }
@@ -89,19 +90,12 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
                     IPluginConfigService pluginConfig = context.getService(IPluginConfigService.class.getName(),
                             IPluginConfigService.class);
                     IClusterConfig cluster = pluginConfig.getCluster(config.getString(VIEWERS) + "/" + type);
-                    cluster.put("wicket.id", getExtensionPoint());
-                    cluster.put("model.folder", config.getString("model.folder"));
-                    cluster.put("model.document", config.getString("model.document"));
-
-                    IPluginConfig parameters = config.getPluginConfig("browser.options");
-                    if (parameters != null) {
-                        for (String override : cluster.getOverrides()) {
-                            if (parameters.containsKey(override)) {
-                                cluster.put(override, parameters.get(override));
-                            }
-                        }
-                    }
-                    viewer = context.start(cluster);
+                    IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig("browser.options"));
+                    parameters.put("wicket.id", getExtensionPoint());
+                    parameters.put("model.folder", config.getString("model.folder"));
+                    parameters.put("model.document", config.getString("model.document"));
+                    viewer = context.newCluster(cluster, parameters);
+                    viewer.start();
                     viewerName = type;
 
                     onShowFolder();
@@ -133,7 +127,7 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
             }
         } else {
             if (viewer != null) {
-                viewer.stopPlugin();
+                viewer.stop();
                 viewer = null;
                 viewerName = null;
             }

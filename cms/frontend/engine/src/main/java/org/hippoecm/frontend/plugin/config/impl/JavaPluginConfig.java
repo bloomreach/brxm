@@ -20,88 +20,63 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.value.IValueMap;
-
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
+    
     private static final long serialVersionUID = 1L;
 
-    private boolean immutable = false;
-
+    private IPluginConfig upstream;
+    
     public JavaPluginConfig() {
         super();
     }
 
     public JavaPluginConfig(IPluginConfig parentConfig) {
-        super(parentConfig);
-    }
-
-    public JavaPluginConfig(IPluginConfig parentConfig, boolean isMutable) {
-        super(parentConfig);
-        this.immutable = isMutable;
+        super(parentConfig == null ? new MiniMap(0) : parentConfig);
+        upstream = parentConfig;
     }
 
     public void detach() {
     }
 
     public Set<IPluginConfig> getPluginConfigSet() {
-        LinkedHashSet<IPluginConfig> returnSet = new LinkedHashSet<IPluginConfig>();
-        for (Iterator iter = values().iterator(); iter.hasNext();) {
-            Object value = iter.next();
-            if (value instanceof IPluginConfig) {
-                returnSet.add((IPluginConfig) value);
-            } else if (value instanceof IPluginConfig[]) {
-                IPluginConfig[] values = (IPluginConfig[]) value;
-                for (int i = 0; i < values.length; i++) {
-                    returnSet.add(values[i]);
-                }
-            }
+        if (upstream != null) {
+            return upstream.getPluginConfigSet();
+        } else {
+            return new LinkedHashSet<IPluginConfig>();
         }
-        return returnSet;
     }
 
     public IPluginConfig getPluginConfig(Object key) {
         Object value = get(key);
         if (value instanceof IPluginConfig) {
             return (IPluginConfig) value;
-        } else if (value instanceof IPluginConfig[] && ((IPluginConfig[]) value).length > 0) {
-            return ((IPluginConfig[]) value)[0];
-        } else if (value instanceof Object[] && ((Object[]) value).length > 0 && ((Object[]) value)[0] instanceof IPluginConfig) {
-            return (IPluginConfig) ((Object[]) value)[0];
+        } else if (value instanceof List && ((List) value).size() > 0) {
+            return (IPluginConfig)((List) value).get(0);
         } else {
             return new JavaPluginConfig();
         }
     }
 
-    @Override
-    public Object put(Object key, Object value) {
-        checkMutability();
-        value = super.put(key, value);
-        return value;
-    }
-
     public boolean isImmutable() {
-        return immutable;
+        return false;
     }
 
     public IValueMap makeImmutable() {
-        return new JavaPluginConfig(this, false);
-    }
-
-    public final void clear() {
-        checkMutability();
-        super.clear();
+        throw new UnsupportedOperationException("JavaPluginConfig is always mutable");
     }
 
     /**
@@ -241,7 +216,6 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
         }
         return new String[]{o.toString()};
     }
-
     /**
      * @see IValueMap#getStringValue(String)
      */
@@ -269,7 +243,6 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
      *         with the combined values
      */
     public final Object add(final String key, final String value) {
-        checkMutability();
         final Object o = get(key);
         if (o == null) {
             return put(key, value);
@@ -288,22 +261,6 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
         } else {
             return put(key, new String[]{o.toString(), value});
         }
-    }
-
-    /**
-     * @see java.util.Map#putAll(java.util.Map)
-     */
-    public void putAll(final Map map) {
-        checkMutability();
-        super.putAll(map);
-    }
-
-    /**
-     * @see java.util.Map#remove(java.lang.Object)
-     */
-    public Object remove(final Object key) {
-        checkMutability();
-        return super.remove(key);
     }
 
     public String getKey(final String key) {
@@ -350,12 +307,4 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
         return buffer.toString();
     }
 
-    /**
-     * Throws an exception if <code>ValueMap</code> is immutable.
-     */
-    private final void checkMutability() {
-        if (immutable) {
-            throw new UnsupportedOperationException("Map is immutable");
-        }
-    }
 }

@@ -42,18 +42,12 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
     private ITypeStore typeStore;
     private JcrTemplateStore templateStore;
     private JcrPrototypeStore prototypeStore;
-    private String serviceId;
 
     public TemplateEngine(IPluginContext context, ITypeStore typeStore) {
         this.typeStore = typeStore;
 
         this.templateStore = new JcrTemplateStore();
         this.prototypeStore = new JcrPrototypeStore();
-    }
-
-    public void setId(String serviceId) {
-        this.serviceId = serviceId;
-        templateStore.setId(serviceId);
     }
 
     public ITypeDescriptor getType(String type) {
@@ -94,13 +88,7 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
     }
 
     public IClusterConfig getTemplate(ITypeDescriptor type, String mode) {
-        IClusterConfig cluster = templateStore.getCluster(type.getName() + "/" + mode);
-        if (cluster != null) {
-            if (cluster.getOverrides().contains(ITemplateEngine.ENGINE)) {
-                cluster.put(ITemplateEngine.ENGINE, serviceId);
-            }
-        }
-        return cluster;
+        return templateStore.getCluster(type.getName() + "/" + mode);
     }
 
     public IModel getPrototype(ITypeDescriptor type) {

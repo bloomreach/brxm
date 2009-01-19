@@ -20,8 +20,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IBrowseService;
-import org.hippoecm.frontend.service.IEditService;
 
 public class EmbedWorkflowPlugin extends WorkflowPlugin implements IDetachable {
     @SuppressWarnings("unused")
@@ -38,12 +36,8 @@ public class EmbedWorkflowPlugin extends WorkflowPlugin implements IDetachable {
     }
 
     @Override
-    protected IPluginConfig configureWorkflow(IPluginConfig wflConfig, WorkflowsModel model) {
-        wflConfig = super.configureWorkflow(wflConfig, model);
-        wflConfig.remove(IBrowseService.BROWSER_ID);
-        wflConfig.remove(IEditService.EDITOR_ID);
+    protected void configureWorkflow(IPluginConfig wflConfig, WorkflowsModel model) {
         wflConfig.put(ITEM_ID, item);
-        return wflConfig;
     }
 
     @Override

@@ -17,48 +17,72 @@ package org.hippoecm.frontend.plugin.config.impl;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.plugin.config.IOverridable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfig, IOverridable {
+public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfig {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private List<IPluginConfig> configs;
-    private List<String> overrides;
+    private List<IPluginConfig> plugins = new LinkedList<IPluginConfig>();
+    private List<String> services;
+    private List<String> references;
+    private List<String> properties;
 
     public JavaClusterConfig() {
-        configs = new LinkedList<IPluginConfig>();
-        overrides = new LinkedList<String>();
+        services = new LinkedList<String>();
+        references = new LinkedList<String>();
+        properties = new LinkedList<String>();
+    }
+
+    public JavaClusterConfig(IClusterConfig upstream) {
+        super(upstream);
+
+        for (IPluginConfig config : upstream.getPlugins()) {
+            plugins.add(newPluginConfig(config));
+        }
+        this.services = upstream.getServices();
+        this.references = upstream.getReferences();
+        this.properties = upstream.getProperties();
     }
 
     public void addPlugin(IPluginConfig config) {
-        configs.add(config);
+        plugins.add(config);
     }
 
     public List<IPluginConfig> getPlugins() {
-        return configs;
+        return plugins;
     }
 
-    public void addOverride(String key) {
-        overrides.add(key);
+    public void addService(String key) {
+        services.add(key);
     }
 
-    public List<String> getOverrides() {
-        return overrides;
+    public List<String> getServices() {
+        return services;
     }
 
-    public Set<IPluginConfig> getPluginConfigSet() {
-        return new TreeSet(configs);
+    public void addReference(String key) {
+        references.add(key);
     }
 
-    public IPluginConfig getPluginConfig(Object key) {
-        return new JavaPluginConfig();
+    public List<String> getReferences() {
+        return references;
     }
+
+    public void addProperty(String key) {
+        properties.add(key);
+    }
+
+    public List<String> getProperties() {
+        return properties;
+    }
+
+    protected IPluginConfig newPluginConfig(IPluginConfig config) {
+        return new JavaPluginConfig(config);
+    }
+
 }

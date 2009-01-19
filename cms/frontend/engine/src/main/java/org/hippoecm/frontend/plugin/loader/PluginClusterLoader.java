@@ -15,8 +15,7 @@
  */
 package org.hippoecm.frontend.plugin.loader;
 
-import java.util.List;
-
+import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -53,15 +52,8 @@ public class PluginClusterLoader implements IPlugin {
                 log.warn("Unable to find cluster '" + clusterName + "'. Does it exist in repository?");
             } else {
                 IPluginConfig parameters = config.getPluginConfig(CLUSTER_PARAMETERS);
-                List<String> overrides = cluster.getOverrides();
-                if (parameters != null && overrides != null) {
-                    for (String key : overrides) {
-                        if (parameters.get(key) != null) {
-                            cluster.put(key, parameters.get(key));
-                        }
-                    }
-                }
-                context.start(cluster);
+                IClusterControl control = context.newCluster(cluster, parameters);
+                control.start();
             }
         }
     }

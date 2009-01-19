@@ -33,7 +33,7 @@
       <sv:value>1901</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.hippoecm.org/htmlcleaner/nt/1.0</sv:value>
+      <sv:value>http://www.hippoecm.org/htmlcleaner/nt/1.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>hippohtmlcleaner.cnd</sv:value>

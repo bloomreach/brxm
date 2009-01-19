@@ -68,8 +68,8 @@ public class EditorManagerPlugin implements IPlugin, IModelListener, IJcrNodeMod
 
         editors = new HashMap<JcrNodeModel, Editor>();
         pending = new LinkedList<JcrNodeModel>();
-        editorFactory = new EditorFactory(context, config.getString("cluster.edit.name"));
-        previewFactory = new EditorFactory(context, config.getString("cluster.preview.name"));
+        editorFactory = new EditorFactory(context, config.getString("cluster.edit.name"), config.getPluginConfig("cluster.edit.options"));
+        previewFactory = new EditorFactory(context, config.getString("cluster.preview.name"), config.getPluginConfig("cluster.preview.options"));
 
         context.registerService(this, IJcrService.class.getName());
 

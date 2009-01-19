@@ -39,11 +39,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
     private transient List<IPluginConfig> configs = null;
 
     public JcrClusterConfig(JcrNodeModel nodeModel) {
-        this(nodeModel, false);
-    }
-
-    public JcrClusterConfig(JcrNodeModel nodeModel, boolean mutable) {
-        super(nodeModel, mutable);
+        super(nodeModel);
     }
 
     private void load() {
@@ -73,12 +69,24 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
         return configs;
     }
 
-    public List<String> getOverrides() {
+    public List<String> getServices() {
+        return getList("frontend:services");
+    }
+
+    public List<String> getReferences() {
+        return getList("frontend:references");
+    }
+
+    public List<String> getProperties() {
+        return getList("frontend:properties");
+    }
+
+    private List<String> getList(String key) {
         List<String> result = new LinkedList<String>();
         try {
-            Node node = nodeModel.getNode();
-            if (node.hasProperty("frontend:overrides")) {
-                for (Value value : node.getProperty("frontend:overrides").getValues()) {
+            Node node = getNodeModel().getNode();
+            if (node.hasProperty(key)) {
+                for (Value value : node.getProperty(key).getValues()) {
                     result.add(value.getString());
                 }
             }

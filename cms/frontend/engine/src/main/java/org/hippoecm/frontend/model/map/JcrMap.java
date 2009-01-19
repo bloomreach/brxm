@@ -134,7 +134,10 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap {
         Object current = get(strKey);
         try {
             if (value instanceof List) {
-                if (current != null && (current instanceof List)) {
+                if (current == null) {
+                    current = new JcrList(item, key);
+                }
+                if (current instanceof List) {
                     List<IHippoMap> list = (List<IHippoMap>) current;
                     for (IHippoMap entry : (List<IHippoMap>) value) {
                         if (!list.contains(entry)) {

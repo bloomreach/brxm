@@ -48,6 +48,17 @@ public class JcrTreeNode extends AbstractTreeNode {
         this.parent = parent;
     }
 
+    public boolean isLeaf() {
+        try {
+            if (nodeModel != null && nodeModel.getNode() != null) {
+                return !nodeModel.getNode().getNodes().hasNext();
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return true;
+    }
+
     public TreeNode getParent() {
         return parent;
     }

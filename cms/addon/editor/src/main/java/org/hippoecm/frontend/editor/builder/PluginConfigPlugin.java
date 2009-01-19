@@ -33,11 +33,11 @@ import org.hippoecm.frontend.editor.config.BuiltinTemplateStore;
 import org.hippoecm.frontend.editor.impl.TemplateEngine;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -63,8 +63,8 @@ public class PluginConfigPlugin extends RenderPlugin {
 
     private static int instanceCount = 0;
 
-    private IPluginControl fieldParams;
-    private IPluginControl template;
+    private IClusterControl fieldParams;
+    private IClusterControl template;
     private List<IRenderService> children;
     private BuiltinTemplateStore templateStore;
 
@@ -95,11 +95,11 @@ public class PluginConfigPlugin extends RenderPlugin {
     @Override
     public void onModelChanged() {
         if (fieldParams != null) {
-            fieldParams.stopPlugin();
+            fieldParams.stop();
             fieldParams = null;
         }
         if (template != null) {
-            template.stopPlugin();
+            template.stop();
             template = null;
         }
 
@@ -143,7 +143,7 @@ public class PluginConfigPlugin extends RenderPlugin {
         }
     }
 
-    private IPluginControl createFieldParamsPlugin() {
+    private IClusterControl createFieldParamsPlugin() {
         JcrNodeModel itemNodeModel = (JcrNodeModel) getModel();
         Node itemNode = itemNodeModel.getNode();
         if (itemNode != null && getFieldModel() != null) {
@@ -172,7 +172,7 @@ public class PluginConfigPlugin extends RenderPlugin {
         return null;
     }
 
-    private IPluginControl createTemplatePlugin() {
+    private IClusterControl createTemplatePlugin() {
         IFieldDescriptor fieldModel = getFieldModel();
         if (fieldModel != null) {
             IPluginContext context = getPluginContext();
@@ -183,8 +183,6 @@ public class PluginConfigPlugin extends RenderPlugin {
             final IClusterConfig target = engine.getTemplate(engine.getType(type), "edit");
 
             final List<String> exempt = new ArrayList<String>();
-            exempt.add("wicket.id");
-            exempt.add("engine");
             exempt.add("mode");
             ITypeDescriptor typeDescriptor = new JavaTypeDescriptor("internal", "frontend:plugin") {
                 private static final long serialVersionUID = 1L;
@@ -192,7 +190,7 @@ public class PluginConfigPlugin extends RenderPlugin {
                 @Override
                 public Map<String, IFieldDescriptor> getFields() {
                     Map<String, IFieldDescriptor> result = new HashMap<String, IFieldDescriptor>();
-                    for (String override : target.getOverrides()) {
+                    for (String override : target.getProperties()) {
                         JavaFieldDescriptor field = new JavaFieldDescriptor("template." + override);
                         if (!exempt.contains(override)) {
                             field.setType("String");
@@ -208,7 +206,7 @@ public class PluginConfigPlugin extends RenderPlugin {
         return null;
     }
 
-    private IPluginControl editPluginNode(String extension, JcrNodeModel itemNodeModel,
+    private IClusterControl editPluginNode(String extension, JcrNodeModel itemNodeModel,
             final ITypeDescriptor typeDescriptor) {
         IPluginConfig config = getPluginConfig();
         final IPluginContext context = getPluginContext();
@@ -232,25 +230,32 @@ public class PluginConfigPlugin extends RenderPlugin {
         });
         final String engineId = getExtensionId(extension + ".engine");
         context.registerService(engine, engineId);
-        engine.setId(engineId);
 
-        IClusterConfig templateConfig = new ClusterConfigDecorator(templateStore.getTemplate(typeDescriptor, "edit"),
-                newId());
-        templateConfig.put("wicket.id", getExtensionId(extension));
-        templateConfig.put("engine", engineId);
+        IClusterConfig templateConfig = templateStore.getTemplate(typeDescriptor, "edit");
+        IPluginConfig parameters = new JavaPluginConfig();
+        parameters.put("wicket.id", getExtensionId(extension));
+        parameters.put("engine", engineId);
+        final IClusterControl control = context.newCluster(templateConfig, parameters);
 
-        String modelId = templateConfig.getString(RenderService.MODEL_ID);
+        String modelId = control.getClusterConfig().getString(RenderService.MODEL_ID);
         final ModelService modelService = new ModelService(modelId, itemNodeModel);
         modelService.init(context);
 
-        final IPluginControl control = context.start(templateConfig);
-        return new IPluginControl() {
+        control.start();
+        return new IClusterControl() {
             private static final long serialVersionUID = 1L;
 
-            public void stopPlugin() {
-                control.stopPlugin();
+            public void stop() {
+                control.stop();
                 modelService.destroy();
                 context.unregisterService(engine, engineId);
+            }
+
+            public IClusterConfig getClusterConfig() {
+                return null;
+            }
+
+            public void start() {
             }
 
         };
@@ -304,7 +309,7 @@ public class PluginConfigPlugin extends RenderPlugin {
                 while (typeNodeModel != null) {
                     Node typeNode = typeNodeModel.getNode();
                     if (typeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-                        return new JcrTypeHelper(new JcrNodeModel(typeNode), "edit").getTypeDescriptor();
+                        return new JcrTypeHelper(new JcrNodeModel(typeNode)).getTypeDescriptor();
                     }
                     typeNodeModel = typeNodeModel.getParentModel();
                 }

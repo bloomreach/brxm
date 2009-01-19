@@ -57,16 +57,27 @@ public class BuiltinTemplateStore implements IClusterable {
 
         public BuiltinTemplateConfig(ITypeDescriptor type, String mode) {
             this.type = type;
-            put("mode", mode);
-            put("wicket.model", "${cluster.id}.model");
         }
 
         @Override
-        public List<String> getOverrides() {
+        public List<String> getServices() {
             List<String> result = new LinkedList<String>();
             result.add("wicket.id");
-            result.add("wicket.dialog");
+            result.add("wicket.model");
+            return result;
+        }
+
+        @Override
+        public List<String> getReferences() {
+            List<String> result = new LinkedList<String>();
+            result.add("wicket.model");
             result.add("engine");
+            return result;
+        }
+
+        @Override
+        public List<String> getProperties() {
+            List<String> result = new LinkedList<String>();
             result.add("mode");
             return result;
         }

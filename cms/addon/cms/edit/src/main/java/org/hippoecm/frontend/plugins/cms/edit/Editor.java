@@ -15,14 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
-import java.util.List;
-
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
@@ -37,39 +36,31 @@ class Editor implements IClusterable {
 
     private static final Logger log = LoggerFactory.getLogger(Editor.class);
 
-    private IPluginControl plugin;
+    private IClusterControl plugin;
     private IRenderService editor;
     private ModelService<IModel> modelService;
 
-    Editor(IPluginContext context, String cluster, IModel model) throws EditorException {
+    Editor(IPluginContext context, String cluster, IPluginConfig config, IModel model) throws EditorException {
         IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                 IPluginConfigService.class);
         IClusterConfig clusterConfig = pluginConfigService.getCluster(cluster);
+        plugin = context.newCluster(clusterConfig, config);
+        IClusterConfig decorated = plugin.getClusterConfig();
 
-        String modelId = clusterConfig.getString("wicket.model");
+        String modelId = decorated.getString(RenderService.MODEL_ID);
         modelService = new ModelService<IModel>(modelId, model);
         modelService.init(context);
 
-        plugin = context.start(clusterConfig);
+        plugin.start();
 
-        List<IRenderService> targetServices = context.getServices(clusterConfig.getString(RenderService.WICKET_ID),
-                IRenderService.class);
-        List<IRenderService> clusterServices = context.getServices(context.getReference(plugin).getServiceId(),
-                IRenderService.class);
-        for (IRenderService target : targetServices) {
-            if (clusterServices.contains(target)) {
-                // found it!
-                editor = target;
-                break;
-            }
-        }
+        editor = context.getService(decorated.getString(RenderService.WICKET_ID), IRenderService.class);
         if (editor == null) {
-            plugin.stopPlugin();
+            plugin.stop();
             modelService.destroy();
             throw new EditorException("No IRenderService found");
         }
     }
-    
+
     IModel getModel() {
         return modelService.getModel();
     }
@@ -83,6 +74,6 @@ class Editor implements IClusterable {
     }
 
     void close() {
-        plugin.stopPlugin();
+        plugin.stop();
     }
 }

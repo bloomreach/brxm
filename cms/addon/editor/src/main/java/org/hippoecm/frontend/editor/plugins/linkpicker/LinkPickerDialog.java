@@ -27,11 +27,12 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.session.UserSession;
@@ -53,7 +54,7 @@ public class LinkPickerDialog extends AbstractDialog {
     protected final IPluginConfig config;
     protected IRenderService dialogRenderer;
     private ModelService<IModel> modelService;
-    private IPluginControl control;
+    private IClusterControl control;
     private IModel selectedNode;
 
     public LinkPickerDialog(IPluginContext context, IPluginConfig config, IModel model, List<String> nodetypes) {
@@ -130,17 +131,13 @@ public class LinkPickerDialog extends AbstractDialog {
                 IPluginConfigService.class);
 
         //Lookup clusterConfig from IPluginContext
-        IClusterConfig clusterConfig = pluginConfigService.getCluster(config.getString("cluster.name"));
-        IPluginConfig parameters = config.getPluginConfig("cluster.options");
-        for (String key : clusterConfig.getOverrides()) {
-            Object value = parameters.get(key);
-            if (value != null) {
-                clusterConfig.put(key, parameters.get(key));
-            }
-        }
+        IClusterConfig template = pluginConfigService.getCluster(config.getString("cluster.name"));
+        IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig("cluster.options"));
+        control = context.newCluster(template, parameters);
 
+        IClusterConfig clusterConfig = control.getClusterConfig();
         //save modelServiceId and dialogServiceId in cluster config
-        String modelServiceId = clusterConfig.getString("model.id");
+        String modelServiceId = clusterConfig.getString("wicket.model");
         modelService = new ModelService<IModel>(modelServiceId, selectedNode) {
             private static final long serialVersionUID = 1L;
 
@@ -157,7 +154,7 @@ public class LinkPickerDialog extends AbstractDialog {
         };
         modelService.init(context);
 
-        control = context.start(clusterConfig);
+        control.start();
 
         dialogRenderer = context.getService(clusterConfig.getString("wicket.id"), IRenderService.class);
         dialogRenderer.bind(null, contentId);
@@ -167,7 +164,7 @@ public class LinkPickerDialog extends AbstractDialog {
     public final void onClose() {
         dialogRenderer.unbind();
         dialogRenderer = null;
-        control.stopPlugin();
+        control.stop();
         modelService.destroy();
     }
     

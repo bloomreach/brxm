@@ -252,15 +252,15 @@
           <sv:value>frontend:plugincluster</sv:value>
         </sv:property>
 
-        <sv:property sv:name="frontend:overrides" sv:type="String">
+        <sv:property sv:name="frontend:services" sv:type="String">
           <sv:value>wicket.id</sv:value>
-          <sv:value>wicket.dialog</sv:value>
-          <sv:value>mode</sv:value>
-          <sv:value>engine</sv:value>
         </sv:property>
-
-        <sv:property sv:name="wicket.model" sv:type="String">
-          <sv:value>${cluster.id}.model</sv:value>
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>engine</sv:value>
+          <sv:value>wicket.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:properties" sv:type="String">
+          <sv:value>mode</sv:value>
         </sv:property>
 
         <sv:node sv:name="root">
@@ -289,7 +289,7 @@
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${cluster.id}.model</sv:value>
+            <sv:value>${wicket.model}</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -319,7 +319,7 @@
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${cluster.id}.model</sv:value>
+            <sv:value>${wicket.model}</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -352,7 +352,7 @@
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${cluster.id}.model</sv:value>
+            <sv:value>${wicket.model}</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -583,15 +583,15 @@
           <sv:value>frontend:plugincluster</sv:value>
         </sv:property>
 
-        <sv:property sv:name="frontend:overrides" sv:type="String">
+        <sv:property sv:name="frontend:services" sv:type="String">
           <sv:value>wicket.id</sv:value>
-          <sv:value>wicket.dialog</sv:value>
-          <sv:value>mode</sv:value>
-          <sv:value>engine</sv:value>
         </sv:property>
-
-        <sv:property sv:name="wicket.model" sv:type="String">
-          <sv:value>${cluster.id}.model</sv:value>
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>engine</sv:value>
+          <sv:value>wicket.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:properties" sv:type="String">
+          <sv:value>mode</sv:value>
         </sv:property>
 
         <sv:node sv:name="root">
@@ -620,7 +620,7 @@
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${cluster.id}.model</sv:value>
+            <sv:value>${wicket.model}</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -650,7 +650,7 @@
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${cluster.id}.model</sv:value>
+            <sv:value>${wicket.model}</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -677,7 +677,7 @@
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${cluster.id}.model</sv:value>
+            <sv:value>${wicket.model}</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -707,7 +707,7 @@
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${cluster.id}.model</sv:value>
+            <sv:value>${wicket.model}</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -936,15 +936,15 @@
           <sv:value>frontend:plugincluster</sv:value>
         </sv:property>
 
-        <sv:property sv:name="frontend:overrides" sv:type="String">
+        <sv:property sv:name="frontend:services" sv:type="String">
           <sv:value>wicket.id</sv:value>
-          <sv:value>wicket.dialog</sv:value>
-          <sv:value>mode</sv:value>
-          <sv:value>engine</sv:value>
         </sv:property>
-
-        <sv:property sv:name="wicket.model" sv:type="String">
-          <sv:value>${cluster.id}.model</sv:value>
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>engine</sv:value>
+          <sv:value>wicket.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:properties" sv:type="String">
+          <sv:value>mode</sv:value>
         </sv:property>
 
         <sv:node sv:name="root">
@@ -973,7 +973,7 @@
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${cluster.id}.model</sv:value>
+            <sv:value>${wicket.model}</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -1003,7 +1003,7 @@
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${cluster.id}.model</sv:value>
+            <sv:value>${wicket.model}</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -1030,7 +1030,7 @@
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${cluster.id}.model</sv:value>
+            <sv:value>${wicket.model}</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -1060,7 +1060,7 @@
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${cluster.id}.model</sv:value>
+            <sv:value>${wicket.model}</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -1238,15 +1238,15 @@
           <sv:value>frontend:plugincluster</sv:value>
         </sv:property>
 
-        <sv:property sv:name="frontend:overrides" sv:type="String">
+        <sv:property sv:name="frontend:services" sv:type="String">
           <sv:value>wicket.id</sv:value>
-          <sv:value>wicket.dialog</sv:value>
-          <sv:value>mode</sv:value>
-          <sv:value>engine</sv:value>
         </sv:property>
-
-        <sv:property sv:name="wicket.model" sv:type="String">
-          <sv:value>${cluster.id}.model</sv:value>
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>engine</sv:value>
+          <sv:value>wicket.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:properties" sv:type="String">
+          <sv:value>mode</sv:value>
         </sv:property>
 
         <sv:node sv:name="root">
@@ -1275,7 +1275,7 @@
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${cluster.id}.model</sv:value>
+            <sv:value>${wicket.model}</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -1302,7 +1302,7 @@
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${cluster.id}.model</sv:value>
+            <sv:value>${wicket.model}</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -1332,7 +1332,7 @@
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${cluster.id}.model</sv:value>
+            <sv:value>${wicket.model}</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>

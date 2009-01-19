@@ -49,20 +49,13 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
     private static final Logger log = LoggerFactory.getLogger(JcrPluginConfig.class);
 
     protected final JcrNodeModel nodeModel;
+    private transient JcrMap map;
     private transient Set<Entry<String, Object>> entries;
-    private IPluginConfig overrides;
 
     public JcrPluginConfig(JcrNodeModel nodeModel) {
-        this(nodeModel, false);
+        this.nodeModel = nodeModel;
     }
 
-    public JcrPluginConfig(JcrNodeModel nodeModel, boolean mutable) {
-        this.nodeModel = nodeModel;
-        if (!mutable) {
-            this.overrides = new JavaPluginConfig();
-        }
-    }
-    
     public JcrNodeModel getNodeModel() {
         return nodeModel;
     }
@@ -165,32 +158,14 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
         return StringValue.valueOf(getString(key));
     }
 
-    @Override
-    public Object put(Object key, Object value) {
-        if (overrides != null) {
-            Object obj;
-            if (overrides.containsKey(key)) {
-                obj = overrides.put(key, value);
-            } else {
-                obj = get(key);
-                overrides.put(key, value);
-            }
-            return obj;
-        }
-        return super.put(key, value);
-    }
-
     public IPluginConfig getPluginConfig(Object key) {
-        if (overrides != null && overrides.containsKey(key)) {
-            return overrides.getPluginConfig(key);
-        }
         if (key instanceof String) {
             String strKey = (String) key;
             try {
                 Node node = nodeModel.getNode();
                 if (node.hasNode(strKey)) {
                     Node child = node.getNode(strKey);
-                    return new JcrPluginConfig(new JcrNodeModel(child), overrides == null);
+                    return new JcrPluginConfig(new JcrNodeModel(child));
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
@@ -208,20 +183,13 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
             for (int i = 0; children.hasNext(); i++) {
                 Node child = children.nextNode();
                 if (child != null) {
-                    configs.add(new JcrPluginConfig(new JcrNodeModel(child), overrides == null));
+                    configs.add(new JcrPluginConfig(new JcrNodeModel(child)));
                 }
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
         return configs;
-    }
-
-    public Object get(Object key) {
-        if (overrides != null && overrides.containsKey(key)) {
-            return overrides.get(key);
-        }
-        return super.get(key);
     }
 
     public CharSequence getCharSequence(String key) {
@@ -264,9 +232,36 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
     }
 
     @Override
+    public Object get(Object key) {
+        JcrMap jcrMap = getMap();
+        Object obj = jcrMap.get(key);
+        if (obj == null) {
+            return null;
+        }
+        Object result;
+        if (obj.getClass().isArray()) {
+            int size = Array.getLength(obj);
+            Class<?> componentType = obj.getClass().getComponentType();
+            result = Array.newInstance(componentType, size);
+            for (int i = 0; i < size; i++) {
+                Array.set(result, i, filter(Array.get(obj, i)));
+            }
+        } else {
+            result = filter(obj);
+        }
+        return result;
+    }
+
+    @Override
+    public Object put(Object key, Object value) {
+        JcrMap jcrMap = getMap();
+        return jcrMap.put((String) key, value);
+    }
+    
+    @Override
     public Set<Map.Entry<String, Object>> entrySet() {
         if (entries == null) {
-            final JcrMap jcrMap = new JcrMap(nodeModel.getNode());
+            final JcrMap jcrMap = getMap();
             final Set<Map.Entry<String, Object>> orig = jcrMap.entrySet();
             entries = new LinkedHashSet<Map.Entry<String, Object>>();
             for (final Map.Entry<String, Object> entry : orig) {
@@ -277,19 +272,7 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
                     }
 
                     public Object getValue() {
-                        Object obj = entry.getValue();
-                        Object result;
-                        if (obj.getClass().isArray()) {
-                            int size = Array.getLength(obj);
-                            Class<?> componentType = obj.getClass().getComponentType();
-                            result = Array.newInstance(componentType, size);
-                            for (int i = 0; i < size; i++) {
-                                Array.set(result, i, filter(Array.get(obj, i)));
-                            }
-                        } else {
-                            result = filter(obj);
-                        }
-                        return result;
+                        return JcrPluginConfig.this.get(entry.getKey());
                     }
 
                     public Object setValue(Object value) {
@@ -325,17 +308,17 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
         return null;
     }
 
+    private JcrMap getMap() {
+        if (map == null) {
+            map = new JcrMap(nodeModel.getNode());
+        }
+        return map;
+    }
+    
     private Object filter(Object value) {
         if (value instanceof JcrMap) {
             JcrMap map = (JcrMap) value;
-            try {
-                Node node = map.getNode();
-                if (node.isNodeType("frontend:pluginconfig")) {
-                    return new JcrPluginConfig(new JcrNodeModel(map.getNode()));
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
+            return new JcrPluginConfig(new JcrNodeModel(map.getNode()));
         } else if (value instanceof List) {
             final List list = (List) value;
             return new AbstractList() {
