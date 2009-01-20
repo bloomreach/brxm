@@ -91,6 +91,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             public void execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
+		((UserSession) getSession()).getJcrSession().refresh(true);
                 Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
                 IEditService editor = getPluginContext().getService(
                         getPluginConfig().getString(IEditService.EDITOR_ID), IEditService.class);
