@@ -70,7 +70,9 @@ public class DefaultWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("delete-dialog", new StringResourceModel("delete", this, null), new WorkflowAction() {
+        IModel deleteLabel = new StringResourceModel("delete-label", this, null);
+        addWorkflowDialog("delete-dialog", deleteLabel, deleteLabel, 
+        		new StringResourceModel("delete-message", this, null, new Object[] { caption }), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             @Override
