@@ -25,10 +25,8 @@ import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.servlet.jsp.PageContext;
 
-import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.TemplateException;
 import org.hippoecm.hst.core.filters.base.HstRequestContext;
-import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;

@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.mapping;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.Session;
 
 import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.filters.domain.RepositoryMapping;

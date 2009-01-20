@@ -16,7 +16,6 @@ import javax.jcr.Value;
 import javax.servlet.FilterConfig;
 
 import org.apache.commons.collections.map.LRUMap;
-import org.hippoecm.hst.jcr.JcrSessionFactory;
 import org.hippoecm.hst.jcr.JcrSessionFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

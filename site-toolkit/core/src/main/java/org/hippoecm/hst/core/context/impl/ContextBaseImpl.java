@@ -20,9 +20,9 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.ContextBaseException;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.hst.core.context.ContextBase;
 import org.slf4j.LoggerFactory;
 
 public class ContextBaseImpl implements ContextBase {

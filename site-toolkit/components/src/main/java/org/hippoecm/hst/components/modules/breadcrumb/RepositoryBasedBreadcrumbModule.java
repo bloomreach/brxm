@@ -26,10 +26,7 @@ import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.components.modules.navigation.NavigationItem;
 import org.hippoecm.hst.components.modules.navigation.RepositoryBasedNavigationModule;
-import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.TemplateException;
-import org.hippoecm.hst.core.filters.base.HstBaseFilter;
 import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.hippoecm.hst.core.template.node.PageNode;

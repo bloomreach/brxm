@@ -18,7 +18,8 @@ package org.hippoecm.hst.core.template.tag;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
-import javax.servlet.jsp.tagext.*;
+import javax.servlet.jsp.tagext.BodyTagSupport;
+import javax.servlet.jsp.tagext.Tag;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,7 +1,5 @@
 package org.hippoecm.hst.core.filters.domain;
 
-import java.util.HashSet;
-import java.util.Set;
 
 public interface DomainMapping
 {

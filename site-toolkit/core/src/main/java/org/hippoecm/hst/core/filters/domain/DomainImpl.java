@@ -7,7 +7,6 @@ import java.util.List;
 import javax.jcr.Session;
 import javax.servlet.FilterConfig;
 
-import org.hippoecm.hst.jcr.JcrSessionFactory;
 import org.hippoecm.hst.jcr.JcrSessionFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
