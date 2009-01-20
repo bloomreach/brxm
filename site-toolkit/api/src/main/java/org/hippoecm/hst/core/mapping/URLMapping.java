@@ -25,12 +25,13 @@ import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
 import org.hippoecm.hst.core.template.node.PageNode;
 
 public interface URLMapping {
-    
-    public String rewriteLocation(Node node);
-    public String rewriteLocation(Node node, String sitemap);
-    public String rewriteLocation(String sitemapNodeName, Session jcrSession);
-    public String getLocation(String path);
+
+    public Link rewriteLocation(Node node, HstRequestContext hstRequestContext, boolean external);
+    public Link rewriteLocation(Node node, String sitemap, HstRequestContext hstRequestContext, boolean external);
+    public Link rewriteLocation(String sitemapNodeName, HstRequestContext hstRequestContext, boolean external);
+    public Link getLocation(String path, HstRequestContext hstRequestContext, boolean external);
     public List<String> getCanonicalPathsConfiguration();
     public RepositoryMapping getRepositoryMapping();
     public PageNode getMatchingPageNode(String requestURI, HstRequestContext hstRequestContext);
+
 }

@@ -8,6 +8,7 @@ import javax.jcr.Session;
 import javax.servlet.FilterConfig;
 
 import org.hippoecm.hst.jcr.JcrSessionFactory;
+import org.hippoecm.hst.jcr.JcrSessionFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +115,7 @@ public class DomainImpl implements Domain {
                 
                 // when the repository mapping is a 'template', create an actual repository mapping out of the template.
                 if(repositoryMapping.isTemplate()) {
-                    Session session = new JcrSessionFactory(filterConfig).getSession();
+                    Session session = new JcrSessionFactoryImpl(filterConfig).getSession();
                     
                     int prefixDepth = repositoryMapping.getDepth();
                     String[] segments = ctxStrippedUri.split("/");

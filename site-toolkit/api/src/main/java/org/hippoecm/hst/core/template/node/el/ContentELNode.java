@@ -22,5 +22,9 @@ import org.hippoecm.hst.core.template.node.content.SourceRewriter;
 public interface ContentELNode extends ELNode{
     public Map getResourceUrl();
     public Map getHasResourceUrl();
-    public SourceRewriter getSourceRewriter();
+    
+    public boolean isRewriteContents();
+    public void setRewriteContents(boolean rewriteContents);
+    public boolean isExternalize();
+    public void setExternalize(boolean externalize);
 }

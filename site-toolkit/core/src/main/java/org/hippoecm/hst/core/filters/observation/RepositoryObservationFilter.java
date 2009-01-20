@@ -32,6 +32,7 @@ import javax.servlet.ServletResponse;
 
 import org.hippoecm.hst.caching.observation.EventListenerImpl;
 import org.hippoecm.hst.jcr.JcrSessionFactory;
+import org.hippoecm.hst.jcr.JcrSessionFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +78,7 @@ public class RepositoryObservationFilter implements Filter{
     }
 
   private void registerEventListener(FilterConfig filterConfig) {
-      observerSession = new JcrSessionFactory(filterConfig).getSession();
+      observerSession = new JcrSessionFactoryImpl(filterConfig).getSession();
       
       ObservationManager obMgr;
       try {

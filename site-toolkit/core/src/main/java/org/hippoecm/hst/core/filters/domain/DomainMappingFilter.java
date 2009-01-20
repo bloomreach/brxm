@@ -38,6 +38,7 @@ import org.hippoecm.hst.caching.validity.EventValidity;
 import org.hippoecm.hst.caching.validity.SourceValidity;
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.context.impl.ContextBaseImpl;
 import org.hippoecm.hst.core.exception.ContextBaseException;
 import org.hippoecm.hst.core.filters.base.HstBaseFilter;
 import org.hippoecm.hst.core.filters.base.HstRequestContext;
@@ -159,8 +160,8 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
                  */ 
 
                 try {
-                    ContextBase contentContextBase = new ContextBase(repositoryMapping.getContentPath(), hstRequestContext.getJcrSession());
-                    ContextBase hstConfigurationContextBase = new ContextBase(repositoryMapping.getHstConfigPath(), hstRequestContext.getJcrSession());
+                    ContextBase contentContextBase = new ContextBaseImpl(repositoryMapping.getContentPath(), hstRequestContext.getJcrSession());
+                    ContextBase hstConfigurationContextBase = new ContextBaseImpl(repositoryMapping.getHstConfigPath(), hstRequestContext.getJcrSession());
                     hstRequestContext.setContentContextBase(contentContextBase);
                     hstRequestContext.setHstConfigurationContextBase(hstConfigurationContextBase);
                     

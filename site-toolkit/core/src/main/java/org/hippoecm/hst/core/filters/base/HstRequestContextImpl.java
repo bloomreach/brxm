@@ -25,7 +25,7 @@ import org.hippoecm.hst.core.mapping.URLMappingManager;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.hst.core.template.node.content.ContentRewriter;
 
-public class HstRequestContext {
+public class HstRequestContextImpl {
 
     private Session jcrSession;
     private ContextBase contentContextBase;
@@ -39,7 +39,7 @@ public class HstRequestContext {
     private HttpServletRequest request;
     private String hstRequestUri;
 
-    public HstRequestContext() {
+    public HstRequestContextImpl() {
     }
     
     public RepositoryMapping getRepositoryMapping() {

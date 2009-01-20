@@ -45,7 +45,7 @@ public class HstStartRequestFilter implements Filter{
         if (ignoreRequest(request, servletCtxStrippedRequestUri)) {
             // if there is not HstRequestContext object on the request, it will be ignored by other filters
         } else {
-            req.setAttribute(HstRequestContext.class.getName(), new HstRequestContext());
+            req.setAttribute(HstRequestContext.class.getName(), new HstRequestContextImpl());
         }
         chain.doFilter(request, response);
     }

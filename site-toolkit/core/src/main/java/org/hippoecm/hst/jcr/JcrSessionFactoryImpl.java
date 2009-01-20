@@ -13,12 +13,12 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrSessionFactory {
+public class JcrSessionFactoryImpl implements JcrSessionFactory {
 
     private FilterConfig filterConfig; 
     private static final Logger log = LoggerFactory.getLogger(DomainMappingFilter.class);
     
-    public JcrSessionFactory (FilterConfig filterConfig) {
+    public JcrSessionFactoryImpl (FilterConfig filterConfig) {
         this.filterConfig = filterConfig;
     }
     

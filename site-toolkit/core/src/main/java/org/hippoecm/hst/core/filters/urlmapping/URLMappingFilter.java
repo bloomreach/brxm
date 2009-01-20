@@ -22,6 +22,7 @@ import org.hippoecm.hst.core.mapping.URLMappingManager;
 import org.hippoecm.hst.core.mapping.URLMappingManagerImpl;
 import org.hippoecm.hst.core.template.node.content.SimpleContentRewriterImpl;
 import org.hippoecm.hst.jcr.JcrSessionFactory;
+import org.hippoecm.hst.jcr.JcrSessionFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public class URLMappingFilter extends HstBaseFilter implements Filter{
     
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        this.urlMappingManager = new URLMappingManagerImpl(new JcrSessionFactory(filterConfig));
+        this.urlMappingManager = new URLMappingManagerImpl(new JcrSessionFactoryImpl(filterConfig));
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,

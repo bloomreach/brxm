@@ -13,10 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.template.node.content;
+package org.hippoecm.hst.core.filters.domain;
 
-import javax.jcr.Node;
 
-public interface PathToHrefTranslator extends Translator{
-    public String documentPathToHref(Node node,String documentPath,boolean externalize);
+public class RepositoryMappingException extends Exception{
+
+    private static final long serialVersionUID = 1L;
+
+    public RepositoryMappingException(String msg) {
+        super(msg);
+    }
+    public RepositoryMappingException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+
+
 }

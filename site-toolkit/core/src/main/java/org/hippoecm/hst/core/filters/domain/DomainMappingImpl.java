@@ -17,6 +17,7 @@ import javax.servlet.FilterConfig;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.hippoecm.hst.jcr.JcrSessionFactory;
+import org.hippoecm.hst.jcr.JcrSessionFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +70,7 @@ public class DomainMappingImpl implements DomainMapping{
         }
         
         try {
-            session = new JcrSessionFactory(filterConfig).getSession();
+            session = new JcrSessionFactoryImpl(filterConfig).getSession();
             if(domainMappingLocation.startsWith("/")) {
                 domainMappingLocation = domainMappingLocation.substring(1);
             }
