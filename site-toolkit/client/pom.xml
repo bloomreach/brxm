@@ -2,8 +2,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.ecm.hst</groupId>
-    <artifactId>site-toolkit</artifactId>
+    <groupId>org.onehippo.ecm</groupId>
+    <artifactId>hst</artifactId>
     <version>2.02.05-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
@@ -11,7 +11,7 @@
   <name>Hippo Site Toolkit Client</name>
   <description>Hippo Site Toolkit Client</description>
   <groupId>org.onehippo.ecm.hst</groupId>
-  <artifactId>site-toolkit-client</artifactId>
+  <artifactId>hst-client</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -31,7 +31,7 @@
 
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>site-toolkit-api</artifactId>
+      <artifactId>hst-api</artifactId>
       <version>${pom.version}</version>
       <scope>provided</scope>
     </dependency>

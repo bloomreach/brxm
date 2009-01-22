@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>site-toolkit</artifactId>
+    <artifactId>maven</artifactId>
     <groupId>org.onehippo.ecm.hst</groupId>
     <version>2.02.05-SNAPSHOT</version>
     <relativePath>..</relativePath>
@@ -10,10 +10,10 @@
 
   <name>Hippo Site Toolkit Archetype</name>
   <description>Hippo Site Toolkit Archetype</description>
-  <groupId>org.onehippo.ecm.hst</groupId>
-  <artifactId>site-toolkit-archetype</artifactId>
+  <groupId>org.onehippo.ecm.hst.maven</groupId>
+  <artifactId>hst-archetype</artifactId>
   <packaging>maven-archetype</packaging>
-
+  
   <build>
     <extensions>
       <extension>

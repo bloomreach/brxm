@@ -4,19 +4,22 @@
 
   <modelVersion>4.0.0</modelVersion>
 
+  <groupId>org.onehippo.ecm.hst</groupId>
   <artifactId>maven</artifactId>
   <name>Site Tool Kit Maven Plugins</name>
   <description>Site Tool Kit Maven Plugins</description>
   <parent>
-    <groupId>org.onehippo.ecm.hst</groupId>
-    <artifactId>site-toolkit</artifactId>
+    <groupId>org.onehippo.ecm</groupId>
+    <artifactId>hst</artifactId>
     <version>2.02.05-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   <packaging>pom</packaging>
 
   <modules>
+    <!-- 
     <module>archetype</module>
+    -->
   </modules>
 
   <reporting>
