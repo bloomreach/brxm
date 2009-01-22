@@ -2,16 +2,16 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.ecm.hst</groupId>
-    <artifactId>site-toolkit-gettingstarted</artifactId>
+    <groupId>org.onehippo.ecm.hst.applications</groupId>
+    <artifactId>gettingstarted</artifactId>
     <version>2.02.05-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
   <name>Hippo Site Toolkit Getting Started Package WAR</name>
   <description>Hippo Site Toolkit Getting Started Package WAR</description>
-  <groupId>org.onehippo.ecm.hst</groupId>
-  <artifactId>site-toolkit-gettingstarted-package-war</artifactId>
+  <groupId>org.onehippo.ecm.hst.applications.gettingstarted</groupId>
+  <artifactId>cms</artifactId>
   <packaging>war</packaging>
 
   <dependencies>
@@ -29,8 +29,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>site-toolkit-gettingstarted-sample-content</artifactId>
+      <groupId>org.onehippo.ecm.hst.applications.gettingstarted</groupId>
+      <artifactId>content</artifactId>
       <version>2.02.05-SNAPSHOT</version>
       <type>jar</type>
     </dependency>

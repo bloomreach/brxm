@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.onehippo.ecm.hst</groupId>
+    <artifactId>applications</artifactId>
+    <name>HSTTWO Applications</name>
+    <description>Jetspeed-2 Applications</description>
+    <parent>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>site-toolkit</artifactId>
+      <version>2.02.05-SNAPSHOT</version>
+      <relativePath>..</relativePath>
+    </parent>
+    <packaging>pom</packaging>
+
+    <modules>
+      <module>gettingstarted</module>
+    </modules>
+
+</project>

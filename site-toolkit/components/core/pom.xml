@@ -3,15 +3,15 @@
 
   <parent>
     <groupId>org.onehippo.ecm.hst</groupId>
-    <artifactId>site-toolkit</artifactId>
+    <artifactId>components</artifactId>
     <version>2.02.05-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
   <name>Hippo Site Toolkit Components</name>
   <description>Hippo Site Toolkit Components</description>
-  <groupId>org.onehippo.ecm.hst</groupId>
-  <artifactId>site-toolkit-components</artifactId>
+  <groupId>org.onehippo.ecm.hst.components</groupId>
+  <artifactId>hst-core</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>

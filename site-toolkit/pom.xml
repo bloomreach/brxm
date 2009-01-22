@@ -60,16 +60,25 @@
 
   <modules>
     <module>api</module>
-    <module>core</module>
-    <module>client</module>
-    <module>addon</module>
+    <module>maven</module>
     <module>components</module>
-    <module>archetype</module>
-    <module>gettingstarted</module>
+    <module>client</module>
+    <module>toolkit-resources</module>
+    <module>applications</module>
   </modules>
 
 
   <developers>
+    <developer>
+      <name>Woonsan Ko</name>
+      <id>wko</id>
+      <email>w.ko@onehippo.com</email>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
     <developer>
       <name>Ard Schrijvers</name>
       <id>aschrijvers</id>

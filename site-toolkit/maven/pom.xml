@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>maven</artifactId>
+  <name>Site Tool Kit Maven Plugins</name>
+  <description>Site Tool Kit Maven Plugins</description>
+  <parent>
+    <groupId>org.onehippo.ecm.hst</groupId>
+    <artifactId>site-toolkit</artifactId>
+    <version>2.02.05-SNAPSHOT</version>
+    <relativePath>..</relativePath>
+  </parent>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>archetype</module>
+  </modules>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet>            
+            <reports>              
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+
+</project>
