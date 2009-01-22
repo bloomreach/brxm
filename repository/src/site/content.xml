@@ -318,6 +318,7 @@
  </introduction>
    <document ext="xml" filename="console" relpath="delve_into/sysadmin/configuration">Console
    <section>Console</section>
+   <shortdesc>A simple GUI application that can be used to edit the configuration.</shortdesc>
    <img>Screenshot of the console</img>
   </document><document ext="xml" filename="database_server" relpath="delve_into/sysadmin/configuration">Database server configuration
    <section>Database server configuration</section>
@@ -326,7 +327,7 @@
    <index>max_allowed_packet</index>
   </document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration">
   </document><folder>nodes
-   
+   <title>JCR nodes</title><shortdesc>Configuration nodes in the JCR tree inside the repository</shortdesc>
    <document ext="xml" filename="domains" relpath="delve_into/sysadmin/configuration/nodes">Domains Configuration
    <section>Domains Configuration</section>
    <section>Structure</section>
@@ -359,7 +360,7 @@
    <shortdesc>How to improve performance of Hippo CMS by site specific tuning.</shortdesc>
    <subsection>Do not allow very large assets</subsection>
   </document><folder>repository
-   
+   <title>Repository</title><shortdesc>The base repository configuration through a number of XML files.</shortdesc>
    <document ext="xml" filename="authentication" relpath="delve_into/sysadmin/configuration/repository">Repository based authentication
    <section>Repository based authentication</section>
   </document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration/repository">Repository configuration
@@ -728,12 +729,7 @@
      </p>
   </subsection>
  </afterlist>
-   <document ext="xml" filename="browsing_history_of_document" relpath="delve_into/user/contributors/howto">Browsing history of a document
-   <section>Browsing history of a document</section>
-   <shortdesc>How to browse the history of a document, i.e. to see the changes to the document over time?</shortdesc>
-   <img>Versioning display screenshot</img>
-   <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="create_document" relpath="delve_into/user/contributors/howto">Create Document
+   <document ext="xml" filename="create_document" relpath="delve_into/user/contributors/howto">Create Document
    <section>Create Document</section>
    <shortdesc>How to create a document to write in.</shortdesc>
    <img>Create document screenshot</img>
@@ -834,12 +830,18 @@
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><folder>todo
-   
-   <document ext="xml" filename="goto_document_tab" relpath="delve_into/user/contributors/howto/todo">Goto a Document
+   <title>todo</title><shortdesc>This folder contains howto's that are in development.</shortdesc>
+   <document ext="xml" filename="browsing_history_of_document" relpath="delve_into/user/contributors/howto/todo">Browsing history of a document
+   <section>Browsing history of a document</section>
+   <shortdesc>How to browse the history of a document, i.e. to see the changes to the document over time?</shortdesc>
+   <img>Versioning display screenshot</img>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="goto_document_tab" relpath="delve_into/user/contributors/howto/todo">Goto a Document
    <section>Goto a Document</section>
    <shortdesc>How to get to a screen to manipulate a particular document.</shortdesc>
    <img>document tab screenshot</img>
    <subsection>Next</subsection>
+  </document><document ext="xml" filename="index" relpath="delve_into/user/contributors/howto/todo">
   </document></folder></folder><document ext="xml" filename="index" relpath="delve_into/user/contributors">Contributors Guide
    <section>Contributors Guide</section>
    <shortdesc>Guide for Hippo CMS users to perform the role of contributor.</shortdesc>

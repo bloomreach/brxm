@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 779 terms</span>
+      <span class="shortdesc">Term index, 780 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -54,6 +54,12 @@
               <a href="../delve_into/user/information_architects/howto/index.html#A_collection_of_howto's_for_small_tasks_an_information_architect_may_want_to_do_">A collection of howto's for small tasks an information architect may want to do.</a>
             </td>
             <td>Welcome: CMS Information Architect Howto</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/configuration/console.html#A_simple_GUI_application_that_can_be_used_to_edit_the_configuration_">A simple GUI application that can be used to edit the configuration.</a>
+            </td>
+            <td>Console</td>
           </tr>
           <tr>
             <td>
@@ -255,12 +261,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/browsing_history_of_document.html#Alternative">Alternative</a>
-            </td>
-            <td>Howto: Browsing history of a document</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/contributors/howto/create_document.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Create Document</td>
@@ -348,6 +348,12 @@
               <a href="../delve_into/user/contributors/howto/start_CMS.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Start CMS site</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/todo/browsing_history_of_document.html#Alternative">Alternative</a>
+            </td>
+            <td>Browsing history of a document</td>
           </tr>
           <tr>
             <td>
@@ -513,9 +519,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/browsing_history_of_document.html#Browsing_history_of_a_document">Browsing history of a document</a>
+              <a href="../delve_into/user/contributors/howto/todo/browsing_history_of_document.html#Browsing_history_of_a_document">Browsing history of a document</a>
             </td>
-            <td>Howto: Browsing history of a document</td>
+            <td>Browsing history of a document</td>
           </tr>
           <tr>
             <td>
@@ -2267,9 +2273,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/browsing_history_of_document.html#How_to_browse_the_history_of_a_document,_i_e__to_see_the_changes_to_the_document_over_time_">How to browse the history of a document, i.e. to see the changes to the document over time?</a>
+              <a href="../delve_into/user/contributors/howto/todo/browsing_history_of_document.html#How_to_browse_the_history_of_a_document,_i_e__to_see_the_changes_to_the_document_over_time_">How to browse the history of a document, i.e. to see the changes to the document over time?</a>
             </td>
-            <td>Howto: Browsing history of a document</td>
+            <td>Browsing history of a document</td>
           </tr>
           <tr>
             <td>
@@ -4389,9 +4395,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/browsing_history_of_document.html#Versioning_display_screenshot">Versioning display screenshot</a>
+              <a href="../delve_into/user/contributors/howto/todo/browsing_history_of_document.html#Versioning_display_screenshot">Versioning display screenshot</a>
             </td>
-            <td>Howto: Browsing history of a document</td>
+            <td>Browsing history of a document</td>
           </tr>
           <tr>
             <td>

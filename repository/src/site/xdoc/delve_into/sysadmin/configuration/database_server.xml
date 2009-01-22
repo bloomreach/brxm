@@ -19,10 +19,10 @@
 -->
 <document>
     <properties>
-        <title>Database server configuration</title>
+        <title>Database server</title>
     </properties>
     <body>
-      <section name="Database server configuration">
+      <section name="Database server">
        <span class='shortdesc'>Configuration of the database server.</span>
 
         <subsection name='Increase the maximum allowed asset size'>
