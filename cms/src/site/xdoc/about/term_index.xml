@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 746 terms</span>
+      <span class="shortdesc">Term index, 779 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -35,7 +35,7 @@
             <td>
               <a href="../delve_into/sysadmin/installation/plugins.html#/hippo:configuration/hippo:frontend/cms/cms-static/logoutPlugin">/hippo:configuration/hippo:frontend/cms/cms-static/logoutPlugin</a>
             </td>
-            <td>Installing plugins from the Hippo forge</td>
+            <td>Hippo Forge plugins</td>
           </tr>
           <tr>
             <td>
@@ -213,9 +213,21 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/content_tabulation_panel.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Content tabulation panel</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/content_workspace.html#Alternative">Alternative</a>
             </td>
             <td>Concept: Content Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/edit_mode.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Edit mode</td>
           </tr>
           <tr>
             <td>
@@ -231,9 +243,111 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/review_mode.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Review mode</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/workspace.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/browsing_history_of_document.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Browsing history of a document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/create_document.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Create Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/fill_boolean_field_in_document.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Fill boolean field in Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/fill_date_field_in_document.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Fill date in Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/fill_markuped_text_in_document.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Fill marked-up text in Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/fill_string_field_in_document.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Fill string in Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/goto_content_workspace.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Goto Content workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/goto_folder.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Goto a Folder</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/index.html#Alternative">Alternative</a>
             </td>
             <td>Welcome: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/learn_meaning_of_inputfield.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Learn meaning of inputfield</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/login.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Login as Contributor</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/request_publication.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Request Publication of Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/save_document.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Save Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/schedule_publication.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Schedule publication of Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/screenshots.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Screenshots</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/start_CMS.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Start CMS site</td>
           </tr>
           <tr>
             <td>
@@ -287,13 +401,13 @@
             <td>
               <a href="../delve_into/sysadmin/installation/in_application_server.html#application_server">application server</a>
             </td>
-            <td>Deploying in Application Server</td>
+            <td>in Application Server</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/sysadmin/installation/in_application_server.html#Application_Server">Application Server</a>
             </td>
-            <td>Deploying in Application Server</td>
+            <td>in Application Server</td>
           </tr>
           <tr>
             <td>
@@ -593,7 +707,7 @@
             <td>
               <a href="../delve_into/sysadmin/installation/plugins.html#cms_plus_feedback">cms plus feedback</a>
             </td>
-            <td>Installing plugins from the Hippo forge</td>
+            <td>Hippo Forge plugins</td>
           </tr>
           <tr>
             <td>
@@ -618,12 +732,6 @@
               <a href="../delve_into/custom/jcr/jcr.html#Complete_Example_Class">Complete Example Class</a>
             </td>
             <td>JCR Basics</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/sysadmin/configuration/index.html#Configuration">Configuration</a>
-            </td>
-            <td>Welcome: Configuration</td>
           </tr>
           <tr>
             <td>
@@ -726,6 +834,12 @@
               <a href="../delve_into/user/contributors/concepts/content_workspace.html#content_workspace">content workspace</a>
             </td>
             <td>Concept: Content Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/workspace.html#content_workspace">content workspace</a>
+            </td>
+            <td>Concept: Workspace</td>
           </tr>
           <tr>
             <td>
@@ -924,7 +1038,7 @@
             <td>
               <a href="../delve_into/sysadmin/installation/plugins.html#Customizing_the_CMS_configuration">Customizing the CMS configuration</a>
             </td>
-            <td>Installing plugins from the Hippo forge</td>
+            <td>Hippo Forge plugins</td>
           </tr>
           <tr>
             <td>
@@ -1002,7 +1116,7 @@
             <td>
               <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Deploy_Hippo_CMS_WAR">Deploy Hippo CMS WAR</a>
             </td>
-            <td>Deploying in Servlet Container</td>
+            <td>in Servlet Container</td>
           </tr>
           <tr>
             <td>
@@ -1014,7 +1128,7 @@
             <td>
               <a href="../delve_into/sysadmin/installation/plugins.html#Deploy_the_Bundle_(planned)">Deploy the Bundle (planned)</a>
             </td>
-            <td>Installing plugins from the Hippo forge</td>
+            <td>Hippo Forge plugins</td>
           </tr>
           <tr>
             <td>
@@ -1024,33 +1138,21 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Application_Server">Deploying in Application Server</a>
-            </td>
-            <td>Deploying in Application Server</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Glassfish">Deploying in Glassfish</a>
             </td>
-            <td>Deploying in Application Server</td>
+            <td>in Application Server</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/sysadmin/installation/in_application_server.html#Deploying_in_JBoss">Deploying in JBoss</a>
             </td>
-            <td>Deploying in Application Server</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Servlet_Container">Deploying in Servlet Container</a>
-            </td>
-            <td>Deploying in Servlet Container</td>
+            <td>in Application Server</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat">Deploying in Tomcat</a>
             </td>
-            <td>Deploying in Servlet Container</td>
+            <td>in Servlet Container</td>
           </tr>
           <tr>
             <td>
@@ -1206,7 +1308,7 @@
             <td>
               <a href="../delve_into/sysadmin/installation/plugins.html#Download_the_Plugin">Download the Plugin</a>
             </td>
-            <td>Installing plugins from the Hippo forge</td>
+            <td>Hippo Forge plugins</td>
           </tr>
           <tr>
             <td>
@@ -1218,7 +1320,19 @@
             <td>
               <a href="../delve_into/sysadmin/installation/index.html#EAR">EAR</a>
             </td>
-            <td>Welcome: Installation</td>
+            <td>Welcome: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/edit_mode.html#Edit_mode">Edit mode</a>
+            </td>
+            <td>Concept: Edit mode</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/edit_mode.html#edit_mode_sreenshot">edit mode sreenshot</a>
+            </td>
+            <td>Concept: Edit mode</td>
           </tr>
           <tr>
             <td>
@@ -1350,13 +1464,13 @@
             <td>
               <a href="../delve_into/sysadmin/installation/plugins.html#Extending_the_EAR">Extending the EAR</a>
             </td>
-            <td>Installing plugins from the Hippo forge</td>
+            <td>Hippo Forge plugins</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/sysadmin/installation/plugins.html#Extending_the_WAR">Extending the WAR</a>
             </td>
-            <td>Installing plugins from the Hippo forge</td>
+            <td>Hippo Forge plugins</td>
           </tr>
           <tr>
             <td>
@@ -1648,16 +1762,16 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Get_Hippo_CMS_up_and_running_&#10;_______in_a_Java_servlet_container_">Get Hippo CMS up and running 
+              <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Get_Hippo_CMS_up_and_running&#10;_______in_a_Java_servlet_container_">Get Hippo CMS up and running
        in a Java servlet container.</a>
             </td>
-            <td>Deploying in Servlet Container</td>
+            <td>in Servlet Container</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/sysadmin/installation/in_application_server.html#Get_Hippo_CMS_up_and_running_in_a_Java_application_server_">Get Hippo CMS up and running in a Java application server.</a>
             </td>
-            <td>Deploying in Application Server</td>
+            <td>in Application Server</td>
           </tr>
           <tr>
             <td>
@@ -1699,19 +1813,19 @@
             <td>
               <a href="../delve_into/sysadmin/installation/in_application_server.html#GlassFish">GlassFish</a>
             </td>
-            <td>Deploying in Application Server</td>
+            <td>in Application Server</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/sysadmin/installation/in_application_server.html#Glassfish_and_Ubuntu">Glassfish and Ubuntu</a>
             </td>
-            <td>Deploying in Application Server</td>
+            <td>in Application Server</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/sysadmin/installation/index.html#glassfish_logo">glassfish logo</a>
             </td>
-            <td>Welcome: Installation</td>
+            <td>Welcome: </td>
           </tr>
           <tr>
             <td>
@@ -1772,6 +1886,12 @@
               <a href="../delve_into/user/contributors/howto/goto_folder.html#Goto_a_Folder">Goto a Folder</a>
             </td>
             <td>Howto: Goto a Folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/start_CMS.html#goto_CMS_site">goto CMS site</a>
+            </td>
+            <td>Howto: Start CMS site</td>
           </tr>
           <tr>
             <td>
@@ -1973,6 +2093,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/installation/plugins.html#Hippo_Forge_plugins">Hippo Forge plugins</a>
+            </td>
+            <td>Hippo Forge plugins</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/cms_admins/howto/login.html#Hippo_login_screenshot">Hippo login screenshot</a>
             </td>
             <td>Howto: Login as Admin</td>
@@ -1982,6 +2108,12 @@
               <a href="../delve_into/user/contributors/howto/login.html#Hippo_login_screenshot">Hippo login screenshot</a>
             </td>
             <td>Howto: Login as Contributor</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/screenshots.html#Hippo_login_screenshot">Hippo login screenshot</a>
+            </td>
+            <td>Howto: Screenshots</td>
           </tr>
           <tr>
             <td>
@@ -2126,12 +2258,6 @@
               <a href="../delve_into/custom/howto/customize_skin.html#How_to_apply_a_skin">How to apply a skin</a>
             </td>
             <td>Howto: Frontend skin customization</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/howto/open_request_publication.html#How_to_ask_the_editor_to_publish_a_document_">How to ask the editor to publish a document?</a>
-            </td>
-            <td>Howto: Request Publication of Document</td>
           </tr>
           <tr>
             <td>
@@ -2328,6 +2454,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/start_CMS.html#How_to_goto_the_CMS_site,_i_e__start_a_CMS_session,_in_your_browser_">How to goto the CMS site, i.e. start a CMS session, in your browser.</a>
+            </td>
+            <td>Howto: Start CMS site</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/editors/howto/handle_request.html#How_to_handle_a_request_">How to handle a request.</a>
             </td>
             <td>Howto: Handle request</td>
@@ -2352,20 +2484,14 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/installation/index.html#How_to_install_Hippo_CMS">How to install Hippo CMS</a>
-            </td>
-            <td>Welcome: Installation</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/cms_admins/howto/login.html#How_to_login_to_Hippo_CMS_as_administrator_">How to login to Hippo CMS as administrator.</a>
             </td>
             <td>Howto: Login as Admin</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/login.html#How_to_login_to_Hippo_CMS_as_contributor_&#10;______________________________of_documents,_images_and/or_files_">How to login to Hippo CMS as contributor 
-                              of documents, images and/or files.</a>
+              <a href="../delve_into/user/contributors/howto/login.html#How_to_login_to_Hippo_CMS_as_contributor_&#10;______of_documents,_images_and/or_files_">How to login to Hippo CMS as contributor 
+      of documents, images and/or files.</a>
             </td>
             <td>Howto: Login as Contributor</td>
           </tr>
@@ -2456,13 +2582,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/start_CMS.html#How_to_start_a_CMS_session_in_your_browser">How to start a CMS session in your browser</a>
+              <a href="../delve_into/user/contributors/howto/schedule_publication.html#How_to_schedule_when_your_document_should_be_published_">How to schedule when your document should be published?</a>
             </td>
-            <td>Howto: Start CMS</td>
+            <td>Howto: Schedule publication of Document</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/start_CMS.html#How_to_start_a_CMS_session_in_your_browser">How to start a CMS session in your browser</a>
+              <a href="../delve_into/user/cms_admins/howto/start_CMS.html#How_to_start_a_CMS_session_in_your_browser">How to start a CMS session in your browser</a>
             </td>
             <td>Howto: Start CMS</td>
           </tr>
@@ -2495,6 +2621,12 @@
               <a href="../delve_into/custom/reference/repository/repository_bootstrap.html#How_to_use">How to use</a>
             </td>
             <td>Bootstrapping the repository</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/screenshots.html#How_to_view_screenshots_in_the_userguide_">How to view screenshots in the userguide.</a>
+            </td>
+            <td>Howto: Screenshots</td>
           </tr>
           <tr>
             <td>
@@ -2531,6 +2663,18 @@
               <a href="../delve_into/custom/jcr/data_migration.html#Importing_Content">Importing Content</a>
             </td>
             <td>Data Migration</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/installation/in_application_server.html#in_Application_Server">in Application Server</a>
+            </td>
+            <td>in Application Server</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/installation/in_servlet_container.html#in_Servlet_Container">in Servlet Container</a>
+            </td>
+            <td>in Servlet Container</td>
           </tr>
           <tr>
             <td>
@@ -2578,7 +2722,7 @@
             <td>
               <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Install_required_libraries">Install required libraries</a>
             </td>
-            <td>Deploying in Servlet Container</td>
+            <td>in Servlet Container</td>
           </tr>
           <tr>
             <td>
@@ -2606,21 +2750,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/installation/index.html#Installation">Installation</a>
+              <a href="../delve_into/sysadmin/installation/plugins.html#Installing_plugins_from_the_Hippo_forge_">Installing plugins from the Hippo forge.</a>
             </td>
-            <td>Welcome: Installation</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/sysadmin/installation/plugins.html#Installing_plugins_from_the_Hippo_forge">Installing plugins from the Hippo forge</a>
-            </td>
-            <td>Installing plugins from the Hippo forge</td>
+            <td>Hippo Forge plugins</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/sysadmin/installation/in_application_server.html#Integration_Glassfish_and_NetBeans">Integration Glassfish and NetBeans</a>
             </td>
-            <td>Deploying in Application Server</td>
+            <td>in Application Server</td>
           </tr>
           <tr>
             <td>
@@ -2656,7 +2794,7 @@
             <td>
               <a href="../delve_into/sysadmin/installation/index.html#Java_application_server">Java application server</a>
             </td>
-            <td>Welcome: Installation</td>
+            <td>Welcome: </td>
           </tr>
           <tr>
             <td>
@@ -2674,19 +2812,19 @@
             <td>
               <a href="../delve_into/sysadmin/installation/index.html#Java_servlet_container">Java servlet container</a>
             </td>
-            <td>Welcome: Installation</td>
+            <td>Welcome: </td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/sysadmin/installation/in_application_server.html#JBoss">JBoss</a>
             </td>
-            <td>Deploying in Application Server</td>
+            <td>in Application Server</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/sysadmin/installation/index.html#JBoss_logo">JBoss logo</a>
             </td>
-            <td>Welcome: Installation</td>
+            <td>Welcome: </td>
           </tr>
           <tr>
             <td>
@@ -2710,7 +2848,7 @@
             <td>
               <a href="../delve_into/sysadmin/installation/index.html#jetty_logo">jetty logo</a>
             </td>
-            <td>Welcome: Installation</td>
+            <td>Welcome: </td>
           </tr>
           <tr>
             <td>
@@ -3062,9 +3200,27 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/content_tabulation_panel.html#Next">Next</a>
+            </td>
+            <td>Concept: Content tabulation panel</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/content_workspace.html#Next">Next</a>
             </td>
             <td>Concept: Content Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/edit_mode.html#Next">Next</a>
+            </td>
+            <td>Concept: Edit mode</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/review_mode.html#Next">Next</a>
+            </td>
+            <td>Concept: Review mode</td>
           </tr>
           <tr>
             <td>
@@ -3134,6 +3290,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/learn_meaning_of_inputfield.html#Next">Next</a>
+            </td>
+            <td>Howto: Learn meaning of inputfield</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/login.html#Next">Next</a>
             </td>
             <td>Howto: Login as Contributor</td>
@@ -3143,12 +3305,6 @@
               <a href="../delve_into/user/contributors/howto/logout.html#Next">Next</a>
             </td>
             <td>Howto: Logout</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/howto/open_request_publication.html#Next">Next</a>
-            </td>
-            <td>Howto: Request Publication of Document</td>
           </tr>
           <tr>
             <td>
@@ -3164,9 +3320,21 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/schedule_publication.html#Next">Next</a>
+            </td>
+            <td>Howto: Schedule publication of Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/screenshots.html#Next">Next</a>
+            </td>
+            <td>Howto: Screenshots</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/start_CMS.html#Next">Next</a>
             </td>
-            <td>Howto: Start CMS</td>
+            <td>Howto: Start CMS site</td>
           </tr>
           <tr>
             <td>
@@ -3376,7 +3544,7 @@
             <td>
               <a href="../delve_into/sysadmin/installation/in_application_server.html#Obtain_the_EAR_package">Obtain the EAR package</a>
             </td>
-            <td>Deploying in Application Server</td>
+            <td>in Application Server</td>
           </tr>
           <tr>
             <td>
@@ -3584,19 +3752,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/open_request_publication.html#Request_Publication_of_Document">Request Publication of Document</a>
-            </td>
-            <td>Howto: Request Publication of Document</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/contributors/howto/request_publication.html#Request_Publication_of_Document">Request Publication of Document</a>
-            </td>
-            <td>Howto: Request Publication of Document</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/howto/open_request_publication.html#request_schedule_publication_screenshot">request schedule publication screenshot</a>
             </td>
             <td>Howto: Request Publication of Document</td>
           </tr>
@@ -3605,6 +3761,12 @@
               <a href="../delve_into/user/contributors/howto/request_publication.html#request_schedule_publication_screenshot">request schedule publication screenshot</a>
             </td>
             <td>Howto: Request Publication of Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/schedule_publication.html#request_schedule_publication_screenshot">request schedule publication screenshot</a>
+            </td>
+            <td>Howto: Schedule publication of Document</td>
           </tr>
           <tr>
             <td>
@@ -3617,6 +3779,18 @@
               <a href="../delve_into/user/contributors/howto/restore_previous_version.html#Restoring_a_previous_version_of_a_document">Restoring a previous version of a document</a>
             </td>
             <td>Howto: Restoring a previous version of a document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/review_mode.html#Review_mode">Review mode</a>
+            </td>
+            <td>Concept: Review mode</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/review_mode.html#review_mode_screenshot">review mode screenshot</a>
+            </td>
+            <td>Concept: Review mode</td>
           </tr>
           <tr>
             <td>
@@ -3701,6 +3875,12 @@
               <a href="../delve_into/user/cms_admins/howto/save_settings.html#save_settings_screenshot">save settings screenshot</a>
             </td>
             <td>Howto: Save settings</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/schedule_publication.html#Schedule_publication_of_Document">Schedule publication of Document</a>
+            </td>
+            <td>Howto: Schedule publication of Document</td>
           </tr>
           <tr>
             <td>
@@ -3806,6 +3986,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/screenshots.html#Screenshots">Screenshots</a>
+            </td>
+            <td>Howto: Screenshots</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/sysadmin/configuration/repository/searchindex.html#SearchIndex_configuration">SearchIndex configuration</a>
             </td>
             <td>SearchIndex configuration</td>
@@ -3844,7 +4030,7 @@
             <td>
               <a href="../delve_into/sysadmin/installation/plugins.html#Sending_feedback">Sending feedback</a>
             </td>
-            <td>Installing plugins from the Hippo forge</td>
+            <td>Hippo Forge plugins</td>
           </tr>
           <tr>
             <td>
@@ -3862,7 +4048,7 @@
             <td>
               <a href="../delve_into/sysadmin/installation/in_servlet_container.html#servlet_container">servlet container</a>
             </td>
-            <td>Deploying in Servlet Container</td>
+            <td>in Servlet Container</td>
           </tr>
           <tr>
             <td>
@@ -3896,12 +4082,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/start_CMS.html#Start_CMS">Start CMS</a>
-            </td>
-            <td>Howto: Start CMS</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/editors/howto/start_CMS.html#Start_CMS">Start CMS</a>
             </td>
             <td>Howto: Start CMS</td>
@@ -3911,6 +4091,12 @@
               <a href="../delve_into/user/information_architects/howto/start_CMS.html#Start_CMS">Start CMS</a>
             </td>
             <td>Howto: Start CMS</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/start_CMS.html#Start_CMS_site">Start CMS site</a>
+            </td>
+            <td>Howto: Start CMS site</td>
           </tr>
           <tr>
             <td>
@@ -4067,7 +4253,7 @@
             <td>
               <a href="../delve_into/sysadmin/installation/index.html#tomcat_logo">tomcat logo</a>
             </td>
-            <td>Welcome: Installation</td>
+            <td>Welcome: </td>
           </tr>
           <tr>
             <td>
@@ -4223,7 +4409,7 @@
             <td>
               <a href="../delve_into/sysadmin/installation/index.html#WAR">WAR</a>
             </td>
-            <td>Welcome: Installation</td>
+            <td>Welcome: </td>
           </tr>
           <tr>
             <td>
@@ -4287,15 +4473,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/requirements.html#What_do_you_need_to_run_Hippo_CMS_">What do you need to run Hippo CMS?</a>
+              <a href=".././/supported_stacks.html.html#What_combinations_of_are_supported_by_Hippo_">What combinations of are supported by Hippo?</a>
             </td>
-            <td>Requirements</td>
+            <td/>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/configuration/index.html#What_does_a_sysadmin_have_to_configure_in_Hippo_CMS_">What does a sysadmin have to configure in Hippo CMS?</a>
+              <a href="../delve_into/sysadmin/requirements.html#What_do_you_need_to_run_Hippo_CMS_">What do you need to run Hippo CMS?</a>
             </td>
-            <td>Welcome: Configuration</td>
+            <td>Requirements</td>
           </tr>
           <tr>
             <td>
@@ -4365,9 +4551,21 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/edit_mode.html#What_is_edit_mode_">What is edit mode?</a>
+            </td>
+            <td>Concept: Edit mode</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../index.html#What_is_Hippo_CMS_">What is Hippo CMS?</a>
             </td>
             <td>Welcome: What is Hippo CMS?</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/review_mode.html#What_is_review_mode_">What is review mode?</a>
+            </td>
+            <td>Concept: Review mode</td>
           </tr>
           <tr>
             <td>

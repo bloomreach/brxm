@@ -18,32 +18,29 @@
   limitations under the License.
 -->
 <document>
-    <properties>
-        <title>Console</title>
-    </properties>
-    <body>
-      <section name="Console">
-
-        <p>
-          The console application provides a simple interface to browse
-          the repository and edit its contents.  Most of the configuration
-          is accessible this way, see the
-          <a href="nodes/index.html">Configuration Nodes</a> page for more
-          details on what can be found where.
-        </p>
+ <properties>
+  <title>Console</title>
+ </properties>
+ <body>
+  <section name="Console">
+   <span class='shortdesc'>A simple GUI application that can be used to edit the configuration.</span>
+   <p>
+    The console application provides a simple interface to browse
+    the repository and edit its contents.  Most of the configuration
+    is accessible this way, see the
+    <a href="nodes/index.html">Configuration Nodes</a> page for more
+    details on what can be found where.
+  </p>
 
         <p>
           The console can normally be found under
           <a href="http://localhost:8080/console">http://localhost:8080/console</a>.
         </p>
-        
         <p>
           <a href="../../../images/console.png">
             <img src="../../../images/console_thumbnail.png" alt="Screenshot of the console" />
           </a>
         </p>
-        
-
         <p>
           The application is based on the concept of "the selected node".  This is
           the JCR node that is selected in the tree.  The main panel shows
@@ -61,7 +58,6 @@
             <li><code>Save:</code> save the node and its descendants</li>
             <li><code>Reset:</code> reset the node and its descendants</li>
           </ol>
-
-      </section>
-    </body>
+  </section>
+ </body>
 </document>

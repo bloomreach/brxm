@@ -45,15 +45,15 @@
   </tr>
  <!-- 
   Hippo developers should not be contacted personally, so contributions related to the issue tracker 
-  are not possible/allowed. 
+  are not possible/allowed.
   <tr>
    <td>Issue Tracker</td>
    <td>
-     <span class='issue-48 icon-48'/> 
+     <span class='issue-48 icon-48'/>
    </td>
-   <td> 
+   <td>
           <a href="../issue-tracking.html">${product_name} issue tracker</a>:
-                 
+
           Only Hippo developers and some partners can open issues in the issue tracker, but 
           anyone can contact the developers by email. They are listed as administrators of the Hippo issue
           tracker at the <a href="${issue_tracker_homepage}">Hippo issue tracker homepage</a>, with their
@@ -67,7 +67,7 @@
      <span class='wiki-48 icon-48'/> 
    </td>
    <td> 
-        <a href="http://${public_project_wiki}">${product_name} wiki</a>:             
+        <a href="http://${public_project_wiki}">${product_name} wiki</a>:
         We appreciate contributions of documenation on the public Wiki.
    </td>
   </tr>
@@ -77,13 +77,13 @@
      <span class='forge-48 icon-48'/> 
    </td>
    <td>
-     <a href="http://forge.onehippo.org/">Hippo Forge</a>         
+     <a href="http://forge.onehippo.org/">Hippo Forge</a>
      is a repository filled with all kinds of useful frontend and repository
      plugins. You are very welcome to 
      <a href="http://forge.onehippo.org/account/register.php">sign up</a> 
      and contribute your own plugin, code snippets, etc, for
-     all to <a href="../delve_into/sysadmin/installation/plugins.html">install</a>
-     and use. 
+     all to <a href="http://www.onehippo.com/delve_into/sysadmin/installation/plugins.html">install</a>
+     and use.
    </td>
   </tr>
  </table>

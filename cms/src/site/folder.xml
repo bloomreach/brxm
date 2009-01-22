@@ -10,7 +10,7 @@
    fullname='about/features.xml'
    relpath='about'
   >features</file>
-   <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='about/term_index.xml'
    relpath='about'
   >term_index</file>
@@ -221,10 +221,22 @@
  <title>System Administration Guide</title>
  <shortdesc>What does a sysadmin need to know and do for Hippo CMS?</shortdesc>
  <introduction>
-   These pages describe how to get Hippo ECM up and running and how to configure your running application.
+  These pages describe how to get Hippo ECM up and running and how to configure your running application.
  </introduction>
+ <inlist> <!-- list of <document>, as made by makeindex.xsl, e.g. .thiscontent.xml -->
+   <document ext="html" filename="supported_stacks.html" relpath="./">
+   <shortdesc>What combinations of are supported by Hippo?</shortdesc>
+  </document>
+ </inlist>
 </info>
     <folder>configuration
+<info>
+ <title>Configuration</title>             <!-- string -->
+ <shortdesc>What does a sysadmin have to configure in Hippo CMS?</shortdesc>     <!-- string -->
+ <introduction>              <!-- tree -->
+     <span class='review'>Whole folder, and rewrite if necessary.</span>
+ </introduction>
+</info>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/sysadmin/configuration/console.xml'
    relpath='delve_into/sysadmin/configuration'
@@ -290,11 +302,83 @@
    fullname='delve_into/sysadmin/debugging.xml'
    relpath='delve_into/sysadmin'
   >debugging</file>
-    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/sysadmin/index.xml'
    relpath='delve_into/sysadmin'
   >index</file>
     <folder>installation
+<info>
+ <title>Installation</title>             <!-- string -->
+ <shortdesc>How to install Hippo CMS</shortdesc>     <!-- string -->
+ <introduction>              <!-- tree -->
+        <p>
+          To run Hippo CMS, a
+          <a href="in_servlet_container.html"><span class='index' id='servlet_container'>Java servlet container</span></a> 
+          or a 
+          <a href="in_application_server.html"><span class='index' id='application_server'>Java application server</span></a> 
+          is needed.
+        </p>
+        <p>
+          Hippo supplies a Java <span class='index' id='WAR'>WAR</span> package to deploy in Java servlet containers and
+          a <span class='index' id='EAR'>EAR</span> package to deploy in Java application servers. 
+        </p>
+
+        <!-- TODO use colspan=0 for the title, as soon as that is possible. -->  
+        <table>
+        <tr><th class='title'>Compatible</th><th> Java servlet</th><th> containers:</th></tr>
+        <tr>
+          <td>
+             <img src='../../../images/tomcat_icon.png' alt='tomcat logo'/>
+      </td>
+          <td>
+            <a href='http://tomcat.apache.org/'>Apache Tomcat</a>
+      </td>
+          <td>
+            <a href='in_servlet_container.html#Deploying_in_Tomcat'>Deploying Hippo</a>
+      </td>
+    </tr>
+        <tr>
+          <td>
+           <img src='../../../images/jetty_icon.png' alt='jetty logo'/>
+      </td>
+          <td>
+            <a href='http://jetty.mortbay.com/jetty/'>Jetty</a>
+      </td>
+          <td>
+            <!-- <a href='in_servlet_container.html'>Deploying Hippo</a> -->
+      </td>
+    </tr>
+        <tr><th colspan='0'>Compatible</th><th> Java application</th><th> servers:</th></tr>
+        <tr>
+          <td>
+            <img src='../../../images/glassfish_icon.png' alt='glassfish logo'/>
+      </td>
+          <td>
+            <a href='https://glassfish.dev.java.net/'>Sun Glassfish</a>
+      </td>
+          <td>
+            <a href='in_application_server.html#Deploying_in_Glassfish'>Deploying Hippo</a> 
+      </td>
+    </tr>
+
+        <tr>
+          <td>
+            <img src='../../../images/jboss_icon.png' alt='JBoss logo'/>
+      </td>
+          <td>
+            <a href='http://www.jboss.org/'>JBoss</a>
+      </td>
+          <td>
+            <a href='in_application_server.html#Deploying_in_JBoss'>Deploying Hippo</a> 
+      </td>
+    </tr>
+    </table>
+            <!--
+            <li><a href='http://www.ibm.com/software/webservers/appserv/was/'>IBM WebSphere Application Server</a></li>
+            <li><a href='http://www.bea.com/framework.jsp?CNT=index.htm&amp;FP=/content/products/weblogic/server'>Oracle Bea WebLogic Server</a></li>
+            -->
+ </introduction>
+</info>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/sysadmin/installation/help_renamed.xml'
    relpath='delve_into/sysadmin/installation'
@@ -307,24 +391,24 @@
    fullname='delve_into/sysadmin/installation/help_web_servlet_container.xml'
    relpath='delve_into/sysadmin/installation'
   >help_web_servlet_container</file>
-     <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
+     <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/sysadmin/installation/in_application_server.xml.vm'
+   relpath='delve_into/sysadmin/installation'
+  >in_application_server</file>
+     <file ext='xml.vm~' mimetype='text/html charset=us-ascii' note='todo'
+   fullname='delve_into/sysadmin/installation/in_application_server.xml.vm~'
    relpath='delve_into/sysadmin/installation'
   >in_application_server</file>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/sysadmin/installation/index.xml'
    relpath='delve_into/sysadmin/installation'
   >index</file>
-     <file ext='xml~rita' mimetype='text/html charset=us-ascii' note='todo'
-   fullname='delve_into/sysadmin/installation/index.xml~rita'
-   relpath='delve_into/sysadmin/installation'
-  >index</file>
-     <file ext='xml~rita' mimetype='text/html charset=us-ascii' note='todo'
-   fullname='delve_into/sysadmin/installation/in_servlet_container.xml~rita'
-   relpath='delve_into/sysadmin/installation'
-  >in_servlet_container</file>
      <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/sysadmin/installation/in_servlet_container.xml.vm'
+   relpath='delve_into/sysadmin/installation'
+  >in_servlet_container</file>
+     <file ext='xml.vm~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/sysadmin/installation/in_servlet_container.xml.vm~'
    relpath='delve_into/sysadmin/installation'
   >in_servlet_container</file>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
@@ -333,6 +417,10 @@
   >install_tomcat</file>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/sysadmin/installation/plugins.xml'
+   relpath='delve_into/sysadmin/installation'
+  >plugins</file>
+     <file ext='xml~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/sysadmin/installation/plugins.xml~'
    relpath='delve_into/sysadmin/installation'
   >plugins</file>
     </folder>
@@ -477,6 +565,10 @@
    relpath='delve_into/user/contributors/concepts'
   >document</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/contributors/concepts/edit_mode.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >edit_mode</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/concepts/folder_action_menu.xml'
    relpath='delve_into/user/contributors/concepts'
   >folder_action_menu</file>
@@ -496,6 +588,10 @@
    fullname='delve_into/user/contributors/concepts/index.xml'
    relpath='delve_into/user/contributors/concepts'
   >index</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/contributors/concepts/review_mode.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >review_mode</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/concepts/slider.xml'
    relpath='delve_into/user/contributors/concepts'
@@ -549,7 +645,7 @@
    fullname='delve_into/user/contributors/howto/fill_string_field_in_document.xml'
    relpath='delve_into/user/contributors/howto'
   >fill_string_field_in_document</file>
-      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/user/contributors/howto/goto_content_workspace.xml'
    relpath='delve_into/user/contributors/howto'
   >goto_content_workspace</file>
@@ -561,11 +657,11 @@
    fullname='delve_into/user/contributors/howto/goto_folder.xml'
    relpath='delve_into/user/contributors/howto'
   >goto_folder</file>
-      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/user/contributors/howto/index.xml'
    relpath='delve_into/user/contributors/howto'
   >index</file>
-      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/howto/learn_meaning_of_inputfield.xml'
    relpath='delve_into/user/contributors/howto'
   >learn_meaning_of_inputfield</file>
@@ -578,10 +674,6 @@
    relpath='delve_into/user/contributors/howto'
   >logout</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
-   fullname='delve_into/user/contributors/howto/open_request_publication.xml'
-   relpath='delve_into/user/contributors/howto'
-  >open_request_publication</file>
-      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/user/contributors/howto/request_publication.xml'
    relpath='delve_into/user/contributors/howto'
   >request_publication</file>
@@ -594,6 +686,14 @@
    relpath='delve_into/user/contributors/howto'
   >save_document</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/contributors/howto/schedule_publication.xml'
+   relpath='delve_into/user/contributors/howto'
+  >schedule_publication</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/contributors/howto/screenshots.xml'
+   relpath='delve_into/user/contributors/howto'
+  >screenshots</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/user/contributors/howto/start_CMS.xml'
    relpath='delve_into/user/contributors/howto'
   >start_CMS</file>

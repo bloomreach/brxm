@@ -22,7 +22,7 @@
         <title>in Application Server</title>
     </properties>
     <body>
-        <section name="Deploying in Application Server">
+        <section name="in Application Server">
           <span class='shortdesc'>Get Hippo CMS up and running in a Java <span class='index' id='application_server'>application server</span>.</span>
 
             <subsection name="Obtain the EAR package">
