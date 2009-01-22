@@ -131,13 +131,20 @@ repository is;
    As username use `admin' and as password use also `admin'.
   .../&lt;td&gt;<br/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</empty_elem></document><folder>sysadmin
    <title>System Administration Guide</title><shortdesc>What does a sysadmin need to know and do for Hippo CMS?</shortdesc><introduction>
-   These pages describe how to get Hippo ECM up and running and how to configure your running application.
- </introduction>
+  These pages describe how to get Hippo ECM up and running and how to configure your running application.
+ </introduction><inlist> <!-- list of <document>, as made by makeindex.xsl, e.g. .thiscontent.xml -->
+   <document ext="html" filename="supported_stacks.html" relpath="./">
+   <shortdesc>What combinations of are supported by Hippo?</shortdesc>
+  </document>
+ </inlist>
    <folder>configuration
-   
+   <title>Configuration</title><shortdesc>What does a sysadmin have to configure in Hippo CMS?</shortdesc><introduction>              <!-- tree -->
+     <span class="review">Whole folder, and rewrite if necessary.</span>
+ </introduction>
    <document ext="xml" filename="console" relpath="delve_into/sysadmin/configuration">Console<linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="database_server" relpath="delve_into/sysadmin/configuration">Database server configuration<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration">Configuration<linkto_unchecked/>
-    <review>Whole folder, and rewrite if necessary.</review></document><folder>nodes
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="database_server" relpath="delve_into/sysadmin/configuration">Database server configuration<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration"><linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><folder>nodes
    
    <document ext="xml" filename="domains" relpath="delve_into/sysadmin/configuration/nodes">Domains Configuration<linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
@@ -163,13 +170,81 @@ repository is;
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder></folder><document ext="xml" filename="debugging" relpath="delve_into/sysadmin">Debugging<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/sysadmin"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><folder>installation
-   
+   <title>Installation</title><shortdesc>How to install Hippo CMS</shortdesc><introduction>              <!-- tree -->
+        <p>
+          To run Hippo CMS, a
+          <a href="in_servlet_container.html"><span class="index" id="servlet_container">Java servlet container</span></a> 
+          or a 
+          <a href="in_application_server.html"><span class="index" id="application_server">Java application server</span></a> 
+          is needed.
+        </p>
+        <p>
+          Hippo supplies a Java <span class="index" id="WAR">WAR</span> package to deploy in Java servlet containers and
+          a <span class="index" id="EAR">EAR</span> package to deploy in Java application servers. 
+        </p>
+
+        <!-- TODO use colspan=0 for the title, as soon as that is possible. -->  
+        <table>
+        <tr><th class="title">Compatible</th><th> Java servlet</th><th> containers:</th></tr>
+        <tr>
+          <td>
+             <img src="../../../images/tomcat_icon.png" alt="tomcat logo"/>
+      </td>
+          <td>
+            <a href="http://tomcat.apache.org/">Apache Tomcat</a>
+      </td>
+          <td>
+            <a href="in_servlet_container.html#Deploying_in_Tomcat">Deploying Hippo</a>
+      </td>
+    </tr>
+        <tr>
+          <td>
+           <img src="../../../images/jetty_icon.png" alt="jetty logo"/>
+      </td>
+          <td>
+            <a href="http://jetty.mortbay.com/jetty/">Jetty</a>
+      </td>
+          <td>
+            <!-- <a href='in_servlet_container.html'>Deploying Hippo</a> -->
+      </td>
+    </tr>
+        <tr><th colspan="0">Compatible</th><th> Java application</th><th> servers:</th></tr>
+        <tr>
+          <td>
+            <img src="../../../images/glassfish_icon.png" alt="glassfish logo"/>
+      </td>
+          <td>
+            <a href="https://glassfish.dev.java.net/">Sun Glassfish</a>
+      </td>
+          <td>
+            <a href="in_application_server.html#Deploying_in_Glassfish">Deploying Hippo</a> 
+      </td>
+    </tr>
+
+        <tr>
+          <td>
+            <img src="../../../images/jboss_icon.png" alt="JBoss logo"/>
+      </td>
+          <td>
+            <a href="http://www.jboss.org/">JBoss</a>
+      </td>
+          <td>
+            <a href="in_application_server.html#Deploying_in_JBoss">Deploying Hippo</a> 
+      </td>
+    </tr>
+    </table>
+            <!--
+            <li><a href='http://www.ibm.com/software/webservers/appserv/was/'>IBM WebSphere Application Server</a></li>
+            <li><a href='http://www.bea.com/framework.jsp?CNT=index.htm&amp;FP=/content/products/weblogic/server'>Oracle Bea WebLogic Server</a></li>
+            -->
+ </introduction>
    <document ext="xml" filename="help_renamed" relpath="delve_into/sysadmin/installation">help renamed<linkto_unchecked/></document><document ext="xml" filename="help_startup_servlet_container" relpath="delve_into/sysadmin/installation">Help startup in Servlet Container<linkto_unchecked/></document><document ext="xml" filename="help_web_servlet_container" relpath="delve_into/sysadmin/installation">Help web Servlet Container<linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml.vm" filename="in_application_server" relpath="delve_into/sysadmin/installation">Deploying in Application Server<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/sysadmin/installation">Installation<linkto_unchecked/>
-    <empty_elem>&lt;td/&gt;</empty_elem></document><document ext="xml.vm" filename="in_servlet_container" relpath="delve_into/sysadmin/installation">Deploying in Servlet Container<linkto_unchecked/></document><document ext="xml" filename="install_tomcat" relpath="delve_into/sysadmin/installation">Install Tomcat<linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml.vm" filename="in_application_server" relpath="delve_into/sysadmin/installation">in Application Server<linkto_unchecked/>
+    <rewrite>Replace 2 bad resolution screenshots</rewrite></document><document ext="xml" filename="index" relpath="delve_into/sysadmin/installation"><linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml.vm" filename="in_servlet_container" relpath="delve_into/sysadmin/installation">in Servlet Container<linkto_unchecked/></document><document ext="xml" filename="install_tomcat" relpath="delve_into/sysadmin/installation">Install Tomcat<linkto_unchecked/>
     <empty_elem>...&lt;span class='to_index' id='tomcat_5.5'/&gt;.
-     .../&lt;td&gt;<br/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</empty_elem></document><document ext="xml" filename="plugins" relpath="delve_into/sysadmin/installation">Installing plugins from the Hippo forge<linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="requirements" relpath="delve_into/sysadmin">Requirements<linkto_unchecked/>
+     .../&lt;td&gt;<br/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</empty_elem></document><document ext="xml" filename="plugins" relpath="delve_into/sysadmin/installation">Hippo Forge plugins<linkto_unchecked/></document></folder><document ext="xml" filename="requirements" relpath="delve_into/sysadmin">Requirements<linkto_unchecked/>
     <empty_elem>&lt;td/&gt;</empty_elem>
     <empty_elem>&lt;td/&gt;</empty_elem>
     <empty_elem>&lt;td/&gt;</empty_elem></document></folder><folder>user
@@ -216,10 +291,10 @@ repository is;
     <badtext>Particular actions are possible for the<span class="bad"> current </span>folder, such as: creating a document in it, creating a subfolder in it, deleting a subfolder from it. The actions that a particular user may do on particular folder can be different for different fold</badtext>
     <badtext>. At any particular moment, only folder actions on the<span class="bad"> current </span>folder are possible.</badtext></document><document ext="xml" filename="document_card" relpath="delve_into/user/contributors/concepts">Document card<linkto_unchecked/>
     <add>more about cards in the image</add></document><document ext="xml" filename="document_panel" relpath="delve_into/user/contributors/concepts">Document panel<linkto_unchecked/>
-    <rewrite>Is for content. Call it content panel?</rewrite></document><document ext="xml" filename="document" relpath="delve_into/user/contributors/concepts">Document<linkto_unchecked/></document><document ext="xml" filename="folder_action_menu" relpath="delve_into/user/contributors/concepts">Folder action menu<linkto_unchecked/>
+    <rewrite>Is for content. Call it content panel?</rewrite></document><document ext="xml" filename="document" relpath="delve_into/user/contributors/concepts">Document<linkto_unchecked/></document><document ext="xml" filename="edit_mode" relpath="delve_into/user/contributors/concepts">Edit mode<linkto_unchecked/></document><document ext="xml" filename="folder_action_menu" relpath="delve_into/user/contributors/concepts">Folder action menu<linkto_unchecked/>
     <badtext>At any particular moment, only folder actions on the<span class="bad"> current </span>folder are possible.</badtext></document><document ext="xml" filename="folder_navigation_panel" relpath="delve_into/user/contributors/concepts">Folder navigation panel<linkto_unchecked/></document><document ext="xml" filename="folder" relpath="delve_into/user/contributors/concepts">Folder<linkto_unchecked/></document><document ext="xml" filename="home_workspace" relpath="delve_into/user/contributors/concepts">Home Workspace<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/user/contributors/concepts"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="slider" relpath="delve_into/user/contributors/concepts">Slider<linkto_unchecked/></document><document ext="xml" filename="versioning" relpath="delve_into/user/contributors/concepts">Versioning<linkto_unchecked/>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="review_mode" relpath="delve_into/user/contributors/concepts">Review mode<linkto_unchecked/></document><document ext="xml" filename="slider" relpath="delve_into/user/contributors/concepts">Slider<linkto_unchecked/></document><document ext="xml" filename="versioning" relpath="delve_into/user/contributors/concepts">Versioning<linkto_unchecked/>
     <badtext>, to replace the<span class="bad"> current </span>content of a document with content the document had sometime in the past.</badtext></document><document ext="xml" filename="workspace_navigation_panel" relpath="delve_into/user/contributors/concepts">Workspace Navigation Panel<linkto_unchecked/></document><document ext="xml" filename="workspace" relpath="delve_into/user/contributors/concepts">Workspace<linkto_unchecked/></document></folder><folder>howto
    <title>CMS Contributor Howto</title><shortdesc>A collection of howto's for small tasks a contributor may want to do.</shortdesc><afterlist>  
   <subsection name="Alternative">
@@ -233,18 +308,17 @@ repository is;
     <badtext>the version is shown. The name of the article is shown (which is constant over all versions, only the<span class="bad"> current </span>name is shown, renaming or moving a document is not part of the document history of the document itself but --if available-- part of the document in which a document is embedded).</badtext>
     <badtext>on number is indicated, which counts from 1, the first version of a document created towards the most<span class="bad"> current </span>document, which does not have a version number yet. It will show the date and time, when a historic version of the document was created and until when that version of the document was the most current</badtext>
     <badtext>Note that this is not the same as when the next<span class="bad"> current </span>document was created, as it may be that there was no current document in the document history.</badtext></document><document ext="xml" filename="create_document" relpath="delve_into/user/contributors/howto">Create Document<linkto_unchecked/></document><document ext="xml" filename="fill_boolean_field_in_document" relpath="delve_into/user/contributors/howto">Fill boolean field in Document<linkto_unchecked/></document><document ext="xml" filename="fill_date_field_in_document" relpath="delve_into/user/contributors/howto">Fill date in Document<linkto_unchecked/></document><document ext="xml" filename="fill_markuped_text_in_document" relpath="delve_into/user/contributors/howto">Fill marked-up text in Document<linkto_unchecked/></document><document ext="xml" filename="fill_string_field_in_document" relpath="delve_into/user/contributors/howto">Fill string in Document<linkto_unchecked/></document><document ext="xml" filename="goto_content_workspace" relpath="delve_into/user/contributors/howto">Goto Content workspace<linkto_unchecked/>
-    <empty_elem>...&lt;span class='content-workspace-16 icon-16'/&gt;.
-    .../&lt;p&gt;<br/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</empty_elem></document><document ext="xml" filename="goto_document_tab" relpath="delve_into/user/contributors/howto">Goto a Document<linkto_unchecked/></document><document ext="xml" filename="goto_folder" relpath="delve_into/user/contributors/howto">Goto a Folder<linkto_unchecked/>
+    <add> image class='content-workspace-16 icon-16'</add></document><document ext="xml" filename="goto_document_tab" relpath="delve_into/user/contributors/howto">Goto a Document<linkto_unchecked/></document><document ext="xml" filename="goto_folder" relpath="delve_into/user/contributors/howto">Goto a Folder<linkto_unchecked/>
     <add>Document about navigation in folder tree and reference from here.</add>
-    <empty_elem>&lt;a href='../concepts/content_listing_panel.html'/&gt;</empty_elem></document><document ext="xml" filename="index" relpath="delve_into/user/contributors/howto"><linkto_unchecked/>
+    <badtext>. The contents of the<span class="bad"> current </span>folder will appear in the</badtext></document><document ext="xml" filename="index" relpath="delve_into/user/contributors/howto"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="learn_meaning_of_inputfield" relpath="delve_into/user/contributors/howto">Learn meaning of inputfield<linkto_unchecked/>
-    <add>more info</add></document><document ext="xml" filename="login" relpath="delve_into/user/contributors/howto">Login as Contributor<linkto_unchecked/></document><document ext="xml" filename="logout" relpath="delve_into/user/contributors/howto">Logout<linkto_unchecked/></document><document ext="xml" filename="open_request_publication" relpath="delve_into/user/contributors/howto">Request Publication of Document<linkto_unchecked/></document><document ext="xml" filename="request_publication" relpath="delve_into/user/contributors/howto">Request Publication of Document<linkto_unchecked/>
-    <add>reference to opening it</add></document><document ext="xml" filename="restore_previous_version" relpath="delve_into/user/contributors/howto">Restoring a previous version of a document<linkto_unchecked/>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="learn_meaning_of_inputfield" relpath="delve_into/user/contributors/howto">Learn meaning of inputfield<linkto_unchecked/></document><document ext="xml" filename="login" relpath="delve_into/user/contributors/howto">Login as Contributor<linkto_unchecked/></document><document ext="xml" filename="logout" relpath="delve_into/user/contributors/howto">Logout<linkto_unchecked/></document><document ext="xml" filename="request_publication" relpath="delve_into/user/contributors/howto">Request Publication of Document<linkto_unchecked/></document><document ext="xml" filename="restore_previous_version" relpath="delve_into/user/contributors/howto">Restoring a previous version of a document<linkto_unchecked/>
     <rewrite>all text</rewrite>
     <badtext>How to replace the<span class="bad"> current </span>content of a document with content the document had sometime in the past?</badtext>
     <badtext>Finally the "Restore" button allows the user to replace the<span class="bad"> current </span>document with the content of a historic document. Note that this does not mean that the historic version of the document becomes the current version of the document. Only the content is restored, and </badtext>
-    <empty_elem>&lt;section name='Restoring a previous version of a document'/&gt;</empty_elem></document><document ext="xml" filename="save_document" relpath="delve_into/user/contributors/howto">Save Document<linkto_unchecked/></document><document ext="xml" filename="start_CMS" relpath="delve_into/user/contributors/howto">Start CMS<linkto_unchecked/></document><folder>todo
+    <empty_elem>&lt;section name='Restoring a previous version of a document'/&gt;</empty_elem></document><document ext="xml" filename="save_document" relpath="delve_into/user/contributors/howto">Save Document<linkto_unchecked/></document><document ext="xml" filename="schedule_publication" relpath="delve_into/user/contributors/howto">Schedule publication of Document<linkto_unchecked/></document><document ext="xml" filename="screenshots" relpath="delve_into/user/contributors/howto">Screenshots<linkto_unchecked/></document><document ext="xml" filename="start_CMS" relpath="delve_into/user/contributors/howto">Start CMS site<linkto_unchecked/>
+    <rewrite>Check what are normal names and make new screenshot.</rewrite>
+    <badtext> that the web address of the site is: http://saraswatia.org:8080/cms. Coincidentially, the site he is<span class="bad"> current </span>ly viewing happens to be the Hippo CMS documentation site at www.onehippo.org.</badtext></document><folder>todo
    
    <document ext="xml" filename="goto_document_tab" relpath="delve_into/user/contributors/howto/todo">Goto a Document<linkto_unchecked/></document></folder></folder><document ext="xml" filename="index" relpath="delve_into/user/contributors">Contributors Guide<linkto_unchecked/></document><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour<linkto_unchecked/></document></folder><folder>editors
    

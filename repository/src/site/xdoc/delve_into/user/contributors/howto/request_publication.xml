@@ -31,41 +31,44 @@ ________________________________________________________________________________
 
    <script type="text/javascript">
     leftpx=300;
-    bottompx=225;
+    bottompx=300;
    </script>
-   <div class='group'> 
+   <div class='group'>
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/contribs/request_schedule_publication.png" alt='request schedule publication screenshot'/> 
-    </div></div> 
-     <p>
-      Requesting publication of the document 'multibazaar2009'. The editor will be notified
-      and accept or reject this request.
-     </p>
+      <img src="../../../../images/screenshots/cms_M9/contribs/goto_request_schedule_publication.png" alt='request schedule publication screenshot'/>
+    </div></div>
+    <p>
+      Requesting publication of the document 'multibazaar2009'.
+    </p>
    </div>
 
-  <span class='add'>reference to opening it</span>
-
    <p>
-    In a <a href='./goto_document_tab.html'>document's tab</a>, e.g. after
-    <a href='./save_document.html'>saving that document</a>, 
-    click the 'publish (request)' button at the top to request that the document be published.
+    In a document in <a href='../concepts/view_mode.html'>view mode</a>, e.g. after
+    <a href='./save_document.html'>saving that document</a>,
+    click the 'schedule publication (request)'
+    button at the top to request that the document be published.
+    <a href='./schedule_publication.html'>A window will popup</a> where you can schedule at
+    what date and time you want the publication to occur.
+   </p>
+   <p>
     The editor will be notified and accept or reject your request.
    </p>
 
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./logout.html'>Logout (continue</a> <a href='../tour.html'>tour</a>).</li>
-    <li><a href='./goto_document_tab.html'>Open another document</a>.</li>
-    <li><a href='./goto_folder.html'>Open another folder</a>.</li>
-   </ul>       
-  </subsection>
+   <subsection name='Next'>
+    <ul>
+     <li><a href='./schedule_publication.html'>Schedule publication (continue</a> <a href='../tour.html'>tour</a>).</li>
+     <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
+     <li><a href='./goto_folder.html'>goto another folder (list its contents)</a>.</li>
+    </ul>
+   </subsection>
 
-                <subsection name='Alternative'>
-   <ul>
-                                <li><a href='./index.html'>Howto list.</a>.</li>
-   </ul>       
-  </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
-   </section>
-  </body>
-</document>        
+  </section>
+ </body>
+</document>

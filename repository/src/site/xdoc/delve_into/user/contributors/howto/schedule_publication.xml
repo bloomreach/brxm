@@ -22,55 +22,48 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Request Publication of Document</title>
+    <title>Schedule publication Document</title>
   </properties>
 
   <body>
-    <section name="Request Publication of Document">
-      <span class="shortdesc">How to ask the editor to publish a document?</span>
-   
+    <section name="Schedule publication of Document">
+      <span class="shortdesc">How to schedule when your document should be published?</span>
+
    <script type="text/javascript">
     leftpx=300;
-    bottompx=300;
+    bottompx=225;
    </script>
-   <div class='group'>
+   <div class='group'> 
     <div id='screenshot'><div>
-      <img src="../../../../images/screenshots/cms_M9/contribs/goto_request_schedule_publication.png" alt='request schedule publication screenshot'/>
-    </div></div>
-    <p>
-      Requesting publication of the document 'multibazaar2009'. 
-      <a href='./request_publication.html'>A window will popup</a> where you can schedule at 
-      what date and time you want the publication to occur.
-
-      The editor will be notified and accept or reject this request.
-    </p>
+     <img src="../../../../images/screenshots/cms_M9/contribs/request_schedule_publication.png" alt='request schedule publication screenshot'/> 
+    </div></div> 
+     <p>
+        Scheduling publication of the document 'multibazaar2009' to occur on the fifth of January, 2009 at
+        17:13.
+     </p>
    </div>
 
    <p>
-    In a document in <a href='../concepts/view_mode.html'>view mode</a>, e.g. after
-    <a href='./save_document.html'>saving that document</a>, 
-    click the 'schedule publication (request)' 
-    button at the top to request that the document be published.
-   </p>
-   <p>
-    The editor will be notified and accept or reject your request.
+      After <a href='./request_publication.html'>requesting publication</a> of your document,
+      a window will popup where you can schedule when you think the publication of your document should occur.
+      This is actually part of your request for publication, so canceling the scheduling also cancels your request
+      for publication.
    </p>
 
    <subsection name='Next'>
     <ul>
      <li><a href='./logout.html'>Logout (continue</a> <a href='../tour.html'>tour</a>).</li>
-  <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
-     <li><a href='./goto_folder.html'>goto another folder (list its contents)</a>.</li>
-    </ul>       
+     <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
+     <li><a href='./goto_folder.html'>Open another folder</a>.</li>
+    </ul>
    </subsection>
 
    <subsection name='Alternative'>
     <ul>
      <li><a href='./index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>
-    </ul>       
+    </ul>
    </subsection>
-
   </section>
  </body>
-</document>        
+</document>

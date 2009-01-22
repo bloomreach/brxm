@@ -157,7 +157,7 @@
      </tr>
 
      <tr>
-      <td><a href="./howto/fill_markuped_text_in_document.html">save document</a></td>
+      <td><a href="./howto/save_document.html">save document</a></td>
       <td>
        <span class='user-48 icon-48'/> 
       </td>
@@ -172,9 +172,20 @@
       <td>
        <span class='user-48 icon-48'/> 
       </td>
-      <td> 
+      <td>
          Marc now requests publication of his article. Janine is the editor and she
          will receive this request and accept or reject it.
+      </td>
+     </tr>
+
+     <tr>
+      <td><a href="./howto/schedule_publication.html">schedule publication</a></td>
+      <td>
+       <span class='user-48 icon-48'/> 
+      </td>
+      <td>
+         As part of requesting publication of his article, Marc schedules when
+         he thinks his article should be published.
       </td>
      </tr>
 
@@ -184,10 +195,10 @@
        <span class='logout-48 icon-48'/> 
       </td>
       <td> 
-         Marc quits for today.          
+         Marc quits for today.
       </td>
      </tr>
- 
+
     </table>
    </blockquote>
 

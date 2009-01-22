@@ -22,10 +22,10 @@
         <title>in Servlet Container</title>
     </properties>
     <body>
-     <section name="Deploying in Servlet Container">
-      <span class='shortdesc'>Get Hippo CMS up and running 
+     <section name="in Servlet Container">
+      <span class='shortdesc'>Get Hippo CMS up and running
        in a Java <span class='index' id='servlet_container'>servlet container</span>.</span>
-     
+
        <p>
         To deploy Hippo CMS in a servlet container, the WAR package is used.
         <span class='expire_event'>release</span>Hippo ECM is still under development, 

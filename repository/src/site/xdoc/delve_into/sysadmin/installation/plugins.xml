@@ -23,7 +23,8 @@
   </properties>
   <body>
 
-    <section name="Installing plugins from the Hippo forge">
+   <section name="Hippo Forge plugins">
+    <span class='shortdesc'>Installing plugins from the Hippo forge.</span>
       <p>
         The Hippo Forge, <a href="http://forge.onehippo.org/">http://forge.onehippo.org/</a>,
         is a repository filled with all kinds of useful frontend and repository
@@ -37,6 +38,7 @@
           href="http://forge.onehippo.org/projects/feedbackplugin/">feedbackplugin</a>
           for the demonstration.  Download the latest version of the plugin,
           hippo-forge-feedbackplugin-1.01.00.jar at the time of this writing.
+          <span class='expires'>sometime</span>
         </p>
       </subsection>
 
