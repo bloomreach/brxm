@@ -241,6 +241,10 @@
    fullname='delve_into/sysadmin/configuration/console.xml'
    relpath='delve_into/sysadmin/configuration'
   >console</file>
+     <file ext='xml~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/sysadmin/configuration/console.xml~'
+   relpath='delve_into/sysadmin/configuration'
+  >console</file>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/sysadmin/configuration/database_server.xml'
    relpath='delve_into/sysadmin/configuration'
@@ -250,6 +254,10 @@
    relpath='delve_into/sysadmin/configuration'
   >index</file>
      <folder>nodes
+<info>
+ <title>JCR nodes</title>             <!-- string -->
+ <shortdesc>Configuration nodes in the JCR tree inside the repository</shortdesc>     <!-- string -->
+</info>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/sysadmin/configuration/nodes/domains.xml'
    relpath='delve_into/sysadmin/configuration/nodes'
@@ -280,6 +288,10 @@
    relpath='delve_into/sysadmin/configuration'
   >performance_tuning</file>
      <folder>repository
+<info>
+ <title>Repository</title>                   <!-- string -->
+ <shortdesc>The base repository configuration through a number of XML files.</shortdesc>     <!-- string -->
+</info>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/sysadmin/configuration/repository/authentication.xml'
    relpath='delve_into/sysadmin/configuration/repository'
@@ -622,10 +634,6 @@
  </afterlist>
 </info>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
-   fullname='delve_into/user/contributors/howto/browsing_history_of_document.xml'
-   relpath='delve_into/user/contributors/howto'
-  >browsing_history_of_document</file>
-      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/howto/create_document.xml'
    relpath='delve_into/user/contributors/howto'
   >create_document</file>
@@ -698,10 +706,22 @@
    relpath='delve_into/user/contributors/howto'
   >start_CMS</file>
       <folder>todo
+<info>
+ <title>todo</title>             <!-- string -->
+ <shortdesc>This folder contains howto's that are in development.</shortdesc>     <!-- string -->
+</info>
+       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/contributors/howto/todo/browsing_history_of_document.xml'
+   relpath='delve_into/user/contributors/howto/todo'
+  >browsing_history_of_document</file>
        <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/howto/todo/goto_document_tab.xml'
    relpath='delve_into/user/contributors/howto/todo'
   >goto_document_tab</file>
+       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+   fullname='delve_into/user/contributors/howto/todo/index.xml'
+   relpath='delve_into/user/contributors/howto/todo'
+  >index</file>
       </folder>
      </folder>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'

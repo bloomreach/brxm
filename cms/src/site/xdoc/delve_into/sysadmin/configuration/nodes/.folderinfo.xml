@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<info>
+ <title>JCR nodes</title>             <!-- string -->
+ <shortdesc>Configuration nodes in the JCR tree inside the repository</shortdesc>     <!-- string -->
+</info>
+
+
+
+

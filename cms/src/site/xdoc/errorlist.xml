@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">357 errors and/or todos in 197 out of 197 documents (100%).</span>
+      <span class="shortdesc">359 errors and/or todos in 198 out of 198 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -280,12 +280,6 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/sysadmin/configuration/console.html">console: Console</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
             <a href="./delve_into/sysadmin/configuration/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
@@ -395,6 +389,13 @@ repository is;
           </li>
           <li>
             <a href="./delve_into/user/contributors/howto/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/howto/todo/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
               <li>Missing section. Add &lt;section name='...'&gt;.</li>
@@ -826,15 +827,6 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/contributors/howto/browsing_history_of_document.html">browsing_history_of_document: Browsing history of a document</a>
-            <ul>
-              <li>Initially the<span xmlns="" class="bad"> current </span>version is show. With the "Older" link you can browse back into previous versions of the document, or back again towards the most current version using the "Newer" link.</li>
-              <li>the version is shown. The name of the article is shown (which is constant over all versions, only the<span xmlns="" class="bad"> current </span>name is shown, renaming or moving a document is not part of the document history of the document itself but --if available-- part of the document in which a document is embedded).</li>
-              <li>on number is indicated, which counts from 1, the first version of a document created towards the most<span xmlns="" class="bad"> current </span>document, which does not have a version number yet. It will show the date and time, when a historic version of the document was created and until when that version of the document was the most current</li>
-              <li>Note that this is not the same as when the next<span xmlns="" class="bad"> current </span>document was created, as it may be that there was no current document in the document history.</li>
-            </ul>
-          </li>
-          <li>
             <a href="./delve_into/user/contributors/howto/goto_folder.html">goto_folder: Goto a Folder</a>
             <ul>
               <li>. The contents of the<span xmlns="" class="bad"> current </span>folder will appear in the</li>
@@ -851,6 +843,15 @@ repository is;
             <a href="./delve_into/user/contributors/howto/start_CMS.html">start_CMS: Start CMS site</a>
             <ul>
               <li> that the web address of the site is: http://saraswatia.org:8080/cms. Coincidentially, the site he is<span xmlns="" class="bad"> current </span>ly viewing happens to be the Hippo CMS documentation site at www.onehippo.org.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/howto/todo/browsing_history_of_document.html">browsing_history_of_document: Browsing history of a document</a>
+            <ul>
+              <li>Initially the<span xmlns="" class="bad"> current </span>version is show. With the "Older" link you can browse back into previous versions of the document, or back again towards the most current version using the "Newer" link.</li>
+              <li>the version is shown. The name of the article is shown (which is constant over all versions, only the<span xmlns="" class="bad"> current </span>name is shown, renaming or moving a document is not part of the document history of the document itself but --if available-- part of the document in which a document is embedded).</li>
+              <li>on number is indicated, which counts from 1, the first version of a document created towards the most<span xmlns="" class="bad"> current </span>document, which does not have a version number yet. It will show the date and time, when a historic version of the document was created and until when that version of the document was the most current</li>
+              <li>Note that this is not the same as when the next<span xmlns="" class="bad"> current </span>document was created, as it may be that there was no current document in the document history.</li>
             </ul>
           </li>
           <li>
