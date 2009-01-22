@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.onehippo.ecm.hst</groupId>
     <artifactId>applications</artifactId>
-    <name>HSTTWO Applications</name>
-    <description>Jetspeed-2 Applications</description>
+    <name>Hippo Site Toolkit Applications</name>
+    <description>Hippo Site Toolkit Applications</description>
     <parent>
       <groupId>org.onehippo.ecm</groupId>
       <artifactId>hst</artifactId>
@@ -16,7 +16,7 @@
     <packaging>pom</packaging>
 
     <modules>
-      <module>gettingstarted</module>
+      
     </modules>
 
 </project>

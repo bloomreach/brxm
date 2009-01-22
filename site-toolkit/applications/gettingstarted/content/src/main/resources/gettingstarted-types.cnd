@@ -1,9 +1,0 @@
-<'gettingstarted'='http://www.hippoecm.org/gettingstarted/1.1'>
-<'hippostd'='http://www.hippoecm.org/hippostd/nt/1.2'>
-<'hippo'='http://www.hippoecm.org/nt/1.2'>
-
-[gettingstarted:textpage] > hippostd:publishable, hippostd:publishableSummary, hippo:document
-+ gettingstarted:body (hippostd:html)
-- gettingstarted:summary (string)
-- gettingstarted:title (string)
-- gettingstarted:date (date)

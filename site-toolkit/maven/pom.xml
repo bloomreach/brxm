@@ -6,8 +6,8 @@
 
   <groupId>org.onehippo.ecm.hst</groupId>
   <artifactId>maven</artifactId>
-  <name>Site Tool Kit Maven Plugins</name>
-  <description>Site Tool Kit Maven Plugins</description>
+  <name>Hippo Site Toolkit Maven Plugins</name>
+  <description>Hippo Site Toolkit Maven Plugins</description>
   <parent>
     <groupId>org.onehippo.ecm</groupId>
     <artifactId>hst</artifactId>
@@ -17,9 +17,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    <!-- 
     <module>archetype</module>
-    -->
   </modules>
 
   <reporting>

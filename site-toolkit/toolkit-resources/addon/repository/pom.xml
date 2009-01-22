@@ -24,8 +24,8 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Hippo Site Toolkit Addon Repository</name>
-  <description>Hippo Site Toolkit Addon Repository</description>
+  <name>Hippo Site Toolkit Addon Resources to the Repository</name>
+  <description>Hippo Site Toolkit Addon Resources to the Repository</description>
   <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
   <artifactId>repository</artifactId>
   <packaging>jar</packaging>

@@ -51,8 +51,8 @@
 mvn archetype:generate \
  -DremoteRepositories=http://repository.hippocms.org/maven2,http://repo1.maven.org/maven2 \
  -DarchetypeGroupId=org.onehippo.ecm.hst \
- -DarchetypeArtifactId=site-toolkit-archetype \
- -DarchetypeVersion=2.02.01 \
+ -DarchetypeArtifactId=hst-archetype \
+ -DarchetypeVersion=2.02.05 \
  -Dversion=1.01.00 \
  -DgroupId=org.example \
  -DartifactId=myproject

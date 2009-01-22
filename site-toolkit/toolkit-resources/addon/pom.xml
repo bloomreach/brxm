@@ -24,8 +24,8 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Hippo Site Toolkit Addon</name>
-  <description>Hippo Site Toolkit Addon</description>
+  <name>Hippo Site Toolkit Addon Resources</name>
+  <description>Hippo Site Toolkit Addon Resources</description>
   <groupId>org.onehippo.ecm.hst.toolkit-resources</groupId>
   <artifactId>addon</artifactId>
   <packaging>pom</packaging>

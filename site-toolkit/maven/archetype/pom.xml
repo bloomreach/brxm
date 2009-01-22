@@ -10,7 +10,7 @@
 
   <name>Hippo Site Toolkit Archetype</name>
   <description>Hippo Site Toolkit Archetype</description>
-  <groupId>org.onehippo.ecm.hst.maven</groupId>
+  <groupId>org.onehippo.ecm.hst</groupId>
   <artifactId>hst-archetype</artifactId>
   <packaging>maven-archetype</packaging>
   
