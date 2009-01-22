@@ -36,7 +36,7 @@
     <javax.jcr.version>1.0</javax.jcr.version>
     <hippoecm.version>2.02.01</hippoecm.version>
   </properties>
-
+  
   <!-- 
      Software configuration management (scm): where to find and how to get acces to the source repository 
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html 
