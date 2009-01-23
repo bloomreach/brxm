@@ -19,13 +19,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 
-class TooManyEditorsWarningDialog extends AbstractDialog {
+class TooManyEditorsDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    TooManyEditorsWarningDialog() {
+    TooManyEditorsDialog() {
         cancel.setVisible(false);
     }
 

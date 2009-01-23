@@ -303,7 +303,7 @@ public class EditorManagerPlugin implements IPlugin, IModelListener, IJcrNodeMod
             }
         } else {
             IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-            dialogService.show(new TooManyEditorsWarningDialog());
+            dialogService.show(new TooManyEditorsDialog());
             pending.add(nodeModel);
         }
     }
