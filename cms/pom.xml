@@ -51,14 +51,14 @@
          May not contain dots as they are processed by Apache velocity.
          Can be used in xdoc files with the extension .xml.vm
     -->
-    <quickstart_war_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.14160/hippo-ecm-quickstart-war-2.01.00.14160.war</quickstart_war_url>
+    <quickstart_war_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.03.00/hippo-ecm-quickstart-war-2.03.00.war</quickstart_war_url>
      <!-- also found: http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.13536/hippo-ecm-quickstart-war-2.01.00.13536.war -->
 
-    <quickstart_ear_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-ear/2.01.00.14160/hippo-ecm-quickstart-ear-2.01.00.14160.ear</quickstart_ear_url>     
+    <quickstart_ear_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-ear/2.03.00/hippo-ecm-quickstart-ear-2.03.00.ear</quickstart_ear_url>     
     <!-- also found: http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-ear/2.01.00.13536/hippo-ecm-quickstart-ear-2.01.00.13536.ear --> 
-                        
-    <quickstart_zip_package_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.04/hippo-ecm-quickstart-bin-2.01.04.zip</quickstart_zip_package_url>
-    <quickstart_targz_package_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.04/hippo-ecm-quickstart-bin-2.01.04.tar.gz</quickstart_targz_package_url>
+
+    <quickstart_zip_package_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.03.00/hippo-ecm-quickstart-bin-2.03.00.zip</quickstart_zip_package_url>
+    <quickstart_targz_package_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.03.00/hippo-ecm-quickstart-bin-2.03.00.tar.gz</quickstart_targz_package_url>
 
     <geronimo_jar_url>http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar</geronimo_jar_url>
 
@@ -77,7 +77,7 @@
     <easymock.version>1.1</easymock.version>
     <selenium.version>0.9.2</selenium.version>
     <atomikos.version>3.1.4</atomikos.version>
-   
+
     <!-- Project Dependencies -->
     <commons-collections.version>3.1</commons-collections.version>
     <commons-httpclient.version>3.0</commons-httpclient.version>
@@ -160,7 +160,6 @@
       <name>Arje Cahn</name>
       <id>acahn</id>
       <organization>Hippo</organization>
-      <email>hipporepos-dev@lists.onehippo.org</email>
       <roles>
         <role>Project Lead</role>
       </roles>
@@ -169,7 +168,6 @@
     <developer>
       <name>Ate Douma</name>
       <id>adouma</id>
-      <email>hipporepos-dev@lists.onehippo.org</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
@@ -179,7 +177,6 @@
     <developer>
       <name>Ard Schrijvers</name>
       <id>aschrijvers</id>
-      <email>hipporepos-dev@lists.onehippo.org</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
@@ -189,7 +186,6 @@
     <developer>
       <name>(Berry) A.W. van Halderen</name>
       <id>bvanhalderen</id>
-      <email>hipporepos-dev@lists.onehippo.org</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
@@ -199,7 +195,6 @@
     <developer>
       <name>Bart van der Schans</name>
       <id>bvdschans</id>
-      <email>hipporepos-dev@lists.onehippo.org</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
@@ -209,7 +204,6 @@
     <developer>
       <name>Niels van Kampenhout</name>
       <id>nvankampenhout</id>
-      <email>hipporepos-dev@lists.onehippo.org</email>
       <organization>Hippo</organization>
       <roles>
         <role>Doctator</role>
@@ -219,7 +213,6 @@
     <developer>
       <name>Frank van Lankvelt</name>
       <id>fvlankvelt</id>
-      <email>hipporepos-dev@lists.onehippo.org</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
@@ -229,7 +222,6 @@
     <developer>
       <name>Auke van Scheltinga</name>
       <id>avanscheltinga</id>
-      <email>hipporepos-dev@lists.onehippo.org</email>
       <organization>Hippo</organization>
       <roles>
         <role>Designer</role>
@@ -239,7 +231,6 @@
     <developer>
       <name>Arthur Bogaart</name>
       <id>abogaart</id>
-      <email>hipporepos-dev@lists.onehippo.org</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
@@ -249,7 +240,6 @@
     <developer>
       <name>Rita Bijlsma</name>
       <id>rbijlsma</id>
-      <email>hipporepos-dev@lists.onehippo.org</email>
       <organization>Hippo</organization>
       <roles>
         <role>Doctator</role>
@@ -259,7 +249,6 @@
     <developer>
       <name>Jeroen Tietema</name>
       <id>jtietema</id>
-      <email>hipporepos-dev@lists.onehippo.org</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
@@ -269,15 +258,17 @@
   </developers>
 
   <mailingLists>
-    <mailingList>
-      <name>Hippo Repository 2 Dev List</name>
-      <subscribe>hipporepos-dev-subscribe@lists.onehippo.org</subscribe>
-      <unsubscribe>hipporepos-dev-unsubscribe@lists.onehippo.org</unsubscribe>
-      <post>hipporepos-dev@lists.onehippo.org</post>
-      <archive>http://lists.onehippo.org/pipermail/hipporepos-dev/</archive>
-
-      <!--  http://lists.hippoforge.org/mailman/listinfo/hipporepos-dev/ -->
-    </mailingList>
+   <mailingList>
+    <name>Hippo cms7 User List</name>
+    <subscribe>hippo-cms7-user-join@lists.onehippo.org</subscribe>
+    <unsubscribe>hippo-cms7-user-leave@lists.onehippo.org</unsubscribe>
+    <post>hippo-cms7-user@lists.onehippo.org</post>
+    <archive>http://lists.onehippo.org/pipermail/hippo-cms7-user/</archive>
+   </mailingList>
+   <mailingList>
+    <name>Hippo Repository 2 Dev List</name>
+    <archive>http://lists.onehippo.org/pipermail/hipporepos-dev/</archive>
+   </mailingList>
   </mailingLists>
 
   <repositories>
