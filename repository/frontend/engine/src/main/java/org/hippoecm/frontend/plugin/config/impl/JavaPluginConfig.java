@@ -40,13 +40,25 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
 
     private IPluginConfig upstream;
     
+    private String pluginInstanceName = null;
+
     public JavaPluginConfig() {
         super();
+    }
+
+    public JavaPluginConfig(String name) {
+        super();
+        pluginInstanceName = name;
     }
 
     public JavaPluginConfig(IPluginConfig parentConfig) {
         super(parentConfig == null ? new MiniMap(0) : parentConfig);
         upstream = parentConfig;
+        pluginInstanceName = parentConfig.getName();
+    }
+
+    public String getName() {
+        return pluginInstanceName;
     }
 
     public void detach() {

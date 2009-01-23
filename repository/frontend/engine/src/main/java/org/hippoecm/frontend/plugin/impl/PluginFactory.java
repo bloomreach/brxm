@@ -19,6 +19,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Session;
@@ -102,6 +103,9 @@ public class PluginFactory implements IClusterable {
             } else {
                 log.error(message);
             }
+        }
+        if(plugin instanceof Component) {
+            ((Component)plugin).setMarkupId(config.getName());
         }
         return plugin;
     }
