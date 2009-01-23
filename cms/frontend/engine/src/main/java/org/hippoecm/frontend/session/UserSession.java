@@ -15,11 +15,14 @@
  */
 package org.hippoecm.frontend.session;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.Component;
 import org.apache.wicket.Request;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.RestartResponseException;
@@ -28,6 +31,7 @@ import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
@@ -104,4 +108,26 @@ public class UserSession extends WebSession {
         return result;
     }
 
+    private Map<String,Integer> pluginComponentCounters = new HashMap<String,Integer>();
+
+    // Do not add the @Override annotation on this
+    public Object getMarkupId(Component component) {
+        String markupId = null;
+        for (Component ancestor=component.getParent(); ancestor!=null && markupId==null; ancestor=ancestor.getParent()) {
+            if (ancestor instanceof IPlugin) {
+                markupId = ancestor.getMarkupId(true);
+                break;
+            }
+        }
+        if (markupId == null) {
+            return "root";
+        }
+        int componentNum = 0;
+        if (pluginComponentCounters.containsKey(markupId)) {
+            componentNum = pluginComponentCounters.get(markupId).intValue();
+        }
+        ++componentNum;
+        pluginComponentCounters.put(markupId, new Integer(componentNum));
+        return markupId + "_" + componentNum;
+    }
 }

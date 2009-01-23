@@ -60,6 +60,20 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
         return nodeModel;
     }
 
+    public String getName() {
+        try {
+            Node node = nodeModel.getNode();
+            if (node != null) {
+                return node.getName();
+            } else {
+                log.warn("Node model is not valid");
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return null;
+    }
+
     public boolean getBoolean(String key) throws StringValueConversionException {
         try {
             Property property = getProperty(key);
