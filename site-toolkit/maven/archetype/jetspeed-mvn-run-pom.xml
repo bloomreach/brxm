@@ -37,31 +37,85 @@
 	        <phase>process-resources</phase>
 	        <configuration>
 	          <tasks>
-                    <echo message="$$$$$$$$$$ Installing this archetype $$$$$$$$$$" />
-                    <exec executable="mvn">
-                      <arg value="clean" />
-                      <arg value="install" />
-                    </exec>
-                    <echo message="$$$$$$$$$$ Generating an example HST application from the archetype $$$$$$$$$$" />
-                    <exec executable="mvn" dir="target">
-                      <arg value="archetype:generate" />
-                      <arg value="-DarchetypeGroupId=org.onehippo.ecm.hst" />
-                      <arg value="-DarchetypeArtifactId=hst-archetype" />
-                      <arg value="-DarchetypeVersion=2.02.05-SNAPSHOT" />
-                      <arg value="-Dversion=1.01.00" />
-                      <arg value="-DgroupId=org.example" />
-                      <arg value="-DartifactId=myproject" />
-                    </exec>
-                    <echo message="$$$$$$$$$$ Packaging an example HST application from the archetype $$$$$$$$$$" />
-                    <exec executable="mvn" dir="target/myproject">
-                      <arg value="package" />
-                    </exec>
-                    <echo message="$$$$$$$$$$ Running an example Hippo Repository $$$$$$$$$$" />
-                    <exec executable="mvn" dir="target/myproject/cms" spawn="true">
-                      <arg value="jetty:run-war" />
-                    </exec>
-                    <echo message="$$$$$$$$$$ Sleeping for a while to give time to the Repository $$$$$$$$$$" />
-                    <sleep seconds="60"/>
+	            
+                <echo message="$$$$$$$$$$ Installing this archetype $$$$$$$$$$" />
+                <java classname="org.codehaus.classworlds.Launcher" dir="." fork="true" failonerror="true">
+                  <permissions>
+                    <grant class="java.security.AllPermission"/>
+                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
+                    <grant class="java.util.PropertyPermission" name="*" actions="read,write"/>
+                  </permissions>
+                  <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+                  <sysproperty key="maven.home" value="${maven.home}" />
+                  <classpath>
+                    <fileset dir="${maven.home}/boot">
+                      <include name="**/*.jar"/>
+                    </fileset>
+                  </classpath>
+                  <arg value="clean" />
+                  <arg value="install" />
+                </java>
+                
+                <echo message="$$$$$$$$$$ Generating an example HST application from the archetype $$$$$$$$$$" />
+                <java classname="org.codehaus.classworlds.Launcher" dir="target" fork="true" failonerror="true">
+                  <permissions>
+                    <grant class="java.security.AllPermission"/>
+                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
+                    <grant class="java.util.PropertyPermission" name="*" actions="read,write"/>
+                  </permissions>
+                  <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+                  <sysproperty key="maven.home" value="${maven.home}" />
+                  <classpath>
+                    <fileset dir="${maven.home}/boot">
+                      <include name="**/*.jar"/>
+                    </fileset>
+                  </classpath>
+                  <arg value="archetype:generate" />
+                  <arg value="-DarchetypeGroupId=org.onehippo.ecm.hst" />
+                  <arg value="-DarchetypeArtifactId=hst-archetype" />
+                  <arg value="-DarchetypeVersion=${pom.version}" />
+                  <arg value="-Dversion=1.01.00" />
+                  <arg value="-DgroupId=org.example" />
+                  <arg value="-DartifactId=myproject" />
+                </java>
+                
+                <echo message="$$$$$$$$$$ Packaging an example HST application from the archetype $$$$$$$$$$" />
+                <java classname="org.codehaus.classworlds.Launcher" dir="target/myproject" fork="true" failonerror="true">
+                  <permissions>
+                    <grant class="java.security.AllPermission"/>
+                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
+                    <grant class="java.util.PropertyPermission" name="*" actions="read,write"/>
+                  </permissions>
+                  <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+                  <sysproperty key="maven.home" value="${maven.home}" />
+                  <classpath>
+                    <fileset dir="${maven.home}/boot">
+                      <include name="**/*.jar"/>
+                    </fileset>
+                  </classpath>
+                  <arg value="install" />
+                </java>
+                
+                <echo message="$$$$$$$$$$ Running an example Hippo Repository $$$$$$$$$$" />
+                <java classname="org.codehaus.classworlds.Launcher" dir="target/myproject/cms" fork="true" spawn="true">
+                  <permissions>
+                    <grant class="java.security.AllPermission"/>
+                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
+                    <grant class="java.util.PropertyPermission" name="*" actions="read,write"/>
+                  </permissions>
+                  <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+                  <sysproperty key="maven.home" value="${maven.home}" />
+                  <classpath>
+                    <fileset dir="${maven.home}/boot">
+                      <include name="**/*.jar"/>
+                    </fileset>
+                  </classpath>
+                  <arg value="jetty:run-war" />
+                </java>
+                
+                <echo message="$$$$$$$$$$ Sleeping for a while to give time to the Repository $$$$$$$$$$" />
+                <sleep seconds="60"/>
+                
 	          </tasks>
 	        </configuration>
 	        <goals>
