@@ -23,19 +23,15 @@
     </properties>
     <body>
         <section name="Roadmap Hippo CMS">
-         <span class='shortdesc'>Dates for future releases of Hippo CMS</span> 
-
-            <h3>Release Schedule</h3>
-            <p> Hippo works with a monthly development cycle. We believe in the <a
-                    href="http://www.catb.org/~esr/writings/cathedral-bazaar/cathedral-bazaar/ar01s04.html"
-                    >Release Early, Release Often</a> paradigm from the Linux community, and use the
-                    <a href="http://www.controlchaos.com/about/">SCRUM development methodology</a>
-                to iteratively build our software. </p> We have 4 scheduled <b>releases</b> per
-            year. A release is a version for which <a href="http://www.onehippo.com">Hippo</a>
-            offers paid support services. See <a href="http://www.onehippo.com/en/support"
-                >http://www.onehippo.com/en/support</a> for more information. <p> Here's the Roadmap
-                outine for 2009. This is a list of how we intent to roll out functionalities, even though some changes may occur as priorities shift.
-           </p>
+         <span class='shortdesc'>Dates for future releases of Hippo CMS</span>
+         <p>
+           Here's the Roadmap outline for Hippo CMS for 2009.
+           This is a list of how we intent to roll out functionalities, even though some changes may occur as priorities shift.
+           The version numbers follow <a href='./version_numbers.html'>this version numbering scheme</a>.
+           Note that only the supported releases are listed here, not the montly updates. See the
+           <a href='http://www.onehippo.org/about/release_schedule.html'>notes on the release schedule</a> for
+           more information.
+         </p>
             <table>
                 <thead>
                     <tr>

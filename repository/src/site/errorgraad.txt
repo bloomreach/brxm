@@ -301,3 +301,11 @@ fifi is /home/rita/bin/fifi
       <span class="shortdesc">359 errors and/or todos in 198 out of 198 documents (100%).</span>
 #_________________________________________________________________________rita_2009-w04-7-20:47
       <span class="shortdesc">370 errors and/or todos in 205 out of 205 documents (100%).</span>
+#_______________________________________________________________________rita_2009-w05-1-12:06
+      <span class="shortdesc">375 errors and/or todos in 208 out of 208 documents (100%).</span>
+#_______________________________________________________________________rita_2009-w05-1-12:50
+      <span class="shortdesc">376 errors and/or todos in 209 out of 209 documents (100%).</span>
+#_______________________________________________________________________rita_2009-w05-1-13:36
+      <span class="shortdesc">376 errors and/or todos in 209 out of 209 documents (100%).</span>
+#_______________________________________________________________________rita_2009-w05-1-13:38
+      <span class="shortdesc">376 errors and/or todos in 209 out of 209 documents (100%).</span>
