@@ -265,6 +265,30 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.portals.jetspeed-2</groupId>
+        <artifactId>jetspeed-mvn-maven-plugin</artifactId>
+        <version>2.2-SNAPSHOT</version>
+        <inherited>false</inherited>
+        <configuration>
+          <targets combine.children="append">
+            <target>
+              <id>run-repository</id>
+              <name>run</name>
+              <dir>maven/archetype</dir>
+              <goals>process-resources</goals>
+              <profiles>run-war</profiles>
+            </target>
+            <target>
+              <id>test</id>
+              <dir>.</dir>
+              <goals>test</goals>
+              <profiles>test</profiles>
+              <depends>run-repository</depends>
+            </target>
+          </targets>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

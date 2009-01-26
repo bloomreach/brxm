@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>maven</artifactId>
+    <groupId>org.onehippo.ecm.hst</groupId>
+    <version>2.02.05-SNAPSHOT</version>
+    <relativePath>..</relativePath>
+  </parent>
+
+  <name>Hippo Site Toolkit Archetype</name>
+  <description>Hippo Site Toolkit Archetype</description>
+  <groupId>org.onehippo.ecm.hst</groupId>
+  <artifactId>hst-archetype</artifactId>
+  <packaging>pom</packaging>
+
+  <build>
+    <defaultGoal>process-resources</defaultGoal>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>run-war</id>
+      <build>
+        <defaultGoal>process-resources</defaultGoal>
+        <plugins>
+          <plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
+	    <artifactId>maven-antrun-plugin</artifactId>
+	    <version>1.2</version>
+	    <executions>
+	      <execution>
+	        <id>run</id>
+	        <phase>process-resources</phase>
+	        <configuration>
+	          <tasks>
+                    <echo message="$$$$$$$$$$ Installing this archetype $$$$$$$$$$" />
+                    <exec executable="mvn">
+                      <arg value="clean" />
+                      <arg value="install" />
+                    </exec>
+                    <echo message="$$$$$$$$$$ Generating an example HST application from the archetype $$$$$$$$$$" />
+                    <exec executable="mvn" dir="target">
+                      <arg value="archetype:generate" />
+                      <arg value="-DarchetypeGroupId=org.onehippo.ecm.hst" />
+                      <arg value="-DarchetypeArtifactId=hst-archetype" />
+                      <arg value="-DarchetypeVersion=2.02.05-SNAPSHOT" />
+                      <arg value="-Dversion=1.01.00" />
+                      <arg value="-DgroupId=org.example" />
+                      <arg value="-DartifactId=myproject" />
+                    </exec>
+                    <echo message="$$$$$$$$$$ Packaging an example HST application from the archetype $$$$$$$$$$" />
+                    <exec executable="mvn" dir="target/myproject">
+                      <arg value="package" />
+                    </exec>
+                    <echo message="$$$$$$$$$$ Running an example Hippo Repository $$$$$$$$$$" />
+                    <exec executable="mvn" dir="target/myproject/cms" spawn="true">
+                      <arg value="jetty:run-war" />
+                    </exec>
+                    <echo message="$$$$$$$$$$ Sleeping for a while to give time to the Repository $$$$$$$$$$" />
+                    <sleep seconds="60"/>
+	          </tasks>
+	        </configuration>
+	        <goals>
+	          <goal>run</goal>
+	        </goals>
+	      </execution>
+	    </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
