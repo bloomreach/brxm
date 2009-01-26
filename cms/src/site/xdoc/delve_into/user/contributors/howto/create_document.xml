@@ -49,16 +49,16 @@ ________________________________________________________________________________
       <a href='../concepts/content_tabulation_panel.html'>content tabulation panel</a>, in which
       there now is already one documentname tabulated: 'artificial intelligence'.
       The unfilled document itself will appear on its own 
-      <a href='../concepts/document_card.html'>card</a> in the
-      <a href='../concepts/documents_panel.html'>documents panel</a>,
+      <a href='../concepts/card.html'>card</a> in the
+      <a href='../concepts/cards_panel.html'>cards panel</a>,
       in <a href='../concepts/edit_mode.html'>edit mode</a>, meaning that you may start
       filling the new document immediately.
     </p>
    </div>
 
    <p>
-    To create a new document in the <a href='./current_folder.html'>current_folder</a>,     
-    select 'create document' in the <a href='./folder_action_menu.html'>folder action menu.</a>
+    To create a new document in the <a href='../concepts/current_folder.html'>current_folder</a>,
+    select 'create document' in the <a href='../concepts/folder_action_menu.html'>folder action menu.</a>
     A dialog window appears.
    </p>
    <p>
@@ -80,15 +80,15 @@ ________________________________________________________________________________
     <li><a href='./fill_boolean_field_in_document.html'>fill boolean field in document</a>.</li> 
     <li><a href='./fill_markuped_text_in_document.html'>fill markedup text in document</a>.</li>
     <!--  <li><a href='./create_document.html'>Create another document</a>.</li> -->
-   </ul>       
+   </ul>
   </subsection>
    <subsection name='Alternative'>
     <ul>
      <li><a href='./index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>
-    </ul>       
+    </ul>
    </subsection>
 
   </section>
  </body>
-</document>        
+</document>

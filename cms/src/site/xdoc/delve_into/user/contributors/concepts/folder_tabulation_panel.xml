@@ -22,12 +22,12 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Content tabulation panel</title>
+    <title>Folder tabulation panel</title>
   </properties>
 
   <body>
-   <section name="Content tabulation panel">
-      <span class="shortdesc">What and where is the content tabulation panel?</span>
+   <section name="Folder tabulation panel">
+      <span class="shortdesc">What and where is the folder tabulation panel?</span>
 
 
    <script type="text/javascript">
@@ -35,11 +35,11 @@ ________________________________________________________________________________
    </script>
     <div class='group'>
      <div id='screenshot'><div>
-      <img src="../../../../images/screenshots/cms_M9/contribs/content_tabulation_panel.png" 
-       alt='content tabulation panel screenshot'/>
+      <img src="../../../../images/screenshots/cms_M9/contribs/folder_tabulation_panel.png" 
+       alt='folder tabulation panel screenshot'/>
      </div></div>
      <p>
-      The content tabulation panel. 
+      The folder tabulation panel. 
       <!-- Note that the left part of the content tabulation panel
        will be hidden under the   
        <a href='documents_panel.html'>documents_panel</a>, if any document is .........
@@ -48,7 +48,7 @@ ________________________________________________________________________________
     </div>
 
     <p>
-     The content tabulation panel is the panel where the content of the 
+     The folder tabulation panel is the panel where the content of the 
      <a href='current_folder.html'>current folder</a> is tabulated.
      The 'name' column of this table gives the names of all items of content 
      while the other columns give more information on each item:

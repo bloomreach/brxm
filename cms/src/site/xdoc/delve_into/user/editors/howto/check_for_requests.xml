@@ -27,10 +27,16 @@ ________________________________________________________________________________
 
   <body>
     <section name="Check for requests">
-      <span class="shortdesc">How to check for requests.</span>
+     <span class="shortdesc">How to check for requests.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=690;
+    bottompx=320;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/editors/check_for_requests.png" alt='Check for requests screenshot'/> 
+    </div></div> 
      <p>
       Checking for <a href='../concepts/request.html'>requests</a>. There is 
       one request, from Marc, to publish the document 'multibazaar2008'.
@@ -38,16 +44,25 @@ ________________________________________________________________________________
    </div>
 
    <p>
-    Go to home tab, by clicking on the home button.
-    At the right in the home tab, there is a todo list, in which requests are shown.
+    Go to the <a href='../concepts/home_workspace.html'>home workspace</a>,
+    by clicking on the home button.
+    At the right in the <a href='../concepts/home_workspace.html'>home workspace</a>, 
+    there is a todo list, in which requests are shown.
    </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./handle_request.html'>Handle request</a>.</li>
-    <li><a href='./logout.html'>Logout</a>.</li> 
-   </ul>       
+    <li><a href='./handle_request.html'>Handle request (continue tour)</a>.</li>
+    <li><a href='./logout.html'>Logout</a>.</li>
+   </ul>
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>

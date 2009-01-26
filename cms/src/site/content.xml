@@ -308,8 +308,8 @@
    <title>System Administration Guide</title><shortdesc>What does a sysadmin need to know and do for Hippo CMS?</shortdesc><introduction>
   These pages describe how to get Hippo ECM up and running and how to configure your running application.
  </introduction><inlist> <!-- list of <document>, as made by makeindex.xsl, e.g. .thiscontent.xml -->
-   <document ext="html" filename="supported_stacks.html" relpath="./">
-   <shortdesc>What combinations of are supported by Hippo?</shortdesc>
+  <document ext="html" filename="supported_stacks" relpath="../..">Supported stacks
+   <shortdesc>What combinations of system software is supported by Hippo?</shortdesc>
   </document>
  </inlist>
    <folder>configuration
@@ -320,8 +320,8 @@
    <section>Console</section>
    <shortdesc>A simple GUI application that can be used to edit the configuration.</shortdesc>
    <img>Screenshot of the console</img>
-  </document><document ext="xml" filename="database_server" relpath="delve_into/sysadmin/configuration">Database server configuration
-   <section>Database server configuration</section>
+  </document><document ext="xml" filename="database_server" relpath="delve_into/sysadmin/configuration">Database server
+   <section>Database server</section>
    <shortdesc>Configuration of the database server.</shortdesc>
    <subsection>Increase the maximum allowed asset size</subsection>
    <index>max_allowed_packet</index>
@@ -644,30 +644,30 @@
      </p>
   </subsection>
  </afterlist>
-   <document ext="xml" filename="content_tabulation_panel" relpath="delve_into/user/contributors/concepts">Content tabulation panel
-   <section>Content tabulation panel</section>
-   <shortdesc>What and where is the content tabulation panel?</shortdesc>
-   <img>content tabulation panel screenshot</img>
-   <subsection>Next</subsection>
-   <subsection>Alternative</subsection>
+   <document ext="xml" filename="cards_panel" relpath="delve_into/user/contributors/concepts">Cards panel
+   <section>Cards panel</section>
+   <shortdesc>What and where is the cards panel?</shortdesc>
+   <img>cards panel</img>
+  </document><document ext="xml" filename="card" relpath="delve_into/user/contributors/concepts">Card
+   <section>Card</section>
+   <shortdesc>What and where are cards?</shortdesc>
+   <img>document cards</img>
   </document><document ext="xml" filename="content_workspace" relpath="delve_into/user/contributors/concepts">Content Workspace
    <section>Content Workspace</section>
    <shortdesc>What and where is the content workspace?</shortdesc>
    <img>content workspace</img>
    <subsection>Alternative</subsection>
    <subsection>Next</subsection>
+  </document><document ext="xml" filename="contributor" relpath="delve_into/user/contributors/concepts">Contributor
+   <section>Contributor</section>
+   <shortdesc>What does it mean to be a CMS contributor?</shortdesc>
   </document><document ext="xml" filename="current_folder" relpath="delve_into/user/contributors/concepts">Current folder
    <section>Current folder</section>
    <shortdesc>What is the current folder?</shortdesc>
    <img>current folder screenshot</img>
-  </document><document ext="xml" filename="document_card" relpath="delve_into/user/contributors/concepts">Document card
-   <section>Document card</section>
-   <shortdesc>What and where are document cards?</shortdesc>
-   <img>document cards</img>
-  </document><document ext="xml" filename="document_panel" relpath="delve_into/user/contributors/concepts">Document panel
-   <section>Document panel</section>
-   <shortdesc>What and where is the document panel?</shortdesc>
-   <img>document panel</img>
+  </document><document ext="xml" filename="document_type" relpath="delve_into/user/contributors/concepts">Document type
+   <section>Document type</section>
+   <shortdesc>What is a document type?</shortdesc>
   </document><document ext="xml" filename="document" relpath="delve_into/user/contributors/concepts">Document
    <section>Document</section>
    <shortdesc>What is a document?</shortdesc>
@@ -686,6 +686,12 @@
    <section>Folder navigation panel</section>
    <shortdesc>What and where is the folder navigation panel?</shortdesc>
    <img>Folder navigation panel screenshot</img>
+  </document><document ext="xml" filename="folder_tabulation_panel" relpath="delve_into/user/contributors/concepts">Folder tabulation panel
+   <section>Folder tabulation panel</section>
+   <shortdesc>What and where is the folder tabulation panel?</shortdesc>
+   <img>folder tabulation panel screenshot</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="folder" relpath="delve_into/user/contributors/concepts">Folder
    <section>Folder</section>
    <shortdesc>What is a Folder?</shortdesc>
@@ -695,6 +701,13 @@
    <img>home workspace</img>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/user/contributors/concepts">
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="inputfield" relpath="delve_into/user/contributors/concepts">Inputfield
+   <section>Inputfield</section>
+   <shortdesc>What is an inputfield?</shortdesc>
+  </document><document ext="xml" filename="markuped_text" relpath="delve_into/user/contributors/concepts">Markuped text
+   <section>Markuped text</section>
+   <shortdesc>What is markuped text?</shortdesc>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="review_mode" relpath="delve_into/user/contributors/concepts">Review mode
    <section>Review mode</section>
@@ -707,7 +720,17 @@
    <shortdesc>What and where are sliders?</shortdesc>
    <img>sliders</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="versioning" relpath="delve_into/user/contributors/concepts">Versioning
+  </document><document ext="xml" filename="string" relpath="delve_into/user/contributors/concepts">Markuped text
+   <section>Markuped text</section>
+   <shortdesc>What is markuped text?</shortdesc>
+  </document><folder>todo
+   <title>todo</title><shortdesc>This folder contains concepts that are in development.</shortdesc>
+   <document ext="xml" filename="document_card" relpath="delve_into/user/contributors/concepts/todo">Document card
+   <section>Document card</section>
+   <shortdesc>What and where are document cards?</shortdesc>
+   <img>document cards</img>
+  </document><document ext="xml" filename="index" relpath="delve_into/user/contributors/concepts/todo">
+  </document></folder><document ext="xml" filename="versioning" relpath="delve_into/user/contributors/concepts">Versioning
    <section>Versioning</section>
    <shortdesc>What is versioning to a content contributor?</shortdesc>
   </document><document ext="xml" filename="workspace_navigation_panel" relpath="delve_into/user/contributors/concepts">Workspace Navigation Panel
@@ -765,11 +788,6 @@
    <img>goto content workspace screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="goto_document_tab" relpath="delve_into/user/contributors/howto">Goto a Document
-   <section>Goto a Document</section>
-   <shortdesc>How to get to a screen to manipulate a particular document.</shortdesc>
-   <img>document tab screenshot</img>
-   <subsection>Next</subsection>
   </document><document ext="xml" filename="goto_folder" relpath="delve_into/user/contributors/howto">Goto a Folder
    <section>Goto a Folder</section>
    <shortdesc>How to get to a folder, to add or change content in it.</shortdesc>
@@ -823,6 +841,11 @@
    <img>Hippo login screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="set_edit_mode" relpath="delve_into/user/contributors/howto">set edit mode
+   <section>set edit mode</section>
+   <shortdesc>How to set a document in edit mode?</shortdesc>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="start_CMS" relpath="delve_into/user/contributors/howto">Start CMS site
    <section>Start CMS site</section>
    <shortdesc>How to goto the CMS site, i.e. start a CMS session, in your browser.</shortdesc>
@@ -847,7 +870,9 @@
    <shortdesc>Guide for Hippo CMS users to perform the role of contributor.</shortdesc>
   </document><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour
    <section>Hippo CMS Contributor Tour</section>
-   <shortdesc>To get introduced to the role of CMS Contributor, take the following tour.</shortdesc>
+   <shortdesc>A CMS contributor writes documents and/or adds images and/or assets.
+    To get introduced to the role of CMS Contributor, take the following tour.</shortdesc>
+   <img>Fill marked-up text screenshot</img>
   </document></folder><folder>editors
    
    <folder>concepts

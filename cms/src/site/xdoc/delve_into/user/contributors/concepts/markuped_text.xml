@@ -16,38 +16,30 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
 ____________________________________________________________________________________________
 
 -->
+
+
 <document>
   <properties>
-    <title>Logout</title>
+    <title>Markuped text</title>
   </properties>
 
   <body>
-    <section name="Logout">
-      <span class="shortdesc">How to logout</span>
+    <section name="Markuped text">
+      <span class="shortdesc">What is markuped text?</span>
 
-   <script type="text/javascript">
-    leftpx=910;
-    bottompx=205;
-   </script>
-   <div class='group'> 
-    <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/editors/hippo_logout_Janine.png" alt='logout screenshot'/> 
-    </div></div>
-     <p>
-       Click the logout button to logout. The <a href='./login.html'>login</a> dialog will reapear.
-     </p>
-   </div>
+      <p>
+       Markuped text is text in which the letters can have properties, like being boldface,
+       italic or underlined.
+      </p>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./string.html'>String</a></li>
+    </ul>
+   </subsection>
+  </section>
+ </body>
+</document>
 
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./login.html'>Login</a>.</li>
-   </ul>
-  </subsection>
-
-   </section>
-  </body>
-</document>        

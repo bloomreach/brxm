@@ -23,10 +23,23 @@
  </properties>
  <body>
   <section name="Hippo CMS Contributor Tour">
-    <span class='shortdesc'>To get introduced to the role of CMS Contributor, take the following tour.</span> 
+   <span class='shortdesc'>A CMS contributor writes documents and/or adds images and/or assets.
+    To get introduced to the role of CMS Contributor, take the following tour.</span> 
+
+  <script type="text/javascript">
+    leftpx=450;
+   </script>
+   <div class='group'>
+    <div id='screenshot'><div>
+     <img src="../../../images/screenshots/cms_M9/contribs/fill_markuped_text.png" alt='Fill marked-up text screenshot'/> 
+    </div></div>
+    <p>
+     Screenshot of the online word-processor of the Hippo CMS.
+     </p>
+   </div>
 
      <p>To get introduced to the role of CMS <a href='./concepts/contributor.html'>contributor</a>, 
-        you will look over the shoulder of Marc, 
+        you will look over the shoulder of Marc,
         who is a member of the imaginary organization Saraswatia,
         an organization of people very interested in music, art and knowledge. We did not imagine an
         answer to the question whether Saraswatia is a commercial organization, a hobby organization, or both. 

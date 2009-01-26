@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">359 errors and/or todos in 198 out of 198 documents (100%).</span>
+      <span class="shortdesc">370 errors and/or todos in 205 out of 205 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -39,13 +39,13 @@
      </li>
         <li>2 documents to review.
      </li>
-        <li>42 documents missing required info.
+        <li>43 documents missing required info.
      </li>
         <li>3 empty documents.
      </li>
         <li>11 documents to rewrite.
      </li>
-        <li>7 documents requiring additions.
+        <li>9 documents requiring additions.
      </li>
         <li>10 documents with unidentified TODO strings.
      </li>
@@ -191,7 +191,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents lacking some information: 42">
+      <subsection name="Documents lacking some information: 43">
         <ol>
           <li>
             <a href="./about/architecture.html">architecture: Architecture</a>
@@ -388,6 +388,13 @@ repository is;
             </ul>
           </li>
           <li>
+            <a href="./delve_into/user/contributors/concepts/todo/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
             <a href="./delve_into/user/contributors/howto/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
@@ -542,9 +549,9 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/contributors/concepts/document_panel.html">document_panel: Document panel</a>
+            <a href="./delve_into/user/contributors/concepts/cards_panel.html">cards_panel: Cards panel</a>
             <ul>
-              <li>Is for content. Call it content panel?</li>
+              <li>Is for content. Call it content panel, file panel, present panel?</li>
             </ul>
           </li>
           <li>
@@ -561,7 +568,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Add something to documents: 7">
+      <subsection name="Add something to documents: 9">
         <ol>
           <li>
             <a href="./delve_into/overview.html">overview: Delve into Hippo CMS</a>
@@ -579,13 +586,19 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/contributors/concepts/content_tabulation_panel.html">content_tabulation_panel: Content tabulation panel</a>
+            <a href="./delve_into/user/contributors/concepts/card.html">card: Card</a>
+            <ul>
+              <li>more about cards in the image</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/concepts/folder_tabulation_panel.html">folder_tabulation_panel: Folder tabulation panel</a>
             <ul>
               <li>more on publish states</li>
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/contributors/concepts/document_card.html">document_card: Document card</a>
+            <a href="./delve_into/user/contributors/concepts/todo/document_card.html">document_card: Document card</a>
             <ul>
               <li>more about cards in the image</li>
             </ul>
@@ -600,6 +613,12 @@ repository is;
             <a href="./delve_into/user/contributors/howto/goto_folder.html">goto_folder: Goto a Folder</a>
             <ul>
               <li>Document about navigation in folder tree and reference from here.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/howto/set_edit_mode.html">set_edit_mode: set edit mode</a>
+            <ul>
+              <li>Screenshot set edit mode</li>
             </ul>
           </li>
           <li>

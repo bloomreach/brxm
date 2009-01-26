@@ -29,8 +29,13 @@ ________________________________________________________________________________
     <section name="Goto Content Browse Tab">
       <span class="shortdesc">How to get to the content browse tab.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=0;
+   </script>
+   <div class='group'>
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/editors/content_browse_tab_Janine.png" alt='content browse screenshot'/>
+    </div></div>
    </div>
 
     <p>
