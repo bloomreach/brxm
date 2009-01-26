@@ -12,9 +12,17 @@
    <section>Architecture</section>
   </document><document ext="xml" filename="features" relpath="about">Features
    <section>Features</section>
+  </document><document ext="xml" filename="roadmap" relpath="about">Roadmap Hippo CMS
+   <section>Roadmap Hippo CMS</section>
+   <shortdesc>Dates for future releases of Hippo CMS</shortdesc>
+   <h4>Goal: deliver all basic CMS functionalities, production ready</h4>
+   <h4>Goal: All CMS 6 functionalities + faceted functionalities</h4>
   </document><document ext="xml" filename="term_index" relpath="about">
   </document><document ext="xml" filename="use_cases" relpath="about">Use cases
    <section>Use cases</section>
+  </document><document ext="xml" filename="version_numbers" relpath="about">Version numbering scheme
+   <section>Version numbering scheme</section>
+   <shortdesc>How are Hippo ECM versions numbered?</shortdesc>
   </document></folder><folder>delve_into
    
    <document ext="xml" filename="bin_startup_help" relpath="delve_into">Bin Startup Help
@@ -644,7 +652,10 @@
      </p>
   </subsection>
  </afterlist>
-   <document ext="xml" filename="cards_panel" relpath="delve_into/user/contributors/concepts">Cards panel
+   <document ext="xml" filename="boolean" relpath="delve_into/user/contributors/concepts">Boolean
+   <section>Boolean</section>
+   <shortdesc>What is a boolean</shortdesc>
+  </document><document ext="xml" filename="cards_panel" relpath="delve_into/user/contributors/concepts">Cards panel
    <section>Cards panel</section>
    <shortdesc>What and where is the cards panel?</shortdesc>
    <img>cards panel</img>
@@ -672,6 +683,11 @@
    <section>Document</section>
    <shortdesc>What is a document?</shortdesc>
    <h4>Etymology</h4>
+  </document><document ext="xml" filename="editing" relpath="delve_into/user/contributors/concepts">Editing
+   <section>Editing</section>
+   <shortdesc>What is editing?</shortdesc>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="edit_mode" relpath="delve_into/user/contributors/concepts">Edit mode
    <section>Edit mode</section>
    <shortdesc>What is edit mode?</shortdesc>
@@ -720,9 +736,10 @@
    <shortdesc>What and where are sliders?</shortdesc>
    <img>sliders</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="string" relpath="delve_into/user/contributors/concepts">Markuped text
-   <section>Markuped text</section>
-   <shortdesc>What is markuped text?</shortdesc>
+  </document><document ext="xml" filename="string" relpath="delve_into/user/contributors/concepts">String
+   <section>String</section>
+   <shortdesc>What is a string?</shortdesc>
+   <subsection>Alternative</subsection>
   </document><folder>todo
    <title>todo</title><shortdesc>This folder contains concepts that are in development.</shortdesc>
    <document ext="xml" filename="document_card" relpath="delve_into/user/contributors/concepts/todo">Document card
@@ -904,11 +921,13 @@
    <shortdesc>How to check for requests.</shortdesc>
    <img>Check for requests screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="create_folder" relpath="delve_into/user/editors/howto">Create Folder
    <section>Create Folder</section>
    <shortdesc>How to create a folder for contributors to put content in.</shortdesc>
    <img>Create folder screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="goto_content_browse_tab" relpath="delve_into/user/editors/howto">Goto Content Browse Tab
    <section>Goto Content Browse Tab</section>
    <shortdesc>How to get to the content browse tab.</shortdesc>

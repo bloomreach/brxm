@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 795 terms</span>
+      <span class="shortdesc">Term index, 810 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -232,6 +232,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/editing.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Editing</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/edit_mode.html#Alternative">Alternative</a>
             </td>
             <td>Concept: Edit mode</td>
@@ -265,6 +271,12 @@
               <a href="../delve_into/user/contributors/concepts/review_mode.html#Alternative">Alternative</a>
             </td>
             <td>Concept: Review mode</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/string.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: String</td>
           </tr>
           <tr>
             <td>
@@ -379,6 +391,18 @@
               <a href="../delve_into/user/editors/concepts/index.html#Alternative">Alternative</a>
             </td>
             <td>Welcome: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/check_for_requests.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Check for requests</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/create_folder.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Create Folder</td>
           </tr>
           <tr>
             <td>
@@ -511,6 +535,12 @@
               <a href="../delve_into/bin_startup_help.html#Bin_Startup_Help">Bin Startup Help</a>
             </td>
             <td>Bin Startup Help</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/boolean.html#Boolean">Boolean</a>
+            </td>
+            <td>Concept: Boolean</td>
           </tr>
           <tr>
             <td>
@@ -1097,6 +1127,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../about/roadmap.html#Dates_for_future_releases_of_Hippo_CMS">Dates for future releases of Hippo CMS</a>
+            </td>
+            <td>Roadmap Hippo CMS</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/cms_admins/howto/deactivate_account.html#Deactivate_account">Deactivate account</a>
             </td>
             <td>Howto: Deactivate account</td>
@@ -1364,6 +1400,12 @@
               <a href="../delve_into/user/contributors/concepts/edit_mode.html#edit_mode_sreenshot">edit mode sreenshot</a>
             </td>
             <td>Concept: Edit mode</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/editing.html#Editing">Editing</a>
+            </td>
+            <td>Concept: Editing</td>
           </tr>
           <tr>
             <td>
@@ -1920,6 +1962,18 @@
           </tr>
           <tr>
             <td>
+              <a href="../about/roadmap.html#Goal:_All_CMS_6_functionalities_+_faceted_functionalities">Goal: All CMS 6 functionalities + faceted functionalities</a>
+            </td>
+            <td>Roadmap Hippo CMS</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../about/roadmap.html#Goal:_deliver_all_basic_CMS_functionalities,_production_ready">Goal: deliver all basic CMS functionalities, production ready</a>
+            </td>
+            <td>Roadmap Hippo CMS</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/todo/goto_document_tab.html#Goto_a_Document">Goto a Document</a>
             </td>
             <td>Goto a Document</td>
@@ -2253,6 +2307,12 @@
               <a href="../delve_into/user/contributors/concepts/home_workspace.html#home_workspace">home workspace</a>
             </td>
             <td>Concept: Home Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../about/version_numbers.html#How_are_Hippo_ECM_versions_numbered_">How are Hippo ECM versions numbered?</a>
+            </td>
+            <td>Version numbering scheme</td>
           </tr>
           <tr>
             <td>
@@ -3081,12 +3141,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/concepts/string.html#Markuped_text">Markuped text</a>
-            </td>
-            <td>Concept: Markuped text</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/howto/gui_plugin.html#Maven_structure">Maven structure</a>
             </td>
             <td>Howto: Hello World</td>
@@ -3264,6 +3318,12 @@
               <a href="../delve_into/user/contributors/concepts/content_workspace.html#Next">Next</a>
             </td>
             <td>Concept: Content Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/editing.html#Next">Next</a>
+            </td>
+            <td>Concept: Editing</td>
           </tr>
           <tr>
             <td>
@@ -3861,6 +3921,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../about/roadmap.html#Roadmap_Hippo_CMS">Roadmap Hippo CMS</a>
+            </td>
+            <td>Roadmap Hippo CMS</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/sysadmin/configuration/nodes/roles.html#Roles_Configuration">Roles Configuration</a>
             </td>
             <td>Roles Configuration</td>
@@ -4167,6 +4233,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/string.html#String">String</a>
+            </td>
+            <td>Concept: String</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/concepts/string.html#string">string</a>
             </td>
             <td>Concept: string</td>
@@ -4438,6 +4510,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../about/version_numbers.html#Version_numbering_scheme">Version numbering scheme</a>
+            </td>
+            <td>Version numbering scheme</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/concepts/versioning.html#Versioning">Versioning</a>
             </td>
             <td>Concept: Versioning</td>
@@ -4558,6 +4636,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/boolean.html#What_is_a_boolean">What is a boolean</a>
+            </td>
+            <td>Concept: Boolean</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/concepts/boolean.html#What_is_a_boolean">What is a boolean</a>
             </td>
             <td>Concept: Boolean</td>
@@ -4624,6 +4708,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/string.html#What_is_a_string_">What is a string?</a>
+            </td>
+            <td>Concept: String</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/workspace.html#What_is_a_workspace_">What is a workspace?</a>
             </td>
             <td>Concept: Workspace</td>
@@ -4642,6 +4732,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/editing.html#What_is_editing_">What is editing?</a>
+            </td>
+            <td>Concept: Editing</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../index.html#What_is_Hippo_CMS_">What is Hippo CMS?</a>
             </td>
             <td>Welcome: What is Hippo CMS?</td>
@@ -4649,12 +4745,6 @@
           <tr>
             <td>
               <a href="../delve_into/user/contributors/concepts/markuped_text.html#What_is_markuped_text_">What is markuped text?</a>
-            </td>
-            <td>Concept: Markuped text</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/concepts/string.html#What_is_markuped_text_">What is markuped text?</a>
             </td>
             <td>Concept: Markuped text</td>
           </tr>
