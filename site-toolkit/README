@@ -1,0 +1,28 @@
+--- How to test and build Hippo Site Toolkit ---
+
+-- Requirements --
+
+* Java 1.5
+* Maven 2.0.9 
+
+3. Testing
+
+mvn org.apache.portals.jetspeed-2:jetspeed-mvn-maven-plugin:mvn -Dtarget=test
+
+You can simplify the above command by adding the following in your settings.xml:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/POM/4.0.0">
+  <pluginGroups>
+    <pluginGroup>org.apache.portals.jetspeed-2</pluginGroup>
+  </pluginGroups>
+</settings>
+
+Now, your command can be like this:
+
+mvn jetspeed:mvn -Dtarget=test
+
+4. Build
+
+mvn clean install
+
