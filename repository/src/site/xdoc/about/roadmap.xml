@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Roadmap Hippo CMS</title>
+    </properties>
+    <body>
+        <section name="Roadmap Hippo CMS">
+         <span class='shortdesc'>Dates for future releases of Hippo CMS</span> 
+
+            <h3>Release Schedule</h3>
+            <p> Hippo works with a monthly development cycle. We believe in the <a
+                    href="http://www.catb.org/~esr/writings/cathedral-bazaar/cathedral-bazaar/ar01s04.html"
+                    >Release Early, Release Often</a> paradigm from the Linux community, and use the
+                    <a href="http://www.controlchaos.com/about/">SCRUM development methodology</a>
+                to iteratively build our software. </p> We have 4 scheduled <b>releases</b> per
+            year. A release is a version for which <a href="http://www.onehippo.com">Hippo</a>
+            offers paid support services. See <a href="http://www.onehippo.com/en/support"
+                >http://www.onehippo.com/en/support</a> for more information. <p> Here's the Roadmap
+                outine for 2009. This is a list of how we intent to roll out functionalities, even though some changes may occur as priorities shift.
+           </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Scheduled date</th>
+                        <th>Release</th>
+                        <th>Feature Goals</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>December, 2008</td>
+                    <td>Hippo CMS v7.0 (r2.02.xx)</td>
+                    <td>Folder structure, Template editor, Workflow, Internationalization (i18n),
+                        AJAX support, Search, Multi-document tabs, Locking, Authorizations, Plugin
+                        architecture, Versioning, Clustering, Scheduled publication, User
+                        management, Image and asset galleries</td>
+                </tr>
+                <tr>
+                    <td>March, 2009</td>
+                    <td>Hippo CMS v7.1 (r2.05.xx)</td>
+                    <td>All standard Hippo CMS 6 features, Faceted browsing, Tagging, Split pane
+                        versioning, Migration path CMS 6 to CMS 7, Forms, Metadata extraction (from
+                        Word, PDF, etc), Batch workflow actions, HST-2 Configuration editor</td>
+                </tr>
+                <tr>
+                    <td>June, 2009</td>
+                    <td>Hippo CMS v7.2 (r2.08.xx)</td>
+                    <td>Hippo CMS 6 migration tools, Reporting, Translations workflow</td>
+                </tr>
+                <tr>
+                    <td>September, 2009</td>
+                    <td>Hippo CMS v7.3 (r2.11.xx)</td>
+                    <td>DMS, BPM, Metadata suggestor, collections, full-repository archiving</td>
+                </tr>
+                <tr>
+                    <td>December, 2009</td>
+                    <td>Hippo CMS v7.4 (r2.14.xx)</td>
+                    <td>TBD</td>
+                </tr>
+            </table>
+            
+            <h3>v7.0 (December 2008)</h3>
+            <h4>Goal: deliver all basic CMS functionalities, production ready</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Feature</td>
+                        <td>Description</td>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>Folder structure</td>
+                    <td>Information architect creates a free folder structure to contain documents. Every document has one position in the folder tree.</td>
+                </tr>
+                <tr>
+                    <td>Template editor</td>
+                    <td>Developer creates and edits the CMS editing templates using the Template Editor in the CMS.</td>
+                </tr>
+                <tr>
+                    <td>Workflow</td>
+                    <td>Standard Reviewed Actions workflow implemented (author / editor, two step process).</td>
+                </tr>
+                <tr>
+                    <td>Internationalization (i18n)</td>
+                    <td>All text in the CMS user interface is available in at least two languages: English and Dutch.</td>
+                </tr>
+                <tr>
+                    <td>AJAX support</td>
+                    <td>Uses AJAX to load parts of the user interface.</td>
+                </tr>
+                <tr>
+                    <td>Auto-save / document recovery</td>
+                    <td>AJAX document editor continuously saves changes in the user's draft version. No loss of data when accidentally navigating away from the CMS.</td>
+                </tr>
+                <tr>
+                    <td>Search</td>
+                    <td>Full-text search as an AJAX dropdown.</td>
+                </tr>
+                <tr>
+                    <td>Multi-document tabs</td>
+                    <td>User can have multiple multiple documents open as tabs.</td>
+                </tr>
+                <tr>
+                    <td>Locking</td>
+                    <td>When someone edits a document, it is locked for others.</td>
+                </tr>
+                <tr>
+                    <td>Authorizations</td>
+                    <td>Restrictions can be set on groups and users, based on properties.</td>
+                </tr>
+                <tr>
+                    <td>Plugin architecture</td>
+                    <td>CMS can be extended by adding plugins, to be downloaded from the Hippo Forge.</td>
+                </tr>
+                <tr>
+                    <td>Versioning</td>
+                    <td>Per publication, a version is stored. Using a dropdown, the user can see the contents of older versions.</td>
+                </tr>
+                <tr>
+                    <td>Clustering</td>
+                    <td>Repository runs in a clustered environment.</td>
+                </tr>
+                <tr>
+                    <td>Scheduled publication</td>
+                    <td>Workflow requests can be set to a time and date.</td>
+                </tr>
+                <tr>
+                    <td>User management</td>
+                    <td>Users, groups and domains can be edited.</td>
+                </tr>
+                <tr>
+                    <td>Image and asset galleries</td>
+                    <td>Support for galleries that contain images, binary files (PDF, DOC, etc). Thumbnails.</td>
+                </tr>
+                <tr>
+                    <td>LDAP support</td>
+                    <td>Support for external authorization repositories based on LDAP (Active Directory, OpenLDAP).</td>
+                </tr>
+                <tr>
+                    <td>Cross browser support</td>
+                    <td>Support for Internet Explorer 6, 7 and Firefox 3</td>
+                </tr>
+            </table>
+            
+            <h3>v7.1 (March 2009)</h3>
+            <h4>Goal: All CMS 6 functionalities + faceted functionalities</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Feature</td>
+                        <td>Description</td>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>All standard Hippo CMS 6 features</td>
+                    <td>All functionalities that are included in the standard download of Hippo CMS 6 are supported out of the box.</td>
+                </tr>
+                <tr>
+                    <td>Word import</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Faceted browsing</td>
+                    <td>Users can create their own views on content, and can navigate and operate the CMS using this interface.</td>
+                </tr>
+                <tr>
+                    <td>Tagging</td>
+                    <td>Tagging support for all documents and gallery items.</td>
+                </tr>
+                <tr>
+                    <td>Split pane versioning</td>
+                    <td>Versions can be viewed side by side</td>
+                </tr>
+                <tr>
+                    <td>Migration path CMS 6 to CMS 7</td>
+                    <td>Migration path for migrating CMS 6 projects to CMS 7.</td>
+                </tr>
+                <tr>
+                    <td>Forms</td>
+                    <td>Form support. Creating forms from within the CMS, and presentation and validation support from the HST </td>
+                </tr>
+                <tr>
+                    <td>Separated deployment</td>
+                    <td>The possibility to deploy the CMS and Repository on different machines.</td>
+                </tr>
+                <tr>
+                    <td>Metadata extraction (from Word, PDF, etc)</td>
+                    <td>Automated meta data extraction from assets.</td>
+                </tr>
+                <tr>
+                    <td>Batch workflow actions</td>
+                    <td>Initiate workflow steps on multiple documents at once.</td>
+                </tr>
+                <tr>
+                    <td>HST-2 Configuration editor</td>
+                    <td>Configuration of the Hippo Site Toolkit from within the CMS.</td>
+                </tr>
+                <tr>
+                    <td>Content OTAP</td>
+                    <td>Automated migration of content sets from Development, to Test, to Acceptance and to Production repositories.</td>
+                </tr>
+                <tr>
+                    <td>Customer skinning</td>
+                    <td>Support customer skinning of CSS and plugins.</td>
+                </tr>
+            </table>
+
+            <h3>v7.2 (June 2009)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Feature</td>
+                        <td>Description</td>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>Metadata / tag suggestors</td>
+                    <td>Guiding the user in the metada generation process. Facilitate tagging of large sets of content.</td>
+                </tr>
+                <tr>
+                    <td>User profiles</td>
+                    <td>Different UI configurations for different user profiles. Casual contributor versus advanced editor.</td>
+                </tr>
+                <tr>
+                    <td>Hot deployable plugins</td>
+                    <td>OSGi support.</td>
+                </tr>
+                <tr>
+                    <td>Knowledge driven workflow</td>
+                    <td>Flexible worfklow configuration based on user profiles and content metadata.</td>
+                </tr>
+                <tr>
+                    <td>Website templating</td>
+                    <td>The possibility to edit Freemarker or JSP templates from within the CMS.</td>
+                </tr>
+                <tr>
+                    <td>Task management</td>
+                    <td>Tasks and workflow items spawning multiple documents, or broader.</td>
+                </tr>
+                <tr>
+                    <td>CMIS support</td>
+                    <td>REST and CMIS interfaces for developers.</td>
+                </tr>
+                <tr>
+                    <td>Customizable help</td>
+                    <td>Functionality to change the help texts for a specific implementation.</td>
+                </tr>
+                <tr>
+                    <td>Personalized reporting</td>
+                    <td>"My recent documents", "My Tasks", etc</td>
+                </tr>
+                <tr>
+                    <td>Advanced Search</td>
+                    <td>Searching on metadata, and storing searches as faceted views.</td>
+                </tr>
+            </table>
+
+        
+            <h3>v7.3 (September 2009)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Feature</td>
+                        <td>Description</td>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>DMS functionality</td>
+                    <td>Document management capabilities, network share.</td>
+                </tr>
+                <tr>
+                    <td>External BPM layer</td>
+                    <td>Support for business process management integration.</td>
+                </tr>
+                <tr>
+                    <td>OpenOffice integration</td>
+                    <td>Native support for OpenOffice documents in the DMS subsystem.</td>
+                </tr>
+                <tr>
+                    <td>Repository-wide content tagging and labeling</td>
+                    <td>Label a "Christmas" edition of your website and schedule it for publication.</td>
+                </tr>
+                <tr>
+                    <td>Archiver</td>
+                    <td>View the contents of the entire repository on a certain date.</td>
+                </tr>
+                <tr>
+                    <td>Visitor generated metadata management</td>
+                    <td>Use visitor behavior and feedback for tagging documents in the repository, in a controlled manner.</td>
+                </tr>
+                <tr>
+                    <td>Metadata suggestor</td>
+                    <td>Suggesting the CMS user what possible metadata could be added to the current document, based on the user's behavior in the CMS itself.</td>
+                </tr>
+                <tr>
+                    <td>Collections</td>
+                    <td>Collections functionality: hand-picked, search or folder selection. Collections can be used for navigation. Collections have workflow.</td>
+                </tr>
+            </table>
+        
+        </section>
+    </body>
+</document>

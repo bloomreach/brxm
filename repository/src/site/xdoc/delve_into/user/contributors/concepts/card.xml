@@ -22,35 +22,34 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Document panel</title>
+    <title>Card</title>
   </properties>
 
   <body>
-   <section name="Document panel">
-      <span class="shortdesc">What and where is the document panel?</span>
+   <section name="Card">
+      <span class="shortdesc">What and where are cards?</span>
 
     <div class='group'>
      <div class='screenshot'>
-      <img src="../../../../images/screenshots/cms_M9/contribs/document_panel.png" 
-       alt='document panel'/>
+      <img src="../../../../images/screenshots/cms_M9/contribs/document_card.png" 
+       alt='document cards'/>
      </div>
      <p>
-      The document panel. 
-      <span class='rewrite'>Is for content. Call it content panel?</span>
+      A card. 
+      <span class='add'>more about cards in the image</span>
      </p>   
     </div>
 
     <p>
-     In the <i>document panel</i> a document can be <a href='./edit_mode.html'>changed</a> or
-     <a href='./review_mode.html'>reviewed</a>
-     The <i>document panel</i> may hold several 
-     <a href='document_card.html'>document cards</a>, of which one is visible.
-     Tabs of all cards are visible at the upper edge of the <i>document panel</i>. 
-     Several documents card can be open on the documents panel at any time. 
-     You can click on a tab to put another document card on top, so that you
-     can see it. 
+     A single card is for
+     for <a href='./edit_mode.html'>changing</a> and/or
+     <a href='./review_mode.html'>reviewing</a> a single file (document, image or asset).
     </p>
-
-   </section>
-  </body>
-</document>        
+    <p>To change or review a file, you have to <a href='../howto/pullout_card.html'>pull
+      out the card</a> of the file
+      from the repository. The card will then be accessable in the
+      <a href='./cards_panel.html'>cards panel</a>.
+   </p>
+  </section>
+ </body>
+</document>

@@ -41,15 +41,15 @@ ________________________________________________________________________________
     <p>
       Marc goes to the Hippo CMS site of Saraswatia. His CMS administrator told him
       that the web address of the site is: http://saraswatia.org:8080/cms.
-      Coincidentially, the site he is currently viewing happens 
+      Coincidentially, the site he is currently viewing happens
       to be the Hippo CMS documentation site at www.onehippo.org.
-    </p>     
+    </p>
    </div>
 
    <p>
       The Hippo CMS is accessed via your web browser.
       Someone, e.g. your CMS administrator must have told you the web address of the site. 
-      For the saraswatia CMS site, the name is http://saraswatia.org:8080/cms.     
+      For the saraswatia CMS site, the name is http://saraswatia.org:8080/cms.
       In most other cases, only 'saraswatia.org' will be replaced by some other name.
       <span class='rewrite'>Check what are normal names and make new screenshot.</span>
    </p>
@@ -63,7 +63,7 @@ ________________________________________________________________________________
    <subsection name='Next'>
     <ul>
      <li><a href='./login.html'>Login (continue</a> <a href='../tour.html'>tour).</a></li>
-    </ul>       
+    </ul>
    </subsection>
 
    <subsection name='Alternative'>

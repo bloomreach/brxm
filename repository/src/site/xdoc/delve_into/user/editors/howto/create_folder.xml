@@ -29,8 +29,14 @@ ________________________________________________________________________________
     <section name="Create Folder">
       <span class="shortdesc">How to create a folder for contributors to put content in.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=50;
+    bottompx=550;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/editors/create_folder.png" alt='Create folder screenshot'/> 
+    </div></div>
      <p>
       Creation of a <a href='../concepts/folder.html'>folder</a> with name `sar newspaper', 
       which is a folder for documents. 
@@ -38,8 +44,8 @@ ________________________________________________________________________________
    </div>
 
    <p>
-    In the <a href='./goto_content_browse_tab.html'>content browse tab</a>,
-    in the tree view, click on 'Documents'. Then
+    In the <a href='./goto_folder_navigation_panel.html'>folder navigation panel</a>,
+    click on 'documents' to open the documents <a href='../concepts/slide.html'>slide</a>. Then
     click on the selection menu at the top of the middle-right lane and select 'create folder'
     by clicking on it. A dialog window appears.
    </p>
@@ -49,11 +55,18 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./logout.html'>Logout</a>.</li> 
+    <li><a href='./logout.html'>Logout (continue tour)</a>.</li> 
     <li><a href='./create_folder.html'>Create another folder</a>.</li>
-   </ul>       
+   </ul>
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>
-</document>        
+</document>

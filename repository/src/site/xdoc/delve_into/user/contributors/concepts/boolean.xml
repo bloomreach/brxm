@@ -20,34 +20,26 @@
 ____________________________________________________________________________________________
 
 -->
+<!--
+   Do not edit! This file is a clone of the file
+   ../../information_architects/concepts/boolean.xml,
+   meaning it is a copy and should stay a copy.
+   All changes will be overwritten when the origional changes.
+-->
 <document>
   <properties>
-    <title>Logout</title>
+    <title>Boolean</title>
   </properties>
 
   <body>
-    <section name="Logout">
-      <span class="shortdesc">How to logout</span>
+    <section name="Boolean">
+      <span class="shortdesc">What is a boolean</span>
 
-   <script type="text/javascript">
-    leftpx=910;
-    bottompx=205;
-   </script>
-   <div class='group'> 
-    <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/editors/hippo_logout_Janine.png" alt='logout screenshot'/> 
-    </div></div>
-     <p>
-       Click the logout button to logout. The <a href='./login.html'>login</a> dialog will reapear.
-     </p>
-   </div>
-
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./login.html'>Login</a>.</li>
-   </ul>
-  </subsection>
-
-   </section>
+    <p>A boolean is a yes or no question. A boolean has a name,
+     identifying the question, and a value, which is the answer to the
+     question and which can only be yes or no (or true or false, which
+     comes down to the same thing).
+   </p>
+    </section>
   </body>
-</document>        
+</document>

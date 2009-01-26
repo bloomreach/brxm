@@ -29,8 +29,14 @@ ________________________________________________________________________________
     <section name="Handle request">
       <span class="shortdesc">How to handle a request.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=480;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/editors/handle_request.png" alt='handle requests screenshot'/> 
+    </div></div>
      <p>
       Handling a <a href='../concepts/request.html'>request</a> concerning the document 
       'multibazaar2008'.

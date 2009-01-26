@@ -20,34 +20,29 @@
 ____________________________________________________________________________________________
 
 -->
+
+
 <document>
   <properties>
-    <title>Logout</title>
+    <title>String</title>
   </properties>
 
   <body>
-    <section name="Logout">
-      <span class="shortdesc">How to logout</span>
+    <section name="String">
+      <span class="shortdesc">What is a string?</span>
 
-   <script type="text/javascript">
-    leftpx=910;
-    bottompx=205;
-   </script>
-   <div class='group'> 
-    <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/editors/hippo_logout_Janine.png" alt='logout screenshot'/> 
-    </div></div>
-     <p>
-       Click the logout button to logout. The <a href='./login.html'>login</a> dialog will reapear.
-     </p>
-   </div>
+      <p>
+       A string is a sequence of characters (letters and punctuation). A string can not
+       contain markup.
+      </p>
 
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./login.html'>Login</a>.</li>
-   </ul>
-  </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./markuped_text.html'>Markuped text.</a></li>
+    </ul>
+   </subsection>
 
-   </section>
-  </body>
-</document>        
+  </section>
+ </body>
+</document>
+

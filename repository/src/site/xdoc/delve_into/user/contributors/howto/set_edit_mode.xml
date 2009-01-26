@@ -22,48 +22,59 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Schedule publication Document</title>
+    <title>Set edit mode</title>
   </properties>
 
   <body>
-    <section name="Schedule publication of Document">
-      <span class="shortdesc">How to schedule when your document should be published?</span>
+    <section name="set edit mode">
+      <span class="shortdesc">How to set a document in edit mode?</span>
 
+      <!--
    <script type="text/javascript">
-    leftpx=300;
-    bottompx=570;
+    leftpx=155;
+    bottompx=225;
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/contribs/request_schedule_publication.png" alt='request schedule publication screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/contribs/save_document.png" alt='save document screenshot'/> 
     </div></div> 
      <p>
-        Scheduling publication of the document 'multibazaar2009' to occur on the fifth of January, 2009 at
-        17:13.
+      Persisting the changes to document 'multibazaar2009', by pressing
+      'save and close'. The changes can be discarded by pressing 'close without saving'.
      </p>
-   </div>
+    </div>
+    -->
+    <span class='add'>Screenshot set edit mode</span>
 
-   <p>
-      After <a href='./request_publication.html'>requesting publication</a> of your document,
-      a window will popup where you can schedule when you think the publication of your document should occur.
-      This is actually part of your request for publication, so canceling the scheduling also cancels your request
-      for publication.
+    <p>
+     There are two ways to set a document in
+     <a href='../concepts/edit_mode.html'>edit mode</a>:
    </p>
+
+   <ol>
+    <li>Clicking on the 'edit' button in <a href='../concepts/review_mode.html'>review mode</a>.
+    </li>
+    <li><a href='./create_document.html'>Creating a new document</a>. The new, empty document will
+     immediately be presented in <a href='../concepts/edit_mode.html'>edit mode</a>, 
+     as not many would need <a href='../concepts/review_mode.html'>review mode</a> for an empty document.
+    </li>
+   </ol>
 
    <subsection name='Next'>
     <ul>
-     <li><a href='./logout.html'>Logout (continue</a> <a href='../tour.html'>tour</a>).</li>
+     <li><a href='./request_publication.html'>Request publication (continue</a> <a href='../tour.html'>tour</a>).</li>
      <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
-     <li><a href='./goto_folder.html'>Open another folder</a>.</li>
+     <li><a href='./goto_folder.html'>Open another folder (list its contents)</a>.</li>
+     <li><a href='./logout.html'>Logout</a>.</li>
     </ul>
    </subsection>
-
    <subsection name='Alternative'>
     <ul>
      <li><a href='./index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>
     </ul>
    </subsection>
+
   </section>
  </body>
 </document>

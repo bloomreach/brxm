@@ -43,14 +43,14 @@ ________________________________________________________________________________
         Marc clicks on the foldername 'newspaper', to go to that folder, i.e. make it the 
         <a href='../concepts/current_folder.html'>current folder</a>.
         He will see the ontent of the newspaper folder
-        tabulated in the <a href='../concepts/content_tabulation_panel.html'>
-        content tabulation panel</a> and he         
+        tabulated in the <a href='../concepts/folder_tabulation_panel.html'>
+        folder tabulation panel</a> and he
         will be allowed to create a new document in that folder.
     </p>
    </div>
 
    <p>
-      In the <a href='../concepts/content_navigation_panel.html'>content navigation panel</a>,
+      In the <a href='../concepts/folder_navigation_panel.html'>folder navigation panel</a>,
       within the documents <a href='../concepts/slider.html'>slider</a>, the names of all folders
       for <a href='../concepts/document.html'>documents</a> are shown.
       <span class='add'>Document about navigation in folder tree and reference from here.</span>
@@ -59,16 +59,17 @@ ________________________________________________________________________________
       Clicking on a foldername will bring you to the folder, i.e. make it the 
       <a href='../concepts/current_folder.html'>current folder</a>.
       The contents of the current folder will appear in 
-      the <a href='../concepts/content_tabulation_panel.html'>
-      content tabulation panel.</a>
+      the <a href='../concepts/folder_tabulation_panel.html'>
+      folder tabulation panel.</a>
       It is also possible to do 
-      <a href='../concepts/folder_action.html'>folder actions</a> on it, like
+      <a href='../concepts/folder_action_menu.html'>folder actions</a> on it, like
       adding a new document.
+      <span class='add'>concept folder action?</span>
    </p>
 
    <subsection name='Next'>
     <ul>
-     <li><a href='./create_document.html'>Create a document (continue</a> <a href='../concepts/tour.html'>tour)</a>.</li>
+     <li><a href='./create_document.html'>Create a document (continue</a> <a href='../tour.html'>tour)</a>.</li>
      <!-- <li><a href='./goto_document_tab.html'>Goto document tab</a>.</li> -->
     </ul>       
    </subsection>

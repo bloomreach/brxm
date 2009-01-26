@@ -22,32 +22,16 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Logout</title>
+    <title>Document type</title>
   </properties>
 
   <body>
-    <section name="Logout">
-      <span class="shortdesc">How to logout</span>
+    <section name="Document type">
+      <span class="shortdesc">What is a document type?</span>
 
-   <script type="text/javascript">
-    leftpx=910;
-    bottompx=205;
-   </script>
-   <div class='group'> 
-    <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/editors/hippo_logout_Janine.png" alt='logout screenshot'/> 
-    </div></div>
-     <p>
-       Click the logout button to logout. The <a href='./login.html'>login</a> dialog will reapear.
-     </p>
-   </div>
-
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./login.html'>Login</a>.</li>
-   </ul>
-  </subsection>
-
-   </section>
+      <p>A document type is a template for documents.
+       All documents made from the same template are similar.
+   </p>
+    </section>
   </body>
-</document>        
+</document>
