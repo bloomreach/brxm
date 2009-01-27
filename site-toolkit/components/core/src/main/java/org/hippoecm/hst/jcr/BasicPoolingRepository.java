@@ -18,10 +18,12 @@ import org.apache.commons.pool.impl.GenericObjectPool;
  * @author <a href="mailto:w.ko@onehippo.com">Woonsan Ko</a>
  * @version $Id$
  */
-public class BasicPoolingRepository implements Repository
+public class BasicPoolingRepository implements PoolingRepository
 {
     private Repository repository;
     private Credentials defaultCredentials;
+    private SessionDecorator readOnlySessionDecorator;
+    private SessionDecorator writableSessionDecorator;
     
     public void setRepository(Repository repository) throws RepositoryException
     {
@@ -41,6 +43,36 @@ public class BasicPoolingRepository implements Repository
     public Credentials getDefaultCredentials()
     {
         return this.defaultCredentials;
+    }
+    
+    public void setReadOnlySessionDecorator(SessionDecorator readOnlySessionDecorator)
+    {
+        this.readOnlySessionDecorator = readOnlySessionDecorator;
+        
+        if (this.readOnlySessionDecorator != null && (this.readOnlySessionDecorator instanceof PoolingRepositoryAware))
+        {
+            ((PoolingRepositoryAware) this.readOnlySessionDecorator).setPoolingRepository(this);
+        }
+    }
+    
+    public SessionDecorator getReadOnlySessionDecorator()
+    {
+        return this.readOnlySessionDecorator;
+    }
+    
+    public void setWritableSessionDecorator(SessionDecorator writableSessionDecorator)
+    {
+        this.writableSessionDecorator = writableSessionDecorator;
+        
+        if (this.writableSessionDecorator != null && (this.writableSessionDecorator instanceof PoolingRepositoryAware))
+        {
+            ((PoolingRepositoryAware) this.writableSessionDecorator).setPoolingRepository(this);
+        }
+    }
+    
+    public SessionDecorator getWritableSessionDecorator()
+    {
+        return this.writableSessionDecorator;
     }
     
     public String getDescriptor(String key)
@@ -93,6 +125,11 @@ public class BasicPoolingRepository implements Repository
             throw new LoginException("Failed to borrow session from the pool.", e);
         }
         
+        if (session != null && this.readOnlySessionDecorator != null)
+        {
+            session = this.readOnlySessionDecorator.decorate(session);
+        }
+        
         return session;
     }
 
@@ -105,7 +142,14 @@ public class BasicPoolingRepository implements Repository
      */
     public Session login(Credentials credentials) throws LoginException, RepositoryException
     {
-        return getRepository().login(credentials);
+        Session session = getRepository().login(credentials);
+        
+        if (session != null && this.writableSessionDecorator != null)
+        {
+            session = this.writableSessionDecorator.decorate(session);
+        }
+
+        return session;
     }
 
     /**
@@ -130,6 +174,17 @@ public class BasicPoolingRepository implements Repository
     public Session login(Credentials credentials, String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException
     {
         return login(credentials);
+    }
+    
+    public void returnSession(Session session)
+    {
+        try
+        {
+            this.sessionPool.returnObject(session);
+        }
+        catch (Exception e)
+        {
+        }
     }
     
     // Pool implementation
@@ -701,4 +756,5 @@ public class BasicPoolingRepository implements Repository
             return validated;
         }
     }
+
 }

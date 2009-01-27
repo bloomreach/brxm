@@ -2,7 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-  <bean id="poolingRepository" class="org.hippoecm.hst.jcr.BasicPoolingRepository" init-method="initialize" destroy-method="close">
+  <bean id="poolingRepository" class="org.hippoecm.hst.jcr.BasicPoolingRepository" 
+        init-method="initialize" destroy-method="close">
+    
+    <!-- delegated JCR repository -->
     <property name="repository">
       <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetObject">
@@ -19,12 +22,21 @@
 	    <property name="targetMethod" value="getRepository" />
 	  </bean>
     </property>
+    
+    <!-- default credentials for read-only sessions -->
     <property name="defaultCredentials">
       <bean class="javax.jcr.SimpleCredentials">
         <constructor-arg value="admin" />
         <constructor-arg value="admin" />
       </bean>
     </property>
+    
+    <!-- session proxy factories -->
+    <property name="readOnlySessionDecorator">
+      <bean class="org.hippoecm.hst.jcr.ReadOnlySessionDecoratorProxyFactoryImpl" />
+    </property>
+    
+    <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="8" />
     <property name="maxIdle" value="4" />
     <property name="minIdle" value="3" />
