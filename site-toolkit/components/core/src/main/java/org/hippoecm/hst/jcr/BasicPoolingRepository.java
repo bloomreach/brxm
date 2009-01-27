@@ -7,12 +7,9 @@ import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 
 /**
  * <p>Basic implementation of <code>javax.jcr.Repository</code> that is
@@ -23,65 +20,117 @@ import org.hippoecm.repository.HippoRepositoryFactory;
  */
 public class BasicPoolingRepository implements Repository
 {
-    protected HippoRepository repository;
-    protected SimpleCredentials simpleCredentials;
+    private Repository repository;
+    private Credentials defaultCredentials;
     
-    public String getDescriptor(String arg0)
+    public void setRepository(Repository repository) throws RepositoryException
     {
-        // TODO Auto-generated method stub
-        return null;
+        this.repository = repository;
+    }
+    
+    public Repository getRepository() throws RepositoryException
+    {
+        return this.repository;
+    }
+    
+    public void setDefaultCredentials(Credentials defaultCredentials)
+    {
+        this.defaultCredentials = defaultCredentials;
+    }
+    
+    public Credentials getDefaultCredentials()
+    {
+        return this.defaultCredentials;
+    }
+    
+    public String getDescriptor(String key)
+    {
+        String descriptor = null;
+        
+        try
+        {
+            descriptor = getRepository().getDescriptor(key);
+        }
+        catch (RepositoryException e)
+        {
+        }
+        
+        return descriptor;
     }
 
     public String[] getDescriptorKeys()
     {
-        // TODO Auto-generated method stub
-        return null;
+        String [] descriptorKeys = null;
+        
+        try
+        {
+            descriptorKeys = getRepository().getDescriptorKeys();
+        }
+        catch (RepositoryException e)
+        {
+        }
+        
+        return descriptorKeys;
     }
 
+    /**
+     * <strong>BasicPoolingRepository will return a read-only session by this method.</strong>
+     *
+     * @throws LoginException
+     * @throws RepositoryException
+     * @return a read-only session
+     */
     public Session login() throws LoginException, RepositoryException
     {
-        return null;
+        Session session = null;
+        
+        try
+        {
+            session = (Session) this.sessionPool.borrowObject();
+        }
+        catch (Exception e)
+        {
+            throw new LoginException("Failed to borrow session from the pool.", e);
+        }
+        
+        return session;
     }
 
     /**
-     * <strong>BasicPoolingRepository does NOT support this method. </strong>
+     * <strong>BasicPoolingRepository will return a writable session by this method.</strong>
      *
-     * @throws UnsupportedOperationException
      * @throws LoginException
      * @throws RepositoryException
-     * @return nothing - always throws UnsupportedOperationException
+     * @return a writable session
      */
-    public Session login(Credentials arg0) throws LoginException, RepositoryException
+    public Session login(Credentials credentials) throws LoginException, RepositoryException
     {
-        throw new UnsupportedOperationException();
+        return getRepository().login(credentials);
     }
 
     /**
-     * <strong>BasicPoolingRepository does NOT support this method. </strong>
+     * <strong>BasicPoolingRepository does not support workspaceName parameter. So it returns a read-only session.</strong>
      *
-     * @throws UnsupportedOperationException
      * @throws LoginException
      * @throws RepositoryException
-     * @return nothing - always throws UnsupportedOperationException
+     * @return a read-only session
      */
-    public Session login(String arg0) throws LoginException, NoSuchWorkspaceException, RepositoryException
+    public Session login(String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException
     {
-        throw new UnsupportedOperationException();
+        return login();
     }
 
     /**
-     * <strong>BasicPoolingRepository does NOT support this method. </strong>
+     * <strong>BasicPoolingRepository does not support workspaceName parameter. So it returns a writable session.</strong>
      *
-     * @throws UnsupportedOperationException
      * @throws LoginException
      * @throws RepositoryException
-     * @return nothing - always throws UnsupportedOperationException
+     * @return a writable session
      */
-    public Session login(Credentials arg0, String arg1) throws LoginException, NoSuchWorkspaceException, RepositoryException
+    public Session login(Credentials credentials, String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException
     {
-        throw new UnsupportedOperationException();
+        return login(credentials);
     }
-
     
     // Pool implementation
     
@@ -151,21 +200,6 @@ public class BasicPoolingRepository implements Repository
      * from the pool.
      */
     protected boolean testWhileIdle = false;
-    /**
-     * The password to be passed to our repository to establish
-     * a session.
-     */
-    protected String password = null;
-    /**
-     * The repository location to be passed to our repository to establish
-     * a session.
-     */
-    protected String location = null;
-    /**
-     * The username to be passed to our repository to
-     * establish a session.
-     */
-    protected String username = null;
     /**
      * The query that will be used to validate sessions from this pool
      * before returning them to the caller.  If specified, this query
@@ -578,85 +612,6 @@ public class BasicPoolingRepository implements Repository
     }
 
     /**
-     * Returns the password passed to the JDBC driver to establish connections.
-     * 
-     * @return the connection password
-     */
-    public synchronized String getPassword() 
-    {
-        return this.password;
-    }
-
-    /** 
-     * <p>Sets the {@link #password}.</p>
-     * <p>
-     * Note: this method currently has no effect once the pool has been
-     * initialized.  The pool is initialized the first time one of the
-     * following methods is invoked: <code>getConnection, setLogwriter,
-     * setLoginTimeout, getLoginTimeout, getLogWriter.</code></p>
-     * 
-     * @param password new value for the password
-     */
-    public synchronized void setPassword(String password) 
-    {
-        this.password = password;
-        this.simpleCredentials = null;
-    }
-
-    /**
-     * Returns the JDBC connection {@link #url} property.
-     * 
-     * @return the {@link #url} passed to the JDBC driver to establish
-     * connections
-     */
-    public synchronized String getLocation() 
-    {
-        return this.location;
-    }
-
-    /** 
-     * <p>Sets the {@link #url}.</p>
-     * <p>
-     * Note: this method currently has no effect once the pool has been
-     * initialized.  The pool is initialized the first time one of the
-     * following methods is invoked: <code>getConnection, setLogwriter,
-     * setLoginTimeout, getLoginTimeout, getLogWriter.</code></p>
-     * 
-     * @param url the new value for the JDBC connection url
-     */
-    public synchronized void setLocation(String location) 
-    {
-        this.location = location;
-    }
-
-    /**
-     * Returns the JDBC connection {@link #username} property.
-     * 
-     * @return the {@link #username} passed to the JDBC driver to establish
-     * connections
-     */
-    public synchronized String getUsername() 
-    {
-        return this.username;
-    }
-
-    /** 
-     * <p>Sets the {@link #username}.</p>
-     * <p>
-     * Note: this method currently has no effect once the pool has been
-     * initialized.  The pool is initialized the first time one of the
-     * following methods is invoked: <code>getConnection, setLogwriter,
-     * setLoginTimeout, getLoginTimeout, getLogWriter.</code></p>
-     * 
-     * @param username the new value for the JDBC connection username
-     */
-    public synchronized void setUsername(String username) 
-    {
-        this.username = username;
-        this.simpleCredentials = null;
-    }
-
-    /**
      * Returns the validation query used to validate connections before
      * returning them.
      * 
@@ -690,26 +645,6 @@ public class BasicPoolingRepository implements Repository
         }
     }
     
-    private HippoRepository getHippoRepository() throws RepositoryException
-    {
-        if (this.repository == null)
-        {
-            this.repository = HippoRepositoryFactory.getHippoRepository(location);
-        }
-        
-        return this.repository;
-    }
-    
-    private SimpleCredentials getSimpleCredentials()
-    {
-        if (this.simpleCredentials == null)
-        {
-            this.simpleCredentials = new SimpleCredentials(this.username, (this.password != null ? this.password.toCharArray() : null));
-        }
-        
-        return this.simpleCredentials;
-    }
-
     private class SessionFactory implements PoolableObjectFactory
     {
         public void activateObject(Object arg0) throws Exception
@@ -731,7 +666,7 @@ public class BasicPoolingRepository implements Repository
 
         public Object makeObject() throws Exception
         {
-            return getHippoRepository().login(getSimpleCredentials());
+            return login(getDefaultCredentials());
         }
 
         public void passivateObject(Object arg0) throws Exception

@@ -2,10 +2,29 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-  <bean id="repository" class="org.hippoecm.hst.jcr.BasicPoolingRepository" init-method="initialize" destroy-method="close">
-    <property name="location" value="rmi://127.0.0.1:1099/hipporepository" />
-    <property name="username" value="admin" />
-    <property name="password" value="admin" />
+  <bean id="poolingRepository" class="org.hippoecm.hst.jcr.BasicPoolingRepository" init-method="initialize" destroy-method="close">
+    <property name="repository">
+      <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject">
+	      <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+	        <property name="targetClass" value="org.hippoecm.repository.HippoRepositoryFactory" />
+	        <property name="targetMethod" value="getHippoRepository" />
+	        <property name="arguments">
+	          <list>
+	            <value>rmi://127.0.0.1:1099/hipporepository</value>
+	          </list>
+	        </property>
+	      </bean>
+	    </property>
+	    <property name="targetMethod" value="getRepository" />
+	  </bean>
+    </property>
+    <property name="defaultCredentials">
+      <bean class="javax.jcr.SimpleCredentials">
+        <constructor-arg value="admin" />
+        <constructor-arg value="admin" />
+      </bean>
+    </property>
     <property name="maxActive" value="8" />
     <property name="maxIdle" value="4" />
     <property name="minIdle" value="3" />
