@@ -3,7 +3,7 @@ package org.hippoecm.hst.test;
 import junit.framework.TestCase;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * <p>
@@ -27,7 +27,7 @@ public abstract class AbstractSpringTestCase extends TestCase
     protected void setUp() throws Exception
     {        
         super.setUp();
-        this.appContext = new FileSystemXmlApplicationContext(getConfigurations());
+        this.appContext = new ClassPathXmlApplicationContext(getConfigurations());
     }
 
     /**
@@ -39,8 +39,13 @@ public abstract class AbstractSpringTestCase extends TestCase
 
     /**
      * required specification of spring configurations
+     * the derived class can override this.
      */
-    protected abstract String[] getConfigurations();
+    protected String[] getConfigurations()
+    {
+        String classXmlFileName = getClass().getName().replace(".", "/") + ".xml";
+        return new String [] { classXmlFileName };
+    }
     
     protected ApplicationContext getApplicationContext()
     {

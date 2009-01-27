@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+  <bean id="repository" class="org.hippoecm.hst.jcr.BasicPoolingRepository" init-method="initialize" destroy-method="close">
+    <property name="location" value="rmi://127.0.0.1:1099/hipporepository" />
+    <property name="username" value="admin" />
+    <property name="password" value="admin" />
+    <property name="maxActive" value="8" />
+    <property name="maxIdle" value="4" />
+    <property name="minIdle" value="3" />
+    <property name="initialSize" value="2" />
+    <property name="maxWait" value="10000" />
+    <property name="testOnBorrow" value="true" />
+    <property name="testOnReturn" value="false" />
+    <property name="testWhileIdle" value="false" />
+    <property name="validationQuery" value="/jcr:root/content" />
+    <property name="timeBetweenEvictionRunsMillis" value="60000" />
+    <property name="numTestsPerEvictionRun" value="1" />
+    <property name="minEvictableIdleTimeMillis" value="10000" />
+  </bean>
+
+</beans>
