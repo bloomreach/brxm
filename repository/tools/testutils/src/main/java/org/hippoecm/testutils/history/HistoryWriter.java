@@ -42,7 +42,6 @@ public class HistoryWriter extends Suite implements XmlConstants {
     private myXML testSuite;
     private myXML testCase;
 
-    private String name;
     private long timeStamp;
 
     private String history;
