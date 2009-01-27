@@ -32,7 +32,7 @@ ________________________________________________________________________________
 
    <script type="text/javascript">
     leftpx=280;
-    toppx=275;
+    toppx=205;
     bottompx=575;
    </script>
    <div class='group'> 
@@ -47,7 +47,7 @@ ________________________________________________________________________________
 
         <p>Each time one starts working with Hippo CMS one has to login
            to it, identifying oneselve. This ensures that no unauthorized
-           persons can get access to Hippo CMS.          
+           persons can get access to Hippo CMS.
         </p>
 
     <p>
@@ -63,15 +63,21 @@ ________________________________________________________________________________
      you may use the default username and password: username=editor, password=editor.
      Note that in this case, your Hippo CMS is not yet protected by the login procedure,
      as anyone can read this.
-    </p>    
+    </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./check_for_requests.html'>Check for requests</a>.</li>
-    <li><a href='./create_folder.html'>Create a folder</a>.</li>
-   </ul>       
+    <li><a href='./create_folder.html'>Create a folder (continue tour, first week)</a>.</li>
+    <li><a href='./check_for_requests.html'>Check for requests (continue tour, a week later)</a>.</li>
+   </ul>
   </subsection>
-
-    </section>
-  </body>
-</document>        
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
+  </section>
+ </body>
+</document>

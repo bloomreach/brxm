@@ -20,28 +20,66 @@
 ____________________________________________________________________________________________
 
 -->
+<!--
+   Do not edit! This file is a clone of the file
+   ../../contributors/howto/start_CMS.xml,
+   meaning it is a copy and should stay a copy.
+   All changes will be overwritten when the origional changes.
+-->
 <document>
   <properties>
-    <title>Start CMS</title>
+    <title>Start CMS site</title>
   </properties>
 
   <body>
-    <section name="Start CMS">
-      <span class="shortdesc">How to start a CMS session in your browser</span>
+    <section name="Start CMS site">
+      <span class="shortdesc">How to go to the CMS site, i.e. start a CMS session, in your browser.</span>
+
+   <script type="text/javascript">
+    leftpx=0;
+    toppx=0;
+    heightpx=100;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
+     <img src="../../../../images/screenshots/cms_M9/goto_CMS_site.png" alt='goto CMS site'/> 
+    </div></div> 
+    <p>
+     Starting the Hippo CMS site of the organisation Swatia.
+     The web address of that Hippo CMS site happens to be: http://cms.swatia.org/.
+     The site is not yet visible, because the user has not clicked yet.
+     Coincidentially, the site currently visible happens
+     to be the Hippo CMS documentation site at <a href='http://www.onehippo.org'>www.onehippo.org</a>.
+    </p>
+   </div>
 
    <p>
-        Open the Hippo CMS site 
-        <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in 
-        your browser. 
+      The Hippo CMS is accessed via your web browser.
+      Someone, e.g. your CMS administrator, must have told you the web address of the site.
+      For the Swatia CMS site, the name is http://cms.swatia.org/.
+      If nobody told you the name, replacing 'swatia' by the name of your company is a good guess.
+      And additionally replacing 'org' by 'com' is also a good guess. But any name is possible.
+   </p>
+   <p>
+      In the special case that the Hippo CMS server program runs on your own computer, the web
+      addresss of the Hippo CMS site will be:
+      <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a>. Note that this
+      link will only work in that special case.
    </p>
 
+   <subsection name='Next'>
+    <ul>
+     <li><a href='./login.html'>Login (continue tour).</a></li>
+    </ul>
+   </subsection>
 
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./login.html'>Login</a>.</li>
-   </ul>
-  </subsection>
-
-   </section>
-  </body>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
+  </section>
+ </body>
 </document>

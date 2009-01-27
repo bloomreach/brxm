@@ -35,31 +35,42 @@ ________________________________________________________________________________
           the role they will perform.
        </p>
 
+       <p>
+        Before starting a guide, you may first want to learn how
+        to <a href='./screenshots.xml'>manipulate the screenshots,</a> 
+        making them large (double click), or showing only the relevant part (single click).
+       </p>
 <table>
   <tr>
     <td>
       <a href="./contributors/index.html">Guide for Contributors</a>
     </td>
-    <td>Guide for Hippo CMS users to perform the role of contributor.</td>
+    <td>Guide for Hippo CMS users to perform the role
+        of <a href='./contributors/concepts/contributor.html'>contributor</a>. 
+        (author and supplier of images and such)</td>
   </tr>
   <tr>
     <td>
       <a href="./editors/index.html">Guide for Editors</a>
     </td>
-    <td>Guide for Hippo CMS users to perform the role of editor.
+    <td>Guide for Hippo CMS users to perform the role of editor
+        (reviewer, decides when ready for publication).
     </td>
   </tr>
   <tr>
     <td>
       <a href="./information_architects/index.html">Guide for Information Architects</a>
     </td>
-    <td>Guide for Hippo CMS users to perform the role of Information Architect.</td>
+    <td>Guide for Hippo CMS users to perform the role of Information Architect (creator of 
+     document templates/types, i.e. the informational structure, conform the business rules
+     of the organisation).</td>
   </tr>
   <tr>
     <td>
       <a href="./cms_admins/index.html">Guide for CMS admins</a>
     </td>
-    <td>Guide for Hippo CMS users to perform the role of CMS administrator.</td>
+    <td>Guide for Hippo CMS users to perform the role of CMS administrator (assigns rights to
+        contributors, editors and information architects according to management decisions).</td>
   </tr>
 </table>
 

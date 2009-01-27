@@ -27,9 +27,9 @@
       take the following tour.</span> 
       
  <p>To get introduced to the role of CMS information architect, you will look over the shoulder of
-    Alice, who is working as an CMS information architect for the imaginary organization Saraswatia,
+    Alice, who is working as an CMS information architect for the imaginary organization Swatia,
     an organization of people very interested in music, art and knowledge. We did not imagine an
-    answer to the question whether Saraswatia is a commercial organization, a hobby organization, or both. 
+    answer to the question whether Swatia is a commercial organization, a hobby organization, or both. 
 </p>
 
    <blockquote>
@@ -75,9 +75,9 @@
        <span class='structure-48 icon-48'/> 
       </td>
       <td> 
-         <a href="./howto/create_namespace.html">Create a namespace</a>. Saraswatia decides to
+         <a href="./howto/create_namespace.html">Create a namespace</a>. Swatia decides to
          publish an online newspaper about music, art and knowledge. The name will be Sar, which
-         is just an abbreviation of `Saraswatia Articles'. Alice creates a namespace to gather
+         is just an abbreviation of `Swatia Articles'. Alice creates a namespace to gather
          all the different kind of content of Sar in.
       </td>
      </tr>
