@@ -39,22 +39,31 @@ ________________________________________________________________________________
     </div></div>
      <p>
       Handling a <a href='../concepts/request.html'>request</a> concerning the document 
-      'multibazaar2008'.
+      'multibazaar2008' by clicking on the accept request button.
      </p>
    </div>
 
    <p>
-    Click on the document mentioned in <a href='./check_for_requests.html'>a request in your todo list</a>.
-    The document tab of that document opens and you can review the document. Then decide to either
+    If you click on a <a href='./check_for_requests.html'>request in your todo list</a>, the
+    <a href='card.html'>card</a> of that document is pulled out and shown in the
+    <a href='cards_panel'>cards panel</a> in <a href='review_mode.html'>review mode</a>.
+    You can review the document. Then decide to either
     accept the request or reject the request, by pressing one of the buttons at the top.
    </p>
 
   <subsection name='Next'>
    <ul>
     <li><a href='./logout.html'>Logout</a>.</li> 
-   </ul>       
+   </ul>
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>
-</document>        
+</document>

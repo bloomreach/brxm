@@ -35,33 +35,37 @@
     </div></div>
     <p>
      Screenshot of the online word-processor of the Hippo CMS.
-     </p>
+     In the <a href='../screenshots.html'>screenshots in the guide</a>,
+     you may double click to make it as large
+     as possible and single click to show the relevant part. 
+     This is useful if the relevant part is small.
+    </p>
    </div>
 
      <p>To get introduced to the role of CMS <a href='./concepts/contributor.html'>contributor</a>, 
         you will look over the shoulder of Marc,
-        who is a member of the imaginary organization Saraswatia,
+        who is a member of the imaginary organization Swatia,
         an organization of people very interested in music, art and knowledge. We did not imagine an
-        answer to the question whether Saraswatia is a commercial organization, a hobby organization, or both. 
+        answer to the question whether Swatia is a commercial organization, a hobby organization, or both.
     </p>
-    <p>Saraswatia decided to publish an online newspaper about music, art and knowledge. 
+    <p>Swatia decided to publish an online newspaper about music, art and knowledge.
     </p>
     <p>Marc will add an article about an upcoming multicultural Bazaar.
     </p>
 
    <blockquote>
     <table>
-  
+
      <tr>
       <td><a href="./howto/start_CMS.html">Browser</a></td>
       <td>
        <span class='web-48 icon-48'/> 
       </td>
       <td>
-         Marc opens the Hippo CMS site of Saraswatia. He needed to know the 
+         Marc opens the Hippo CMS site of Swatia. He needed to know the 
          site's web address and he got it from the CMS administrator, 
          who got it from the system administrator 
-         who installed the Hippo CMS at Saraswatia.
+         who installed the Hippo CMS at Swatia.
       </td>
      </tr>
    
@@ -99,7 +103,7 @@
        <span class='user-48 icon-48'/> 
       </td>
       <td> 
-         Marc learned that all articles for Saraswatia's online newspaper are supposed to
+         Marc learned that all articles for Swatia's online newspaper are supposed to
          go in the 'newspaper' document folder, so he goes to that folder to add his new 
          document in.  
       </td>
@@ -114,7 +118,7 @@
          For the article about the upcoming multicultural bazaar, Marc creates a
          <a href='./concepts/document.html'>document</a> named 'multibazar2009'. 
          He gives it the <a href='./concepts/document_type.html'>document type</a> 'upcoming',
-         because that is in Saraswatia the <a href='./concepts/document_type.html'>document type</a> 
+         because that is in Swatia the <a href='./concepts/document_type.html'>document type</a> 
          for upcoming happenings, like the bazaar.
       </td>
      </tr>

@@ -580,10 +580,6 @@
    fullname='delve_into/user/contributors/concepts/editing.xml'
    relpath='delve_into/user/contributors/concepts'
   >editing</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/contributors/concepts/editing.xml~'
-   relpath='delve_into/user/contributors/concepts'
-  >editing</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/concepts/edit_mode.xml'
    relpath='delve_into/user/contributors/concepts'

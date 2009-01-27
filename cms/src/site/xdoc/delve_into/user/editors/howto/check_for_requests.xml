@@ -38,14 +38,14 @@ ________________________________________________________________________________
      <img src="../../../../images/screenshots/cms_M9/editors/check_for_requests.png" alt='Check for requests screenshot'/> 
     </div></div> 
      <p>
-      Checking for <a href='../concepts/request.html'>requests</a>. There is 
-      one request, from Marc, to publish the document 'multibazaar2008'.
+      Checking for <a href='../concepts/request.html'>requests</a>. There are
+      three requests from Marc, one to publish the document 'multibazaar2008',
+      and two requests to delete documents with stupid names. Janine is about
+      to click on the request for publication, to review that document.
      </p>
    </div>
 
    <p>
-    Go to the <a href='../concepts/home_workspace.html'>home workspace</a>,
-    by clicking on the home button.
     At the right in the <a href='../concepts/home_workspace.html'>home workspace</a>, 
     there is a todo list, in which requests are shown.
    </p>

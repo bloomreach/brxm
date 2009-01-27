@@ -26,15 +26,14 @@
     <span class='shortdesc'>To get introduced to the role of CMS Editor, take the following tour.</span> 
 
      <p>To get introduced to the role of CMS editor, you will look over the shoulder of
-        Janine, who works for the imaginary organization Saraswatia,
+        Janine, who works for the imaginary organization Swatia,
         an organization of people very interested in music, art and knowledge. We did not imagine an
-        answer to the question whether Saraswatia is a commercial organization, a hobby organization, or both. 
+        answer to the question whether Swatia is a commercial organization, a hobby organization, or both. 
     </p>
-    <p>Saraswatia decided to publish an online newspaper about music, art and knowledge. The name will be Sar, which
-        is just an abbreviation of `Saraswatia Articles'. 
+    <p>Swatia decided to publish an online newspaper about music, art and knowledge.
     </p>
     <p>Janine will for example decide if articles written by contributors can be published in
-       the Sar newspaper.
+       the Swatia newspaper.
     </p>
 
    <blockquote>
@@ -45,12 +44,9 @@
        <span class='web-48 icon-48'/> 
       </td>
       <td>
-        Open the Hippo CMS site 
-        <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in 
-        your browser. 
+       <a href='./howto/start_CMS.html'>Janine starts the Hippo CMS site of Swatia.</a>
       </td>
      </tr>
-   
      <tr>
       <td>Login</td>
       <td>
