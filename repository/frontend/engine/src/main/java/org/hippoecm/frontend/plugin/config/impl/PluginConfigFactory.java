@@ -33,7 +33,9 @@ import org.slf4j.LoggerFactory;
 public class PluginConfigFactory implements IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
+
     private final static Logger log = LoggerFactory.getLogger(PluginConfigFactory.class);
 
     private IPluginConfigService pluginConfigService;
@@ -43,8 +45,22 @@ public class PluginConfigFactory implements IClusterable {
         try {
             Session session = sessionModel.getSession();
             ValueMap credentials = sessionModel.getCredentials();
-            if (session == null || !session.isLive() || Main.DEFAULT_CREDENTIALS.equals(credentials)) {
+            if (session == null || !session.isLive()) {
                 baseService = new JavaConfigService("login");
+            } else if (Main.DEFAULT_CREDENTIALS.equals(credentials)) {
+                String configPath = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/" + "login";
+                if (session.itemExists(configPath)) {
+                    Node applicationNode = (Node)session.getItem(configPath);
+                    if (applicationNode.hasNodes()) {
+                        Node clusterNode = applicationNode.getNodes().nextNode();
+                        baseService = new JcrConfigService(new JcrNodeModel(applicationNode), clusterNode.getName());
+                    } else {
+                        log.error("Application configuration '" + applicationNode.getName() + "' contains no plugin cluster");
+                        baseService = new JavaConfigService("login");
+                    }
+                } else {
+                    baseService = new JavaConfigService("login");
+                }
             } else {
                 String config = ((Main) Application.get()).getConfigurationParameter("config", null);
                 if (config == null) {
