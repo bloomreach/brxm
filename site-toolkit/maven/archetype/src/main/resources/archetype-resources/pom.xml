@@ -39,7 +39,7 @@
 
   <properties>
     <hippoecm.version>2.01.04</hippoecm.version>
-    <hst.version>2.02.04</hst.version>
+    <hst.version>2.02.05-SNAPSHOT</hst.version>
   </properties>
 
   <dependencyManagement>
@@ -52,19 +52,27 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.ecm.hst</groupId>
-        <artifactId>site-toolkit-components</artifactId>
+        <artifactId>hst-api</artifactId>
+        <version>${dollar}{hst.version}</version>
+        <type>jar</type>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.ecm.hst.components</groupId>
+        <artifactId>hst-core</artifactId>
         <version>${dollar}{hst.version}</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.onehippo.ecm.hst</groupId>
-        <artifactId>site-toolkit-core</artifactId>
+        <artifactId>hst-client</artifactId>
         <version>${dollar}{hst.version}</version>
         <type>jar</type>
+        <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.onehippo.ecm.hst</groupId>
-        <artifactId>site-toolkit-addon-repository</artifactId>
+        <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
+        <artifactId>repository</artifactId>
         <version>${dollar}{hst.version}</version>
         <type>jar</type>
       </dependency>

@@ -60,10 +60,10 @@
 
   <modules>
     <module>api</module>
-    <module>maven</module>
     <module>components</module>
     <module>client</module>
     <module>toolkit-resources</module>
+    <module>maven</module>
     <module>applications</module>
   </modules>
 

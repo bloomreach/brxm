@@ -37,8 +37,9 @@
       <type>war</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>site-toolkit-addon-repository</artifactId>
+      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
+      <artifactId>repository</artifactId>
+      <version>${hst.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
