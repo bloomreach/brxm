@@ -17,6 +17,7 @@ package org.hippoecm.frontend.session;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.QueryManager;
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 public class UserSession extends WebSession {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: UserSession.java 15919 2009-01-13 12:43:27Z bvanhalderen $";
 
     private static final long serialVersionUID = 1L;
 
@@ -63,8 +64,8 @@ public class UserSession extends WebSession {
         return jcrSessionModel;
     }
 
-    public void setJcrSessionModel(JcrSessionModel model) {
-        jcrSessionModel = model;
+    public void setJcrSessionModel(JcrSessionModel sessionModel) {
+        jcrSessionModel = sessionModel;
     }
 
     public void logout() {

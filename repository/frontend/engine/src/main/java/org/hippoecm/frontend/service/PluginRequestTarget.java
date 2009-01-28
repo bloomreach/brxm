@@ -17,8 +17,6 @@ package org.hippoecm.frontend.service;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,7 +24,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippoecm.frontend.Home;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +34,6 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
     private static final Logger log = LoggerFactory.getLogger(PluginRequestTarget.class);
 
     private Set<Component> updates;
-    private List<IListener> listeners;
 
     public PluginRequestTarget(Page page) {
         super(page);
@@ -52,38 +48,11 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
         this.updates.add(component);
     }
 
-    @Override
-    public void addListener(IListener listener) {
-        if (listener == null) {
-            throw new IllegalArgumentException("Argument `listener` cannot be null");
-        }
-
-        if (listeners == null) {
-            listeners = new LinkedList();
-        }
-
-        if (!listeners.contains(listener)) {
-            listeners.add(listener);
-        }
-    }
-
     // implement AjaxRequestTarget.IListener
 
     public void onBeforeRespond(Map existing, AjaxRequestTarget target) {
         if (existing.size() > 0) {
             log.warn("Some components have already been added to the target.");
-        }
-
-        Page page = getPage();
-        if (page instanceof Home) {
-            ((Home) page).render(this);
-        }
-
-        if (listeners != null) {
-            Iterator it = listeners.iterator();
-            while (it.hasNext()) {
-                ((IListener) it.next()).onBeforeRespond(existing, this);
-            }
         }
 
         Iterator<Component> components = updates.iterator();
@@ -107,12 +76,6 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
     }
 
     public void onAfterRespond(Map map, IJavascriptResponse response) {
-        if (listeners != null) {
-            Iterator it = listeners.iterator();
-            while (it.hasNext()) {
-                ((IListener) it.next()).onAfterRespond(map, response);
-            }
-        }
     }
 
 }

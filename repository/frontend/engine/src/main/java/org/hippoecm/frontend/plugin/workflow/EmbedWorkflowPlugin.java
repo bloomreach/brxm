@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugin.workflow;
 
 import org.apache.wicket.model.IDetachable;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -38,14 +37,6 @@ public class EmbedWorkflowPlugin extends WorkflowPlugin implements IDetachable {
     @Override
     protected void configureWorkflow(IPluginConfig wflConfig, WorkflowsModel model) {
         wflConfig.put(ITEM_ID, item);
-    }
-
-    @Override
-    public void onFlush(JcrNodeModel nodeModel) {
-        JcrNodeModel myModel = getNodeModel();
-        if (myModel != null && myModel.getItemModel().hasAncestor(nodeModel.getItemModel())) {
-            updateModel(myModel);
-        }
     }
 
 }

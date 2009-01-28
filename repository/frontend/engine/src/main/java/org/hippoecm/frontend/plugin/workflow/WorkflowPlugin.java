@@ -19,18 +19,19 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.IModelService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.model.WorkflowsModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -38,12 +39,11 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelListener, IDetachable {
+public class WorkflowPlugin implements IPlugin, IModelListener, IObserver, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -60,7 +60,7 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
         Cluster(IClusterConfig clusterConfig, IModel model) {
             control = context.newCluster(clusterConfig, null);
 
-            String modelId = control.getClusterConfig().getString("wicket.model"); 
+            String modelId = control.getClusterConfig().getString("wicket.model");
             modelService = new ModelService(modelId, model);
             modelService.init(context);
 
@@ -87,7 +87,6 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
         this.context = context;
         this.config = config;
 
-        model = new JcrNodeModel((Node) null);
         workflows = new LinkedList<Cluster>();
 
         if (config.get(CATEGORIES) != null) {
@@ -113,17 +112,28 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
         } else {
             log.warn("");
         }
-
-        context.registerService(this, IJcrService.class.getName());
     }
 
     // implement IModelListener
     public void updateModel(IModel imodel) {
         closeWorkflows();
-        if (imodel == null || ((JcrNodeModel) imodel).getNode() == null) {
+
+        if (imodel != model && (imodel == null || !imodel.equals(model))) {
+            // unregister and re-register; observer model is changed 
+            if (model != null) {
+                context.unregisterService(this, IObserver.class.getName());
+            }
+            model = (JcrNodeModel) imodel;
+            if (model != null) {
+                context.registerService(this, IObserver.class.getName());
+            }
+        } else {
+            model = (JcrNodeModel) imodel;
+        }
+        if (model == null || model.getNode() == null) {
             return;
         }
-        model = (JcrNodeModel) imodel;
+
         try {
             List<String> cats = new LinkedList<String>();
             for (String category : categories) {
@@ -185,13 +195,19 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
         workflows = new LinkedList<Cluster>();
     }
 
-    public void onFlush(JcrNodeModel nodeModel) {
-        if (model.getItemModel().hasAncestor(nodeModel.getItemModel())) {
-            updateModel(model);
-        }
+    public IObservable getObservable() {
+        // FIXME: should this be an ancestor of the model?  (the handle if it exists?)
+        return model;
+    }
+
+    public void onEvent(IEvent event) {
+        updateModel(model);
     }
 
     public void detach() {
-        model.detach();
+        if (model != null) {
+            model.detach();
+        }
     }
+
 }

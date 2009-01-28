@@ -20,6 +20,7 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.string.AppendingStringBuffer;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
@@ -39,21 +40,16 @@ class ListCell extends Panel {
         add(new AjaxEventBehavior("onclick") {
             private static final long serialVersionUID = 1L;
 
+            protected CharSequence getEventHandler() {
+                return new AppendingStringBuffer(super.getEventHandler()).append("; return false;");
+            }
+
             @Override
             protected void onEvent(AjaxRequestTarget target) {
                 ListDataTable dataTable = (ListDataTable) findParent(ListDataTable.class);
                 dataTable.getSelectionListener().selectionChanged(model);
             }
         });
-
-//        add(new AjaxEventBehavior("ondblclick") {
-//            private static final long serialVersionUID = 1L;
-//            @Override
-//            protected void onEvent(AjaxRequestTarget target) {
-//                String script = "var x = YAHOO.util.Dom.getElementsByClassName('edit_ico'); var y = x[0];y.onclick();this.blur()";
-//                target.appendJavascript(script);
-//            }
-//        });
 
         if (renderer == null) {
             add(new NameRenderer().getRenderer("renderer", model));
@@ -64,7 +60,7 @@ class ListCell extends Panel {
         if (attributeModifier != null) {
             AttributeModifier[] cellModifiers = attributeModifier.getCellAttributeModifiers(model);
             if (cellModifiers != null) {
-                for(AttributeModifier cellModifier : cellModifiers) {
+                for (AttributeModifier cellModifier : cellModifiers) {
                     add(cellModifier);
                 }
             }

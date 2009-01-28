@@ -30,9 +30,9 @@ import javax.servlet.ServletContext;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.Localizer;
 import org.apache.wicket.Page;
 import org.apache.wicket.Request;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -41,8 +41,12 @@ import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authorization.IAuthorizationStrategy;
 import org.apache.wicket.protocol.http.HttpSessionStore;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.protocol.http.WebRequestCycleProcessor;
+import org.apache.wicket.request.IRequestCycleProcessor;
 import org.apache.wicket.request.RequestParameters;
 import org.apache.wicket.request.target.coding.AbstractRequestTargetUrlCodingStrategy;
+import org.apache.wicket.request.target.component.BookmarkablePageRequestTarget;
+import org.apache.wicket.request.target.component.IPageRequestTarget;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.session.ISessionStore;
 import org.apache.wicket.settings.IExceptionSettings;
@@ -106,7 +110,7 @@ public class Main extends WebApplication {
                 return Thread.currentThread().getContextClassLoader().loadClass(name);
             }
         });
-        
+
         IResourceSettings resourceSettings = getResourceSettings();
         final IResourceStreamLocator oldLocator = resourceSettings.getResourceStreamLocator();
         final String layout = "/WEB-INF/" + getConfigurationParameter("config", "default") + "/";
@@ -114,27 +118,27 @@ public class Main extends WebApplication {
         resourceSettings.setResourceStreamLocator(new ResourceStreamLocator() {
             @Override
             public IResourceStream locate(final Class clazz, final String path) {
-                    // EAR packaging
-                    try {
-                        ServletContext layoutContext = getServletContext().getContext("/layout");
-                        if (layoutContext != null) {
-                            URL url = layoutContext.getResource(layout + path);
-                            if (url != null) {
-                                return new UrlResourceStream(url);
-                            }
-                        }
-                    } catch (MalformedURLException ex) {
-                        log.warn("malformed url for layout override " + ex.getMessage());
-                    }
-                    // WAR packaging
-                    try {
-                        URL url = getServletContext().getResource("/layout" + layout + path);
+                // EAR packaging
+                try {
+                    ServletContext layoutContext = getServletContext().getContext("/layout");
+                    if (layoutContext != null) {
+                        URL url = layoutContext.getResource(layout + path);
                         if (url != null) {
                             return new UrlResourceStream(url);
                         }
-                    } catch (MalformedURLException ex) {
-                        log.warn("malformed url for layout override " + ex.getMessage());
                     }
+                } catch (MalformedURLException ex) {
+                    log.warn("malformed url for layout override " + ex.getMessage());
+                }
+                // WAR packaging
+                try {
+                    URL url = getServletContext().getResource("/layout" + layout + path);
+                    if (url != null) {
+                        return new UrlResourceStream(url);
+                    }
+                } catch (MalformedURLException ex) {
+                    log.warn("malformed url for layout override " + ex.getMessage());
+                }
                 return oldLocator.locate(clazz, path);
             }
         });
@@ -149,8 +153,7 @@ public class Main extends WebApplication {
                 if (component instanceof IStringResourceProvider) {
                     provider = (IStringResourceProvider) component;
                 } else {
-                    provider = (IStringResourceProvider) component
-                        .findParent(IStringResourceProvider.class);
+                    provider = (IStringResourceProvider) component.findParent(IStringResourceProvider.class);
                 }
                 if (provider != null) {
                     Map<String, String> keys = new MiniMap(5);
@@ -258,15 +261,37 @@ public class Main extends WebApplication {
         return new PluginRequestTarget(page);
     }
 
+    @Override
+    protected IRequestCycleProcessor newRequestCycleProcessor() {
+        return new WebRequestCycleProcessor() {
+            @Override
+            public void processEvents(RequestCycle requestCycle) {
+                super.processEvents(requestCycle);
+
+                IRequestTarget target = requestCycle.getRequestTarget();
+                if (target instanceof IPageRequestTarget) {
+                    Page page = ((IPageRequestTarget) target).getPage();
+                    if (page instanceof Home) {
+                        JcrObservationManager.getInstance().process();
+
+                        if (target instanceof PluginRequestTarget) {
+                            ((Home) page).render((PluginRequestTarget) target);
+                        } else {
+                            ((Home) page).render((PluginRequestTarget) null);
+                        }
+                    }
+                } else if (target instanceof BookmarkablePageRequestTarget) {
+                    Page page = ((BookmarkablePageRequestTarget) target).getPage();
+                    if (page instanceof Home) {
+                        ((Home) page).render((PluginRequestTarget) null);
+                    }
+                }
+            }
+        };
+    }
+
     public String getConfigurationParameter(String parameterName, String defaultValue) {
-        String result = getInitParameter(parameterName);
-        if (result == null || result.equals("")) {
-            result = getServletContext().getInitParameter(parameterName);
-        }
-        if (result == null || result.equals("")) {
-            result = defaultValue;
-        }
-        return result;
+        return WebApplicationHelper.getConfigurationParameter(this, parameterName, defaultValue);
     }
 
     private HippoRepository repository;

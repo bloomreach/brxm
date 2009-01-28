@@ -1,0 +1,119 @@
+/*
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.hippoecm.frontend.model.event;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.wicket.Page;
+import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.plugin.IPlugin;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.ServiceTracker;
+
+public class ObservableRegistry implements IPlugin {
+    private static final long serialVersionUID = 1L;
+
+    private class ObservationContext implements IObservationContext {
+
+        List<IObserver> observers;
+        IObservable observable;
+
+        ObservationContext(IObservable observable) {
+            this.observable = observable;
+            this.observers = new ArrayList<IObserver>();
+            observable.setObservationContext(this);
+        }
+
+        void addObserver(IObserver observer) {
+            if (observer.getObservable() != observable) {
+                observer.getObservable().setObservationContext(this);
+            }
+            observers.add(observer);
+        }
+
+        void removeObserver(IObserver observer) {
+            observers.remove(observer);
+        }
+
+        boolean hasObservers() {
+            return !observers.isEmpty();
+        }
+
+        public void publish(IEvent event) {
+            for (IObserver observer : observers) {
+                observer.onEvent(event);
+            }
+        }
+
+        public Page getPage() {
+            return pluginContext.getService(Home.class.getName(), Page.class);
+        }
+
+    }
+
+    private IPluginContext pluginContext;
+    private HashMap<IObservable, ObservationContext> contexts;
+
+    public ObservableRegistry(IPluginContext context, IPluginConfig config) {
+        this.pluginContext = context;
+
+        contexts = new HashMap<IObservable, ObservationContext>();
+
+        context.registerTracker(new ServiceTracker<IObserver>(IObserver.class) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onServiceAdded(IObserver service, String name) {
+                IObservable observable = service.getObservable();
+                ObservationContext obContext = contexts.get(observable);
+                if (obContext == null) {
+                    obContext = new ObservationContext(observable);
+                    obContext.observable.startObservation();
+                    contexts.put(observable, obContext);
+                }
+                obContext.addObserver(service);
+            }
+
+            @Override
+            protected void onRemoveService(IObserver service, String name) {
+                IObservable observable = service.getObservable();
+                ObservationContext obContext = contexts.get(observable);
+                obContext.removeObserver(service);
+                if (!obContext.hasObservers()) {
+                    obContext.observable.stopObservation();
+                    contexts.remove(observable);
+                }
+            }
+
+        }, IObserver.class.getName());
+    }
+
+    public void startObservation() {
+        for (ObservationContext context : contexts.values()) {
+            context.observable.startObservation();
+        }
+    }
+
+    public void stopObservation() {
+        for (ObservationContext context : contexts.values()) {
+            context.observable.stopObservation();
+        }
+    }
+
+}
