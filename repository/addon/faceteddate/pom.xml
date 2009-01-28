@@ -17,45 +17,26 @@
 
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm</artifactId>
+    <artifactId>hippo-ecm-addon</artifactId>
     <version>2.04.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Addons</name>
-  <description>Hippo ECM addons</description>
+  <name>Faceted date addon</name>
+  <description>Hippo ECM faceted date addon</description>
+  <artifactId>hippo-ecm-addon-faceteddate</artifactId>
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-addon</artifactId>
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/faceteddate</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/faceteddate</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/faceteddate</url>
   </scm>
 
   <modules>
-    <module>builtin</module>
-    <module>standards</module>
-    <module>editor</module>
-    <module>reporting</module>
-    <module>reviewed-action</module>
-    <module>xinha</module>
-    <module>xinha-frontend</module>
-    <module>yui</module>
-    <module>cms</module>
-    <module>gallery</module>
-    <module>gotolink</module>
-    <module>sample</module>
-    <module>search</module>
-    <module>defaultcontent</module>
-    <module>versioning</module>
-    <module>ldap</module>
-    <module>eavesdrop</module>
-    <module>faceteddate</module>
+    <module>frontend</module>
+    <module>repository</module>
   </modules>
 
-  <build>
-    <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
-  </build>
 </project>
