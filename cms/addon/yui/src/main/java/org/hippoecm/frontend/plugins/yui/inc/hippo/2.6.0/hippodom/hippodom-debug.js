@@ -72,6 +72,9 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
         };
 
         YAHOO.hippo.Dom.enhance = function(el, id) {
+            if(el == null) {
+                return;
+            }
             var yid = el.getAttribute("yui:id");
             if (yid && yid == id.split(':')[1] && el.id != id) {
                 el.id = id;
@@ -101,6 +104,8 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
  * with Firebug 1.2.0b2.
  */
 
+//TODO: not needed anymore?
+/*
 YAHOO.util.Dom.get = function(el) {
     if (el) {
         if (el.nodeType || el.item) { // Node, or NodeList
@@ -125,3 +130,4 @@ YAHOO.util.Dom.get = function(el) {
 
     return null;
 };
+*/

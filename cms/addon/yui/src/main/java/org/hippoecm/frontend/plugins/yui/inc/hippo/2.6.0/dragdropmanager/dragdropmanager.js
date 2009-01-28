@@ -29,54 +29,52 @@ YAHOO.namespace('hippo');
 if (!YAHOO.hippo.DragDropManager) {
     ( function() {
         var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
-        
+
         YAHOO.hippo.DragDropManagerImpl = function() {
         };
-        
+
         YAHOO.hippo.DragDropManagerImpl.prototype = {
-                
+
             loader :new YAHOO.hippo.FunctionQueue('DragDropQueue'),
-            draggables : new YAHOO.hippo.HashMap(),
-            droppables : new YAHOO.hippo.HashMap(),
-            
+            draggables :new YAHOO.hippo.HashMap(),
+            droppables :new YAHOO.hippo.HashMap(),
+
             onLoad : function() {
                 this.cleanup();
                 this.loader.handleQueue();
             },
-            
-            cleanup: function() {
-                //remove old drag or drop components from dom and maps
+
+            cleanup : function() {
+                // remove old drag or drop components from dom and maps
             },
-            
+
             /**
              * TODO: Maybe the draggables and droppables can be merged?
              */
             getModel : function(id) {
-                if(this.draggables.containsKey(id)) {
+                if (this.draggables.containsKey(id)) {
                     return this.draggables.get(id);
                 } else if (this.droppables.containsKey(id)) {
                     return this.droppables.get(id);
                 }
                 return null;
             },
-            
+
             addDraggable : function(id, modelClass, config) {
                 var clazz = this.getClass(modelClass, YAHOO.hippo.DDModel);
-                YAHOO.log("Add draggable component[" + id + "] of type " + clazz, "info", "DragDropManager");
                 this._add(id, clazz, config, this.draggables);
             },
 
             addDroppable : function(id, modelClass, config) {
                 var clazz = this.getClass(modelClass, YAHOO.util.DDTarget);
-                YAHOO.log("Add droppable component[" + id + "] of type " + clazz, "info", "DragDropManager");
                 this._add(id, clazz, config, this.droppables);
             },
-            
-            _add: function(id, clazz, config, map) {
+
+            _add : function(id, clazz, config, map) {
                 var me = this;
                 var func = function() {
                     var c = null;
-                    
+
                     if (Lang.isArray(config.groups)) {
                         c = new clazz(id, config.groups.shift(), config);
                     } else {
@@ -86,9 +84,10 @@ if (!YAHOO.hippo.DragDropManager) {
                 };
                 this.loader.registerFunction(func);
             },
-            
-            getClass: function(clazz, defaultClazz) {
-                if (!Lang.isUndefined(clazz) && !Lang.isNull(clazz)) { //TODO: test for isObject?
+
+            // TODO: test for isObject?
+            getClass : function(clazz, defaultClazz) {
+                if (!Lang.isUndefined(clazz) && !Lang.isNull(clazz)) {
                     return clazz;
                 }
                 return defaultClazz;

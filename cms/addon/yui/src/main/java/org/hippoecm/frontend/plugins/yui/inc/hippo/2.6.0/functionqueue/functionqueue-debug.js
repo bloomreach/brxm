@@ -22,21 +22,10 @@
  * </p>
  * @namespace YAHOO.hippo
  * @requires yahoo
- * @module hippoutil
+ * @module functionqueue
  */
 ( function() {
     var Lang = YAHOO.lang;
-
-    /**
-     * @description
-     * <p>
-     * Class that queues an array of init functions that get executed upon page
-     * load or in Wicket's post ajax phase
-     * </p>
-     * @namespace YAHOO.hippo
-     * @requires yahoo
-     * @module hippoutil
-     */
 
     YAHOO.namespace('hippo');
 

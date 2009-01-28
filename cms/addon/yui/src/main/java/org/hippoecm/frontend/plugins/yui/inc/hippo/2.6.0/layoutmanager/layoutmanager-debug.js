@@ -240,10 +240,28 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
         YAHOO.hippo.GridsRootWireframe = function(id, config) {
             YAHOO.hippo.GridsRootWireframe.superclass.constructor.apply(this, arguments); 
             
-            var units = [{ position: 'center', body: 'bd', grids: true, scroll: false }];
-            if(Lang.isNumber(config.headerHeight)) {
-                units.push({position: 'top', body: 'hd', height: config.headerHeight, scroll: false});
+            var units = [];
+            var body = { position: 'center', body: 'bd', grids: true, scroll: false};
+            if(config.bodyGutter != null) {
+                body.gutter = config.bodyGutter;
             }
+            units.push(body);
+            
+            if(Lang.isNumber(config.headerHeight)) {
+                var header = {position: 'top', body: 'hd', height: config.headerHeight, scroll: false, grids: true};
+                if(config.headerGutter != null) {
+                  header.gutter = config.headerGutter;
+                }
+                units.push(header);
+            }
+            if(Lang.isNumber(config.footerHeight)) {
+                var footer = {position: 'bottom', body: 'ft', height: config.footerHeight, scroll: false, grids: true};
+                if(config.footerGutter != null) {
+                  footer.gutter = config.footerGutter;
+                }
+                units.push(footer);
+            }
+
             this.config.units = units;
             this.margins = null;
         };
@@ -291,7 +309,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             
             prepareConfig : function() {
                 if(this.config.linkedWithParent) {
-                    this.parent = YAHOO.hippo.LayoutManager.getWireframe(this.config.parentElementId);
+                    this.parent = YAHOO.hippo.LayoutManager.getWireframe(this.config.parentId);
                     this.parent.registerChild(this);
                     this.config.parent = this.parent.layout;
                 }
@@ -325,6 +343,15 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                             dim.h = this.domHelper.getHeight(parent);
                             dim.w -= margin.w;
                             dim.h -= margin.h;
+                            
+                            if(this.config.parent != null) {
+                                var u = this.config.parent.getUnitById(parent.id);
+                                if(u != null) {
+                                    dim.w -= (u._gutter.left + u._gutter.right);
+                                    dim.h -= (u._gutter.top + u._gutter.bottom);
+                                }
+                            }
+                            
                             return dim;
                         }
                         parent = parent.parentNode;

@@ -15,6 +15,7 @@
  */
 
 /**
+ * @module hippoautocomplete
  * @class a YAHOO.widget.Autocomplete extension
  * @requires autocomplete, get
  * @extends YAHOO.widget.AutoComplete
@@ -110,6 +111,5 @@ YAHOO.namespace("hippo");
         _clearTextboxValue : function() {
             this._elTextbox.value = '';
         }
-
     });
  })();
