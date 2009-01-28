@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.filters.base.HstBaseFilter;
 import org.hippoecm.hst.core.filters.base.HstRequestContext;
+import org.hippoecm.hst.core.filters.base.HstRequestContextImpl;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.slf4j.Logger;
@@ -83,7 +84,7 @@ public class URLMappingTemplateContextFilter extends HstBaseFilter implements Fi
                 String urlPrefix = getUrlPrefix(request);
                 RequestDispatcher dispatcher = request.getRequestDispatcher(urlPrefix + matchPageNode.getLayoutNode().getTemplatePage());
                 //set attributes
-                hstRequestContext.setPageNode(matchPageNode);
+                ((HstRequestContextImpl) hstRequestContext).setPageNode(matchPageNode);
                 
                 // below deprecated: take it from the hstRequestContext
                 request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE, matchPageNode);

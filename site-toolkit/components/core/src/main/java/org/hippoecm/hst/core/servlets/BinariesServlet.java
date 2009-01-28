@@ -24,6 +24,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
@@ -34,8 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.mapping.UrlUtilities;
-import org.hippoecm.hst.jcr.JcrSessionPoolManager;
-import org.hippoecm.hst.jcr.ReadOnlyPooledSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +47,7 @@ public class BinariesServlet extends HttpServlet {
 
     public static final Logger log = LoggerFactory.getLogger(BinariesServlet.class);
 
-    private final JcrSessionPoolManager jcrSessionPoolManager = new JcrSessionPoolManager();
+    private Repository repository;
     
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -75,7 +74,7 @@ public class BinariesServlet extends HttpServlet {
         path = UrlUtilities.decodeUrl(path);
         Session session = null;
         try {
-            session = jcrSessionPoolManager.getSession(req);
+            session = repository.login();
             
             Item item = session.getItem(path);
 
@@ -164,8 +163,8 @@ public class BinariesServlet extends HttpServlet {
             log.debug("RepositoryException : ", ex );
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } finally {
-            if(session!=null && session instanceof ReadOnlyPooledSession) {
-                ((ReadOnlyPooledSession)session).getJcrSessionPool().release(req.getSession());
+            if (session!=null) {
+                session.logout();
             }
         }
     }

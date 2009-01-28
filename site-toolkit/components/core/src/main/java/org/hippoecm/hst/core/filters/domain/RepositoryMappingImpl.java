@@ -4,6 +4,7 @@ import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -26,9 +27,10 @@ public class RepositoryMappingImpl implements RepositoryMapping {
     private Domain domain;
     private DomainMapping domainMapping;
     private boolean template;
- 
+    private Repository repository;
 
-    public RepositoryMappingImpl(Session session, DomainMapping domainMapping, Domain domain, String prefix, String path) throws RepositoryMappingException{
+    public RepositoryMappingImpl(Repository repository, DomainMapping domainMapping, Domain domain, String prefix, String path) throws RepositoryMappingException{
+        this.repository = repository;
         this.prefix = prefix;
         this.path = path;
         this.depth = prefix.split("/").length;
@@ -46,14 +48,17 @@ public class RepositoryMappingImpl implements RepositoryMapping {
             this.template = true;
         } else {
             this.template = false;
-            init(session);
+            init();
         }
         
         
     }
     
-    private void init(Session session) throws RepositoryMappingException {
+    private void init() throws RepositoryMappingException {
+        Session session = null;
+        
         try {
+            session = repository.login();
             Item item = session.getItem(this.getContentPath());
             if(item.isNode()) {
                 Node node = (Node)item;
@@ -75,6 +80,11 @@ public class RepositoryMappingImpl implements RepositoryMapping {
             throw new RepositoryMappingException("PathNotFoundException: Cannot create Repository Mapping because the content path '"+ this.getContentPath()+"' can not be found.", e);
         } catch (RepositoryException e) {
             throw new RepositoryMappingException("RepositoryException: Cannot create Repository Mapping because an exception  happened for '"+ this.getContentPath()+"'.", e);
+        }
+        finally
+        {
+            if (session != null)
+                session.logout();
         }
     }
 

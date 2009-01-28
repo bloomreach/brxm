@@ -32,18 +32,17 @@
     </property>
     
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
-    <property name="maxActive" value="8" />
-    <property name="maxIdle" value="4" />
-    <property name="minIdle" value="3" />
-    <property name="initialSize" value="2" />
+    <property name="maxActive" value="250" />
+    <property name="maxIdle" value="50" />
+    <property name="minIdle" value="20" />
+    <property name="initialSize" value="20" />
     <property name="maxWait" value="10000" />
-    <property name="testOnBorrow" value="false" />
+    <property name="testOnBorrow" value="true" />
     <property name="testOnReturn" value="false" />
     <property name="testWhileIdle" value="false" />
-    <property name="validationQuery" value="/jcr:root/content" />
     <property name="timeBetweenEvictionRunsMillis" value="60000" />
     <property name="numTestsPerEvictionRun" value="1" />
-    <property name="minEvictableIdleTimeMillis" value="10000" />
+    <property name="minEvictableIdleTimeMillis" value="60000" />
   </bean>
 
 </beans>

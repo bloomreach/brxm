@@ -15,8 +15,7 @@
  */
 package org.hippoecm.hst.core.filters.base;
 
-import javax.jcr.Session;
-import javax.servlet.http.HttpServletRequest;
+import javax.jcr.Repository;
 
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
@@ -26,12 +25,14 @@ import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.hst.core.template.node.content.ContentRewriter;
 
 public interface HstRequestContext {
+    
+    public Repository getRepository();
+    
+    public String getUserID();
 
     public RepositoryMapping getRepositoryMapping();
 
     public PageNode getPageNode();
-    
-    public Session getJcrSession();
     
     public URLMappingManager getURLMappingManager();
     
@@ -45,34 +46,13 @@ public interface HstRequestContext {
 
     public ContextBase getHstConfigurationContextBase();
     
-    public HttpServletRequest getRequest();
+    public String getServerName();
+    
+    public String getRequestURI();
     
     public String getHstRequestUri();
     
     public ContentRewriter getContentRewriter();
   
-    public void setRepositoryMapping(RepositoryMapping repositoryMapping);
-    
-    public void setPageNode(PageNode pageNode);
-    
-    public void setAbsoluteUrlMapping(URLMapping absoluteUrlMapping);
-
-    public void setRelativeUrlMapping(URLMapping relativeUrlMapping);
-
-    public void setJcrSession(Session jcrSession);
- 
-    public void setContentContextBase(ContextBase contentContextBase);
-
-    public void setHstConfigurationContextBase(ContextBase hstConfigurationContextBase);
-
-    public void setURLMappingManager(URLMappingManager urlMappingManager);
-
-    public void setRequest(HttpServletRequest request);
-
-    public void setHstRequestUri(String hstRequestUri);
-
-    public void setContentRewriter(ContentRewriter contentRewriter);
-
-
 }
 

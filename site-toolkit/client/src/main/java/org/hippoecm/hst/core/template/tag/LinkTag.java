@@ -23,7 +23,6 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.hippoecm.hst.core.filters.base.HstRequestContext;
-import org.hippoecm.hst.core.mapping.RelativeURLMappingImpl;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.node.el.ContentELNode;
 import org.hippoecm.hst.core.template.node.el.ELNode;
@@ -60,7 +59,9 @@ public class LinkTag extends SimpleTagSupport {
         if( urlMapping == null) {
             log.debug("urlMapping not set as attribute on request. Cannot rewrite a link. Try to make it relative only for staticattr");
             if(staticattr != null ) {
-                href =  RelativeURLMappingImpl.computeRelativeUrl(staticattr, request.getRequestURI());
+                // TODO: This class should be refined with new api. Just make it compiled for now.
+                // href = RelativeURLMappingImpl.computeRelativeUrl(staticattr, request.getRequestURI());
+                href = hstRequestContext.getRelativeUrlMapping().rewriteLocation(staticattr, hstRequestContext, false).toString();  
             }
         } else {
             

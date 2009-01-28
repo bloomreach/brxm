@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.filters.domain;
 
 import java.io.IOException;
 
+import javax.jcr.Repository;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -42,6 +43,7 @@ import org.hippoecm.hst.core.context.impl.ContextBaseImpl;
 import org.hippoecm.hst.core.exception.ContextBaseException;
 import org.hippoecm.hst.core.filters.base.HstBaseFilter;
 import org.hippoecm.hst.core.filters.base.HstRequestContext;
+import org.hippoecm.hst.core.filters.base.HstRequestContextImpl;
 import org.hippoecm.hst.core.mapping.UrlUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +98,10 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
             // if domain mapping is recreated, flush all caches (to avoid cached wrong links)
             CacheManagerImpl.getCaches().clear();
             cache = CacheManagerImpl.getCache(this.getClass().getName(), EventCacheImpl.class.getName());
-            domainMapping = new DomainMappingImpl(domainMappingLocation, filterConfig);
+            
+            // TODO: this filter will be removed later. For now, make it compiled.
+            Repository repository = null;
+            domainMapping = new DomainMappingImpl(repository, domainMappingLocation);
             // put it in the eventcache
             SourceValidity sourceValidity = new EventValidity(new NamedEvent(domainMappingLocation));
             CachedResponse cachedResponse = new CachedResponseImpl(sourceValidity, domainMapping);
@@ -143,7 +148,7 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
             } else {
                 log.debug("Matching domain found. Wrapping the request.");
                 String ctxStrippedUri =  req.getRequestURI().replaceFirst(req.getContextPath(), "");
-                RepositoryMapping repositoryMapping = matchingDomain.getRepositoryMapping(ctxStrippedUri, this.filterConfig);
+                RepositoryMapping repositoryMapping = matchingDomain.getRepositoryMapping(ctxStrippedUri);
                 
                 if(repositoryMapping == null) {
                     log.warn("repositoryMapping is null. Cannot process request further");
@@ -152,7 +157,7 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
                 }
                 
                 // set the repositoryMapping on the hstRequestContext. This repositoryMapping gives access to the entire domain + domainMapping
-                hstRequestContext.setRepositoryMapping(repositoryMapping);
+                ((HstRequestContextImpl) hstRequestContext).setRepositoryMapping(repositoryMapping);
                 
                 /*
                  * the repository mapping has knowledge of the two main context's that are needed in the hst. One context for the 'hst:configuration' 
@@ -160,10 +165,12 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
                  */ 
 
                 try {
-                    ContextBase contentContextBase = new ContextBaseImpl(repositoryMapping.getContentPath(), hstRequestContext.getJcrSession());
-                    ContextBase hstConfigurationContextBase = new ContextBaseImpl(repositoryMapping.getHstConfigPath(), hstRequestContext.getJcrSession());
-                    hstRequestContext.setContentContextBase(contentContextBase);
-                    hstRequestContext.setHstConfigurationContextBase(hstConfigurationContextBase);
+                    // TODO: this filter will be removed later. For now just make it compiled.
+                    Repository repository = null;
+                    ContextBase contentContextBase = new ContextBaseImpl(repository, repositoryMapping.getContentPath());
+                    ContextBase hstConfigurationContextBase = new ContextBaseImpl(repository, repositoryMapping.getHstConfigPath());
+                    ((HstRequestContextImpl) hstRequestContext).setContentContextBase(contentContextBase);
+                    ((HstRequestContextImpl) hstRequestContext).setHstConfigurationContextBase(hstConfigurationContextBase);
                     
                     // TODO for backwards compatability for now put the context ctx base also seperately on the request attr. Classes needing the 
                     // content ctx base should not use this anymore but access it through the hstRequestContext
@@ -176,8 +183,8 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
                 
                 // set original request on the HstRequestContext and the request uri that matters for the hst
                 String hstRequestUri = getHstRequestUri(req.getRequestURI(), repositoryMapping, req.getContextPath());
-                hstRequestContext.setHstRequestUri(hstRequestUri);
-                hstRequestContext.setRequest(req);
+                ((HstRequestContextImpl) hstRequestContext).setHstRequestUri(hstRequestUri);
+                ((HstRequestContextImpl) hstRequestContext).setRequest(req);
                 
                 if(hstRequestUri.startsWith("/binaries")) {
                     HttpServletRequest request = new BinariesRequestWrapper(req, repositoryMapping);

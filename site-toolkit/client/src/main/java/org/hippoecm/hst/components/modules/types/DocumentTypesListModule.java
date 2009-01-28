@@ -42,24 +42,32 @@ public class DocumentTypesListModule extends ModuleBase{
 	@Override
 	public void render(PageContext pageContext,HstRequestContext hstRequestContext) throws TemplateException {
         
-		final Session jcrSession = hstRequestContext.getJcrSession();
-
-        boolean params = false;
-        if (moduleParameters != null) {
-            params = true;
-        }
-        if (params && moduleParameters.containsKey(NAMESPACE)) {
-            String namespace = moduleParameters.get(NAMESPACE);
-            if (!"".equals(namespace)) {
-                setNamespace(namespace);
+		Session jcrSession = null;
+		
+		try
+		{
+		    jcrSession = hstRequestContext.getRepository().login();
+            boolean params = false;
+            if (moduleParameters != null) {
+                params = true;
             }
-        }
-        
-
-		try {
+            if (params && moduleParameters.containsKey(NAMESPACE)) {
+                String namespace = moduleParameters.get(NAMESPACE);
+                if (!"".equals(namespace)) {
+                    setNamespace(namespace);
+                }
+            }
+            
 			getNodeTypes(jcrSession,namespace);
-		} catch (RepositoryException e) {
-			log.error("An error occured while fetching document types for namespace {} with message: ",namespace,e.getMessage());
+        } 
+		catch (RepositoryException e) 
+		{
+            log.error("An error occured while fetching document types for namespace {} with message: ",namespace,e.getMessage());
+        }
+		finally
+		{
+		    if (jcrSession != null)
+		        jcrSession.logout();
 		}
 		
         pageContext.setAttribute(getVar(), getTypes());

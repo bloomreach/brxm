@@ -4,17 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.servlet.FilterConfig;
 
-import org.hippoecm.hst.jcr.JcrSessionFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DomainImpl implements Domain {
     
     private static final Logger log = LoggerFactory.getLogger(DomainImpl.class);
-  
+
+    private Repository repository;
     private DomainMapping domainMapping;
     private String pattern;
     private String[] segments;
@@ -22,28 +23,29 @@ public class DomainImpl implements Domain {
     private boolean exactHost;
     private String redirect;
 
-    public DomainImpl(Session session, String pattern, String[] repositoryPaths, DomainMapping domainMapping, String redirect) throws DomainException{
+    public DomainImpl(Repository repository, String pattern, String[] repositoryPaths, DomainMapping domainMapping, String redirect) throws DomainException{
         if(pattern == null || "".equals(pattern)) {
             throw new DomainException("Not allowed to have an empty pattern. Skipping domain");
         }
+        this.repository = repository;
         this.domainMapping = domainMapping;
         this.segments = pattern.split(DELIMITER);
         this.pattern = pattern;
         this.exactHost = !pattern.contains(Domain.WILDCARD);
         this.redirect = redirect;
-        this.repositoryMappings = createRepositoryMappings(session, repositoryPaths);
+        this.repositoryMappings = createRepositoryMappings(repositoryPaths);
     }
 
     
-    private RepositoryMapping[] createRepositoryMappings(Session session, String[] repositoryPaths) throws DomainException{
+    private RepositoryMapping[] createRepositoryMappings(String[] repositoryPaths) throws DomainException{
         List<RepositoryMapping> repoMappings = new ArrayList<RepositoryMapping>();
         for(String repositoryPath : repositoryPaths) {
             int index = repositoryPath.indexOf(":");
             try {
                 if(index > -1) {
-                    repoMappings.add(new RepositoryMappingImpl(session, domainMapping,this, repositoryPath.substring(0,index), repositoryPath.substring(index+1, repositoryPath.length())));
+                    repoMappings.add(new RepositoryMappingImpl(repository, domainMapping,this, repositoryPath.substring(0,index), repositoryPath.substring(index+1, repositoryPath.length())));
                 } else {
-                    repoMappings.add(new RepositoryMappingImpl(session, domainMapping, this, "",repositoryPath));
+                    repoMappings.add(new RepositoryMappingImpl(repository, domainMapping, this, "",repositoryPath));
                 }
             } catch (RepositoryMappingException e) {
                log.warn("Skipping Repository Mapping for pattern '{}' because {}", pattern, e.getMessage());
@@ -107,15 +109,13 @@ public class DomainImpl implements Domain {
     }
 
 
-    public RepositoryMapping getRepositoryMapping(String ctxStrippedUri, FilterConfig filterConfig) {
+    public RepositoryMapping getRepositoryMapping(String ctxStrippedUri) {
         for(RepositoryMapping repositoryMapping : repositoryMappings) {
             if(repositoryMapping.match(ctxStrippedUri)) {
                 // return the first match because we have sorted the mappings already
                 
                 // when the repository mapping is a 'template', create an actual repository mapping out of the template.
                 if(repositoryMapping.isTemplate()) {
-                    Session session = new JcrSessionFactoryImpl(filterConfig).getSession();
-                    
                     int prefixDepth = repositoryMapping.getDepth();
                     String[] segments = ctxStrippedUri.split("/");
                     if(segments.length < prefixDepth) {
@@ -127,7 +127,7 @@ public class DomainImpl implements Domain {
                     
                     RepositoryMapping repositoryMappingFromTemplate = null;
                     try {
-                        repositoryMappingFromTemplate = new RepositoryMappingImpl(session, this.domainMapping, this, prefix, path);
+                        repositoryMappingFromTemplate = new RepositoryMappingImpl(repository, this.domainMapping, this, prefix, path);
                         
                         // if succesfully created, let's add it to the existing repository mappings of this domain.
                         List<RepositoryMapping> repoMappingsList =  new ArrayList<RepositoryMapping>(Arrays.asList(this.repositoryMappings));

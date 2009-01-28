@@ -7,16 +7,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
-import javax.servlet.FilterConfig;
 
 import org.apache.commons.collections.map.LRUMap;
-import org.hippoecm.hst.jcr.JcrSessionFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +26,8 @@ public class DomainMappingImpl implements DomainMapping{
     
     private static final Logger log = LoggerFactory.getLogger(DomainMapping.class);
     
+    private Repository repository;
     private String domainMappingLocation;
-    private FilterConfig filterConfig;
     private boolean initialized;
     private Domain[] orderedDomains; 
     private Domain primaryDomain;
@@ -45,11 +45,9 @@ public class DomainMappingImpl implements DomainMapping{
     private String[] binaryLocations = new String[]{"/content/gallery", "/content/assets"};
      
   
-    public DomainMappingImpl(String domainMappingLocation, FilterConfig filterConfig){
-        
+    public DomainMappingImpl(Repository repository, String domainMappingLocation){
+        this.repository = repository;
         this.domainMappingLocation = domainMappingLocation;
-        this.filterConfig = filterConfig;
-        
     }
 
     public void init() throws DomainMappingException{
@@ -69,7 +67,7 @@ public class DomainMappingImpl implements DomainMapping{
         }
         
         try {
-            session = new JcrSessionFactoryImpl(filterConfig).getSession();
+            session = this.repository.login();
             if(domainMappingLocation.startsWith("/")) {
                 domainMappingLocation = domainMappingLocation.substring(1);
             }
@@ -106,7 +104,16 @@ public class DomainMappingImpl implements DomainMapping{
                 throw new DomainMappingException("RepositoryException for domain mapping node '" + domainMappingLocation + "'" , e.getCause());
             }
             
-        } finally {
+        }
+        catch (LoginException e)
+        {
+            throw new DomainMappingException("Failed to retrieve session.", e);
+        }
+        catch (RepositoryException e)
+        {
+            throw new DomainMappingException("Failed to retrieve session.", e);
+        } 
+        finally {
             if(session!=null) {
                 session.logout();
             }
@@ -158,15 +165,15 @@ public class DomainMappingImpl implements DomainMapping{
                     if(mappingNode.isNodeType("hst:redirectmapping")) {
                         if(mappingNode.hasProperty("hst:redirect")) {
                             String redirect = mappingNode.getProperty("hst:redirect").getString();
-                            domain = new DomainImpl(domainMappingNode.getSession(), newPattern, new String[0], this, redirect);
+                            domain = new DomainImpl(repository, newPattern, new String[0], this, redirect);
                         } else {
                             log.warn("Skipping redirect mapping node '{}' because does not have mandatory 'hst:redirect' property", mappingNode.getPath());
                         }
                     } else {
                         if(newRepositoryPaths == null) {
-                            domain = new DomainImpl(domainMappingNode.getSession(), newPattern, repositorypaths.toArray(new String[repositorypaths.size()]), this, null);
+                            domain = new DomainImpl(repository, newPattern, repositorypaths.toArray(new String[repositorypaths.size()]), this, null);
                         } else {
-                            domain = new DomainImpl(domainMappingNode.getSession(), newPattern, newRepositoryPaths.toArray(new String[newRepositoryPaths.size()]), this, null);
+                            domain = new DomainImpl(repository, newPattern, newRepositoryPaths.toArray(new String[newRepositoryPaths.size()]), this, null);
                         }
                     }
                     if(mappingNode.isNodeType("hst:primarydomain")) {

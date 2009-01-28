@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.context.impl;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -28,24 +29,32 @@ import org.slf4j.LoggerFactory;
 public class ContextBaseImpl implements ContextBase {
 	private static final org.slf4j.Logger log = LoggerFactory.getLogger(ContextBaseImpl.class);
 	
+	private Repository repository;
 	private HippoNode contextRootNode;
-	private final Session jcrSession;
 	
-	public ContextBaseImpl(String repositoryPath, Session jcrSession) throws ContextBaseException{
+	public ContextBaseImpl(Repository repository, String repositoryPath) throws ContextBaseException{
         String relativePath = stripFirstSlash(repositoryPath);
-        this.jcrSession = jcrSession;
+        this.repository = repository;
         if(relativePath == null || "".equals(relativePath)) {
             log.warn("Cannot instantiate a ContextBase because repositoryPath is empty");
             throw new ContextBaseException("Cannot instantiate a ContextBase because repositoryPath is empty");
         } else {
+            Session session = null;
+            
             try {
-                this.contextRootNode = (HippoNode)jcrSession.getRootNode().getNode(relativePath);
+                session = repository.login();
+                this.contextRootNode = (HippoNode) session.getRootNode().getNode(relativePath);
             } catch (PathNotFoundException e) {
                 log.warn("PathNotFoundException while instantiating ContextBase for repository path '{}'", repositoryPath);
                 throw new ContextBaseException("PathNotFoundException while instantiating ContextBase for repository path '"+repositoryPath+"'");
             } catch (RepositoryException e) {
                 log.warn("RepositoryException while instantiating ContextBase for repository path '{}'", repositoryPath);
                 throw new ContextBaseException("RepositoryException while instantiating ContextBase for repository path '"+repositoryPath+"'");
+            }
+            finally
+            {
+                if (session != null)
+                    session.logout();
             }
         }
         
@@ -55,10 +64,6 @@ public class ContextBaseImpl implements ContextBase {
 		return contextRootNode;
 	}
 	
-	public Session getSession() {
-		return jcrSession;
-	}
-	 
 	public Node getRelativeNode(String path){
 	    String strPath = "";
 	    String relativePath = stripFirstSlash(path);

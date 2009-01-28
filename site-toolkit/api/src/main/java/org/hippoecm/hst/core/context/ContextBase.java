@@ -22,8 +22,5 @@ import org.hippoecm.repository.api.HippoNode;
 
 public interface ContextBase {
     HippoNode getContextRootNode();
-
-    Session getSession();
-
     Node getRelativeNode(String path);
 }

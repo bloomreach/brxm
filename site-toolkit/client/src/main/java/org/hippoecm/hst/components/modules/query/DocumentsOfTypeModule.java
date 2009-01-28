@@ -21,6 +21,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -69,12 +70,13 @@ public class DocumentsOfTypeModule extends ModuleBase {
 	private List<ELNode> getDocuments(HstRequestContext hstRequestContext){
 		List<ELNode> wrappedNodes = new ArrayList<ELNode>();
 		if(docType!=null || !docType.equals("")) {
+		    Session session = null;
 	        try {
 	            ContextWhereClause ctxWhereClause = new ContextWhereClause(hstRequestContext.getContentContextBase().getContextRootNode(), "content");
 	            String contextWhereClauses = ctxWhereClause.getWhereClause();
 	            String xpath = "//*["+contextWhereClauses+ " and @jcr:primaryType='"+docType+"']";
-	            
-	            QueryManager qMgr = hstRequestContext.getJcrSession().getWorkspace().getQueryManager();
+	            session = hstRequestContext.getRepository().login();
+	            QueryManager qMgr = session.getWorkspace().getQueryManager();
 	            QueryResult result = qMgr.createQuery(xpath,Query.XPATH).execute();
 	            NodeIterator iter = result.getNodes();
 	            while (iter.hasNext()) {
@@ -84,6 +86,11 @@ public class DocumentsOfTypeModule extends ModuleBase {
 	            
 	        } catch (RepositoryException ex) {
 	           ex.printStackTrace();
+	        }
+	        finally
+	        {
+	            if (session != null)
+	                session.logout();
 	        }
 		}
         return wrappedNodes;

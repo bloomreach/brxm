@@ -33,6 +33,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -52,6 +53,7 @@ public class URLMappingImpl implements URLMapping {
 
     private static final Logger log = LoggerFactory.getLogger(URLMapping.class);
 
+    private Repository repository;
     private final RewriteLRUCache rewriteLRUCache;
     private final List<LinkRewriter> linkRewriters = new ArrayList<LinkRewriter>();
     private final Map<String, String> siteMapNodes = new LinkedHashMap<String, String>();
@@ -64,16 +66,20 @@ public class URLMappingImpl implements URLMapping {
 
     private String siteMapRootNodePath;
 
-    public URLMappingImpl(RepositoryMapping repositoryMapping, URLMappingManager urlMappingManager, Session jcrSession)
+    public URLMappingImpl(Repository repository, RepositoryMapping repositoryMapping, URLMappingManager urlMappingManager)
             throws URLMappingException {
+        this.repository = repository;
         this.urlMappingManager = urlMappingManager;
         this.repositoryMapping = repositoryMapping;
         this.rewriteLRUCache = new RewriteLRUCache(500);
         this.canonicalPathConfiguration = new ArrayList<String>();
+        Session session = null;
+        
         try {
             long start = System.currentTimeMillis();
 
-            HippoNode hstConf = (HippoNode) jcrSession.getItem(repositoryMapping.getHstConfigPath());
+            session = repository.login();
+            HippoNode hstConf = (HippoNode) session.getItem(repositoryMapping.getHstConfigPath());
             Node canonical = hstConf.getCanonicalNode();
             if (canonical != null) {
                 this.canonicalPathConfiguration.add(canonical.getPath());
@@ -158,56 +164,73 @@ public class URLMappingImpl implements URLMapping {
         } catch (RepositoryException e) {
             log.warn("URLMapping cannot be build:  RepositoryException " + e.getMessage());
         }
+        finally
+        {
+            if (session != null)
+                session.logout();
+        }
     }
 
     // TODO this method shouldn't be part of the url mapping
     public PageNode getMatchingPageNode(String requestURI, HstRequestContext hstRequestContext) {
-        Session session = hstRequestContext.getJcrSession();
-        Iterator<String> patternIter = siteMapNodes.keySet().iterator();
         PageNode pageNode = null;
-        String matchNodePath = null;
-        while (patternIter.hasNext() && matchNodePath == null) {
-            String pagePattern = patternIter.next();
-            log.debug("trying to match " + pagePattern + " with " + requestURI);
-            //try to find a mapping that matches the requestURI
-            Pattern pattern = Pattern.compile(pagePattern);
-            Matcher parameterMatcher = pattern.matcher(requestURI);
+        Session session = null;
+        
+        try
+        {
+            session = repository.login();
+            Iterator<String> patternIter = siteMapNodes.keySet().iterator();
+            
+            String matchNodePath = null;
+            while (patternIter.hasNext() && matchNodePath == null) {
+                String pagePattern = patternIter.next();
+                log.debug("trying to match " + pagePattern + " with " + requestURI);
+                //try to find a mapping that matches the requestURI
+                Pattern pattern = Pattern.compile(pagePattern);
+                Matcher parameterMatcher = pattern.matcher(requestURI);
+    
+                if (parameterMatcher.matches()) {
+                    log.info("match " + pagePattern + " found " + requestURI);
+                    matchNodePath = siteMapNodes.get(pagePattern); // get appropriate pageNode
+                    Node matchNode = null;
+                    try {
+                        matchNode = (Node) session.getItem(matchNodePath);
+                    } catch (PathNotFoundException e1) {
+                        log.error("Matching node not found at : '" + matchNodePath + "'");
+                    } catch (RepositoryException e1) {
+                        log.error("RepositoryException for matching sitemap node : '" + matchNodePath + "'");
+                    }
+                    parameterMatcher.reset();
 
-            if (parameterMatcher.matches()) {
-                log.info("match " + pagePattern + " found " + requestURI);
-                matchNodePath = siteMapNodes.get(pagePattern); // get appropriate pageNode
-                Node matchNode = null;
-                try {
-                    matchNode = (Node) session.getItem(matchNodePath);
-                } catch (PathNotFoundException e1) {
-                    log.error("Matching node not found at : '" + matchNodePath + "'");
-                } catch (RepositoryException e1) {
-                    log.error("RepositoryException for matching sitemap node : '" + matchNodePath + "'");
-                }
-                parameterMatcher.reset();
-                try {
                     pageNode = new PageNode(hstRequestContext.getHstConfigurationContextBase(), matchNode);
-                } catch (RepositoryException e) {
-                    log.error("RepositoryException " + e.getMessage());
-                }
-                while (parameterMatcher.find()) {
-                    if (parameterMatcher.groupCount() > 0) {
-                        String relativeContentPath = parameterMatcher.group(1); // get back reference value if available
-                        log.debug("Relative content path = '" + relativeContentPath + "'");
-                        if (relativeContentPath != null) {
-                            pageNode.setRelativeContentPath(relativeContentPath);
+
+                    while (parameterMatcher.find()) {
+                        if (parameterMatcher.groupCount() > 0) {
+                            String relativeContentPath = parameterMatcher.group(1); // get back reference value if available
+                            log.debug("Relative content path = '" + relativeContentPath + "'");
+                            if (relativeContentPath != null) {
+                                pageNode.setRelativeContentPath(relativeContentPath);
+                            }
                         }
                     }
                 }
             }
-        }
-        if (pageNode != null) {
-            return pageNode;
-        } else {
-            log.warn("no sitemap node matches the request");
-            return null;
-        }
 
+            if (pageNode == null) {
+                log.warn("no sitemap node matches the request");
+            }
+        }
+        catch (Exception e)
+        {
+            log.error("Failed to retrieve content nodes.", e);
+        }
+        finally
+        {
+            if (session != null)
+                session.logout();
+        }
+        
+        return pageNode;
     }
 
     public Link rewriteLocation(Node node, HstRequestContext hstRequestContext, boolean external) {
@@ -277,7 +300,7 @@ public class URLMappingImpl implements URLMapping {
                 if (matchingRepositoryMapping != null) {
                     try {
                         URLMappingImpl newUrlMapping = (URLMappingImpl) this.urlMappingManager.getUrlMapping(
-                                matchingRepositoryMapping, this.urlMappingManager, node.getSession());
+                                matchingRepositoryMapping, this.urlMappingManager, hstRequestContext.getUserID());
                         
                         // if the domain belonging to the matching repository mappingis not equal to the current domain, we have to externalize (including http://hostname:port ...) the link
                     
@@ -392,15 +415,23 @@ public class URLMappingImpl implements URLMapping {
             return rewritten;
         }
         Node siteMapRootNode = null;
-        if (hstRequestContext.getJcrSession() != null) {
-            try {
-                siteMapRootNode = (Node) hstRequestContext.getJcrSession().getItem(siteMapRootNodePath);
-            } catch (PathNotFoundException e) {
-                log.warn("siteMapRootNodePath '" + siteMapRootNodePath + "' not found. Cannot rewrite link");
-            } catch (RepositoryException e) {
-                log.warn("RepositoryException fetching '" + siteMapRootNodePath + "' not found. Cannot rewrite link");
-            }
+        
+        Session session = null;
+        try {
+            session = repository.login();
+            siteMapRootNode = (Node) session.getItem(siteMapRootNodePath);
+        } catch (PathNotFoundException e) {
+            log.warn("siteMapRootNodePath '" + siteMapRootNodePath + "' not found. Cannot rewrite link");
+        } catch (RepositoryException e) {
+            log.warn("RepositoryException fetching '" + siteMapRootNodePath + "' not found. Cannot rewrite link");
         }
+        finally
+        {
+            if (session != null)
+                session.logout();
+        }
+        
+
         StringBuffer rewrite = null;
         if (siteMapRootNode != null && sitemapNodeName != null && !"".equals(sitemapNodeName)) {
             if (sitemapNodeName.startsWith("/")) {
@@ -524,11 +555,11 @@ public class URLMappingImpl implements URLMapping {
         if(newRepositoryMapping != null) {
             // we have to link to a different domain, hence we cannot get the serverName from the request
             log.debug("External link to different domain for node '{}'", path);
-            log.debug("Rewriting link from domain '{}' --> domain '{}'", hstRequestContext.getRequest().getServerName(), newRepositoryMapping.getDomain().getPattern());
+            log.debug("Rewriting link from domain '{}' --> domain '{}'", hstRequestContext.getServerName(), newRepositoryMapping.getDomain().getPattern());
             externalLink.append(repositoryMapping.getDomain().getPattern());
         } else {
             log.debug("Rewrite link to an external (including hostname) link");
-            externalLink.append(hstRequestContext.getRequest().getServerName());
+            externalLink.append(hstRequestContext.getServerName());
         }
         
         if(domainMapping.isPortInUrl()) {
@@ -545,7 +576,7 @@ public class URLMappingImpl implements URLMapping {
 
     private String computeCacheKey(String name, boolean externalize, boolean secondTry, String precedence, HstRequestContext hstRequestContext) {
         StringBuffer key = new StringBuffer();
-        key.append(hstRequestContext.getRequest().getServerName());
+        key.append(hstRequestContext.getServerName());
         key.append("_");
         key.append(name);
         key.append("_").append(externalize);

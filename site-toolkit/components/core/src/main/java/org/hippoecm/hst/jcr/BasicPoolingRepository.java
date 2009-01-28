@@ -698,25 +698,18 @@ public class BasicPoolingRepository implements PoolingRepository
      */
     public synchronized void setValidationQuery(String validationQuery) 
     {
-        if ((validationQuery != null) && (validationQuery.trim().length() > 0)) 
-        {
-            this.validationQuery = validationQuery;
-        } 
-        else 
-        {
-            this.validationQuery = null;
-        }
+        this.validationQuery = (validationQuery != null ? validationQuery.trim() : null);
     }
     
     private class SessionFactory implements PoolableObjectFactory
     {
-        public void activateObject(Object arg0) throws Exception
+        public void activateObject(Object object) throws Exception
         {
         }
 
-        public void destroyObject(Object arg0) throws Exception
+        public void destroyObject(Object object) throws Exception
         {
-            Session session = (Session) arg0;
+            Session session = (Session) object;
             
             try
             {
@@ -732,13 +725,20 @@ public class BasicPoolingRepository implements PoolingRepository
             return login(getDefaultCredentials());
         }
 
-        public void passivateObject(Object arg0) throws Exception
+        public void passivateObject(Object object) throws Exception
         {
+            ((Session) object).refresh(false);
         }
 
-        public boolean validateObject(Object arg0)
+        public boolean validateObject(Object object)
         {
-            boolean validated = true;
+            Session session = (Session) object;
+            boolean validated = session.isLive();
+            
+            if (!validated) 
+            {
+                return validated;
+            }
             
             String validationQuery = getValidationQuery();
             
@@ -748,8 +748,14 @@ public class BasicPoolingRepository implements PoolingRepository
                 
                 try
                 {
-                    Session session = (Session) arg0;
-                    nodeFound = session.getRootNode().getNode(validationQuery);
+                    if ("".equals(validationQuery))
+                    {
+                        nodeFound = session.getRootNode();
+                    }
+                    else
+                    {
+                        nodeFound = session.getRootNode().getNode(validationQuery);
+                    }
                 }
                 catch (Exception e)
                 {

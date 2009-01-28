@@ -17,6 +17,9 @@ package org.hippoecm.hst.core.mapping;
 
 import java.util.Iterator;
 
+import javax.jcr.LoginException;
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.caching.Cache;
@@ -30,25 +33,23 @@ import org.hippoecm.hst.caching.validity.AggregatedValidity;
 import org.hippoecm.hst.caching.validity.EventValidity;
 import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
-import org.hippoecm.hst.jcr.JcrSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class URLMappingManagerImpl implements URLMappingManager {
 
     private static final Logger log = LoggerFactory.getLogger(URLMapping.class);
-    private JcrSessionFactory jcrSessionFactory;
+    private Repository repository;
     
-    public URLMappingManagerImpl(JcrSessionFactory jcrSessionFactory) {
-       this.jcrSessionFactory = jcrSessionFactory;
+    public URLMappingManagerImpl(Repository repository) {
+       this.repository = repository;
     }
 
     public URLMapping getUrlMapping(HstRequestContext hstRequestContext) throws URLMappingException {
-       return this.getUrlMapping(hstRequestContext.getRepositoryMapping(), hstRequestContext.getURLMappingManager(),hstRequestContext.getJcrSession());
+       return this.getUrlMapping(hstRequestContext.getRepositoryMapping(), hstRequestContext.getURLMappingManager(), hstRequestContext.getUserID());
     }
 
-    public URLMapping getUrlMapping(RepositoryMapping repositoryMapping, URLMappingManager urlMappingManager, Session jcrSession) throws URLMappingException{
-        String userId = jcrSession.getUserID();
+    public URLMapping getUrlMapping(RepositoryMapping repositoryMapping, URLMappingManager urlMappingManager, String userId) throws URLMappingException{
         if(userId == null) {
             userId = "anonymous";
         }
@@ -59,28 +60,22 @@ public class URLMappingManagerImpl implements URLMappingManager {
         Cache cache = CacheManagerImpl.getCache(userId, EventCacheImpl.class.getName());
         
         CachedResponse urlMapping = cache.get(cacheKey);
-        if(urlMapping != null && urlMapping.getResponse() instanceof URLMapping) {
+        
+        if(urlMapping != null && urlMapping.getResponse() instanceof URLMapping) 
+        {
             log.debug("return found urlmapping for user and context");
             return (URLMapping)urlMapping.getResponse();
-        } else {
-            log.debug("no urlmapping found for user and context. Create a new one with a clean session");
-            Session session = null;
-            URLMapping newUrlMapping = null;
-            try {
-                session = jcrSessionFactory.getSession();
-                newUrlMapping = new URLMappingImpl(repositoryMapping, urlMappingManager, session);
-                AggregatedValidity aggrVal = new AggregatedValidity();
-                Iterator<String> paths = newUrlMapping.getCanonicalPathsConfiguration().iterator();
-                while(paths.hasNext()) {
-                    aggrVal.add(new EventValidity(new NamedEvent(paths.next())));
-                }
-                CachedResponse cr = new CachedResponseImpl(aggrVal, newUrlMapping);
-                cache.store(cacheKey, cr);
-            } finally {
-                if(session != null) {
-                session.logout();
-                }
+        } 
+        else 
+        {
+            URLMapping newUrlMapping = new URLMappingImpl(repository, repositoryMapping, urlMappingManager);
+            AggregatedValidity aggrVal = new AggregatedValidity();
+            Iterator<String> paths = newUrlMapping.getCanonicalPathsConfiguration().iterator();
+            while(paths.hasNext()) {
+                aggrVal.add(new EventValidity(new NamedEvent(paths.next())));
             }
+            CachedResponse cr = new CachedResponseImpl(aggrVal, newUrlMapping);
+            cache.store(cacheKey, cr);
             
             return newUrlMapping;
         }

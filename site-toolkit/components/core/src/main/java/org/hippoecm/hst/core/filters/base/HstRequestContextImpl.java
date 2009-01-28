@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.core.filters.base;
 
-import javax.jcr.Session;
+import javax.jcr.Repository;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.context.ContextBase;
@@ -25,9 +25,9 @@ import org.hippoecm.hst.core.mapping.URLMappingManager;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.hst.core.template.node.content.ContentRewriter;
 
-public class HstRequestContextImpl {
+public class HstRequestContextImpl implements HstRequestContext {
 
-    private Session jcrSession;
+    private Repository repository;
     private ContextBase contentContextBase;
     private ContextBase hstConfigurationContextBase;
     private URLMapping absoluteUrlMapping;
@@ -48,10 +48,6 @@ public class HstRequestContextImpl {
 
     public PageNode getPageNode() {
         return pageNode;   
-    }
-    
-    public Session getJcrSession(){
-        return this.jcrSession;
     }
     
     public URLMappingManager getURLMappingManager(){
@@ -107,10 +103,6 @@ public class HstRequestContextImpl {
         this.relativeUrlMapping = relativeUrlMapping;
     }
 
-    public void setJcrSession(Session jcrSession) {
-        this.jcrSession =  jcrSession;
-    }
- 
     public void setContentContextBase(ContextBase contentContextBase) {
         this.contentContextBase = contentContextBase;
     }
@@ -133,6 +125,32 @@ public class HstRequestContextImpl {
 
     public void setContentRewriter(ContentRewriter contentRewriter) {
         this.contentRewriter = contentRewriter;
+    }
+
+    public void setRepository(Repository repository)
+    {
+        this.repository = repository;
+    }
+    
+    public Repository getRepository()
+    {
+        return this.repository;
+    }
+
+    public String getServerName()
+    {
+        return this.request.getServerName();
+    }
+
+    public String getUserID()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public String getRequestURI()
+    {
+        return this.request.getRequestURI();
     }
 
 

@@ -1,8 +1,5 @@
 package org.hippoecm.hst.core.filters.domain;
 
-import javax.servlet.FilterConfig;
-
-
 public interface Domain extends Comparable<Domain>{ 
 
     // The DELIMITER is a "." but it needs to be escaped for regexp hence the \\
@@ -13,7 +10,7 @@ public interface Domain extends Comparable<Domain>{
     
     public String getPattern();
     
-    public RepositoryMapping getRepositoryMapping(String ctxStippedUri, FilterConfig filterConfig);
+    public RepositoryMapping getRepositoryMapping(String ctxStippedUri);
     
     public RepositoryMapping[] getRepositoryMappings();
     

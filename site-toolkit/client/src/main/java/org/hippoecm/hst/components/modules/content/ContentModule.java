@@ -18,6 +18,7 @@ package org.hippoecm.hst.components.modules.content;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.exception.TemplateException;
@@ -64,8 +65,10 @@ public class ContentModule extends ModuleBase {
 			node = hstRequestContext.getContentContextBase().getRelativeNode(path);	
 		}
 		else if(uuid!=null && !uuid.equals("")) {
+		    Session session = null;
 			try {
-				node = hstRequestContext.getJcrSession().getNodeByUUID(uuid);
+			    session = hstRequestContext.getRepository().login();
+				node = session.getNodeByUUID(uuid);
 				if(node.isNodeType(HippoNodeType.NT_HANDLE)){
 					node = node.getNode(node.getName());
 				}				 
@@ -73,6 +76,11 @@ public class ContentModule extends ModuleBase {
 				log.error("Cannot get Node by uuid ("+uuid+") : + "+ e.getCause());
 			} catch (RepositoryException e) {
 				log.error("Cannot get Node by uuid ("+uuid+") : + "+ e.getCause());
+			}
+			finally
+			{
+			    if (session != null)
+			        session.logout();
 			}
 		}		
 		contentModuleNode = new ContentModuleNode(node, hstRequestContext);

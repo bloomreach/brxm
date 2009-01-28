@@ -44,7 +44,7 @@ public class CacheTag extends BodyTagSupport {
             return EVAL_BODY_BUFFERED;
         }
         
-        this.cache = CacheManagerImpl.getCache(hstRequestContext.getJcrSession().getUserID());
+        this.cache = CacheManagerImpl.getCache(hstRequestContext.getUserID());
         this.cachedResponse = this.cache.get(this.key);
         if (this.cachedResponse != null) {
             return SKIP_BODY;
