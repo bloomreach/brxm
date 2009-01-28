@@ -10,7 +10,7 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase
 
     public void testBasicPoolingRepository() throws Exception
     {
-        BasicPoolingRepository poolingRepository = (BasicPoolingRepository) getApplicationContext().getBean("repository");
+        BasicPoolingRepository poolingRepository = (BasicPoolingRepository) getComponent("poolingRepository");
         Repository repository = poolingRepository;
         
         Session [] sessions = new Session[poolingRepository.getMaxActive()];

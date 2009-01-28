@@ -7,9 +7,11 @@ import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
+import org.hippoecm.repository.HippoRepository;
 
 /**
  * <p>Basic implementation of <code>javax.jcr.Repository</code> that is
@@ -20,17 +22,17 @@ import org.apache.commons.pool.impl.GenericObjectPool;
  */
 public class BasicPoolingRepository implements PoolingRepository
 {
-    private Repository repository;
+    private HippoRepository repository;
     private Credentials defaultCredentials;
     private SessionDecorator readOnlySessionDecorator;
     private SessionDecorator writableSessionDecorator;
     
-    public void setRepository(Repository repository) throws RepositoryException
+    public void setRepository(HippoRepository repository) throws RepositoryException
     {
         this.repository = repository;
     }
     
-    public Repository getRepository() throws RepositoryException
+    public HippoRepository getRepository() throws RepositoryException
     {
         return this.repository;
     }
@@ -81,7 +83,7 @@ public class BasicPoolingRepository implements PoolingRepository
         
         try
         {
-            descriptor = getRepository().getDescriptor(key);
+            descriptor = getRepository().getRepository().getDescriptor(key);
         }
         catch (RepositoryException e)
         {
@@ -96,7 +98,7 @@ public class BasicPoolingRepository implements PoolingRepository
         
         try
         {
-            descriptorKeys = getRepository().getDescriptorKeys();
+            descriptorKeys = getRepository().getRepository().getDescriptorKeys();
         }
         catch (RepositoryException e)
         {
@@ -142,14 +144,21 @@ public class BasicPoolingRepository implements PoolingRepository
      */
     public Session login(Credentials credentials) throws LoginException, RepositoryException
     {
-        Session session = getRepository().login(credentials);
-        
-        if (session != null && this.writableSessionDecorator != null)
+        if (credentials instanceof SimpleCredentials)
         {
-            session = this.writableSessionDecorator.decorate(session);
-        }
+            Session session = getRepository().login((SimpleCredentials) credentials);
+            
+            if (session != null && this.writableSessionDecorator != null)
+            {
+                session = this.writableSessionDecorator.decorate(session);
+            }
 
-        return session;
+            return session;
+        }
+        else
+        {
+            throw new LoginException("login by credentials other than SimpleCredentials is not supported.");
+        }
     }
 
     /**

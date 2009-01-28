@@ -47,8 +47,8 @@ public abstract class AbstractSpringTestCase extends TestCase
         return new String [] { classXmlFileName };
     }
     
-    protected ApplicationContext getApplicationContext()
+    protected Object getComponent(String name)
     {
-        return this.appContext;
+        return this.appContext.getBean(name);
     }
 }

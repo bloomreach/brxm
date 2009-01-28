@@ -8,19 +8,14 @@
     <!-- delegated JCR repository -->
     <property name="repository">
       <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetObject">
-	      <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-	        <property name="targetClass" value="org.hippoecm.repository.HippoRepositoryFactory" />
-	        <property name="targetMethod" value="getHippoRepository" />
-	        <property name="arguments">
-	          <list>
-	            <value>rmi://127.0.0.1:1099/hipporepository</value>
-	          </list>
-	        </property>
-	      </bean>
-	    </property>
-	    <property name="targetMethod" value="getRepository" />
-	  </bean>
+        <property name="targetClass" value="org.hippoecm.repository.HippoRepositoryFactory" />
+        <property name="targetMethod" value="getHippoRepository" />
+        <property name="arguments">
+          <list>
+            <value>rmi://127.0.0.1:1099/hipporepository</value>
+          </list>
+        </property>
+      </bean>
     </property>
     
     <!-- default credentials for read-only sessions -->
@@ -42,7 +37,7 @@
     <property name="minIdle" value="3" />
     <property name="initialSize" value="2" />
     <property name="maxWait" value="10000" />
-    <property name="testOnBorrow" value="true" />
+    <property name="testOnBorrow" value="false" />
     <property name="testOnReturn" value="false" />
     <property name="testWhileIdle" value="false" />
     <property name="validationQuery" value="/jcr:root/content" />

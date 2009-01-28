@@ -36,9 +36,10 @@
       <artifactId>hippo-ecm-package-war</artifactId>
       <type>war</type>
     </dependency>
+    <!-- TODO: error during cms startup found when hst-addon-repository and content artifacts are included..
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-      <artifactId>repository</artifactId>
+      <artifactId>hst-addon-repository</artifactId>
       <version>${hst.version}</version>
       <type>jar</type>
     </dependency>
@@ -48,6 +49,7 @@
       <version>${version}</version>
       <type>jar</type>
     </dependency>
+    -->
   </dependencies>
 
   <build>

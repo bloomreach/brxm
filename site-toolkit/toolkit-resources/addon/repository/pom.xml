@@ -27,7 +27,7 @@
   <name>Hippo Site Toolkit Addon Resources to the Repository</name>
   <description>Hippo Site Toolkit Addon Resources to the Repository</description>
   <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-  <artifactId>repository</artifactId>
+  <artifactId>hst-addon-repository</artifactId>
   <packaging>jar</packaging>
 
   <build>
