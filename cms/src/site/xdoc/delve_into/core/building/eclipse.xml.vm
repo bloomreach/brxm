@@ -25,21 +25,21 @@
 
     <section name="Developing Hippo CMS with Eclipse">
         <span class='shortdesc'>How to import and work with the Hippo CMS project in the Eclipse IDE.</span>
-        
+
     <subsection name="Introduction">
-    
+
       <p>
         This chapter is meant as a guide for setting up and managing a debugging environment
         for Hippo ECM inside Eclipse. By the time you have finished reading you will be able to
         run and debug every aspect of Hippo ECM from within Eclipse.
       </p>
     </subsection>
-    
+
     <subsection name="Prepare">
       <p>Follow all steps documented on the <a href="maven.html">Building with Maven</a> page.
         Don't continue with the instructions on this page before you have seen a running application
         using just Maven.</p>
-      
+
       <div style="border:1px solid black; padding:1em;">
         <p>NOTE: Do not do the initial checkout of the source tree from within Eclipse, use the command
           line SVN client.</p>
@@ -47,9 +47,9 @@
           For the rest of this chapter ~/hippo-ecm is the directory where the sources
           are checked out and ~/workspace is the Eclipse workspace directory.</p>
       </div>
-      
+
       <p>Download and install <a href="http://www.eclipse.org/">Eclipse</a> version >= 3.3.2</p>
-            
+
       <p>Start eclipse with some memory flags to the Eclipse -vmargs startup argument:</p>
       <source>eclipse -vmargs -Xms512M -Xmx512M -XX:MaxPermSize=128M</source>
       <ul>
@@ -230,7 +230,7 @@
         open your browser and go to <a href="http://localhost:8080/cms">http://localhost:8080/cms</a></p>
       <br/>
     </subsection>
-    
+
     <subsection name="Code formatting">
       <p>
         Before committing java code, please make sure that it has been formatted
@@ -240,7 +240,7 @@
         Formatting a Java file is done in Eclipse by hitting Ctrl-Shift-F 
       </p>
     </subsection>
-    
+
     <subsection name="Keeping up">
       <p>
         Hippo ECM is a very active project with many updates every day. 'Ordinary' updates can be digested
