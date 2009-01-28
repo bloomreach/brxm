@@ -128,7 +128,7 @@ public class DerivedDataEngine {
                 for(NodeIterator iter = session.pendingChanges(node,HippoNodeType.NT_DERIVED); iter.hasNext(); ) {
                     Node modified = iter.nextNode();
                     if(logger.isDebugEnabled())
-                        logger.debug("Derived engine found "+modified.getPath()+" "+modified.getUUID()+" with derived mixin");
+                        logger.debug("Derived engine found "+modified.getPath()+" "+(modified.isNodeType("mix:referenceable")?modified.getUUID():"")+" with derived mixin");
                     recomputeSet.add(modified);
                 }
             } catch(NamespaceException ex) {
@@ -267,8 +267,31 @@ public class DerivedDataEngine {
                                         sb.append(propName);
                                         sb.append(" valued ");
                                     }
-                                    if(modified.hasProperty(propertyPath)) {
-                                        Property property = modified.getProperty(propertyPath);
+                                    Node targetModifiedNode = modified;
+                                    String targetModifiedPropertyPath = propertyPath;
+                                    NodeType targetModifiedNodetype = nodetype;
+                                    while(targetModifiedPropertyPath.contains("/")  && !targetModifiedPropertyPath.startsWith("..")) {
+                                        String pathElement = targetModifiedPropertyPath.substring(0, targetModifiedPropertyPath.indexOf("/"));
+                                        if(targetModifiedNode != null) {
+                                            if(targetModifiedNode.hasNode(pathElement)) {
+                                                targetModifiedNode = targetModifiedNode.getNode(pathElement);
+                                            } else if(parameters.containsKey(propName)) {
+                                                targetModifiedNode = targetModifiedNode.addNode(pathElement);
+                                            } else {
+                                                targetModifiedNode = null;
+                                            }
+                                        }
+                                        targetModifiedPropertyPath = targetModifiedPropertyPath.substring(targetModifiedPropertyPath.indexOf("/")+1);
+                                        if(!targetModifiedPropertyPath.contains("/")) {
+                                            if(targetModifiedNode != null) {
+                                                targetModifiedNodetype = targetModifiedNode.getPrimaryNodeType();
+                                            } else {
+                                                targetModifiedNodetype = null;
+                                            }
+                                        }
+                                    }
+                                    if(targetModifiedNode != null && targetModifiedNode.hasProperty(targetModifiedPropertyPath)) {
+                                        Property property = targetModifiedNode.getProperty(targetModifiedPropertyPath);
                                         if(!property.getDefinition().isMultiple()) {
                                             Value[] values = parameters.get(propName);
                                             if(values != null && values.length >= 1) {
@@ -346,12 +369,15 @@ public class DerivedDataEngine {
                                             }
                                         }
                                     } else {
-                                        PropertyDefinition derivedPropDef = getPropertyDefinition(nodetype, propertyPath);
-                                        if(!derivedPropDef.isMultiple()) {
+                                        PropertyDefinition derivedPropDef = null;
+                                        if(targetModifiedNodetype != null) {
+                                            derivedPropDef = getPropertyDefinition(targetModifiedNodetype, targetModifiedPropertyPath);
+                                        }
+                                        if(derivedPropDef == null || !derivedPropDef.isMultiple()) {
                                             Value[] values = parameters.get(propName);
                                             if(values != null && values.length >= 1) {
                                                     try {
-                                                        modified.setProperty(propertyPath, values[0]);
+                                                        targetModifiedNode.setProperty(targetModifiedPropertyPath, values[0]);
                                                         if(logger.isDebugEnabled()) {
                                                             sb.append(values[0].getString());
                                                             sb.append(" created");
@@ -378,7 +404,7 @@ public class DerivedDataEngine {
                                                 sb.append(" }");
                                             }
                                             try {
-                                                modified.setProperty(propertyPath, values);
+                                                targetModifiedNode.setProperty(targetModifiedPropertyPath, values);
                                                 if(logger.isDebugEnabled()) {
                                                     sb.append(" created");
                                                 }
