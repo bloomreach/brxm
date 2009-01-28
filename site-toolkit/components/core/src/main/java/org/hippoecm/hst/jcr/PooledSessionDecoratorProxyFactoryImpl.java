@@ -1,13 +1,17 @@
 package org.hippoecm.hst.jcr;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.jcr.Item;
 import javax.jcr.Session;
 import javax.jcr.RepositoryException;
 
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.hippoecm.hst.util.ProxyUtils;
 import org.springframework.aop.framework.ProxyFactory;
 
 public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator, PoolingRepositoryAware
@@ -70,6 +74,13 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 {
                     ret = invocation.proceed();
                 }
+            }
+            
+            if (ret != null && ret instanceof Item)
+            {
+                Set<String> unsupportedMethodNames = new HashSet<String>();
+                unsupportedMethodNames.add("getSession");
+                ret = ProxyUtils.createdUnsupportableProxyObject(ret, unsupportedMethodNames);
             }
             
             return ret;

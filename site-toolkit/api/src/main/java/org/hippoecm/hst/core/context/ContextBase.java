@@ -16,7 +16,6 @@
 package org.hippoecm.hst.core.context;
 
 import javax.jcr.Node;
-import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNode;
 
