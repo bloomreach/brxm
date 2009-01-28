@@ -23,13 +23,13 @@
 
 [hippostd:datefields] > nt:base
 - hippostd:year (long)
-- hippostd:month (long)
-- hippostd:weekofyear (long)
-- hippostd:dayofweek (long)
-- hippostd:dayofmonth (long)
-- hippostd:dayofyear (long)
-- hippostd:hourofday (long)
-- hippostd:minute (long)
+- hippostd:month (long) < '[0,11]'
+- hippostd:weekofyear (long) < '[1,53]'
+- hippostd:dayofweek (long) < '[1,7]'
+- hippostd:dayofmonth (long) < '[1,31]'
+- hippostd:dayofyear (long) < '[1,366]'
+- hippostd:hourofday (long) < '[0,24]'
+- hippostd:minute (long) < '[0,59]'
 - hippostd:second (long)
 
 [hippostd:date] > hippostd:datefields, hippo:derived
