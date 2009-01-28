@@ -28,101 +28,143 @@
         <defaultGoal>process-resources</defaultGoal>
         <plugins>
           <plugin>
-	    <groupId>org.apache.maven.plugins</groupId>
-	    <artifactId>maven-antrun-plugin</artifactId>
-	    <version>1.2</version>
-	    <executions>
-	      <execution>
-	        <id>run</id>
-	        <phase>process-resources</phase>
-	        <configuration>
-	          <tasks>
-	            
-                <echo message="$$$$$$$$$$ Installing this archetype $$$$$$$$$$" />
-                <java classname="org.codehaus.classworlds.Launcher" dir="." fork="true" failonerror="true">
-                  <permissions>
-                    <grant class="java.security.AllPermission"/>
-                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
-                    <grant class="java.util.PropertyPermission" name="*" actions="read,write"/>
-                  </permissions>
-                  <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
-                  <sysproperty key="maven.home" value="${maven.home}" />
-                  <classpath>
-                    <fileset dir="${maven.home}/boot">
-                      <include name="**/*.jar"/>
-                    </fileset>
-                  </classpath>
-                  <arg value="clean" />
-                  <arg value="install" />
-                </java>
-                
-                <echo message="$$$$$$$$$$ Generating an example HST application from the archetype $$$$$$$$$$" />
-                <java classname="org.codehaus.classworlds.Launcher" dir="target" fork="true" failonerror="true">
-                  <permissions>
-                    <grant class="java.security.AllPermission"/>
-                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
-                    <grant class="java.util.PropertyPermission" name="*" actions="read,write"/>
-                  </permissions>
-                  <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
-                  <sysproperty key="maven.home" value="${maven.home}" />
-                  <classpath>
-                    <fileset dir="${maven.home}/boot">
-                      <include name="**/*.jar"/>
-                    </fileset>
-                  </classpath>
-                  <arg value="archetype:generate" />
-                  <arg value="-DarchetypeGroupId=org.onehippo.ecm.hst" />
-                  <arg value="-DarchetypeArtifactId=hst-archetype" />
-                  <arg value="-DarchetypeVersion=${pom.version}" />
-                  <arg value="-Dversion=1.01.00" />
-                  <arg value="-DgroupId=org.example" />
-                  <arg value="-DartifactId=myproject" />
-                </java>
-                
-                <echo message="$$$$$$$$$$ Packaging an example HST application from the archetype $$$$$$$$$$" />
-                <java classname="org.codehaus.classworlds.Launcher" dir="target/myproject" fork="true" failonerror="true">
-                  <permissions>
-                    <grant class="java.security.AllPermission"/>
-                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
-                    <grant class="java.util.PropertyPermission" name="*" actions="read,write"/>
-                  </permissions>
-                  <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
-                  <sysproperty key="maven.home" value="${maven.home}" />
-                  <classpath>
-                    <fileset dir="${maven.home}/boot">
-                      <include name="**/*.jar"/>
-                    </fileset>
-                  </classpath>
-                  <arg value="install" />
-                </java>
-                
-                <echo message="$$$$$$$$$$ Running an example Hippo Repository $$$$$$$$$$" />
-                <java classname="org.codehaus.classworlds.Launcher" dir="target/myproject/cms" fork="true" spawn="true">
-                  <permissions>
-                    <grant class="java.security.AllPermission"/>
-                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
-                    <grant class="java.util.PropertyPermission" name="*" actions="read,write"/>
-                  </permissions>
-                  <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
-                  <sysproperty key="maven.home" value="${maven.home}" />
-                  <classpath>
-                    <fileset dir="${maven.home}/boot">
-                      <include name="**/*.jar"/>
-                    </fileset>
-                  </classpath>
-                  <arg value="jetty:run-war" />
-                </java>
-                
-                <echo message="$$$$$$$$$$ Sleeping for a while to give time to the Repository $$$$$$$$$$" />
-                <sleep seconds="60"/>
-                
-	          </tasks>
-	        </configuration>
-	        <goals>
-	          <goal>run</goal>
-	        </goals>
-	      </execution>
-	    </executions>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-antrun-plugin</artifactId>
+		    <version>1.2</version>
+		    <executions>
+		      <execution>
+		        <id>run</id>
+		        <phase>process-resources</phase>
+		        <configuration>
+		          <tasks>
+		          
+		            <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy">
+		              <classpath refid="maven.compile.classpath"/>
+		            </taskdef>
+		            
+	                <echo message="$$$$$$$$$$ Installing this archetype $$$$$$$$$$" />
+	                <java classname="org.codehaus.classworlds.Launcher" dir="." fork="true" failonerror="true">
+	                  <permissions>
+	                    <grant class="java.security.AllPermission"/>
+	                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
+	                    <grant class="java.util.PropertyPermission" name="*" actions="read,write"/>
+	                  </permissions>
+	                  <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+	                  <sysproperty key="maven.home" value="${maven.home}" />
+	                  <classpath>
+	                    <fileset dir="${maven.home}/boot">
+	                      <include name="**/*.jar"/>
+	                    </fileset>
+	                  </classpath>
+	                  <arg value="clean" />
+	                  <arg value="install" />
+	                </java>
+	                
+	                <echo message="$$$$$$$$$$ Generating an example HST application from the archetype $$$$$$$$$$" />
+	                <java classname="org.codehaus.classworlds.Launcher" dir="target" fork="true" failonerror="true">
+	                  <permissions>
+	                    <grant class="java.security.AllPermission"/>
+	                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
+	                    <grant class="java.util.PropertyPermission" name="*" actions="read,write"/>
+	                  </permissions>
+	                  <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+	                  <sysproperty key="maven.home" value="${maven.home}" />
+	                  <classpath>
+	                    <fileset dir="${maven.home}/boot">
+	                      <include name="**/*.jar"/>
+	                    </fileset>
+	                  </classpath>
+	                  <arg value="archetype:generate" />
+	                  <arg value="-DarchetypeGroupId=org.onehippo.ecm.hst" />
+	                  <arg value="-DarchetypeArtifactId=hst-archetype" />
+	                  <arg value="-DarchetypeVersion=${pom.version}" />
+	                  <arg value="-Dversion=1.01.00" />
+	                  <arg value="-DgroupId=org.example" />
+	                  <arg value="-DartifactId=myproject" />
+	                </java>
+	                
+	                <echo message="$$$$$$$$$$ Packaging an example HST application from the archetype $$$$$$$$$$" />
+	                <java classname="org.codehaus.classworlds.Launcher" dir="target/myproject" fork="true" failonerror="true">
+	                  <permissions>
+	                    <grant class="java.security.AllPermission"/>
+	                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
+	                    <grant class="java.util.PropertyPermission" name="*" actions="read,write"/>
+	                  </permissions>
+	                  <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+	                  <sysproperty key="maven.home" value="${maven.home}" />
+	                  <classpath>
+	                    <fileset dir="${maven.home}/boot">
+	                      <include name="**/*.jar"/>
+	                    </fileset>
+	                  </classpath>
+	                  <arg value="install" />
+	                </java>
+
+	                <echo message="$$$$$$$$$$ Running an example Hippo Repository $$$$$$$$$$" />
+	                <java classname="org.codehaus.classworlds.Launcher" dir="target/myproject/cms" fork="true" spawn="true">
+	                  <permissions>
+	                    <grant class="java.security.AllPermission"/>
+	                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
+	                    <grant class="java.util.PropertyPermission" name="*" actions="read,write"/>
+	                  </permissions>
+	                  <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+	                  <sysproperty key="maven.home" value="${maven.home}" />
+	                  <classpath>
+	                    <fileset dir="${maven.home}/boot">
+	                      <include name="**/*.jar"/>
+	                    </fileset>
+	                  </classpath>
+	                  <arg value="jetty:run-war" />
+	                </java>
+	                
+	                <property name="repository.address" value="rmi://127.0.0.1:1099/hipporepository"/>
+                    <property name="repository.username" value="admin"/>
+                    <property name="repository.password" value="admin"/>
+                    
+	                <groovy src="CheckRepositoryRunning.groovy">
+  	                  <classpath refid="maven.compile.classpath"/>
+	                </groovy>
+	                
+		          </tasks>
+		        </configuration>
+		        <goals>
+		          <goal>run</goal>
+		        </goals>
+		      </execution>
+		    </executions>
+	        <dependencies>
+	          <dependency>
+	            <groupId>org.codehaus.groovy</groupId>
+	            <artifactId>groovy</artifactId>
+	            <version>1.5.7</version>
+	          </dependency>
+              <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jta_1.1_spec</artifactId>
+                <scope>provided</scope>
+                <version>1.1</version>
+              </dependency>
+              <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.4.2</version>
+              </dependency>
+              <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>1.4.2</version>
+              </dependency>
+              <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.13</version>
+              </dependency>
+              <dependency>
+                <groupId>org.hippoecm</groupId>
+                <artifactId>hippo-ecm-repository-connector</artifactId>
+                <version>${hippoecm.version}</version>
+              </dependency>
+	        </dependencies>
           </plugin>
         </plugins>
       </build>
