@@ -20,8 +20,8 @@
  * @requires dragdrop, hashmap
  * @extends YAHOO.util.DDProxy
  * @constructor
- * @param {String} id the id of the linked element
- * @param {String} sGroup the group of related DragDrop objects
+ * @param {String}
+ *            id the id of the linked element
  */
 YAHOO.namespace("hippo");
 
@@ -29,12 +29,22 @@ YAHOO.namespace("hippo");
     var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
 
     YAHOO.hippo.CallbackHelper = function(url, func, parameters) {
-        this.callbackUrl = url.replace(/\&amp;/g, '&');
-        this.callbackFunction = func;
-        this.callbackParameters = new YAHOO.hippo.HashMap();
+        this.init(url, func);
     };
 
     YAHOO.hippo.CallbackHelper.prototype = {
+        callbackUrl :null,
+
+        callbackFunction : function() {
+        },
+
+        callbackParameters :new YAHOO.hippo.HashMap(),
+
+        init : function(url, func) {
+            this.callbackUrl = url.replace(/\&amp;/g, '&');
+            this.callbackFunction = func;
+        },
+
         execute : function(overrideParameters) {
             if (overrideParameters != null) {
                 this.callbackParameters.putAll(overrideParameters);
@@ -62,8 +72,8 @@ YAHOO.namespace("hippo");
                 }
             }
             this.cancelCallback = config.cancelCallback ? true : false;
-            this.callback = new YAHOO.hippo.CallbackHelper(config.callbackUrl,
-                    config.callbackFunction, config.callbackParameters);
+            this.callback = new YAHOO.hippo.CallbackHelper(config.callbackUrl, config.callbackFunction,
+                    config.callbackParameters);
         },
 
         getCallbackParameters : function(dropId) {
@@ -103,7 +113,7 @@ YAHOO.namespace("hippo");
         this.type = YAHOO.hippo.DDBaseDragModel.TYPE;
         this.startPos = YAHOO.util.Dom.getXY(this.getEl());
 
-        this.useShim = true; //iframe magic
+        this.useShim = true; // iframe magic
     },
 
     initStyle : function() {
@@ -186,8 +196,8 @@ YAHOO.namespace("hippo");
         setStartStyle : function() {
             var dragEl = this.getDragEl();
             dragEl.innerHTML = this.label;
-            Dom.setStyle(dragEl, "color",  Dom.getStyle(clickEl, "color"));
-            
+            Dom.setStyle(dragEl, "color", Dom.getStyle(clickEl, "color"));
+
             var clickEl = this.getEl();
             Dom.setStyle(clickEl, "opacity", 0.4);
         },
@@ -209,34 +219,34 @@ YAHOO.namespace("hippo");
         }
 
     });
-    
+
     YAHOO.hippo.DDFallbackModel = function(id, group, config) {
 
         var clazz = config.wrappedModelClass;
         if (YAHOO.env.ua.ie > 0) {
             var original = Dom.get(id);
-            
+
             var ids = [];
             var className = config.ieFallbackClass;
             var dds = Dom.getElementsByClassName(className, null, original, function(el) {
-                if(el.id == '') {
+                if (el.id == '') {
                     Dom.generateId(el);
-                }    
+                }
                 ids.push(el.id);
             });
 
-            for(var i=0; i<ids.length; i++) {
+            for ( var i = 0; i < ids.length; i++) {
                 var el = Dom.get(ids[i]);
                 var newEl = document.createElement("a");
                 var parent = el.parentNode;
                 newEl.appendChild(parent.removeChild(el));
-                newEl.setAttribute("href", "#"); //this does the trick
+                newEl.setAttribute("href", "#"); // this does the trick
                 parent.appendChild(newEl);
                 Dom.generateId(newEl);
                 var x = new clazz(newEl.id, group, config);
-                
+
                 var ancestorTag = config.firstAncestorToBlur;
-                if(ancestorTag != '') {
+                if (ancestorTag != '') {
                     var opacity = function(_el, _val) {
                         Dom.setStyle(Dom.getAncestorByTagName(_el, ancestorTag), "opacity", _val);
                     }
@@ -244,7 +254,7 @@ YAHOO.namespace("hippo");
                         this.getDragEl().innerHTML = this.label;
                         opacity(this.getEl(), 0.4);
                     };
-    
+
                     x.setEndStyle = function() {
                         opacity(this.getEl(), 1);
                     }
@@ -254,50 +264,54 @@ YAHOO.namespace("hippo");
             var x = new clazz(id, group, config)
         }
     };
-    
+
     YAHOO.hippo.DDImage = function(id, sGroup, config) {
         YAHOO.hippo.DDImage.superclass.constructor.apply(this, arguments);
     };
 
-    YAHOO.extend(YAHOO.hippo.DDImage, YAHOO.hippo.DDBaseDragModel, {
-        TYPE :"DDImage",
+    YAHOO
+            .extend(
+                    YAHOO.hippo.DDImage,
+                    YAHOO.hippo.DDBaseDragModel,
+                    {
+                        TYPE :"DDImage",
 
-        initPlayer : function(id, sGroup, config) {
-            YAHOO.hippo.DDImage.superclass.initPlayer.call(this, id, sGroup, config);
+                        initPlayer : function(id, sGroup, config) {
+                            YAHOO.hippo.DDImage.superclass.initPlayer.call(this, id, sGroup, config);
 
-            this.currentGroup = config.currentGroup;
-        },
+                            this.currentGroup = config.currentGroup;
+                        },
 
-        setStartStyle : function() {
-            var Dom = YAHOO.util.Dom;
-            var dragEl = this.getDragEl();
-            var clickEl = this.getEl();
+                        setStartStyle : function() {
+                            var Dom = YAHOO.util.Dom;
+                            var dragEl = this.getDragEl();
+                            var clickEl = this.getEl();
 
-            dragEl.innerHTML = this.label;
-            dragEl.innerHTML = '<div style="padding-left:15px;padding-top:5px;width:120px;"><div><img src="' + clickEl.src + '" /></div></div>';
+                            dragEl.innerHTML = this.label;
+                            dragEl.innerHTML = '<div style="padding-left:15px;padding-top:5px;width:120px;"><div><img src="' + clickEl.src + '" /></div></div>';
 
-            Dom.setStyle(dragEl, "color", Dom.getStyle(clickEl, "color"));
-            Dom.setStyle(clickEl, "opacity", 0.4);
-        },
+                            Dom.setStyle(dragEl, "color", Dom.getStyle(clickEl, "color"));
+                            Dom.setStyle(clickEl, "opacity", 0.4);
+                        },
 
-        setEndStyle : function() {
-            YAHOO.util.Dom.setStyle(this.getEl(), "opacity", 1);
-        },
+                        setEndStyle : function() {
+                            YAHOO.util.Dom.setStyle(this.getEl(), "opacity", 1);
+                        },
 
-        /**
-         * lookup drop model, getParameters, add to own and
-         * return;
-         */
-        getCallbackParameters : function(dropId) {
-            var cp = YAHOO.hippo.DDImage.superclass.getCallbackParameters.call(this, dropId);
-            var model = YAHOO.hippo.DragDropManager.getModel(dropId);
-            if (Lang.isFunction(model.getCallbackParameters)) {
-                cp.putAll(model.getCallbackParameters(dropId));
-            }
-            return cp;
-        }
+                        /**
+                         * lookup drop model, getParameters, add to own and
+                         * return;
+                         */
+                        getCallbackParameters : function(dropId) {
+                            var cp = YAHOO.hippo.DDImage.superclass.getCallbackParameters.call(this, dropId);
+                            var model = YAHOO.hippo.DragDropManager.getModel(dropId);
+                            if (Lang.isFunction(model.getCallbackParameters)) {
+                                cp.putAll(model.getCallbackParameters(dropId));
+                            }
+                            return cp;
+                        }
 
-    });
+                    });
 
     YAHOO.hippo.DDBaseDropModel = function(id, sGroup, config) {
         YAHOO.hippo.DDBaseDropModel.superclass.constructor.apply(this, arguments);
@@ -305,9 +319,7 @@ YAHOO.namespace("hippo");
     };
 
     YAHOO.extend(YAHOO.hippo.DDBaseDropModel, YAHOO.util.DDTarget, {
-
         TYPE :"DDBaseDropModel"
-
     });
 
     Lang.augment(YAHOO.hippo.DDBaseDropModel, YAHOO.hippo.DDSharedBehavior);

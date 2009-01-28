@@ -46,93 +46,93 @@ Array.prototype.removeAt = _removeAt;
 
     YAHOO.hippo.HashMap.prototype = {
         
-    	put : function(key, value) {
-	    	var index = this._getIndex(key);
-	        if(index == -1) {
-	            this.keys.push(key);
-	            this.values.push(value);
-	            return null;
-	        } else {
-	        	var previous = this.values[index];
-	            this.values[index] = value;
-	            return previous;
-	        }
+        put : function(key, value) {
+            var index = this._getIndex(key);
+            if(index == -1) {
+                this.keys.push(key);
+                this.values.push(value);
+                return null;
+            } else {
+                var previous = this.values[index];
+                this.values[index] = value;
+                return previous;
+            }
         },
         
         putAll : function(hashMap) {
-        	var entries = hashMap.entrySet();
-        	for(var e in  entries) {
-        		var entry =entries[e];
-        		this.put(entry.getKey(), entry.getValue());
-        	}
+            var entries = hashMap.entrySet();
+            for(var e in  entries) {
+                var entry =entries[e];
+                this.put(entry.getKey(), entry.getValue());
+            }
         },
         
         get : function(key) {
-        	var index = this._getIndex(key);
+            var index = this._getIndex(key);
 
-        	if(index == -1) {
-        		//TODO: throw error or return null?
-        		var msg = "No value found for key[" + key + "]";
-        		YAHOO.log(msg, "error", "HashMap");
-        		throw new Error(msg)
-        	}
+            if(index == -1) {
+                //TODO: throw error or return null?
+                var msg = "No value found for key[" + key + "]";
+                YAHOO.log(msg, "error", "HashMap");
+                throw new Error(msg)
+            }
              return this.values[index];
         },
         
         remove : function(key) {
-        	var index = this._getIndex(key);
-        	if(index == -1) {
-        		//TODO: throw error or return null
-        		var msg = "Can not remove entry, key[" + key + "] not found";
-        		YAHOO.log(msg, "error", "HashMap");
-        		throw new Error(msg)
-        	}
-        	var value = this.values[index];
-         	this.keys = this.keys.removeAt(index);
-        	this.values = this.values.removeAt(index);
-        	
-        	return value;
+            var index = this._getIndex(key);
+            if(index == -1) {
+                //TODO: throw error or return null
+                var msg = "Can not remove entry, key[" + key + "] not found";
+                YAHOO.log(msg, "error", "HashMap");
+                throw new Error(msg)
+            }
+            var value = this.values[index];
+            this.keys = this.keys.removeAt(index);
+            this.values = this.values.removeAt(index);
+            
+            return value;
         },
 
         containsKey : function(key) {
-        	return this._getIndex(key) > -1;
+            return this._getIndex(key) > -1;
         },
         
         size : function() {
-        	return this.keys.length;
+            return this.keys.length;
         },
         
         isEmpty : function() {
-        	return this.keys.length == 0;
+            return this.keys.length == 0;
         },
         
         clear : function() {
-        	this.keys = [];
-        	this.values = [];
+            this.keys = [];
+            this.values = [];
         },
-        
+
         keySet : function() {
-        	return this.keys;
+            return this.keys;
         },
         
         valueSet : function() {
-        	return this.values;
+            return this.values;
         },
         
         entrySet : function() {
-        	var o = {};
-        	for(var i=0; i<this.keys.length; i++) {
-        		o['o' + i] = new YAHOO.hippo.HashMapEntry(this.keys[i], this.values[i]);
-        	}
-        	return o;
+            var o = {};
+            for(var i=0; i<this.keys.length; i++) {
+                o['o' + i] = new YAHOO.hippo.HashMapEntry(this.keys[i], this.values[i]);
+            }
+            return o;
         },
 
         entrySetAsArray : function() {
-        	var ar = [];
-        	for(var i=0; i<this.keys.length; i++) {
-        		ar.push(new YAHOO.hippo.HashMapEntry(this.keys[i], this.values[i]));
-        	}
-        	return ar;
+            var ar = [];
+            for(var i=0; i<this.keys.length; i++) {
+                ar.push(new YAHOO.hippo.HashMapEntry(this.keys[i], this.values[i]));
+            }
+            return ar;
         },
         
         forEach : function(context, visitor) {
@@ -146,22 +146,22 @@ Array.prototype.removeAt = _removeAt;
         },
 
         _getIndex : function(key) {
-			for (var i=0; i < this.keys.length; i++) {
-			    if( this.keys[ i ] == key ) {
-			        return i;
-			    }
-			}
-			return -1;
+            for (var i=0; i < this.keys.length; i++) {
+                if( this.keys[ i ] == key ) {
+                    return i;
+                }
+            }
+            return -1;
         },
         
         toString : function() {
-    		var x = '';
+            var x = '';
             var entries = this.entrySetAsArray();
             for(var i=0; i<entries.length; i++) {
-    			if (i>0) x += ', ';
+                if (i>0) x += ', ';
                 var entry = entries[i];
                 x +='{' + entry.getKey() + '=' + entry.getValue()+ '}'; 
-    		}
+            }
             return 'HashMap[' + x + ']';
         }
     };
@@ -172,13 +172,13 @@ Array.prototype.removeAt = _removeAt;
     };
     
     YAHOO.hippo.HashMapEntry.prototype = {
-    	getKey : function() {
-    		return this._key;
-    	},
-    	
-    	getValue : function() {
-    		return this._value;
-    	}
+        getKey : function() {
+            return this._key;
+        },
+        
+        getValue : function() {
+            return this._value;
+        }
     };
 
 })();
@@ -191,26 +191,26 @@ YAHOO.register("hashmap", YAHOO.hippo.HashMap, {
 /*
         //test for hashmap
         var title = function(str) {
-        	var len = 80;
-        	var pre = '--------';
-        	var suf = ' ';
-        	for(var i=0; i<len - (pre.length + str.length); i++) {
-        		suf += '-';
-        	}
-        	console.log(pre + ' ' + str + ' ' + suf);
+            var len = 80;
+            var pre = '--------';
+            var suf = ' ';
+            for(var i=0; i<len - (pre.length + str.length); i++) {
+                suf += '-';
+            }
+            console.log(pre + ' ' + str + ' ' + suf);
         }
         var endline = '\n';
         var testFunction = function(func, numberOfRuns) {
             var testAr = [];
             for(var i=0; i<numberOfRuns; i++) {
-    	        var start = new Date().getTime();
-    	        var x = func();
-    	        var stop = new Date().getTime();
-    	        testAr.push(stop-start);
+                var start = new Date().getTime();
+                var x = func();
+                var stop = new Date().getTime();
+                testAr.push(stop-start);
             }
             var average = 0;
             while(testAr.length > 0) {
-            	average += testAr.pop();
+                average += testAr.pop();
             }
             return average/numberOfRuns;
         }
@@ -255,7 +255,7 @@ YAHOO.register("hashmap", YAHOO.hippo.HashMap, {
         console.log('Length = ' + hm.size() + ', Empty = ' + hm.isEmpty());
         console.log(endline);
 
-		//TODO: write putAll test
+        //TODO: write putAll test
 
         title('Remove keys test');
         hm = new YAHOO.hippo.HashMap();
@@ -291,11 +291,11 @@ YAHOO.register("hashmap", YAHOO.hippo.HashMap, {
         for(var i in testSet) {
             ++testCount;
             var entry = testSet[i];
-        	console.log('Found entry: key=' + entry.getKey() + ', value=' + entry.getValue());
-        	if(entry.getKey() != ('key' + testCount) || entry.getValue() != ('value' + testCount)) {
-        		console.log('Entry[' + entry.getKey() + ', '  + entry.getValue() + '] at index ' + testCount + ' should have [' + 'key'  + testCount + ',value' + testCount + ']');
-        		break;
-        	}
+            console.log('Found entry: key=' + entry.getKey() + ', value=' + entry.getValue());
+            if(entry.getKey() != ('key' + testCount) || entry.getValue() != ('value' + testCount)) {
+                console.log('Entry[' + entry.getKey() + ', '  + entry.getValue() + '] at index ' + testCount + ' should have [' + 'key'  + testCount + ',value' + testCount + ']');
+                break;
+            }
         }
 
         var numberOfMapEntries= 150;
@@ -305,12 +305,12 @@ YAHOO.register("hashmap", YAHOO.hippo.HashMap, {
 
         var hm = new YAHOO.hippo.HashMap();
         for(var i=0; i<numberOfMapEntries; i++) {
-        	hm.put('key' + i, 'val' + i);
+            hm.put('key' + i, 'val' + i);
         }
         
         //first call seems very slow
         var testFunc = function() {
-        	hm.entrySet();	
+            hm.entrySet();  
         }
         var average = testFunction(testFunc, 1);
         console.log('Initial call: ' + average + 'ms');
@@ -319,7 +319,7 @@ YAHOO.register("hashmap", YAHOO.hippo.HashMap, {
         console.log('EntrySet average on '  + numberOfTestRuns + ' runs: ' + average + 'ms');
         
         testFunc = function() {
-        	hm.entrySetAsArray();	
+            hm.entrySetAsArray();   
         }
         average = testFunction(testFunc, numberOfTestRuns);
         console.log('EntrySetAsArray average on '  + numberOfTestRuns + ' runs: ' + average + 'ms');
@@ -327,14 +327,14 @@ YAHOO.register("hashmap", YAHOO.hippo.HashMap, {
         
         var entrySet = hm.entrySet();
         for(var x in entrySet) {
-        	var entry = entrySet[x];
-        	console.log('Found entry: key=' + entry.getKey()+ ', value=' + entry.getValue());
+            var entry = entrySet[x];
+            console.log('Found entry: key=' + entry.getKey()+ ', value=' + entry.getValue());
         }
 
         title('Entryset as array test');
         entrySet = hm.entrySetAsArray();
         for(var i=0; i<entrySet.length; i++) {
-        	var entry = entrySet[i];
-        	console.log('Found entry: key=' + entry.getKey()+ ', value=' + entry.getValue());
+            var entry = entrySet[i];
+            console.log('Found entry: key=' + entry.getKey()+ ', value=' + entry.getValue());
         }
 */
