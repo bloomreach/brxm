@@ -26,13 +26,16 @@
 <section name="Your own Quickstart">
  <span class='shortdesc'>Quickstart in your own servlet container.</span>
 
-  <span class='rewrite'>This text contains much that is admin information and is mostly redundant.
-                        Merge this document into the admin guide and leave the new version very small, 
-                        mainly refering to the necessary admin documents. 
-  </span>  
- 
+ <div><span class='worse'>This text contains much that is also described as
+                    admin information and is therefor mostly redundant.
+                    This document is to be largely merged with the admin guide.
+ </span></div>
+ <span class='rewrite'>
+                        and leave the new version very small,
+                        mainly refering to the necessary admin documents.
+ </span>
 
-<subsection name='Rubbish'>
+<subsection name='Download'>
 <p>
    download either the WAR or EAR package, whichever type you prefer:
 </p>

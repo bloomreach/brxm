@@ -3,7 +3,7 @@
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
-  Copyright 2007 Hippo
+  Copyright 2008 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -26,53 +26,6 @@
     <section name="Building with Maven">
     
       <span class='shortdesc'>Build Hippo CMS from the command line using Maven.</span>
-
-      <subsection name="Install Maven">
-        <p>
-          Hippo CMS is built using Maven 2 (version 2.0.9 or newer). Follow the
-          <a href="http://maven.apache.org/download.html">Maven installation instructions</a>.
-        </p>
-
-        <div style="border:1px solid black; padding:1em;">
-          <p>
-            <b>For Windows users</b>
-            <br/>
-            You need to take care that your local Maven 2 repository is not located in a folder with
-            spaces in the pathname. The default Maven installation procedure will locate
-            it in your home directory which on Windows is a subdirectory of the
-            "Documents and Settings" directory.  This means that you need to relocate your local Maven repository.
-          </p>
-          <p>
-            Create and edit the file
-            <b>c:\Documents and Settings\&lt;Your Name&gt;\.m2\settings.xml</b> with the following content:
-          </p>
-<source>
-<![CDATA[
-<settings xmlns="http://maven.apache.org/POM/4.0.0"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
-    <localRepository>C:\\mvnhome</localRepository>
-</settings>
-]]>
-</source>
-          <p>
-            This effectively relocates your local Maven repository to <b>c:\mvnhome</b>.
-          </p>
-        </div>
-
-      </subsection>
-
-      <subsection name="Get the Hippo CMS source">
-        <p>
-          The source can be found at <a href="${project_source_url}">${project_source_url}</a>
-          and can be anonymously checked out using any <a href="http://subversion.tigris.org/">Subversion</a> client.
-          Instructions on Subversion use can be found at <a href="http://svnbook.red-bean.com/">http://svnbook.red-bean.com/</a>.
-          The following command checks out the trunk to a directory called 'hippo-ecm'
-        </p>
-          <source>
-~/> svn co ${project_source_url}/trunk hippo-ecm
-          </source>
-      </subsection>
 
  <span class='update'>~/hippo-ecm for the checkout of cms+repository?</span>
 
