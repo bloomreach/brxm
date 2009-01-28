@@ -21,14 +21,24 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.jackrabbit.spi.Event;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.JcrEventListener;
 import org.hippoecm.repository.api.HippoNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class JcrNodeModel extends ItemModelWrapper {
+public class JcrNodeModel extends ItemModelWrapper implements IObservable {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: JcrNodeModel.java 12254 2008-07-01 11:09:05Z fvlankvelt $";
 
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(JcrNodeModel.class);
+
+    private IObservationContext context;
+    private JcrEventListener listener;
     private transient boolean parentCached = false;
     private transient JcrNodeModel parent;
 
@@ -74,6 +84,29 @@ public class JcrNodeModel extends ItemModelWrapper {
             result = result.getParentModel();
         }
         return result;
+    }
+
+    // implement IObservable
+
+    public void setObservationContext(IObservationContext context) {
+        this.context = context;
+    }
+
+    public void startObservation() {
+        if (itemModel.getObject() != null) {
+            listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED |
+                    Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, itemModel.getPath(), false, null, null);
+            listener.start();
+        } else {
+            log.debug("skipping observation for null node");
+        }
+    }
+
+    public void stopObservation() {
+        if (listener != null) {
+            listener.stop();
+            listener = null;
+        }
     }
 
     // override Object

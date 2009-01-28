@@ -26,10 +26,15 @@ import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.jfree.util.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClusterControl implements IClusterControl, IServiceTracker<IClusterable>, IDetachable {
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(ClusterControl.class);
+    
     static class Extension implements IClusterable {
         private static final long serialVersionUID = 1L;
 
@@ -130,10 +135,14 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
     public void removeService(IClusterable service, String name) {
         String serviceId = context.getReference(service).getServiceId();
         Extension extension = extensions.get(serviceId);
-        extension.removeName(name);
-        if (!extension.exists()) {
-            extension.forwarder.stop();
-            extensions.remove(serviceId);
+        if (extension != null) {
+            extension.removeName(name);
+            if (!extension.exists()) {
+                extension.forwarder.stop();
+                extensions.remove(serviceId);
+            }
+        } else {
+            log.error("unknown extension " + serviceId);
         }
     }
 

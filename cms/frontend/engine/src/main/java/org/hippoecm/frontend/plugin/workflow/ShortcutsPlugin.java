@@ -15,31 +15,31 @@
  */
 package org.hippoecm.frontend.plugin.workflow;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.Iterator;
 
-import org.apache.wicket.Session;
+import javax.jcr.Node;
+import javax.jcr.query.Query;
+
 import org.apache.wicket.model.IDetachable;
-import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrQueryModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ShortcutsPlugin implements IPlugin, IJcrNodeModelListener, IDetachable {
+public class ShortcutsPlugin implements IPlugin, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -54,16 +54,27 @@ public class ShortcutsPlugin implements IPlugin, IJcrNodeModelListener, IDetacha
     private IPluginConfig config;
     private IClusterControl pluginControl;
 
-    private String pluginsQuery = "";
+    private JcrQueryModel query;
 
     public ShortcutsPlugin(IPluginContext context, IPluginConfig config) {
         this.context = context;
         this.config = config;
 
-        context.registerService(this, IJcrService.class.getName());
-
+        // FIXME: throw exception when no query is defined?
         if (config.get(PLUGINSQUERY) != null) {
-            pluginsQuery = config.getString(PLUGINSQUERY);
+            query = new JcrQueryModel(config.getString(PLUGINSQUERY), Query.XPATH);
+            context.registerService(new IObserver() {
+                private static final long serialVersionUID = 1L;
+
+                public IObservable getObservable() {
+                    return query;
+                }
+
+                public void onEvent(IEvent event) {
+                    refresh();
+                }
+
+            }, IObserver.class.getName());
         } else {
             log.warn("No query defined for {}", context.getReference(this).getServiceId());
         }
@@ -76,32 +87,31 @@ public class ShortcutsPlugin implements IPlugin, IJcrNodeModelListener, IDetacha
             pluginControl.stop();
             pluginControl = null;
         }
-        try {
-            QueryManager qmgr = ((UserSession) Session.get()).getJcrSession().getWorkspace().getQueryManager();
-            Query query = qmgr.createQuery(pluginsQuery, Query.XPATH);
-            QueryResult result = query.execute();
-
+        if (query != null) {
             JavaClusterConfig clusterConfig = new JavaClusterConfig();
-            for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
-                Node pluginNode = iter.nextNode();
+            Iterator<Node> iter = query.iterator(0, query.size());
+            while (iter.hasNext()) {
+                JcrNodeModel model = (JcrNodeModel) query.model(iter.next());
 
-                IPluginConfig pluginConfig = new JavaPluginConfig(new JcrPluginConfig(new JcrNodeModel(pluginNode)));
+                IPluginConfig pluginConfig = new JavaPluginConfig(new JcrPluginConfig(model));
                 pluginConfig.put(RenderService.WICKET_ID, config.getString(RenderService.WICKET_ID));
                 clusterConfig.addPlugin(pluginConfig);
             }
             pluginControl = context.newCluster(clusterConfig, null);
             pluginControl.start();
-        } catch (RepositoryException ex) {
-            log.error("could not setup plugin", ex);
         }
     }
 
-    public void onFlush(JcrNodeModel nodeModel) {
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+
         refresh();
     }
 
     public void detach() {
-        config.detach();
+        if (query != null) {
+            query.detach();
+        }
     }
 
 }

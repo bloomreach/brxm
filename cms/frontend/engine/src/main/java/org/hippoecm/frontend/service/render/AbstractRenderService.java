@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestContext;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.HeaderContributor;
@@ -32,6 +33,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WicketURLDecoder;
+import org.apache.wicket.request.target.component.PageRequestTarget;
 import org.apache.wicket.util.string.PrependingStringBuffer;
 import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -351,7 +353,9 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
 
     public void render(PluginRequestTarget target) {
         if (redraw) {
-            target.addComponent(this);
+            if (target != null) {
+                target.addComponent(this);
+            }
             redraw = false;
         }
         for (Map.Entry<String, ExtensionPoint> entry : children.entrySet()) {
@@ -404,14 +408,6 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
             }
         }
         return null;
-    }
-
-    // detach
-
-    @Override
-    protected void onDetach() {
-        redraw = false;
-        super.onDetach();
     }
 
     private static IModel getPluginModel(IPluginContext context, IPluginConfig properties) {

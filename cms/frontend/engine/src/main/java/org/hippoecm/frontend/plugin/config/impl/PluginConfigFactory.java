@@ -21,8 +21,10 @@ import javax.jcr.Session;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Main;
+import org.hippoecm.frontend.WebApplicationHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
@@ -62,7 +64,8 @@ public class PluginConfigFactory implements IClusterable {
                     baseService = new JavaConfigService("login");
                 }
             } else {
-                String config = ((Main) Application.get()).getConfigurationParameter("config", null);
+                String config = WebApplicationHelper.getConfigurationParameter((WebApplication) Application.get(),
+                        "config", null);
                 if (config == null) {
                     String configPath = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
                     Node configNode = (Node) session.getItem(configPath);
@@ -72,21 +75,24 @@ public class PluginConfigFactory implements IClusterable {
                             Node clusterNode = applicationNode.getNodes().nextNode();
                             baseService = new JcrConfigService(new JcrNodeModel(applicationNode), clusterNode.getName());
                         } else {
-                            log.error("Application configuration '" + applicationNode.getName()+ "' contains no plugin cluster");
+                            log.error("Application configuration '" + applicationNode.getName()
+                                    + "' contains no plugin cluster");
                             baseService = new JavaConfigService("console");
                         }
                     } else {
                         baseService = new JavaConfigService("console");
                     }
                 } else {
-                    String configPath = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/" + config;
+                    String configPath = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH
+                            + "/" + config;
                     if (session.itemExists(configPath)) {
                         Node applicationNode = (Node) session.getItem(configPath);
                         if (applicationNode.hasNodes()) {
                             Node clusterNode = applicationNode.getNodes().nextNode();
                             baseService = new JcrConfigService(new JcrNodeModel(applicationNode), clusterNode.getName());
                         } else {
-                            log.error("Application configuration '" + applicationNode.getName()+ "' contains no plugin cluster");
+                            log.error("Application configuration '" + applicationNode.getName()
+                                    + "' contains no plugin cluster");
                             baseService = new JavaConfigService("console");
                         }
                     } else {

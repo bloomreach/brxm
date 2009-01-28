@@ -18,6 +18,7 @@ package org.hippoecm.frontend;
 import java.util.List;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -27,6 +28,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.model.event.ObservableRegistry;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -79,6 +81,9 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
             }
         };
         context.registerService(jcrService, IJcrService.class.getName());
+
+        ObservableRegistry obRegistry = new ObservableRegistry(context, null);
+        obRegistry.startObservation();
 
         dialogService = new DialogService();
         dialogService.init(context, IDialogService.class.getName(), "dialog");

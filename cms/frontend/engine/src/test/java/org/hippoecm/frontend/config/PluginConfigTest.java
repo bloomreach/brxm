@@ -13,12 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend;
+package org.hippoecm.frontend.config;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -29,7 +34,11 @@ import java.util.Set;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.util.lang.Objects;
+import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.map.HippoMap;
 import org.hippoecm.frontend.model.map.IHippoMap;
 import org.hippoecm.frontend.model.map.JcrMap;
@@ -49,14 +58,10 @@ public class PluginConfigTest extends TestCase {
 
     Node root, cleanerConfigNode;
 
-    String[] content = new String[] {
-            "/map", "nt:unstructured", "a", "b", "c", "d",
-            "/config", "frontend:pluginconfig", "a", "b",
-            "/config/sub", "frontend:pluginconfig", "c", "d",
-            "/cluster", "frontend:plugincluster",
-            "/cluster/plugin", "frontend:plugin", "c", "d", "x", "${cluster.id}",
-            "/cluster/plugin/sub", "frontend:pluginconfig", "a", "b", "y", "${cluster.id}"
-        };
+    String[] content = new String[] { "/map", "nt:unstructured", "a", "b", "c", "d", "/config",
+            "frontend:pluginconfig", "a", "b", "/config/sub", "frontend:pluginconfig", "c", "d", "/cluster",
+            "frontend:plugincluster", "/cluster/plugin", "frontend:plugin", "c", "d", "x", "${cluster.id}",
+            "/cluster/plugin/sub", "frontend:pluginconfig", "a", "b", "y", "${cluster.id}" };
 
     @Before
     public void setUp() throws Exception {
@@ -147,7 +152,6 @@ public class PluginConfigTest extends TestCase {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testConfig() throws Exception {
         build(session, content);
 
@@ -166,7 +170,6 @@ public class PluginConfigTest extends TestCase {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testCluster() throws Exception {
         build(session, content);
 
@@ -177,7 +180,7 @@ public class PluginConfigTest extends TestCase {
         assertEquals(0, config.getServices().size());
         assertEquals(0, config.getReferences().size());
         assertEquals(0, config.getProperties().size());
-        
+
         IPluginConfig pluginConfig = plugins.get(0);
         assertEquals("d", pluginConfig.getString("c"));
         assertEquals("${cluster.id}", pluginConfig.getString("x"));
@@ -188,7 +191,6 @@ public class PluginConfigTest extends TestCase {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testDecorator() throws Exception {
         build(session, content);
 
@@ -203,6 +205,64 @@ public class PluginConfigTest extends TestCase {
         IPluginConfig subConfig = pluginConfig.getPluginConfig("sub");
         assertEquals("b", subConfig.getString("a"));
         assertEquals("cluster", subConfig.getString("y"));
+    }
+
+    @Test
+    public void testSerialization() throws Exception {
+        build(session, content);
+
+        // need session context
+        HippoTester tester = new HippoTester(new JcrSessionModel(new ValueMap("username=admin,password=admin")) {
+            @Override
+            protected Object load() {
+                return session;
+            }
+        });
+
+        IPluginConfig original = getPluginConfig();
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(os);
+        oos.writeObject(original);
+
+        InputStream is = new ByteArrayInputStream(os.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(is);
+        IPluginConfig copy = (IPluginConfig) ois.readObject();
+        assertEquals("b", copy.getString("a"));
+
+        IPluginConfig subConfig = copy.getPluginConfig("sub");
+        assertEquals("d", subConfig.getString("c"));
+
+        copy.put("e", "f");
+        assertEquals("f", copy.getString("e"));
+        assertEquals("f", original.getString("e"));
+    }
+
+    @Test
+    public void testCloning() throws Exception {
+        build(session, content);
+
+        // need session context
+        HippoTester tester = new HippoTester(new JcrSessionModel(new ValueMap("username=admin,password=admin")) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected Object load() {
+                return session;
+            }
+        });
+
+        IPluginConfig original = getPluginConfig();
+        IPluginConfig copy = (IPluginConfig) Objects.cloneObject(original);
+
+        assertEquals("b", copy.getString("a"));
+
+        IPluginConfig subConfig = copy.getPluginConfig("sub");
+        assertEquals("d", subConfig.getString("c"));
+
+        copy.put("e", "f");
+        assertEquals("f", copy.getString("e"));
+        assertEquals("f", original.getString("e"));
     }
 
 }

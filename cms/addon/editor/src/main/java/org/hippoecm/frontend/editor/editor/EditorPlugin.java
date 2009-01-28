@@ -81,7 +81,9 @@ public class EditorPlugin extends RenderPlugin implements IValidateService {
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
-        target.addComponent(feedback);
+        if (target != null) {
+            target.addComponent(feedback);
+        }
         if (form != null) {
             form.render(target);
         }
