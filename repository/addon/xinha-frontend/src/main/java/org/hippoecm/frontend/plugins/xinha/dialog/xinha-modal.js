@@ -83,7 +83,7 @@ ModalDialog.prototype = {
     },
     
     restoreState: function() {
-        if(this.editor.editorIsActivated()) {
+        if(this.editor.editorIsActivated() && Xinha._currentlyActiveEditor) {
             return;
         }
         if (Xinha.is_ff2) {
