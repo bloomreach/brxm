@@ -151,6 +151,20 @@
       <type>jar</type>
     </dependency>
 
+    <!-- Faceted date type -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-faceteddate-repository</artifactId>
+      <version>2.04.00-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-faceteddate-frontend</artifactId>
+      <version>2.04.00-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+
     <!-- Template editor -->
     <dependency>
       <groupId>org.hippoecm</groupId>
