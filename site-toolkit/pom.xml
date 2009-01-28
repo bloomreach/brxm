@@ -191,7 +191,12 @@
         <updatePolicy>never</updatePolicy>
       </releases>
     </pluginRepository>
-  </pluginRepositories>
+    <pluginRepository>
+      <id>hippo</id>
+      <name>Hippo Maven 2 Repository</name>
+      <url>http://repository.hippocms.org/maven2</url>
+    </pluginRepository>
+   </pluginRepositories>
   <organization>
     <name>Hippo</name>
     <url>http://www.onehippo.com</url>
