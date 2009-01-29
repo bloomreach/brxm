@@ -76,9 +76,16 @@
         <configuration>
           <targets combine.children="append">
             <target>
-              <id>run</id>
+              <id>run-repository</id>
               <name>run</name>
+              <goals>initialize</goals>
               <profiles>run-war</profiles>
+            </target>
+            <target>
+              <id>stop-repository</id>
+              <name>run</name>
+              <goals>verify</goals>
+              <profiles>stop-jetty</profiles>
             </target>
           </targets>
         </configuration>

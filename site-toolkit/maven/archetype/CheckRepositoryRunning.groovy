@@ -9,7 +9,7 @@ session = null
 
 while (!repositoryRunning)
 {
-    Thread.sleep(1000)
+    Thread.sleep(3000)
     
     try
     {

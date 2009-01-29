@@ -25,7 +25,7 @@
     <profile>
       <id>run-war</id>
       <build>
-        <defaultGoal>process-resources</defaultGoal>
+        <defaultGoal>initialize</defaultGoal>
         <plugins>
           <plugin>
 		    <groupId>org.apache.maven.plugins</groupId>
@@ -34,7 +34,7 @@
 		    <executions>
 		      <execution>
 		        <id>run</id>
-		        <phase>process-resources</phase>
+		        <phase>initialize</phase>
 		        <configuration>
 		          <tasks>
 		          
@@ -97,7 +97,7 @@
 	                      <include name="**/*.jar"/>
 	                    </fileset>
 	                  </classpath>
-	                  <arg value="install" />
+	                  <arg value="package" />
 	                </java>
 
 	                <echo message="$$$$$$$$$$ Running an example Hippo Repository $$$$$$$$$$" />
@@ -165,6 +165,83 @@
                 <version>${hippoecm.version}</version>
               </dependency>
 	        </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>stop-jetty</id>
+      <build>
+        <defaultGoal>verify</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.2</version>
+            <executions>
+              <execution>
+                <id>run</id>
+                <phase>verify</phase>
+                <configuration>
+                  <tasks>
+                  
+                    <echo message="$$$$$$$$$$ Stopping the example Hippo Repository $$$$$$$$$$" />
+                    <java classname="org.codehaus.classworlds.Launcher" dir="target/myproject/cms" fork="true" spawn="true">
+                      <permissions>
+                        <grant class="java.security.AllPermission"/>
+                        <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
+                        <grant class="java.util.PropertyPermission" name="*" actions="read,write"/>
+                      </permissions>
+                      <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+                      <sysproperty key="maven.home" value="${maven.home}" />
+                      <classpath>
+                        <fileset dir="${maven.home}/boot">
+                          <include name="**/*.jar"/>
+                        </fileset>
+                      </classpath>
+                      <arg value="jetty:stop" />
+                    </java>
+                    
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy</artifactId>
+                <version>1.5.7</version>
+              </dependency>
+              <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jta_1.1_spec</artifactId>
+                <scope>provided</scope>
+                <version>1.1</version>
+              </dependency>
+              <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.4.2</version>
+              </dependency>
+              <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>1.4.2</version>
+              </dependency>
+              <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.13</version>
+              </dependency>
+              <dependency>
+                <groupId>org.hippoecm</groupId>
+                <artifactId>hippo-ecm-repository-connector</artifactId>
+                <version>${hippoecm.version}</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>
