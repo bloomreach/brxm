@@ -40,7 +40,7 @@
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                     <sv:value>hippo:harddocument</sv:value>
-                </sv:property>               
+                </sv:property>
                 <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:date" sv:type="Date">
                     <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
                 </sv:property>

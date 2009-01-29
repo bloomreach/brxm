@@ -12,7 +12,7 @@
 <hst-tmpl:link var="homeLink" location="homepage"/>
  
 <a href="${dollar}{homeLink.href}" title="Home">Home</a> &#62;
-<c:forEach var="item" items="${result}" varStatus="resultStatus">
+<c:forEach var="item" items="${dollar}{result}" varStatus="resultStatus">
   <c:choose>
     <c:when test="${dollar}{resultStatus.last == true}">
       <span>${dollar}{item.decodedName}</span>

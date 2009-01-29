@@ -6,7 +6,7 @@
 <hst-tmpl:module name="mainnav" var="navitems" className="org.hippoecm.hst.components.modules.navigation.RepositoryBasedNavigationModule" execute="false" render="true"/>
 <h3 class="nav_title">Example menu</h3>
 <!--  Iterate over all the nodes returned by the above module -->
-<c:forEach var="item" items="${navitems}">
+<c:forEach var="item" items="${dollar}{navitems}">
   <div id="nav${dollar}{item.uuid}">
     <ul>
       <!-- print out the decoded name of the current jcrNode -->

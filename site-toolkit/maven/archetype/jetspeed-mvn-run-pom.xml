@@ -97,7 +97,7 @@
 	                      <include name="**/*.jar"/>
 	                    </fileset>
 	                  </classpath>
-	                  <arg value="package" />
+	                  <arg value="install" />
 	                </java>
 
 	                <echo message="$$$$$$$$$$ Running an example Hippo Repository $$$$$$$$$$" />

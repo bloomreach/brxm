@@ -30,7 +30,7 @@
       <sv:value>10050</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$empty)}/1.0</sv:value>
+      <sv:value>http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$empty)}/1.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>${rootArtifactId}-types.cnd</sv:value>

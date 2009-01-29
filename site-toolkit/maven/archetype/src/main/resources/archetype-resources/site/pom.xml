@@ -79,7 +79,7 @@
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-api</artifactId>
-      <version>${hst.version}</version>
+      <version>${dollar}{hst.version}</version>
       <type>jar</type>
       <scope>provided</scope>
     </dependency>
@@ -87,7 +87,7 @@
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-client</artifactId>
-      <version>${hst.version}</version>
+      <version>${dollar}{hst.version}</version>
       <type>jar</type>
     </dependency>
 
