@@ -253,7 +253,7 @@
       </p>
       <ol>
         <li>Delete all projects (do not delete contents)</li>
-        <li>Run <b>mvn [-Dmaven.test.skip=true] [clean] install</b>, this will resolve any new dependencies</li>        
+        <li>Run <b>mvn [-DskipTests=true] [clean] install</b>, this will resolve any new dependencies</li>        
         <li>Run <b>mvn [-o] [eclipse:clean] eclipse:eclipse</b>, this will regenerate the Eclipse projects</li>
         <li>Make sure there is no .project file in the project root (ie. there is no 'ecm files' resource
         project for the whole source tree)</li>
