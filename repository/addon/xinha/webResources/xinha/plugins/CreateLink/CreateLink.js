@@ -38,9 +38,65 @@ CreateLink.loadAssets = function()
     var self = CreateLink;
     if (self.loading) return;
     self.loading = true;
-    Xinha._getback(_editor_url + 'modules/CreateLink/pluginMethods.js', function(getback) { eval(getback); self.methodsReady = true; });
+    Xinha._getback(_editor_url + 'modules/CreateLink/pluginMethods.js', 
+        function(getback) { 
+            eval(getback); 
+            self.methodsReady = true;
+            if(Xinha.is_ie) {
+                CreateLink.prototype.show = CreateLink.prototype.showIE;
+            }
+        }
+    );
 }
 
+CreateLink.prototype.showIE = function(a)
+{
+  if (!this.dialog)
+  {
+    this.prepareDialog();
+  } 
+    var editor = this.editor;
+    this.a = a;
+    if(!a && this.editor.selectionEmpty(this.editor.getSelection()))
+    {
+        alert(this._lc("You need to select some text before creating a link"));
+        return false;
+    }
+
+    var inputs =
+    {
+        f_href   : '',
+        f_title  : '',
+        f_target : '',
+        f_other_target : ''
+    };
+    
+    alert(inputs);
+    
+    if(a && a.tagName.toLowerCase() == 'a')
+    {
+        //IE IFlags: http://tobielangel.com/2007/1/11/attribute-nightmare-in-ie/
+        inputs.f_href   = this.editor.fixRelativeLinks(a.getAttribute('href', 2));
+
+        inputs.f_title  = a.title;
+        if (a.target)
+        {
+            if (!/_self|_top_|_blank/.test(a.target))
+            {
+                inputs.f_target = '_other';
+                inputs.f_other_target = a.target;
+            }
+            else
+            {
+                inputs.f_target = a.target;
+                inputs.f_other_target = '';
+            }
+        }
+    }
+
+    // now calling the show method of the Xinha.Dialog object to set the values and show the actual dialog
+    this.dialog.show(inputs);
+};
 
 CreateLink.prototype.onUpdateToolbar = function()
 { 

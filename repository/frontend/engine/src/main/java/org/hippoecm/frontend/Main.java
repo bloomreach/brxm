@@ -97,6 +97,8 @@ public class Main extends WebApplication {
             }
         });
 
+        getPageSettings().setVersionPagesByDefault(false);
+        
         getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
         getApplicationSettings().setClassResolver(new IClassResolver() {
             public Class resolveClass(String name) throws ClassNotFoundException {

@@ -50,6 +50,12 @@ public abstract class XinhaDropBehavior extends DropBehavior {
         Image, Document;
     }
 
+    /**
+     * List of elements names that are allowed to have a link inserted. Note that "" means no element is selected,
+     * thus a link can be inserted as well.
+     */
+    private String[] insertDocumentElements = new String[] { "", "p", "img", "li" }; //TODO: Try all Xinha possibilities to complete this list.
+
     @Override
     public void addHeaderContribution(IYuiContext context) {
         super.addHeaderContribution(context);
@@ -83,14 +89,12 @@ public abstract class XinhaDropBehavior extends DropBehavior {
                 }
             case Document:
                 if (!emptySelection) {
-                    if (activeElement.equals("")) {
-                        //Only text selected, create internal link
-                        insertLink(nodeModel, target);
-                        break;
-                    } else if (activeElement.equals("img")) {
-                        insertLink(nodeModel, target);
-                        break;
-                    }
+                    for (String el : insertDocumentElements) {
+                        if (activeElement.equals(el)) {
+                            insertLink(nodeModel, target);
+                            break;
+                        }
+                    } 
                 } else {
                     break;
                 }
