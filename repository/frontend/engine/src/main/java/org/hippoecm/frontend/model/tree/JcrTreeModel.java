@@ -16,10 +16,10 @@
 package org.hippoecm.frontend.model.tree;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.observation.Event;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.spi.Event;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
