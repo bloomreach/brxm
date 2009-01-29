@@ -130,6 +130,7 @@
         </sv:property>
         <sv:property sv:name="Xinha.plugins" sv:type="String">
           <sv:value>AutoSave</sv:value>
+          <sv:value>AutoResize</sv:value>
         </sv:property>
         <sv:property sv:name="AutoSave" sv:type="String">
           <sv:value>timeoutLength=1500</sv:value>
