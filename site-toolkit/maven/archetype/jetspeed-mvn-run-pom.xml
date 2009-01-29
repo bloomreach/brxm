@@ -17,6 +17,15 @@
   <artifactId>hst-archetype</artifactId>
   <packaging>pom</packaging>
 
+  <properties>
+    <example.app.groupId>org.onehippo.ecm.hst</example.app.groupId>
+    <example.app.artifactId>gettingstarted</example.app.artifactId>
+    <example.app.version>${pom.version}</example.app.version>
+    <example.app.repository.address>rmi://127.0.0.1:1099/hipporepository</example.app.repository.address>
+    <example.app.repository.username>admin</example.app.repository.username>
+    <example.app.repository.password>admin</example.app.repository.password>
+  </properties>
+  
   <build>
     <defaultGoal>process-resources</defaultGoal>
   </build>
@@ -38,12 +47,19 @@
 		        <configuration>
 		          <tasks>
 		          
+                    <property name="example.app.groupId" value="${example.app.groupId}" />
+                    <property name="example.app.artifactId" value="${example.app.artifactId}" />
+                    <property name="example.app.version" value="${example.app.version}" />
+                    <property name="example.app.repository.address" value="${example.app.repository.address}" />
+                    <property name="example.app.repository.username" value="${example.app.repository.username}" />
+                    <property name="example.app.repository.password" value="${example.app.repository.password}" />
+                  
 		            <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy">
 		              <classpath refid="maven.compile.classpath"/>
 		            </taskdef>
 		            
 	                <echo message="$$$$$$$$$$ Installing this archetype $$$$$$$$$$" />
-	                <java classname="org.codehaus.classworlds.Launcher" dir="." fork="true" failonerror="true">
+	                <java classname="org.codehaus.classworlds.Launcher" dir="${basedir}" fork="true" failonerror="true">
 	                  <permissions>
 	                    <grant class="java.security.AllPermission"/>
 	                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
@@ -61,7 +77,7 @@
 	                </java>
 	                
 	                <echo message="$$$$$$$$$$ Generating an example HST application from the archetype $$$$$$$$$$" />
-	                <java classname="org.codehaus.classworlds.Launcher" dir="target" fork="true" failonerror="true">
+	                <java classname="org.codehaus.classworlds.Launcher" dir="${basedir}/target" fork="true" failonerror="true">
 	                  <permissions>
 	                    <grant class="java.security.AllPermission"/>
 	                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
@@ -78,13 +94,13 @@
 	                  <arg value="-DarchetypeGroupId=org.onehippo.ecm.hst" />
 	                  <arg value="-DarchetypeArtifactId=hst-archetype" />
 	                  <arg value="-DarchetypeVersion=${pom.version}" />
-	                  <arg value="-Dversion=1.01.00" />
-	                  <arg value="-DgroupId=org.example" />
-	                  <arg value="-DartifactId=myproject" />
+	                  <arg value="-Dversion=${example.app.version}" />
+	                  <arg value="-DgroupId=${example.app.groupId}" />
+	                  <arg value="-DartifactId=${example.app.artifactId}" />
 	                </java>
 	                
 	                <echo message="$$$$$$$$$$ Packaging an example HST application from the archetype $$$$$$$$$$" />
-	                <java classname="org.codehaus.classworlds.Launcher" dir="target/myproject" fork="true" failonerror="true">
+	                <java classname="org.codehaus.classworlds.Launcher" dir="${basedir}/target/${example.app.artifactId}" fork="true" failonerror="true">
 	                  <permissions>
 	                    <grant class="java.security.AllPermission"/>
 	                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
@@ -101,7 +117,7 @@
 	                </java>
 
 	                <echo message="$$$$$$$$$$ Running an example Hippo Repository $$$$$$$$$$" />
-	                <java classname="org.codehaus.classworlds.Launcher" dir="target/myproject/cms" fork="true" spawn="true">
+	                <java classname="org.codehaus.classworlds.Launcher" dir="${basedir}/target/${example.app.artifactId}/cms" fork="true" spawn="true">
 	                  <permissions>
 	                    <grant class="java.security.AllPermission"/>
 	                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
@@ -117,10 +133,6 @@
 	                  <arg value="jetty:run-war" />
 	                </java>
 	                
-	                <property name="repository.address" value="rmi://127.0.0.1:1099/hipporepository"/>
-                    <property name="repository.username" value="admin"/>
-                    <property name="repository.password" value="admin"/>
-                    
 	                <groovy src="CheckRepositoryRunning.groovy">
   	                  <classpath refid="maven.compile.classpath"/>
 	                </groovy>
@@ -185,8 +197,15 @@
                 <configuration>
                   <tasks>
                   
+                    <property name="example.app.groupId" value="${example.app.groupId}" />
+                    <property name="example.app.artifactId" value="${example.app.artifactId}" />
+                    <property name="example.app.version" value="${example.app.version}" />
+                    <property name="example.app.repository.address" value="${example.app.repository.address}" />
+                    <property name="example.app.repository.username" value="${example.app.repository.username}" />
+                    <property name="example.app.repository.password" value="${example.app.repository.password}" />
+                    
                     <echo message="$$$$$$$$$$ Stopping the example Hippo Repository $$$$$$$$$$" />
-                    <java classname="org.codehaus.classworlds.Launcher" dir="target/myproject/cms" fork="true" spawn="true">
+                    <java classname="org.codehaus.classworlds.Launcher" dir="${basedir}/target/${example.app.artifactId}/cms" fork="true" spawn="true">
                       <permissions>
                         <grant class="java.security.AllPermission"/>
                         <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />

@@ -14,9 +14,9 @@ while (!repositoryRunning)
     try
     {
         if (repository == null)
-            repository = HippoRepositoryFactory.getHippoRepository("${properties['repository.address']}")
+            repository = HippoRepositoryFactory.getHippoRepository("${properties['example.app.repository.address']}")
         
-        session = repository.login("${properties['repository.username']}", "${properties['repository.password']}".toCharArray())
+        session = repository.login("${properties['example.app.repository.username']}", "${properties['example.app.repository.password']}".toCharArray())
         
         if (session != null)
             repositoryRunning = true
