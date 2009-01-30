@@ -42,7 +42,7 @@ public interface HstSiteEngine
      * 
      * @return Pipeline The engine's request pipeline.
      */
-    public Pipeline getPipeline();
+    public Pipeline getDefaultPipeline();
  
     /**
      * Gets the specified engine's request pipeline.

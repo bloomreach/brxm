@@ -45,15 +45,13 @@
   </listener>
 
   <servlet>
-    <servlet-name>hst-container</servlet-name>
+    <servlet-name>HstSiteServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.core.container.engine.HstSiteServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>
-      hst-container
-    </servlet-name>
+    <servlet-name>HstSiteServlet</servlet-name>
     <url-pattern>/site/*</url-pattern>
   </servlet-mapping>
     

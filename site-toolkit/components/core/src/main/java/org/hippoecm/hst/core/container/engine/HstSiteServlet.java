@@ -177,6 +177,14 @@ public class HstSiteServlet extends HttpServlet
     public final void destroy()
     {
         log.info("Done shutting down!");
+        
+        try
+        {
+            this.engine.shutdown();
+        }
+        catch (Exception e)
+        {
+        }
     }
 
     private ComponentManager initializeComponentManager()

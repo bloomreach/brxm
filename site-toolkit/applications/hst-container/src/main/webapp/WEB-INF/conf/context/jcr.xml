@@ -17,22 +17,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-  <!-- Commons configuration from collab.properties -->
-  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="properties">
-      <props>
-        <prop key="dollarSign">$</prop>
-      </props>
-    </property>
-    <property name="locations">
-      <list>
-        <value>file:${hst.container.root}/WEB-INF/conf/hst.properties</value>
-      </list>
-    </property>
-  </bean>
-
   <!-- JCR Session Pool -->
-  <bean id="poolingRepository" class="org.hippoecm.hst.jcr.BasicPoolingRepository" 
+  <bean id="org.hippoecm.hst.jcr.pool.PoolingRepository" class="org.hippoecm.hst.jcr.pool.BasicPoolingRepository" 
         init-method="initialize" destroy-method="close">
     
     <!-- delegated JCR repository -->
@@ -73,6 +59,7 @@
     <property name="timeBetweenEvictionRunsMillis" value="60000" />
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
+    
   </bean>
     
 </beans>
