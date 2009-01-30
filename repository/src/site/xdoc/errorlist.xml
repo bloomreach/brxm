@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">376 errors and/or todos in 209 out of 209 documents (100%).</span>
+      <span class="shortdesc">394 errors and/or todos in 219 out of 219 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -39,19 +39,19 @@
      </li>
         <li>2 documents to review.
      </li>
-        <li>43 documents missing required info.
+        <li>46 documents missing required info.
      </li>
         <li>3 empty documents.
      </li>
-        <li>11 documents to rewrite.
+        <li>9 documents to rewrite.
      </li>
-        <li>9 documents requiring additions.
+        <li>11 documents requiring additions.
      </li>
-        <li>10 documents with unidentified TODO strings.
+        <li>11 documents with unidentified TODO strings.
      </li>
         <li>1 not valid XML documents.
      </li>
-        <li>16 documents with bad text.
+        <li>18 documents with bad text.
      </li>
         <li>10 multisection documents.
      </li>
@@ -70,7 +70,7 @@
       <subsection name="Documents with standard typos: 1">
         <ol>
           <li>
-            <a href="./delve_into/core/building/eclipse.html">eclipse: Developing Hippo CMS with Eclipse</a>
+            <a href="./delve_into/tools/howto/configure_workspace.html">configure_workspace: Configure Workspace</a>
             <ul>
               <li>Select JPOX -&gt; Enhancer and enter 'BCEL' in<span xmlns="" class="bad"> the the </span>'Class Enhancer' field.</li>
             </ul>
@@ -197,7 +197,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents lacking some information: 43">
+      <subsection name="Documents lacking some information: 46">
         <ol>
           <li>
             <a href="./about/architecture.html">architecture: Architecture</a>
@@ -232,6 +232,12 @@ repository is;
           </li>
           <li>
             <a href="./delve_into/core/architecture/index.html">index: Architecture</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/core/building/maven.html">maven: Developing with Maven</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
@@ -373,6 +379,20 @@ repository is;
             </ul>
           </li>
           <li>
+            <a href="./delve_into/tools/howto/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/tools/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
             <a href="./delve_into/user/cms_admins/concepts/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
@@ -501,18 +521,12 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="rewrite documents: 11">
+      <subsection name="rewrite documents: 9">
         <ol>
           <li>
             <a href="./delve_into/core/building/eclipse.html">eclipse: Developing Hippo CMS with Eclipse</a>
             <ul>
               <li>org.hippoecm.frontend.Home</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/core/building/maven.html">maven: Building with Maven</a>
-            <ul>
-              <li>~/hippo-ecm for the checkout of cms+repository?</li>
             </ul>
           </li>
           <li>
@@ -542,10 +556,10 @@ repository is;
           <li>
             <a href="./delve_into/quickstart_in_existing_container.html">quickstart_in_existing_container: Your own Quickstart</a>
             <ul>
-              <li>This text contains much that is admin information and is mostly redundant.
-                        Merge this document into the admin guide and leave the new version very small, 
-                        mainly refering to the necessary admin documents. 
-  </li>
+              <li>
+                        and leave the new version very small,
+                        mainly refering to the necessary admin documents.
+ </li>
             </ul>
           </li>
           <li>
@@ -566,15 +580,9 @@ repository is;
               <li>all text</li>
             </ul>
           </li>
-          <li>
-            <a href="./delve_into/user/contributors/howto/start_CMS.html">start_CMS: Start CMS site</a>
-            <ul>
-              <li>Check what are normal names and make new screenshot.</li>
-            </ul>
-          </li>
         </ol>
       </subsection>
-      <subsection name="Add something to documents: 9">
+      <subsection name="Add something to documents: 11">
         <ol>
           <li>
             <a href="./delve_into/overview.html">overview: Delve into Hippo CMS</a>
@@ -589,6 +597,18 @@ repository is;
           Also see
            href="http://jackrabbit.apache.org/doc/arch/operate/index-readers.html" JackRabbit lucene implementation.
           </li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/tools/howto/configure_workspace.html">configure_workspace: Configure Workspace</a>
+            <ul>
+              <li>Explanation about installing JPOX eclipse plugin</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/tools/howto/learning_maven.html">learning_maven: Learning Maven</a>
+            <ul>
+              <li>References to Maven pages</li>
             </ul>
           </li>
           <li>
@@ -635,7 +655,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents with unidentified TODO strings: 10">
+      <subsection name="Documents with unidentified TODO strings: 11">
         <ol>
           <li>
             <a href="./about/architecture.html">architecture: Architecture</a>
@@ -693,6 +713,12 @@ repository is;
               <li>
                 <span xmlns="" class="bad"> TODO </span>
               </li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/tools/howto/learning_maven.html">learning_maven: Learning Maven</a>
+            <ul>
+              <li>References to good Maven pages (<span xmlns="" class="bad"> TODO </span>) and some handy notes.</li>
             </ul>
           </li>
           <li>
@@ -788,7 +814,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="badtext documents: 16">
+      <subsection name="badtext documents: 18">
         <ol>
           <li>
             <a href="./about/roadmap.html">roadmap: Roadmap Hippo CMS</a>
@@ -828,6 +854,12 @@ repository is;
             <a href="./delve_into/sysadmin/configuration/repository/searchindex.html">searchindex: SearchIndex configuration</a>
             <ul>
               <li>getting indexing_configuration from a jar classpath instead of the<span xmlns="" class="bad"> current </span>JackRabbit implementation which can only fetch an indexing_configuration from filesystem.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/tools/howto/learning_maven.html">learning_maven: Learning Maven</a>
+            <ul>
+              <li>Maven commands always works on the<span xmlns="" class="bad"> current </span>directory, so you have to cd to the directory you want Maven to work on.</li>
             </ul>
           </li>
           <li>
@@ -873,7 +905,7 @@ repository is;
           <li>
             <a href="./delve_into/user/contributors/howto/start_CMS.html">start_CMS: Start CMS site</a>
             <ul>
-              <li> that the web address of the site is: http://saraswatia.org:8080/cms. Coincidentially, the site he is<span xmlns="" class="bad"> current </span>ly viewing happens to be the Hippo CMS documentation site at www.onehippo.org.</li>
+              <li>ia.org/. The site is not yet visible, because the user has not clicked yet. Coincidentially, the site<span xmlns="" class="bad"> current </span>ly visible happens to be the Hippo CMS documentation site at</li>
             </ul>
           </li>
           <li>
@@ -883,6 +915,12 @@ repository is;
               <li>the version is shown. The name of the article is shown (which is constant over all versions, only the<span xmlns="" class="bad"> current </span>name is shown, renaming or moving a document is not part of the document history of the document itself but --if available-- part of the document in which a document is embedded).</li>
               <li>on number is indicated, which counts from 1, the first version of a document created towards the most<span xmlns="" class="bad"> current </span>document, which does not have a version number yet. It will show the date and time, when a historic version of the document was created and until when that version of the document was the most current</li>
               <li>Note that this is not the same as when the next<span xmlns="" class="bad"> current </span>document was created, as it may be that there was no current document in the document history.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/editors/howto/start_CMS.html">start_CMS: Start CMS site</a>
+            <ul>
+              <li>ia.org/. The site is not yet visible, because the user has not clicked yet. Coincidentially, the site<span xmlns="" class="bad"> current </span>ly visible happens to be the Hippo CMS documentation site at</li>
             </ul>
           </li>
           <li>

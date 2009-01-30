@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 810 terms</span>
+      <span class="shortdesc">Term index, 827 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -364,12 +364,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/screenshots.html#Alternative">Alternative</a>
-            </td>
-            <td>Howto: Screenshots</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/contributors/howto/set_edit_mode.html#Alternative">Alternative</a>
             </td>
             <td>Howto: set edit mode</td>
@@ -403,6 +397,24 @@
               <a href="../delve_into/user/editors/howto/create_folder.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Create Folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/handle_request.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Handle request</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/login.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Login as Editor</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/start_CMS.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Start CMS site</td>
           </tr>
           <tr>
             <td>
@@ -574,12 +586,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/core/building/maven.html#Build">Build</a>
-            </td>
-            <td>Building with Maven</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/web/add-ons/howto/editing_template.html#Build_and_deploy">Build and deploy</a>
             </td>
             <td>Howto: Create an Editing Template Add-on</td>
@@ -589,12 +595,6 @@
               <a href="../delve_into/core/building/index.html#Build_Hippo_CMS_from_source_using_your_tool_of_choice_">Build Hippo CMS from source using your tool of choice.</a>
             </td>
             <td>Welcome: Building Hippo CMS</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/core/building/maven.html#Build_Hippo_CMS_from_the_command_line_using_Maven_">Build Hippo CMS from the command line using Maven.</a>
-            </td>
-            <td>Building with Maven</td>
           </tr>
           <tr>
             <td>
@@ -610,15 +610,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/howto/gui_plugin.html#Building_the_plugin_JAR">Building the plugin JAR</a>
+              <a href="../delve_into/tools/howto/build_core_Hippo_CMS.html#Building_the_core_Hippo_CMS">Building the core Hippo CMS</a>
             </td>
-            <td>Howto: Hello World</td>
+            <td>Howto: Building the core Hippo CMS</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/core/building/maven.html#Building_with_Maven">Building with Maven</a>
+              <a href="../delve_into/custom/howto/gui_plugin.html#Building_the_plugin_JAR">Building the plugin JAR</a>
             </td>
-            <td>Building with Maven</td>
+            <td>Howto: Hello World</td>
           </tr>
           <tr>
             <td>
@@ -826,6 +826,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/tools/howto/configure_workspace.html#Configure_Eclipse_Workspace_for_Hippo_CMS_addon_projects_">Configure Eclipse Workspace for Hippo CMS addon projects.</a>
+            </td>
+            <td>Howto: Configure Workspace</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/core/building/netbeans.html#Configure_Netbeans">Configure Netbeans</a>
             </td>
             <td>Building with Netbeans</td>
@@ -835,6 +841,18 @@
               <a href="../delve_into/web/add-ons/howto/packaging.html#Configure_the_WAR_overlay">Configure the WAR overlay</a>
             </td>
             <td>Howto: Creating your own WAR package</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/configure_workspace.html#Configure_update_sites">Configure update sites</a>
+            </td>
+            <td>Howto: Configure Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/configure_workspace.html#Configure_Workspace">Configure Workspace</a>
+            </td>
+            <td>Howto: Configure Workspace</td>
           </tr>
           <tr>
             <td>
@@ -1265,6 +1283,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/core/building/maven.html#Developing_with_Maven">Developing with Maven</a>
+            </td>
+            <td>Developing with Maven</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/howto/workflow.html#Developing_workflows">Developing workflows</a>
             </td>
             <td>Howto: Developing workflows</td>
@@ -1370,6 +1394,12 @@
               <a href="../delve_into/sysadmin/configuration/nodes/domains.html#Domains_Configuration">Domains Configuration</a>
             </td>
             <td>Domains Configuration</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/quickstart_in_existing_container.html#Download">Download</a>
+            </td>
+            <td>Your own Quickstart</td>
           </tr>
           <tr>
             <td>
@@ -1872,9 +1902,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/core/building/maven.html#Get_the_Hippo_CMS_source">Get the Hippo CMS source</a>
+              <a href="../delve_into/tools/howto/get_Hippo_CMS_source.html#Get_the_Hippo_CMS_source">Get the Hippo CMS source</a>
             </td>
-            <td>Building with Maven</td>
+            <td>Howto: Get the Hippo CMS source</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/get_Hippo_CMS_source.html#Get_the_Hippo_CMS_source_from_the_Hippo_subversion_repository_">Get the Hippo CMS source from the Hippo subversion repository.</a>
+            </td>
+            <td>Howto: Get the Hippo CMS source</td>
           </tr>
           <tr>
             <td>
@@ -1987,6 +2023,12 @@
           <tr>
             <td>
               <a href="../delve_into/user/contributors/howto/start_CMS.html#goto_CMS_site">goto CMS site</a>
+            </td>
+            <td>Howto: Start CMS site</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/start_CMS.html#goto_CMS_site">goto CMS site</a>
             </td>
             <td>Howto: Start CMS site</td>
           </tr>
@@ -2208,12 +2250,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/screenshots.html#Hippo_login_screenshot">Hippo login screenshot</a>
-            </td>
-            <td>Howto: Screenshots</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/editors/howto/login.html#Hippo_login_screenshot">Hippo login screenshot</a>
             </td>
             <td>Howto: Login as Editor</td>
@@ -2373,6 +2409,12 @@
               <a href="../delve_into/user/contributors/howto/todo/browsing_history_of_document.html#How_to_browse_the_history_of_a_document,_i_e__to_see_the_changes_to_the_document_over_time_">How to browse the history of a document, i.e. to see the changes to the document over time?</a>
             </td>
             <td>Browsing history of a document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/build_core_Hippo_CMS.html#How_to_build_the_core_Hippo_CMS_package_from_the_sources_">How to build the core Hippo CMS package from the sources?</a>
+            </td>
+            <td>Howto: Building the core Hippo CMS</td>
           </tr>
           <tr>
             <td>
@@ -2551,7 +2593,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/start_CMS.html#How_to_goto_the_CMS_site,_i_e__start_a_CMS_session,_in_your_browser_">How to goto the CMS site, i.e. start a CMS session, in your browser.</a>
+              <a href="../delve_into/user/contributors/howto/start_CMS.html#How_to_go_to_the_CMS_site,_i_e__start_a_CMS_session,_in_your_browser_">How to go to the CMS site, i.e. start a CMS session, in your browser.</a>
+            </td>
+            <td>Howto: Start CMS site</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/start_CMS.html#How_to_go_to_the_CMS_site,_i_e__start_a_CMS_session,_in_your_browser_">How to go to the CMS site, i.e. start a CMS session, in your browser.</a>
             </td>
             <td>Howto: Start CMS site</td>
           </tr>
@@ -2661,6 +2709,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/tools/howto/run_development_package.html#How_to_run_a___">How to run a  ?</a>
+            </td>
+            <td>Howto: Run a development package</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/howto/save_documenttype.html#How_to_save_a_document_type_">How to save a document type.</a>
             </td>
             <td>Howto: Save document type</td>
@@ -2697,12 +2751,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/editors/howto/start_CMS.html#How_to_start_a_CMS_session_in_your_browser">How to start a CMS session in your browser</a>
-            </td>
-            <td>Howto: Start CMS</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/information_architects/howto/start_CMS.html#How_to_start_a_CMS_session_in_your_browser">How to start a CMS session in your browser</a>
             </td>
             <td>Howto: Start CMS</td>
@@ -2727,9 +2775,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/screenshots.html#How_to_view_screenshots_in_the_userguide_">How to view screenshots in the userguide.</a>
+              <a href="../delve_into/tools/howto/war_overlays_in_eclipse.html#How_to_use_War_overlays_in_eclipse">How to use War overlays in eclipse</a>
             </td>
-            <td>Howto: Screenshots</td>
+            <td>Howto: War overlays in eclipse</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/screenshots.html#How_to_view_screenshots_in_the_userguide_">How to view screenshots in the userguide.</a>
+            </td>
+            <td>Screenshots</td>
           </tr>
           <tr>
             <td>
@@ -2757,9 +2811,21 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/tools/howto/install_maven.html#Howto_install_Maven_">Howto install Maven.</a>
+            </td>
+            <td>Howto: Install Maven</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#Html">Html</a>
             </td>
             <td>Field Types Reference</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/configure_workspace.html#Identify_Maven_local_repository">Identify Maven local repository</a>
+            </td>
+            <td>Howto: Configure Workspace</td>
           </tr>
           <tr>
             <td>
@@ -2823,9 +2889,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/core/building/maven.html#Install_Maven">Install Maven</a>
+              <a href="../delve_into/tools/howto/install_maven.html#Install_Maven">Install Maven</a>
             </td>
-            <td>Building with Maven</td>
+            <td>Howto: Install Maven</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/configure_workspace.html#Install_plugins">Install plugins</a>
+            </td>
+            <td>Howto: Configure Workspace</td>
           </tr>
           <tr>
             <td>
@@ -3012,6 +3084,12 @@
               <a href="../delve_into/user/contributors/howto/learn_meaning_of_inputfield.html#Learn_meaning_of_inputfield">Learn meaning of inputfield</a>
             </td>
             <td>Howto: Learn meaning of inputfield</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/learning_maven.html#Learning_Maven">Learning Maven</a>
+            </td>
+            <td>Howto: Learning Maven</td>
           </tr>
           <tr>
             <td>
@@ -3441,12 +3519,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/screenshots.html#Next">Next</a>
-            </td>
-            <td>Howto: Screenshots</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/contributors/howto/set_edit_mode.html#Next">Next</a>
             </td>
             <td>Howto: set edit mode</td>
@@ -3503,7 +3575,7 @@
             <td>
               <a href="../delve_into/user/editors/howto/start_CMS.html#Next">Next</a>
             </td>
-            <td>Howto: Start CMS</td>
+            <td>Howto: Start CMS site</td>
           </tr>
           <tr>
             <td>
@@ -3630,6 +3702,12 @@
               <a href="../delve_into/user/information_architects/howto/update_content.html#Next">Next</a>
             </td>
             <td>Howto: Update content</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/screenshots.html#Next">Next</a>
+            </td>
+            <td>Screenshots</td>
           </tr>
           <tr>
             <td>
@@ -3813,6 +3891,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/tools/howto/learning_maven.html#References_to_good_Maven_pages_(TODO)_and_some_handy_notes_">References to good Maven pages (TODO) and some handy notes.</a>
+            </td>
+            <td>Howto: Learning Maven</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../releasing.html#Releasing_in_subversion">Releasing in subversion</a>
             </td>
             <td>Performing a release of the Hippo ECM suite</td>
@@ -3933,27 +4017,21 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/quickstart_in_existing_container.html#Rubbish">Rubbish</a>
-            </td>
-            <td>Your own Quickstart</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/core/building/eclipse.html#Run">Run</a>
             </td>
             <td>Developing Hippo CMS with Eclipse</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/core/building/maven.html#Run">Run</a>
-            </td>
-            <td>Building with Maven</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/core/building/netbeans.html#Run_/_Debug">Run / Debug</a>
             </td>
             <td>Building with Netbeans</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/run_development_package.html#Run_a_development_package">Run a development package</a>
+            </td>
+            <td>Howto: Run a development package</td>
           </tr>
           <tr>
             <td>
@@ -4113,9 +4191,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/screenshots.html#Screenshots">Screenshots</a>
+              <a href="../delve_into/user/screenshots.html#Screenshots">Screenshots</a>
             </td>
-            <td>Howto: Screenshots</td>
+            <td>Screenshots</td>
           </tr>
           <tr>
             <td>
@@ -4215,21 +4293,39 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/editors/howto/start_CMS.html#Start_CMS">Start CMS</a>
-            </td>
-            <td>Howto: Start CMS</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/information_architects/howto/start_CMS.html#Start_CMS">Start CMS</a>
             </td>
             <td>Howto: Start CMS</td>
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/screenshots.html#Start_CMS_screenshot">Start CMS screenshot</a>
+            </td>
+            <td>Screenshots</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/start_CMS.html#Start_CMS_site">Start CMS site</a>
             </td>
             <td>Howto: Start CMS site</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/start_CMS.html#Start_CMS_site">Start CMS site</a>
+            </td>
+            <td>Howto: Start CMS site</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/start_eclipse.html#Start_Eclipse">Start Eclipse</a>
+            </td>
+            <td>Howto: Start Eclipse</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/start_eclipse.html#Start_Eclipse_to_work_on_Hippo_CMS_addon_projects_">Start Eclipse to work on Hippo CMS addon projects.</a>
+            </td>
+            <td>Howto: Start Eclipse</td>
           </tr>
           <tr>
             <td>
@@ -4549,6 +4645,12 @@
               <a href="../delve_into/sysadmin/installation/index.html#WAR">WAR</a>
             </td>
             <td>Welcome: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/war_overlays_in_eclipse.html#War_overlays_in_eclipse">War overlays in eclipse</a>
+            </td>
+            <td>Howto: War overlays in eclipse</td>
           </tr>
           <tr>
             <td>

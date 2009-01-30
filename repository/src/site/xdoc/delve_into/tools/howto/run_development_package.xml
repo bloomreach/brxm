@@ -24,7 +24,7 @@
   <body>
 
    <section name="Run a development package">
-    <span class='shortdesc'>How to run a  ?</span>
+    <span class='shortdesc'>How to build the package of a project and run it, all on the fly?</span>
 
         <p>
          In production, the Hippo CMS and any addons are run by <a href="../../sysadmin/installation/in_servlet_container.html">
@@ -35,7 +35,8 @@
         <p>
          To facilitate development it is possible to run Hippo CMS together with any
          addons using maven commands and kill the running CMS using Ctrl-C.
-         Assuming that the project directory is '~/cms':
+         Assuming that the project directory is '~/cms'
+         (after you have <a href='./get_Hippo_CMS_source.html'>checked out the Hippo CMS source</a> to it):
         </p>
         <source>
 &gt; cd ~/cms
@@ -45,8 +46,9 @@
         </source>
         <p>
          Maven uses the application server Jetty, which is included with Maven.
-         The <code>mvn install</code> is required to put all project artifacts (jars, wars) in your local
-         maven repository, as required by the maven-jetty-plugin.
+         <code>mvn install</code> does the same as <code>mvn package</code> (i.e. building the packages)
+         and in addition puts all project artifacts
+         (jars, wars) in your local maven repository, as required by the maven-jetty-plugin.
         </p>
         <p>
          Jetty and the Hippo CMS have now started and the CMS can be accessed via
