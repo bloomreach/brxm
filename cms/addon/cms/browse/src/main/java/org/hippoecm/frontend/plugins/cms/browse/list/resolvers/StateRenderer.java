@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
-import org.hippoecm.repository.api.HippoNode;
 
 public class StateRenderer extends AbstractNodeRenderer {
     @SuppressWarnings("unused")
@@ -30,14 +29,13 @@ public class StateRenderer extends AbstractNodeRenderer {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Component getViewer(String id, HippoNode node) throws RepositoryException {
+    protected Component getViewer(String id, Node node) throws RepositoryException {
         //State property is only available on variants
         if (node.hasNode(node.getName())) {
-            HippoNode variant = (HippoNode) (node.getNode(node.getName()));
-            Node canonicalNode = variant.getCanonicalNode();
+            Node variant = (node.getNode(node.getName()));
             String state = "unknown";
-            if (canonicalNode.hasProperty("hippostd:stateSummary")) {
-                state = canonicalNode.getProperty("hippostd:stateSummary").getString();
+            if (variant.hasProperty("hippostd:stateSummary")) {
+                state = variant.getProperty("hippostd:stateSummary").getString();
             }
             return new Label(id, state);
         }

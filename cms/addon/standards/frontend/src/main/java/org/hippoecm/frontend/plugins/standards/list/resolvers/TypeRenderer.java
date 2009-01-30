@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class TypeRenderer extends AbstractNodeRenderer {
@@ -31,7 +30,7 @@ public class TypeRenderer extends AbstractNodeRenderer {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Component getViewer(String id, HippoNode node) throws RepositoryException {
+    protected Component getViewer(String id, Node node) throws RepositoryException {
         String label;
 
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {

@@ -969,16 +969,6 @@ public abstract class AbstractTree extends Panel implements ITreeStateListener, 
 			for (Iterator i = dirtyItems.iterator(); i.hasNext();)
 			{
 				TreeItem item = (TreeItem)i.next();
-				// does the item need to rebuild children?
-				if (item.getChildren() == null)
-				{
-					// rebuild the children
-					buildItemChildren(item);
-
-					// set flag on item so that it renders itself together with
-					// it's children
-					item.setRenderChildren(true);
-				}
 
 				// add the component to target
 				addComponent(target, item);
@@ -1081,7 +1071,7 @@ public abstract class AbstractTree extends Panel implements ITreeStateListener, 
 		else
 		{
 			// it's not expanded, just set children to an empty list
-			items = new ArrayList(0);
+			items = null;
 		}
 
 		item.setChildren(items);
@@ -1351,8 +1341,12 @@ public abstract class AbstractTree extends Panel implements ITreeStateListener, 
 					}
 				});
 
-				// set children to null so that they get rebuild
-				item.setChildren(null);
+                // rebuild the children
+                buildItemChildren(item);
+
+                // set flag on item so that it renders itself together with
+                // it's children
+                item.setRenderChildren(true);
 
 				// add item to dirty items
 				dirtyItems.add(item);

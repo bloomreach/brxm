@@ -99,8 +99,9 @@ public class UsersListPlugin extends AbstractManagementListingPlugin {
                 try {
                     String username = droppedModel.getNode().getName();
                     GroupsListPlugin.addMultiValueProperty(groupModel.getNode(), "hippo:members", username);
-                    if (groupModel.getNode().pendingChanges().hasNext()) {
-                        groupModel.getNode().getSession().save();
+                    javax.jcr.Session session = groupModel.getNode().getSession();
+                    if (session.hasPendingChanges()) {
+                        session.save();
                         onModelChanged();
                     }
                 } catch (RepositoryException e) {

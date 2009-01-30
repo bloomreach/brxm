@@ -20,6 +20,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -29,7 +30,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugins.xinha.XinhaPlugin;
 import org.hippoecm.frontend.service.IRenderService;
-import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

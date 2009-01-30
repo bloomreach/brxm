@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -103,7 +104,7 @@ public class GroupsListPlugin extends AbstractManagementListingPlugin {
         return username;
     }
 
-    public static HippoNode addMultiValueProperty(HippoNode node, String propertyName, String propertyValue)
+    public static Node addMultiValueProperty(Node node, String propertyName, String propertyValue)
             throws RepositoryException {
         if (!node.hasProperty(propertyName)) {
             node.setProperty(propertyName, new String[] { propertyValue });
@@ -142,11 +143,12 @@ public class GroupsListPlugin extends AbstractManagementListingPlugin {
                 JcrNodeModel droppedGroup = (JcrNodeModel) model;
                 String myUsername = getUsername();
                 if (myUsername != null) {
-                    HippoNode groupNode = droppedGroup.getNode();
+                    Node groupNode = droppedGroup.getNode();
                     try {
                         addMultiValueProperty(groupNode, "hippo:members", myUsername);
-                        if (groupNode.pendingChanges().hasNext()) {
-                            groupNode.getSession().save();
+                        javax.jcr.Session session = groupNode.getSession();
+                        if (session.hasPendingChanges()) {
+                            session.save();
                             onModelChanged();
                         }
                     } catch (RepositoryException e) {

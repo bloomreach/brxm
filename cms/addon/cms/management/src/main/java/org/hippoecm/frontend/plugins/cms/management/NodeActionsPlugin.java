@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.cms.management;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
@@ -96,7 +97,7 @@ public class NodeActionsPlugin extends RenderPlugin {
         JcrNodeModel nodeModel = (JcrNodeModel) getModel();
         if (operation.equals(ACTION_OK)) {
             try {
-                HippoNode node = nodeModel.getNode();
+                Node node = nodeModel.getNode();
                 if (node.getSession().hasPendingChanges() && node.getParent() != null) {
                     node.getParent().getSession().save();
                     info("Action " + ACTION_OK + " successfull.");
@@ -120,10 +121,15 @@ public class NodeActionsPlugin extends RenderPlugin {
                 }
             });
 
-            HippoNode node = nodeModel.getNode();
+            Node node = nodeModel.getNode();
             try {
                 if (node.isNew()) {
-                    String displayName = node.getDisplayName();
+                    String displayName;
+                    if (node instanceof HippoNode) {
+                        displayName = ((HippoNode) node).getDisplayName();
+                    } else {
+                        displayName = node.getName();
+                    }
                     node.remove();
                     info("User " + displayName + " removed");
                 }

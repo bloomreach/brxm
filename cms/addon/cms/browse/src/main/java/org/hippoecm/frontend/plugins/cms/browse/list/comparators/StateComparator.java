@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NodeComparator;
-import org.hippoecm.repository.api.HippoNode;
 
 public class StateComparator extends NodeComparator {
     @SuppressWarnings("unused")
@@ -30,19 +29,17 @@ public class StateComparator extends NodeComparator {
     @Override
     public int compare(JcrNodeModel o1, JcrNodeModel o2) {
         try {
-            HippoNode n1 = o1.getNode();
-            HippoNode n2 = o2.getNode();
-            HippoNode variant = (HippoNode) (n1.getNode(n1.getName()));
-            Node canonicalNode = variant.getCanonicalNode();
+            Node n1 = o1.getNode();
+            Node n2 = o2.getNode();
+            Node variant = n1.getNode(n1.getName());
             String state1 = "unknown";
-            if (canonicalNode.hasProperty("hippostd:stateSummary")) {
-                state1 = canonicalNode.getProperty("hippostd:stateSummary").getString();
+            if (variant.hasProperty("hippostd:stateSummary")) {
+                state1 = variant.getProperty("hippostd:stateSummary").getString();
             }
-            variant = (HippoNode) (n2.getNode(n2.getName()));
-            canonicalNode = variant.getCanonicalNode();
+            variant = n2.getNode(n2.getName());
             String state2 = "unknown";
-            if (canonicalNode.hasProperty("hippostd:stateSummary")) {
-                state2 = canonicalNode.getProperty("hippostd:stateSummary").getString();
+            if (variant.hasProperty("hippostd:stateSummary")) {
+                state2 = variant.getProperty("hippostd:stateSummary").getString();
             }
             return String.CASE_INSENSITIVE_ORDER.compare(state1, state2);
         } catch (RepositoryException e) {

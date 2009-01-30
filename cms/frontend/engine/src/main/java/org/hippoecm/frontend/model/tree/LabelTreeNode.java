@@ -15,57 +15,67 @@
  */
 package org.hippoecm.frontend.model.tree;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Enumeration;
 
-import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-import org.hippoecm.frontend.model.JcrNodeModel;
 
-public class LabelTreeNode extends AbstractTreeNode {
+public class LabelTreeNode implements TreeNode {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private JcrTreeNode parentNode;
+    private TreeNode parentNode;
     private long moreCount;
 
-    public LabelTreeNode(JcrNodeModel parentModel, JcrTreeNode parentNode, long moreCount) {
-        super(parentModel);
-        this.parentNode = parentNode;
+    public LabelTreeNode(TreeNode parentNode, long moreCount) {
         this.moreCount = moreCount;
+        this.parentNode = parentNode;
+    }
+
+    public String getLabel() {
+        return " ... " + moreCount + " more ...";
+    }
+
+    public Enumeration<TreeNode> children() {
+        return new Enumeration<TreeNode>() {
+
+            public boolean hasMoreElements() {
+                return false;
+            }
+
+            public TreeNode nextElement() {
+                return null;
+            }
+            
+        };
+    }
+
+    public boolean getAllowsChildren() {
+        return false;
+    }
+
+    public TreeNode getChildAt(int childIndex) {
+        return null;
+    }
+
+    public int getChildCount() {
+        return 0;
+    }
+
+    public int getIndex(TreeNode node) {
+        return -1;
     }
 
     public TreeNode getParent() {
         return parentNode;
     }
 
-    @Override
-    protected int loadChildcount() throws RepositoryException {
-        return 0;
-    }
-
-    @Override
-    protected List<AbstractTreeNode> loadChildren() throws RepositoryException {
-        return new ArrayList();
-    }
-
-    @Override
-    public String renderNode() {
-        return " ... " + moreCount + " more ...";
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("nodeModel", nodeModel.toString())
-                .toString();
+    public boolean isLeaf() {
+        return true;
     }
 
     @Override
@@ -76,12 +86,12 @@ public class LabelTreeNode extends AbstractTreeNode {
             return false;
         } else {
             LabelTreeNode treeNode = (LabelTreeNode) object;
-            return new EqualsBuilder().append(nodeModel, treeNode.nodeModel).isEquals();
+            return new EqualsBuilder().append(parentNode, treeNode.parentNode).isEquals();
         }
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(87, 335).append(nodeModel).toHashCode();
+        return new HashCodeBuilder(87, 335).append(parentNode).toHashCode();
     }
 }

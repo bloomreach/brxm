@@ -21,6 +21,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.widgets.Pinger;
 
 public class RootPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -30,6 +31,8 @@ public class RootPlugin extends RenderPlugin {
 
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        add(new Pinger("pinger"));
 
         if (config.getString(RenderService.MODEL_ID) != null) {
             String modelId = config.getString(RenderService.MODEL_ID);

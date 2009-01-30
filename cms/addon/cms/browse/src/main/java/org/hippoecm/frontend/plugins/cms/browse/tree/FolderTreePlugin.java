@@ -19,30 +19,32 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.tree.ITreeState;
-import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
-import org.hippoecm.frontend.model.tree.AbstractTreeNode;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.tree.CachedTreeModel;
+import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.FolderTreeNode;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.wicket1985.Tree;
+import org.hippoecm.frontend.widgets.JcrTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListener {
+public class FolderTreePlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     static final Logger log = LoggerFactory.getLogger(FolderTreePlugin.class);
 
-    protected Tree tree;
-    protected JcrTreeModel treeModel;
-    protected AbstractTreeNode rootNode;
+    protected final JcrTree tree;
+    protected CachedTreeModel treeModel;
+    protected JcrTreeNode rootNode;
     private JcrNodeModel rootModel;
 
     public FolderTreePlugin(IPluginContext context, IPluginConfig config) {
@@ -59,13 +61,15 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
         DocumentListFilter folderTreeConfig = new DocumentListFilter(config);
         this.rootNode = new FolderTreeNode(rootModel, folderTreeConfig);
 
-        treeModel = new JcrTreeModel(rootNode);
+        treeModel = new CachedTreeModel(new JcrTreeModel(rootNode));
+        context.registerService(treeModel, IObserver.class.getName());
+
         tree = new CmsJcrTree("tree", treeModel) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
-                AbstractTreeNode treeNodeModel = (AbstractTreeNode) clickedNode;
+                IJcrTreeNode treeNodeModel = (IJcrTreeNode) clickedNode;
                 FolderTreePlugin.this.setModel(treeNodeModel.getNodeModel());
                 ITreeState state = getTreeState();
                 if (state.isNodeExpanded(clickedNode)) {
@@ -92,25 +96,12 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
         super.onBeforeRender();
     }
 
-    public void onFlush(JcrNodeModel nodeModel) {
-        AbstractTreeNode node = treeModel.lookup(nodeModel);
-        if (node != null) {
-            node.detach();
-            treeModel.nodeStructureChanged(node);
-            redraw();
-        } else {
-            rootNode.detach();
-            treeModel.nodeStructureChanged(rootNode);
-            redraw();
-        }
-    }
-
     @Override
     public void onModelChanged() {
         super.onModelChanged();
 
         JcrNodeModel model = (JcrNodeModel) getModel();
-        AbstractTreeNode node = null;
+        IJcrTreeNode node = null;
         node = treeModel.lookup(model);
         if (node != null) {
             TreeNode parentNode = node.getParent();

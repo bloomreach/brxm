@@ -37,7 +37,7 @@ public class ObservationTest extends TestCase {
         }
 
         void fire() {
-            context.publish(new IEvent() {
+            context.notifyObservers(new IEvent() {
 
                 public IObservable getSource() {
                     return TestObservable.this;

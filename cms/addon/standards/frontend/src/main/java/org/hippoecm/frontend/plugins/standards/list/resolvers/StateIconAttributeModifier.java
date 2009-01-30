@@ -23,7 +23,6 @@ import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
-import org.hippoecm.repository.api.HippoNode;
 
 public class StateIconAttributeModifier extends AbstractNodeAttributeModifier {
     @SuppressWarnings("unused")
@@ -36,18 +35,17 @@ public class StateIconAttributeModifier extends AbstractNodeAttributeModifier {
 
 
     @Override
-    public AttributeModifier getColumnAttributeModifier(HippoNode node) throws RepositoryException {
+    public AttributeModifier getColumnAttributeModifier(Node node) throws RepositoryException {
         return new CssClassAppender(new Model("icon-16"));
     }
 
     @Override
-    public AttributeModifier[] getCellAttributeModifiers(HippoNode node) throws RepositoryException {
+    public AttributeModifier[] getCellAttributeModifiers(Node node) throws RepositoryException {
         AttributeModifier[] attributes = new AttributeModifier[2];
         String cssClass = "";
         String summary = "";
         if (node.hasNode(node.getName())) {
-            HippoNode variant = (HippoNode) (node.getNode(node.getName()));
-            Node canonicalNode = variant.getCanonicalNode();
+            Node canonicalNode = node.getNode(node.getName());
             if (canonicalNode.hasProperty("hippostd:stateSummary")) {
                 cssClass = PREFIX + canonicalNode.getProperty("hippostd:stateSummary").getString() + SUFFIX;
             }

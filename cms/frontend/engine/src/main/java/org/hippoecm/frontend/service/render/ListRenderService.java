@@ -31,6 +31,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.IModelService;
@@ -38,7 +39,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBehaviorService;
 import org.hippoecm.frontend.service.IRenderService;
-import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 

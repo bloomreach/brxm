@@ -15,12 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
+import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.repository.api.HippoNode;
 
 public class PropertyRenderer extends AbstractNodeRenderer {
     @SuppressWarnings("unused")
@@ -36,7 +36,7 @@ public class PropertyRenderer extends AbstractNodeRenderer {
 
 
     @Override
-    protected Component getViewer(String id, HippoNode node) throws RepositoryException {
+    protected Component getViewer(String id, Node node) throws RepositoryException {
         String value = getValue(node);
         if (value == null) {
             return new Label(id, value);
@@ -44,7 +44,7 @@ public class PropertyRenderer extends AbstractNodeRenderer {
         return new Label(id);
     }
 
-    private String getValue(HippoNode node) throws RepositoryException {
+    private String getValue(Node node) throws RepositoryException {
         Property p = node.getProperty(property);
         switch (p.getType()) {
         case 1: //javax.jcr.PropertyType.STRING:

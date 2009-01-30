@@ -253,6 +253,10 @@ public class PluginConfigTest extends TestCase {
         });
 
         IPluginConfig original = getPluginConfig();
+
+        assertEquals("b", original.getString("a"));
+        Set entries = original.entrySet();
+
         IPluginConfig copy = (IPluginConfig) Objects.cloneObject(original);
 
         assertEquals("b", copy.getString("a"));

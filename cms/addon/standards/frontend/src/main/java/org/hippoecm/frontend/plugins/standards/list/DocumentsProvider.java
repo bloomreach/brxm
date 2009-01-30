@@ -32,7 +32,6 @@ import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NodeComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortableDataProvider;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,8 +107,8 @@ public class DocumentsProvider extends SortableDataProvider {
         @Override
         public int compare(JcrNodeModel o1, JcrNodeModel o2) {
             try {
-                HippoNode n1 = o1.getNode();
-                HippoNode n2 = o2.getNode();
+                Node n1 = o1.getNode();
+                Node n2 = o2.getNode();
                 if (n1 == null) {
                     if (n2 == null) {
                         return 0;
@@ -126,7 +125,7 @@ public class DocumentsProvider extends SortableDataProvider {
             }
         }
 
-        private String folderOrDocument(HippoNode node) throws RepositoryException {
+        private String folderOrDocument(Node node) throws RepositoryException {
             String type = "";
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 type = node.getPrimaryNodeType().getName();

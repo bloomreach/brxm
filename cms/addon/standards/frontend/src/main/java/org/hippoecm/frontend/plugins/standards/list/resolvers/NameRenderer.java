@@ -15,13 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.api.HippoNode;
 
 public class NameRenderer extends AbstractNodeRenderer {
     @SuppressWarnings("unused")
@@ -30,7 +30,7 @@ public class NameRenderer extends AbstractNodeRenderer {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Component getViewer(String id, HippoNode node) throws RepositoryException {
+    protected Component getViewer(String id, Node node) throws RepositoryException {
         return new Label(id, new NodeTranslator(new JcrNodeModel(node)).getNodeName());
     }
 

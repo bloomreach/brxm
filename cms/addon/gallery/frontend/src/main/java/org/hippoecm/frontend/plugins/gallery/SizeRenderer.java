@@ -23,7 +23,6 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class SizeRenderer extends AbstractNodeRenderer {
@@ -36,7 +35,7 @@ public class SizeRenderer extends AbstractNodeRenderer {
     public static final long ONE_GB = ONE_KB * ONE_MB;
 
     @Override
-    protected Component getViewer(String id, HippoNode node) throws RepositoryException {
+    protected Component getViewer(String id, Node node) throws RepositoryException {
         String size;
         if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
             Node imageSet = node.getNode(node.getName());

@@ -17,12 +17,12 @@ package org.hippoecm.frontend.plugins.cms.admin;
 
 import org.apache.wicket.extensions.breadcrumb.BreadCrumbBar;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbBar;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
-import org.hippoecm.frontend.service.PluginRequestTarget;
 
 public class AdminPerspective extends Perspective {
     @SuppressWarnings("unused")

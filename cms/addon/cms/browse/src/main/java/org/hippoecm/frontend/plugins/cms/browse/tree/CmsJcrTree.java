@@ -17,16 +17,19 @@ package org.hippoecm.frontend.plugins.cms.browse.tree;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.hippoecm.frontend.model.tree.AbstractTreeNode;
-import org.hippoecm.frontend.model.tree.JcrTreeModel;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.widgets.JcrTree;
-import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +39,7 @@ public abstract class CmsJcrTree extends JcrTree {
     static final Logger log = LoggerFactory.getLogger(CmsJcrTree.class);
     private static final long serialVersionUID = 1L;
 
-    public CmsJcrTree(String id, JcrTreeModel treeModel) {
+    public CmsJcrTree(String id, TreeModel treeModel) {
         super(id, treeModel);
     }
 
@@ -53,17 +56,16 @@ public abstract class CmsJcrTree extends JcrTree {
     }
 
     private String getCss(TreeNode treeNode) {
-        if (treeNode instanceof AbstractTreeNode) {
+        if (treeNode instanceof IJcrTreeNode) {
             String css = "icon-16 ";
-            Node jcrNode = ((AbstractTreeNode) treeNode).getNodeModel().getNode();
             if (treeNode.isLeaf() == true) {
-                if (isVirtual(jcrNode)) {
+                if (isVirtual((IJcrTreeNode) treeNode)) {
                     css += "leaf-virtual-16";
                 } else {
                     css += "leaf-16";
                 }
             } else {
-                if (isVirtual(jcrNode)) {
+                if (isVirtual((IJcrTreeNode) treeNode)) {
                     if (isNodeExpanded(treeNode)) {
                         css += "folder-virtual-open-16";
                     } else {
@@ -83,21 +85,23 @@ public abstract class CmsJcrTree extends JcrTree {
         }
     }
 
-    private boolean isVirtual(Node jcrNode) {
-        if (jcrNode == null) {
-            return false;
-        }
-        HippoNode hippoNode = (HippoNode) jcrNode;
-        try {
-            Node canonical = hippoNode.getCanonicalNode();
-            if (canonical == null) {
-                return true;
+    @Override
+    public String renderNode(TreeNode treeNode) {
+        JcrNodeModel nodeModel = ((IJcrTreeNode) treeNode).getNodeModel();
+        String result = (String) new NodeTranslator(nodeModel).getNodeName().getObject();
+        Node node = nodeModel.getNode();
+        if (node != null) {
+            try {
+                if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
+                    result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
+                }
+            } catch (ValueFormatException e) {
+                // ignore the hippo count if not of type long
+            } catch (RepositoryException e) {
+                result = e.getMessage();
             }
-            return !hippoNode.getCanonicalNode().isSame(hippoNode);
-        } catch (RepositoryException e) {
-            log.error(e.getMessage(), e);
-            return false;
         }
+        return result;
     }
 
 }

@@ -17,8 +17,9 @@ package org.hippoecm.frontend.plugins.console.dialog;
 
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.tree.AbstractTreeNode;
+import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeNode;
 
 public abstract class LookupDialog extends AbstractDialog {
     @SuppressWarnings("unused")
@@ -29,7 +30,7 @@ public abstract class LookupDialog extends AbstractDialog {
     private LookupTargetTreeView tree;
     private JcrTreeModel treeModel;
 
-    protected LookupDialog(AbstractTreeNode rootNode) {
+    protected LookupDialog(JcrTreeNode rootNode) {
         treeModel = new JcrTreeModel(rootNode);
         this.tree = new LookupTargetTreeView("tree", treeModel, this);
         tree.getTreeState().expandNode(rootNode);
@@ -43,8 +44,8 @@ public abstract class LookupDialog extends AbstractDialog {
     }
 
     // The selected node
-    public AbstractTreeNode getSelectedNode() {
-        return (AbstractTreeNode) tree.getSelectedNode();
+    public IJcrTreeNode getSelectedNode() {
+        return tree.getSelectedNode();
     }
 
     public void setSelectedNode(JcrNodeModel selectedNode) {
@@ -54,5 +55,5 @@ public abstract class LookupDialog extends AbstractDialog {
     protected void onSelect(JcrNodeModel nodeModel) {
     }
 
-    protected abstract boolean isValidSelection(AbstractTreeNode targetModel);
+    protected abstract boolean isValidSelection(IJcrTreeNode targetModel);
 }

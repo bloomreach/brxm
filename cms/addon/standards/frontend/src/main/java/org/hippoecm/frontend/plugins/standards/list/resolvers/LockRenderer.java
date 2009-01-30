@@ -15,11 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.repository.api.HippoNode;
 
 public class LockRenderer extends AbstractNodeRenderer {
     @SuppressWarnings("unused")
@@ -28,7 +28,7 @@ public class LockRenderer extends AbstractNodeRenderer {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Component getViewer(String id, HippoNode node) throws RepositoryException {
+    protected Component getViewer(String id, Node node) throws RepositoryException {
         return new Label(id, String.valueOf(node.isLocked()));
     }
 

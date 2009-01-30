@@ -23,6 +23,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class ToggleVersionPlugin extends RenderPlugin {
@@ -43,10 +44,13 @@ public class ToggleVersionPlugin extends RenderPlugin {
         JcrNodeModel model = (JcrNodeModel) getModel();
         if (model != null && model.getNode() != null) {
             try {
-                Node node = model.getNode().getCanonicalNode();
-                if (node == null) {
-                    // virtual node not having canonical equivalent
-                    return;
+                Node node = model.getNode();
+                if (node instanceof HippoNode) {
+                    node = ((HippoNode) node).getCanonicalNode();
+                    if (node == null) {
+                        // virtual node not having canonical equivalent
+                        return;
+                    }
                 }
                 if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                     replace(new ToggleVersionPanel("toggleLabel"));

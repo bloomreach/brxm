@@ -32,7 +32,7 @@ public class SizeComparator extends NodeComparator {
     public int compare(JcrNodeModel nodeModel1, JcrNodeModel nodeModel2) {
         try {
             long size1 = 0;
-            Node n1 = nodeModel1.getNode().getCanonicalNode();
+            Node n1 = getCanonicalNode(nodeModel1);
             if (n1.isNodeType(HippoNodeType.NT_HANDLE) && n1.hasNode(n1.getName())) {
                 Node imageSet = n1.getNode(n1.getName());
                 Item primItem = imageSet.getPrimaryItem();
@@ -42,7 +42,7 @@ public class SizeComparator extends NodeComparator {
             }
 
             long size2 = 0;
-            Node n2 = nodeModel2.getNode().getCanonicalNode();
+            Node n2 = getCanonicalNode(nodeModel2);
             if (n2.isNodeType(HippoNodeType.NT_HANDLE) && n2.hasNode(n2.getName())) {
                 Node imageSet = n2.getNode(n2.getName());
                 Item primItem = imageSet.getPrimaryItem();

@@ -53,7 +53,7 @@ public class JcrEventListener implements EventListener, IClusterable {
     public void onEvent(EventIterator events) {
         if (context != null) {
             while (events.hasNext()) {
-                context.publish(new JcrEvent(events.nextEvent()));
+                context.notifyObservers(new JcrEvent(events.nextEvent()));
             }
         } else {
             log.error("No observation context present");

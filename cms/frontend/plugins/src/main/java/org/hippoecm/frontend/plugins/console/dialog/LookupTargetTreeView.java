@@ -24,7 +24,8 @@ import javax.swing.tree.TreeNode;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.tree.AbstractTreeNode;
+import org.hippoecm.frontend.model.tree.JcrTreeNode;
+import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.widgets.JcrTree;
 
@@ -34,7 +35,7 @@ class LookupTargetTreeView extends JcrTree {
 
     private static final long serialVersionUID = 1L;
 
-    private TreeNode selectedNode;
+    private IJcrTreeNode selectedNode;
     private LookupDialog dialog;
 
     LookupTargetTreeView(String id, JcrTreeModel treeModel, LookupDialog dialog) {
@@ -44,12 +45,14 @@ class LookupTargetTreeView extends JcrTree {
 
     @Override
     protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
-        this.selectedNode = treeNode;
-        AbstractTreeNode treeNodeModel = (AbstractTreeNode) treeNode;
-        dialog.setModel(treeNodeModel.getNodeModel());
+        if (treeNode instanceof IJcrTreeNode) {
+            IJcrTreeNode jcrTreeNode = (IJcrTreeNode) treeNode;
+            this.selectedNode = jcrTreeNode;
+            dialog.setModel(jcrTreeNode.getNodeModel());
+        }
     }
 
-    TreeNode getSelectedNode() {
+    IJcrTreeNode getSelectedNode() {
         return selectedNode;
     }
 
@@ -68,7 +71,7 @@ class LookupTargetTreeView extends JcrTree {
                 treeState.expandNode(treeModel.lookup(ancestor));
             }
 
-            AbstractTreeNode treeNode= treeModel.lookup(selectedNode.getParentModel());
+            IJcrTreeNode treeNode= treeModel.lookup(selectedNode.getParentModel());
             treeState.selectNode(treeNode, true);
             this.selectedNode = treeNode;
         }

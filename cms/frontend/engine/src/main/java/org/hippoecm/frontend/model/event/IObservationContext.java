@@ -19,7 +19,7 @@ import org.apache.wicket.Page;
 
 public interface IObservationContext {
 
-    void publish(IEvent event);
+    void notifyObservers(IEvent event);
 
     Page getPage();
 }

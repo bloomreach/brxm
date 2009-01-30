@@ -22,10 +22,8 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.model.IModel;
-
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class DocumentAttributeModifier extends AbstractNodeAttributeModifier {
@@ -35,7 +33,7 @@ public class DocumentAttributeModifier extends AbstractNodeAttributeModifier {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public AttributeModifier getCellAttributeModifier(HippoNode node) throws RepositoryException {
+    public AttributeModifier getCellAttributeModifier(Node node) throws RepositoryException {
         IModel documentType = null;
         try {
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -57,7 +55,7 @@ public class DocumentAttributeModifier extends AbstractNodeAttributeModifier {
     }
 
     @Override
-    public AttributeModifier getColumnAttributeModifier(HippoNode node) throws RepositoryException {
+    public AttributeModifier getColumnAttributeModifier(Node node) throws RepositoryException {
         return null;
     }
 }

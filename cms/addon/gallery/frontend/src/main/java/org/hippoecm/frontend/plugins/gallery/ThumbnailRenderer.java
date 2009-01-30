@@ -26,7 +26,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class ThumbnailRenderer extends AbstractNodeRenderer {
@@ -43,7 +42,7 @@ public class ThumbnailRenderer extends AbstractNodeRenderer {
     }
 
     @Override
-    protected Component getViewer(String id, HippoNode node) throws RepositoryException {
+    protected Component getViewer(String id, Node node) throws RepositoryException {
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
             if (node.hasNode(node.getName())) {
                 Node imageSet = node.getNode(node.getName());
