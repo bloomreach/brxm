@@ -82,6 +82,9 @@
         <sv:property sv:name="list.page.size" sv:type="String">
           <sv:value>4</sv:value>
         </sv:property>
+        <sv:property sv:name="list.view.size" sv:type="String">
+      <sv:value>8</sv:value>
+    </sv:property>
       </sv:node>
     </sv:node>
 
@@ -215,6 +218,9 @@
         </sv:property>
         <sv:property sv:name="list.page.size" sv:type="String">
           <sv:value>10</sv:value>
+        </sv:property>
+        <sv:property sv:name="list.view.size" sv:type="String">
+          <sv:value>8</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>

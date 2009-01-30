@@ -30,6 +30,7 @@ import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
@@ -70,17 +71,18 @@ public class AssetGalleryPlugin extends AbstractListingPlugin {
 
     @Override
     protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition,
-            ISortableDataProvider dataProvider, TableSelectionListener selectionListener, int rowsPerPage,
-            boolean triState) {
-        return new DraggableListDataTable(id, tableDefinition, dataProvider, selectionListener, rowsPerPage, triState);
+            ISortableDataProvider dataProvider, TableSelectionListener selectionListener, boolean triState,
+            ListPagingDefinition pagingDefinition) {
+        return new DraggableListDataTable(id, tableDefinition, dataProvider, selectionListener, triState,
+                pagingDefinition);
     }
 
     class DraggableListDataTable extends ListDataTable {
         private static final long serialVersionUID = 1L;
 
         public DraggableListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
-                TableSelectionListener selectionListener, int rowsPerPage, boolean triState) {
-            super(id, tableDefinition, dataProvider, selectionListener, rowsPerPage, triState);
+                TableSelectionListener selectionListener, boolean triState, ListPagingDefinition pagingDefinition) {
+            super(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
         }
 
         @Override

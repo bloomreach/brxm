@@ -29,6 +29,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -43,7 +44,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     private static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
 
     private ListDataTable dataTable;
-    private int pageSize;
+    private ListPagingDefinition pagingDefinition;
 
     public AbstractListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -63,10 +64,11 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
         } else {
             log.warn("No document model service configured (model.document)");
         }
+        
+        pagingDefinition = new ListPagingDefinition(config);
 
-        pageSize = config.getInt("list.page.size", 15);
-
-        dataTable = getListDataTable("table", getTableDefinition(), getDataProvider(), this, pageSize, isOrderable());
+        dataTable = getListDataTable("table", getTableDefinition(), getDataProvider(), this, isOrderable(),
+                pagingDefinition);
         add(dataTable);
 
         if(!isOrderable()) {
@@ -77,8 +79,9 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     }
 
     protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
-            TableSelectionListener selectionListener, final int rowsPerPage, final boolean triState) {
-        return new ListDataTable(id, tableDefinition, dataProvider, selectionListener, rowsPerPage, triState);
+            TableSelectionListener selectionListener, final boolean triState,
+            ListPagingDefinition pagingDefinition) {
+        return new ListDataTable(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
     }
 
     protected ISortableDataProvider getDataProvider() {
@@ -118,7 +121,8 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     @Override
     @SuppressWarnings("unchecked")
     public void onModelChanged() {
-        dataTable = getListDataTable("table", getTableDefinition(), getDataProvider(), this, pageSize, isOrderable());
+        dataTable = getListDataTable("table", getTableDefinition(), getDataProvider(), this, isOrderable(),
+                pagingDefinition);
         replace(dataTable);
         IPluginConfig config = getPluginConfig();
         if (config.getString("model.document") != null) {

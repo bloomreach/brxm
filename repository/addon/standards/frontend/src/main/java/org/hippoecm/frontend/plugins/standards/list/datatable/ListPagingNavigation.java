@@ -27,10 +27,13 @@ public class ListPagingNavigation extends AjaxPagingNavigation {
 
     private static final long serialVersionUID = 1L;
 
-    public ListPagingNavigation(final String id, final IPageable pageable, final IPagingLabelProvider labelProvider) {
+    public ListPagingNavigation(final String id, final IPageable pageable, final IPagingLabelProvider labelProvider,
+            ListPagingDefinition pagingDefinition) {
         super(id, pageable, labelProvider);
+        
+        setViewSize(pagingDefinition.getViewSize());
     }
-
+ 
     @Override
     protected Link newPagingNavigationLink(String id, IPageable pageable, int pageIndex) {
         return new AjaxPagingNavigationLink(id, pageable, pageIndex);
