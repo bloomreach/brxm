@@ -2,7 +2,19 @@ function CreateExternalLink(editor, args) {
     this.editor = editor;
     var cfg = editor.config;
     var self = this;
-    editor.config.registerButton('createexternallink', this._lc('External link'), [_editor_url + cfg.imgURL + "ed_buttons_main.png",5,1], false, function() { self.show(self._getSelectedAnchor()); });
+    
+    editor.config.registerButton('createexternallink', 
+            this._lc('External link'), 
+            [_editor_url + cfg.imgURL + "ed_buttons_main.png",5,1], 
+            false, 
+            function() {
+                if(Xinha.is_ie && Xinha.ie_version == 6) {
+                    alert('Custom buttons in IE6 blur the focus on selected text, rendering this plugin useless. Use a decent browser instead (IE7, FireFox, Safari, Google Chrome, Opera, etc).')
+                } else {
+                    self.show(self._getSelectedAnchor());
+                }
+            }
+    );
 }
 
 CreateExternalLink._pluginInfo = {
@@ -34,23 +46,10 @@ CreateExternalLink.loadAssets = function()
     var self = CreateExternalLink;
     if (self.loading) return;
     self.loading = true;
-    var t =  this;
-    Xinha._getback(_editor_url + 'modules/CreateLink/pluginMethods.js', 
-        function(getback) { 
-            eval(getback);
-            if(Xinha.is_ie) {
-                self.prototype.show = CreateExternalLink.prototype.showIE;
-            } else {
-                self.prototype.show = CreateLink.prototype.show;
-            }
-            self.prototype.apply = CreateLink.prototype.apply;
-            self.prototype._getSelectedAnchor = CreateLink.prototype._getSelectedAnchor;
-            self.methodsReady = true; 
-        }
-    );
+    self.methodsReady = true;
 }
 
-CreateExternalLink.prototype.showIE = function(a)
+CreateExternalLink.prototype.show = function(a)
 {
   if (!this.dialog)
   {
@@ -58,6 +57,7 @@ CreateExternalLink.prototype.showIE = function(a)
   } 
     var editor = this.editor;
     this.a = a;
+    
     if(!a && this.editor.selectionEmpty(this.editor.getSelection()))
     {
         alert(this._lc("You need to select some text before creating a link"));
@@ -75,7 +75,11 @@ CreateExternalLink.prototype.showIE = function(a)
     if(a && a.tagName.toLowerCase() == 'a')
     {
         //IE IFlags: http://tobielangel.com/2007/1/11/attribute-nightmare-in-ie/
-        inputs.f_href   = this.editor.fixRelativeLinks(a.getAttribute('href', 2));
+        if(Xinha.is_ie) {
+            inputs.f_href   = this.editor.fixRelativeLinks(a.getAttribute('href', 2));
+        } else {
+            inputs.f_href   = this.editor.fixRelativeLinks(a.getAttribute('href'));
+        }    
 
         inputs.f_title  = a.title;
         if (a.target)
@@ -126,4 +130,124 @@ CreateExternalLink.prototype.prepareDialog = function()
         self.editor.plugins.AutoSave.instance.saveSynchronous();
     };
     this.dialogReady = true;
+};
+
+CreateExternalLink.prototype._getSelectedAnchor = function() {
+    var sel  = this.editor.getSelection();
+    var rng  = this.editor.createRange(sel);
+    var a    = this.editor.activeElement(sel);
+    if(a != null && a.tagName.toLowerCase() == 'a')
+    {
+      return a;
+    }
+    else
+    {
+      a = this.editor._getFirstAncestor(sel, 'a');
+      if(a != null)
+      {
+        return a;
+      }
+    }
+    return null;
+}
+
+// and finally ... take some action
+CreateExternalLink.prototype.apply = function()
+{
+
+    var values = this.dialog.hide();
+    var a = this.a;
+    var editor = this.editor;
+
+    var atr =
+    {
+        href: '',
+        target:'',
+        title:''
+    };
+
+    if(values.f_href)
+    {
+        atr.href = values.f_href;
+        atr.title = values.f_title;
+        if (values.f_target.value)
+        {
+            if (values.f_target.value == 'other') atr.target = values.f_other_target;
+            else atr.target = values.f_target.value;
+        }
+    }
+    if (values.f_target.value)
+    {
+        if (values.f_target.value != '_other')
+        {
+            atr.target = values.f_target.value;
+        }
+        else
+        {
+            atr.target = values.f_other_target;
+        }
+    }
+    
+    if(a && a.tagName.toLowerCase() == 'a')
+    {
+        if(!atr.href)
+        {
+            if(confirm(this._lc('Are you sure you wish to remove this link?')))
+            {
+                var p = a.parentNode;
+                while(a.hasChildNodes())
+                {
+                    p.insertBefore(a.removeChild(a.childNodes[0]), a);
+                }
+                p.removeChild(a);
+                editor.updateToolbar();
+                return;
+            }
+        }
+        else
+        {
+            // Update the link
+            for(var i in atr)
+            {
+                a.setAttribute(i, atr[i]);
+            }
+
+            // If we change a mailto link in IE for some hitherto unknown
+            // reason it sets the innerHTML of the link to be the
+            // href of the link.  Stupid IE.
+            if(Xinha.is_ie)
+            {
+                if(/mailto:([^?<>]*)(\?[^<]*)?$/i.test(a.innerHTML))
+                {
+                    a.innerHTML = RegExp.$1;
+                }
+            }
+        }
+    }
+    else
+    {
+        if(!atr.href) return true;
+
+        // Insert a link, we let the browser do this, we figure it knows best
+        var tmp = Xinha.uniq('http://www.example.com/Link');
+        editor._doc.execCommand('createlink', false, tmp);
+
+        // Fix them up
+        var anchors = editor._doc.getElementsByTagName('a');
+        for(var i = 0; i < anchors.length; i++)
+        {
+            var anchor = anchors[i];
+            if(anchor.href == tmp)
+            {
+                // Found one.
+                if (!a) a = anchor;
+                for(var j in atr)
+                {
+                    anchor.setAttribute(j, atr[j]);
+                }
+            }
+        }
+    }
+    editor.selectNodeContents(a);
+    editor.updateToolbar();
 };

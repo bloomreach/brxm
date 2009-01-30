@@ -17,16 +17,9 @@
 package org.hippoecm.frontend.plugins.xinha.dialog;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -40,7 +33,7 @@ import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractBrowserDialog extends AbstractDialog {
+public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -59,25 +52,6 @@ public abstract class AbstractBrowserDialog extends AbstractDialog {
 
         this.context = context;
         this.config = config;
-
-        final Button remove = new AjaxButton("button") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
-                onRemove();
-                if (!hasError()) {
-                    closeDialog();
-                }
-            }
-
-            @Override
-            public boolean isVisible() {
-                return hasRemoveButton();
-            }
-        };
-        remove.add(new Label("label", "Remove"));
-        addButton(remove);
 
         add(createContentPanel("content"));
     }
@@ -122,69 +96,27 @@ public abstract class AbstractBrowserDialog extends AbstractDialog {
         return dialogRenderer.getComponent();
     }
 
-    public final void onClose() {
-        dialogRenderer.unbind();
-        dialogRenderer = null;
-        control.stop();
-        modelService.destroy();
-
-        AjaxRequestTarget target = AjaxRequestTarget.get();
-        if (target != null) {
-            String script;
-            if (cancelled) {
-                script = getCancelScript();
-            } else {
-                script = getCloseScript();
-            }
-            target.getHeaderResponse().renderOnDomReadyJavascript(script);
-        }
-        onCloseDialog();
-    }
-
+    @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
         if (dialogRenderer != null) {
             dialogRenderer.render(target);
         }
     }
-
-    public IModel getTitle() {
-        return new StringResourceModel("dialog-title", this, null);
+    
+    @Override
+    public IValueMap getProperties() {
+        return new ValueMap("width=850,height=465");
     }
 
     @Override
-    public IValueMap getProperties() {
-        return new ValueMap("width=850,height=455");
+    void onCloseInternal() {
+        dialogRenderer.unbind();
+        dialogRenderer = null;
+        control.stop();
+        modelService.destroy();
     }
-
+    
     protected abstract JcrNodeModel findNewModel(IModel model);
-
-    protected void checkState() {
-        IPersistedMap link = (IPersistedMap) getModelObject();
-        enableOk(link.isValid() && link.hasChanged());
-    }
-
-    protected boolean hasRemoveButton() {
-        return ((IPersistedMap) getModelObject()).isExisting();
-    }
-
-    protected void onRemove() {
-    }
-
-    protected String getCancelScript() {
-        return "if(openModalDialog != null){ openModalDialog.cancel(); }";
-    }
-
-    protected String getCloseScript() {
-        String returnValue = ((IPersistedMap) getModelObject()).toJsString();
-        return "if(openModalDialog != null){ openModalDialog.close(" + returnValue + "); }";
-    }
-
-    protected void onCloseDialog() {
-    }
-
-    protected void enableOk(boolean state) {
-        ok.setEnabled(state);
-    }
 
 }

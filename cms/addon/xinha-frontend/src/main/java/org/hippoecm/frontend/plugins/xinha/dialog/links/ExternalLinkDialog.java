@@ -17,25 +17,19 @@
 package org.hippoecm.frontend.plugins.xinha.dialog.links;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.dialog.IPersistedMap;
+import org.hippoecm.frontend.plugins.xinha.dialog.AbstractXinhaDialog;
 import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLink;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
-public class ExternalLinkDialog extends AbstractDialog {
+public class ExternalLinkDialog extends AbstractXinhaDialog {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -44,7 +38,8 @@ public class ExternalLinkDialog extends AbstractDialog {
     public ExternalLinkDialog(IPluginContext context, IPluginConfig config, IModel model) {
         super(model);
 
-        add(new TextFieldWidget("href", new PropertyModel(getLink(), XinhaLink.HREF)) {
+        ExternalXinhaLink link = (ExternalXinhaLink) getModelObject();
+        add(new TextFieldWidget("href", new PropertyModel(link, XinhaLink.HREF)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -53,7 +48,7 @@ public class ExternalLinkDialog extends AbstractDialog {
             }
         });
 
-        add(new TextFieldWidget("title", new PropertyModel(getLink(), XinhaLink.TITLE)) {
+        add(new TextFieldWidget("title", new PropertyModel(link, XinhaLink.TITLE)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -62,7 +57,7 @@ public class ExternalLinkDialog extends AbstractDialog {
             }
         });
 
-        add(new BooleanFieldWidget("popup", new PropertyModel(getLink(), "target")) {
+        add(new BooleanFieldWidget("popup", new PropertyModel(link, "target")) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -70,34 +65,6 @@ public class ExternalLinkDialog extends AbstractDialog {
                 update(target);
             }
         });
-
-        final Button remove = new AjaxButton("button") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
-                onRemove();
-                closeDialog();
-            }
-
-            @Override
-            public boolean isVisible() {
-                return hasRemoveButton();
-            }
-        };
-        remove.add(new Label("label", "Remove"));
-        addButton(remove);
-    }
-
-    protected boolean hasRemoveButton() {
-        return getLink().isExisting();
-    }
-
-    protected void onRemove() {
-    }
-
-    public IModel getTitle() {
-        return new StringResourceModel("dialog-title", this, null);
     }
 
     @Override
@@ -106,15 +73,11 @@ public class ExternalLinkDialog extends AbstractDialog {
     }
 
     private void update(AjaxRequestTarget target) {
-        IPersistedMap link = (IPersistedMap) getModelObject();
-        ok.setEnabled(link.isValid() && link.hasChanged());
-        if (target != null) {
-            target.addComponent(ok);
-        }
+        //For now this doesn't work
+        //        IPersistedMap link = (IPersistedMap) getModelObject();
+        //        ok.setEnabled(link.isValid() && link.hasChanged());
+        //        if (target != null) {
+        //            target.addComponent(ok);
+        //        }
     }
-
-    private ExternalXinhaLink getLink() {
-        return (ExternalXinhaLink) getModel();
-    }
-
 }

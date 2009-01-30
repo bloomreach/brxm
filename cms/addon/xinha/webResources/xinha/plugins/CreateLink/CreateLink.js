@@ -71,8 +71,6 @@ CreateLink.prototype.showIE = function(a)
         f_other_target : ''
     };
     
-    alert(inputs);
-    
     if(a && a.tagName.toLowerCase() == 'a')
     {
         //IE IFlags: http://tobielangel.com/2007/1/11/attribute-nightmare-in-ie/

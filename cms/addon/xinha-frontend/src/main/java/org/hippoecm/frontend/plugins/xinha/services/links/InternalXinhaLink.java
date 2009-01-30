@@ -25,9 +25,10 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.xinha.XinhaUtil;
+import org.hippoecm.frontend.plugins.xinha.dialog.DocumentLink;
 import org.hippoecm.repository.api.HippoNodeType;
 
-public abstract class InternalXinhaLink extends XinhaLink {
+public abstract class InternalXinhaLink extends DocumentLink {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")

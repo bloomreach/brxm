@@ -90,6 +90,7 @@ public class DocumentBrowserDialog extends AbstractBrowserDialog {
         return null;
     }
 
+    @Override
     protected void onOk() {
         InternalXinhaLink link = (InternalXinhaLink) getModelObject();
         if (link.isValid()) {
@@ -97,11 +98,6 @@ public class DocumentBrowserDialog extends AbstractBrowserDialog {
         } else {
             error("Please select a document");
         }
-    }
-
-    protected void onRemove() {
-        InternalXinhaLink link = (InternalXinhaLink) getModelObject();
-        link.delete();
     }
 
 }

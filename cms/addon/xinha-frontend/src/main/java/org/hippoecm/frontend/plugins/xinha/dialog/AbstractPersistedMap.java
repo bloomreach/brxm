@@ -57,11 +57,14 @@ public abstract class AbstractPersistedMap extends HashMap implements IPersisted
             } else {
                 sb.append(',');
             }
-            Object value = e.getValue();
-            sb.append(e.getKey()).append(':').append(JavascriptUtil.serialize2JS((String) value));
+            sb.append(e.getKey()).append(':').append(serializeValue(e.getValue()));
         }
         sb.append('}');
         return sb.toString();
+    }
+
+    protected Object serializeValue(Object value) {
+        return JavascriptUtil.serialize2JS((String) value);
     }
 
     protected Map<String, String> getInitialValues() {

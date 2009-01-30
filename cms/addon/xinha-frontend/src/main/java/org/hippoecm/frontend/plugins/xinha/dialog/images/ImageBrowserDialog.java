@@ -54,6 +54,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog {
         checkState();
     }
 
+    @Override
     protected JcrNodeModel findNewModel(IModel model) {
         JcrNodeModel nodeModel = (JcrNodeModel) model;
         HippoNode node = nodeModel.getNode();
@@ -79,12 +80,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog {
         } else {
             error("Please select an image");
         }
-    }
-
-    @Override
-    protected void onRemove() {
-        XinhaImage img = (XinhaImage) getModelObject();
-        img.delete();
     }
 
 }
