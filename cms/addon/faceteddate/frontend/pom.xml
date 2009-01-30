@@ -58,10 +58,6 @@
     <resources>
       <resource>
         <filtering>false</filtering>
-        <directory>${basedir}/src/main/resources</directory>
-      </resource>
-      <resource>
-        <filtering>false</filtering>
         <directory>${basedir}/src/main/java</directory>
         <includes>
           <include>**/*.html</include>
