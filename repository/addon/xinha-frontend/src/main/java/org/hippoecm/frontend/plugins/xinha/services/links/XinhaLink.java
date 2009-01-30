@@ -17,19 +17,18 @@ package org.hippoecm.frontend.plugins.xinha.services.links;
 
 import java.util.Map;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.xinha.dialog.DocumentLink;
+import org.hippoecm.frontend.plugins.xinha.dialog.AbstractPersistedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class XinhaLink extends DocumentLink {
+public abstract class XinhaLink extends AbstractPersistedMap {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(XinhaLink.class);
-    
+
     public static final String NEW_WINDOW = "_blank";
 
     public static final String HREF = "f_href";
@@ -37,8 +36,8 @@ public abstract class XinhaLink extends DocumentLink {
     public static final String TARGET = "f_target";
     public static final String OTHER_TARGET = "f_other_target";
 
-    public XinhaLink(Map<String, String> values, JcrNodeModel parentModel) {
-        super(values, parentModel);
+    public XinhaLink(Map<String, String> values) {
+        super(values);
     }
 
     public String getHref() {
@@ -63,6 +62,14 @@ public abstract class XinhaLink extends DocumentLink {
         } else {
             put(TARGET, "");
         }
+    }
+
+    @Override
+    protected Object serializeValue(Object value) {
+        if (value == null) {
+            value = "";
+        }
+        return super.serializeValue(value);
     }
 
 }

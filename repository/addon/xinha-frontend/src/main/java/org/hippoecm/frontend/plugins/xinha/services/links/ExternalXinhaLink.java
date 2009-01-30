@@ -16,12 +16,9 @@
 
 package org.hippoecm.frontend.plugins.xinha.services.links;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.hippoecm.frontend.plugins.xinha.dialog.AbstractPersistedMap;
-
-public class ExternalXinhaLink extends AbstractPersistedMap {
+public class ExternalXinhaLink extends XinhaLink {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -29,21 +26,11 @@ public class ExternalXinhaLink extends AbstractPersistedMap {
 
     public static final String HREF = "f_href";
 
-    private Map<String, String> initialValues;
-
     public ExternalXinhaLink(Map<String, String> values) {
         super(values);
-        initialValues = new HashMap<String, String>(values);
     }
 
-    public String getHref() {
-        return (String) get(HREF);
-    }
-
-    public void setHref(String href) {
-        put(HREF, href);
-    }
-
+    @Override
     public boolean isValid() {
         if (getHref() == null || "".equals(getHref())) {
             return false;
@@ -51,6 +38,7 @@ public class ExternalXinhaLink extends AbstractPersistedMap {
         return true;
     }
 
+    @Override
     public boolean isExisting() {
         if (getHref() != null && !getHref().equals("")) {
             return true;
@@ -59,13 +47,10 @@ public class ExternalXinhaLink extends AbstractPersistedMap {
     }
 
     public void delete() {
+        setHref(null);
     }
 
     public void save() {
-    }
-
-    public boolean hasChanged() {
-        return !equals(initialValues);
     }
 
 }
