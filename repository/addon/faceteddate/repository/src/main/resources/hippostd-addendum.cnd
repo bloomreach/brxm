@@ -33,4 +33,4 @@
 - hippostd:second (long)
 
 [hippostd:date] > hippostd:datefields, hippo:derived
-- hippostd:date (date) mandatory
+- hippostd:date (date) mandatory primary
