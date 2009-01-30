@@ -55,10 +55,11 @@ public class ObservableRegistry implements IPlugin {
             return !observers.isEmpty();
         }
 
-        public void publish(IEvent event) {
+        public void notifyObservers(IEvent event) {
             for (IObserver observer : observers) {
                 observer.onEvent(event);
             }
+            getPage().dirty();
         }
 
         public Page getPage() {

@@ -19,7 +19,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.service.PluginRequestTarget;
+import org.hippoecm.frontend.PluginRequestTarget;
 
 public interface IDialogService extends IClusterable {
     final static String SVN_ID = "$Id$";

@@ -21,55 +21,52 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
 import javax.swing.tree.TreeNode;
 
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.tree.AbstractTreeNode;
+import org.hippoecm.frontend.model.tree.JcrTreeNode;
+import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FolderTreeNode extends AbstractTreeNode {
+public class FolderTreeNode extends JcrTreeNode {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     static final Logger log = LoggerFactory.getLogger(FolderTreeNode.class);
 
-    private FolderTreeNode parent;
     private DocumentListFilter config;
 
     public FolderTreeNode(JcrNodeModel model, DocumentListFilter config) {
-        super(model);
-        this.parent = null;
+        super(model, null);
         this.config = config;
     }
 
     private FolderTreeNode(JcrNodeModel model, FolderTreeNode parent) {
-        super(model);
-        this.parent = parent;
+        super(model, parent);
         this.config = parent.config;
     }
 
     @Override
     protected int loadChildcount() throws RepositoryException {
-        HippoNode jcrNode = nodeModel.getNode();
+        Node jcrNode = nodeModel.getNode();
         // do not count for virtual nodes w.r.t performance
         if (jcrNode.isNodeType(HippoNodeType.NT_FACETRESULT)
                 || jcrNode.isNodeType(HippoNodeType.NT_FACETSEARCH)
-                || jcrNode.getCanonicalNode() == null
-                || !jcrNode.getCanonicalNode().isSame(jcrNode) ) {
-            return  1;
+                || ((jcrNode instanceof HippoNode)
+                        && (((HippoNode) jcrNode).getCanonicalNode() == null
+                                || !((HippoNode) jcrNode).getCanonicalNode().isSame(jcrNode)))) {
+            return 1;
         } else {
             return loadChildren().size();
         }
     }
 
     @Override
-    protected List<AbstractTreeNode> loadChildren() throws RepositoryException {
-        List<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
+    protected List<TreeNode> loadChildren() throws RepositoryException {
+        List<TreeNode> result = new ArrayList<TreeNode>();
         List<Node> subNodes = subNodes(nodeModel.getNode());
         for (Node subNode : subNodes) {
             FolderTreeNode subfolder = new FolderTreeNode(new JcrNodeModel(subNode), this);
@@ -85,38 +82,19 @@ public class FolderTreeNode extends AbstractTreeNode {
 
     @Override
     public int getChildCount() {
-        HippoNode jcrNode = this.nodeModel.getNode();
-        try {
-            // do not count for virtual nodes w.r.t performance
-            if (jcrNode.getCanonicalNode() == null || !jcrNode.getCanonicalNode().isSame(jcrNode)) {
-               return 1;
-            }
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
-       return super.getChildCount();
-    }
-
-    public TreeNode getParent() {
-        return parent;
-    }
-
-    @Override
-    public String renderNode() {
-        String result = (String) new NodeTranslator(getNodeModel()).getNodeName().getObject();
-        HippoNode node = getNodeModel().getNode();
-        if (node != null) {
+        Node jcrNode = this.nodeModel.getNode();
+        if (jcrNode instanceof HippoNode) {
             try {
-                if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
-                    result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
+                HippoNode hippoNode = (HippoNode) jcrNode;
+                // do not count for virtual nodes w.r.t performance
+                if (hippoNode.getCanonicalNode() == null || !hippoNode.getCanonicalNode().isSame(hippoNode)) {
+                    return 1;
                 }
-            } catch (ValueFormatException e) {
-                // ignore the hippo count if not of type long
             } catch (RepositoryException e) {
-                result = e.getMessage();
+                log.error(e.getMessage());
             }
         }
-        return result;
+        return super.getChildCount();
     }
 
     private List<Node> subNodes(Node node) throws RepositoryException {

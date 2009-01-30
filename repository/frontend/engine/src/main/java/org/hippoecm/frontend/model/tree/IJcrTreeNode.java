@@ -13,30 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.service;
+package org.hippoecm.frontend.model.tree;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.PluginRequestTarget;
+import javax.jcr.RepositoryException;
+import javax.swing.tree.TreeNode;
 
-public interface IRenderService extends IClusterable {
-    final static String SVN_ID = "$Id$";
+import org.apache.wicket.model.IDetachable;
+import org.hippoecm.frontend.model.JcrNodeModel;
 
-    Component getComponent();
+public interface IJcrTreeNode extends TreeNode, IDetachable {
 
-    void render(PluginRequestTarget target);
+    JcrNodeModel getNodeModel();
 
-    // travels up the hierarchy
-    void focus(IRenderService child);
-
-    // Rendering hierarchy management
-
-    void bind(IRenderService parent, String id);
-
-    void unbind();
-
-    String getId();
-
-    IRenderService getParentService();
-
+    IJcrTreeNode getChild(String name) throws RepositoryException;
 }

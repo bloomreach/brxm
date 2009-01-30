@@ -16,6 +16,7 @@
 
 package org.hippoecm.frontend.plugins.xinha.dialog.images;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -27,7 +28,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractBrowserDialog;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImage;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
-import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +57,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog {
     @Override
     protected JcrNodeModel findNewModel(IModel model) {
         JcrNodeModel nodeModel = (JcrNodeModel) model;
-        HippoNode node = nodeModel.getNode();
+        Node node = nodeModel.getNode();
         if (node != null) {
             try {
                 if (node.getPrimaryNodeType().getName().equals("hippo:handle")) {

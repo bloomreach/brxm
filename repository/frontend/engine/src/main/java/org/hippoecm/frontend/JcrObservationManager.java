@@ -18,10 +18,12 @@ package org.hippoecm.frontend;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.jcr.RepositoryException;
@@ -91,10 +93,13 @@ public class JcrObservationManager implements ObservationManager {
 
         synchronized void process() {
             final Iterator<Event> upstream = events.iterator();
+            final long size = events.size();
             EventIterator iter = new EventIterator() {
 
                 public Event nextEvent() {
-                    return upstream.next();
+                    Event event = upstream.next();
+                    upstream.remove();
+                    return event;
                 }
 
                 public long getPosition() {
@@ -102,7 +107,7 @@ public class JcrObservationManager implements ObservationManager {
                 }
 
                 public long getSize() {
-                    return events.size();
+                    return size;
                 }
 
                 public void skip(long skipNum) {
@@ -114,7 +119,7 @@ public class JcrObservationManager implements ObservationManager {
                 }
 
                 public Object next() {
-                    return upstream.next();
+                    return nextEvent();
                 }
 
                 public void remove() {
@@ -170,7 +175,13 @@ public class JcrObservationManager implements ObservationManager {
 
         UserSession session = (UserSession) org.apache.wicket.Session.get();
         if (session != null) {
-            for (Map.Entry<EventListener, JcrListener> entry : listeners.entrySet()) {
+            // copy set of listeners; don't synchronize on map while notifying observers
+            // as it may need to be modified as a result of the event.
+            Set<Map.Entry<EventListener, JcrListener>> set;
+            synchronized (listeners) {
+                set = new HashSet<Map.Entry<EventListener, JcrListener>>(listeners.entrySet());
+            }
+            for (Map.Entry<EventListener, JcrListener> entry : set) {
                 JcrListener listener = entry.getValue();
                 if (listener.getSession() == session) {
                     listener.process();

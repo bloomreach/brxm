@@ -15,24 +15,25 @@
  */
 package org.hippoecm.frontend.plugins.console.browser;
 
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippoecm.frontend.model.IJcrNodeModelListener;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.tree.AbstractTreeNode;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.tree.CachedTreeModel;
+import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.wicket1985.Tree;
 import org.hippoecm.frontend.widgets.JcrTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BrowserPlugin extends RenderPlugin implements IJcrNodeModelListener {
+public class BrowserPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -40,39 +41,46 @@ public class BrowserPlugin extends RenderPlugin implements IJcrNodeModelListener
 
     static final Logger log = LoggerFactory.getLogger(BrowserPlugin.class);
 
-    protected Tree tree;
-    protected JcrTreeModel treeModel;
-    protected AbstractTreeNode rootNode;
+    protected JcrTree tree;
+    protected CachedTreeModel treeModel;
+    protected IJcrTreeNode rootNode;
 
     public BrowserPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        context.registerService(this, IJcrService.class.getName());
-
         this.rootNode = new JcrTreeNode(new JcrNodeModel("/"), null);
-
-        treeModel = new JcrTreeModel(rootNode);
+        treeModel = new CachedTreeModel(new JcrTreeModel(rootNode));
+        context.registerService(treeModel, IObserver.class.getName());
         tree = newTree(treeModel);
         add(tree);
+
 
         add(new ScrollBehavior());
         onModelChanged();
     }
 
-    protected Tree newTree(JcrTreeModel treeModel) {
+    protected JcrTree newTree(TreeModel treeModel) {
         return new JcrTree("tree", treeModel) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
-                AbstractTreeNode treeNodeModel = (AbstractTreeNode) clickedNode;
-                BrowserPlugin.this.onSelect(treeNodeModel, target);
+                if (clickedNode instanceof IJcrTreeNode) {
+                    IJcrTreeNode treeNodeModel = (IJcrTreeNode) clickedNode;
+                    BrowserPlugin.this.onSelect(treeNodeModel, target);
+                }
             }
         };
     }
 
-    protected void onSelect(final AbstractTreeNode treeNodeModel, AjaxRequestTarget target) {
+    protected void onSelect(final IJcrTreeNode treeNodeModel, AjaxRequestTarget target) {
         setModel(treeNodeModel.getNodeModel());
+    }
+
+    @Override
+    public void render(PluginRequestTarget target) {
+        super.render(target);
+        tree.updateTree();
     }
 
     @Override
@@ -80,28 +88,16 @@ public class BrowserPlugin extends RenderPlugin implements IJcrNodeModelListener
         super.onModelChanged();
 
         JcrNodeModel model = (JcrNodeModel) getModel();
-        AbstractTreeNode node = treeModel.lookup(model);
+        IJcrTreeNode node = treeModel.lookup(model);
         if (node != null) {
             TreeNode parentNode = node.getParent();
             while (parentNode != null) {
-                if(!tree.getTreeState().isNodeExpanded(parentNode)) {
+                if (!tree.getTreeState().isNodeExpanded(parentNode)) {
                     tree.getTreeState().expandNode(parentNode);
                 }
                 parentNode = parentNode.getParent();
             }
             tree.getTreeState().selectNode(node, true);
-            redraw();
-        }
-    }
-
-    // implements IJcrNodeModelListener
-
-    public void onFlush(JcrNodeModel nodeModel) {
-        AbstractTreeNode node = treeModel.lookup(nodeModel);
-        if (node != null) {
-            node.detach();
-            treeModel.nodeStructureChanged(node);
-            redraw();
         }
     }
 

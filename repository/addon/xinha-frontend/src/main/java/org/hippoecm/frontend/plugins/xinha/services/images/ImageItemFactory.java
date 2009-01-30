@@ -59,10 +59,15 @@ public class ImageItemFactory implements IClusterable {
                 // find the nodename of the facetselect
                 String resourcePath = urlValue.substring(BINARIES_PREFIX.length());
                 JcrNodeModel linkedImageModel = new JcrNodeModel(resourcePath).getParentModel();
-                HippoNode virtualImageNode = linkedImageModel.getNode();
+                Node virtualImageNode = linkedImageModel.getNode();
                 if (virtualImageNode != null) {
                     try {
-                        Node imageNode = linkedImageModel.getNode().getCanonicalNode();
+                        Node imageNode;
+                        if (virtualImageNode instanceof HippoNode) {
+                            imageNode = ((HippoNode) virtualImageNode).getCanonicalNode();
+                        } else {
+                            imageNode = virtualImageNode;
+                        }
                         if (imageNode != null) {
                             ImageItem item = createImageItem(imageNode);
                             item.setFacetName(virtualImageNode.getParent().getName());

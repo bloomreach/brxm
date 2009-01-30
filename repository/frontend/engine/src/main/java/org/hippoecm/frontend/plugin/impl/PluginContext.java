@@ -62,7 +62,7 @@ public class PluginContext implements IPluginContext, IDetachable {
     }
 
     public IClusterControl newCluster(IClusterConfig template, IPluginConfig parameters) {
-        String clusterId = controlId + ":clusters." + (clusterCount++);
+        String clusterId = controlId + ":" + template.getName() + (clusterCount++);
         IClusterConfig decorator = new ClusterConfigDecorator(template, clusterId);
         ClusterControl cluster = new ClusterControl(manager, this, decorator, clusterId);
 

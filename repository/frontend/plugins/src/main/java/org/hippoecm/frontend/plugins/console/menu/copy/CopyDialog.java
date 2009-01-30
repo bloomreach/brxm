@@ -26,7 +26,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.tree.AbstractTreeNode;
+import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugins.console.dialog.LookupDialog;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
@@ -102,7 +102,7 @@ public class CopyDialog extends LookupDialog {
     }
 
     @Override
-    protected boolean isValidSelection(AbstractTreeNode targetModel) {
+    protected boolean isValidSelection(IJcrTreeNode targetModel) {
         return true;
     }
 

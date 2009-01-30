@@ -20,7 +20,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class TypeComparator extends NodeComparator {
@@ -31,8 +30,8 @@ public class TypeComparator extends NodeComparator {
     @Override
     public int compare(JcrNodeModel o1, JcrNodeModel o2) {
         try {
-            HippoNode n1 = ((JcrNodeModel) o1).getNode();
-            HippoNode n2 = ((JcrNodeModel) o2).getNode();
+            Node n1 = ((JcrNodeModel) o1).getNode();
+            Node n2 = ((JcrNodeModel) o2).getNode();
             if (n1 == null) {
                 if (n2 == null) {
                     return 0;
@@ -49,7 +48,7 @@ public class TypeComparator extends NodeComparator {
         }
     }
 
-    private String getTypeLabel(HippoNode node) throws RepositoryException {
+    private String getTypeLabel(Node node) throws RepositoryException {
         String type = "";
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
             type = node.getPrimaryNodeType().getName();

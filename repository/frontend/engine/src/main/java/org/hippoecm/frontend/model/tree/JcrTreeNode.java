@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.model.tree;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -27,27 +29,86 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class JcrTreeNode extends AbstractTreeNode {
+public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
+    private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final long serialVersionUID = 1L;
+    static final Logger log = LoggerFactory.getLogger(JcrTreeNode.class);
 
     private final static int MAXCOUNT = 2000;
 
-    private JcrTreeNode parent;
+    private List<TreeNode> children = new ArrayList<TreeNode>();
 
-    public JcrTreeNode(JcrNodeModel nodeModel, JcrTreeNode parent) {
+    private boolean reloadChildren = true;
+    private boolean reloadChildcount = true;
+    private int childcount = 0;
+    private IJcrTreeNode parent;
+
+    public JcrTreeNode(JcrNodeModel nodeModel, IJcrTreeNode parent) {
         super(nodeModel);
 
         this.parent = parent;
     }
 
+    /**
+     * Resolve the child that corresponds to a particular name.
+     * @param name
+     * @return child node
+     * @throws RepositoryException
+     */
+    public IJcrTreeNode getChild(String name) throws RepositoryException {
+        if (getNodeModel().getNode().hasNode(name)) {
+            JcrNodeModel childModel = new JcrNodeModel(getNodeModel().getNode().getNode(name));
+            ensureChildrenLoaded();
+            for (TreeNode child : children) {
+                if (child instanceof IJcrTreeNode && ((IJcrTreeNode) child).getNodeModel().equals(childModel)) {
+                    return (IJcrTreeNode) child;
+                }
+            }
+        }
+        return null;
+    }
+
+    // implement TreeNode
+
+    public TreeNode getParent() {
+        return parent;
+    }
+
+    public Enumeration<TreeNode> children() {
+        ensureChildrenLoaded();
+        return Collections.enumeration(children);
+    }
+
+    public TreeNode getChildAt(int i) {
+        ensureChildrenLoaded();
+        return children.get(i);
+    }
+
+    public int getChildCount() {
+        ensureChildcountLoaded();
+        return childcount;
+    }
+
+    public int getIndex(TreeNode node) {
+        ensureChildrenLoaded();
+        return children.indexOf(node);
+    }
+
     public boolean isLeaf() {
+        if (!reloadChildcount) {
+            return childcount == 0;
+        }
         try {
             if (nodeModel != null && nodeModel.getNode() != null) {
                 return !nodeModel.getNode().getNodes().hasNext();
@@ -58,40 +119,32 @@ public class JcrTreeNode extends AbstractTreeNode {
         return true;
     }
 
-    public TreeNode getParent() {
-        return parent;
+    public boolean getAllowsChildren() {
+        return true;
     }
 
-    /**
-     * Checks if the wrappen jcr node is a virtual node
-     * @return true if the node is virtual else false
-     */
-    public boolean isVirtual() {
-        if (nodeModel == null) {
-            return false;
-        }
-        HippoNode jcrNode = nodeModel.getNode();
-        if (jcrNode == null) {
-            return false;
-        }
-        try {
-            Node canonical = jcrNode.getCanonicalNode();
-            if (canonical == null) {
-                return true;
-            }
-            return !jcrNode.getCanonicalNode().isSame(jcrNode);
-        } catch (RepositoryException e) {
-            log.error(e.getMessage(), e);
-            return false;
-        }
-    }
+    // implement IDetachable
 
     @Override
+    public void detach() {
+        reloadChildren = true;
+        reloadChildcount = true;
+        if (children != null) {
+            for (TreeNode child : children) {
+                if (child instanceof IDetachable) {
+                    ((IDetachable) child).detach();
+                }
+            }
+            children = null;
+        }
+        super.detach();
+    }
+
     protected int loadChildcount() throws RepositoryException {
         int result;
-        HippoNode node = nodeModel.getNode();
+        Node node = nodeModel.getNode();
         if (node.isNodeType(HippoNodeType.NT_FACETRESULT) || node.isNodeType(HippoNodeType.NT_FACETSEARCH)
-                || node.getCanonicalNode() == null) {
+                || ((node instanceof HippoNode) && ((HippoNode) node).getCanonicalNode() == null)) {
             result = 1;
         } else {
             result = (int) node.getNodes().getSize();
@@ -99,10 +152,9 @@ public class JcrTreeNode extends AbstractTreeNode {
         return result;
     }
 
-    @Override
-    protected List<AbstractTreeNode> loadChildren() throws RepositoryException {
+    protected List<TreeNode> loadChildren() throws RepositoryException {
         Node node = nodeModel.getNode();
-        List<AbstractTreeNode> newChildren = new ArrayList();
+        List<TreeNode> newChildren = new ArrayList<TreeNode>();
         NodeIterator jcrChildren = node.getNodes();
         int count = 0;
         while (jcrChildren.hasNext() && count < MAXCOUNT) {
@@ -115,34 +167,42 @@ public class JcrTreeNode extends AbstractTreeNode {
             }
         }
         if (jcrChildren.hasNext()) {
-            LabelTreeNode treeNodeModel = new LabelTreeNode(nodeModel, this, jcrChildren.getSize()
-                    - jcrChildren.getPosition());
+            LabelTreeNode treeNodeModel = new LabelTreeNode(this, jcrChildren.getSize() - jcrChildren.getPosition());
             newChildren.add(treeNodeModel);
         }
         return newChildren;
     }
 
-    @Override
-    public String renderNode() {
-        String result = "unknown";
-        HippoNode node = getNodeModel().getNode();
-        if (node != null) {
+    private void ensureChildcountLoaded() {
+        if (nodeModel == null || nodeModel.getNode() == null) {
+            reloadChildren = false;
+            reloadChildcount = false;
+            childcount = 0;
+        } else if (reloadChildcount) {
             try {
-                result = node.getDisplayName();
-                if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
-                    result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
-                }
+                childcount = loadChildcount();
             } catch (RepositoryException e) {
-                result = e.getMessage();
+                log.error(e.getMessage());
             }
+            reloadChildcount = false;
         }
-        return result;
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("nodeModel", nodeModel.toString())
-                .toString();
+    private void ensureChildrenLoaded() {
+        if (nodeModel.getNode() == null) {
+            reloadChildren = false;
+            reloadChildcount = false;
+            children = new ArrayList<TreeNode>();
+        } else if (reloadChildren) {
+            try {
+                children = loadChildren();
+                childcount = children.size();
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+            reloadChildren = false;
+            reloadChildcount = false;
+        }
     }
 
     @Override
@@ -159,7 +219,13 @@ public class JcrTreeNode extends AbstractTreeNode {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(87, 335).append(nodeModel).toHashCode();
+        return new HashCodeBuilder(467, 17).append(nodeModel).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("nodeModel", nodeModel.toString())
+                .toString();
     }
 
 }

@@ -15,12 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +35,7 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
     public AttributeModifier[] getCellAttributeModifiers(IModel model) {
         if (model instanceof JcrNodeModel) {
             try {
-                HippoNode node = (HippoNode) model.getObject();
+                Node node = (Node) model.getObject();
                 if (node != null) {
                     return getCellAttributeModifiers(node);
                 } else {
@@ -48,11 +48,11 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
         return null;
     }
 
-    protected AttributeModifier getCellAttributeModifier(HippoNode node) throws RepositoryException {
+    protected AttributeModifier getCellAttributeModifier(Node node) throws RepositoryException {
         return null;
     }
 
-    protected AttributeModifier[] getCellAttributeModifiers(HippoNode node) throws RepositoryException {
+    protected AttributeModifier[] getCellAttributeModifiers(Node node) throws RepositoryException {
         AttributeModifier modifier = getCellAttributeModifier(node);
         if(modifier != null) {
             return new AttributeModifier[] { modifier };
@@ -64,7 +64,7 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
     public AttributeModifier[] getColumnAttributeModifiers(IModel model) {
         if (model instanceof JcrNodeModel) {
             try {
-                HippoNode node = (HippoNode) model.getObject();
+                Node node = (Node) model.getObject();
                 if (node != null) {
                     return getColumnAttributeModifiers(node);
                 } else {
@@ -77,11 +77,11 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
         return null;
     }
 
-    protected AttributeModifier getColumnAttributeModifier(HippoNode node) throws RepositoryException {
+    protected AttributeModifier getColumnAttributeModifier(Node node) throws RepositoryException {
         return null;
     }
 
-    protected AttributeModifier[] getColumnAttributeModifiers(HippoNode node) throws RepositoryException {
+    protected AttributeModifier[] getColumnAttributeModifiers(Node node) throws RepositoryException {
         AttributeModifier modifier = getColumnAttributeModifier(node);
         if (modifier != null) {
             return new AttributeModifier[] { modifier };

@@ -25,7 +25,6 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
@@ -34,7 +33,7 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public AttributeModifier getCellAttributeModifier(HippoNode node) throws RepositoryException {
+    public AttributeModifier getCellAttributeModifier(Node node) throws RepositoryException {
         String cssClass;
         if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
             Node imageSet = node.getNode(node.getName());
@@ -72,7 +71,7 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
     }
 
     @Override
-    public AttributeModifier getColumnAttributeModifier(HippoNode node) throws RepositoryException {
+    public AttributeModifier getColumnAttributeModifier(Node node) throws RepositoryException {
         return new CssClassAppender(new Model("icon-16"));
     }
 }

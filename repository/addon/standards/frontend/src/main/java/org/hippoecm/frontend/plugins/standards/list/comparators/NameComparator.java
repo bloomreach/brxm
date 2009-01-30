@@ -15,10 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.comparators;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.api.HippoNode;
 
 public class NameComparator extends NodeComparator {
     @SuppressWarnings("unused")
@@ -29,8 +29,8 @@ public class NameComparator extends NodeComparator {
     public int compare(JcrNodeModel o1, JcrNodeModel o2) {
         int result;
         try {
-            HippoNode n1 = o1.getNode();
-            HippoNode n2 = o2.getNode();
+            Node n1 = o1.getNode();
+            Node n2 = o2.getNode();
             if (n1 == null) {
                 if (n2 == null) {
                     result = 0;

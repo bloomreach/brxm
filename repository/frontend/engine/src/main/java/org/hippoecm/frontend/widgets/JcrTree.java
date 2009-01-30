@@ -15,15 +15,20 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.tree.ITreeState;
-import org.hippoecm.frontend.model.tree.AbstractTreeNode;
-import org.hippoecm.frontend.model.tree.JcrTreeModel;
-import org.hippoecm.frontend.model.tree.JcrTreeNode;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.tree.IJcrTreeNode;
+import org.hippoecm.frontend.model.tree.ILabelTreeNode;
 import org.hippoecm.frontend.wicket1985.Tree;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,19 +43,14 @@ public abstract class JcrTree extends Tree {
 
     private static final ResourceReference VIRTUAL_FOLDER_CLOSED = new ResourceReference(JcrTree.class,
             "icons/folder-closed-virtual.gif");
-    
-    /** Reference to the icon of tree item (not a folder) */
-    private static final ResourceReference VIRTUAL_ITEM = new ResourceReference(JcrTree.class,
-            "icons/item-virtual.gif");
 
+    /** Reference to the icon of tree item (not a folder) */
+    private static final ResourceReference VIRTUAL_ITEM = new ResourceReference(JcrTree.class, "icons/item-virtual.gif");
 
     static final Logger log = LoggerFactory.getLogger(JcrTree.class);
 
-    private JcrTreeModel treeModel;
-
-    public JcrTree(String id, JcrTreeModel treeModel) {
+    public JcrTree(String id, TreeModel treeModel) {
         super(id, treeModel);
-        this.treeModel = treeModel;
         setLinkType(LinkType.AJAX);
 
         ITreeState treeState = getTreeState();
@@ -61,16 +61,29 @@ public abstract class JcrTree extends Tree {
 
     protected abstract void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode);
 
-    @Override
-    public void onDetach() {
-        treeModel.detach();
-        super.onDetach();
-    }
-    
-    @Override
-    protected String renderNode(TreeNode treeNode) {
-        AbstractTreeNode treeNodeModel = (AbstractTreeNode) treeNode;
-        return treeNodeModel.renderNode();
+    public String renderNode(TreeNode treeNode) {
+        String result = "unknown";
+        if (treeNode instanceof IJcrTreeNode) {
+            Node node = ((IJcrTreeNode) treeNode).getNodeModel().getNode();
+            if (node != null) {
+                try {
+                    if (node instanceof HippoNode) {
+                        HippoNode hippoNode = (HippoNode) node;
+                        result = hippoNode.getDisplayName();
+                        if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
+                            result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
+                        }
+                    } else {
+                        result = node.getName();
+                    }
+                } catch (RepositoryException e) {
+                    result = e.getMessage();
+                }
+            }
+        } else if (treeNode instanceof ILabelTreeNode) {
+            return ((ILabelTreeNode) treeNode).getLabel();
+        }
+        return result;
     }
 
     /**
@@ -81,7 +94,7 @@ public abstract class JcrTree extends Tree {
      * @return The package resource reference
      */
     protected ResourceReference getNodeIcon(TreeNode node) {
-        if (node instanceof JcrTreeNode && ((JcrTreeNode) node).isVirtual()) {
+        if (node instanceof IJcrTreeNode && isVirtual((IJcrTreeNode) node)) {
             if (node.isLeaf()) {
                 return getVirtualItem();
             } else {
@@ -93,6 +106,32 @@ public abstract class JcrTree extends Tree {
             }
         } else {
             return super.getNodeIcon(node);
+        }
+    }
+
+    /**
+     * Checks if the wrapped jcr node is a virtual node
+     * @return true if the node is virtual else false
+     */
+    public boolean isVirtual(IJcrTreeNode node) {
+        JcrNodeModel nodeModel = node.getNodeModel();
+        if (nodeModel == null) {
+            return false;
+        }
+        Node jcrNode = nodeModel.getNode();
+        if (jcrNode == null || !(jcrNode instanceof HippoNode)) {
+            return false;
+        }
+        try {
+            HippoNode hippoNode = (HippoNode) jcrNode;
+            Node canonical = hippoNode.getCanonicalNode();
+            if (canonical == null) {
+                return true;
+            }
+            return !hippoNode.getCanonicalNode().isSame(hippoNode);
+        } catch (RepositoryException e) {
+            log.error(e.getMessage(), e);
+            return false;
         }
     }
 
@@ -122,6 +161,5 @@ public abstract class JcrTree extends Tree {
     protected ResourceReference getVirtualItem() {
         return VIRTUAL_ITEM;
     }
-
 
 }

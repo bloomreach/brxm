@@ -25,7 +25,6 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.JcrEventListener;
-import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +53,8 @@ public class JcrNodeModel extends ItemModelWrapper implements IObservable {
         super(path);
     }
 
-    public HippoNode getNode() {
-        return (HippoNode) itemModel.getObject();
+    public Node getNode() {
+        return (Node) itemModel.getObject();
     }
 
     public JcrNodeModel getParentModel() {

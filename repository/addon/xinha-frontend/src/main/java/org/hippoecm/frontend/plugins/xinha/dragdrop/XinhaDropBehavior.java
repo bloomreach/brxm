@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.xinha.dragdrop;
 
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,7 +30,6 @@ import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DragDropSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DropBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,7 +108,7 @@ public abstract class XinhaDropBehavior extends DropBehavior {
     }
 
     private Type getType(JcrNodeModel nodeModel) {
-        HippoNode node = nodeModel.getNode();
+        Node node = nodeModel.getNode();
         try {
             if (node.isNodeType(HippoNodeType.NT_RESOURCE)) {
                 //asset or image

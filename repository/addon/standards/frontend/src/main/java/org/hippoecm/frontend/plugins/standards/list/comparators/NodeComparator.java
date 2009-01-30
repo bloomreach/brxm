@@ -17,9 +17,13 @@ package org.hippoecm.frontend.plugins.standards.list.comparators;
 
 import java.util.Comparator;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.repository.api.HippoNode;
 
 public abstract class NodeComparator implements Comparator<IModel>, IClusterable {
     @SuppressWarnings("unused")
@@ -31,6 +35,17 @@ public abstract class NodeComparator implements Comparator<IModel>, IClusterable
             return 0;
         }
         return compare((JcrNodeModel)o1, (JcrNodeModel)o2);
+    }
+
+    protected Node getCanonicalNode(JcrNodeModel model) throws RepositoryException {
+        Node node1 = model.getNode();
+        Node n1;
+        if (node1 instanceof HippoNode) {
+            n1 = ((HippoNode) node1).getCanonicalNode();
+        } else {
+            n1 = node1;
+        }
+        return n1;
     }
 
     public abstract int compare(JcrNodeModel node1, JcrNodeModel node2);
