@@ -26,6 +26,12 @@
     <section name="Developing Hippo CMS with Eclipse">
         <span class='shortdesc'>How to import and work with the Hippo CMS project in the Eclipse IDE.</span>
 
+  <div class='warn'>
+   Part of the contents of this page has been split up and the components have
+   been moved to <a href='../../tools/howto/index.html'>Tools howto</a>. This document now has links
+   to them, but all of this document will go there too.
+  </div>
+
     <subsection name="Introduction">
 
       <p>
@@ -47,101 +53,13 @@
           For the rest of this chapter ~/hippo-ecm is the directory where the sources
           are checked out and ~/workspace is the Eclipse workspace directory.</p>
       </div>
-
-      <p>Download and install <a href="http://www.eclipse.org/">Eclipse</a> version >= 3.3.2</p>
-
-      <p>Start eclipse with some memory flags to the Eclipse -vmargs startup argument:</p>
-      <source>eclipse -vmargs -Xms512M -Xmx512M -XX:MaxPermSize=128M</source>
-      <ul>
-        <li>Set the heap size to at least 512M by adding something like -Xms512M -Xmx512M</li>
-        <li>Set the permSpace size to at least 128M by adding something like -XX:MaxPermSize=128M</li>
-      </ul>
- 
-      <p>
-        Start Eclipse, it is strongly advised to start with a clean workspace.
-        <br/><br/>
-        Tell Eclipse where it can find your local Maven repository by opening a command shell and running:
-      </p>
-      <source>~/> mvn -Declipse.workspace=&lt;path-to-eclipse-workspace&gt; eclipse:add-maven-repo</source>
-      <p> 
-        Import the Eclipse update site bookmarks file 
-        <a href="${project_source_url}/trunk/tools/eclipse/bookmark.xml"><b>
-        ~/hippo-ecm/tools/eclipse/bookmark.xml</b></a> using the Eclipse update manager.
-        <br/><br/>
-        This will add update sites for the following Eclipse plugins which need to be installed:
-      </p>
-            
-      <ul>
-        <li>
-          <b>Subversive: </b>see the official 
-          <a href="http://www.eclipse.org/subversive/documentation/gettingStarted/aboutSubversive/install.php">documentation</a>.
-        </li>
-        <li>
-          <b>Run Jetty Run: </b>see the official
-          <a href="http://code.google.com/p/run-jetty-run/">documentation</a>.
-        </li>
-        <li>
-          <b>JPOX Eclipse:</b>
-          <br/>
-          You only need to install the 'JPOX Eclipse Plugin', after installing go to the Eclipse preferences dialog and:
-          <ol>             
-            <li>
-              <p>Select JPOX</p>
-            </li>
-            <li>
-              <p>Uncheck 'Use project classpath when running tools' (some versions have it below submenu '<i>JPOX -> General</i>')</p>
-            </li>
-            <li>
-              <p>Add the following jars to the classpath: You can find these jars in your
-                local Maven repository.
-              </p>
-              <ul>
-                <li>&lt;maven-repository&gt;/jpox/jpox-core/1.2.0-beta-2/jpox-core-1.2.0-beta-2.jar</li>
-                <li>&lt;maven-repository&gt;/jpox/jpox-enhancer/1.2.0-beta-2/jpox-enhancer-1.2.0-beta-2.jar</li>
-                <li>&lt;maven-repository&gt;/bcel/bcel/5.2/bcel-5.2.jar</li>
-              </ul>
-            </li>
-            <li>
-              <p>Select JPOX -&gt; Enhancer and enter 'BCEL' in the the 'Class Enhancer' field.</p>
-            </li>
-          </ol>
-        </li>
-        <li>
-          <b>Groovy Monkey: </b>see the official
-          <a href="http://groovy.codehaus.org/Groovy+Monkey">documentation</a>.
-        </li>
-      </ul>
-      <p>
-        The Hippo ECM Maven build extensively uses
-        <a href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html">WAR overlays</a>,
-        in order to mimic this for Eclipse some scripts have been made that create symbolic links for these overlays.
-      </p>
-      <ul>
-        <li>
-          <p>
-            <b>Windows: </b> Open a command shell, go to the <b>~\hippo-ecm\tools\eclipse</b> directory and run the 
-            <a href="${project_source_url}/trunk/tools/eclipse/createlinks.bat"><b>
-            createlinks.bat</b></a> script.
-          </p>
-          <p>
-            <b>Note:</b> Although it is not possible to create symbolic links with the tools that are provided by
-            default by Windows, they do exist. This script uses one of the Microsoft supplied tools for this:
-            <a href="http://technet.microsoft.com/en-us/sysinternals/bb896768.aspx">junction</a>.  <!-- Was:  <a href="http://www.microsoft.com/technet/sysinternals/fileanddisk/junction.mspx">junction</a>. -->
-            If you prefer not to install junction the alternative is to manually copy the linked directories,
-            please note that this has to be done every time there is an update in the linked directory. See
-            the script for what needs to be done.
-          </p>
-        </li>
-        <li>
-          <p>
-            <b>Unix: </b> Open a command shell, go to the <b>~/hippo-ecm/tools/eclipse</b> directory and run the 
-            <a href="${project_source_url}/trunk/tools/eclipse/createlinks.sh"><b>
-            createlinks.sh</b></a> script.
-          </p>
-        </li>
-      </ul>
     </subsection>
-    
+
+    <subsection name='Configure Eclipse workspace'>
+     Read the document <a href='../../tools/howto/configure_workspace.html'>Configure Eclipse workspace</a>
+     and the documents it refers to.
+    </subsection>
+
     <subsection name="Create Eclipse projects">
       <div style="border:1px solid black; padding:1em;"> NOTE: Make sure that there is no
         .project file in the toplevel (hippo-ecm) directory before proceding. If there is

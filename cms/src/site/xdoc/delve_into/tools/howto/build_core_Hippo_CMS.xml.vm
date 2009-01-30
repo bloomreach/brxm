@@ -40,16 +40,16 @@
          ~/cms&gt; mvn package
         </source>
         <p>This will build the package:</p>
-        <code>cms/package/ear/target/${package_ear}</code>
+        <code>~/cms/package/ear/target/${package_ear}</code>
         <p>
          The 'mvn package' command will build the package(s) 
          and leave them in a <code>target/</code>
          descendant directory of your /cms directory. For instance,
          if a project is configured to produce an EAR package, the produced EAR
          package is put in the directory:</p>
-         <code>cms/package/ear/target/</code>
+         <code>~/cms/package/ear/target/</code>
          <p>While a WAR package would be put in the directory:</p>
-         <code>cms/package/war/target/</code>
+         <code>~/cms/package/war/target/</code>
          <p>WAR and EAR packages can <em>not</em> be build simultaneously.</p>
 
         </section>

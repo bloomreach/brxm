@@ -48,13 +48,8 @@
   </document><document ext="xml" filename="index" relpath="delve_into/core/building">Building Hippo CMS
    <section>Building Hippo CMS</section>
    <shortdesc>Build Hippo CMS from source using your tool of choice.</shortdesc>
-  </document><document ext="xml.vm" filename="maven" relpath="delve_into/core/building">Building with Maven
-   <section>Building with Maven</section>
-   <shortdesc>Build Hippo CMS from the command line using Maven.</shortdesc>
-   <subsection>Install Maven</subsection>
-   <subsection>Get the Hippo CMS source</subsection>
-   <subsection>Build</subsection>
-   <subsection>Run</subsection>
+  </document><document ext="xml.vm" filename="maven" relpath="delve_into/core/building">Developing with Maven
+   <section>Developing with Maven</section>
   </document><document ext="xml" filename="netbeans" relpath="delve_into/core/building">Building with Netbeans
    <section>Building with Netbeans</section>
    <shortdesc>How to import and work with the Hippo CMS project in the Netbeans IDE.</shortdesc>
@@ -300,7 +295,7 @@
   </document><document ext="xml.vm" filename="quickstart_in_existing_container" relpath="delve_into">Your own Quickstart
    <section>Your own Quickstart</section>
    <shortdesc>Quickstart in your own servlet container.</shortdesc>
-   <subsection>Rubbish</subsection>
+   <subsection>Download</subsection>
    <subsection>Deploy, run and access</subsection>
    <img/>
    <img/>
@@ -539,6 +534,50 @@
    <img>Glassfish logo</img>
    <img>Derby logo</img>
    <img>Oracle logo</img>
+  </document></folder><folder>tools
+   <title>Development Tools</title><shortdesc>Tools used when developing upon Hippo CMS 7</shortdesc><introduction>              <!-- tree -->
+  This section is to describe general tools and procedures needed when developing on top of Hippo CMS 7.
+  <span class="expires">When tools section finished</span>The intend is that the rest of the documentation
+  will link to this section where needed and thereby become cleaner.
+ </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
+ </afterlist>
+   <folder>howto
+   <title>Development Tools Howto</title><shortdesc>Howto's for tools used when developing upon Hippo CMS 7</shortdesc><introduction>              <!-- tree -->
+  This subsection of the tools section is to describe 
+  howto's of general tools and procedures needed when developing on top of Hippo CMS 7.
+  <span class="expires">When tools section finished</span>The intend is that the rest of the documentation
+  will link to the tools section where needed and thereby become cleaner.
+ </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
+ </afterlist>
+   <document ext="xml.vm" filename="build_core_Hippo_CMS" relpath="delve_into/tools/howto">Building the core Hippo CMS
+   <section>Building the core Hippo CMS</section>
+   <shortdesc>How to build the core Hippo CMS package from the sources?</shortdesc>
+  </document><document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/howto">Configure Workspace
+   <section>Configure Workspace</section>
+   <shortdesc>Configure Eclipse Workspace for Hippo CMS addon projects.</shortdesc>
+   <subsection>Identify Maven local repository</subsection>
+   <subsection>Configure update sites</subsection>
+   <subsection>Install plugins</subsection>
+  </document><document ext="xml.vm" filename="get_Hippo_CMS_source" relpath="delve_into/tools/howto">Get the Hippo CMS source
+   <section>Get the Hippo CMS source</section>
+   <shortdesc>Get the Hippo CMS source from the Hippo subversion repository.</shortdesc>
+  </document><document ext="xml" filename="index" relpath="delve_into/tools/howto">
+  </document><document ext="xml" filename="install_maven" relpath="delve_into/tools/howto">Install Maven
+   <section>Install Maven</section>
+   <shortdesc>Howto install Maven.</shortdesc>
+  </document><document ext="xml" filename="learning_maven" relpath="delve_into/tools/howto">Learning Maven
+   <section>Learning Maven</section>
+   <shortdesc>References to good Maven pages (TODO) and some handy notes.</shortdesc>
+  </document><document ext="xml" filename="run_development_package" relpath="delve_into/tools/howto">Run a development package
+   <section>Run a development package</section>
+   <shortdesc>How to run a  ?</shortdesc>
+  </document><document ext="xml" filename="start_eclipse" relpath="delve_into/tools/howto">Start Eclipse
+   <section>Start Eclipse</section>
+   <shortdesc>Start Eclipse to work on Hippo CMS addon projects.</shortdesc>
+  </document><document ext="xml.vm" filename="war_overlays_in_eclipse" relpath="delve_into/tools/howto">War overlays in eclipse
+   <section>War overlays in eclipse</section>
+   <shortdesc>How to use War overlays in eclipse</shortdesc>
+  </document></folder><document ext="xml" filename="index" relpath="delve_into/tools">
   </document></folder><folder>user
    
    <folder>cms_admins
@@ -852,12 +891,6 @@
    <img>request schedule publication screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="screenshots" relpath="delve_into/user/contributors/howto">Screenshots
-   <section>Screenshots</section>
-   <shortdesc>How to view screenshots in the userguide.</shortdesc>
-   <img>Hippo login screenshot</img>
-   <subsection>Next</subsection>
-   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="set_edit_mode" relpath="delve_into/user/contributors/howto">set edit mode
    <section>set edit mode</section>
    <shortdesc>How to set a document in edit mode?</shortdesc>
@@ -865,7 +898,7 @@
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="start_CMS" relpath="delve_into/user/contributors/howto">Start CMS site
    <section>Start CMS site</section>
-   <shortdesc>How to goto the CMS site, i.e. start a CMS session, in your browser.</shortdesc>
+   <shortdesc>How to go to the CMS site, i.e. start a CMS session, in your browser.</shortdesc>
    <img>goto CMS site</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
@@ -938,6 +971,7 @@
    <shortdesc>How to handle a request.</shortdesc>
    <img>handle requests screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/user/editors/howto">CMS Editor Howto
    <section>CMS Editor Howto</section>
    <shortdesc>A collection of howto's for small tasks an CMS editor may want to do.</shortdesc>
@@ -947,15 +981,18 @@
                               to decide about publication of documents, images and/or files.</shortdesc>
    <img>Hippo login screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="logout" relpath="delve_into/user/editors/howto">Logout
    <section>Logout</section>
    <shortdesc>How to logout</shortdesc>
    <img>logout screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="start_CMS" relpath="delve_into/user/editors/howto">Start CMS
-   <section>Start CMS</section>
-   <shortdesc>How to start a CMS session in your browser</shortdesc>
+  </document><document ext="xml" filename="start_CMS" relpath="delve_into/user/editors/howto">Start CMS site
+   <section>Start CMS site</section>
+   <shortdesc>How to go to the CMS site, i.e. start a CMS session, in your browser.</shortdesc>
+   <img>goto CMS site</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document></folder><document ext="xml" filename="index" relpath="delve_into/user/editors">Editors Guide
    <section>Editors Guide</section>
    <shortdesc>Guide for Hippo CMS users to perform the role of editor.</shortdesc>
@@ -1153,7 +1190,12 @@
    <section>Hippo CMS Tour for Information Architects</section>
    <shortdesc>To get introduced to the role of CMS information architect, 
       take the following tour.</shortdesc>
-  </document></folder></folder><folder>web
+  </document></folder><document ext="xml" filename="screenshots" relpath="delve_into/user">Screenshots
+   <section>Screenshots</section>
+   <shortdesc>How to view screenshots in the userguide.</shortdesc>
+   <img>Start CMS screenshot</img>
+   <subsection>Next</subsection>
+  </document></folder><folder>web
    
    <folder>add-ons
    
