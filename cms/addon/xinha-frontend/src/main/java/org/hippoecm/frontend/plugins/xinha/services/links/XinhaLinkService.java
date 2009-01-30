@@ -156,6 +156,7 @@ public abstract class XinhaLinkService implements IClusterable {
                     Node linkNode = node.getNode(relPath);
                     linkNode.remove();
                     node.getSession().save();
+                    setHref(null);
                 }
             } catch (RepositoryException e) {
                 log.error("Error during remove of internal link node[" + relPath + "]", e);
