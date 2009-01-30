@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 import javax.jcr.query.QueryManager;
@@ -69,7 +70,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
     public SearchBehavior(IPluginContext context, IPluginConfig config, IBrowseService<IModel> browse) {
         super(YuiPluginHelper.getManager(context), new AutoCompleteSettings(YuiPluginHelper.getConfig(config)));
         this.browseService = browse;
-        searchBuilder = new SearchBuilder(config.getStringArray("search.paths"));
+        searchBuilder = new SearchBuilder(config);
     }
 
     @Override
@@ -122,7 +123,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
                 r.setCharacterEncoding(encoding);
                 r.setContentType("application/json; charset=" + encoding);
 
-                // Make sure it is not cached by a
+                // Make sure it is not cached
                 r.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
                 r.setHeader("Cache-Control", "no-cache, must-revalidate");
                 r.setHeader("Pragma", "no-cache");
@@ -142,43 +143,72 @@ public class SearchBehavior extends AutoCompleteBehavior {
     private static class SearchBuilder implements IClusterable {
         private static final long serialVersionUID = 1L;
 
-        private static final String HARDDOCUMENT_QUERY = "//element(*, hippo:harddocument)";
-        private static final String EXCLUDE_FROZEN_NODE = "not(@jcr:primaryType='nt:frozenNode')";
+        private static final String HARDDOCUMENT_QUERY = "//element(*, hippo:harddocument)[";
         private static final String EXCERPT = "/rep:excerpt(.)";
-
+        
         private static ResultItem[] EMPTY_RESULTS = new ResultItem[0];
         private final String defaultWhere;
+        
+        private boolean wildcardSearch = false;
+        private String ignoreChars = "";
+         
+        public SearchBuilder(IPluginConfig config) {
+            if (config.containsKey("wildcard.search")) {
+                wildcardSearch = config.getBoolean("wildcard.search");
+            }
+            ignoreChars = config.getString("ignore.chars", ignoreChars);
 
-        public SearchBuilder(String[] searchPaths) {
+            StringBuilder sb = new StringBuilder(HARDDOCUMENT_QUERY);
+            if (config.containsKey("exclude.primary.types")) {
+                String[] excludePrimaryTypes = config.getStringArray("exclude.primary.types");
+                if (excludePrimaryTypes.length > 0) {
+                    sb.append("not(");
+                    boolean addOr = false;
+                    for (String exclude : excludePrimaryTypes) {
+                        if (addOr) {
+                            sb.append(" or ");
+                        } else
+                            addOr = true;
+                        sb.append("@jcr:primaryType='").append(exclude).append('\'');
+                    }
+                    sb.append(") and ");
+                }
+            }
+            String[] searchPaths = config.getStringArray("search.paths");
             if (searchPaths == null || searchPaths.length == 0) {
                 log.error("No search paths configured.");
                 throw new IllegalArgumentException("No search paths configured.");
             }
+            
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-            Node content;
-            StringBuilder sb = new StringBuilder();
-            sb.append(HARDDOCUMENT_QUERY).append('[').append(EXCLUDE_FROZEN_NODE).append(" and (");
+            sb.append("(");
 
             boolean addOr = false;
             for (String path : searchPaths) {
                 if (!path.startsWith("/")) {
                     throw new IllegalArgumentException("Search path should be absolute: " + path);
                 }
-                String uuid = null;
                 try {
-                    content = (Node) session.getItem(path);
-                    uuid = content.getUUID();
-                    if (uuid != null) {
-                        if (addOr) {
-                            sb.append(" or ");
-                        } else {
-                            addOr = true;
+                    Node content = (Node) session.getItem(path);
+                    NodeIterator ni = content.getNodes();
+                    while (ni.hasNext()) {
+                        Node cn = ni.nextNode();
+                        if (cn.isNodeType("mix:referenceable")) {
+                            String uuid = cn.getUUID();
+                            if (uuid != null) {
+                                if (addOr) {
+                                    sb.append(" or ");
+                                } else {
+                                    addOr = true;
+                                }
+                                sb.append("hippo:paths = '").append(uuid).append('\'');
+                            }
                         }
-                        sb.append("hippo:paths = '").append(uuid).append('\'');
                     }
                 } catch (RepositoryException e) {
-                    log.error("Could not get UUID from node[" + path + "]", e);
-                    throw new IllegalArgumentException("Could not get UUID from node[" + path + "]", e);
+                    log.error("An error occured while constructing the default search where-clause part", e);
+                    throw new IllegalStateException(
+                            "An error occured while constructing the default search where-clause part", e);
                 }
             }
             sb.append(')');
@@ -194,7 +224,18 @@ public class SearchBehavior extends AutoCompleteBehavior {
 
             StringTokenizer st = new StringTokenizer(value, " ");
             while (st.hasMoreTokens()) {
-                query.append(" and jcr:contains(., '").append(st.nextToken()).append("*')");
+                query.append(" and jcr:contains(., '");
+                String token = st.nextToken();
+                for (int i = 0; i < token.length(); i++) {
+                    char c = token.charAt(i);
+                    if (ignoreChars.indexOf(c) == -1) {
+                        query.append(c);
+                    }
+                }
+                if (wildcardSearch) {
+                    query.append('*');
+                }
+                query.append("')");
             }
             query.append(']').append(EXCERPT);
             final String queryString = query.toString();
@@ -206,13 +247,12 @@ public class SearchBehavior extends AutoCompleteBehavior {
                 QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
                 HippoQuery hippoQuery = (HippoQuery) queryManager.createQuery(queryString, queryType);
                 session.refresh(true);
-                hippoQuery.setLimit(10);
+                hippoQuery.setLimit(15);
                 
                 long start = System.currentTimeMillis();
                 result = hippoQuery.execute();
                 long end = System.currentTimeMillis();
                 log.info("Executing search query: " + queryString + " took " + (end-start) + "ms");
-                
             } catch (RepositoryException e) {
                 log.error("Error executing query[" + queryString + "]", e);
             }
