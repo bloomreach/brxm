@@ -240,6 +240,7 @@
             <sv:value>hippo:resource</sv:value>
             <sv:value>hippo:query</sv:value>
             <sv:value>hippo:facetselect</sv:value>
+            <sv:value>hippostd:date</sv:value>
           </sv:property>
         </sv:node>
 
