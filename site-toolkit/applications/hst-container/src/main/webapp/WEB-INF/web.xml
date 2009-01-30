@@ -39,11 +39,6 @@
     <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
   </listener>
 
-  <!-- spring configuration listener -->
-  <listener>
-    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-  </listener>
-
   <servlet>
     <servlet-name>HstSiteServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.core.container.engine.HstSiteServlet</servlet-class>

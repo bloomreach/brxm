@@ -18,7 +18,7 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
   <!-- JCR Session Pool -->
-  <bean id="org.hippoecm.hst.jcr.pool.PoolingRepository" class="org.hippoecm.hst.jcr.pool.BasicPoolingRepository" 
+  <bean id="org.hippoecm.hst.core.jcr.pool.PoolingRepository" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
         init-method="initialize" destroy-method="close">
     
     <!-- delegated JCR repository -->
@@ -44,14 +44,14 @@
     
     <!-- session proxy factories -->
     <property name="readOnlySessionDecorator">
-      <bean class="org.hippoecm.hst.jcr.ReadOnlySessionDecoratorProxyFactoryImpl" />
+      <bean class="org.hippoecm.hst.core.jcr.pool.ReadOnlySessionDecoratorProxyFactoryImpl" />
     </property>
     
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="250" />
     <property name="maxIdle" value="50" />
     <property name="minIdle" value="20" />
-    <property name="initialSize" value="20" />
+    <property name="initialSize" value="0" />
     <property name="maxWait" value="10000" />
     <property name="testOnBorrow" value="true" />
     <property name="testOnReturn" value="false" />

@@ -17,6 +17,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
+  <!-- Valves -->
+  
   <bean id="contextResolvingValve" class="org.hippoecm.hst.core.container.pipeline.valve.ContextResolvingValve">
   </bean>
   
@@ -29,11 +31,13 @@
   <bean id="cleanupValve" class="org.hippoecm.hst.core.container.pipeline.valve.CleanupValve">
   </bean>
   
+  <!-- Pipelines -->
+  
   <bean id="org.hippoecm.hst.core.container.pipeline.Pipelines" class="org.hippoecm.hst.core.container.pipeline.HstSitePipelines">
     <constructor-arg>
       <list>
-        <bean class="rg.hippoecm.hst.core.container.pipeline.HstSitePipeline">
-          <constructor-arg value="HstSite"/>
+        <bean class="org.hippoecm.hst.core.container.pipeline.HstSitePipeline">
+          <constructor-arg value="DefaultSitePipeline"/>
           <constructor-arg>
             <list>
               <ref bean="contextResolvingValve" />
@@ -45,7 +49,7 @@
         </bean>
       </list>
     </constructor-arg>
-    <constructor-arg value="HstSite" />
+    <constructor-arg value="DefaultSitePipeline" />
   </bean>
    
 </beans>

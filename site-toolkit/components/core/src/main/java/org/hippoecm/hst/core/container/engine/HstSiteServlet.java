@@ -32,7 +32,7 @@ public class HstSiteServlet extends HttpServlet
     private static Log log;
     private static Log console;
     
-    private String [] appConfigs = { "/WEB-INF/conf/context/applicationContext.xml" };
+    private String appConfigDir = "/WEB-INF/conf/site-assembly";
     private String appConfigFileExtension = ".xml";
 
     private HstSiteEngine engine;
@@ -70,27 +70,10 @@ public class HstSiteServlet extends HttpServlet
         
         if (appConfigDirParam != null)
         {
-            if (appConfigDirParam.endsWith("/"))
-                appConfigDirParam = appConfigDirParam.substring(0, appConfigDirParam.length() - 1);
+            this.appConfigDir = appConfigDirParam;
             
-            File appConfigDirFile = new File(servletContext.getRealPath(appConfigDirParam));
-            
-            if (appConfigDirFile.isDirectory())
-            {
-                String [] fileNames = appConfigDirFile.list(new FilenameFilter() {
-
-                    public boolean accept(File dir, String name)
-                    {
-                        return name.endsWith(appConfigFileExtension);
-                    }
-                });
-                
-                this.appConfigs = new String[fileNames.length];
-                for (int i = 0; i < fileNames.length; i++)
-                {
-                    this.appConfigs[i] = appConfigDirParam + "/" + fileNames[i];
-                }
-            }
+            if (this.appConfigDir.endsWith("/"))
+                this.appConfigDir = this.appConfigDir.substring(0, this.appConfigDir.length() - 1);
         }
 
         try
@@ -189,17 +172,30 @@ public class HstSiteServlet extends HttpServlet
 
     private ComponentManager initializeComponentManager()
     {
-        ServletContext servletContext = getServletConfig().getServletContext();
-        String [] configFiles = new String[this.appConfigs.length];
+        File appConfigDirFile = new File(getServletConfig().getServletContext().getRealPath(this.appConfigDir));
+        File [] appConfigFiles = new File[0];
         
-        for (int i = 0; i < this.appConfigs.length; i++)
+        if (appConfigDirFile.isDirectory())
         {
-            File file = new File(servletContext.getRealPath(this.appConfigs[i]));
-            configFiles[i] = file.toURI().toString();
+            appConfigFiles = appConfigDirFile.listFiles(new FilenameFilter() 
+            {
+                public boolean accept(File dir, String name)
+                {
+                    return name.endsWith(appConfigFileExtension);
+                }
+            });
+        }
+
+        String [] appConfigs = new String[appConfigFiles.length];
+        for (int i = 0; i < appConfigFiles.length; i++)
+        {
+            appConfigs[i] = appConfigFiles[i].toURI().toString();
         }
         
-        SpringComponentManager cm = new SpringComponentManager(configFiles);
+        SpringComponentManager cm = new SpringComponentManager(appConfigs);
+        
         cm.init();
+        
         return cm;        
     }
     

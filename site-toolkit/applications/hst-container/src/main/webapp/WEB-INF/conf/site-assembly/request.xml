@@ -18,17 +18,10 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
   <!-- Commons configuration from collab.properties -->
-  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="properties">
-      <props>
-        <prop key="dollarSign">$</prop>
-      </props>
-    </property>
-    <property name="locations">
-      <list>
-        <value>file:${hst.container.root}/WEB-INF/conf/hst.properties</value>
-      </list>
-    </property>
+  <bean id="org.hippoecm.hst.core.request.HstRequestContextComponent" class="org.hippoecm.hst.core.request.HstRequestContextComponentImpl">
+    <constructor-arg>
+      <ref bean="org.hippoecm.hst.core.jcr.pool.PoolingRepository" />
+    </constructor-arg>
   </bean>
    
 </beans>

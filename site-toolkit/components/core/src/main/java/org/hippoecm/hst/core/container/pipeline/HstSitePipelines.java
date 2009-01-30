@@ -12,6 +12,7 @@ public class HstSitePipelines implements Pipelines
     
     public HstSitePipelines(Pipeline [] pipelines, String defaultPipelineName)
     {
+        this.defaultPipelineName = defaultPipelineName;
         this.pipelineMap = new HashMap<String, Pipeline>();
         
         for (Pipeline pipeline : pipelines)
