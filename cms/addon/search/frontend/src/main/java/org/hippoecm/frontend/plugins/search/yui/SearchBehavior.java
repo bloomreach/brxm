@@ -145,6 +145,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
 
         private static final String HARDDOCUMENT_QUERY = "//element(*, hippo:harddocument)[";
         private static final String EXCERPT = "/rep:excerpt(.)";
+        private static final char SINGLE_QUOTE = '\'';
         
         private static ResultItem[] EMPTY_RESULTS = new ResultItem[0];
         private final String defaultWhere;
@@ -229,6 +230,9 @@ public class SearchBehavior extends AutoCompleteBehavior {
                 for (int i = 0; i < token.length(); i++) {
                     char c = token.charAt(i);
                     if (ignoreChars.indexOf(c) == -1) {
+                        if (c == SINGLE_QUOTE) {
+                            query.append(SINGLE_QUOTE);
+                        }
                         query.append(c);
                     }
                 }
