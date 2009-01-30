@@ -772,51 +772,51 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             session.save();
         } catch (IOException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
             }
         } catch (PathNotFoundException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
             }
         } catch (ItemExistsException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
             }
         } catch (ConstraintViolationException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
             }
         } catch (VersionException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
             }
         } catch (InvalidSerializedDataException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
             }
         } catch (LockException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
             }
         } catch (RepositoryException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
             }
         } finally {
             try {
