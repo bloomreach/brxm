@@ -34,12 +34,6 @@
     <param-value>hst.container.root</param-value>
   </context-param>
 
-  <!-- spring configuration -->
-  <context-param>
-    <param-name>contextConfigLocation</param-name>
-    <param-value>/WEB-INF/conf/context/applicationContext.xml</param-value>
-  </context-param>
-      
   <!-- Spring Log4j Configuring Listener -->
   <listener>
     <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
@@ -52,7 +46,7 @@
 
   <servlet>
     <servlet-name>hst-container</servlet-name>
-    <servlet-class>org.hippoecm.hst.core.container.servlet.ContainerServlet</servlet-class>
+    <servlet-class>org.hippoecm.hst.core.container.engine.HstSiteServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
 
