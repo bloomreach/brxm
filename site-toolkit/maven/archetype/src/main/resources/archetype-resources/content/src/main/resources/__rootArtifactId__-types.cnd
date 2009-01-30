@@ -5,7 +5,7 @@
 <'hippo'='http://www.hippoecm.org/nt/1.2'>
 
 [${rootArtifactId.replace($hyphen,$empty)}:textpage] > hippostd:publishable, hippostd:publishableSummary, hippo:document
-- ${rootArtifactId.replace($hyphen,$empty)}:body (hippostd:html)
++ ${rootArtifactId.replace($hyphen,$empty)}:body (hippostd:html)
 - ${rootArtifactId.replace($hyphen,$empty)}:summary (string)
 - ${rootArtifactId.replace($hyphen,$empty)}:title (string)
 - ${rootArtifactId.replace($hyphen,$empty)}:date (date)
