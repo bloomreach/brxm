@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.core.mapping;
 
-import org.hippoecm.hst.core.filters.base.HstRequestContext;
-import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
+import org.hippoecm.hst.core.domain.RepositoryMapping;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 public interface URLMappingManager {
     

@@ -22,7 +22,7 @@ import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.components.modules.navigation.RepositoryBasedNavigationModule;
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.filters.base.HstRequestContext;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

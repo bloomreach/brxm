@@ -18,7 +18,7 @@ package org.hippoecm.hst.core.mapping;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
+import org.hippoecm.hst.core.domain.RepositoryMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

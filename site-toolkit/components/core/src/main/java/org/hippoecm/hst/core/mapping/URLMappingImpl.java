@@ -39,10 +39,10 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.apache.commons.collections.map.LRUMap;
+import org.hippoecm.hst.core.domain.DomainMapping;
+import org.hippoecm.hst.core.domain.RepositoryMapping;
 import org.hippoecm.hst.core.filters.base.HstBaseFilter;
-import org.hippoecm.hst.core.filters.base.HstRequestContext;
-import org.hippoecm.hst.core.filters.domain.DomainMapping;
-import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;

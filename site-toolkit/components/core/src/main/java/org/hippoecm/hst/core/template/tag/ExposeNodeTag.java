@@ -25,7 +25,7 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.hippoecm.hst.core.context.ContextBase;
-import org.hippoecm.hst.core.filters.base.HstRequestContext;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.hst.core.template.node.el.ContentELNode;
 import org.hippoecm.hst.core.template.node.el.ContentELNodeImpl;

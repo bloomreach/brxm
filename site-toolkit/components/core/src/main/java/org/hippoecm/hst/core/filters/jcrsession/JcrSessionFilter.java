@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.filters.base.HstBaseFilter;
-import org.hippoecm.hst.core.filters.base.HstRequestContext;
-import org.hippoecm.hst.core.filters.base.HstRequestContextImpl;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.HstRequestContextImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

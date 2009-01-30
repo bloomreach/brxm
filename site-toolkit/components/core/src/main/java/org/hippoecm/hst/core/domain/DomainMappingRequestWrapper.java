@@ -1,8 +1,9 @@
-package org.hippoecm.hst.core.filters.domain;
+package org.hippoecm.hst.core.domain;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import org.hippoecm.hst.core.domain.RepositoryMapping;
 import org.hippoecm.hst.core.mapping.UrlUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

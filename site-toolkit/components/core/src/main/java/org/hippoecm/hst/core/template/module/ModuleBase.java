@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.exception.TemplateException;
-import org.hippoecm.hst.core.filters.base.HstRequestContext;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.template.module.execution.ExecutionResult;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 

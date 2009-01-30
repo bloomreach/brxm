@@ -1,4 +1,4 @@
-package org.hippoecm.hst.core.filters.domain;
+package org.hippoecm.hst.core.domain;
 
 
 public interface DomainMapping

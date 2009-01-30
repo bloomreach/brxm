@@ -24,7 +24,7 @@ import javax.jcr.RepositoryException;
 import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.exception.TemplateException;
-import org.hippoecm.hst.core.filters.base.HstRequestContext;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.slf4j.Logger;

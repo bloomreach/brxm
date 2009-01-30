@@ -1,4 +1,4 @@
-package org.hippoecm.hst.core.filters.domain;
+package org.hippoecm.hst.core.domain;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +17,11 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.apache.commons.collections.map.LRUMap;
+import org.hippoecm.hst.core.domain.Domain;
+import org.hippoecm.hst.core.domain.DomainException;
+import org.hippoecm.hst.core.domain.DomainMapping;
+import org.hippoecm.hst.core.domain.DomainMappingException;
+import org.hippoecm.hst.core.domain.RepositoryMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

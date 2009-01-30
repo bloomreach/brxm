@@ -31,8 +31,8 @@ import org.hippoecm.hst.caching.EventCacheImpl;
 import org.hippoecm.hst.caching.NamedEvent;
 import org.hippoecm.hst.caching.validity.AggregatedValidity;
 import org.hippoecm.hst.caching.validity.EventValidity;
-import org.hippoecm.hst.core.filters.base.HstRequestContext;
-import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
+import org.hippoecm.hst.core.domain.RepositoryMapping;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

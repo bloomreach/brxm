@@ -19,8 +19,8 @@ import java.util.List;
 
 import javax.jcr.Node;
 
-import org.hippoecm.hst.core.filters.base.HstRequestContext;
-import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
+import org.hippoecm.hst.core.domain.RepositoryMapping;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.template.node.PageNode;
 
 public interface URLMapping {

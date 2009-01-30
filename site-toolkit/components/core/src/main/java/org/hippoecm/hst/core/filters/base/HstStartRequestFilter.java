@@ -13,6 +13,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.HstRequestContextImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

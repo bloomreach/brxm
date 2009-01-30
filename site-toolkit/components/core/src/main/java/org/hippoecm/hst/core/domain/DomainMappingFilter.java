@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.filters.domain;
+package org.hippoecm.hst.core.domain;
 
 import java.io.IOException;
 
@@ -40,11 +40,15 @@ import org.hippoecm.hst.caching.validity.SourceValidity;
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.context.impl.ContextBaseImpl;
+import org.hippoecm.hst.core.domain.Domain;
+import org.hippoecm.hst.core.domain.DomainMapping;
+import org.hippoecm.hst.core.domain.DomainMappingException;
+import org.hippoecm.hst.core.domain.RepositoryMapping;
 import org.hippoecm.hst.core.exception.ContextBaseException;
 import org.hippoecm.hst.core.filters.base.HstBaseFilter;
-import org.hippoecm.hst.core.filters.base.HstRequestContext;
-import org.hippoecm.hst.core.filters.base.HstRequestContextImpl;
 import org.hippoecm.hst.core.mapping.UrlUtilities;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.HstRequestContextImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

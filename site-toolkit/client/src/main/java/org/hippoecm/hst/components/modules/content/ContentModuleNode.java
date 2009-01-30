@@ -17,7 +17,7 @@ package org.hippoecm.hst.components.modules.content;
 
 import javax.jcr.Node;
 
-import org.hippoecm.hst.core.filters.base.HstRequestContext;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.template.node.el.ContentELNodeImpl;
 
 public class ContentModuleNode extends ContentELNodeImpl{

@@ -32,6 +32,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

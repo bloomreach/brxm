@@ -17,7 +17,7 @@ package org.hippoecm.hst.core.template.node.content;
 
 import javax.jcr.Node;
 
-import org.hippoecm.hst.core.filters.base.HstRequestContext;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

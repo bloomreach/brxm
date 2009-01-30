@@ -13,15 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.filters.base;
+package org.hippoecm.hst.core.request;
 
 import javax.jcr.Repository;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.context.ContextBase;
-import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
+import org.hippoecm.hst.core.domain.RepositoryMapping;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.mapping.URLMappingManager;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.hst.core.template.node.content.ContentRewriter;
 

@@ -1,4 +1,4 @@
-package org.hippoecm.hst.core.filters.domain;
+package org.hippoecm.hst.core.domain;
 
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
@@ -8,6 +8,10 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.core.domain.Domain;
+import org.hippoecm.hst.core.domain.DomainMapping;
+import org.hippoecm.hst.core.domain.RepositoryMapping;
+import org.hippoecm.hst.core.domain.RepositoryMappingException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
