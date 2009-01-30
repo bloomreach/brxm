@@ -37,6 +37,7 @@ import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
@@ -50,7 +51,7 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
     private TableDefinition tableDefinition;
     private ReorderDataProvider dataProvider;
     private ListDataTable dataTable;
-    private int pagesize;
+    private ListPagingDefinition pagingDefinition;
     private AjaxLink up;
     private AjaxLink down;
 
@@ -101,8 +102,10 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
         tableDefinition = new TableDefinition(columns, false);
         DocumentsProvider documents = new DocumentsProvider(model, filter, new HashMap<String, Comparator<IModel>>());
         dataProvider = new ReorderDataProvider(documents);
-        pagesize = dataProvider.size() > 0 ? dataProvider.size() : 1;
-        add(dataTable = new ListDataTable("table", tableDefinition, dataProvider, this, pagesize, false));
+        
+        pagingDefinition = new ListPagingDefinition();
+        pagingDefinition.setPageSize(dataProvider.size() > 0 ? dataProvider.size() : 1);
+        add(dataTable = new ListDataTable("table", tableDefinition, dataProvider, this, false, pagingDefinition));
 
         up = new AjaxLink("up") {
             private static final long serialVersionUID = 1L;
@@ -113,7 +116,7 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
                 dataProvider.shiftUp(selection);
 
                 ReorderPanel panel = ReorderPanel.this;
-                dataTable = new ListDataTable("table", tableDefinition, dataProvider, panel, pagesize, false);
+                dataTable = new ListDataTable("table", tableDefinition, dataProvider, panel, false, pagingDefinition);
                 panel.replace(dataTable);
                 selectionChanged(selection);
             }
@@ -129,7 +132,7 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
                 dataProvider.shiftDown(selection);
 
                 ReorderPanel panel = ReorderPanel.this;
-                dataTable = new ListDataTable("table", tableDefinition, dataProvider, panel, pagesize, false);
+                dataTable = new ListDataTable("table", tableDefinition, dataProvider, panel, false, pagingDefinition);
                 panel.replace(dataTable);
                 selectionChanged(selection);
             }

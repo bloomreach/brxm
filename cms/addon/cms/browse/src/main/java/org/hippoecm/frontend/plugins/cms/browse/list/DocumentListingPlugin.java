@@ -33,6 +33,7 @@ import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
@@ -77,20 +78,21 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
 
         return new TableDefinition(columns);
     }
-
+    
     @Override
     protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition,
-            ISortableDataProvider dataProvider, TableSelectionListener selectionListener, int rowsPerPage,
-            boolean triState) {
-        return new DraggebleListDataTable(id, tableDefinition, dataProvider, selectionListener, rowsPerPage, triState);
+            ISortableDataProvider dataProvider, TableSelectionListener selectionListener, boolean triState,
+            ListPagingDefinition pagingDefinition) {
+        return new DraggebleListDataTable(id, tableDefinition, dataProvider, selectionListener, triState,
+                pagingDefinition);
     }
 
     class DraggebleListDataTable extends ListDataTable {
         private static final long serialVersionUID = 1L;
 
         public DraggebleListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
-                TableSelectionListener selectionListener, int rowsPerPage, boolean triState) {
-            super(id, tableDefinition, dataProvider, selectionListener, rowsPerPage, triState);
+                TableSelectionListener selectionListener, boolean triState, ListPagingDefinition pagingDefinition) {
+            super(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
         }
 
         @Override

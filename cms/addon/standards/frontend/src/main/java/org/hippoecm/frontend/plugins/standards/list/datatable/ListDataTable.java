@@ -27,7 +27,6 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 
 public class ListDataTable extends DataTable {
@@ -42,8 +41,8 @@ public class ListDataTable extends DataTable {
     }
 
     public ListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
-            TableSelectionListener selectionListener, int rowsPerPage, final boolean triState) {
-        super(id, tableDefinition.getColumns(), dataProvider, rowsPerPage);
+            TableSelectionListener selectionListener, final boolean triState, ListPagingDefinition pagingDefinition) {
+        super(id, tableDefinition.getColumns(), dataProvider, pagingDefinition.getPageSize());
         setOutputMarkupId(true);
         setVersioned(false);
 
@@ -60,7 +59,7 @@ public class ListDataTable extends DataTable {
                 }
             });
         }
-        addBottomToolbar(new ListNavigationToolBar(this));
+        addBottomToolbar(new ListNavigationToolBar(this, pagingDefinition));
     }
 
     @Override

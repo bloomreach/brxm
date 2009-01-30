@@ -26,13 +26,17 @@ public class ListPagingNavigator extends AjaxPagingNavigator {
 
     private static final long serialVersionUID = 1;
 
-    public ListPagingNavigator(String id, IPageable pageable, IPagingLabelProvider labelProvider) {
+    private ListPagingDefinition pagingDefinition;
+
+    public ListPagingNavigator(String id, IPageable pageable, IPagingLabelProvider labelProvider,
+            ListPagingDefinition pagingDefinition) {
         super(id, pageable, labelProvider);
+        this.pagingDefinition = pagingDefinition;
     }
 
     @Override
     protected PagingNavigation newNavigation(final IPageable pageable, final IPagingLabelProvider labelProvider) {
-        return new ListPagingNavigation("navigation", pageable, labelProvider);
+        return new ListPagingNavigation("navigation", pageable, labelProvider, pagingDefinition);
     }
 
 }

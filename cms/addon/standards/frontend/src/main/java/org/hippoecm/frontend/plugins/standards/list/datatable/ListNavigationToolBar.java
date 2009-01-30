@@ -31,14 +31,14 @@ public class ListNavigationToolBar extends AbstractToolbar {
 
     private static final long serialVersionUID = 1L;
 
-    public ListNavigationToolBar(DataTable table) {
+    public ListNavigationToolBar(DataTable table, ListPagingDefinition pagingDefinition) {
         super(table);
 
         WebMarkupContainer span = new WebMarkupContainer("span");
         add(span);
         span.add(new AttributeModifier("colspan", true, new Model(String.valueOf(table.getColumns().length))));
 
-        PagingNavigator pagingNavigator = newPagingNavigator("navigator", table);
+        PagingNavigator pagingNavigator = newPagingNavigator("navigator", table, pagingDefinition);
         span.add(pagingNavigator);
         span.add(new NavigatorLabel("navigatorLabel", table));
     }
@@ -48,8 +48,9 @@ public class ListNavigationToolBar extends AbstractToolbar {
         return getTable().getPageCount() > 1;
     }
 
-    private PagingNavigator newPagingNavigator(String navigatorId, final DataTable table) {
-        return new ListPagingNavigator(navigatorId, table, new ListPagingLabelProvider()) {
+    private PagingNavigator newPagingNavigator(String navigatorId, final DataTable table,
+            ListPagingDefinition pagingDefinition) {
+        return new ListPagingNavigator(navigatorId, table, new ListPagingLabelProvider(), pagingDefinition) {
             private static final long serialVersionUID = 1L;
 
             /**
