@@ -8,6 +8,7 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository;
+import org.hippoecm.hst.core.jcr.pool.PoolingRepository;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 
 public class TestBasicPoolingRepository extends AbstractSpringTestCase
@@ -15,7 +16,7 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase
 
     public void testBasicPoolingRepository() throws Exception
     {
-        BasicPoolingRepository poolingRepository = (BasicPoolingRepository) getComponent("poolingRepository");
+        BasicPoolingRepository poolingRepository = (BasicPoolingRepository) getComponent(PoolingRepository.class.getName());
         Repository repository = poolingRepository;
         
         Session [] sessions = new Session[poolingRepository.getMaxActive()];

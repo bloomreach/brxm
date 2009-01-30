@@ -10,7 +10,7 @@
     </property>
   </bean>
   
-  <bean id="poolingRepository" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
+  <bean id="org.hippoecm.hst.core.jcr.pool.PoolingRepository" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
         init-method="initialize" destroy-method="close">
     
     <!-- delegated JCR repository -->

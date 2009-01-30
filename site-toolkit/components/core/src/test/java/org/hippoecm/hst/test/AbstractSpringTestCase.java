@@ -43,7 +43,7 @@ public abstract class AbstractSpringTestCase extends TestCase
      */
     protected String[] getConfigurations()
     {
-        String classXmlFileName = getClass().getName().replace(".", "/") + ".xml";
+        String classXmlFileName = getClass().getName().replace(".", "/") + "*.xml";
         return new String [] { classXmlFileName };
     }
     
