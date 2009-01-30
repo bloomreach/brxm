@@ -15,10 +15,12 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
         this.repository = repository;
     }
     
-    public HstRequestContext create(HttpServletRequest req, HttpServletResponse resp, ServletConfig config)
+    public HstRequestContext create(HttpServletRequest req, HttpServletResponse res, ServletConfig config)
     {
         HstRequestContextImpl context = new HstRequestContextImpl();
+        // TODO: wrap request and response for buffered aggregation later.
         context.setRequest(req);
+        context.setResponse(res);
         context.setRepository(this.repository);
         return context;
     }

@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.request;
 
 import javax.jcr.Repository;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.domain.RepositoryMapping;
@@ -28,17 +29,18 @@ import org.hippoecm.hst.core.template.node.content.ContentRewriter;
 
 public class HstRequestContextImpl implements HstRequestContext {
 
-    private Repository repository;
-    private ContextBase contentContextBase;
-    private ContextBase hstConfigurationContextBase;
-    private URLMapping absoluteUrlMapping;
-    private URLMapping relativeUrlMapping;
-    private ContentRewriter contentRewriter;
-    private PageNode pageNode;
-    private RepositoryMapping repositoryMapping;
-    private URLMappingManager urlMappingManager;
-    private HttpServletRequest request;
-    private String hstRequestUri;
+    protected Repository repository;
+    protected HttpServletRequest request;
+    protected HttpServletResponse response;
+    protected ContextBase contentContextBase;
+    protected ContextBase hstConfigurationContextBase;
+    protected URLMapping absoluteUrlMapping;
+    protected URLMapping relativeUrlMapping;
+    protected ContentRewriter contentRewriter;
+    protected PageNode pageNode;
+    protected RepositoryMapping repositoryMapping;
+    protected URLMappingManager urlMappingManager;
+    protected String hstRequestUri;
 
     public HstRequestContextImpl() {
     }
@@ -46,7 +48,27 @@ public class HstRequestContextImpl implements HstRequestContext {
     public RepositoryMapping getRepositoryMapping() {
         return repositoryMapping;
     }
+    
+    public void setRequest(HttpServletRequest request) 
+    {
+        this.request = request;
+    }
 
+    public HttpServletRequest getRequest()
+    {
+        return this.request;
+    }
+    
+    public void setResponse(HttpServletResponse response) 
+    {
+        this.response = response;
+    }
+
+    public HttpServletResponse getResponse()
+    {
+        return this.response;
+    }
+    
     public PageNode getPageNode() {
         return pageNode;   
     }
@@ -76,10 +98,6 @@ public class HstRequestContextImpl implements HstRequestContext {
         return hstConfigurationContextBase;
     }
 
-    public HttpServletRequest getRequest() {
-        return request;
-    }
-    
     public String getHstRequestUri() {
         return hstRequestUri;
     }
@@ -114,10 +132,6 @@ public class HstRequestContextImpl implements HstRequestContext {
 
     public void setURLMappingManager(URLMappingManager urlMappingManager) {
         this.urlMappingManager = urlMappingManager;
-    }
-
-    public void setRequest(HttpServletRequest request) {
-        this.request = request;
     }
 
     public void setHstRequestUri(String hstRequestUri) {
