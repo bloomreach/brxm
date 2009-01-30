@@ -20,6 +20,7 @@
     <!-- hippo aggregates -->
     <aggregates>
         <nodetype>hippostd:html</nodetype>
+        <nodetype>hippostd:date</nodetype>
     </aggregates>
     
     <excludefromnodescope>
