@@ -1,4 +1,4 @@
-package org.hippoecm.hst.jcr;
+package org.hippoecm.hst.jcr.pool;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
@@ -7,6 +7,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 
+import org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 
 public class TestBasicPoolingRepository extends AbstractSpringTestCase

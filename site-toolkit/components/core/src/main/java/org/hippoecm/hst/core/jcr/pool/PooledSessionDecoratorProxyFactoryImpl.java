@@ -1,4 +1,4 @@
-package org.hippoecm.hst.jcr;
+package org.hippoecm.hst.core.jcr.pool;
 
 import java.util.HashSet;
 import java.util.List;

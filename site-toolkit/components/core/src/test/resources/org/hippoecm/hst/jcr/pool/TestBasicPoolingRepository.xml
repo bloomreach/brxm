@@ -2,7 +2,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-  <bean id="poolingRepository" class="org.hippoecm.hst.jcr.BasicPoolingRepository" 
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations">
+      <list>
+        <value>classpath:hst.properties</value>
+      </list>
+    </property>
+  </bean>
+  
+  <bean id="poolingRepository" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
         init-method="initialize" destroy-method="close">
     
     <!-- delegated JCR repository -->
@@ -12,7 +20,7 @@
         <property name="targetMethod" value="getHippoRepository" />
         <property name="arguments">
           <list>
-            <value>rmi://127.0.0.1:1099/hipporepository</value>
+            <value>${repository.address}</value>
           </list>
         </property>
       </bean>
@@ -21,14 +29,14 @@
     <!-- default credentials for read-only sessions -->
     <property name="defaultCredentials">
       <bean class="javax.jcr.SimpleCredentials">
-        <constructor-arg value="admin" />
-        <constructor-arg value="admin" />
+        <constructor-arg value="${repository.user.name}" />
+        <constructor-arg value="${repository.password}" />
       </bean>
     </property>
     
     <!-- session proxy factories -->
     <property name="readOnlySessionDecorator">
-      <bean class="org.hippoecm.hst.jcr.ReadOnlySessionDecoratorProxyFactoryImpl" />
+      <bean class="org.hippoecm.hst.core.jcr.pool.ReadOnlySessionDecoratorProxyFactoryImpl" />
     </property>
     
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->

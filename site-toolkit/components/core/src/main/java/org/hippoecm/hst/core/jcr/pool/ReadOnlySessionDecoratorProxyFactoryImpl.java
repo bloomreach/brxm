@@ -1,4 +1,4 @@
-package org.hippoecm.hst.jcr;
+package org.hippoecm.hst.core.jcr.pool;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
