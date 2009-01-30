@@ -542,6 +542,13 @@
     <sv:property sv:name="search.paths" sv:type="String">
       <sv:value>/content</sv:value>
     </sv:property>
+    <sv:property sv:name="ignore.chars" sv:type="String">
+      <sv:value>*</sv:value>
+    </sv:property>
+    <sv:property sv:name="exclude.primary.types" sv:type="String">
+      <sv:value>nt:frozenNode</sv:value>
+      <sv:value>hippogallery:exampleImageSet</sv:value>
+    </sv:property>
     <sv:node sv:name="yui.config">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
@@ -551,6 +558,9 @@
       </sv:property>
       <sv:property sv:name="use.shadow" sv:type="Boolean">
         <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="min.query.length" sv:type="String">
+        <sv:value>2</sv:value>
       </sv:property>
       <sv:property sv:name="container.id" sv:type="String">
         <sv:value>searchBoxContainer</sv:value>
