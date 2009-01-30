@@ -30,8 +30,8 @@ import org.hippoecm.hst.core.template.node.content.ContentRewriter;
 public class HstRequestContextImpl implements HstRequestContext {
 
     protected Repository repository;
-    protected HttpServletRequest request;
-    protected HttpServletResponse response;
+    protected HstRequest request;
+    protected HstResponse response;
     protected ContextBase contentContextBase;
     protected ContextBase hstConfigurationContextBase;
     protected URLMapping absoluteUrlMapping;
@@ -40,6 +40,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected PageNode pageNode;
     protected RepositoryMapping repositoryMapping;
     protected URLMappingManager urlMappingManager;
+    // TODO: remove this.
     protected String hstRequestUri;
 
     public HstRequestContextImpl() {
@@ -49,26 +50,34 @@ public class HstRequestContextImpl implements HstRequestContext {
         return repositoryMapping;
     }
     
-    public void setRequest(HttpServletRequest request) 
+    public HstRequest getRequest()
+    {
+        // TODO:
+        return null;
+    }
+    
+    public HstResponse getResponse()
+    {
+        // TODO:
+        return null;
+    }
+    
+    public HstRequestDispatcher getDispatcher()
+    {
+        // TODO:
+        return null;
+    }
+    
+    public void setRequest(HstRequest request) 
     {
         this.request = request;
     }
-
-    public HttpServletRequest getRequest()
-    {
-        return this.request;
-    }
     
-    public void setResponse(HttpServletResponse response) 
+    public void setResponse(HstResponse response) 
     {
         this.response = response;
     }
 
-    public HttpServletResponse getResponse()
-    {
-        return this.response;
-    }
-    
     public PageNode getPageNode() {
         return pageNode;   
     }
@@ -98,6 +107,7 @@ public class HstRequestContextImpl implements HstRequestContext {
         return hstConfigurationContextBase;
     }
 
+    // TODO: remove this.
     public String getHstRequestUri() {
         return hstRequestUri;
     }
@@ -152,9 +162,10 @@ public class HstRequestContextImpl implements HstRequestContext {
         return this.repository;
     }
 
+    // TODO: remove this.
     public String getServerName()
     {
-        return this.request.getServerName();
+        return null;
     }
 
     public String getUserID()
@@ -163,9 +174,10 @@ public class HstRequestContextImpl implements HstRequestContext {
         return null;
     }
 
+    // TODO: remove this.
     public String getRequestURI()
     {
-        return this.request.getRequestURI();
+        return null;
     }
 
 

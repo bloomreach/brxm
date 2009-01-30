@@ -16,8 +16,6 @@
 package org.hippoecm.hst.core.request;
 
 import javax.jcr.Repository;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.domain.RepositoryMapping;
@@ -30,10 +28,12 @@ public interface HstRequestContext {
     
     public Repository getRepository();
     
-    public HttpServletRequest getRequest();
-
-    public HttpServletResponse getResponse();
-
+    public HstRequest getRequest();
+    
+    public HstResponse getResponse();
+    
+    public HstRequestDispatcher getDispatcher();
+    
     public String getUserID();
 
     public RepositoryMapping getRepositoryMapping();
@@ -52,13 +52,15 @@ public interface HstRequestContext {
 
     public ContextBase getHstConfigurationContextBase();
     
+    // TODO: remove this.
     public String getServerName();
     
+    // TODO: remove this.
     public String getRequestURI();
     
+    // TODO: remove this.
     public String getHstRequestUri();
     
     public ContentRewriter getContentRewriter();
   
 }
-

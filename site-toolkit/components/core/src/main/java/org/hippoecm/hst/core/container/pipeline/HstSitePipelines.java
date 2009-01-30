@@ -1,7 +1,6 @@
 package org.hippoecm.hst.core.container.pipeline;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class HstSitePipelines implements Pipelines

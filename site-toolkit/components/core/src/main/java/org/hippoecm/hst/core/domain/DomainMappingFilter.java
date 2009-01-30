@@ -188,7 +188,8 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
                 // set original request on the HstRequestContext and the request uri that matters for the hst
                 String hstRequestUri = getHstRequestUri(req.getRequestURI(), repositoryMapping, req.getContextPath());
                 ((HstRequestContextImpl) hstRequestContext).setHstRequestUri(hstRequestUri);
-                ((HstRequestContextImpl) hstRequestContext).setRequest(req);
+                //TODO: remove the following
+                //((HstRequestContextImpl) hstRequestContext).setRequest(req);
                 
                 if(hstRequestUri.startsWith("/binaries")) {
                     HttpServletRequest request = new BinariesRequestWrapper(req, repositoryMapping);
