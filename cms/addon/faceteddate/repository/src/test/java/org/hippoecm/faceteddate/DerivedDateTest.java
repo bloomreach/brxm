@@ -21,14 +21,20 @@ import java.util.Date;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
+import javax.jcr.query.QueryManager;
 
 import org.hippoecm.repository.TestCase;
+import org.hippoecm.repository.Utilities;
 
 public class DerivedDateTest extends TestCase {
     @SuppressWarnings("unused")
@@ -130,5 +136,27 @@ public class DerivedDateTest extends TestCase {
         session.save();
         check(date, root.getNode("doc/hippo:d1fields"));
         assertFalse(root.hasNode("doc/hippo:d2fields"));
+    }
+
+    @Ignore
+    public void testSearch() throws Exception {
+        root.addNode("docs","nt:unstructured").addMixin("mix:referenceable");
+        Node doc = root.getNode("docs").addNode("doc", "hippo:datedocument1");
+        doc.addMixin("hippo:harddocument");
+        doc = doc.addNode("hippo:d");
+        doc.addMixin("mix:referenceable");
+        doc.setProperty("hippostd:date", date);
+        session.save();
+
+        Node search = root.addNode("search", "hippo:facetsearch");
+        search.setProperty("hippo:queryname", "test");
+        search.setProperty("hippo:docbase", root.getNode("docs").getUUID());
+        search.setProperty("hippo:facets", new String[] { "hippostd:dayofmonth" });
+        session.save();
+
+        search = root.getNode("search");
+        Utilities.dump(System.err, search);
+
+        assertNotNull(traverse(session, "/test/search" + date.get(Calendar.DAY_OF_MONTH) + "/hippo:resultset/doc"));
     }
 }

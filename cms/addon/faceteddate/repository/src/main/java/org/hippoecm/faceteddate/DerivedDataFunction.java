@@ -33,7 +33,6 @@ public class DerivedDataFunction extends org.hippoecm.repository.ext.DerivedData
         }
         try {
             Calendar date = parameters.get("date")[0].getDate();
-	    System.err.println("date is "+date.toString());
             parameters.put("year", new Value[] { getValueFactory().createValue(date.get(Calendar.YEAR)) });
             parameters.put("month", new Value[] { getValueFactory().createValue(date.get(Calendar.MONTH)) });
             parameters.put("weekofyear", new Value[] { getValueFactory().createValue(date.get(Calendar.WEEK_OF_YEAR)) });
@@ -44,7 +43,9 @@ public class DerivedDataFunction extends org.hippoecm.repository.ext.DerivedData
             parameters.put("minute", new Value[] { getValueFactory().createValue(date.get(Calendar.MINUTE)) });
             parameters.put("second", new Value[] { getValueFactory().createValue(date.get(Calendar.SECOND)) });
         } catch(ValueFormatException ex) {
+            parameters.clear();
         } catch(RepositoryException ex) {
+            parameters.clear();
         }
         return parameters;
     }
