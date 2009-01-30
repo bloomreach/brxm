@@ -192,7 +192,7 @@
           <sv:value>hippohtmlcleaner:cleanupElement</sv:value>
         </sv:property>
         <sv:property sv:name="hippohtmlcleaner:name" sv:type="String">
-          <sv:value>blockquote</sv:value>
+          <sv:value>a</sv:value>
         </sv:property>
         <sv:property sv:name="hippohtmlcleaner:attributes" sv:type="String">
           <sv:value>href</sv:value>
