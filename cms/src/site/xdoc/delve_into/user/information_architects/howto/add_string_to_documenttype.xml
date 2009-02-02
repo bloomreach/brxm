@@ -29,20 +29,27 @@ ________________________________________________________________________________
     <section name="Add string to document type">
       <span class="shortdesc">How to add a string field to a document type.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=610;
+   </script>
+   <div class='group'>
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/inars/add_string_to_documenttype.png" alt='Add string to documenttype screenshot'/> 
-     <p>
-      Adding mandatory string field sar:title with caption 'Title' 
-      to document type `upcoming'.      
+    </div></div>
+    <p>
+      Adding mandatory string field snp:title with caption 'Title' 
+      to document type `upcoming'.
      </p>
    </div>
 
    <p>
-    Open the <a href='./goto_documenttype_tab.html'>document type</a> for editing. 
-    In the list of possible fields, 
-    click on 'String' (far right, almost at the top, 
-    Below the top and Above 'Html'). 
-    A <a href='../concepts/string.html'>string field</a> appears as part of the document type.
+    Ensure that you have the document type in <a href='../concepts/edit_mode.html'>edit mode</a>.
+    In the <a href='../concepts/field_type_menu.html'>field type menu</a>,
+    choose 'String'. A new <a href='../concepts/string_field.html'>string field</a>
+    appears as part of the document type.
+    The <a href='../concepts/field_properties_overview.html'>field properties overview</a>
+    of the new field also appears. Define at least the following properties:
    </p>
    <p>
    <ul>
@@ -56,7 +63,7 @@ ________________________________________________________________________________
      Decide if it should be <a href='./mandatory_or_optional.html'>mandatory or optional</a>.
     </li>
     <li>
-     Decide the <a href='./fieldsize.html'>maximum number of characters</a> the string 
+     Decide the <a href='./fieldsize.html'>maximum number of characters</a> the string
      may maximally have.
     </li>
    </ul>
@@ -64,15 +71,22 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
+    <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type (continue tour)</a>.</li>
+    <li><a href='./add_markuped_text_to_documenttype.html'>Add field for marked-up text to a document type</a>.</li>
+    <li><a href='./add_date_to_documenttype.html'>Add a date field to a document type</a>.</li>
+    <li><a href='./add_string_to_documenttype.html'>Add another string field to a document type</a>.</li>
     <li><a href='./change_field_in_documenttype.html'>Change a field in a document type</a>.</li>
     <li><a href='./remove_field_from_documenttype.html'>Remove field of a document type</a>.</li>
-    <li><a href='./add_date_to_documenttype.html'>Add a date field to a document type</a>.</li>
-    <li><a href='./add_string_to_documenttype.html'>Add a string field to a document type</a>.</li>
-    <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type</a>.</li>
-    <li><a href='./add_markuped_text_to_documenttype.html'>Add field for marked-up text to a document type</a>.</li>
-   </ul>       
+   </ul>
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>
-</document>        
+</document>

@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -29,9 +29,15 @@ ________________________________________________________________________________
     <section name="Save document type">
       <span class="shortdesc">How to save a document type.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=350;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/inars/save_documenttype.png" alt='save document type screenshot'/> 
-     <p>
+    </div></div>
+    <p>
        Click on 'save and close' to save the changes to a document type and 'Close without saving'
        to discard the changes.
      </p>
@@ -54,11 +60,17 @@ ________________________________________________________________________________
     <li><a href='./update_content.html'>Update all content</a>.</li>
     <li><a href='./logout.html'>Logout</a>.</li>
     <li><a href='./create_documenttype.html'>Create a document type</a>.</li>
-    <li><a href='./goto_documenttype_tab.html'>Go to document type tab</a>.</li>
     <li><a href='./goto_namespace.html'>Go to namespace</a>.</li>
-   </ul>       
+   </ul>
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>
-</document>        
+</document>

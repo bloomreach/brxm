@@ -29,10 +29,14 @@ ________________________________________________________________________________
     <section name="Assign user to group">
       <span class="shortdesc">How to make a particular user belong to a particular group.</span>
 
-   <span class='screenshot'>
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=350;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/user_properties.png" alt='Assign user to group screenshot'/>      
-   </span>
-
+   </div></div></div>
    <p>
     Open the list of <a href='./goto_user_properties.html'>properties of the user</a>,
     and on the left, select with the mouse a group from the list of existing groups
@@ -54,6 +58,13 @@ ________________________________________________________________________________
     <li><a href='./add_user.html'>Add a user</a>.</li>
    </ul>       
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>

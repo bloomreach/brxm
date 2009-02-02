@@ -29,20 +29,27 @@ ________________________________________________________________________________
     <section name="Add date to document type">
       <span class="shortdesc">How to add a date field to a document type.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=610;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/inars/add_date_to_documenttype.png" alt='Add date to documenttype screenshot'/> 
-     <p>
-      Adding mandatory datefield sar:date_of_happening with caption 'Date of happening' 
-      to document type `upcoming'.      
+    </div></div>
+    <p>
+      Adding mandatory datefield snp:upcoming_date with caption 'Upcoming date'
+      to document type `upcoming'.
      </p>
    </div>
 
    <p>
-    Open the <a href='./goto_documenttype_tab.html'>document type</a> for editing. 
-    In the list of possible fields, 
-    click on 'Date' (far right, almost at the top, 
-    Below 'Text' and Above 'Boolean'). 
-    A date field appears as part of the document type.
+    Ensure that you have the document type in <a href='../concepts/edit_mode.html'>edit mode</a>.
+    In the <a href='../concepts/field_type_menu.html'>field type menu</a>,
+    choose 'Date'. A new <a href='../concepts/date_field.html'>date field</a>
+    appears as part of the document type.
+    The <a href='../concepts/field_properties_overview.html'>field properties overview</a>
+    of the new field also appears. Define at least the following properties:
    </p>
    <ul>
     <li>
@@ -58,14 +65,21 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./change_field_in_documenttype.html'>Change a field in a document type</a>.</li>
-    <li><a href='./remove_field_from_documenttype.html'>Remove field of a document type</a>.</li>
-    <li><a href='./add_date_to_documenttype.html'>Add a date field to a document type</a>.</li>
-    <li><a href='./add_string_to_documenttype.html'>Add a string field to a document type</a>.</li>
+    <li><a href='./add_string_to_documenttype.html'>Add a string field to a document type (continue tour)</a>.</li>
     <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type</a>.</li>
     <li><a href='./add_markuped_text_to_documenttype.html'>Add field for marked-up text to a document type</a>.</li>
-   </ul>       
+    <li><a href='./add_date_to_documenttype.html'>Add another date field to a document type</a>.</li>
+    <li><a href='./change_field_in_documenttype.html'>Change a field in a document type</a>.</li>
+    <li><a href='./remove_field_from_documenttype.html'>Remove field of a document type</a>.</li>
+   </ul>
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>

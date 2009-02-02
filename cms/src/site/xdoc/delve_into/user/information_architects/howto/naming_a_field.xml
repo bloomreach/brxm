@@ -29,9 +29,15 @@ ________________________________________________________________________________
     <section name="Naming a field">
       <span class="shortdesc">How to name a field of a document type.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=350;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/inars/add_date_to_documenttype.png" alt='Naming a field screenshot'/> 
-     <p>
+    </div></div>
+    <p>
       In a document type, a field with name sar:date_of_happening (which is a date field).
      </p>
    </div>
@@ -66,6 +72,13 @@ ________________________________________________________________________________
     <li><a href='./add_markuped_text_to_documenttype.html'>Add field for marked-up text to a document type</a>.</li>
    </ul>       
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>

@@ -22,36 +22,28 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Goto User Management Tab</title>
+    <title>Add number to document type</title>
   </properties>
 
   <body>
-    <section name="Goto User Management Tab">
-      <span class="shortdesc">How to get to the user management tab, to add users and groups or change their properties.</span>
+    <section name="Add number to document type">
+     <span class="shortdesc">How to add a number field to a document type.</span>
 
-    <p>
-     Go to the user management tab by clicking on the 
-     user management icon <span class='usermanagement_16'/>,
-     at the left of the screen. 
-    </p>
+  <p>
+    In the standard <a href='../concepts/field_type_menu.html'>field type menu</a>,
+    of Hippo CMS, there is no number field type to choose.
+    But any number is of course also a string, i.e. a sequence of characters,
+    so <a href='./add_date_to_documenttype.html'>you can use a date field instead.</a>
+   </p>
+   <p>
+    However, this implies that it is not possible to check if the
+    <a href='../concepts/contributor.html'>contributor</a> fills the field with
+    a number. He may use any sequence of characters. An organization using Hippo CMS,
+    may have the number field added to the field type menu and in the future Hippo CMS
+    may have the number field in the standard field type menu.
+    <span class='expires'>When Hippo CMS has a number field in the field type menu.</span>
+  </p>
 
-   <script type="text/javascript">
-    leftpx=450;
-    bottompx=350;
-   </script>
-   <div class='group'> 
-    <div id='screenshot'><div>
-     <img src="../../../../images/user_management_tab.png" alt='user management tab screenshot'/>      
-  </div></div></div>
-
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./add_group.html'>Add a group</a>.</li>
-    <li><a href='./add_user.html'>Add a user</a>.</li>
-    <li><a href='./change_password.html'>change a password</a>.</li>
-    <li><a href='./deactivate_account.html'>deactivate an account</a>.</li>
-   </ul>       
-  </subsection>
    <subsection name='Alternative'>
     <ul>
      <li><a href='../tour.html'>tour page.</a></li>
@@ -62,4 +54,4 @@ ________________________________________________________________________________
 
    </section>
   </body>
-</document>        
+</document>

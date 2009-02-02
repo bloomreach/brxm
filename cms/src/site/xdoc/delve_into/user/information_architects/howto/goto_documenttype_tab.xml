@@ -29,9 +29,15 @@ ________________________________________________________________________________
     <section name="Go to a Document type">
       <span class="shortdesc">How to get to a screen to manipulate a particular document type.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=445;
+    bottompx=300;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/inars/documenttype_tab.png" alt='documenttype tab screenshot'/> 
-     <p>
+    </div></div>
+    <p>
       Opened the tab for the document type 'upcoming', which is a document type in the namespace
       'sar'. For the document type, there are subtabs 'Edit' and 'Copy'. 
       The 'upcoming' document type is already filled by a structure definition containing the fields:
@@ -55,6 +61,13 @@ ________________________________________________________________________________
     <li><a href='./add_markuped_text_to_documenttype.html'>Add field for markedup text to a document type</a>.</li>
    </ul>       
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>

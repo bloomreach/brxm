@@ -31,6 +31,13 @@ ________________________________________________________________________________
 
     <p>A string is a sequence of characters. 
     </p>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Glossary.</a></li>
+     <li><a href='../howto/index.html'>Howto list.</a></li>
+    </ul>
+   </subsection>
    </section>
   </body>
 </document>
