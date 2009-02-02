@@ -29,20 +29,26 @@ ________________________________________________________________________________
     <section name="Remove field from document type">
       <span class="shortdesc">How to remove a field from a document type.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=350;
+   </script>
+   <div class='group'>
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/inars/remove_field_from_documenttype.png" alt='remove field screenshot'/> 
-     <p>
-      In a document type, fields can be removed by clicking on the remove buttons.
-     </p>
+    </div></div>
+    <p>
+      In a document type, fields can be removed by clicking on their remove button.
+    </p>
    </div>
 
    <p>
-    Open the <a href='./goto_documenttype_tab.html'>document type</a> for editing. 
-    Click on the remove button at the upper right of a field of the document type to remove it.    
+    Ensure that you have the document type in <a href='../concepts/edit_mode.html'>edit mode</a>.
+    Click on the remove button at the upper right of a field to remove it.
    </p>
    <div class='alert-48 icon-text-48'>
      If you remove a field from a document type, while documents of that type
-     already exists, all information in that field from all those documents will be lost!     
+     already exists, all information in that field from all those documents will be lost!
    </div>
 
   <subsection name='Next'>
@@ -53,9 +59,16 @@ ________________________________________________________________________________
     <li><a href='./add_string_to_documenttype.html'>Add a string field to a document type</a>.</li>
     <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type</a>.</li>
     <li><a href='./add_markuped_text_to_documenttype.html'>Add field for marked-up text to a document type</a>.</li>
-   </ul>       
+   </ul>
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>
-</document>        
+</document>

@@ -29,9 +29,14 @@ ________________________________________________________________________________
     <section name="Save settings">
       <span class="shortdesc">How to save settings, like the properties of a user of a group.</span>
 
-   <span class='screenshot'>
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=350;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/save_settings.png" alt='save settings screenshot'/>      
-   </span>
+  </div></div></div>
 
   <p>
    In the properties list on the right of the <a href='./goto_user_management_tab.html'>user management tab</a>
@@ -55,6 +60,13 @@ ________________________________________________________________________________
     <li><a href='./deactivate_account.html'>deactivate an account</a>.</li>
    </ul>       
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>

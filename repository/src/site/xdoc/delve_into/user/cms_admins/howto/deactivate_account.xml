@@ -29,9 +29,14 @@ ________________________________________________________________________________
     <section name="Deactivate account">
       <span class="shortdesc">How to deactivate a Hippo CMS user account.</span>
 
-   <span class='screenshot'>
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=350;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/deactivate_account.png" alt='Deactivate account screenshot'/>      
-   </span>
+  </div></div></div>
 
    <p>
     In the list of <a href='./goto_user_properties.html'>properties of the user</a>,
@@ -46,6 +51,13 @@ ________________________________________________________________________________
     <li><a href='./change_password.html'>change a password</a>.</li>
    </ul>       
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>

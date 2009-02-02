@@ -33,6 +33,13 @@ ________________________________________________________________________________
        no two pieces of information have the same URL (at any single moment).
        URL is short for 'universal resource locator'.           
     </p>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Glossary.</a></li>
+     <li><a href='../howto/index.html'>Howto list.</a></li>
+    </ul>
+   </subsection>
    </section>
   </body>
 </document>

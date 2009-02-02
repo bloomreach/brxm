@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -29,8 +29,14 @@ ________________________________________________________________________________
     <section name="Field size">
       <span class="shortdesc">How to define the size for a field in a document type.</span>
 
-   <div class='screenshot'>
-     <img src="../../../../images/screenshots/cms_M9/inars/fieldsize.png" alt='Fieldsize screenshot'/> 
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=350;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
+      <img src="../../../../images/screenshots/cms_M9/inars/fieldsize.png" alt='Fieldsize screenshot'/>
+    </div></div>
      <p>
       In the document type 'upcoming', titles may be no more than 60 characters.
      </p>
@@ -41,11 +47,11 @@ ________________________________________________________________________________
     e.g. a <a href='./add_string_to_documenttype.html'>string field</a> or
     a <a href='./add_markuped_text_to_documenttype.html'>marked-up text field</a>,
     the maximum size should be defined. 
-    For string fields, click below the size title to type the maximal number of characters     
+    For string fields, click below the size title to type the maximal number of characters
     (far right, in the middle).
     Fields that may consist of several lines, do not have a single size property, but two, a width
-    and a height (number of characters wide and number of lines heigh). They are set in the 
-    same way.  
+    and a height (number of characters wide and number of lines heigh). They are set in the
+    same way.
    </p>
 
   <subsection name='Next'>
@@ -56,9 +62,16 @@ ________________________________________________________________________________
     <li><a href='./add_string_to_documenttype.html'>Add a string field to a document type</a>.</li>
     <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type</a>.</li>
     <li><a href='./add_markuped_text_to_documenttype.html'>Add field for marked-up text to a document type</a>.</li>
-   </ul>       
+   </ul>
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>
-</document>        
+</document>

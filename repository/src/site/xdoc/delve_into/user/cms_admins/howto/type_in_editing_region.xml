@@ -29,10 +29,15 @@ ________________________________________________________________________________
     <section name="Type in editing region">
       <span class="shortdesc">How to type in an editing regin, creating markuped text.</span>
 
-   <span class='screenshot'>
-     <img src="../../../../images/editing_region.png" alt='Editing region screenshot'/>      
-   </span>
-  
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=350;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
+     <img src="../../../../images/editing_region.png" alt='Editing region screenshot'/>
+   </div></div></div>
+
    <p>
     In any editing region you can create markuped text, i.e.: You can make some text boldface,
     italic or underlined. You can make indented lists of numbered or bulleted items. You can make
@@ -51,7 +56,14 @@ ________________________________________________________________________________
     <li><a href='./add_group.html'>Add a group</a>.</li>
    </ul>       
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
-   </section>
-  </body>
+  </section>
+ </body>
 </document>        

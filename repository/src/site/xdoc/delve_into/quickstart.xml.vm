@@ -33,7 +33,7 @@
 
 <subsection name='Install standard Hippo CMS with example content'>
 
-<blockquote>
+<div class='nav'>
  <table>
   <tr>
    <td>Download</td>
@@ -57,13 +57,13 @@
    </td>
   </tr>
  </table>
-</blockquote>
+</div>
 
 </subsection>
 
 <subsection name='Using standard Hippo CMS with example content'>
 
-<blockquote>
+<div class='nav'>
  <table summary='First column= step number, second column= action icon, third column= action description'>
   <tr>
    <td><a name='startup'/>Startup</td>
@@ -116,7 +116,7 @@
    </td>
   </tr>
  </table>
-</blockquote>
+</div>
 
  </subsection>
 

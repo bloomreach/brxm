@@ -22,49 +22,50 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Go to a namespace</title>
+    <title>Namespace folder</title>
   </properties>
 
   <body>
-    <section name="Go to a namespace">
-      <span class="shortdesc">How to get to a namespace, to view the document types in it.</span>
+    <section name="Namespace folder">
+      <span class="shortdesc">What and where is the namespace folder?</span>
 
    <script type="text/javascript">
-    leftpx=450;
-    bottompx=350;
+    leftpx=0;
+    toppx=160;
+    bottompx=400;
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/inars/namespace_tab.png" alt='Go to namespace screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/documenttypes_tab.png" alt='Go to document types tab screenshot'/> 
     </div></div>
     <p>
-      Opened list of documenttypes in <a href='../concepts/namespace.html'>namespace</a> 'sar'.
-      The namespace 'sar' contains te document types 'myhobby' and 'upcoming'.
-     </p>
+     Opened the <i>namespaces folder</i>.
+     It is a main folder in the <a href='../concepts/configuration_slide.html'>configuration slide</a>.
+     The subfolders of the namespaces folder are <a href='../concepts/namespace.html'>namespaces</a>.
+     There is one namespace in this example, called 'defaultcontent'.
+     It is the namespace for <span href='../concepts/namespace.html'>default content</span>.
+    </p>
    </div>
 
    <p>
-    In the list of namespaces
-    (in the tree view, below the documenttypes folder, in 
-    the <a href='./goto_documenttypes_tab.html'>document types tab</a>, at middle-left), 
-    click on namespace you want to open. 
+    The <i>namespaces folder</i> contains all the <a href='../concepts/namespace.html'>namespaces</a>
+    defined in your Hippo CMS. You can add new namespaces here.
    </p>
 
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./create_documenttype.html'>Create document type</a>.</li>
-    <li><a href='./goto_documenttype_tab.html'>Go to document type tab</a>.</li>
-    <li><a href='./goto_namespace.html'>Go to another namespace</a>.</li>
-   </ul>       
-  </subsection>
+   <subsection name='Next'>
+    <ul>
+     <li><a href='../howto/create_namespace.html'>Create namespace</a>.</li>
+    </ul>
+   </subsection>
+
    <subsection name='Alternative'>
     <ul>
      <li><a href='../tour.html'>tour page.</a></li>
-     <li><a href='./index.html'>Howto list.</a></li>
-     <li><a href='../concepts/index.html'>Glossary.</a></li>
+     <li><a href='./index.html'>Glossary.</a></li>
+     <li><a href='../howto/index.html'>Howto list.</a></li>
     </ul>
    </subsection>
 
    </section>
   </body>
-</document>        
+</document>

@@ -41,6 +41,7 @@
    <shortdesc>How to import and work with the Hippo CMS project in the Eclipse IDE.</shortdesc>
    <subsection>Introduction</subsection>
    <subsection>Prepare</subsection>
+   <subsection>Configure Eclipse workspace</subsection>
    <subsection>Create Eclipse projects</subsection>
    <subsection>Run</subsection>
    <subsection>Code formatting</subsection>
@@ -558,6 +559,7 @@
    <subsection>Identify Maven local repository</subsection>
    <subsection>Configure update sites</subsection>
    <subsection>Install plugins</subsection>
+   <subsection>War overlays</subsection>
   </document><document ext="xml.vm" filename="get_Hippo_CMS_source" relpath="delve_into/tools/howto">Get the Hippo CMS source
    <section>Get the Hippo CMS source</section>
    <shortdesc>Get the Hippo CMS source from the Hippo subversion repository.</shortdesc>
@@ -570,7 +572,7 @@
    <shortdesc>References to good Maven pages (TODO) and some handy notes.</shortdesc>
   </document><document ext="xml" filename="run_development_package" relpath="delve_into/tools/howto">Run a development package
    <section>Run a development package</section>
-   <shortdesc>How to run a  ?</shortdesc>
+   <shortdesc>How to build the package of a project and run it, all on the fly?</shortdesc>
   </document><document ext="xml" filename="start_eclipse" relpath="delve_into/tools/howto">Start Eclipse
    <section>Start Eclipse</section>
    <shortdesc>Start Eclipse to work on Hippo CMS addon projects.</shortdesc>
@@ -599,53 +601,63 @@
    <shortdesc>How to add a group to Hippo CMS to group users in.</shortdesc>
    <img>add group screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="add_user" relpath="delve_into/user/cms_admins/howto">Add User
    <section>Add User</section>
    <shortdesc>How to add a user account to Hippo CMS to allow someone access.</shortdesc>
    <img>Add user screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="assign_user_to_group" relpath="delve_into/user/cms_admins/howto">Assign user to group
    <section>Assign user to group</section>
    <shortdesc>How to make a particular user belong to a particular group.</shortdesc>
    <img>Assign user to group screenshot</img>
    <subsection>Alternative</subsection>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="change_group_properties" relpath="delve_into/user/cms_admins/howto">Change group properties
    <section>Change group properties</section>
    <shortdesc>How to change to properties of a Hippo CMS group of users.</shortdesc>
    <img>Group properties screenshot</img>
    <subsection>Alternative</subsection>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="change_password" relpath="delve_into/user/cms_admins/howto">Change password
    <section>Change password</section>
    <shortdesc>How to change the password of a Hippo CMS user.</shortdesc>
    <img>Change password screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="change_user_properties" relpath="delve_into/user/cms_admins/howto">Change user properties
    <section>Change user properties</section>
    <shortdesc>How to change to properties of a Hippo CMS user account.</shortdesc>
    <img>Change user properties screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="deactivate_account" relpath="delve_into/user/cms_admins/howto">Deactivate account
    <section>Deactivate account</section>
    <shortdesc>How to deactivate a Hippo CMS user account.</shortdesc>
    <img>Deactivate account screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="goto_group_properties" relpath="delve_into/user/cms_admins/howto">Goto Group Properties
    <section>Goto Group Properties</section>
    <shortdesc>How to get to the properties of a group</shortdesc>
    <img>group properties screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="goto_user_management_tab" relpath="delve_into/user/cms_admins/howto">Goto User Management Tab
    <section>Goto User Management Tab</section>
    <shortdesc>How to get to the user management tab, to add users and groups or change their properties.</shortdesc>
    <img>user management tab screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="goto_user_properties" relpath="delve_into/user/cms_admins/howto">Goto User Properties
    <section>Goto User Properties</section>
    <shortdesc>How to get to the properties of a user</shortdesc>
    <img>user properties screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/user/cms_admins/howto">CMS admin Howto
    <section>CMS admin Howto</section>
    <shortdesc>A collection of howto's for small tasks a CMS admin may want to do.</shortdesc>
@@ -655,26 +667,30 @@
    <shortdesc>How to login to Hippo CMS as administrator.</shortdesc>
    <img>Hippo login screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="logout" relpath="delve_into/user/cms_admins/howto">Logout
    <section>Logout</section>
    <shortdesc>How to logout</shortdesc>
    <img>logout screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="save_settings" relpath="delve_into/user/cms_admins/howto">Save settings
    <section>Save settings</section>
    <shortdesc>How to save settings, like the properties of a user of a group.</shortdesc>
    <img>save settings screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="schemas" relpath="delve_into/user/cms_admins/howto">
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="start_CMS" relpath="delve_into/user/cms_admins/howto">Start CMS
    <section>Start CMS</section>
    <shortdesc>How to start a CMS session in your browser</shortdesc>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="type_in_editing_region" relpath="delve_into/user/cms_admins/howto">Type in editing region
    <section>Type in editing region</section>
    <shortdesc>How to type in an editing regin, creating markuped text.</shortdesc>
    <img>Editing region screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document></folder><document ext="xml" filename="index" relpath="delve_into/user/cms_admins">CMS Admin Guide
    <section>CMS Admin Guide</section>
    <shortdesc>Guide for Hippo CMS users to perform the role of CMS admin</shortdesc>
@@ -1015,62 +1031,84 @@
    <document ext="xml" filename="boolean" relpath="delve_into/user/information_architects/concepts">Boolean
    <section>Boolean</section>
    <shortdesc>What is a boolean</shortdesc>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="documenttype" relpath="delve_into/user/information_architects/concepts">Document type
    <section>Document type</section>
    <shortdesc>What is a document type</shortdesc>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/concepts">
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="mandatory_or_optional" relpath="delve_into/user/information_architects/concepts">Mandatory or optional field
    <section>Mandatory or optional field</section>
    <shortdesc>What is a mandatory or optional field in a documenttype?</shortdesc>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="namespaces_folder" relpath="delve_into/user/information_architects/concepts">Namespace folder
+   <section>Namespace folder</section>
+   <shortdesc>What and where is the namespace folder?</shortdesc>
+   <img>Go to document types tab screenshot</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="namespace" relpath="delve_into/user/information_architects/concepts">namespace
    <section>namespace</section>
    <shortdesc>What is a namespace</shortdesc>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="string" relpath="delve_into/user/information_architects/concepts">string
    <section>string</section>
    <shortdesc>What is a string</shortdesc>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="URL" relpath="delve_into/user/information_architects/concepts">URL
    <section>URL</section>
    <shortdesc>URL</shortdesc>
+   <subsection>Alternative</subsection>
   </document></folder><folder>howto
    
    <document ext="xml" filename="add_boolean_to_documenttype" relpath="delve_into/user/information_architects/howto">Add boolean to document type
    <section>Add boolean to document type</section>
    <shortdesc>How to add a boolean to a document type.</shortdesc>
    <img>Add boolean to document type screenshot</img>
-   <index>checkbox</index>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="add_date_to_documenttype" relpath="delve_into/user/information_architects/howto">Add date to document type
    <section>Add date to document type</section>
    <shortdesc>How to add a date field to a document type.</shortdesc>
    <img>Add date to documenttype screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="add_markuped_text_to_documenttype" relpath="delve_into/user/information_architects/howto">Add marked-up text field to document type
    <section>Add marked-up text field to document type</section>
    <shortdesc>How to add a marked-up text field to a document type.</shortdesc>
    <img>Add markuped text to document type screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="add_number_to_documenttype" relpath="delve_into/user/information_architects/howto">Add number to document type
+   <section>Add number to document type</section>
+   <shortdesc>How to add a number field to a document type.</shortdesc>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="add_string_to_documenttype" relpath="delve_into/user/information_architects/howto">Add string to document type
    <section>Add string to document type</section>
    <shortdesc>How to add a string field to a document type.</shortdesc>
    <img>Add string to documenttype screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="change_field_in_documenttype" relpath="delve_into/user/information_architects/howto">Change field in document type
    <section>Change field in document type</section>
    <shortdesc>How to change a field in a document type.</shortdesc>
    <img>change field screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="create_documenttype" relpath="delve_into/user/information_architects/howto">Create document type
    <section>Create document type</section>
-   <shortdesc>How to create a document type, to define the structure 
-         of a class of similar documents.</shortdesc>
+   <shortdesc>How to create a document type, to define the structure
+                              of a class of similar documents.</shortdesc>
    <img>Create document type screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="create_namespace" relpath="delve_into/user/information_architects/howto">Create namespace
    <section>Create namespace</section>
    <shortdesc>How to create a namespace to gather document types in.</shortdesc>
    <img>Create namespace screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><folder>document_types
    
    <document ext="xml" filename="editor" relpath="delve_into/user/information_architects/howto/document_types">The Document Type Editor
@@ -1115,31 +1153,31 @@
    <shortdesc>How to define a caption for a field in a document type.</shortdesc>
    <img>Fieldcaption screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="fieldsize" relpath="delve_into/user/information_architects/howto">Field size
    <section>Field size</section>
    <shortdesc>How to define the size for a field in a document type.</shortdesc>
    <img>Fieldsize screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="goto_content_browse_tab" relpath="delve_into/user/information_architects/howto">Go to content browse tab
    <section>Go to content browse tab</section>
    <shortdesc>How to get to the content browse tab.</shortdesc>
    <img>content browse screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="goto_documenttypes_tab" relpath="delve_into/user/information_architects/howto">Go to Document Types Tab
-   <section>Go to Document Types Tab</section>
-   <shortdesc>How to get to the document types tab, to add and change document types.</shortdesc>
-   <img>Go to document types tab screenshot</img>
-   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="goto_documenttype_tab" relpath="delve_into/user/information_architects/howto">Go to a Document type
    <section>Go to a Document type</section>
    <shortdesc>How to get to a screen to manipulate a particular document type.</shortdesc>
    <img>documenttype tab screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="goto_namespace" relpath="delve_into/user/information_architects/howto">Go to a namespace
    <section>Go to a namespace</section>
    <shortdesc>How to get to a namespace, to view the document types in it.</shortdesc>
    <img>Go to namespace screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/howto">CMS Information Architect Howto
    <section>CMS Information Architect Howto</section>
    <shortdesc>A collection of howto's for small tasks an information architect may want to do.</shortdesc>
@@ -1148,32 +1186,38 @@
    <shortdesc>How to login to Hippo CMS.</shortdesc>
    <img>Hippo login screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="logout" relpath="delve_into/user/information_architects/howto">Logout
    <section>Logout</section>
    <shortdesc>How to logout</shortdesc>
    <img>logout screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="mandatory_or_optional" relpath="delve_into/user/information_architects/howto">Mandatory or optional field
    <section>Mandatory or optional field</section>
    <shortdesc>How to define a field as mandatory or as optional.</shortdesc>
    <img>Mandatory or optional screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="naming_a_field" relpath="delve_into/user/information_architects/howto">Naming a field
    <section>Naming a field</section>
    <shortdesc>How to name a field of a document type.</shortdesc>
    <img>Naming a field screenshot</img>
    <index>Path sar:title is used in multiple fields</index>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="remove_field_from_documenttype" relpath="delve_into/user/information_architects/howto">Remove field from document type
    <section>Remove field from document type</section>
    <shortdesc>How to remove a field from a document type.</shortdesc>
    <img>remove field screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="save_documenttype" relpath="delve_into/user/information_architects/howto">Save document type
    <section>Save document type</section>
    <shortdesc>How to save a document type.</shortdesc>
    <img>save document type screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="start_CMS" relpath="delve_into/user/information_architects/howto">Start CMS
    <section>Start CMS</section>
    <shortdesc>How to start a CMS session in your browser</shortdesc>
@@ -1183,6 +1227,7 @@
    <shortdesc>How to update content</shortdesc>
    <img>update content screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document></folder><document ext="xml" filename="index" relpath="delve_into/user/information_architects">Information Architects Guide
    <section>Information Architects Guide</section>
    <shortdesc>Guide for Hippo CMS users to perform the role of Information Architect.</shortdesc>

@@ -33,6 +33,13 @@ ________________________________________________________________________________
          of that documenttype. A field that is optional may have a value, but may be left
          empty.
       </p>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Glossary.</a></li>
+     <li><a href='../howto/index.html'>Howto list.</a></li>
+    </ul>
+   </subsection>
     </section>
   </body>
 </document>

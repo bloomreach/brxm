@@ -28,17 +28,24 @@ ________________________________________________________________________________
   <body>
     <section name="Login">
       <span class="shortdesc">How to login to Hippo CMS.</span>
-     
-   <div class='screenshot'>
+
+   <script type="text/javascript">
+    leftpx=275;
+    toppx=200;
+    bottompx=575;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/inars/hippo_login_alice.png" alt='Hippo login screenshot'/>
-      <p>Alice logs in to Hippo CMS. She has typed her password, but only bullets are shown,
+    </div></div>
+    <p>Alice logs in to Hippo CMS. She has typed her password, but only bullets are shown,
        to prevent someone looking over her shoulder from reading it. She chose the Hippo CMS to
        be in English. Now she is about to press the button marked `sign in'.
       </p>
    </div>
 
     <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a>, you will be presented with a login dialog. 
+     After <a href='./start_CMS.html'>starting Hippo CMS</a>, you will be presented with a login dialog.
      Type your Hippo CMS username and password. This must been given to you by your CMS administrator and
      he must have known that you are supposed to work in Hippo CMS as information architect, because he
      has to set the appropiate rights for you.
@@ -46,10 +53,17 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./goto_documenttypes_tab.html'>Go to document types tab</a>.</li>
-   </ul>       
+    <li><a href='./goto_documenttypes_tab.html'>Go to document types tab (continue tour)</a>.</li>
+   </ul>
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>
-</document>        
+</document>

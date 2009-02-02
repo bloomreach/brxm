@@ -27,33 +27,49 @@ ________________________________________________________________________________
 
   <body>
     <section name="Create document type">
-      <span class="shortdesc">How to create a document type, to define the structure 
-         of a class of similar documents.</span>
+      <span class="shortdesc">How to create a document type, to define the structure
+                              of a class of similar documents.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=0;
+    toppx=160;
+    bottompx=610;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/inars/create_documenttype.png" alt='Create document type screenshot'/> 
-     <p>
-      Creation of <a href='../concepts/documenttype.html'>document type</a> with name `upcoming',
-      in namespace 'sar'. The namespace 'sar' already contains the document type 'myhobby'.      
-     </p>
+    </div></div>
+    <p>
+     Creation of <a href='../concepts/documenttype.html'>document type</a> with name 'myhobby',
+     in namespace 'snp'. The namespace 'snp' already contains the document type 'upcoming'.
+    </p>
    </div>
 
    <p>
-    <a href='./goto_namespace.html'>Select the namespace</a> to create a document type in,
-    then click on the selection menu at the top of the middle-right lane and select `create new type'
-    by clicking on it. A dialog window appears.
+    To add a documenttype to a <a href='../concepts/namespace.html'>namespace</a>, select the
+    <a href='../concepts/namespace_folder.html'>folder</a> for that namespace
+    as the <a href='../concepts/current_folder.html'>current folder</a> and
+    select 'create new type' in the <a href='../concepts/folder_action_menu.html'>folder action menu</a>.
+    A dialog window appears.
    </p>
    <p>
-    Type a informative name for the documenttype. 
+    Type an informative name for the documenttype.
    </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./goto_documenttype_tab.html'>Select document type</a>.</li>
+    <li><a href='./add_date_to_documenttype.html'>Add date to document type (continue tour)</a>.</li>
     <li><a href='./create_documenttype.html'>Create another document type</a>.</li>
-   </ul>       
+   </ul>
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>
-</document>        
+</document>

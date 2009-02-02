@@ -37,43 +37,31 @@ ________________________________________________________________________________
     <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/contribs/fill_boolean_field.png" alt='Fill boolean screenshot'/> 
     </div></div> 
-   <p>
-      Consider as example the inputfield 'recurring?'.
-      This is a <a href='boolean'>boolean</a>, i.e. a yes/no question, and the caption
-      is 'recurring?'. So the question is whether the happening (that is what the document is about)
-      is recurring or not.
-      However, it is not immediately clear what exactly 'recurring' is supposed to mean.
-      Should a happening be considered recurring if such a happening 
-      is intended to occur more often or only if it 
-      already has occurred at least once? And if so, what if such happenings did occur in the past, but were
-      organized by another organization, does that count as 'already occurred'? It is clear that such a
-      short caption may leave some questions. However, if you already know what is meant, a short caption 
-      is better, as the document looks cleaner and you see the structure in one grasp.
+    <p>
+     Make sure you know what the fields in a <a href='../concepts/document_type.html'>document type</a>
+     mean.
+     Often, this will be clear. Everyone knows what a title or a description is supposed to be.
+     There is also no question as to what 'indoors' means.
+     But people can answer the question whether a happening is recurring differently.
+     A person may consider a happening recurring if it is intended to occur again in the future.
+     An other person may consider the same happening as not recurring, because it has not occured
+     before.
    </p>
   </div>
 
    <p>
       The <a href='../concepts/document_type.html'>document types</a> used in your organization, were
-      created by an information architect with the 
+      created by an information architect with the
       intent that every <a href='contributor'>contributor</a> would
-      fill in information that answers exactly the same questions. 
-      We will call information that answers exactly the same question: similar information.
-   </p>
-   <p>   
-      Ensuring that information is similar allows to use all similar information at once. 
-      It would for example be possible
-      to select all happenings that are recurring, or give statistics on how many of the happenings 
-      are recurring or if there are more recurring happenings this year than last year.
+      fill in information with the same meaning of the field in mind.
    </p>
    <p>
-      However, if not every contributor answered exactly the same question when he filled in the
-      'recurring?' inputfield, then the information is not really similar and a selection of all
-      happenings that are recurring could almost be a random selection, not usefull.
-      Likewise, the statistics will be meaningless numbers.
+      If contributors use different meanings of the same field,
+      searches and statistics on that field will not be particularly useful.
    </p>
    <p>
-      So, as a contributor, you have the responsibility to ensure that you answer all the questions
-      in a <a href='../concepts/document_type.html'>document type</a> as they are intended. 
+    So, as a contributor, make sure that you know the meanings intended.
+    If the information architect chose a name that is unclear, ask for an explanation.
    </p>
    <subsection name='Next'>
     <ul>
@@ -81,15 +69,15 @@ ________________________________________________________________________________
       If you are doing the <a href='../tour.html'>tour</a>, use the back button of your browser to continue.
       (There is no hyperlink here, because you can get here from many different pages.)
      </li>
-    </ul>       
+    </ul>
    </subsection>
    <subsection name='Alternative'>
     <ul>
      <li><a href='./index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>
-    </ul>       
+    </ul>
    </subsection>
-     
+
   </section>
  </body>
-</document>        
+</document>

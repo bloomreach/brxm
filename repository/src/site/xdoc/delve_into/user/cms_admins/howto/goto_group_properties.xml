@@ -29,9 +29,14 @@ ________________________________________________________________________________
     <section name="Goto Group Properties">
       <span class="shortdesc">How to get to the properties of a group</span>
 
-   <span class='screenshot'>
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=350;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/group_properties.png" alt='group properties screenshot'/>      
-   </span>
+  </div></div></div>
 
    <p>
     In the list of existing groups 
@@ -46,6 +51,13 @@ ________________________________________________________________________________
     <li><a href='./assign_user_to_group.html'>assign user to group</a>.</li>
    </ul>       
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>

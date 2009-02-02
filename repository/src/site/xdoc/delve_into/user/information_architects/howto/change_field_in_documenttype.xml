@@ -29,31 +29,49 @@ ________________________________________________________________________________
     <section name="Change field in document type">
       <span class="shortdesc">How to change a field in a document type.</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=450;
+    bottompx=660;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/inars/change_field_in_documenttype.png" alt='change field screenshot'/> 
-     <p>
-      In a document type, fields can be changed by clicking on them in the documenttype (not in the
-      list of possible field types!). Then, all properties of the field can be changed just like
-      when it was first added. Here, the Title field was clicked and the size was changed from 60 to 68.
-     </p>
+    </div></div>
+    <p>
+     In a document type, fields can be changed by clicking on them in the documenttype
+     (don't click in the <a href='../concepts/field_type_menu.html'>field type menu</a>!).
+     After clicking on the field,
+     the <a href='../concepts/field_properties_overview.html'>properties overview</a> of that field
+     appears and all properties can be changed just like
+     when the field was first added.
+     Here, the Title field was clicked and the size was changed from 60 to 68.
+    </p>
    </div>
 
    <p>
-    Open the <a href='./goto_documenttype_tab.html'>document type</a> for editing. 
-    Click on the field to be changed in the document type and change any properties of that field.    
+    Ensure that you have the document type in <a href='../concepts/edit_mode.html'>edit mode</a>.
+    Click on the field to be changed in the document type and change any properties of that field in
+    the <a href='../concepts/field_properties_overview.html'>properties overview of the field.</a>
    </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./change_field_in_documenttype.html'>Change a field in a document type</a>.</li>
-    <li><a href='./remove_field_from_documenttype.html'>Remove field of a document type</a>.</li>
+    <li><a href='./remove_field_from_documenttype.html'>Remove field of a document type (continue tour)</a>.</li>
     <li><a href='./add_date_to_documenttype.html'>Add a date field to a document type</a>.</li>
     <li><a href='./add_string_to_documenttype.html'>Add a string field to a document type</a>.</li>
     <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type</a>.</li>
     <li><a href='./add_markuped_text_to_documenttype.html'>Add field for marked-up text to a document type</a>.</li>
-   </ul>       
+    <li><a href='./change_field_in_documenttype.html'>Change another field in a document type</a>.</li>
+   </ul>
   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>
-</document>        
+</document>
