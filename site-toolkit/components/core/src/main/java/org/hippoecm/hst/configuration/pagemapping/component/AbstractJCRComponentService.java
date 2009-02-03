@@ -6,18 +6,18 @@ import java.util.List;
 import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.Configuration;
-import org.hippoecm.hst.configuration.pagemapping.PageMapping;
-import org.hippoecm.hst.configuration.pagemapping.components.AugmentableComponent;
-import org.hippoecm.hst.configuration.pagemapping.components.Component;
+import org.hippoecm.hst.configuration.components.AugmentableHstComponent;
+import org.hippoecm.hst.configuration.components.HstComponent;
+import org.hippoecm.hst.configuration.components.HstComponents;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractJCRComponentService extends AbstractJCRService implements AugmentableComponent{
+public abstract class AbstractJCRComponentService extends AbstractJCRService implements AugmentableHstComponent{
     
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Component.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponent.class);
     
     private String jsp;
     
@@ -29,12 +29,12 @@ public abstract class AbstractJCRComponentService extends AbstractJCRService imp
     /**
      * List of ComponentService's that are a child component by hierarchy
      */
-    private List<Component> hierchicalChildComponents;
+    private List<HstComponent> hierchicalChildComponents;
     
     /**
      * Array of ComponentService's that is composed of the String[] childComponents and List<ComponentService> hierchicalChildComponents
      */
-    private Component[] combinedComponents;
+    private HstComponent[] combinedComponents;
 
     private String namespace;
 
@@ -42,15 +42,15 @@ public abstract class AbstractJCRComponentService extends AbstractJCRService imp
     
     private String componentClassName;
     
-    private PageMapping pageMappingService;
+    private HstComponents components;
     
     private JCRValueProvider valueProvider; 
     
-    public AbstractJCRComponentService(PageMapping pageMappingService,Node jcrNode) {
+    public AbstractJCRComponentService(HstComponents components,Node jcrNode) {
         super(jcrNode);
         this.valueProvider = new JCRValueProviderImpl(jcrNode);
-        this.pageMappingService = pageMappingService;
-        this.hierchicalChildComponents = new ArrayList<Component>();
+        this.components = components;
+        this.hierchicalChildComponents = new ArrayList<HstComponent>();
         if (valueProvider.isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
             this.jsp = valueProvider.getString(Configuration.PROPERTYNAME_JSP);
             this.namespace = valueProvider.getString(Configuration.PROPERTYNAME_NAMESPACE);
@@ -60,20 +60,20 @@ public abstract class AbstractJCRComponentService extends AbstractJCRService imp
         } 
     }
     
-    public Component[] getChildServices() {
+    public HstComponent[] getChildServices() {
         return this.getChildComponents();
     }
 
     
     final public void action(HstRequestContext hstRequestContext){
-        for(Component childs : getChildComponents()) {
+        for(HstComponent childs : getChildComponents()) {
             childs.action(hstRequestContext);
         }
         this.doAction(hstRequestContext);
     }
     
     final public void render(HstRequestContext hstRequestContext){
-        for(Component childs : getChildComponents()) {
+        for(HstComponent childs : getChildComponents()) {
             childs.render(hstRequestContext);
         }
         this.doRender(hstRequestContext);
@@ -87,23 +87,23 @@ public abstract class AbstractJCRComponentService extends AbstractJCRService imp
         return this.jsp;
     }
 
-    public void addHierarchicalChildComponent(Component hierarchicalChildComponent){
+    public void addHierarchicalChildComponent(HstComponent hierarchicalChildComponent){
         this.hierchicalChildComponents.add(hierarchicalChildComponent);
         // reset the combined components such the getChilds returns the added component
         combinedComponents = null;
     }
     
-    public Component[] getChildComponents() {
+    public HstComponent[] getChildComponents() {
         if(combinedComponents != null) {
             return combinedComponents;
         }
         if(childComponents == null && hierchicalChildComponents.isEmpty()) {
-            return new Component[0];
+            return new HstComponent[0];
         } else {
-            List<Component> childs = new ArrayList<Component>();
+            List<HstComponent> childs = new ArrayList<HstComponent>();
             if(childComponents != null) {
                 for(String childComponent : this.childComponents) {
-                    Component c = this.pageMappingService.getComponent(childComponent);
+                    HstComponent c = this.components.getComponent(childComponent);
                     if(c!=null) {
                         childs.add(c);
                     } else {
@@ -112,7 +112,7 @@ public abstract class AbstractJCRComponentService extends AbstractJCRService imp
                 }
             }
             childs.addAll(hierchicalChildComponents);
-            this.combinedComponents =  childs.toArray(new Component[childs.size()]);
+            this.combinedComponents =  childs.toArray(new HstComponent[childs.size()]);
             return this.combinedComponents;
         }
     }
@@ -125,8 +125,8 @@ public abstract class AbstractJCRComponentService extends AbstractJCRService imp
         return this.componentSource;
     }
     
-    public PageMapping getPageMappingService(){
-        return this.pageMappingService;
+    public HstComponents getHstComponents(){
+        return this.components;
     }
 
 }

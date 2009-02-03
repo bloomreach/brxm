@@ -7,9 +7,9 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.HstConfigurationService;
-import org.hippoecm.hst.configuration.JCRHstConfigurationService;
-import org.hippoecm.hst.configuration.sitemap.MatchingSiteMapItem;
+import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.HstSiteService;
+import org.hippoecm.hst.configuration.sitemap.HstMatchingSiteMapItem;
 import org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository;
 import org.hippoecm.hst.core.jcr.pool.PoolingRepository;
 import org.hippoecm.hst.service.ServiceException;
@@ -19,13 +19,14 @@ public class TestURLMappingMatcher extends AbstractSpringTestCase {
 
     public static final String PREVIEW_NODEPATH = "preview";
     public static final String CONFIGURATION_NODEPATH = "hst:configuration/hst:configuration";
+    public static final String CONTENT_NODEPATH = "content";
 
-    public void testURLMappingLoading() {
+    public void testURLMapping() {
 
         try {
-            Node hstConfNode = getConfigNode();
-            HstConfigurationService hstConfigurationService = new JCRHstConfigurationService(hstConfNode);
-            MatchingSiteMapItem m = hstConfigurationService.getSiteMapService().match("news/inland");
+            HstSiteNodes hstSiteNodes = getHstSiteNodes();
+            HstSite hstSiteService = new HstSiteService("test", hstSiteNodes.getConfigNode(), hstSiteNodes.getContentNode());
+            HstMatchingSiteMapItem m = hstSiteService.getSiteMap().match("news/inland");
             if (m != null) {
                 StringBuffer buf = new StringBuffer();
                 m.dump(buf, "");
@@ -46,7 +47,7 @@ public class TestURLMappingMatcher extends AbstractSpringTestCase {
         return new String[] { "org/hippoecm/hst/jcr/pool/GeneralBasicPoolingRepository.xml" };
     }
 
-    protected Node getConfigNode() {
+    protected HstSiteNodes getHstSiteNodes() {
         
         BasicPoolingRepository poolingRepository = (BasicPoolingRepository) getComponent(PoolingRepository.class.getName());
         Repository repository = poolingRepository;
@@ -60,17 +61,37 @@ public class TestURLMappingMatcher extends AbstractSpringTestCase {
             e1.printStackTrace();
         }
 
-        Node hstConfNode = null;
         try {
-            hstConfNode = session.getRootNode().getNode(PREVIEW_NODEPATH + "/" + CONFIGURATION_NODEPATH);
-
+            Node hstConfNode  = session.getRootNode().getNode(PREVIEW_NODEPATH + "/" + CONFIGURATION_NODEPATH);
+            Node contentNode  = session.getRootNode().getNode(PREVIEW_NODEPATH + "/" + CONTENT_NODEPATH);
+            return new HstSiteNodes(hstConfNode, contentNode);
         } catch (PathNotFoundException e) {
             e.printStackTrace();
         } catch (RepositoryException e) {
             e.printStackTrace();
         }
 
-        return hstConfNode;
+        return null;
     }
 
+    class HstSiteNodes {
+        
+        Node configNode;
+        Node contentNode;
+        
+        HstSiteNodes(Node configNode, Node contentNode){
+            this.configNode = configNode;
+            this.contentNode = contentNode;
+        }
+
+        public Node getConfigNode() {
+            return configNode;
+        }
+
+        public Node getContentNode() {
+            return contentNode;
+        }
+        
+        
+    }
 }

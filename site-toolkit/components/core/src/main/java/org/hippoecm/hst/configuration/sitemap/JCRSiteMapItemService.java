@@ -7,28 +7,28 @@ import java.util.Map;
 import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.Configuration;
-import org.hippoecm.hst.configuration.pagemapping.components.Component;
+import org.hippoecm.hst.configuration.components.HstComponent;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JCRSiteMapItemService extends AbstractJCRService implements SiteMapItem{
+public class JCRSiteMapItemService extends AbstractJCRService implements HstSiteMapItem{
 
-    private static final Logger log = LoggerFactory.getLogger(SiteMapItem.class);
+    private static final Logger log = LoggerFactory.getLogger(HstSiteMapItem.class);
     
-    private Component componentService;
-    private SiteMapItem parentSiteMapItemService;
-    private Map<String, SiteMapItem> childSiteMapItemServices;
+    private HstComponent componentService;
+    private HstSiteMapItem parentSiteMapItemService;
+    private Map<String, HstSiteMapItem> childSiteMapItemServices;
     private String dataSource;
     private String urlPartName;
     private String url;
     private String componentLocation;
     private boolean repositoryBased;
    
-    public JCRSiteMapItemService(Node jcrNode, SiteMapItem parentSiteMapItemService) {
+    public JCRSiteMapItemService(Node jcrNode, HstSiteMapItem parentSiteMapItemService) {
         super(jcrNode);
-        childSiteMapItemServices = new HashMap<String, SiteMapItem>();
+        childSiteMapItemServices = new HashMap<String, HstSiteMapItem>();
         this.parentSiteMapItemService = parentSiteMapItemService;
         
         this.dataSource = this.getValueProvider().getString(Configuration.PROPERTYNAME_DATASOURCE);
@@ -60,7 +60,7 @@ public class JCRSiteMapItemService extends AbstractJCRService implements SiteMap
         return componentLocation;
     }
 
-    public Component getComponentService() {
+    public HstComponent getComponentService() {
         return this.componentService;
     }
 
@@ -68,7 +68,7 @@ public class JCRSiteMapItemService extends AbstractJCRService implements SiteMap
         return this.dataSource;
     }
 
-    public SiteMapItem getParent() {
+    public HstSiteMapItem getParent() {
         return this.parentSiteMapItemService;
     }
 
@@ -84,25 +84,25 @@ public class JCRSiteMapItemService extends AbstractJCRService implements SiteMap
         return this.repositoryBased;
     }
 
-    public void setComponentService(Component componentService) {
+    public void setComponentService(HstComponent componentService) {
         this.componentService = componentService;
     }
    
-    public SiteMapItem[] getChilds() {
-        return this.childSiteMapItemServices.values().toArray(new SiteMapItem[childSiteMapItemServices.size()]);
+    public HstSiteMapItem[] getChilds() {
+        return this.childSiteMapItemServices.values().toArray(new HstSiteMapItem[childSiteMapItemServices.size()]);
     }
 
-    public void addChild(SiteMapItem siteMapService) {
+    public void addChild(HstSiteMapItem siteMapService) {
         this.childSiteMapItemServices.put(siteMapService.getUrlPartName(), siteMapService);
     }
 
-    public SiteMapItem getChild(String urlPartName) {
+    public HstSiteMapItem getChild(String urlPartName) {
         return this.childSiteMapItemServices.get(urlPartName);
     }
 
-    public SiteMapItem getChild(SiteMapItemMatcher siteMapItemMatcher) {
-        SiteMapItem[] allChilds =  getChilds();
-        for(SiteMapItem child : allChilds) {
+    public HstSiteMapItem getChild(HstSiteMapItemMatcher siteMapItemMatcher) {
+        HstSiteMapItem[] allChilds =  getChilds();
+        for(HstSiteMapItem child : allChilds) {
             if(siteMapItemMatcher.matches(child)) {
                 // return the first child that matches
                 return child;

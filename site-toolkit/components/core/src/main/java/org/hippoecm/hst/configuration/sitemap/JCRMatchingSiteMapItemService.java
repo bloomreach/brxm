@@ -1,20 +1,20 @@
 package org.hippoecm.hst.configuration.sitemap;
 
-import org.hippoecm.hst.configuration.pagemapping.components.Component;
+import org.hippoecm.hst.configuration.components.HstComponent;
 import org.hippoecm.hst.core.mapping.UrlUtilities;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JCRMatchingSiteMapItemService extends AbstractJCRService implements MatchingSiteMapItem{
+public class JCRMatchingSiteMapItemService extends AbstractJCRService implements HstMatchingSiteMapItem{
 
-    private static final Logger log = LoggerFactory.getLogger(MatchingSiteMapItem.class);
+    private static final Logger log = LoggerFactory.getLogger(HstMatchingSiteMapItem.class);
     
-    private SiteMapItem delegatee;
+    private HstSiteMapItem delegatee;
     private String urlResidue;
     
-    public JCRMatchingSiteMapItemService(SiteMapItem siteMapItemService, String urlResidue) {
+    public JCRMatchingSiteMapItemService(HstSiteMapItem siteMapItemService, String urlResidue) {
         // we do not have a jcr node anymore at this point
         super(null);
         this.delegatee = siteMapItemService;
@@ -25,7 +25,7 @@ public class JCRMatchingSiteMapItemService extends AbstractJCRService implements
         return this.urlResidue;
     }
 
-    public SiteMapItem getChild(String urlPartName) {
+    public HstSiteMapItem getChild(String urlPartName) {
        return delegatee.getChild(urlPartName);
     }
 
@@ -33,7 +33,7 @@ public class JCRMatchingSiteMapItemService extends AbstractJCRService implements
         return delegatee.getComponentLocation();
     }
 
-    public Component getComponentService() {
+    public HstComponent getComponentService() {
         return delegatee.getComponentService();
     }
 
@@ -41,7 +41,7 @@ public class JCRMatchingSiteMapItemService extends AbstractJCRService implements
         return delegatee.getDataSource();
     }
 
-    public SiteMapItem getParent() {
+    public HstSiteMapItem getParent() {
         return delegatee.getParent();
     }
 

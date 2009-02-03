@@ -5,25 +5,25 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.Configuration;
-import org.hippoecm.hst.configuration.pagemapping.PageMapping;
-import org.hippoecm.hst.configuration.pagemapping.components.Component;
+import org.hippoecm.hst.configuration.components.HstComponent;
+import org.hippoecm.hst.configuration.components.HstComponents;
 import org.hippoecm.hst.core.mapping.UrlUtilities;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
 
-public class JCRSiteMapService extends AbstractJCRService implements SiteMapService{
+public class JCRSiteMapService extends AbstractJCRService implements HstSiteMap{
     
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(SiteMapService.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstSiteMap.class);
     
     private DataSourceTree dataSourceTree;
     
-    private PageMapping pageMappingService;
+    private HstComponents pageMappingService;
     
-    private SiteMapItem rootSiteMapItemService; 
+    private HstSiteMapItem rootSiteMapItemService; 
     
-    public JCRSiteMapService(Node siteMapNode, PageMapping pageMappingService) throws RepositoryException, ServiceException {
+    public JCRSiteMapService(Node siteMapNode, HstComponents pageMappingService) throws RepositoryException, ServiceException {
         super(siteMapNode);
         this.pageMappingService = pageMappingService;
         if(!siteMapNode.isNodeType(Configuration.NODETYPE_HST_SITEMAP)) {
@@ -50,7 +50,7 @@ public class JCRSiteMapService extends AbstractJCRService implements SiteMapServ
                 JCRSiteMapItemService siteMapItemService = new JCRSiteMapItemService(child,parentSiteMapItemService);
                 String componentLocation = siteMapItemService.getComponentLocation();
                 if(componentLocation != null) {
-                    Component componentService = pageMappingService.getComponent(componentLocation);
+                    HstComponent componentService = pageMappingService.getComponent(componentLocation);
                     if(componentService != null) {
                         log.debug("Adding componentService for component location '{}'", componentLocation);
                         siteMapItemService.setComponentService(componentService);
@@ -66,12 +66,12 @@ public class JCRSiteMapService extends AbstractJCRService implements SiteMapServ
         }
     }
 
-    public MatchingSiteMapItem match(String url) {
+    public HstMatchingSiteMapItem match(String url) {
         url = UrlUtilities.normalizeUrl(url);
         String[] tokens  = url.split("/");
-        SiteMapItem currentSiteMapItemService = rootSiteMapItemService;
+        HstSiteMapItem currentSiteMapItemService = rootSiteMapItemService;
         for(String token : tokens) {
-            SiteMapItem match = currentSiteMapItemService.getChild(token);
+            HstSiteMapItem match = currentSiteMapItemService.getChild(token);
             if(match != null) {
                 currentSiteMapItemService = match;
             } else {
@@ -106,18 +106,18 @@ public class JCRSiteMapService extends AbstractJCRService implements SiteMapServ
         buf.append("\n\n------ SiteMapService ------ \n\n");
         
         for(Service child : rootSiteMapItemService.getChildServices()) {
-            if(child instanceof SiteMapItem)
-            appendChild(buf, (SiteMapItem)child, "");
+            if(child instanceof HstSiteMapItem)
+            appendChild(buf, (HstSiteMapItem)child, "");
         }
         buf.append("\n\n------ End SiteMapService ------");
         
     }
 
-    private void appendChild(StringBuffer buf, SiteMapItem child, String indent) {
+    private void appendChild(StringBuffer buf, HstSiteMapItem child, String indent) {
         child.dump(buf, indent);
         for(Service s : child.getChildServices()) {
-            if(s instanceof SiteMapItem)
-            appendChild(buf, (SiteMapItem)s, indent + "\t");
+            if(s instanceof HstSiteMapItem)
+            appendChild(buf, (HstSiteMapItem)s, indent + "\t");
         }
     }
 
