@@ -31,6 +31,7 @@ import org.junit.runners.Suite;
 
 @RunWith(RemoteSPITest.class)
 @Suite.SuiteClasses({
+org.hippoecm.repository.HREPTWO2182Test.class
     // org.hippoecm.repository.FacetedAuthorizationTest.class  // failure
     // org.hippoecm.repository.CopyNodeTest.class // failure
     // org.hippoecm.repository.FacetedNavigationTest.class // failure

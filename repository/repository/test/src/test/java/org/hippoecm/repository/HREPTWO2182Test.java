@@ -15,10 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-
 import java.rmi.RemoteException;
 
 import javax.jcr.Node;
@@ -27,40 +23,59 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
+import org.hippoecm.repository.api.WorkflowManager;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
-public class HREPTWO2182IssueTest extends SpiTestCase {
+public class HREPTWO2182Test extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    @Override
+    public void setUp() throws Exception {
+	super.setUp();
+        if (session.getRootNode().hasNode("test")) {
+            session.getRootNode().getNode("test").remove();
+        }
+        session.save();
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        session.refresh(false);
+        if (session.getRootNode().hasNode("test")) {
+            session.getRootNode().getNode("test").remove();
+        }
+	super.tearDown();
+    }
+
     @Test
     public void editType() throws RepositoryException, WorkflowException, RemoteException {
-
-        HippoRepository repository = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository/spi");
-        Session session = repository.login(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
-
         Node root = session.getRootNode();
+
         Node typeNode = root.getNode("hippo:namespaces/editmodel/existing");
 
         // check initial conditions
         NodeIterator nodes = typeNode.getNode("hippo:nodetype").getNodes("hippo:nodetype");
-        assertTrue(nodes.getSize() == 1);
+        assertEquals(1, nodes.getSize());
 
         WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
         Workflow workflow = workflowManager.getWorkflow("default", typeNode);
+        System.err.println("BERRY "+workflow.getClass().getName());
         assertTrue(workflow instanceof EditmodelWorkflow);
 
         ((EditmodelWorkflow) workflow).edit();
         session.refresh(false);
 
         nodes = typeNode.getNode("hippo:nodetype").getNodes("hippo:nodetype");
-        // nodes.getSize() should return 2
-        assertEquals(1, nodes.getSize());
+        assertEquals(2, nodes.getSize());
     }
-
 }
