@@ -63,7 +63,6 @@ public class BuiltinTemplateStore implements IClusterable {
         public List<String> getServices() {
             List<String> result = new LinkedList<String>();
             result.add("wicket.id");
-            result.add("wicket.model");
             return result;
         }
 
