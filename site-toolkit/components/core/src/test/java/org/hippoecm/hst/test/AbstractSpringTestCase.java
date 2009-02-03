@@ -17,15 +17,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Id$
  *  
  */
-public abstract class AbstractSpringTestCase extends TestCase
-{
+public abstract class AbstractSpringTestCase extends TestCase {
     protected ApplicationContext appContext;
 
     /**
      * setup Spring context as part of test setup
      */
-    protected void setUp() throws Exception
-    {        
+    protected void setUp() throws Exception {
         super.setUp();
         this.appContext = new ClassPathXmlApplicationContext(getConfigurations());
     }
@@ -33,22 +31,19 @@ public abstract class AbstractSpringTestCase extends TestCase
     /**
      * close Spring context as part of test teardown
      */
-    protected void tearDown() throws Exception
-    {
+    protected void tearDown() throws Exception {
     }
 
     /**
      * required specification of spring configurations
      * the derived class can override this.
      */
-    protected String[] getConfigurations()
-    {
+    protected String[] getConfigurations() {
         String classXmlFileName = getClass().getName().replace(".", "/") + "*.xml";
-        return new String [] { classXmlFileName };
+        return new String[] { classXmlFileName };
     }
-    
-    protected Object getComponent(String name)
-    {
+
+    protected Object getComponent(String name) {
         return this.appContext.getBean(name);
     }
 }

@@ -1,11 +1,8 @@
 package org.hippoecm.hst.core.container.engine;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,8 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.hippoecm.hst.core.container.ComponentManager;
-import org.hippoecm.hst.core.container.SpringComponentManager;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContextComponent;
 
@@ -25,19 +20,15 @@ import org.hippoecm.hst.core.request.HstRequestContextComponent;
  * @author <a href="mailto:w.ko@onehippo.com">Woonsan Ko</a>
  * @version $Id$
  */
-public class HstSiteServlet extends HttpServlet
-{
+public class HstSiteServlet extends HttpServlet {
     public static final String CONSOLE_LOGGER = "console";
-    
+
     private static Log log;
     private static Log console;
-    
-    private String appConfigDir = "/WEB-INF/conf/site-assembly";
-    private String appConfigFileExtension = ".xml";
 
     private HstSiteEngine engine;
     private HstRequestContextComponent contextComponent;
-    
+
     // -------------------------------------------------------------------
     // I N I T I A L I Z A T I O N
     // -------------------------------------------------------------------
@@ -47,46 +38,25 @@ public class HstSiteServlet extends HttpServlet
     /**
      * Intialize Servlet.
      */
-    public final void init( ServletConfig config ) throws ServletException
-    {
-        if ( log == null )
-        {
+    public final void init(ServletConfig config) throws ServletException {
+        if (log == null) {
             log = LogFactory.getLog(HstSiteServlet.class);
-            console = LogFactory.getLog(CONSOLE_LOGGER);                
+            console = LogFactory.getLog(CONSOLE_LOGGER);
         }
-        
+
         console.info(INIT_START_MSG);
 
         super.init(config);
-        
-        ServletContext servletContext = config.getServletContext();
-        
-        String appConfigFileExtensionParam = this.getInitParameter("appConfigFileExtension");
-        
-        if (appConfigFileExtensionParam != null)
-            this.appConfigFileExtension = appConfigFileExtensionParam;
-        
-        String appConfigDirParam = this.getInitParameter("appConfigDir");
-        
-        if (appConfigDirParam != null)
-        {
-            this.appConfigDir = appConfigDirParam;
-            
-            if (this.appConfigDir.endsWith("/"))
-                this.appConfigDir = this.appConfigDir.substring(0, this.appConfigDir.length() - 1);
-        }
 
-        try
-        {
+        try {
             console.info("HSTSiteServlet attempting to create the  portlet engine...");
-            engine = new HstSiteEngineImpl(config.getServletContext(), initializeComponentManager());
+            engine = new HstSiteEngineImpl(config.getServletContext());
             console.info("HSTSiteServlet attempting to start the Jetspeed Portal Engine...");
-            engine.start();                
+            engine.start();
             console.info("HSTSiteServlet has successfuly started the Jetspeed Portal Engine....");
-            contextComponent = (HstRequestContextComponent) engine.getComponentManager().getComponent(HstRequestContextComponent.class.getName());
-        }
-        catch (Throwable e)
-        {
+            contextComponent = (HstRequestContextComponent) engine.getComponentManager().getComponent(
+                    HstRequestContextComponent.class.getName());
+        } catch (Throwable e) {
             // save the exception to complain loudly later :-)
             final String msg = "HSTSite: init() failed.";
             log.fatal(msg, e);
@@ -113,24 +83,18 @@ public class HstSiteServlet extends HttpServlet
      * @exception ServletException
      *                a servlet exception.
      */
-    public final void doGet( HttpServletRequest req, HttpServletResponse res ) throws IOException, ServletException
-    {
+    public final void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         HstRequestContext context = null;
-        
-        try
-        {
+
+        try {
             // send request through pipeline
             context = contextComponent.create(req, res, getServletConfig());
             engine.service(context);
-        }
-        catch (Exception e)
-        {
-            final String msg = "Fatal error encountered while processing portal request: "+e.toString();
+        } catch (Exception e) {
+            final String msg = "Fatal error encountered while processing portal request: " + e.toString();
             log.fatal(msg, e);
             throw new ServletException(msg, e);
-        }
-        finally
-        {
+        } finally {
             if (context != null)
                 contextComponent.release(context);
         }
@@ -148,8 +112,7 @@ public class HstSiteServlet extends HttpServlet
      * @exception ServletException
      *                a servlet exception.
      */
-    public final void doPost( HttpServletRequest req, HttpServletResponse res ) throws IOException, ServletException
-    {
+    public final void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         doGet(req, res);
     }
 
@@ -157,46 +120,13 @@ public class HstSiteServlet extends HttpServlet
     // S E R V L E T S H U T D O W N
     // -------------------------------------------------------------------
 
-    public final void destroy()
-    {
+    public final void destroy() {
         log.info("Done shutting down!");
-        
-        try
-        {
+
+        try {
             this.engine.shutdown();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
         }
     }
 
-    private ComponentManager initializeComponentManager()
-    {
-        File appConfigDirFile = new File(getServletConfig().getServletContext().getRealPath(this.appConfigDir));
-        File [] appConfigFiles = new File[0];
-        
-        if (appConfigDirFile.isDirectory())
-        {
-            appConfigFiles = appConfigDirFile.listFiles(new FilenameFilter() 
-            {
-                public boolean accept(File dir, String name)
-                {
-                    return name.endsWith(appConfigFileExtension);
-                }
-            });
-        }
-
-        String [] appConfigs = new String[appConfigFiles.length];
-        for (int i = 0; i < appConfigFiles.length; i++)
-        {
-            appConfigs[i] = appConfigFiles[i].toURI().toString();
-        }
-        
-        SpringComponentManager cm = new SpringComponentManager(appConfigs);
-        
-        cm.init();
-        
-        return cm;        
-    }
-    
 }
