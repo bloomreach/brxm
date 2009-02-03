@@ -1,7 +1,7 @@
-package org.hippoecm.hst.core.container.pipeline.valve;
+package org.hippoecm.hst.core.container;
 
-import org.hippoecm.hst.core.container.pipeline.Valve;
-import org.hippoecm.hst.core.container.pipeline.ValveContext;
+import org.hippoecm.hst.core.container.Valve;
+import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public abstract class AbstractValve implements Valve

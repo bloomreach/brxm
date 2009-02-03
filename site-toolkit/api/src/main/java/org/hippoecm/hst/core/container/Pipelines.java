@@ -1,4 +1,4 @@
-package org.hippoecm.hst.core.container.pipeline;
+package org.hippoecm.hst.core.container;
 
 public interface Pipelines
 {

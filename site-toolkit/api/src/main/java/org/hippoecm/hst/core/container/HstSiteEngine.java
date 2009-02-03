@@ -1,7 +1,5 @@
-package org.hippoecm.hst.core.container.engine;
+package org.hippoecm.hst.core.container;
 
-import org.hippoecm.hst.core.container.ComponentManager;
-import org.hippoecm.hst.core.container.pipeline.Pipeline;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**

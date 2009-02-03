@@ -1,11 +1,11 @@
-package org.hippoecm.hst.core.container.engine;
+package org.hippoecm.hst.core.container;
 
 import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.core.container.ComponentManager;
-import org.hippoecm.hst.core.container.SpringComponentManager;
-import org.hippoecm.hst.core.container.pipeline.Pipeline;
-import org.hippoecm.hst.core.container.pipeline.Pipelines;
+import org.hippoecm.hst.core.container.HstSiteEngine;
+import org.hippoecm.hst.core.container.Pipeline;
+import org.hippoecm.hst.core.container.Pipelines;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstSiteEngineImpl implements HstSiteEngine {

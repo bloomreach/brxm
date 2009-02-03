@@ -1,4 +1,4 @@
-package org.hippoecm.hst.core.container.engine;
+package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 
@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.hippoecm.hst.core.container.HstSiteEngine;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContextComponent;
 
