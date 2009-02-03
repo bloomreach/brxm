@@ -117,6 +117,20 @@
       <version>2.04.00-SNAPSHOT</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-builtin-test</artifactId>
+      <version>2.04.00-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+
+    <!-- the next dependency is a weakness in the current project structure -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-editor</artifactId>
+      <version>2.04.00-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -175,6 +189,7 @@
           <excludes>
             <exclude>**/TraversePerfTest.java</exclude>
             <exclude>**/TraversePerfTestCase.java</exclude>
+            <exclude>**/HREPTWO2182Test.java</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -219,6 +234,14 @@
           <classifier>tests</classifier>
           <scope>test</scope>
         </dependency>
+        <dependency>
+          <groupId>org.hippoecm</groupId>
+          <artifactId>hippo-ecm-addon-builtin-test</artifactId>
+          <version>${project.version}</version>
+          <type>jar</type>
+          <classifier>tests</classifier>
+          <scope>test</scope>
+        </dependency>
       </dependencies>
     </profile>
     <profile>
@@ -234,6 +257,15 @@
           <dependency>
             <groupId>org.hippoecm</groupId>
             <artifactId>hippo-ecm-repository-engine</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+            <optional>true</optional>
+          </dependency>
+          <dependency>
+            <groupId>org.hippoecm</groupId>
+            <artifactId>hippo-ecm-addon-builtin-test</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <classifier>tests</classifier>
