@@ -22,6 +22,7 @@
   </issueManagement>
 
   <properties>
+    <skipTests>true</skipTests>
     <!-- Documentation properties (variables).
          May not contain dots as they are processed by Apache velocity.
          Can be used in xdoc files with the extension .xml.vm
@@ -57,16 +58,6 @@
       <url>ftp://repository.hippocms.org/maven2</url>
     </snapshotRepository>
   </distributionManagement>
-
-  <modules>
-    <module>api</module>
-    <module>components</module>
-    <module>client</module>
-    <module>toolkit-resources</module>
-    <module>maven</module>
-    <module>applications</module>
-  </modules>
-
 
   <developers>
     <developer>
@@ -316,5 +307,46 @@
       </plugin>
     </plugins>
   </reporting>
+
+  <profiles>
+    <profile>
+      <id>all</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>api</module>
+        <module>components</module>
+        <!-- 
+        <module>client</module>
+        -->
+        <module>toolkit-resources</module>
+        <module>maven</module>
+        <module>applications</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>test</id>
+      <activation>
+        <property>
+          <name>skipTests</name>
+          <value>false</value>
+        </property>
+      </activation>
+      <properties>
+        <skipTests>false</skipTests>
+      </properties>
+      <modules>
+        <module>api</module>
+        <module>components</module>
+        <!-- 
+        <module>client</module>
+        -->
+        <module>toolkit-resources</module>
+        <module>maven</module>
+        <module>applications</module>
+      </modules>
+    </profile>
+  </profiles>
 
 </project>

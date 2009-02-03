@@ -7,7 +7,7 @@
 
 3. Testing
 
-$ mvn clean install -DskipTests
+$ mvn clean install
 $ mvn org.apache.portals.jetspeed-2:jetspeed-mvn-maven-plugin:mvn -Dtarget=test
 
 You can simplify the above command by adding the following in your settings.xml:
