@@ -27,3 +27,6 @@ mvn jetspeed:mvn -Dtarget=test
 
 mvn clean install
 
+5. Website Generation
+
+mvn -P website site

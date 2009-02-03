@@ -347,6 +347,11 @@
         <module>applications</module>
       </modules>
     </profile>
+    <profile>
+      <id>website</id>
+      <!-- For building website documentation, there's no need to include modules. -->
+      <modules/>
+    </profile>
   </profiles>
 
 </project>
