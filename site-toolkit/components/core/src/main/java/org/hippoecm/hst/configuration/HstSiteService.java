@@ -5,7 +5,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.components.HstComponents;
-import org.hippoecm.hst.configuration.pagemapping.HstComponentsService;
+import org.hippoecm.hst.configuration.components.HstComponentsService;
 import org.hippoecm.hst.configuration.sitemap.JCRSiteMapService;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.service.AbstractJCRService;
@@ -26,7 +26,9 @@ public class HstSiteService extends AbstractJCRService implements HstSite{
     
     public HstSiteService(String name, Node confNode, Node contentNode) throws ServiceException, RepositoryException{
         super(confNode);
-        
+        if(name == null) {
+            throw new ServiceException("HstSite's name is not allowed to be null.");
+        }
         this.name = name;
         this.contentPath = contentNode.getPath();
         
@@ -48,8 +50,8 @@ public class HstSiteService extends AbstractJCRService implements HstSite{
     }
     
     private void init() throws PathNotFoundException, RepositoryException, ServiceException {
-       Node pageMappingNode = getValueProvider().getJcrNode().getNode(Configuration.NODEPATH_HST_PAGEMAPPING); 
-       this.componentsService = new HstComponentsService(pageMappingNode); 
+       Node componentsNode = getValueProvider().getJcrNode().getNode(Configuration.NODEPATH_HST_PAGEMAPPING); 
+       this.componentsService = new HstComponentsService(componentsNode); 
        
        if(log.isDebugEnabled()){
            StringBuffer buf = new StringBuffer();
@@ -76,11 +78,11 @@ public class HstSiteService extends AbstractJCRService implements HstSite{
     }
 
     public String getContentPath() {
-        return null;
+        return contentPath;
     }
 
     public String getName() {
-        return null;
+        return name;
     }
 
 

@@ -1,11 +1,11 @@
-package org.hippoecm.hst.configuration.pagemapping.component;
+package org.hippoecm.hst.configuration.components;
 
 import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.components.HstComponents;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
-public class JCRComponentRootService extends AbstractJCRComponentService{
+public class JCRComponentRootService extends JCRComponentService{
 
     public JCRComponentRootService(HstComponents pageMappingService, Node jcrNode) {
         super(pageMappingService, jcrNode);

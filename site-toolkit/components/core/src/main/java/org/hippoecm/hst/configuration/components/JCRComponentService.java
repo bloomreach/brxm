@@ -1,4 +1,4 @@
-package org.hippoecm.hst.configuration.pagemapping.component;
+package org.hippoecm.hst.configuration.components;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,16 +6,10 @@ import java.util.List;
 import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.Configuration;
-import org.hippoecm.hst.configuration.components.AugmentableHstComponent;
-import org.hippoecm.hst.configuration.components.HstComponent;
-import org.hippoecm.hst.configuration.components.HstComponents;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.provider.jcr.JCRValueProvider;
-import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractJCRComponentService extends AbstractJCRService implements AugmentableHstComponent{
+public class JCRComponentService extends AbstractJCRService implements AugmentableHstComponent{
     
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponent.class);
     
@@ -37,6 +31,8 @@ public abstract class AbstractJCRComponentService extends AbstractJCRService imp
     private HstComponent[] combinedComponents;
 
     private String namespace;
+    
+    private String name;
 
     private String componentSource;
     
@@ -44,49 +40,20 @@ public abstract class AbstractJCRComponentService extends AbstractJCRService imp
     
     private HstComponents components;
     
-    private JCRValueProvider valueProvider; 
-    
-    public AbstractJCRComponentService(HstComponents components,Node jcrNode) {
+    public JCRComponentService(HstComponents components,Node jcrNode) {
         super(jcrNode);
-        this.valueProvider = new JCRValueProviderImpl(jcrNode);
+        this.name = getValueProvider().getName();
         this.components = components;
         this.hierchicalChildComponents = new ArrayList<HstComponent>();
-        if (valueProvider.isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
-            this.jsp = valueProvider.getString(Configuration.PROPERTYNAME_JSP);
-            this.namespace = valueProvider.getString(Configuration.PROPERTYNAME_NAMESPACE);
-            this.componentSource = valueProvider.getString(Configuration.PROPERTYNAME_COMPONENTSOURCE);
-            this.childComponents = valueProvider.getStrings(Configuration.PROPERTYNAME_COMPONENTS);
-            this.componentClassName = valueProvider.getString(Configuration.PROPERTYNAME_COMPONENT_CLASSNAME);
+        if (getValueProvider().isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
+            this.jsp = getValueProvider().getString(Configuration.PROPERTYNAME_JSP);
+            this.namespace = getValueProvider().getString(Configuration.PROPERTYNAME_NAMESPACE);
+            this.componentSource = getValueProvider().getString(Configuration.PROPERTYNAME_COMPONENTSOURCE);
+            this.childComponents = getValueProvider().getStrings(Configuration.PROPERTYNAME_COMPONENTS);
+            this.componentClassName = getValueProvider().getString(Configuration.PROPERTYNAME_COMPONENT_CLASSNAME);
         } 
     }
     
-    public HstComponent[] getChildServices() {
-        return this.getChildComponents();
-    }
-
-    
-    final public void action(HstRequestContext hstRequestContext){
-        for(HstComponent childs : getChildComponents()) {
-            childs.action(hstRequestContext);
-        }
-        this.doAction(hstRequestContext);
-    }
-    
-    final public void render(HstRequestContext hstRequestContext){
-        for(HstComponent childs : getChildComponents()) {
-            childs.render(hstRequestContext);
-        }
-        this.doRender(hstRequestContext);
-    }
-    
-    public String getComponentClassName(){
-        return this.componentClassName;
-    }
-    
-    public String getJsp(){
-        return this.jsp;
-    }
-
     public void addHierarchicalChildComponent(HstComponent hierarchicalChildComponent){
         this.hierchicalChildComponents.add(hierarchicalChildComponent);
         // reset the combined components such the getChilds returns the added component
@@ -117,6 +84,22 @@ public abstract class AbstractJCRComponentService extends AbstractJCRService imp
         }
     }
 
+    
+    public HstComponent[] getChildServices() {
+        return this.getChildComponents();
+    }
+
+
+    
+    public String getComponentClassName(){
+        return this.componentClassName;
+    }
+    
+    public String getJsp(){
+        return this.jsp;
+    }
+
+   
     public String getNamespace() {
         return this.namespace;
     }
@@ -127,6 +110,10 @@ public abstract class AbstractJCRComponentService extends AbstractJCRService imp
     
     public HstComponents getHstComponents(){
         return this.components;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
 }

@@ -1,7 +1,5 @@
-package org.hippoecm.hst.configuration.pagemapping;
+package org.hippoecm.hst.configuration.components;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -15,8 +13,6 @@ import org.hippoecm.hst.configuration.Configuration;
 import org.hippoecm.hst.configuration.components.AugmentableHstComponent;
 import org.hippoecm.hst.configuration.components.HstComponent;
 import org.hippoecm.hst.configuration.components.HstComponents;
-import org.hippoecm.hst.configuration.pagemapping.component.AbstractJCRComponentService;
-import org.hippoecm.hst.configuration.pagemapping.component.JCRComponentRootService;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.slf4j.LoggerFactory;
@@ -26,16 +22,16 @@ public class HstComponentsService  extends AbstractJCRService  implements HstCom
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponents.class);
     
     private Map<String, HstComponent> componentServices;
-    private String pageMappingNodePath;
+    private String componentsNodePath;
     
-    public HstComponentsService(Node pageMappingNode) throws RepositoryException {
-        super(pageMappingNode);
-        this.pageMappingNodePath = pageMappingNode.getPath();
+    public HstComponentsService(Node componentsNode) throws RepositoryException {
+        super(componentsNode);
+        this.componentsNodePath = componentsNode.getPath();
         this.componentServices = new HashMap<String, HstComponent>();
-        AbstractJCRComponentService rootComponentService = new JCRComponentRootService(this,pageMappingNode);
-        populate(pageMappingNode, rootComponentService);
+        JCRComponentService rootComponentService = new JCRComponentRootService(this,componentsNode);
+        populate(componentsNode, rootComponentService);
     }
-    
+     
     public Service[] getChildServices() {
         return componentServices.values().toArray(new Service[componentServices.size()]);
     }
@@ -62,42 +58,20 @@ public class HstComponentsService  extends AbstractJCRService  implements HstCom
                         log.debug("Skipping hst:component for '{}' because the classname property is empty", childPath);
                         continue;
                     }
-                    try {
-                        if(AugmentableHstComponent.class.isAssignableFrom(Class.forName(clazz))) {
-                            Constructor<?> cons = Class.forName(clazz).getConstructor(new Class[]{HstComponents.class, Node.class});
-                            componentService = (AbstractJCRComponentService)cons.newInstance(this,child);
-                            
-                            /*
-                             * put the component service with the key as a relative path of the component wrt the hst:pagemappings node
-                             * The childPath will always be longer then the ancestors pageMappingNodePath
-                             */ 
-                            String key = childPath.substring(pageMappingNodePath.length()+1);
-                            componentServices.put(key, componentService);
-                            log.debug("Added component service for key '{}'",key);
-                            if(parentComponent != null) {
-                                parentComponent.addHierarchicalChildComponent(componentService);
-                                log.debug("Added component service '{}' to parent component ",key);
-                            }
-                        } else {
-                            log.warn("Skipping hst:component for '{}' because the classname property ("+clazz+") is not a subclass of {}", childPath, HstComponent.class.getName());
-                        }
-                    } catch (NoClassDefFoundError e){
-                        log.warn("NoClassDefFoundError: Skipping hst:component for '{}' because the class ('"+clazz+"') cannot be found", childPath);
-                    } catch (ClassNotFoundException e) {
-                        log.warn("ClassNotFoundException: Skipping hst:component for '{}' because the class ('"+clazz+"') cannot be found", childPath);
-                    } catch (InstantiationException e) {
-                        log.warn("InstantiationException: Skipping hst:component for '{}' because class '{}' cannot be instiated", childPath, clazz);
-                    } catch (IllegalAccessException e) {
-                        log.warn("IllegalAccessException: Skipping hst:component for '{}'", childPath, e);  
-                    } catch (SecurityException e) {
-                        log.warn("SecurityException: Skipping hst:component for '{}'", childPath, e); 
-                    } catch (NoSuchMethodException e) {
-                        log.warn("NoSuchMethodException: Skipping hst:component for '{}'", childPath, e);  
-                    } catch (IllegalArgumentException e) {
-                        log.warn("IllegalArgumentException: Skipping hst:component for '{}'", childPath, e);  
-                    } catch (InvocationTargetException e) {
-                        log.warn("InvocationTargetException: Skipping hst:component for '{}'", childPath, e);  
+                    
+                    componentService = new JCRComponentService(this, child);
+                    /*
+                     * put the component service with the key as a relative path of the component wrt the hst:pagemappings node
+                     * The childPath will always be longer then the ancestors pageMappingNodePath
+                     */ 
+                    String key = childPath.substring(componentsNodePath.length()+1);
+                    componentServices.put(key, componentService);
+                    log.debug("Added component service for key '{}'",key);
+                    if(parentComponent != null) {
+                        parentComponent.addHierarchicalChildComponent(componentService);
+                        log.debug("Added component service '{}' to parent component ",key);
                     }
+
                 } else {
                     log.debug("Skipping '{}' hst:component because it does not contain the mandatory properties '"+Configuration.PROPERTYNAME_COMPONENT_CLASSNAME+"' and '"+Configuration.PROPERTYNAME_JSP+"'.", child.getPath());
                 }
@@ -121,7 +95,7 @@ public class HstComponentsService  extends AbstractJCRService  implements HstCom
         for(Iterator<Entry<String, HstComponent>> entries = componentServices.entrySet().iterator(); entries.hasNext();) {
             Entry<String, HstComponent> entry = entries.next();
             buf.append("\n\tComponent: '" + entry.getKey() +"'");
-            buf.append("\n\t\t"+entry.getValue().getClass().getName());
+            buf.append("\n\t\t"+entry.getValue().getComponentClassName());
             appendChildComponents(entry.getValue(), buf, "\n\t\t\t");
         }
         
