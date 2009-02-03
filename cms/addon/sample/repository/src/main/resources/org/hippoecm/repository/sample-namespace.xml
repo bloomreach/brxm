@@ -136,6 +136,7 @@
           <sv:value>wicket.id</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>wicket.model</sv:value>
           <sv:value>engine</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:properties" sv:type="String">
@@ -410,6 +411,7 @@
           <sv:value>wicket.id</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>wicket.model</sv:value>
           <sv:value>engine</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:properties" sv:type="String">
