@@ -19,24 +19,24 @@
 
   <!-- Valves -->
   
-  <bean id="contextResolvingValve" class="org.hippoecm.hst.core.container.pipeline.valve.ContextResolvingValve">
+  <bean id="contextResolvingValve" class="org.hippoecm.hst.core.container.ContextResolvingValve">
   </bean>
   
-  <bean id="actionValve" class="org.hippoecm.hst.core.container.pipeline.valve.ActionValve">
+  <bean id="actionValve" class="org.hippoecm.hst.core.container.ActionValve">
   </bean>
   
-  <bean id="aggregationValve" class="org.hippoecm.hst.core.container.pipeline.valve.AggregationValve">
+  <bean id="aggregationValve" class="org.hippoecm.hst.core.container.AggregationValve">
   </bean>
   
-  <bean id="cleanupValve" class="org.hippoecm.hst.core.container.pipeline.valve.CleanupValve">
+  <bean id="cleanupValve" class="org.hippoecm.hst.core.container.CleanupValve">
   </bean>
   
   <!-- Pipelines -->
   
-  <bean id="org.hippoecm.hst.core.container.pipeline.Pipelines" class="org.hippoecm.hst.core.container.pipeline.HstSitePipelines">
+  <bean id="org.hippoecm.hst.core.container.Pipelines" class="org.hippoecm.hst.core.container.HstSitePipelines">
     <constructor-arg>
       <list>
-        <bean class="org.hippoecm.hst.core.container.pipeline.HstSitePipeline">
+        <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
           <constructor-arg value="DefaultSitePipeline"/>
           <constructor-arg>
             <list>
