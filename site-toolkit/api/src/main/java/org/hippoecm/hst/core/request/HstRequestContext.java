@@ -22,7 +22,6 @@ import org.hippoecm.hst.core.domain.RepositoryMapping;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.mapping.URLMappingManager;
 import org.hippoecm.hst.core.template.node.PageNode;
-import org.hippoecm.hst.core.template.node.content.ContentRewriter;
 
 public interface HstRequestContext {
     
@@ -61,6 +60,4 @@ public interface HstRequestContext {
     // TODO: remove this.
     public String getHstRequestUri();
     
-    public ContentRewriter getContentRewriter();
-  
 }
