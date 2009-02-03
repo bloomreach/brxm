@@ -265,24 +265,6 @@ public class FacetedAuthorizationTest extends TestCase {
     }
 
     @Test
-    public void testCannotReadConfiguration() throws RepositoryException {
-        try {
-            userSession.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
-            fail("Testuser can read configuration.");
-        } catch (PathNotFoundException e) {
-            // success
-        }
-        for (String action: JCR_ACTIONS) {
-            try {
-                userSession.checkPermission("/" + HippoNodeType.CONFIGURATION_PATH, action);
-                fail("Testuser has '"+action+"' permissions configuration.");
-            } catch (AccessControlException e) {
-                // success
-            }
-        }
-    }
-
-    @Test
     public void testReadsAllowed() throws RepositoryException {
         assertTrue(testData.hasNode("readdoc0"));
         assertTrue(testData.hasNode("writedoc0"));
