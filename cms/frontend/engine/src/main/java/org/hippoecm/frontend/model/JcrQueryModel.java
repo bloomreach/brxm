@@ -80,7 +80,11 @@ public class JcrQueryModel extends LoadableDetachableModel implements IDataProvi
                     }
 
                     public Node next() {
-                        return nodeIter.nextNode();
+                        Node node = nodeIter.nextNode();
+                        while (node == null && nodeIter.hasNext()) {
+                            node = nodeIter.nextNode();
+                        }
+                        return node;
                     }
 
                     public void remove() {

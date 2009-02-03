@@ -28,22 +28,23 @@ import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.IJcrNodeModelListener;
-import org.hippoecm.frontend.model.IModelListener;
-import org.hippoecm.frontend.model.IModelService;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditService;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditorManagerPlugin implements IPlugin, IModelListener, IJcrNodeModelListener, IDetachable {
+public class EditorManagerPlugin implements IPlugin, IObserver, IRefreshable, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -57,6 +58,7 @@ public class EditorManagerPlugin implements IPlugin, IModelListener, IJcrNodeMod
     private EditorFactory previewFactory;
     private EditorFactory editorFactory;
 
+    private final IModelReference modelReference;
     private Editor preview;
     private Map<JcrNodeModel, Editor> editors;
     private List<JcrNodeModel> pending;
@@ -68,15 +70,21 @@ public class EditorManagerPlugin implements IPlugin, IModelListener, IJcrNodeMod
 
         editors = new HashMap<JcrNodeModel, Editor>();
         pending = new LinkedList<JcrNodeModel>();
-        editorFactory = new EditorFactory(context, config.getString("cluster.edit.name"), config.getPluginConfig("cluster.edit.options"));
-        previewFactory = new EditorFactory(context, config.getString("cluster.preview.name"), config.getPluginConfig("cluster.preview.options"));
+        editorFactory = new EditorFactory(context, config.getString("cluster.edit.name"), config
+                .getPluginConfig("cluster.edit.options"));
+        previewFactory = new EditorFactory(context, config.getString("cluster.preview.name"), config
+                .getPluginConfig("cluster.preview.options"));
 
-        context.registerService(this, IJcrService.class.getName());
+        context.registerService(this, IRefreshable.class.getName());
 
         // monitor document in browser 
         if (config.getString(RenderService.MODEL_ID) != null) {
-            context.registerService(this, config.getString(RenderService.MODEL_ID));
+            modelReference = context.getService(config.getString(RenderService.MODEL_ID), IModelReference.class);
+            if (modelReference != null) {
+                context.registerService(this, IObserver.class.getName());
+            }
         } else {
+            modelReference = null;
             log.warn("No model defined ({})", RenderService.MODEL_ID);
         }
 
@@ -98,11 +106,15 @@ public class EditorManagerPlugin implements IPlugin, IModelListener, IJcrNodeMod
     public void detach() {
     }
 
-    public void updateModel(IModel model) {
+    public IObservable getObservable() {
+        return modelReference;
+    }
+
+    public void onEvent(IEvent event) {
         if (!active) {
             active = true;
             try {
-                JcrNodeModel nodeModel = (JcrNodeModel) model;
+                JcrNodeModel nodeModel = (JcrNodeModel) modelReference.getModel();
                 if (nodeModel != null && nodeModel.getNode() != null) {
                     // close preview when a new document is selected
                     if (preview != null) {
@@ -176,39 +188,31 @@ public class EditorManagerPlugin implements IPlugin, IModelListener, IJcrNodeMod
         }
     }
 
-    public void onFlush(JcrNodeModel nodeModel) {
+    public void refresh() {
         if (!active) {
             active = true;
             try {
-                if (nodeModel != null && nodeModel.getNode() != null) {
-                    if (preview != null) {
-                        JcrNodeModel previewModel = (JcrNodeModel) preview.getModel();
-                        if (previewModel.getParentModel().equals(nodeModel)) {
-                            if (!previewModel.getItemModel().exists()) {
-                                preview.close();
-                                preview = null;
-                                return;
-                            }
-                        }
+                if (preview != null) {
+                    JcrNodeModel previewModel = (JcrNodeModel) preview.getModel();
+                    if (!previewModel.getItemModel().exists()) {
+                        preview.close();
+                        preview = null;
+                        return;
                     }
+                }
 
-                    for (JcrNodeModel editorModel : editors.keySet()) {
-                        if (editorModel.getParentModel().equals(nodeModel)) {
-                            if (!editorModel.getItemModel().exists()) {
-                                editors.get(editorModel).close();
-                                editors.remove(editorModel);
-                                return;
-                            }
-                        }
+                for (JcrNodeModel editorModel : editors.keySet()) {
+                    if (!editorModel.getItemModel().exists()) {
+                        editors.get(editorModel).close();
+                        editors.remove(editorModel);
+                        return;
                     }
+                }
 
-                    for (JcrNodeModel pendingModel : pending) {
-                        if (pendingModel.getParentModel().equals(nodeModel)) {
-                            if (!pendingModel.getItemModel().exists()) {
-                                pending.remove(pendingModel);
-                                return;
-                            }
-                        }
+                for (JcrNodeModel pendingModel : pending) {
+                    if (!pendingModel.getItemModel().exists()) {
+                        pending.remove(pendingModel);
+                        return;
                     }
                 }
             } finally {
@@ -222,26 +226,37 @@ public class EditorManagerPlugin implements IPlugin, IModelListener, IJcrNodeMod
             active = true;
             try {
                 if (editModel instanceof JcrNodeModel) {
-                    IModelService modelService = context.getService(config.getString(RenderService.MODEL_ID),
-                            IModelService.class);
+                    JcrNodeModel nodeModel = (JcrNodeModel) editModel;
+
+                    if (preview != null && nodeModel.equals(preview.getModel()) && nodeModel.getParentModel() != null
+                            && nodeModel.getParentModel().getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+                        preview.focus();
+                    } else {
+                        if (preview != null) {
+                            preview.close();
+                            preview = null;
+                        }
+
+                        // open editor
+                        if (editors.containsKey(editModel)) {
+                            editors.get(editModel).focus();
+                        } else if (!pending.contains(editModel)) {
+                            openEditor((JcrNodeModel) editModel);
+                        }
+                    }
+
+                    IModelReference modelService = context.getService(config.getString(RenderService.MODEL_ID),
+                            IModelReference.class);
                     if (modelService != null) {
-                        JcrNodeModel nodeModel = (JcrNodeModel) editModel;
                         if (nodeModel.getParentModel() != null
                                 && nodeModel.getParentModel().getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
                             modelService.setModel(nodeModel.getParentModel());
                         } else {
                             modelService.setModel(nodeModel);
                         }
-                        if (preview != null) {
-                            preview.close();
-                            preview = null;
-                        }
                     }
-                    if (editors.containsKey(editModel)) {
-                        editors.get(editModel).focus();
-                    } else if (!pending.contains(editModel)) {
-                        openEditor((JcrNodeModel) editModel);
-                    }
+                } else {
+                    log.warn("Unknown model type", editModel);
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());

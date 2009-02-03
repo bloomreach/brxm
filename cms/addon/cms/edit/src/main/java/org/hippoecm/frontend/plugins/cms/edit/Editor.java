@@ -17,7 +17,7 @@ package org.hippoecm.frontend.plugins.cms.edit;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -38,7 +38,7 @@ class Editor implements IClusterable {
 
     private IClusterControl plugin;
     private IRenderService editor;
-    private ModelService<IModel> modelService;
+    private ModelReference<IModel> modelService;
 
     Editor(IPluginContext context, String cluster, IPluginConfig config, IModel model) throws EditorException {
         IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
@@ -48,7 +48,7 @@ class Editor implements IClusterable {
         IClusterConfig decorated = plugin.getClusterConfig();
 
         String modelId = decorated.getString(RenderService.MODEL_ID);
-        modelService = new ModelService<IModel>(modelId, model);
+        modelService = new ModelReference<IModel>(modelId, model);
         modelService.init(context);
 
         plugin.start();

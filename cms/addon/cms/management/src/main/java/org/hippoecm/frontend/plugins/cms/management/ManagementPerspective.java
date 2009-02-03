@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.management;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
@@ -32,13 +32,13 @@ public class ManagementPerspective extends Perspective {
 
     private static final Logger log = LoggerFactory.getLogger(ManagementPerspective.class);
 
-    private ModelService modelService;
+    private ModelReference modelService;
 
     public ManagementPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         if (config.getString(RenderService.MODEL_ID) != null) {
-            modelService = new ModelService(config.getString(RenderService.MODEL_ID), new JcrNodeModel("/"));
+            modelService = new ModelReference(config.getString(RenderService.MODEL_ID), new JcrNodeModel("/"));
             modelService.init(context);
         } else {
             log.error("no model service specified");

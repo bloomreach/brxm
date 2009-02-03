@@ -25,6 +25,8 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentAttributeModifier extends AbstractNodeAttributeModifier {
     @SuppressWarnings("unused")
@@ -32,8 +34,10 @@ public class DocumentAttributeModifier extends AbstractNodeAttributeModifier {
 
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(DocumentAttributeModifier.class);
+    
     @Override
-    public AttributeModifier getCellAttributeModifier(Node node) throws RepositoryException {
+    public AttributeModifier getCellAttributeModifier(Node node) {
         IModel documentType = null;
         try {
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -50,12 +54,9 @@ public class DocumentAttributeModifier extends AbstractNodeAttributeModifier {
                 documentType = new TypeTranslator(new JcrNodeTypeModel(node.getPrimaryNodeType())).getTypeName();
             }
         } catch (RepositoryException ex) {
+            log.error("Unable to determine type of document", ex);
         }
         return new AttributeAppender("title", documentType, " ");
     }
 
-    @Override
-    public AttributeModifier getColumnAttributeModifier(Node node) throws RepositoryException {
-        return null;
-    }
 }

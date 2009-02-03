@@ -13,15 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.model;
+package org.hippoecm.frontend.model.event;
 
-import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.model.IModel;
+import org.apache.wicket.IClusterable;
 
-public interface IModelService<T extends IModel> extends IDetachable {
-    final static String SVN_ID = "$Id$";
+/**
+ * This interface defines the contract for a service that can update its internal state.
+ * To participate in the default refresh strategy, part of each (ajax) update of a page,
+ * register the service at classname of this interface, IRefreshable.class.getName().
+ */
+public interface IRefreshable extends IClusterable {
 
-    T getModel();
-
-    void setModel(T model);
+    void refresh();
 }

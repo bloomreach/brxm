@@ -13,16 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.service;
+package org.hippoecm.frontend.plugin;
 
-import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.model.JcrNodeModel;
+public interface IActivator {
 
-// global service to broadcast repository changes
-public interface IJcrService extends IClusterable {
-    static String SVN_ID = "$Id$";
+    void start();
 
-    // support for broadcasting JCR flush
-
-    void flush(JcrNodeModel model);
+    void stop();
 }

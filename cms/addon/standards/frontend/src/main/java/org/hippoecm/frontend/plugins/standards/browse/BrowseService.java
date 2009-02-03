@@ -20,9 +20,11 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.ModelReference;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
@@ -37,7 +39,7 @@ public class BrowseService implements IBrowseService<IModel>, IDetachable {
 
     static final Logger log = LoggerFactory.getLogger(BrowseService.class);
 
-    private class DocumentModelService extends ModelService<JcrNodeModel> {
+    private class DocumentModelService extends ModelReference<JcrNodeModel> {
         private static final long serialVersionUID = 1L;
 
         DocumentModelService(IPluginConfig config, JcrNodeModel document) {
@@ -55,7 +57,7 @@ public class BrowseService implements IBrowseService<IModel>, IDetachable {
     }
 
     private JcrNodeModel folder;
-    private ModelService<JcrNodeModel> folderService;
+    private ModelReference<JcrNodeModel> folderService;
     private DocumentModelService documentService;
 
     public BrowseService(final IPluginContext context, final IPluginConfig config, JcrNodeModel document) {
@@ -72,16 +74,20 @@ public class BrowseService implements IBrowseService<IModel>, IDetachable {
         }
 
         if (config.getString("model.folder") != null) {
-            folderService = new ModelService<JcrNodeModel>(config.getString("model.folder"), folder);
+            folderService = new ModelReference<JcrNodeModel>(config.getString("model.folder"), folder);
             folderService.init(context);
-            context.registerService(new IModelListener() {
+            context.registerService(new IObserver() {
                 private static final long serialVersionUID = 1L;
 
-                public void updateModel(IModel model) {
-                    selectFolder(model);
+                public IObservable getObservable() {
+                    return folderService;
                 }
 
-            }, config.getString("model.folder"));
+                public void onEvent(IEvent event) {
+                    selectFolder(folderService.getModel());
+                }
+
+            }, IObserver.class.getName());
         } else {
             log.error("no folder model service (model.folder) specified");
         }

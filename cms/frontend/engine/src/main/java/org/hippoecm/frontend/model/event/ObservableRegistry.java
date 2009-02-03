@@ -56,7 +56,7 @@ public class ObservableRegistry implements IPlugin {
         }
 
         public void notifyObservers(IEvent event) {
-            for (IObserver observer : observers) {
+            for (IObserver observer : new ArrayList<IObserver>(observers)) {
                 observer.onEvent(event);
             }
             getPage().dirty();

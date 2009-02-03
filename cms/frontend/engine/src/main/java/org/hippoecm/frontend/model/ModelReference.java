@@ -15,40 +15,33 @@
  */
 package org.hippoecm.frontend.model;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.service.ServiceTracker;
 
-public class ModelService<T extends IModel> extends ServiceTracker<IModelListener> implements IModelService<T> {
+public class ModelReference<T extends IModel> implements IModelReference<T> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
     private IPluginContext context;
-    private List<IModelListener> listeners;
+    private IObservationContext observationContext;
     private String id;
     private T model;
 
-    public ModelService(String serviceId, T model) {
-        super(IModelListener.class);
-
+    public ModelReference(String serviceId, T model) {
         this.id = serviceId;
         this.model = model;
-        this.listeners = new LinkedList<IModelListener>();
     }
 
     public void init(IPluginContext context) {
         this.context = context;
         context.registerService(this, id);
-        context.registerTracker(this, id);
     }
 
     public void destroy() {
-        context.unregisterTracker(this, id);
         context.unregisterService(this, id);
     }
 
@@ -56,29 +49,37 @@ public class ModelService<T extends IModel> extends ServiceTracker<IModelListene
         return model;
     }
 
-    public void setModel(T model) {
-        if (model != this.model && (model == null || !model.equals(this.model))) {
-            this.model = model;
-            for (Object listener : listeners.toArray()) {
-                ((IModelListener)listener).updateModel(model);
-            }
+    public void setModel(final T newModel) {
+        if (newModel != this.model && (newModel == null || !newModel.equals(this.model))) {
+            final T oldModel = this.model;
+            this.model = newModel;
+            observationContext.notifyObservers(new IModelChangeEvent<T>() {
+
+                public T getNewModel() {
+                    return newModel;
+                }
+
+                public T getOldModel() {
+                    return oldModel;
+                }
+
+                public IObservable getSource() {
+                    return ModelReference.this;
+                }
+            });
         }
     }
 
-    public void resetModel() {
-        for (Object listener : listeners.toArray()) {
-            ((IModelListener)listener).updateModel(model);
-        }
+    public void setObservationContext(IObservationContext context) {
+        this.observationContext = context;
     }
 
-    @Override
-    protected void onServiceAdded(IModelListener service, String name) {
-        listeners.add(service);
+    public void startObservation() {
+        // no listeners need to be registered
     }
 
-    @Override
-    protected void onRemoveService(IModelListener service, String name) {
-        listeners.remove(service);
+    public void stopObservation() {
+        // no listeners have been registered
     }
 
     public void detach() {
@@ -86,4 +87,5 @@ public class ModelService<T extends IModel> extends ServiceTracker<IModelListene
             model.detach();
         }
     }
+
 }

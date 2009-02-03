@@ -273,8 +273,8 @@ public class Main extends WebApplication {
                 if (target instanceof IPageRequestTarget) {
                     Page page = ((IPageRequestTarget) target).getPage();
                     if (page instanceof Home) {
-                        JcrObservationManager.getInstance().process();
-
+                        ((Home) page).update();
+                        
                         if (target instanceof PluginRequestTarget) {
                             ((Home) page).render((PluginRequestTarget) target);
                         } else {

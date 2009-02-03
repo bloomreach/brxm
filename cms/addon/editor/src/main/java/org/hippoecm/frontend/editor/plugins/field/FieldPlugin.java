@@ -17,7 +17,6 @@ package org.hippoecm.frontend.editor.plugins.field;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.IClusterable;
@@ -25,7 +24,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.model.AbstractProvider;
-import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -164,11 +163,11 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         private static final long serialVersionUID = 1L;
 
         private Map<C, IClusterControl> plugins;
-        private Map<C, ModelService> models;
+        private Map<C, ModelReference> models;
 
         TemplateController() {
             plugins = new HashMap<C, IClusterControl>();
-            models = new HashMap<C, ModelService>();
+            models = new HashMap<C, ModelReference>();
         }
 
         void start(AbstractProvider<C> provider) {
@@ -199,7 +198,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
             IClusterControl control = FieldPlugin.this.getTemplate(model);
             if (control != null) {
                 String modelId = control.getClusterConfig().getString(RenderService.MODEL_ID);
-                ModelService modelService = new ModelService(modelId, model);
+                ModelReference modelService = new ModelReference(modelId, model);
                 models.put(model, modelService);
 
                 modelService.init(getPluginContext());
@@ -215,7 +214,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
             } else {
                 log.warn("Model " + model + " was not found in list of plugins");
             }
-            ModelService modelService = models.remove(model);
+            ModelReference modelService = models.remove(model);
             if (modelService != null) {
                 modelService.destroy();
             }

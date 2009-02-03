@@ -26,11 +26,9 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.Gallery;
 import org.hippoecm.frontend.plugins.gallery.GalleryShortcutPlugin;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -43,7 +41,6 @@ public class UploadDialog extends AbstractDialog {
     private final static String SVN_ID = "$Id$";
 
     private UploadWizard wizard;
-    private IServiceReference<IJcrService> jcrServiceRef;
     private IPluginConfig pluginConfig;
 
     public UploadDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config) {
@@ -52,8 +49,6 @@ public class UploadDialog extends AbstractDialog {
         pluginConfig = config;
 
         setModel(plugin.getModel());
-        IJcrService service = context.getService(IJcrService.class.getName(), IJcrService.class);
-        jcrServiceRef = context.getReference(service);
 
         wizard = new UploadWizard("wizard", this);
         add(wizard);
@@ -71,10 +66,6 @@ public class UploadDialog extends AbstractDialog {
 
     public IWizardModel getWizardModel() {
         return wizard.getWizardModel();
-    }
-
-    public IJcrService getJcrService() {
-        return jcrServiceRef.getService();
     }
 
     public IModel getTitle() {
@@ -112,14 +103,6 @@ public class UploadDialog extends AbstractDialog {
             Gallery.log.error("Error while accessing upload directory " + e.getMessage());
         }
         return node;
-    }
-
-    @Override
-    public void onDetach() {
-        if (jcrServiceRef != null) {
-            jcrServiceRef.detach();
-        }
-        super.onDetach();
     }
 
 }

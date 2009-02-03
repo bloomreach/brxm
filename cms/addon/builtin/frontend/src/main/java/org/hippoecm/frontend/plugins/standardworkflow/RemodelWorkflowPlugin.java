@@ -23,12 +23,10 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.CreateTypeDialog;
 import org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog;
-import org.hippoecm.frontend.service.IJcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,9 +39,6 @@ public class RemodelWorkflowPlugin extends AbstractWorkflowPlugin {
     public RemodelWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
-        final IServiceReference<IJcrService> jcrRef = context.getReference(jcrService);
-
         List<WorkflowActionComponent> actions = new LinkedList<WorkflowActionComponent>();
         DialogAction action;
         WorkflowActionComponent choice;
@@ -52,7 +47,7 @@ public class RemodelWorkflowPlugin extends AbstractWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog() {
-                return new RemodelDialog(RemodelWorkflowPlugin.this, jcrRef);
+                return new RemodelDialog(RemodelWorkflowPlugin.this);
             }
         }, getDialogService());
         choice = new WorkflowActionComponent("remodelRequest-dialog", new StringResourceModel("update-content", this, null), (String) null, action);
@@ -62,7 +57,7 @@ public class RemodelWorkflowPlugin extends AbstractWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog() {
-                return new CreateTypeDialog(RemodelWorkflowPlugin.this, jcrRef);
+                return new CreateTypeDialog(RemodelWorkflowPlugin.this);
             }
         }, getDialogService());
         choice = new WorkflowActionComponent("createTypeRequest-dialog", new StringResourceModel("create-type", this, null), (String) null, action);

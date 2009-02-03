@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -28,7 +29,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.EditmodelWorkflowPlugin;
 import org.hippoecm.frontend.service.IEditService;
-import org.hippoecm.frontend.service.IJcrService;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
 import org.slf4j.Logger;
@@ -66,13 +67,12 @@ public class CopyModelDialog extends AbstractWorkflowDialog {
         EditmodelWorkflow workflow = (EditmodelWorkflow) getWorkflow();
         if (workflow != null) {
             String path = workflow.copy(name);
+            ((UserSession) Session.get()).getJcrSession().refresh(true);
+
             JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
             if (path != null) {
                 IPluginContext context = getPlugin().getPluginContext();
                 IPluginConfig config = getPlugin().getPluginConfig();
-
-                IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
-                jcrService.flush(nodeModel.getParentModel());
 
                 IEditService viewService = context.getService(config.getString(IEditService.EDITOR_ID),
                         IEditService.class);

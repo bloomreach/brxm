@@ -20,8 +20,12 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IconAttributeModifier extends AbstractNodeAttributeModifier {
     @SuppressWarnings("unused")
@@ -29,35 +33,61 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
 
     private static final long serialVersionUID = 1L;
 
-    @Override
-    public AttributeModifier getCellAttributeModifier(Node node) throws RepositoryException {
-        String cssClass = null;
-        String type = node.getPrimaryNodeType().getName();
+    static final Logger log = LoggerFactory.getLogger(IconAttributeModifier.class);
 
-        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-            NodeIterator nodeIt = node.getNodes();
-            while (nodeIt.hasNext()) {
-                Node childNode = nodeIt.nextNode();
-                if (childNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                    type = childNode.getPrimaryNodeType().getName();
-                    break;
+    private static class IconAttributeModel extends LoadableDetachableModel {
+        private static final long serialVersionUID = 1L;
+
+        private JcrNodeModel nodeModel;
+
+        IconAttributeModel(JcrNodeModel model) {
+            this.nodeModel = model;
+        }
+
+        @Override
+        public void detach() {
+            super.detach();
+            nodeModel.detach();
+        }
+        
+        protected Object load() {
+            Node node = nodeModel.getNode();
+            if (node != null) {
+                try {
+                    String type = node.getPrimaryNodeType().getName();
+    
+                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        NodeIterator nodeIt = node.getNodes();
+                        while (nodeIt.hasNext()) {
+                            Node childNode = nodeIt.nextNode();
+                            if (childNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                                type = childNode.getPrimaryNodeType().getName();
+                                break;
+                            }
+                        }
+                        if (type.indexOf(":") > -1) {
+                            return "document-16";
+                        }
+                    }
+                    if (type.equals("hippo:templatetype")) {
+                        return "document-16";
+                    }
+                    return "folder-16";
+                } catch (RepositoryException ex) {
+                    log.error("Unable to determine icon for document", ex);
                 }
             }
-            if (type.indexOf(":") > -1) {
-                cssClass = "document-16";
-            }
+            return null;
         }
-        if (cssClass == null && type.equals("hippo:templatetype")) {
-            cssClass = "document-16";
-        }
-        if (cssClass == null) {
-            cssClass = "folder-16";
-        }
-        return new CssClassAppender(new Model(cssClass));
     }
 
     @Override
-    public AttributeModifier getColumnAttributeModifier(Node node) throws RepositoryException {
+    public AttributeModifier getCellAttributeModifier(Node node) {
+        return new CssClassAppender(new IconAttributeModel(new JcrNodeModel(node)));
+    }
+
+    @Override
+    public AttributeModifier getColumnAttributeModifier(Node node) {
         return new CssClassAppender(new Model("icon-16"));
     }
 

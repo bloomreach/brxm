@@ -21,25 +21,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.RequestContext;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.WicketURLDecoder;
-import org.apache.wicket.request.target.component.PageRequestTarget;
-import org.apache.wicket.util.string.PrependingStringBuffer;
 import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.IModelListener;
-import org.hippoecm.frontend.model.IModelService;
+import org.hippoecm.frontend.model.IModelReference;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBehaviorService;
@@ -49,8 +42,7 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractRenderService extends Panel implements IModelListener, IRenderService,
-        IStringResourceProvider {
+public abstract class AbstractRenderService extends Panel implements IObserver, IRenderService, IStringResourceProvider {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -70,100 +62,13 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
     private boolean redraw;
     private String wicketServiceId;
     private String wicketId;
-    private String modelId;
     private String cssClasses;
 
     private final IPluginContext context;
     private final IPluginConfig config;
+    private final IModelReference modelReference;
     protected LinkedHashMap<String, ExtensionPoint> children;
     private IRenderService parent;
-
-    public static final HeaderContributor forCss(final String location) {
-        return new HeaderContributor(new IHeaderContributor() {
-            private static final long serialVersionUID = 1L;
-
-            public void renderHead(IHeaderResponse response) {
-                response.renderCSSReference(returnFixedRelativePath(location));
-            }
-        });
-    }
-
-    public static final HeaderContributor forJavaScript(final String location) {
-        return new HeaderContributor(new IHeaderContributor() {
-            private static final long serialVersionUID = 1L;
-
-            public void renderHead(IHeaderResponse response) {
-                response.renderJavascriptReference(returnFixedRelativePath(location));
-            }
-        });
-    }
-
-    // Adds ../ links to make the location relative to the root of the webapp,
-    // provided it's not a fully-qualified URL.
-    public static final String returnFixedRelativePath(String location) {
-        // WICKET-59 allow external URLs, WICKET-612 allow absolute URLs.
-        if (location.startsWith("http://") || location.startsWith("https://") || location.startsWith("/")) {
-            return location;
-        } else {
-            return getFixedRelativePathPrefixToContextRoot() + location;
-        }
-    }
-
-    public static final String getFixedRelativePathPrefixToContextRoot() {
-        WebRequest request = (WebRequest) RequestCycle.get().getRequest();
-
-        if (RequestContext.get().isPortletRequest()) {
-            return request.getHttpServletRequest().getContextPath() + "/";
-        }
-
-        // Prepend to get back to the wicket handler.
-        String tmp = RequestCycle.get().getRequest().getRelativePathPrefixToWicketHandler();
-        PrependingStringBuffer prepender = new PrependingStringBuffer(tmp);
-
-        String path = WicketURLDecoder.PATH_INSTANCE.decode(request.getPath());
-        if (path == null || path.length() == 0) {
-            path = "";
-        }
-
-        // Now prepend to get back from the wicket handler to the root context.
-
-        // Find the absolute path for the wicket filter/servlet
-        String wicketPath = "";
-
-        // We're running as a filter.
-        // Note: do not call RequestUtils.decode() on getServletPath ... it is
-        //       already url-decoded (JIRA WICKET-1624)
-        String servletPath = request.getServletPath();
-
-        // We need to substitute the %3A (or the other way around) to be able to
-        // get a good match, as parts of the path may have been escaped while
-        // others arent
-
-        // Add check if path is empty
-        if (!"".equals(path) && servletPath.endsWith(path)) {
-            int len = servletPath.length() - path.length() - 1;
-            if (len < 0) {
-                len = 0;
-            }
-            wicketPath = servletPath.substring(0, len);
-        }
-        // We're running as a servlet
-        else {
-            wicketPath = servletPath;
-        }
-
-        int start = 0;
-        // add skip for starting slash
-        if (wicketPath.startsWith("/")) {
-            start = 1;
-        }
-        for (int i = start; i < wicketPath.length(); i++) {
-            if (wicketPath.charAt(i) == '/') {
-                prepender.prepend("../");
-            }
-        }
-        return prepender.toString();
-    }
 
     public AbstractRenderService(IPluginContext context, IPluginConfig properties) {
         super("id", getPluginModel(context, properties));
@@ -184,10 +89,28 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
         }
 
         if (properties.getString(MODEL_ID) != null) {
-            modelId = properties.getString(MODEL_ID);
-            if (modelId != null) {
-                context.registerService(this, modelId);
+            modelReference = context.getService(properties.getString(MODEL_ID), IModelReference.class);
+            if (modelReference != null) {
+                context.registerService(new IObserver() {
+
+                    public IObservable getObservable() {
+                        return modelReference;
+                    }
+
+                    public void onEvent(IEvent event) {
+                        if (event instanceof IModelReference.IModelChangeEvent) {
+                            IModelReference.IModelChangeEvent mce = (IModelReference.IModelChangeEvent) event;
+                            updateModel(mce.getNewModel());
+                        }
+                    }
+
+                }, IObserver.class.getName());
             }
+        } else {
+            modelReference = null;
+        }
+        if (getModel() instanceof IObservable) {
+            context.registerService(this, IObserver.class.getName());
         }
 
         String[] extensions = config.getStringArray(EXTENSIONS_ID);
@@ -218,7 +141,7 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
         String[] skins = config.getStringArray(SKIN_ID);
         if (skins != null) {
             for (String skin : skins) {
-                HeaderContributor cssContributor = forCss(skin);
+                HeaderContributor cssContributor = HeaderContributorHelper.forCss(skin);
                 add(cssContributor);
                 context.registerService(cssContributor, IDialogService.class.getName());
             }
@@ -275,13 +198,8 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
 
     @Override
     public Component setModel(IModel model) {
-        IModelService service = context.getService(modelId, IModelService.class);
-        if (service != null) {
-            service.setModel(model);
-            if (model != getModel() && (model == null || !model.equals(getModel()))) {
-                log.info("Did not receive model change notification for wicket.model ({})", config.getString(MODEL_ID));
-                updateModel(model);
-            }
+        if (modelReference != null) {
+            modelReference.setModel(model);
         } else {
             updateModel(model);
         }
@@ -289,7 +207,22 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
     }
 
     public final void updateModel(IModel model) {
+        if (getModel() instanceof IObservable) {
+            context.unregisterService(this, IObserver.class.getName());
+        }
         super.setModel(model);
+        if (getModel() instanceof IObservable) {
+            context.registerService(this, IObserver.class.getName());
+        }
+    }
+
+    public IObservable getObservable() {
+        return (IObservable) getModel();
+    }
+
+    public void onEvent(IEvent event) {
+        getModel().detach();
+        modelChanged();
     }
 
     // override methods with configuration data
@@ -413,7 +346,7 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
     private static IModel getPluginModel(IPluginContext context, IPluginConfig properties) {
         String modelId = properties.getString(MODEL_ID);
         if (modelId != null) {
-            IModelService service = context.getService(modelId, IModelService.class);
+            IModelReference service = context.getService(modelId, IModelReference.class);
             if (service != null) {
                 return service.getModel();
             }

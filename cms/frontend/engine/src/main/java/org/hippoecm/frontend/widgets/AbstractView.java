@@ -15,16 +15,9 @@
  */
 package org.hippoecm.frontend.widgets;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.wicket.markup.repeater.IItemFactory;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.IModel;
 
 public abstract class AbstractView extends DataView {
     private static final long serialVersionUID = 1L;
@@ -34,26 +27,12 @@ public abstract class AbstractView extends DataView {
     public AbstractView(String wicketId, IDataProvider provider) {
         super(wicketId, provider);
 
-        setItemReuseStrategy(new ReuseIfModelsEqualStrategy() {
+        setItemReuseStrategy(new ManagedReuseStrategy() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Iterator getItems(final IItemFactory factory, final Iterator newModels, final Iterator existingItems) {
-                List<IModel> models = new LinkedList<IModel>();
-                while (newModels.hasNext()) {
-                    models.add((IModel) newModels.next());
-                }
-
-                List<Item> items = new LinkedList<Item>();
-                while (existingItems.hasNext()) {
-                    Item item = (Item) existingItems.next();
-                    if (!models.contains(item.getModel())) {
-                        destroyItem(item);
-                    } else {
-                        items.add(item);
-                    }
-                }
-                return super.getItems(factory, models.iterator(), items.iterator());
+            public void destroyItem(Item item) {
+                AbstractView.this.destroyItem(item);
             }
         });
     }

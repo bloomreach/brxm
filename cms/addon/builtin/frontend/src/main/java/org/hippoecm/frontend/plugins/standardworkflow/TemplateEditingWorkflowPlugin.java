@@ -32,7 +32,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditService;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
@@ -69,11 +68,6 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implem
                 final JcrNodeModel nodeModel = model.getNodeModel();
                 if (nodeModel.getNode() != null) {
                     nodeModel.getNode().getSession().save();
-
-                    IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
-                    if (jcrService != null) {
-                        jcrService.flush(nodeModel);
-                    }
                 } else {
                     log.error("Node does not exist");
                 }
@@ -93,10 +87,6 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implem
                         nodeModel.getNode().refresh(false);
                     } catch (RepositoryException ex) {
                         log.error(ex.getMessage());
-                    }
-                    IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
-                    if (jcrService != null) {
-                        jcrService.flush(nodeModel);
                     }
                 } else {
                     log.error("Node does not exist");

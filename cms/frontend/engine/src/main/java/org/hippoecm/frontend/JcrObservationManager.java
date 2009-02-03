@@ -170,7 +170,7 @@ public class JcrObservationManager implements ObservationManager {
         }
     }
 
-    public void process() {
+    public void processEvents() {
         cleanup();
 
         UserSession session = (UserSession) org.apache.wicket.Session.get();

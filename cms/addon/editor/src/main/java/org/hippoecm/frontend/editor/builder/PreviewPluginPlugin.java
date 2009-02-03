@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -27,8 +28,8 @@ import org.hippoecm.frontend.editor.plugins.field.FieldPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
@@ -177,10 +178,10 @@ public class PreviewPluginPlugin extends RenderPlugin {
     }
 
     private void flush() {
-        IPluginContext context = getPluginContext();
-        IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
-        if (jcrService != null) {
-            jcrService.flush(pluginNodeModel.getParentModel());
+        try {
+            ((UserSession) Session.get()).getJcrSession().save();
+        } catch (RepositoryException ex) {
+            log.error("failed to flush changes");
         }
     }
 

@@ -35,7 +35,6 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -123,8 +122,6 @@ public class LinkPickerPlugin extends RenderPlugin {
                 }
             };
             add(new DialogLink("value", displayModel, dialogFactory, dialogService));
-
-            context.registerService(this, IJcrService.class.getName());
         } else {
             add(new Label("value", valueModel));
         }

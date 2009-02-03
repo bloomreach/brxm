@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.editor.plugins.resource;
 
-import java.io.IOException;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -24,18 +22,16 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageDisplayPlugin extends RenderPlugin implements IJcrNodeModelListener {
+public class ImageDisplayPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: ImageDisplayPlugin.java 12039 2008-06-13 09:27:05Z bvanhalderen $";
 
@@ -47,8 +43,6 @@ public class ImageDisplayPlugin extends RenderPlugin implements IJcrNodeModelLis
 
     public ImageDisplayPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        context.registerService(this, IJcrService.class.getName());
 
         resource = new JcrResourceStream(((JcrNodeModel) getModel()).getNode());
         Fragment fragment = new Fragment("fragment", "unknown", this);
@@ -79,18 +73,6 @@ public class ImageDisplayPlugin extends RenderPlugin implements IJcrNodeModelLis
             resource.detach();
         }
         super.onDetach();
-    }
-
-    public void onFlush(JcrNodeModel newModel) {
-        String path = newModel.getItemModel().getPath();
-        String target = ((JcrNodeModel) getModel()).getItemModel().getPath();
-        if (target.length() >= path.length() && target.substring(0, path.length()).equals(path)) {
-            try {
-                resource.close();
-            } catch (IOException ex) {
-                log.error(ex.getMessage());
-            }
-        }
     }
 
 }
