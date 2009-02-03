@@ -2,55 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="locations">
-      <list>
-        <value>classpath:hst.properties</value>
-      </list>
-    </property>
-  </bean>
+  <import resource="GeneralBasicPoolingRepository.xml" />
   
-  <bean id="org.hippoecm.hst.core.jcr.pool.PoolingRepository" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
-        init-method="initialize" destroy-method="close">
-    
-    <!-- delegated JCR repository -->
-    <property name="repository">
-      <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetClass" value="org.hippoecm.repository.HippoRepositoryFactory" />
-        <property name="targetMethod" value="getHippoRepository" />
-        <property name="arguments">
-          <list>
-            <value>${repository.address}</value>
-          </list>
-        </property>
-      </bean>
-    </property>
-    
-    <!-- default credentials for read-only sessions -->
-    <property name="defaultCredentials">
-      <bean class="javax.jcr.SimpleCredentials">
-        <constructor-arg value="${repository.user.name}" />
-        <constructor-arg value="${repository.password}" />
-      </bean>
-    </property>
-    
-    <!-- session proxy factories -->
-    <property name="readOnlySessionDecorator">
-      <bean class="org.hippoecm.hst.core.jcr.pool.ReadOnlySessionDecoratorProxyFactoryImpl" />
-    </property>
-    
-    <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
-    <property name="maxActive" value="250" />
-    <property name="maxIdle" value="50" />
-    <property name="minIdle" value="0" />
-    <property name="initialSize" value="0" />
-    <property name="maxWait" value="10000" />
-    <property name="testOnBorrow" value="true" />
-    <property name="testOnReturn" value="false" />
-    <property name="testWhileIdle" value="false" />
-    <property name="timeBetweenEvictionRunsMillis" value="60000" />
-    <property name="numTestsPerEvictionRun" value="1" />
-    <property name="minEvictableIdleTimeMillis" value="60000" />
-  </bean>
+  <!-- You can also use a fully qualified resource location like this:
+  <import resource="classpath:/org/hippoecm/hst/jcr/pool/GeneralBasicPoolingRepository.xml" />
+  -->
 
 </beans>
