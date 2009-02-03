@@ -17,6 +17,7 @@ package org.hippoecm.repository;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.rmi.RemoteException;
 
@@ -59,7 +60,7 @@ public class HREPTWO2182IssueTest extends SpiTestCase {
 
         nodes = typeNode.getNode("hippo:nodetype").getNodes("hippo:nodetype");
         // nodes.getSize() should return 2
-        assertTrue(nodes.getSize() == 1);
+        assertEquals(1, nodes.getSize());
     }
 
 }
