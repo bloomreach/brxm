@@ -202,17 +202,18 @@ public class URLMappingImpl implements URLMapping {
                     }
                     parameterMatcher.reset();
 
-                    pageNode = new PageNode(hstRequestContext.getHstConfigurationContextBase(), matchNode);
-
-                    while (parameterMatcher.find()) {
-                        if (parameterMatcher.groupCount() > 0) {
-                            String relativeContentPath = parameterMatcher.group(1); // get back reference value if available
-                            log.debug("Relative content path = '" + relativeContentPath + "'");
-                            if (relativeContentPath != null) {
-                                pageNode.setRelativeContentPath(relativeContentPath);
-                            }
-                        }
-                    }
+// TODO: Just comment out the followings for compiliation
+//                    pageNode = new PageNode(hstRequestContext.getHstConfigurationContextBase(), matchNode);
+//
+//                    while (parameterMatcher.find()) {
+//                        if (parameterMatcher.groupCount() > 0) {
+//                            String relativeContentPath = parameterMatcher.group(1); // get back reference value if available
+//                            log.debug("Relative content path = '" + relativeContentPath + "'");
+//                            if (relativeContentPath != null) {
+//                                pageNode.setRelativeContentPath(relativeContentPath);
+//                            }
+//                        }
+//                    }
                 }
             }
 

@@ -3,7 +3,6 @@ package org.hippoecm.hst.core.filters.urlmapping;
 import java.io.IOException;
 
 import javax.jcr.Repository;
-import javax.jcr.Session;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -22,7 +21,6 @@ import org.hippoecm.hst.core.mapping.URLMappingManager;
 import org.hippoecm.hst.core.mapping.URLMappingManagerImpl;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContextImpl;
-import org.hippoecm.hst.core.template.node.content.SimpleContentRewriterImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +74,8 @@ public class URLMappingFilter extends HstBaseFilter implements Filter{
         ((HstRequestContextImpl) hstRequestContext).setRelativeUrlMapping(relativeURLMapping);
         
         // now we have a urlMapping obj, also set the ContentRewriter on the HstRequestContext
-        ((HstRequestContextImpl) hstRequestContext).setContentRewriter(new SimpleContentRewriterImpl(hstRequestContext));
+        // TODO: Just comment out the following line for compilation. 
+        //((HstRequestContextImpl) hstRequestContext).setContentRewriter(new SimpleContentRewriterImpl(hstRequestContext));
         
         request.setAttribute(HSTHttpAttributes.URL_MAPPING_ATTR, relativeURLMapping);
         chain.doFilter(request, response);

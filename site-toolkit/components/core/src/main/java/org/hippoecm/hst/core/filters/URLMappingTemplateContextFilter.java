@@ -82,7 +82,10 @@ public class URLMappingTemplateContextFilter extends HstBaseFilter implements Fi
             PageNode matchPageNode = urlMapping.getMatchingPageNode(hstRequestContext.getHstRequestUri(), hstRequestContext);
             if (matchPageNode != null) {
                 String urlPrefix = getUrlPrefix(request);
-                RequestDispatcher dispatcher = request.getRequestDispatcher(urlPrefix + matchPageNode.getLayoutNode().getTemplatePage());
+                // TODO: Just comment out the following line for compilation
+                //RequestDispatcher dispatcher = request.getRequestDispatcher(urlPrefix + matchPageNode.getLayoutNode().getTemplatePage());
+                RequestDispatcher dispatcher = null;
+                
                 //set attributes
                 ((HstRequestContextImpl) hstRequestContext).setPageNode(matchPageNode);
                 
@@ -95,18 +98,23 @@ public class URLMappingTemplateContextFilter extends HstBaseFilter implements Fi
                 //what to do? no matching pattern found... lets continue the filter chain...
                 chain.doFilter(request, response);
             }
-        } catch (PathNotFoundException e) {
-            log.warn("PathNotFoundException: " + e.getMessage());
-            log.debug("PathNotFoundException: " , e);
-            chain.doFilter(request, response);
-        } catch (ValueFormatException e) {
-            log.warn("ValueFormatException: " + e.getMessage());
-            log.debug("ValueFormatException: " , e);
-            chain.doFilter(request, response);
-        } catch (RepositoryException e) {
-            log.warn("RepositoryException: " + e.getMessage());
-            log.debug("RepositoryException: " , e);
-            chain.doFilter(request, response);
+//        } catch (PathNotFoundException e) {
+//            log.warn("PathNotFoundException: " + e.getMessage());
+//            log.debug("PathNotFoundException: " , e);
+//            chain.doFilter(request, response);
+//        } catch (ValueFormatException e) {
+//            log.warn("ValueFormatException: " + e.getMessage());
+//            log.debug("ValueFormatException: " , e);
+//            chain.doFilter(request, response);
+//        } catch (RepositoryException e) {
+//            log.warn("RepositoryException: " + e.getMessage());
+//            log.debug("RepositoryException: " , e);
+//            chain.doFilter(request, response);
+//        }
+        // TODO: temporarily catch all exception here.
+        } catch (Exception e) {
+            log.warn("Exception: " + e.getMessage());
+            log.debug("Exception: " , e);
         }
     }
 	

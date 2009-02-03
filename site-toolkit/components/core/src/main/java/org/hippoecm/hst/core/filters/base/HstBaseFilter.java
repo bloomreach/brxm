@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.template.node.PageNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,25 +76,25 @@ public abstract class HstBaseFilter implements Filter {
         return urlPrefix;
     }
 
-    protected Map<String, PageNode> getURLMappingNodes(ContextBase templateContextBase) throws RepositoryException {
-        Map<String, PageNode> siteMapNodes = new HashMap<String, PageNode>();
-
-        Node siteMapRootNode = templateContextBase.getRelativeNode(SITEMAP_RELATIVE_LOCATION);
-        NodeIterator subNodes = siteMapRootNode.getNodes();
-        while (subNodes.hasNext()) {
-            Node subNode = (Node) subNodes.next();
-            if (subNode == null) {
-                continue;
-            }
-            if (subNode.hasProperty("hst:urlmapping")) {
-                Property urlMappingProperty = subNode.getProperty("hst:urlmapping");
-                siteMapNodes.put(urlMappingProperty.getValue().getString(), new PageNode(templateContextBase, subNode));
-            } else {
-                log.debug("hst:sitemapitem sitemap item missing 'hst:ulrmapping' property. " +
-                        "Item not meant for mapping, but only for binaries");
-            }
-        }
-        return siteMapNodes;
-    }
+//    protected Map<String, PageNode> getURLMappingNodes(ContextBase templateContextBase) throws RepositoryException {
+//        Map<String, PageNode> siteMapNodes = new HashMap<String, PageNode>();
+//
+//        Node siteMapRootNode = templateContextBase.getRelativeNode(SITEMAP_RELATIVE_LOCATION);
+//        NodeIterator subNodes = siteMapRootNode.getNodes();
+//        while (subNodes.hasNext()) {
+//            Node subNode = (Node) subNodes.next();
+//            if (subNode == null) {
+//                continue;
+//            }
+//            if (subNode.hasProperty("hst:urlmapping")) {
+//                Property urlMappingProperty = subNode.getProperty("hst:urlmapping");
+//                siteMapNodes.put(urlMappingProperty.getValue().getString(), new PageNodeImpl(templateContextBase, subNode));
+//            } else {
+//                log.debug("hst:sitemapitem sitemap item missing 'hst:ulrmapping' property. " +
+//                        "Item not meant for mapping, but only for binaries");
+//            }
+//        }
+//        return siteMapNodes;
+//    }
   
 }
