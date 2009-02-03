@@ -12,7 +12,7 @@ import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.hippoecm.repository.HippoRepository;
 
-/**
+/** 
  * <p>Basic implementation of <code>javax.jcr.Repository</code> that is
  * configured via JavaBeans properties.</p>
  *

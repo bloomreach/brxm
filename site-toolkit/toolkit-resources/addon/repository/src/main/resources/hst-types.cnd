@@ -14,61 +14,38 @@
  * limitations under the License.
  */
 
-<hst='http://www.hippoecm.org/hst/nt/1.1'>
+<hst='http://www.hippoecm.org/hst/nt/1.2'>
 <hippostd='http://www.hippoecm.org/hippostd/nt/1.2'>
 <hippo='http://www.hippoecm.org/nt/1.2'>
 
-// TYPES SHOULD EVOLVE DURING HST DEVELOPMENT
+[hst:component]
+- hst:jsp
+- hst:classname
+- hst:namespace
+- hst:componentsource
+- hst:components (string) multiple
++ * (hst:component)
++ * (hippo:facetselect)
 
+[hst:pagemappings] 
++ * (hst:component)
 
-[hst:module] > hippo:document
-- * (string)
+[hst:sitemapitem]
+- hst:urlname
+- hst:datasource (string)
+- hst:repositorybased (boolean) = false
+- hst:componentlocation (string)
++ * (hst:sitemapitem)
++ * (hippo:facetselect)
 
-[hst:modules] > hippo:document
-+ * (hst:module) = hst:module 
+[hst:sitemap] 
++ * (hst:sitemapitem)
 
-[hst:sitemapmodule] > hippo:document
-- hst:module (string)
-- * (string)
-
-[hst:sitemaplayout]> hippo:document orderable
-- hst:layoutAttribute (string)
-+ * (hst:sitemapmodule) = hst:sitemapmodule
-
-[hst:sitemapitem] > hippo:document
-- hst:urlmapping (string)
-- hst:pageLayout (string)
-- hst:prefixlinkrewrite (string)
-// hst:linkrewriteprefix  is preferred name, hst:prefixlinkrewrite is there for historical reason. They serve the 
-// exact same purpose 
-- hst:linkrewriteprefix (string)
-- hst:linkrewrite (string)
-- hst:nodetype (string) multiple
-- hst:nodepath (string) multiple
-+ * (hst:sitemaplayout) = hst:sitemaplayout
-
-[hst:sitemap] > hippo:document orderable
-+ * (hst:sitemapitem) = hst:sitemapitem
-
-
-[hst:navigation] > hippo:document
-+ *
-- *
-
-[hst:layoutitem] > hippo:document
-
-[hst:layout] > hippo:document
-- hst:template (string)
-+ * (hst:layoutitem) = hst:layoutitem
-
-[hst:layouts] >  hippo:document
-+ * (hst:layout) = hst:layout
 
 [hst:configuration] > hippo:document, hippostd:publishable, hippostd:publishableSummary, hippostd:languageable
-+ hst:modules (hst:modules) = hst:modules  
++ hst:pagemappings (hst:pagemappings) = hst:pagemappings 
 + hst:sitemap (hst:sitemap) = hst:sitemap  
-+ hst:navigation (hst:navigation) = hst:navigation  
-+ hst:layouts (hst:layouts) = hst:layouts 
+
 
 [hst:redirectmapping]
 - hst:redirect (string) mandatory
@@ -86,11 +63,4 @@
 - hst:showcontextpath (boolean)
 - hst:binarylocations (string) multiple 
 + * (hst:domainmapping) 
-
-
-[hst:reaction] mixin
-- hst:reactionto (String) mandatory
-- hst:reactiondate (date)
-- hst:reactionby (String)
-
 

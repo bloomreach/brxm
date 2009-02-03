@@ -34,6 +34,25 @@ public class UrlUtilities {
     private static final String SLASH_ENCODED = "__slash__";
 
     /**
+     * remove trailing and leading slashes
+     * @param url
+     * @return normalized url
+     */
+    
+    public static String normalizeUrl(String url) {
+        if(url == null) {
+            return null;
+        } 
+        if(url.startsWith("/")) {
+           url = url.substring(1);
+        }
+        if(url.endsWith("/" )) {
+            url = url.substring(0, url.length()-1);
+        }
+        return url;
+    }
+    
+    /**
      * Encode the url:
      * <ul>
      *   <li>split url in url parts on '/'</li>

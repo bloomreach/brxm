@@ -1,0 +1,108 @@
+<sv:node sv:name="hst:pagemappings" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:pagemappings</sv:value>
+    </sv:property>
+    <sv:node sv:name="pages">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:node sv:name="newsoverview">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:component</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:jsp" sv:type="String">
+                <sv:value>newspage.jsp</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:classname" sv:type="String">
+                <sv:value>org.hippoecm.hst.hstconfiguration.components.pages.NewsOverview</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:namespace" sv:type="String">
+                <sv:value>newspage</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:components" sv:type="String">
+                <sv:value>fragments/header</sv:value>
+                <sv:value>fragments/navigation</sv:value>
+                <sv:value>fragments/archive</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+    <sv:node sv:name="fragments">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:component</sv:value>
+        </sv:property>
+
+        <sv:node sv:name="header">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:component</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:jsp" sv:type="String">
+                <sv:value>header.jsp</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:classname" sv:type="String">
+                <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Header</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:namespace" sv:type="String">
+                <sv:value>header</sv:value>
+            </sv:property>
+            <sv:node sv:name="title">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:component</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:jsp" sv:type="String">
+                    <sv:value>title.jsp</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:classname" sv:type="String">
+                    <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.DocumentTitle</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:namespace" sv:type="String">
+                    <sv:value>title</sv:value>
+                </sv:property>
+            </sv:node>
+        </sv:node>
+
+        <sv:node sv:name="navigation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:component</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:jsp" sv:type="String">
+                <sv:value>navigation.jsp</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:classname" sv:type="String">
+                <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Navigation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:namespace" sv:type="String">
+                <sv:value>navigation</sv:value>
+            </sv:property>
+        </sv:node>
+
+        <sv:node sv:name="archive">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:component</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:jsp" sv:type="String">
+                <sv:value>archive.jsp</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:classname" sv:type="String">
+                <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Archive</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:namespace" sv:type="String">
+                <sv:value>archive</sv:value>
+            </sv:property>
+            <sv:node sv:name="paging">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:component</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:jsp" sv:type="String">
+                    <sv:value>paging.jsp</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:classname" sv:type="String">
+                    <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Paging</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:namespace" sv:type="String">
+                    <sv:value>paging</sv:value>
+                </sv:property>
+            </sv:node>
+        </sv:node>
+
+    </sv:node>
+</sv:node>
