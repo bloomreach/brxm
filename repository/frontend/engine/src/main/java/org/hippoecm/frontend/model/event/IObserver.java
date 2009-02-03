@@ -19,6 +19,10 @@ import java.util.EventListener;
 
 import org.apache.wicket.IClusterable;
 
+/**
+ * This interface defines the contract for a service that update its internal state in
+ * response to changes in an observable object (IObservable).
+ */
 public interface IObserver extends EventListener, IClusterable {
     
     IObservable getObservable();

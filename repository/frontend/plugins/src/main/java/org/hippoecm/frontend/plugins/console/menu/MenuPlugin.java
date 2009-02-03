@@ -39,7 +39,6 @@ import org.hippoecm.frontend.plugins.console.menu.reset.ResetDialog;
 import org.hippoecm.frontend.plugins.console.menu.save.SaveDialog;
 import org.hippoecm.frontend.plugins.console.menu.sorter.Sorter;
 import org.hippoecm.frontend.plugins.console.menu.workflow.WorkflowDialog;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class MenuPlugin extends RenderPlugin {
@@ -204,11 +203,8 @@ public class MenuPlugin extends RenderPlugin {
         super.redraw();
     }
 
+    @Deprecated
     public void flushNodeModel(JcrNodeModel nodeModel) {
-        IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
-        if (jcrService != null) {
-            jcrService.flush(nodeModel);
-        }
     }
 
 }

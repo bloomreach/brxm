@@ -31,7 +31,6 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,11 +95,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
                         node.setProperty("jcr:data", upload.getInputStream());
                         node.setProperty("jcr:lastModified", Calendar.getInstance());
 
-                        IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(),
-                                IJcrService.class);
-                        if (jcrService != null) {
-                            jcrService.flush(nodeModel);
-                        }
+                        node.save();
                     } catch (RepositoryException ex) {
                         // FIXME: report back to user
                         log.error(ex.getMessage());

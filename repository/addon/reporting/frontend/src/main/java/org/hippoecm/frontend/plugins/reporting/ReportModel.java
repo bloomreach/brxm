@@ -18,12 +18,10 @@ package org.hippoecm.frontend.plugins.reporting;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.query.QueryManager;
@@ -49,7 +47,12 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider {
 
     private static final long serialVersionUID = 1L;
 
+    public static final int UNKNOWN_SIZE = -1;
+
     static final Logger log = LoggerFactory.getLogger(ReportModel.class);
+
+    private transient boolean attached = false;
+    private transient QueryResult resultSet;
 
     public ReportModel(JcrNodeModel nodeModel) {
         super(nodeModel);
@@ -58,74 +61,80 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider {
     // IDataProvider
 
     public Iterator iterator(int first, int count) {
-        return resultSet().iterator();
+        load();
+        if (resultSet != null) {
+            try {
+                return resultSet.getNodes();
+            } catch (RepositoryException ex) {
+                log.error("Failed to obtain nodes from query result");
+            }
+        }
+        return new ArrayList(0).iterator();
     }
 
     public IModel model(Object object) {
-        return (JcrNodeModel) object;
+        return new JcrNodeModel((Node) object);
     }
 
     public int size() {
-        return resultSet().size();
+        return UNKNOWN_SIZE;
     }
 
     // privates
 
-    private List<JcrNodeModel> resultSet() {
-        List<JcrNodeModel> resultSet = new ArrayList<JcrNodeModel>();
-        try {
-            Node reportNode = nodeModel.getNode();
-            if (reportNode.isNodeType(ReportingNodeTypes.NT_REPORT)) {
-                Node queryNode = reportNode.getNode(ReportingNodeTypes.QUERY);
-                QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
-                HippoQuery query = (HippoQuery) queryManager.getQuery(queryNode);
+    private void load() {
+        if (!attached) {
+            attached = true;
+            try {
+                Node reportNode = nodeModel.getNode();
+                if (reportNode.isNodeType(ReportingNodeTypes.NT_REPORT)) {
+                    Node queryNode = reportNode.getNode(ReportingNodeTypes.QUERY);
+                    QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
+                    HippoQuery query = (HippoQuery) queryManager.getQuery(queryNode);
 
-                Map<String, String> arguments = new HashMap<String, String>();
-                if (reportNode.hasProperty(ReportingNodeTypes.PARAMETER_NAMES)) {
-                    Value[] parameterNames = reportNode.getProperty(ReportingNodeTypes.PARAMETER_NAMES).getValues();
-                    Value[] parameterValues = reportNode.getProperty(ReportingNodeTypes.PARAMETER_VALUES).getValues();
-                    if (parameterNames.length == parameterValues.length) {
-                        for (int i = 0; i < parameterNames.length; i++) {
-                            arguments.put(parameterNames[i].getString(), parameterValues[i].getString());
+                    Map<String, String> arguments = new HashMap<String, String>();
+                    if (reportNode.hasProperty(ReportingNodeTypes.PARAMETER_NAMES)) {
+                        Value[] parameterNames = reportNode.getProperty(ReportingNodeTypes.PARAMETER_NAMES).getValues();
+                        Value[] parameterValues = reportNode.getProperty(ReportingNodeTypes.PARAMETER_VALUES)
+                                .getValues();
+                        if (parameterNames.length == parameterValues.length) {
+                            for (int i = 0; i < parameterNames.length; i++) {
+                                arguments.put(parameterNames[i].getString(), parameterValues[i].getString());
+                            }
                         }
                     }
-                }
-                if (reportNode.hasProperty(ReportingNodeTypes.LIMIT)) {
-                    query.setLimit(reportNode.getProperty(ReportingNodeTypes.LIMIT).getLong());
-                }
-                if (reportNode.hasProperty(ReportingNodeTypes.OFFSET)) {
-                    query.setOffset(reportNode.getProperty(ReportingNodeTypes.OFFSET).getLong());
-                }
+                    if (reportNode.hasProperty(ReportingNodeTypes.LIMIT)) {
+                        query.setLimit(reportNode.getProperty(ReportingNodeTypes.LIMIT).getLong());
+                    }
+                    if (reportNode.hasProperty(ReportingNodeTypes.OFFSET)) {
+                        query.setOffset(reportNode.getProperty(ReportingNodeTypes.OFFSET).getLong());
+                    }
 
-                javax.jcr.Session session = ((UserSession)Session.get()).getJcrSession();
-                session.refresh(true);
-                QueryResult result;
-                if (arguments.isEmpty()) {
-                    result = query.execute();
-                } else {
-                    result = query.execute(arguments);
+                    javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+                    session.refresh(true);
+                    if (arguments.isEmpty()) {
+                        resultSet = query.execute();
+                    } else {
+                        resultSet = query.execute(arguments);
+                    }
                 }
-
-                NodeIterator it = result.getNodes();
-                while (it.hasNext()) {
-                    resultSet.add(new JcrNodeModel(it.nextNode()));
-                }
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            } catch (PatternSyntaxException e) {
+                //This occurs if there is a mismatch between
+                //supplied parameters and number of parameter placeholders in statement
+                //Should probably be a RepositoryException
+                log.error(e.getMessage());
             }
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        } catch (PatternSyntaxException e) {
-            //This occurs if there is a mismatch between
-            //supplied parameters and number of parameter placeholders in statement
-            //Should probably be a RepositoryException
-            log.error(e.getMessage());
         }
-        return resultSet;
     }
 
     // IDetachable
 
     @Override
     public void detach() {
+        attached = false;
+        resultSet = null;
         super.detach();
     }
 

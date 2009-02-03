@@ -27,7 +27,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -53,7 +53,7 @@ public class LinkPickerDialog extends AbstractDialog {
     protected final IPluginContext context;
     protected final IPluginConfig config;
     protected IRenderService dialogRenderer;
-    private ModelService<IModel> modelService;
+    private ModelReference<IModel> modelService;
     private IClusterControl control;
     private IModel selectedNode;
 
@@ -138,7 +138,7 @@ public class LinkPickerDialog extends AbstractDialog {
         IClusterConfig clusterConfig = control.getClusterConfig();
         //save modelServiceId and dialogServiceId in cluster config
         String modelServiceId = clusterConfig.getString("wicket.model");
-        modelService = new ModelService<IModel>(modelServiceId, selectedNode) {
+        modelService = new ModelReference<IModel>(modelServiceId, selectedNode) {
             private static final long serialVersionUID = 1L;
 
             @Override

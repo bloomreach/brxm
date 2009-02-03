@@ -31,7 +31,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.model.IModelService;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -121,8 +121,8 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                     public void onClick(AjaxRequestTarget target) {
                         if (section.extPt.getChildren().size() > 0) {
                             IRenderService renderer = section.extPt.getChildren().get(0);
-                            IModelService modelService = context.getService(context.getReference(renderer)
-                                    .getServiceId(), IModelService.class);
+                            IModelReference modelService = context.getService(context.getReference(renderer)
+                                    .getServiceId(), IModelReference.class);
                             if (modelService != null) {
                                 IModel sectionModel = modelService.getModel();
                                 SectionTreePlugin.this.setModel(sectionModel);
@@ -188,8 +188,8 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         for (Section section : sections) {
             if (section.extPt.getChildren().size() > 0) {
                 IRenderService renderService = section.extPt.getChildren().get(0);
-                IModelService modelService = context.getService(context.getReference(renderService).getServiceId(),
-                        IModelService.class);
+                IModelReference modelService = context.getService(context.getReference(renderService).getServiceId(),
+                        IModelReference.class);
                 if (modelService != null) {
                     IModel sectionModel = modelService.getModel();
                     if (sectionModel instanceof JcrNodeModel) {

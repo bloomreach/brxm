@@ -35,8 +35,11 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.model.IModelListener;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -70,14 +73,22 @@ public class BreadcrumbPlugin extends RenderPlugin {
         add(getListView(nodeModel));
 
         if (config.getString("model.folder") != null) {
-            context.registerService(new IModelListener() {
-                private static final long serialVersionUID = 1L;
+            final IModelReference folderReference = context.getService(config.getString("model.folder"),
+                    IModelReference.class);
+            if (folderReference != null) {
+                context.registerService(new IObserver() {
+                    private static final long serialVersionUID = 1L;
 
-                public void updateModel(IModel model) {
-                    update((JcrNodeModel) model);
-                }
+                    public IObservable getObservable() {
+                        return folderReference;
+                    }
 
-            }, config.getString("model.folder"));
+                    public void onEvent(IEvent event) {
+                        update((JcrNodeModel) folderReference.getModel());
+                    }
+
+                }, IObserver.class.getName());
+            }
         }
         up = new AjaxButton("up") {
             private static final long serialVersionUID = 1L;

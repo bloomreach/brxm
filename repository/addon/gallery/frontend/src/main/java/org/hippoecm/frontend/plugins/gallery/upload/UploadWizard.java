@@ -65,7 +65,6 @@ public class UploadWizard extends Wizard {
         try {
             JcrNodeModel gallery = new JcrNodeModel(uploadDialog.getGalleryNode());
             gallery.getNode().getSession().refresh(true);
-            uploadDialog.getJcrService().flush(gallery);
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
         }

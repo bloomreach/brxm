@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
@@ -36,7 +36,7 @@ public class PreviewClusterConfig extends JcrClusterConfig {
     private String pluginConfigModel;
     private String engineId;
 
-    public PreviewClusterConfig(IPluginContext context, JcrNodeModel node, ModelService model, String engineId) {
+    public PreviewClusterConfig(IPluginContext context, JcrNodeModel node, ModelReference model, String engineId) {
         super(node);
 
         this.engineId = engineId;

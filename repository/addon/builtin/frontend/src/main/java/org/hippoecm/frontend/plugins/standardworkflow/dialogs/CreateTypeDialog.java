@@ -15,14 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
-import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.service.IJcrService;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow;
 import org.slf4j.Logger;
@@ -39,12 +38,8 @@ public class CreateTypeDialog extends AbstractWorkflowDialog {
 
     private String name;
 
-    private IServiceReference<IJcrService> jcrServiceRef;
-
-    public CreateTypeDialog(AbstractWorkflowPlugin plugin, IServiceReference<IJcrService> jcrService) {
+    public CreateTypeDialog(AbstractWorkflowPlugin plugin) {
         super(plugin);
-
-        this.jcrServiceRef = jcrService;
 
         add(new TextFieldWidget("name", new PropertyModel(this, "name")));
     }
@@ -53,12 +48,7 @@ public class CreateTypeDialog extends AbstractWorkflowDialog {
     protected void execute() throws Exception {
         TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) getWorkflow();
         workflow.createType(name);
-
-        WorkflowsModel wflModel = (WorkflowsModel) getPlugin().getModel();
-        IJcrService jcrService = jcrServiceRef.getService();
-        if (jcrService != null) {
-            jcrService.flush(wflModel.getNodeModel());
-        }
+        ((UserSession) Session.get()).getJcrSession().refresh(true);
     }
     
     public IModel getTitle() {

@@ -36,9 +36,9 @@ import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
+import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -49,7 +49,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractWorkflowPlugin extends RenderPlugin {
+public abstract class AbstractWorkflowPlugin extends RenderPlugin implements IActivator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -80,6 +80,13 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
         actions = new HashMap<String, Action>();
     }
 
+    public void start() {
+        modelChanged();
+    }
+    
+    public void stop() {
+    }
+    
     @Override
     public IPluginContext getPluginContext() {
         return super.getPluginContext();
@@ -222,11 +229,6 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
             action.execute(workflow);
 
             ((UserSession) Session.get()).getJcrSession().refresh(true);
-
-            IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
-            if (jcrService != null) {
-                jcrService.flush(handle);
-            }
         } catch (RepositoryException ex) {
             log.error("Invalid data to save", ex);
             showException(ex);

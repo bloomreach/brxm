@@ -47,7 +47,6 @@ import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditService;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
@@ -179,7 +178,6 @@ public class FolderShortcutPlugin extends RenderPlugin {
         private String templateCategory = null;
         private String prototype = null;
         private String name;
-        protected IServiceReference<IJcrService> jcrServiceRef;
         protected IServiceReference<IBrowseService> browseServiceRef;
         protected IServiceReference<IEditService> editServiceRef;
         private Map<String, Set<String>> templates;
@@ -195,9 +193,6 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 optionSelectFirst = config.getBoolean("option.first");
             if (config.containsKey("option.only"))
                 optionSelectOnly = config.getString("option.only");
-
-            IJcrService service = context.getService(IJcrService.class.getName(), IJcrService.class);
-            jcrServiceRef = context.getReference(service);
 
             browseServiceRef = context.getReference(context.getService(config.getString(IBrowseService.BROWSER_ID),
                     IBrowseService.class));
@@ -360,14 +355,6 @@ public class FolderShortcutPlugin extends RenderPlugin {
             }
         }
 
-        @Override
-        public void onDetach() {
-            if (jcrServiceRef != null) {
-                jcrServiceRef.detach();
-            }
-            super.onDetach();
-        }
-
         public IModel getTitle() {
             return new StringResourceModel("new-document-label", this, null);
         }
@@ -393,10 +380,9 @@ public class FolderShortcutPlugin extends RenderPlugin {
                             error("Unknown folder type " + prototype);
                             return;
                         }
-                        IJcrService jcrService = jcrServiceRef.getService();
-                        jcrService.flush(((WorkflowsModel) getModel()).getNodeModel().getParentModel());
-    
                         String path = workflow.add(templateCategory, prototype, NodeNameCodec.encode(name, true));
+                        jcrSession.refresh(true);
+
                         JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
                         select(nodeModel, browseServiceRef, editServiceRef);
                     } else {

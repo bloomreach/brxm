@@ -104,9 +104,9 @@ public class PluginFactory implements IClusterable {
                 log.error(message);
             }
         }
-        if(plugin instanceof Component) {
-            ((Component)plugin).setMarkupId(config.getName());
-        }
+//        if(plugin instanceof Component) {
+//            ((Component)plugin).setMarkupId(config.getName());
+//        }
         return plugin;
     }
 

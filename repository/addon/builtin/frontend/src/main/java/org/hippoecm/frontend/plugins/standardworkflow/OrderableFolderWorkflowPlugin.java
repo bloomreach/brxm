@@ -24,10 +24,8 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.reorder.ReorderDialog;
-import org.hippoecm.frontend.service.IJcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,14 +41,11 @@ public class OrderableFolderWorkflowPlugin extends FolderWorkflowPlugin {
 
         Node node = (Node) getModel().getObject();
         try {
-            IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
-            final IServiceReference<IJcrService> jcrRef = context.getReference(jcrService);
-
             DialogAction action = new DialogAction(new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
 
                 public AbstractDialog createDialog() {
-                    return new ReorderDialog(OrderableFolderWorkflowPlugin.this, jcrRef);
+                    return new ReorderDialog(OrderableFolderWorkflowPlugin.this);
                 }
             }, getDialogService());
 

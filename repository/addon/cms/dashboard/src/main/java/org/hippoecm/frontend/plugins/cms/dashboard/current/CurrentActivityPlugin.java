@@ -34,19 +34,18 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
-import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModelListener {
+public class CurrentActivityPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -58,10 +57,8 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
     public CurrentActivityPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        context.registerService(this, IJcrService.class.getName());
-
         if (!(getModel() instanceof IDataProvider)) {
-            throw new IllegalArgumentException("CurrentActivityPlugin needs an IDataProvider as Plugin model.");
+            throw new IllegalArgumentException("CurrentActivityPlugin needs a model that is an IDataProvider.");
         }
 
         //FIXME: detect client timezone (use StyleDateConverter?)
@@ -72,8 +69,26 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
         add(new CurrentActivityView("view", getModel()));
     }
 
-    public void onFlush(JcrNodeModel nodeModel) {
+    @Override
+    public void render(PluginRequestTarget target) {
         redraw();
+        super.render(target);
+    }
+
+    String uuid2Path(String uuid) {
+        if (uuid == null || uuid.equals("")) {
+            return null;
+        }
+        try {
+            Session session = ((UserSession) getSession()).getJcrSession();
+            Node node = session.getNodeByUUID(uuid);
+            return node.getPath();
+        } catch (ItemNotFoundException e) {
+            return null;
+        } catch (RepositoryException e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
     }
 
     private class CurrentActivityView extends RefreshingView {
@@ -85,8 +100,23 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
 
         @Override
         protected Iterator getItemModels() {
-            IDataProvider dataProvider = (IDataProvider) getModel();
-            return dataProvider.iterator(0, 0);
+            final IDataProvider dataProvider = (IDataProvider) getModel();
+            final Iterator iter = dataProvider.iterator(0, 0);
+            return new Iterator() {
+
+                public boolean hasNext() {
+                    return iter.hasNext();
+                }
+
+                public Object next() {
+                    return dataProvider.model(iter.next());
+                }
+
+                public void remove() {
+                    iter.remove();
+                }
+                
+            };
         }
 
         @Override
@@ -95,12 +125,14 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
             Session session = ((UserSession) getSession()).getJcrSession();
             try {
                 if (!node.isNodeType("hippolog:item")) {
-                    throw new IllegalArgumentException("CurrentActivityPlugin can only process Nodes of type hippolog:item.");
+                    throw new IllegalArgumentException(
+                            "CurrentActivityPlugin can only process Nodes of type hippolog:item.");
                 }
 
                 // Add even/odd row css styling
                 item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel() {
                     private static final long serialVersionUID = 1L;
+
                     @Override
                     public Object getObject() {
                         return (item.getIndex() % 2 == 1) ? "even" : "odd";
@@ -112,7 +144,7 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
                 String timestamp = "";
                 try {
                     timestamp = relativeTime(nodeCal);
-                } catch(IllegalArgumentException ex) {
+                } catch (IllegalArgumentException ex) {
                 }
 
                 // Best effort algoritm to create a 'browse' link to a document.
@@ -161,26 +193,37 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
                 }
 
                 if (path != null) {
-                     // We have a path to a document variant, so we can link to it!
-                    String label = new StringResourceModel(timestamp, this, null, "").getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString(), new NodeTranslator(new JcrNodeModel(path)).getNodeName().getObject()  }).getString();
+                    // We have a path to a document variant, so we can link to it!
+                    String label = new StringResourceModel(timestamp, this, null, "").getString()
+                            + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null,
+                                    new Object[] { node.getProperty("hippo:eventUser").getString(),
+                                            new NodeTranslator(new JcrNodeModel(path)).getNodeName().getObject() })
+                                    .getString();
                     BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", path, label);
                     item.add(link);
                     return;
-                }
-                else
-                {
+                } else {
                     //Maybe both variants have been deleted, try to create a link to the handle
                     if (sourceVariant != null) {
                         String handle = StringUtils.substringBeforeLast(sourceVariant, "/");
                         if (session.itemExists(handle)) {
-                            
-                            String label = new StringResourceModel(timestamp, this, null, "").getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString(), new NodeTranslator(new JcrNodeModel(handle)).getNodeName().getObject()  }).getString();
-                            BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", handle, label);
-                            item.add( link );
+
+                            String label = new StringResourceModel(timestamp, this, null, "").getString()
+                                    + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this,
+                                            null, new Object[] {
+                                                    node.getProperty("hippo:eventUser").getString(),
+                                                    new NodeTranslator(new JcrNodeModel(handle)).getNodeName()
+                                                            .getObject() }).getString();
+                            BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", handle,
+                                    label);
+                            item.add(link);
                             return;
                         } else {
                             // No path, so we're just rendering a label without a link
-                            String label = new StringResourceModel(timestamp, this, null, "").getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString() }).getString();
+                            String label = new StringResourceModel(timestamp, this, null, "").getString()
+                                    + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this,
+                                            null, new Object[] { node.getProperty("hippo:eventUser").getString() })
+                                            .getString();
                             item.add(new Label("entry", label));
                             return;
                         }
@@ -189,8 +232,10 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
 
                 //Apparently the log item wasn't created by a Workflow step
                 //on a document.
-                String label = new StringResourceModel(timestamp, this, null, "").getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString() }).getString();
-                Label entryLabel = new Label("entry", label );
+                String label = new StringResourceModel(timestamp, this, null, "").getString()
+                        + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null,
+                                new Object[] { node.getProperty("hippo:eventUser").getString() }).getString();
+                Label entryLabel = new Label("entry", label);
                 entryLabel.setEscapeModelStrings(false);
                 item.add(entryLabel);
 
@@ -199,9 +244,9 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
                 if (item.get("timestamp") == null) {
                     item.add(new Label("timestamp", ""));
                 }
-//                if (item.get("user") == null) {
-//                    item.add(new Label("user", ""));
-//                }
+                //                if (item.get("user") == null) {
+                //                    item.add(new Label("user", ""));
+                //                }
                 if (item.get("method") == null) {
                     item.add(new Label("method", ""));
                 }
@@ -213,20 +258,25 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
             Calendar currentCal = Calendar.getInstance();
 
             Calendar yesterdayCal = Calendar.getInstance();
-            yesterdayCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+            yesterdayCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal
+                    .get(Calendar.DAY_OF_MONTH), 0, 0, 0);
             yesterdayCal.add(Calendar.DAY_OF_MONTH, -1);
 
             Calendar todayCal = Calendar.getInstance();
-            todayCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+            todayCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal
+                    .get(Calendar.DAY_OF_MONTH), 0, 0, 0);
 
             Calendar thisEveningCal = Calendar.getInstance();
-            thisEveningCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+            thisEveningCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal
+                    .get(Calendar.DAY_OF_MONTH), 23, 59, 59);
 
             Calendar thisAfternoonCal = Calendar.getInstance();
-            thisAfternoonCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal.get(Calendar.DAY_OF_MONTH), 18, 0, 0);
+            thisAfternoonCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal
+                    .get(Calendar.DAY_OF_MONTH), 18, 0, 0);
 
             Calendar thisMorningCal = Calendar.getInstance();
-            thisMorningCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal.get(Calendar.DAY_OF_MONTH), 12, 0, 0);
+            thisMorningCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal
+                    .get(Calendar.DAY_OF_MONTH), 12, 0, 0);
 
             Calendar hourAgoCal = Calendar.getInstance();
             hourAgoCal.add(Calendar.HOUR, -1);
@@ -243,32 +293,34 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
             Calendar oneMinuteAgoCal = Calendar.getInstance();
             oneMinuteAgoCal.add(Calendar.MINUTE, -1);
 
-            if(nodeCal.after(oneMinuteAgoCal)) { return new String("one-minute"); }
-            if(nodeCal.after(fiveMinutesAgoCal)) { return new String("five-minutes"); }
-            if(nodeCal.after(tenMinutesAgoCal)) { return new String("ten-minutes"); }
-            if(nodeCal.after(halfHourAgoCal)) { return new String("half-hour"); }
-            if(nodeCal.after(hourAgoCal)) { return new String("hour"); }
-            if(nodeCal.before(thisMorningCal) && nodeCal.after(todayCal)) { return new String("morning"); }
-            if(nodeCal.before(thisAfternoonCal) && nodeCal.after(todayCal)) { return new String("afternoon"); }
-            if(nodeCal.before(thisEveningCal) && nodeCal.after(todayCal)) { return new String("evening"); }
-            if(nodeCal.after(yesterdayCal)) { return new String("yesterday"); }
+            if (nodeCal.after(oneMinuteAgoCal)) {
+                return new String("one-minute");
+            }
+            if (nodeCal.after(fiveMinutesAgoCal)) {
+                return new String("five-minutes");
+            }
+            if (nodeCal.after(tenMinutesAgoCal)) {
+                return new String("ten-minutes");
+            }
+            if (nodeCal.after(halfHourAgoCal)) {
+                return new String("half-hour");
+            }
+            if (nodeCal.after(hourAgoCal)) {
+                return new String("hour");
+            }
+            if (nodeCal.before(thisMorningCal) && nodeCal.after(todayCal)) {
+                return new String("morning");
+            }
+            if (nodeCal.before(thisAfternoonCal) && nodeCal.after(todayCal)) {
+                return new String("afternoon");
+            }
+            if (nodeCal.before(thisEveningCal) && nodeCal.after(todayCal)) {
+                return new String("evening");
+            }
+            if (nodeCal.after(yesterdayCal)) {
+                return new String("yesterday");
+            }
             return df.format(nodeCal);
-        }
-    }
-
-    String uuid2Path(String uuid) {
-        if (uuid == null || uuid.equals("")) {
-            return null;
-        }
-        try {
-            Session session = ((UserSession) getSession()).getJcrSession();
-            Node node = session.getNodeByUUID(uuid);
-            return node.getPath();
-        } catch (ItemNotFoundException e) {
-            return null;
-        } catch (RepositoryException e) {
-            log.error(e.getMessage(), e);
-            return null;
         }
     }
 

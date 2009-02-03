@@ -24,10 +24,9 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.IModelListener;
-import org.hippoecm.frontend.model.IModelService;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -43,7 +42,7 @@ import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WorkflowPlugin implements IPlugin, IModelListener, IObserver, IDetachable {
+public class WorkflowPlugin implements IPlugin, IObserver, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -54,19 +53,17 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IObserver, IDeta
     private class Cluster implements IClusterable {
         private static final long serialVersionUID = 1L;
 
-        ModelService modelService;
+        ModelReference modelService;
         IClusterControl control;
 
         Cluster(IClusterConfig clusterConfig, IModel model) {
             control = context.newCluster(clusterConfig, null);
 
             String modelId = control.getClusterConfig().getString("wicket.model");
-            modelService = new ModelService(modelId, model);
+            modelService = new ModelReference(modelId, model);
             modelService.init(context);
 
             control.start();
-
-            modelService.resetModel();
         }
 
         void stop() {
@@ -80,6 +77,7 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IObserver, IDeta
     private IPluginContext context;
     private IPluginConfig config;
     private String[] categories;
+    private final IModelReference modelReference;
     private JcrNodeModel model;
     private List<Cluster> workflows;
 
@@ -103,14 +101,29 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IObserver, IDeta
         }
 
         if (config.getString(RenderService.MODEL_ID) != null) {
-            context.registerService(this, config.getString(RenderService.MODEL_ID));
-            IModelService modelService = context.getService(config.getString(RenderService.MODEL_ID),
-                    IModelService.class);
-            if (modelService != null) {
-                updateModel(modelService.getModel());
+            modelReference = context.getService(config.getString(RenderService.MODEL_ID),
+                    IModelReference.class);
+            if (modelReference != null) {
+                updateModel(modelReference.getModel());
+                context.registerService(new IObserver() {
+                    private static final long serialVersionUID = 1L;
+
+                    public IObservable getObservable() {
+                        return modelReference;
+                    }
+
+                    public void onEvent(IEvent event) {
+                        if (event instanceof IModelReference.IModelChangeEvent) {
+                            IModelReference.IModelChangeEvent<JcrNodeModel> mce = (IModelReference.IModelChangeEvent<JcrNodeModel>) event;
+                            updateModel(mce.getNewModel());
+                        }
+                    }
+                    
+                }, IObserver.class.getName());
             }
         } else {
-            log.warn("");
+            modelReference = null;
+            log.warn("No model configured");
         }
     }
 

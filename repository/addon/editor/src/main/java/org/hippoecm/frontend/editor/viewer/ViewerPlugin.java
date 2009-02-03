@@ -18,7 +18,7 @@ package org.hippoecm.frontend.editor.viewer;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.impl.TemplateEngine;
-import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -40,7 +40,7 @@ public class ViewerPlugin extends RenderPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(ViewerPlugin.class);
 
-    private ModelService modelService;
+    private ModelReference modelService;
     private IClusterControl cluster;
     private String engineId;
     private ITypeStore typeStore;
@@ -93,7 +93,7 @@ public class ViewerPlugin extends RenderPlugin {
                     cluster = context.newCluster(template, parameters);
                     String modelId = cluster.getClusterConfig().getString(RenderService.MODEL_ID);
                     if (modelId != null) {
-                        modelService = new ModelService(modelId, model);
+                        modelService = new ModelReference(modelId, model);
                         modelService.init(context);
                         cluster.start();
                     } else {

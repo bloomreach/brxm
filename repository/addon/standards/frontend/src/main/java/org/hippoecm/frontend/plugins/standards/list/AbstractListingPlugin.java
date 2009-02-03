@@ -18,74 +18,87 @@ package org.hippoecm.frontend.plugins.standards.list;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.IJcrNodeModelListener;
-import org.hippoecm.frontend.model.IModelListener;
-import org.hippoecm.frontend.model.IModelService;
+import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractListingPlugin extends RenderPlugin implements IJcrNodeModelListener, TableSelectionListener {
+public abstract class AbstractListingPlugin extends RenderPlugin implements TableSelectionListener, IActivator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
 
+    private final IModelReference documentReference;
     private ListDataTable dataTable;
     private ListPagingDefinition pagingDefinition;
 
     public AbstractListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        // register for flush notifications
-        context.registerService(this, IJcrService.class.getName());
-
         if (config.getString("model.document") != null) {
-            context.registerService(new IModelListener() {
-                private static final long serialVersionUID = 1L;
+            documentReference = context.getService(config.getString("model.document"), IModelReference.class);
+            if (documentReference != null) {
+                context.registerService(new IObserver() {
+                    private static final long serialVersionUID = 1L;
 
-                public void updateModel(IModel model) {
-                    updateSelection(model);
-                }
+                    public IObservable getObservable() {
+                        return documentReference;
+                    }
 
-            }, config.getString("model.document"));
+                    public void onEvent(IEvent event) {
+                        updateSelection(documentReference.getModel());
+                    }
+                    
+                }, IObserver.class.getName());
+            }
         } else {
+            documentReference = null;
             log.warn("No document model service configured (model.document)");
         }
-        
+
         pagingDefinition = new ListPagingDefinition(config);
 
         dataTable = getListDataTable("table", getTableDefinition(), getDataProvider(), this, isOrderable(),
                 pagingDefinition);
         add(dataTable);
+        dataTable.init(context);
 
-        if(!isOrderable()) {
+        if (!isOrderable()) {
             updateSelection(getModel());
         }
+    }
 
+    public void start() {
         modelChanged();
     }
 
-    protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
-            TableSelectionListener selectionListener, final boolean triState,
+    public void stop() {
+    }
+
+    protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition,
+            ISortableDataProvider dataProvider, TableSelectionListener selectionListener, final boolean triState,
             ListPagingDefinition pagingDefinition) {
         return new ListDataTable(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
     }
 
     protected ISortableDataProvider getDataProvider() {
-        return new DocumentsProvider((JcrNodeModel) getModel(), new DocumentListFilter(getPluginConfig()), getTableDefinition().getComparators());
+        return new DocumentsProvider((JcrNodeModel) getModel(), new DocumentListFilter(getPluginConfig()),
+                getTableDefinition().getComparators());
     }
 
     protected abstract TableDefinition getTableDefinition();
@@ -94,11 +107,13 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     public void selectionChanged(IModel model) {
         IPluginConfig config = getPluginConfig();
         if (config.getString("model.document") != null) {
-            IModelService<IModel> documentService = getPluginContext().getService(config.getString("model.document"), IModelService.class);
+            IModelReference<IModel> documentService = getPluginContext().getService(config.getString("model.document"),
+                    IModelReference.class);
             if (documentService != null) {
                 documentService.setModel(model);
                 if (model != dataTable.getModel() && (model == null || !model.equals(dataTable.getModel()))) {
-                    log.info("Did not receive model change notification for model.document ({})", config.getString("model.document"));
+                    log.info("Did not receive model change notification for model.document ({})", config
+                            .getString("model.document"));
                     updateSelection(model);
                 }
             } else {
@@ -121,13 +136,16 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     @Override
     @SuppressWarnings("unchecked")
     public void onModelChanged() {
+        dataTable.destroy();
         dataTable = getListDataTable("table", getTableDefinition(), getDataProvider(), this, isOrderable(),
                 pagingDefinition);
         replace(dataTable);
+        dataTable.init(getPluginContext());
+
         IPluginConfig config = getPluginConfig();
         if (config.getString("model.document") != null) {
-            IModelService<IModel> documentService = getPluginContext().getService(config.getString("model.document"),
-                    IModelService.class);
+            IModelReference<IModel> documentService = getPluginContext().getService(config.getString("model.document"),
+                    IModelReference.class);
             if (documentService != null) {
                 dataTable.setModel(documentService.getModel());
             }
@@ -135,21 +153,10 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
         redraw();
     }
 
-    public void onFlush(JcrNodeModel nodeModel) {
-        JcrNodeModel myModel = (JcrNodeModel) getModel();
-        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-        try {
-            if (session.itemExists(myModel.getItemModel().getPath())) {
-                modelChanged();
-            } else {
-                do {
-                    myModel = myModel.getParentModel();
-                } while (!session.itemExists(myModel.getItemModel().getPath()));
-                setModel(myModel);
-            }
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
+    @Override
+    public void render(PluginRequestTarget target) {
+        super.render(target);
+        dataTable.render(target);
     }
 
     private boolean isOrderable() {

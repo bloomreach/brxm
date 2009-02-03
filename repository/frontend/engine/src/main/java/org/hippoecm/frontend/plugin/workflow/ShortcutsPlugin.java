@@ -15,19 +15,13 @@
  */
 package org.hippoecm.frontend.plugin.workflow;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Iterator;
 
 import javax.jcr.Node;
 import javax.jcr.query.Query;
 
-import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrQueryModel;
-import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
-import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -39,7 +33,7 @@ import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ShortcutsPlugin implements IPlugin, IDetachable {
+public class ShortcutsPlugin implements IPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -50,44 +44,10 @@ public class ShortcutsPlugin implements IPlugin, IDetachable {
     private static final String PLUGINSQUERY = "shortcuts.query";
     public static final String SHORTCUTS_ID = "shortcuts.id";
 
-    private IPluginContext context;
-    private IPluginConfig config;
-    private IClusterControl pluginControl;
-
-    private JcrQueryModel query;
-
     public ShortcutsPlugin(IPluginContext context, IPluginConfig config) {
-        this.context = context;
-        this.config = config;
-
         // FIXME: throw exception when no query is defined?
         if (config.get(PLUGINSQUERY) != null) {
-            query = new JcrQueryModel(config.getString(PLUGINSQUERY), Query.XPATH);
-            context.registerService(new IObserver() {
-                private static final long serialVersionUID = 1L;
-
-                public IObservable getObservable() {
-                    return query;
-                }
-
-                public void onEvent(IEvent event) {
-                    refresh();
-                }
-
-            }, IObserver.class.getName());
-        } else {
-            log.warn("No query defined for {}", context.getReference(this).getServiceId());
-        }
-
-        refresh();
-    }
-
-    public void refresh() {
-        if (pluginControl != null) {
-            pluginControl.stop();
-            pluginControl = null;
-        }
-        if (query != null) {
+            JcrQueryModel query = new JcrQueryModel(config.getString(PLUGINSQUERY), Query.XPATH);
             JavaClusterConfig clusterConfig = new JavaClusterConfig();
             Iterator<Node> iter = query.iterator(0, query.size());
             while (iter.hasNext()) {
@@ -97,20 +57,10 @@ public class ShortcutsPlugin implements IPlugin, IDetachable {
                 pluginConfig.put(RenderService.WICKET_ID, config.getString(RenderService.WICKET_ID));
                 clusterConfig.addPlugin(pluginConfig);
             }
-            pluginControl = context.newCluster(clusterConfig, null);
+            IClusterControl pluginControl = context.newCluster(clusterConfig, null);
             pluginControl.start();
-        }
-    }
-
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        ois.defaultReadObject();
-
-        refresh();
-    }
-
-    public void detach() {
-        if (query != null) {
-            query.detach();
+        } else {
+            log.warn("No query defined for {}", context.getReference(this).getServiceId());
         }
     }
 

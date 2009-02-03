@@ -20,7 +20,7 @@ import javax.swing.tree.TreeNode;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.tree.CachedTreeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
@@ -30,7 +30,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.FolderTreeNode;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.JcrTree;
 import org.slf4j.Logger;
@@ -50,12 +49,10 @@ public class FolderTreePlugin extends RenderPlugin {
     public FolderTreePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        context.registerService(this, IJcrService.class.getName());
-
         String startingPath = config.getString("path", "/");
         rootModel = new JcrNodeModel(startingPath);
 
-        ModelService modelService = new ModelService(context.getReference(this).getServiceId(), rootModel);
+        ModelReference modelService = new ModelReference(context.getReference(this).getServiceId(), rootModel);
         modelService.init(context);
 
         DocumentListFilter folderTreeConfig = new DocumentListFilter(config);

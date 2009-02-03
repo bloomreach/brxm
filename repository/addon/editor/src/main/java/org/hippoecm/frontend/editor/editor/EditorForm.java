@@ -25,7 +25,7 @@ import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.impl.TemplateEngine;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -47,7 +47,7 @@ public class EditorForm extends Form {
     private IPluginContext context;
 
     private IClusterControl cluster;
-    private ModelService modelService;
+    private ModelReference modelService;
     private ServiceTracker<IRenderService> fieldTracker;
     private List<IRenderService> fields;
     private ITypeStore typeStore;
@@ -144,7 +144,7 @@ public class EditorForm extends Form {
                     cluster = context.newCluster(template, parameters);
 
                     String modelId = cluster.getClusterConfig().getString(RenderService.MODEL_ID);
-                    modelService = new ModelService(modelId, model);
+                    modelService = new ModelReference(modelId, model);
                     modelService.init(context);
 
                     cluster.start();

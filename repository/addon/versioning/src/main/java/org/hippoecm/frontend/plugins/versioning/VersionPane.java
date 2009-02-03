@@ -36,13 +36,11 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -57,7 +55,7 @@ import org.hippoecm.repository.standardworkflow.VersionWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
+public class VersionPane extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -75,20 +73,18 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
     AjaxLink compareComponent;
     AjaxLink olderComponent;
     AjaxLink newerComponent;
-    ModelService subModel;
+    ModelReference subModel;
     boolean visible = false;
 
     public VersionPane(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         if (config.get("wicket.submodel") != null) {
-            subModel = new ModelService(config.getString("wicket.submodel"), null);
+            subModel = new ModelReference(config.getString("wicket.submodel"), null);
             subModel.init(context);
         } else {
             log.warn("");
         }
-
-        context.registerService(this, IJcrService.class.getName());
 
         add(documentComponent = new Label("document"));
         add(createdComponent = new Label("created"));
@@ -348,10 +344,4 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
         return workflowMgr.getWorkflow(category, canonicalNode);
     }
 
-    public void onFlush(JcrNodeModel nodeModel) {
-        JcrNodeModel myModel = (JcrNodeModel) getModel();
-        if (myModel != null && myModel.getItemModel().hasAncestor(nodeModel.getItemModel())) {
-            modelChanged();
-        }
-    }
 }

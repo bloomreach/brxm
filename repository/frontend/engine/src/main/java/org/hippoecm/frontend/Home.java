@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend;
 
-import java.util.List;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.WebPage;
@@ -24,9 +22,8 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.dialog.DialogService;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.IJcrNodeModelListener;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.model.event.ObservableRegistry;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IServiceTracker;
@@ -35,7 +32,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.PluginConfigFactory;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.frontend.plugin.impl.PluginManager;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
@@ -65,20 +61,6 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         PluginConfigFactory configFactory = new PluginConfigFactory(sessionModel);
         pluginConfigService = configFactory.getPluginConfigService();
         context.registerService(pluginConfigService, IPluginConfigService.class.getName());
-
-        // register JCR service to notify plugins of updates to the jcr tree
-        IJcrService jcrService = new IJcrService() {
-            private static final long serialVersionUID = 1L;
-
-            public void flush(JcrNodeModel model) {
-                List<IJcrNodeModelListener> listeners = mgr.getServices(IJcrService.class.getName(),
-                        IJcrNodeModelListener.class);
-                for (IJcrNodeModelListener listener : listeners) {
-                    listener.onFlush(model);
-                }
-            }
-        };
-        context.registerService(jcrService, IJcrService.class.getName());
 
         ObservableRegistry obRegistry = new ObservableRegistry(context, null);
         obRegistry.startObservation();
@@ -111,6 +93,16 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
 
     public Component getComponent() {
         return this;
+    }
+
+    void update() {
+        // process JCR events
+        JcrObservationManager.getInstance().processEvents();
+
+        // re-evaluate models
+        for (IRefreshable refreshable : context.getServices(IRefreshable.class.getName(), IRefreshable.class)) {
+            refreshable.refresh();
+        }
     }
 
     public void render(PluginRequestTarget target) {

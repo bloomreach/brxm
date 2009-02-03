@@ -29,6 +29,7 @@ import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.service.render.HeaderContributorHelper;
 
 class XinhaEditorBehavior extends AbstractHeaderContributor {
     @SuppressWarnings("unused")
@@ -83,7 +84,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
 
             public void renderHead(IHeaderResponse response) {
 
-                String xinhaEditorUrl = AbstractXinhaPlugin.getFixedRelativePathPrefixToContextRoot() + "xinha/xinha/";
+                String xinhaEditorUrl = HeaderContributorHelper.getFixedRelativePathPrefixToContextRoot() + "xinha/xinha/";
 
                 StringBuffer sb = new StringBuffer();
                 sb.append("_editor_url = '" + xinhaEditorUrl + "';\n");
@@ -98,7 +99,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
             }
         },
 
-        AbstractXinhaPlugin.forJavaScript("xinha/xinha/XinhaLoader.js"),
+        HeaderContributorHelper.forJavaScript("xinha/xinha/XinhaLoader.js"),
 
         new IHeaderContributor() {
             private static final long serialVersionUID = 1L;

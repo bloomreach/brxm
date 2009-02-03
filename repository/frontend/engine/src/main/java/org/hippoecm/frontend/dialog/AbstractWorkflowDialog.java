@@ -28,7 +28,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -123,12 +122,6 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog implements I
             execute();
 
             ((UserSession) Session.get()).getJcrSession().refresh(true);
-
-            IJcrService jcrService = plugin.getPluginContext().getService(IJcrService.class.getName(),
-                    IJcrService.class);
-            if (jcrService != null) {
-                jcrService.flush(handle);
-            }
         } catch (Exception e) {
             String msg = e.getClass().getName() + ": " + e.getMessage();
             log.error(msg);

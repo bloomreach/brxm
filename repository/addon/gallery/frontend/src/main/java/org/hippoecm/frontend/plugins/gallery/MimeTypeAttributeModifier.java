@@ -22,7 +22,9 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -32,46 +34,71 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
     private final static String SVN_ID = "$Id: $";
     private static final long serialVersionUID = 1L;
 
-    @Override
-    public AttributeModifier getCellAttributeModifier(Node node) throws RepositoryException {
-        String cssClass;
-        if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
-            Node imageSet = node.getNode(node.getName());
-            try {
-                Item primItem = imageSet.getPrimaryItem();
-                if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                    String mimeType = ((Node) primItem).getProperty("jcr:mimeType").getString();
-                    if (mimeType.startsWith("application")) {
-                        cssClass = mimeType;
-                        cssClass = StringUtils.replace(cssClass, "/", "-");
-                        cssClass = StringUtils.replace(cssClass, ".", "-");
-                        if (cssClass.contains("opendocument")) {
-                            cssClass = "application-opendocument";
+    static class MimeTypeAttributeModel extends LoadableDetachableModel {
+        private static final long serialVersionUID = 1L;
+
+        private JcrNodeModel nodeModel;
+
+        public MimeTypeAttributeModel(JcrNodeModel model) {
+            this.nodeModel = model;
+        }
+
+        @Override
+        public void detach() {
+            super.detach();
+            nodeModel.detach();
+        }
+        
+        protected Object load() {
+            Node node = nodeModel.getNode();
+            if (node != null) {
+                try {
+                    String cssClass;
+                    if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
+                        Node imageSet = node.getNode(node.getName());
+                        try {
+                            Item primItem = imageSet.getPrimaryItem();
+                            if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
+                                String mimeType = ((Node) primItem).getProperty("jcr:mimeType").getString();
+                                if (mimeType.startsWith("application")) {
+                                    cssClass = mimeType;
+                                    cssClass = StringUtils.replace(cssClass, "/", "-");
+                                    cssClass = StringUtils.replace(cssClass, ".", "-");
+                                    if (cssClass.contains("opendocument")) {
+                                        cssClass = "application-opendocument";
+                                    }
+                                } else {
+                                    cssClass = StringUtils.substringBefore(mimeType, "/");
+                                }
+                                return "mimetype-" + cssClass + "-16";
+                            } else {
+                                Gallery.log.warn("primary item of image set must be of type "
+                                        + HippoNodeType.NT_RESOURCE);
+                            }
+                        } catch (ItemNotFoundException e) {
+                            Gallery.log.warn("ImageSet must have a primary item. " + node.getPath()
+                                    + " probably not of correct image set type");
                         }
+                    } else if (node.isNodeType("hippostd:folder") || node.isNodeType("hippostd:directory")) {
+                        return "folder-16";
                     } else {
-                        cssClass = StringUtils.substringBefore(mimeType, "/");
+                        Gallery.log.warn("Node " + node.getPath() + " is not a handle or a folder");
                     }
-                    cssClass = "mimetype-" + cssClass + "-16";
-                } else {
-                    Gallery.log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
-                    return null;
+                } catch (RepositoryException ex) {
+                    Gallery.log.error("Unable to determine mime type of document", ex);
                 }
-            } catch (ItemNotFoundException e) {
-                Gallery.log.warn("ImageSet must have a primary item. " + node.getPath()
-                        + " probably not of correct image set type");
-                return null;
             }
-        } else if (node.isNodeType("hippostd:folder") || node.isNodeType("hippostd:directory")) {
-            cssClass = "folder-16";
-        } else {
-            Gallery.log.warn("Node " + node.getPath() + " is not a handle or a folder");
             return null;
         }
-        return new CssClassAppender(new Model(cssClass));
     }
 
     @Override
-    public AttributeModifier getColumnAttributeModifier(Node node) throws RepositoryException {
+    public AttributeModifier getCellAttributeModifier(Node node) {
+        return new CssClassAppender(new MimeTypeAttributeModel(new JcrNodeModel(node)));
+    }
+
+    @Override
+    public AttributeModifier getColumnAttributeModifier(Node node) {
         return new CssClassAppender(new Model("icon-16"));
     }
 }

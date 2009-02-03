@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IDetachable;
+import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -44,12 +45,14 @@ public class PluginContext implements IPluginContext, IDetachable {
 
     private String controlId;
     private IPluginConfig config;
+    private IPlugin plugin;
     private Map<String, List<IClusterable>> services;
     private Map<String, List<IServiceTracker<? extends IClusterable>>> listeners;
     private List<ClusterControl> children;
-    private boolean initializing = true;
     private PluginManager manager;
     private int clusterCount = 0;
+    private transient boolean initializing;
+    private transient boolean stopping;
 
     public PluginContext(PluginManager manager, String controlId, IPluginConfig config) {
         this.controlId = controlId;
@@ -59,6 +62,7 @@ public class PluginContext implements IPluginContext, IDetachable {
         this.services = new HashMap<String, List<IClusterable>>();
         this.listeners = new HashMap<String, List<IServiceTracker<? extends IClusterable>>>();
         this.children = new LinkedList<ClusterControl>();
+        this.initializing = true;
     }
 
     public IClusterControl newCluster(IClusterConfig template, IPluginConfig parameters) {
@@ -106,22 +110,26 @@ public class PluginContext implements IPluginContext, IDetachable {
     }
 
     public void registerService(IClusterable service, String name) {
-        List<IClusterable> list = services.get(name);
-        if (list == null) {
-            list = new LinkedList<IClusterable>();
-            services.put(name, list);
+        if (!stopping) {
+            List<IClusterable> list = services.get(name);
+            if (list == null) {
+                list = new LinkedList<IClusterable>();
+                services.put(name, list);
+            }
+            list.add(service);
+            manager.registerService(service, name);
         }
-        list.add(service);
-        manager.registerService(service, name);
     }
 
     public void unregisterService(IClusterable service, String name) {
-        List<IClusterable> list = services.get(name);
-        if (list != null) {
-            list.remove(service);
-            manager.unregisterService(service, name);
-        } else {
-            log.warn("unregistering service that wasn't registered.");
+        if (!stopping) {
+            List<IClusterable> list = services.get(name);
+            if (list != null) {
+                list.remove(service);
+                manager.unregisterService(service, name);
+            } else {
+                log.warn("unregistering service that wasn't registered.");
+            }
         }
     }
 
@@ -129,23 +137,27 @@ public class PluginContext implements IPluginContext, IDetachable {
         if (name == null) {
             log.error("listener name is null");
         }
-        List<IServiceTracker<? extends IClusterable>> list = listeners.get(name);
-        if (list == null) {
-            list = new LinkedList<IServiceTracker<? extends IClusterable>>();
-            listeners.put(name, list);
-        }
-        list.add(listener);
-        if (!initializing) {
-            manager.registerTracker(listener, name);
+        if (!stopping) {
+            List<IServiceTracker<? extends IClusterable>> list = listeners.get(name);
+            if (list == null) {
+                list = new LinkedList<IServiceTracker<? extends IClusterable>>();
+                listeners.put(name, list);
+            }
+            list.add(listener);
+            if (!initializing) {
+                manager.registerTracker(listener, name);
+            }
         }
     }
 
     public void unregisterTracker(IServiceTracker<? extends IClusterable> listener, String name) {
-        List<IServiceTracker<? extends IClusterable>> list = listeners.get(name);
-        if (list != null) {
-            list.remove(listener);
-            if (!initializing) {
-                manager.unregisterTracker(listener, name);
+        if (!stopping) {
+            List<IServiceTracker<? extends IClusterable>> list = listeners.get(name);
+            if (list != null) {
+                list.remove(listener);
+                if (!initializing) {
+                    manager.unregisterTracker(listener, name);
+                }
             }
         }
     }
@@ -153,6 +165,7 @@ public class PluginContext implements IPluginContext, IDetachable {
     // DO NOT CALL THIS API
     public void connect(IPlugin plugin) {
         if (initializing) {
+            this.plugin = plugin;
             for (Map.Entry<String, List<IServiceTracker<? extends IClusterable>>> entry : listeners.entrySet()) {
                 List<IServiceTracker<? extends IClusterable>> list = entry.getValue();
                 for (IServiceTracker<? extends IClusterable> listener : list) {
@@ -160,6 +173,9 @@ public class PluginContext implements IPluginContext, IDetachable {
                 }
             }
             initializing = false;
+            if (plugin instanceof IActivator) {
+                ((IActivator) plugin).start();
+            }
         } else {
             log.warn("context was already initialized");
         }
@@ -178,24 +194,32 @@ public class PluginContext implements IPluginContext, IDetachable {
     }
 
     void stop() {
-        ClusterControl[] controls = children.toArray(new ClusterControl[children.size()]);
-        for (ClusterControl control : controls) {
-            control.stop();
-        }
+        if (!stopping) {
+            stopping = true;
 
-        for (Map.Entry<String, List<IServiceTracker<? extends IClusterable>>> entry : listeners.entrySet()) {
-            for (IServiceTracker<? extends IClusterable> service : entry.getValue()) {
-                manager.unregisterTracker(service, entry.getKey());
+            if (plugin instanceof IActivator) {
+                ((IActivator) plugin).stop();
             }
-        }
-        listeners = new HashMap<String, List<IServiceTracker<? extends IClusterable>>>();
-
-        for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
-            for (IClusterable service : entry.getValue()) {
-                manager.unregisterService(service, entry.getKey());
+    
+            ClusterControl[] controls = children.toArray(new ClusterControl[children.size()]);
+            for (ClusterControl control : controls) {
+                control.stop();
             }
+    
+            for (Map.Entry<String, List<IServiceTracker<? extends IClusterable>>> entry : listeners.entrySet()) {
+                for (IServiceTracker<? extends IClusterable> service : entry.getValue()) {
+                    manager.unregisterTracker(service, entry.getKey());
+                }
+            }
+            listeners = new HashMap<String, List<IServiceTracker<? extends IClusterable>>>();
+    
+            for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
+                for (IClusterable service : entry.getValue()) {
+                    manager.unregisterService(service, entry.getKey());
+                }
+            }
+            services = new HashMap<String, List<IClusterable>>();
         }
-        services = new HashMap<String, List<IClusterable>>();
     }
 
     public void detach() {

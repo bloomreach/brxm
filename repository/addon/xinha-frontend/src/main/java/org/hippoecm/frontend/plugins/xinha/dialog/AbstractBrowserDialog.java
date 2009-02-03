@@ -22,7 +22,7 @@ import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -43,7 +43,7 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
 
     protected final IPluginContext context;
     protected final IPluginConfig config;
-    private ModelService<IModel> modelService;
+    private ModelReference<IModel> modelService;
     private IClusterControl control;
     protected IRenderService dialogRenderer;
 
@@ -69,7 +69,7 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
         //save modelServiceId and dialogServiceId in cluster config
         String modelServiceId = decorated.getString("wicket.model");
         IModel model = ((DocumentLink) getModelObject()).getNodeModel();
-        modelService = new ModelService<IModel>(modelServiceId, model) {
+        modelService = new ModelReference<IModel>(modelServiceId, model) {
             private static final long serialVersionUID = 1L;
 
             @Override

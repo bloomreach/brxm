@@ -48,7 +48,7 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
         return null;
     }
 
-    protected AttributeModifier getCellAttributeModifier(Node node) throws RepositoryException {
+    protected AttributeModifier getCellAttributeModifier(Node node) {
         return null;
     }
 
@@ -77,7 +77,7 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
         return null;
     }
 
-    protected AttributeModifier getColumnAttributeModifier(Node node) throws RepositoryException {
+    protected AttributeModifier getColumnAttributeModifier(Node node) {
         return null;
     }
 

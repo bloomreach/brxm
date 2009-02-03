@@ -26,16 +26,14 @@ import javax.jcr.Value;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.config.BuiltinTemplateStore;
 import org.hippoecm.frontend.editor.impl.TemplateEngine;
-import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.IFieldDescriptor;
@@ -46,7 +44,7 @@ import org.hippoecm.frontend.types.JcrTypeStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener {
+public class PreviewPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -56,7 +54,7 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
 
     private ITypeStore typeStore;
     private IClusterControl child;
-    private ModelService helperModel;
+    private ModelReference helperModel;
     private Map<String, String> paths;
 
     public PreviewPlugin(IPluginContext context, IPluginConfig config) {
@@ -65,13 +63,10 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
         addExtensionPoint("template");
 
         // create model service for helper
-        helperModel = new ModelService(config.getString("helper.model"), null);
+        helperModel = new ModelReference(config.getString("helper.model"), null);
         helperModel.init(context);
 
         paths = new HashMap<String, String>();
-
-        // register for flush events
-        context.registerService(this, IJcrService.class.getName());
 
         onModelChanged();
     }
@@ -138,7 +133,7 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
             final IClusterControl control = context.newCluster(template, parameters);
             String modelId = control.getClusterConfig().getString(RenderService.MODEL_ID);
             JcrNodeModel prototypeModel = typeHelper.getPrototype();
-            final ModelService modelService = new ModelService(modelId, prototypeModel);
+            final ModelReference modelService = new ModelReference(modelId, prototypeModel);
 
             child = new IClusterControl() {
                 private static final long serialVersionUID = 1L;
@@ -246,15 +241,4 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
         }
     }
 
-    public void onFlush(JcrNodeModel nodeModel) {
-        // if anything above us or below us changed, refresh
-        JcrNodeModel myModel = (JcrNodeModel) getModel();
-        if (myModel.getItemModel().hasAncestor(nodeModel.getItemModel())
-                || nodeModel.getItemModel().hasAncestor(myModel.getItemModel())) {
-            if (typeStore != null) {
-                typeStore.detach();
-            }
-            onModelChanged();
-        }
-    }
 }

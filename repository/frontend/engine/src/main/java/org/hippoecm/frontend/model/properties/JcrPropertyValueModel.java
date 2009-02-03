@@ -50,6 +50,12 @@ public class JcrPropertyValueModel extends Model {
     private int index;
     private int type;
 
+    public JcrPropertyValueModel(JcrPropertyModel propertyModel) throws RepositoryException {
+        this.propertyModel = propertyModel;
+        this.index = NO_INDEX;
+        this.type = propertyModel.getProperty().getType();
+    }
+
     public JcrPropertyValueModel(int index, Value value, JcrPropertyModel propertyModel) {
         this.propertyModel = propertyModel;
         this.value = value;

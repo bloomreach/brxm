@@ -15,10 +15,22 @@
  */
 package org.hippoecm.frontend.model;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
 
-public interface IJcrNodeModelListener extends IClusterable {
+public interface IModelReference<T extends IModel> extends IDetachable, IObservable {
     final static String SVN_ID = "$Id$";
 
-    void onFlush(JcrNodeModel nodeModel);
+    interface IModelChangeEvent<T extends IModel> extends IEvent {
+
+        T getOldModel();
+
+        T getNewModel();
+    }
+
+    T getModel();
+
+    void setModel(T model);
 }

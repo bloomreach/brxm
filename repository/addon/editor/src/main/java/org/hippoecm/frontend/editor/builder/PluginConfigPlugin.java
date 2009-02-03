@@ -33,7 +33,7 @@ import org.hippoecm.frontend.editor.config.AutoTypeStore;
 import org.hippoecm.frontend.editor.config.BuiltinTemplateStore;
 import org.hippoecm.frontend.editor.impl.TemplateEngine;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -60,8 +60,6 @@ public class PluginConfigPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PluginConfigPlugin.class);
-
-    private static int instanceCount = 0;
 
     private IClusterControl fieldParams;
     private IClusterControl template;
@@ -238,7 +236,7 @@ public class PluginConfigPlugin extends RenderPlugin {
         final IClusterControl control = context.newCluster(templateConfig, parameters);
 
         String modelId = control.getClusterConfig().getString(RenderService.MODEL_ID);
-        final ModelService modelService = new ModelService(modelId, itemNodeModel);
+        final ModelReference modelService = new ModelReference(modelId, itemNodeModel);
         modelService.init(context);
 
         control.start();
@@ -308,7 +306,7 @@ public class PluginConfigPlugin extends RenderPlugin {
             try {
                 while (typeNodeModel != null) {
                     Node typeNode = typeNodeModel.getNode();
-                    if (typeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                    if (typeNode != null && typeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
                         return new JcrTypeHelper(new JcrNodeModel(typeNode)).getTypeDescriptor();
                     }
                     typeNodeModel = typeNodeModel.getParentModel();
@@ -318,12 +316,6 @@ public class PluginConfigPlugin extends RenderPlugin {
             }
         }
         return null;
-    }
-
-    private static String newId() {
-        synchronized (PluginConfigPlugin.class) {
-            return PluginConfigPlugin.class.getName() + "." + (instanceCount++);
-        }
     }
 
 }

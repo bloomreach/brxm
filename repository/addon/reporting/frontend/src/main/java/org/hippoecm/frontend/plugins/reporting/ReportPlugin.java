@@ -20,7 +20,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -50,7 +50,7 @@ public class ReportPlugin implements IPlugin {
         } else {
             String modelId = config.getString("report.resultset.model");
             ReportModel reportModel = new ReportModel(new JcrNodeModel(reportNode));
-            ModelService modelService = new ModelService(modelId, reportModel);
+            ModelReference modelService = new ModelReference(modelId, reportModel);
             modelService.init(context);
 
             IClusterConfig renderer = getReportRenderer(reportNode);

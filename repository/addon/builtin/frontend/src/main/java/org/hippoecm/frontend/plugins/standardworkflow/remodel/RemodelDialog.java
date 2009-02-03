@@ -27,14 +27,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugins.standardworkflow.export.CndSerializer;
 import org.hippoecm.frontend.plugins.standardworkflow.export.NamespaceUpdater;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.JcrTypeStore;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -50,13 +47,10 @@ public class RemodelDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(RemodelDialog.class);
 
-    private IServiceReference<IJcrService> jcrServiceRef;
     private RemodelWizard wizard;
 
-    public RemodelDialog(AbstractWorkflowPlugin plugin, IServiceReference<IJcrService> jcrService) {
+    public RemodelDialog(AbstractWorkflowPlugin plugin) {
         super(plugin);
-
-        this.jcrServiceRef = jcrService;
 
         if (plugin.getModel() == null || ((WorkflowsModel) plugin.getModel()).getNodeModel().getNode() == null) {
             add(new Label("wizard"));
@@ -125,8 +119,6 @@ public class RemodelDialog extends AbstractWorkflowDialog {
                 // log out; the session model will log in again.
                 // Sessions cache path resolver information, which is incorrect after remapping the prefix.
                 sessionModel.flush();
-
-                jcrServiceRef.getService().flush(new JcrNodeModel("/"));
             } catch (RepositoryException ex) {
                 // log out; the session model will log in again.
                 // Sessions cache path resolver information, which is incorrect after remapping the prefix.

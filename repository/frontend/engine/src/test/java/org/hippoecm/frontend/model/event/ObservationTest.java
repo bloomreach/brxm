@@ -140,7 +140,7 @@ public class ObservationTest extends TestCase {
         session.save();
 
         Thread.sleep(1000);
-        JcrObservationManager.getInstance().process();
+        JcrObservationManager.getInstance().processEvents();
 
         assertTrue(events.size() == 1);
 
@@ -152,7 +152,7 @@ public class ObservationTest extends TestCase {
         session.save();
 
         Thread.sleep(1000);
-        JcrObservationManager.getInstance().process();
+        JcrObservationManager.getInstance().processEvents();
 
         assertTrue(events.size() == 1);
     }
@@ -178,7 +178,7 @@ public class ObservationTest extends TestCase {
         session.save();
 
         Thread.sleep(1000);
-        JcrObservationManager.getInstance().process();
+        JcrObservationManager.getInstance().processEvents();
 
         assertTrue(events.size() == 0);
     }

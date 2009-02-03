@@ -35,13 +35,12 @@ import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
-import org.hippoecm.frontend.model.IModelService;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JcrTypeStore;
@@ -186,8 +185,7 @@ public class TemplateListPlugin extends RenderPlugin {
                 itemNode.setProperty("field", name);
                 itemNode.setProperty("caption", new String[] { typeDescriptor.getName() });
 
-                IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
-                jcrService.flush((JcrNodeModel) getModel());
+                templateNode.save();
 
                 // update helper model
                 select(new JcrNodeModel(itemNode));
@@ -201,8 +199,8 @@ public class TemplateListPlugin extends RenderPlugin {
     }
 
     private void select(JcrNodeModel model) {
-        IModelService helperModel = getPluginContext().getService(getPluginConfig().getString("helper.model"),
-                IModelService.class);
+        IModelReference helperModel = getPluginContext().getService(getPluginConfig().getString("helper.model"),
+                IModelReference.class);
         if (helperModel != null) {
             helperModel.setModel(model);
         }

@@ -17,16 +17,16 @@ package org.hippoecm.frontend.plugins.standardworkflow.reorder;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
-import org.hippoecm.frontend.service.IJcrService;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,12 +37,10 @@ public class ReorderDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ReorderDialog.class);
 
-    private IServiceReference<IJcrService> jcrServiceRef;
     private ReorderPanel panel;
 
-    public ReorderDialog(AbstractWorkflowPlugin plugin, IServiceReference<IJcrService> jcrService) {
+    public ReorderDialog(AbstractWorkflowPlugin plugin) {
         super(plugin);
-        jcrServiceRef = jcrService;
 
         JcrNodeModel folderModel = ((WorkflowsModel) plugin.getModel()).getNodeModel();
         panel = new ReorderPanel("reorder-panel", folderModel, new DocumentListFilter(plugin.getPluginConfig()));
@@ -66,10 +64,7 @@ public class ReorderDialog extends AbstractWorkflowDialog {
         FolderWorkflow workflow = (FolderWorkflow) getWorkflow();
         workflow.reorder(panel.getMapping());
 
-        IModel pluginModel = getPlugin().getModel();
-        if (pluginModel instanceof JcrNodeModel) {
-            jcrServiceRef.getService().flush((JcrNodeModel) pluginModel);
-        }
+        ((UserSession) Session.get()).getJcrSession().refresh(true);
     }
 
 }

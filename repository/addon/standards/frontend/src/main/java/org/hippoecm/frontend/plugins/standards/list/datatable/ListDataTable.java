@@ -15,6 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.datatable;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -26,14 +31,22 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
+import org.hippoecm.frontend.widgets.ManagedReuseStrategy;
 
 public class ListDataTable extends DataTable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
+    private IPluginContext context;
+    private Map<Item, IObserver> observers;
+    private Set<Item> dirty;
     private TableSelectionListener selectionListener;
 
     public interface TableSelectionListener {
@@ -60,16 +73,65 @@ public class ListDataTable extends DataTable {
             });
         }
         addBottomToolbar(new ListNavigationToolBar(this, pagingDefinition));
+
+        setItemReuseStrategy(new ManagedReuseStrategy() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void destroyItem(Item item) {
+                ListDataTable.this.destroyItem(item);
+            }
+        });
+    }
+
+    public void init(IPluginContext context) {
+        this.context = context;
+        this.dirty = new HashSet<Item>();
+        this.observers = new HashMap<Item, IObserver>();
+    }
+
+    public void destroy() {
+        for (IObserver observer : observers.values()) {
+            context.unregisterService(observer, IObserver.class.getName());
+        }
+        observers = null;
+        context = null;
+        dirty = null;
+    }
+
+    public void render(PluginRequestTarget target) {
+        if (target != null) {
+            for (Item item : dirty) {
+                target.addComponent(item);
+            }
+        }
+        dirty.clear();
     }
 
     @Override
     protected Item newRowItem(String id, int index, final IModel model) {
-        OddEvenItem item = new OddEvenItem(id, index, model);
+        final OddEvenItem item = new OddEvenItem(id, index, model);
+        item.setOutputMarkupId(true);
 
-        IModel selected = getModel();
-        if (selected != null && selected.equals(model)) {
-            item.add(new AttributeAppender("class", new Model("hippo-list-selected"), " "));
-        }
+        item.add(new AttributeAppender("class", new IModel() {
+            private static final long serialVersionUID = 1L;
+
+            public Object getObject() {
+                IModel selected = ListDataTable.this.getModel();
+                if (selected != null && selected.equals(model)) {
+                    return "hippo-list-selected";
+                } else {
+                    return null;
+                }
+            }
+
+            public void setObject(Object object) {
+                throw new UnsupportedOperationException();
+            }
+
+            public void detach() {
+            }
+        }, " "));
 
         item.add(new AjaxEventBehavior("onclick") {
             private static final long serialVersionUID = 1L;
@@ -80,7 +142,32 @@ public class ListDataTable extends DataTable {
             }
         });
 
+        if (context != null && model instanceof IObservable) {
+            IObserver observer = new IObserver() {
+                private static final long serialVersionUID = 1L;
+
+                public IObservable getObservable() {
+                    return (IObservable) model;
+                }
+
+                public void onEvent(IEvent event) {
+                    dirty.add(item);
+                }
+            };
+            observers.put(item, observer);
+            context.registerService(observer, IObserver.class.getName());
+        }
+
         return item;
+    }
+
+    protected void destroyItem(Item item) {
+        if (context != null) {
+            if (observers.containsKey(item)) {
+                IObserver observer = observers.remove(item);
+                context.unregisterService(observer, IObserver.class.getName());
+            }
+        }
     }
 
     public TableSelectionListener getSelectionListener() {

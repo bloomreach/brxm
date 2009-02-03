@@ -22,9 +22,11 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.IModelListener;
-import org.hippoecm.frontend.model.IModelService;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -55,22 +57,31 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
     protected AbstractBrowseView(IPluginContext context, IPluginConfig config, JcrNodeModel document) {
         this.config = config;
         this.context = context;
-        
+
         if (document == null) {
             document = new JcrNodeModel(config.getString("model.folder.root", "/"));
         }
 
         browseService = new BrowseService(context, config, document);
-        context.registerService(new IModelListener() {
+        final IModelReference folderReference = context.getService(config.getString("model.folder"),
+                IModelReference.class);
+        if (folderReference != null) {
+            context.registerService(new IObserver() {
+                private static final long serialVersionUID = 1L;
 
-            public void updateModel(IModel model) {
-                onFolderChanged(model);
-            }
+                public IObservable getObservable() {
+                    return folderReference;
+                }
 
-        }, config.getString("model.folder"));
+                public void onEvent(IEvent event) {
+                    onFolderChanged(folderReference.getModel());
+                }
+
+            }, IObserver.class.getName());
+        }
 
         @SuppressWarnings("unchecked")
-        IModelService<IModel> modelService = context.getService(config.getString("model.folder"), IModelService.class);
+        IModelReference<IModel> modelService = context.getService(config.getString("model.folder"), IModelReference.class);
         if (modelService != null) {
             IModel model = modelService.getModel();
             onFolderChanged(model);
