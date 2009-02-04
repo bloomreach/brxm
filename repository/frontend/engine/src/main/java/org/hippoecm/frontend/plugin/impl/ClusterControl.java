@@ -33,7 +33,7 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(ClusterControl.class);
-    
+
     static class Extension implements IClusterable {
         private static final long serialVersionUID = 1L;
 
@@ -79,10 +79,6 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
         return config;
     }
 
-    void forward(String source, String target) {
-        forwarders.add(new ServiceForwarder(mgr, IClusterable.class, source, target));
-    }
-
     public <S extends IClusterable> S getService(String name, Class<S> clazz) {
         return context.getService(config.getString(name), clazz);
     }
@@ -98,12 +94,16 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
 
         int i = 0;
         for (IPluginConfig plugin : config.getPlugins()) {
-            String pluginId = clusterId + "." + plugin.getName();
+            String pluginId = clusterId + ".plugin." + plugin.getName();
             contexts[i++] = context.start(plugin, pluginId);
         }
+
+        context.registerControl(this);
     }
 
     public void stop() {
+        context.unregisterControl(this);
+
         for (PluginContext context : contexts) {
             if (context != null) {
                 context.stop();
@@ -151,9 +151,16 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
     public void detach() {
         for (PluginContext context : contexts) {
             if (context != null) {
-                context.stop();
+                context.detach();
             }
         }
     }
 
+    void forward(String source, String target) {
+        forwarders.add(new ServiceForwarder(mgr, IClusterable.class, source, target));
+    }
+
+    String getClusterId() {
+        return clusterId;
+    }
 }
