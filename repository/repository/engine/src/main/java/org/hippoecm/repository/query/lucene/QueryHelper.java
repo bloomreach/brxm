@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.hippoecm.repository.query.lucene;
 
 import org.apache.lucene.search.BooleanQuery;
@@ -25,17 +24,16 @@ public class QueryHelper {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private QueryHelper(){
-
+    private QueryHelper() {
     }
 
-    public static Query getNoHitsQuery(){
+    public static Query getNoHitsQuery() {
         BooleanQuery noHitsQuery = new BooleanQuery(true);
         noHitsQuery.add(new MatchAllDocsQuery(), Occur.MUST_NOT);
         return noHitsQuery;
     }
 
-    public static Query negateQuery(Query q){
+    public static Query negateQuery(Query q) {
         BooleanQuery negatedQuery = new BooleanQuery(true);
         negatedQuery.add(new MatchAllDocsQuery(), Occur.MUST);
         negatedQuery.add(q, Occur.MUST_NOT);

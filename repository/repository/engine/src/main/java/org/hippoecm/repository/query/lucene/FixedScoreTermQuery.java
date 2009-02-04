@@ -33,7 +33,7 @@ import org.apache.lucene.search.Weight;
 import org.apache.lucene.util.ToStringUtils;
 
 /** A Query that matches documents containing a term.
- This may be combined with other terms with a {@link BooleanQuery}.
+This may be combined with other terms with a {@link BooleanQuery}.
  */
 public class FixedScoreTermQuery extends Query {
     @SuppressWarnings("unused")
@@ -72,9 +72,9 @@ public class FixedScoreTermQuery extends Query {
         public Scorer scorer(IndexReader reader) throws IOException {
             TermDocs termDocs = reader.termDocs(term);
 
-            if (termDocs == null)
+            if (termDocs == null) {
                 return null;
-
+            }
             return new FixedScoreTermScorer(this, termDocs, similarity);
         }
 
@@ -144,25 +144,24 @@ public class FixedScoreTermQuery extends Query {
         public boolean skipTo(int target) throws IOException {
             // first scan in cache
             for (pointer++; pointer < pointerMax; pointer++) {
-              if (docs[pointer] >= target) {
-                doc = docs[pointer];
-                return true;
-              }
+                if (docs[pointer] >= target) {
+                    doc = docs[pointer];
+                    return true;
+                }
             }
 
             // not found in cache, seek underlying stream
             boolean result = termDocs.skipTo(target);
             if (result) {
-              pointerMax = 1;
-              pointer = 0;
-              docs[pointer] = doc = termDocs.doc();
-              freqs[pointer] = termDocs.freq();
+                pointerMax = 1;
+                pointer = 0;
+                docs[pointer] = doc = termDocs.doc();
+                freqs[pointer] = termDocs.freq();
             } else {
-              doc = Integer.MAX_VALUE;
+                doc = Integer.MAX_VALUE;
             }
             return result;
         }
-
     }
 
     /** Constructs a query for the term <code>t</code>. */
@@ -197,8 +196,9 @@ public class FixedScoreTermQuery extends Query {
 
     /** Returns true iff <code>o</code> is equal to this. */
     public boolean equals(Object o) {
-        if (!(o instanceof FixedScoreTermQuery))
+        if (!(o instanceof FixedScoreTermQuery)) {
             return false;
+        }
         FixedScoreTermQuery other = (FixedScoreTermQuery) o;
         return this.term.equals(other.term);
     }
@@ -207,5 +207,4 @@ public class FixedScoreTermQuery extends Query {
     public int hashCode() {
         return Float.floatToIntBits(getBoost()) ^ term.hashCode();
     }
-
 }

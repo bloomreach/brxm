@@ -70,7 +70,6 @@ public class ServicingSearchIndex extends SearchIndex {
      */
     public ServicingSearchIndex() {
         super();
-       
     }
 
     /**
@@ -81,7 +80,6 @@ public class ServicingSearchIndex extends SearchIndex {
     public MultiIndex getIndex() {
         return super.getIndex();
     }
-
 
     /**
      * Returns the document element of the indexing configuration or
@@ -100,7 +98,7 @@ public class ServicingSearchIndex extends SearchIndex {
             return null;
         }
         InputStream configInputStream = null;
-        if(configName.startsWith("file:/")) {
+        if (configName.startsWith("file:/")) {
             File config = new File(configName.substring(5));
             log.info("Using indexing configuration: " + configName);
             if (!config.exists()) {
@@ -112,15 +110,15 @@ public class ServicingSearchIndex extends SearchIndex {
             }
             try {
                 configInputStream = new FileInputStream(config);
-            } catch(FileNotFoundException ex) {
+            } catch (FileNotFoundException ex) {
                 log.warn("indexing configuration not found: " + configName);
                 return null;
             }
         } else {
             log.info("Using resource repository indexing_configuration: " + configName);
             configInputStream = ServicingSearchIndex.class.getResourceAsStream(configName);
-            if(configInputStream == null) {
-                log.warn("indexing configuration not found: " + getClass().getName() +"/"+ configName);
+            if (configInputStream == null) {
+                log.warn("indexing configuration not found: " + getClass().getName() + "/" + configName);
                 return null;
             }
         }
@@ -143,64 +141,61 @@ public class ServicingSearchIndex extends SearchIndex {
 
     @Override
     protected Document createDocument(NodeState node, NamespaceMappings nsMappings,
-                                      IndexFormatVersion indexFormatVersion) throws RepositoryException
-    {
-        
-        if(node.getId() instanceof HippoNodeId) {
+            IndexFormatVersion indexFormatVersion) throws RepositoryException {
+
+        if (node.getId() instanceof HippoNodeId) {
             log.warn("Indexing a virtual node should never happen, and not be possible. Return an empty lucene doc");
             Document doc = new Document();
             return doc;
         }
-        
+
         ServicingNodeIndexer indexer = new ServicingNodeIndexer(node,
                 getContext(), nsMappings, super.getTextExtractor());
 
         indexer.setSupportHighlighting(super.getSupportHighlighting());
         // indexer.setIndexingConfiguration(indexingConfig);
-        indexer.setServicingIndexingConfiguration((ServicingIndexingConfiguration)super.getIndexingConfig());
+        indexer.setServicingIndexingConfiguration((ServicingIndexingConfiguration) super.getIndexingConfig());
         indexer.setIndexFormatVersion(indexFormatVersion);
         Document doc = indexer.createDoc();
         mergeAggregatedNodeIndexes(node, doc);
-        mergeHippoStandardAggregates(node,doc, indexFormatVersion);
+        mergeHippoStandardAggregates(node, doc, indexFormatVersion);
         return doc;
     }
 
     // TODO remove when jackrabbit supports sorting on nodename
     @Override
     protected SortField[] createSortFields(Name[] orderProps, boolean[] orderSpecs) {
-            SortField[] sortFields = super.createSortFields(orderProps, orderSpecs);
-            for (int i = 0; i < orderProps.length; i++) {
-                if (orderProps[i].equals(NameConstants.JCR_NAME)) {
-                     // replace the one created by the one from Jackrabbit, because the jackrabbit cannot sort on jcr:name (core < 1.4.6) 
-                    sortFields[i] = new SortField(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, orderSpecs[i]);
-                }   
+        SortField[] sortFields = super.createSortFields(orderProps, orderSpecs);
+        for (int i = 0; i < orderProps.length; i++) {
+            if (orderProps[i].equals(NameConstants.JCR_NAME)) {
+                // replace the one created by the one from Jackrabbit, because the jackrabbit cannot sort on jcr:name (core < 1.4.6) 
+                sortFields[i] = new SortField(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, orderSpecs[i]);
             }
-            return sortFields;
-        
+        }
+        return sortFields;
     }
-    
-    private void mergeHippoStandardAggregates(NodeState state, Document doc,IndexFormatVersion indexFormatVersion) {
 
-        if(this.getIndexingConfig() instanceof ServicingIndexingConfiguration) {
-            ServicingIndexingConfiguration servicingIndexingConfiguration = (ServicingIndexingConfiguration)this.getIndexingConfig();
+    private void mergeHippoStandardAggregates(NodeState state, Document doc, IndexFormatVersion indexFormatVersion) {
+        if (this.getIndexingConfig() instanceof ServicingIndexingConfiguration) {
+            ServicingIndexingConfiguration servicingIndexingConfiguration = (ServicingIndexingConfiguration) this.getIndexingConfig();
 
             List childNodeEntries = state.getChildNodeEntries();
 
             List<NodeState> nodeStates = new ArrayList<NodeState>();
-            for(Iterator it = childNodeEntries.iterator(); it.hasNext();) {
+            for (Iterator it = childNodeEntries.iterator(); it.hasNext();) {
                 Object o = it.next();
-                if(o instanceof ChildNodeEntry) {
-                    ChildNodeEntry childNodeEntry = (ChildNodeEntry)o;
-                    if(childNodeEntry.getId() instanceof HippoNodeId) {
+                if (o instanceof ChildNodeEntry) {
+                    ChildNodeEntry childNodeEntry = (ChildNodeEntry) o;
+                    if (childNodeEntry.getId() instanceof HippoNodeId) {
                         // do not index virtual child nodes, ever
                         continue;
                     }
                     try {
-                        NodeState nodeState = (NodeState)getContext().getItemStateManager().getItemState(childNodeEntry.getId());
+                        NodeState nodeState = (NodeState) getContext().getItemStateManager().getItemState(childNodeEntry.getId());
                         Name nodeName = nodeState.getNodeTypeName();
                         Name[] aggr = servicingIndexingConfiguration.getHippoAggregates();
-                        for(int i = 0; i < aggr.length; i++) {
-                            if(nodeName.equals(aggr[i]) ) {
+                        for (int i = 0; i < aggr.length; i++) {
+                            if (nodeName.equals(aggr[i])) {
                                 nodeStates.add(nodeState);
                                 // leave after first aggr match
                                 break;
@@ -242,5 +237,4 @@ public class ServicingSearchIndex extends SearchIndex {
             }
         }
     }
-
 }

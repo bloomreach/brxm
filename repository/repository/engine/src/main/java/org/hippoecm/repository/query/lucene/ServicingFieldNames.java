@@ -24,7 +24,7 @@ public class ServicingFieldNames {
      */
     private ServicingFieldNames() {
     }
-    
+
     /**
      * Lucene field name which is used to index the localname of a node to be able to sort on nodes
      */
@@ -45,12 +45,10 @@ public class ServicingFieldNames {
      */
     public static final String HIPPO_MIXINTYPE = "_:HIPPO_MI_FACET".intern();
 
-
     /**
      * Prefix for all field names that are path properties.
      */
     public static final String HIPPO_PATH = "_:HIPPOPATH:".intern();
-
 
     /**
      * Prefix for all field names that are depth properties.
@@ -62,5 +60,4 @@ public class ServicingFieldNames {
      * for this indexed node.
      */
     public static final String FACET_PROPERTIES_SET = "_:FACET_PROPERTIES_SET".intern();
-
 }

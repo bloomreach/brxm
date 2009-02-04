@@ -40,49 +40,46 @@ public class CachingFacetResultCollector extends HitCollector {
     private String internalName;
     private int numhits;
     private Set<String> hits;
-    private Map<String,Count> facetMap;
+    private Map<String, Count> facetMap;
     private FieldSelector fieldSelector;
     private int offset;
     private int limit;
-
-    private Map<String,Map<Integer, String[]>> collectorTFVMap;
+    private Map<String, Map<Integer, String[]>> collectorTFVMap;
     private Map<Integer, String[]> internalNameTermsMap;
     private boolean checkCache = true;
 
     public CachingFacetResultCollector(IndexReader reader,
-                                       Map<IndexReader, Map<String,Map<Integer, String[]>>> tfvCache,
-                                       String facet, Map<String,
-                                       Map<String, Count>> resultset,
-                                       HitsRequested hitsRequested,
-                                       NamespaceMappings nsMappings) {
+                                       Map<IndexReader, Map<String, Map<Integer, String[]>>> tfvCache,
+                                       String facet, Map<String, Map<String, Count>> resultset,
+                                       HitsRequested hitsRequested, NamespaceMappings nsMappings) {
         this.reader = reader;
 
         try {
-         this.internalName = ServicingNameFormat.getInternalFacetName(facet, nsMappings);
-         } catch(Exception ex) {
-              System.err.println(ex.getMessage());
-              ex.printStackTrace(System.err);
-         }
+            this.internalName = ServicingNameFormat.getInternalFacetName(facet, nsMappings);
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        }
 
-         this.collectorTFVMap = tfvCache.get(reader);
-         if(collectorTFVMap == null ) {
-             collectorTFVMap = new HashMap<String,Map<Integer, String[]>>();
-             tfvCache.put(reader, collectorTFVMap);
-         }
+        this.collectorTFVMap = tfvCache.get(reader);
+        if (collectorTFVMap == null) {
+            collectorTFVMap = new HashMap<String, Map<Integer, String[]>>();
+            tfvCache.put(reader, collectorTFVMap);
+        }
 
-         this.internalNameTermsMap = collectorTFVMap.get(internalName);
-         if(internalNameTermsMap == null){
-             checkCache = false;
-             this.internalNameTermsMap =  new HashMap<Integer, String[]>();
-             collectorTFVMap.put(internalName, internalNameTermsMap);
-         }
+        this.internalNameTermsMap = collectorTFVMap.get(internalName);
+        if (internalNameTermsMap == null) {
+            checkCache = false;
+            this.internalNameTermsMap = new HashMap<Integer, String[]>();
+            collectorTFVMap.put(internalName, internalNameTermsMap);
+        }
         this.numhits = 0;
 
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add(ServicingFieldNames.HIPPO_PATH);
         this.fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet());
 
-        if(hitsRequested.isResultRequested()) {
+        if (hitsRequested.isResultRequested()) {
             this.hits = new HashSet<String>();
             this.offset = hitsRequested.getOffset();
             this.limit = hitsRequested.getLimit();
@@ -90,51 +87,50 @@ public class CachingFacetResultCollector extends HitCollector {
             this.hits = null;
         }
 
-        if(facet != null && resultset.get(facet)!= null) {
-             facetMap = resultset.get(facet);
+        if (facet != null && resultset.get(facet) != null) {
+            facetMap = resultset.get(facet);
         }
     }
 
     public final void collect(final int docid, final float score) {
         try {
-            if(hits != null) {
-                if(offset == 0 && hits.size() < limit ) {
-
-                    Document d = reader.document(docid,fieldSelector);
+            if (hits != null) {
+                if (offset == 0 && hits.size() < limit) {
+                    Document d = reader.document(docid, fieldSelector);
                     Field f = d.getField(ServicingFieldNames.HIPPO_PATH);
-                    if(f!=null){
+                    if (f != null) {
                         hits.add(f.stringValue());
                     }
-                } else if (offset > 0){
+                } else if (offset > 0) {
                     // decrement offset untill it is 0. Then start gathering results above
                     offset--;
                 }
             }
 
-             String[] terms = null;
-             // if checkCache is true, first check the cache. This is faster
-             if(checkCache) {
-                 terms = internalNameTermsMap.get(docid);
-                 if(terms == null){
-                     terms = getFacetTerms(reader, docid, internalName, internalNameTermsMap);
-                 }
-             } else {
-                 terms = getFacetTerms(reader, docid, internalName, internalNameTermsMap);
-             }
+            String[] terms = null;
+            // if checkCache is true, first check the cache. This is faster
+            if (checkCache) {
+                terms = internalNameTermsMap.get(docid);
+                if (terms == null) {
+                    terms = getFacetTerms(reader, docid, internalName, internalNameTermsMap);
+                }
+            } else {
+                terms = getFacetTerms(reader, docid, internalName, internalNameTermsMap);
+            }
 
-             if(terms != null) {
-                 for(int i=0; i<terms.length; i++) {
-                     Count count = facetMap.get(terms[i]);
-                     if(count == null) {
-                         facetMap.put(terms[i], new Count(1));
-                     } else {
-                         count.count += 1;
-                     }
-                 }
-             }
+            if (terms != null) {
+                for (int i = 0; i < terms.length; i++) {
+                    Count count = facetMap.get(terms[i]);
+                    if (count == null) {
+                        facetMap.put(terms[i], new Count(1));
+                    } else {
+                        count.count += 1;
+                    }
+                }
+            }
 
             ++numhits;
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
         }
@@ -145,8 +141,8 @@ public class CachingFacetResultCollector extends HitCollector {
         // and hold a list of {int,term} mappings to translate later
         TermFreqVector tfv = reader.getTermFreqVector(docid, internalName);
         String[] terms = new String[tfv.getTermFrequencies().length];
-        for(int i=0; i<tfv.getTermFrequencies().length; i++) {
-            terms[i] =  tfv.getTerms()[i];
+        for (int i = 0; i < tfv.getTermFrequencies().length; i++) {
+            terms[i] = tfv.getTerms()[i];
         }
         internalNameTermsMap.put(docid, terms);
         return terms;
@@ -155,6 +151,7 @@ public class CachingFacetResultCollector extends HitCollector {
     public final Set<String> getHits() {
         return hits;
     }
+
     public final int getNumhits() {
         return numhits;
     }

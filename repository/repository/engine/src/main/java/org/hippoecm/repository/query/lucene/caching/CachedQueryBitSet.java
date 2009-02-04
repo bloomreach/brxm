@@ -41,12 +41,10 @@ public class CachedQueryBitSet {
 
     public boolean isValid(IndexReader indexReader) {
         // TODO check on creationtick per index reader
-        if(this.maxDoc == indexReader.maxDoc()) {
+        if (this.maxDoc == indexReader.maxDoc()) {
             // dummy check for now for validity: needs enhancement
             return true;
         }
         return false;
     }
-
-
 }

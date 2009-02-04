@@ -46,8 +46,7 @@ import org.slf4j.LoggerFactory;
  * <code>LuceneSpellChecker</code> implements a spell checker based on the terms
  * present in a lucene index.
  */
-public class LuceneSpellChecker
-        implements org.apache.jackrabbit.core.query.lucene.SpellChecker {
+public class LuceneSpellChecker implements org.apache.jackrabbit.core.query.lucene.SpellChecker {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -159,7 +158,6 @@ public class LuceneSpellChecker
     }
 
     //------------------------------< internal >--------------------------------
-
     /**
      * Returns the fulltext statement of a spellcheck relation query node or
      * <code>null</code> if none exists in the abstract query tree.
@@ -169,24 +167,24 @@ public class LuceneSpellChecker
      */
     private String getFulltextStatement(QueryRootNode aqt) {
         try {
-        final String[] stmt = new String[1];
-        aqt.accept(new TraversingQueryNodeVisitor() {
-            @Override
-            public Object visit(RelationQueryNode node, Object o) throws RepositoryException {
-                if (stmt[0] == null && node.getOperation() == RelationQueryNode.OPERATION_SPELLCHECK) {
-                    stmt[0] = node.getStringValue();
+            final String[] stmt = new String[1];
+            aqt.accept(new TraversingQueryNodeVisitor() {
+
+                @Override
+                public Object visit(RelationQueryNode node, Object o) throws RepositoryException {
+                    if (stmt[0] == null && node.getOperation() == RelationQueryNode.OPERATION_SPELLCHECK) {
+                        stmt[0] = node.getStringValue();
+                    }
+                    return super.visit(node, o);
                 }
-                return super.visit(node, o);
-            }
-        }, null);
-        return stmt[0];
-        } catch(RepositoryException ex) {
+            }, null);
+            return stmt[0];
+        } catch (RepositoryException ex) {
             return null;
         }
     }
 
     private final class InternalSpellChecker {
-
         /**
          * Timestamp when the last refresh was done.
          */
@@ -372,6 +370,7 @@ public class LuceneSpellChecker
                     } else {
                         refreshing = true;
                         Runnable refresh = new Runnable() {
+
                             public void run() {
                                 try {
                                     IndexReader reader = handler.getIndexReader();
