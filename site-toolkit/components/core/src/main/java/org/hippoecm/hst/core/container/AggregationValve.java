@@ -1,10 +1,9 @@
 package org.hippoecm.hst.core.container;
 
-import java.util.Iterator;
-
 import org.hippoecm.hst.configuration.components.HstComponent;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.HstRequestProcessor;
 
 public class AggregationValve extends AbstractValve {
     
@@ -21,7 +20,9 @@ public class AggregationValve extends AbstractValve {
         //Page page = request.getPage();
         //root = page.getRootComponent();
         
-        aggregateAndRender(request, root);
+        if (root != null) {
+            aggregateAndRender(request, root);
+        }
         
         // continue
         context.invokeNext(request);

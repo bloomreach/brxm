@@ -1,12 +1,29 @@
 package org.hippoecm.hst.core.container;
 
+import java.util.Properties;
+
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringComponentManager implements ComponentManager {
-    private ClassPathXmlApplicationContext applicationContext;
+    
+    private AbstractApplicationContext applicationContext;
 
     public SpringComponentManager() {
-        this.applicationContext = new ClassPathXmlApplicationContext(getConfigurations());
+        this(null);
+    }
+    
+    public SpringComponentManager(Properties initProps) {
+        this.applicationContext = new ClassPathXmlApplicationContext(getConfigurations(), false);
+        
+        if (initProps != null) {
+            PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
+            ppc.setIgnoreUnresolvablePlaceholders(true);
+            ppc.setSystemPropertiesMode(PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK);
+            ppc.setProperties(initProps);
+            this.applicationContext.addBeanFactoryPostProcessor(ppc);
+        }
     }
 
     public void start() {

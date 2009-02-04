@@ -1,6 +1,8 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -22,7 +24,12 @@ import org.hippoecm.hst.core.request.HstRequestContextComponent;
  * @version $Id$
  */
 public class HstSiteServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
+
     public static final String CONSOLE_LOGGER = "console";
+    
+    private static final String INIT_PROPS_PARAM_PREFIX = "properties.";
 
     private static Log log;
     private static Log console;
@@ -48,10 +55,21 @@ public class HstSiteServlet extends HttpServlet {
         console.info(INIT_START_MSG);
 
         super.init(config);
+        
+        Properties initProperties = new Properties();
+        
+        for (Enumeration paramNamesEnum = config.getInitParameterNames(); paramNamesEnum.hasMoreElements(); ) {
+            String paramName = (String) paramNamesEnum.nextElement();
+            String paramValue = config.getInitParameter(paramName);
+            
+            if (paramName.startsWith(INIT_PROPS_PARAM_PREFIX) && paramValue != null) {
+                initProperties.setProperty(paramName.substring(INIT_PROPS_PARAM_PREFIX.length()).trim(), paramValue.trim());
+            }
+        }
 
         try {
             console.info("HSTSiteServlet attempting to create the  portlet engine...");
-            engine = new HstSiteEngineImpl(config.getServletContext());
+            engine = new HstSiteEngineImpl(config.getServletContext(), initProperties);
             console.info("HSTSiteServlet attempting to start the Jetspeed Portal Engine...");
             engine.start();
             console.info("HSTSiteServlet has successfuly started the Jetspeed Portal Engine....");

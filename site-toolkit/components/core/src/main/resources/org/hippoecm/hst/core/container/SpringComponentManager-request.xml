@@ -23,6 +23,9 @@
       <ref bean="org.hippoecm.hst.core.jcr.pool.PoolingRepository" />
     </constructor-arg>
   </bean>
+  
+  <bean id="org.hippoecm.hst.core.request.HstRequestProcessor" class="org.hippoecm.hst.core.container.HstRequestProcessorImpl">
+  </bean>
    
 </beans>
 

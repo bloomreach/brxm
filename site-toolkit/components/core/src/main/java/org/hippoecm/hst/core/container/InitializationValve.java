@@ -6,7 +6,7 @@ import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
-public class CleanupValve extends AbstractValve
+public class InitializationValve extends AbstractValve
 {
     protected List<ResourceLifecycleManagement> resourceLifecycleManagements;
     
@@ -20,6 +20,7 @@ public class CleanupValve extends AbstractValve
         if (this.resourceLifecycleManagements != null) {
             for (ResourceLifecycleManagement resourceLifecycleManagement : this.resourceLifecycleManagements) {
                 resourceLifecycleManagement.disposeAllResources();
+                resourceLifecycleManagement.setActive(true);
             }
         }
         

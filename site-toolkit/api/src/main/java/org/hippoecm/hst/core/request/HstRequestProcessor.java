@@ -1,7 +1,6 @@
-package org.hippoecm.hst.core.container;
+package org.hippoecm.hst.core.request;
 
 import org.hippoecm.hst.configuration.components.HstComponent;
-import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
  * The component responsible for delegating a incoming (Servlet or Portlet) request to

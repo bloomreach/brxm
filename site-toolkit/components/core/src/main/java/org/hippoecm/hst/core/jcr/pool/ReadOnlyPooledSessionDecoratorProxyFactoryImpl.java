@@ -12,12 +12,12 @@ import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
-public class ReadOnlySessionDecoratorProxyFactoryImpl extends PooledSessionDecoratorProxyFactoryImpl
+public class ReadOnlyPooledSessionDecoratorProxyFactoryImpl extends PooledSessionDecoratorProxyFactoryImpl
 {
     protected Map<String, Boolean> readOnlyMethodMap;
     protected List<Advice> advices = new ArrayList<Advice>();
     
-    public ReadOnlySessionDecoratorProxyFactoryImpl()
+    public ReadOnlyPooledSessionDecoratorProxyFactoryImpl()
     {
         super();
         

@@ -43,8 +43,18 @@
     </property>
     
     <!-- session proxy factories -->
-    <property name="readOnlySessionDecorator">
+    <property name="sessionDecorator">
+      <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionDecoratorProxyFactoryImpl" />
+    </property>
+    
+    <!-- If you want read-only sessions, then use the following instead.  
+    <property name="sessionDecorator">
       <bean class="org.hippoecm.hst.core.jcr.pool.ReadOnlySessionDecoratorProxyFactoryImpl" />
+    </property>
+    -->
+    
+    <property name="pooledSessionLifecycleManagement">
+      <ref bean="org.hippoecm.hst.core.jcr.pool.PoolingRepository.pooledSessionLifecycleManagement" />
     </property>
     
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
@@ -60,6 +70,13 @@
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
     
+  </bean>
+  
+  <bean id="org.hippoecm.hst.core.jcr.pool.PoolingRepository.pooledSessionLifecycleManagement" 
+        class=" org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement">
+    <constructor-arg>
+      <value>org.hippoecm.hst.core.jcr.pool.PoolingRepository.pooledSessionLifecycleManagement</value>
+    </constructor-arg>
   </bean>
     
 </beans>

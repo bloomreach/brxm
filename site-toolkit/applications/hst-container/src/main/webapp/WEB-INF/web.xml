@@ -21,7 +21,7 @@
   <!-- Spring Log4j Web Configuration Init Parameters -->
   <context-param>
     <param-name>log4jConfigLocation</param-name>
-    <param-value>/WEB-INF/conf/log4j.properties</param-value>
+    <param-value>/WEB-INF/log4j.properties</param-value>
   </context-param>
 
   <context-param>
@@ -41,7 +41,19 @@
 
   <servlet>
     <servlet-name>HstSiteServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.core.container.engine.HstSiteServlet</servlet-class>
+    <servlet-class>org.hippoecm.hst.core.container.HstSiteServlet</servlet-class>
+    <init-param>
+        <param-name>properties.repository.address</param-name>
+        <param-value>rmi://127.0.0.1:1099/hipporepository</param-value>
+    </init-param>
+    <init-param>
+        <param-name>properties.repository.user.name</param-name>
+        <param-value>admin</param-value>
+    </init-param>
+    <init-param>
+        <param-name>properties.repository.password</param-name>
+        <param-value>admin</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
 

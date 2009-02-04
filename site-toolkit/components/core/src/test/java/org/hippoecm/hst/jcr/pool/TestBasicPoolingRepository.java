@@ -1,6 +1,5 @@
 package org.hippoecm.hst.jcr.pool;
 
-import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.Session;
@@ -56,11 +55,10 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase
             try
             {
                 session.save();
-                fail("The session from the pool should be read-only session by default login().");
             }
             catch (UnsupportedRepositoryOperationException uroe)
             {
-                // good enough.
+                fail("The session from the pool is not able to save.");
             }
         }
         finally
@@ -73,15 +71,12 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase
         
         try
         {
-            // get a writable session by using credentials.
-            Credentials credentials = new SimpleCredentials("admin", "admin".toCharArray());
+            SimpleCredentials defaultCredentials = poolingRepository.getDefaultCredentials();
+            SimpleCredentials testCredentials = new SimpleCredentials(defaultCredentials.getUserID(), defaultCredentials.getPassword());
 
-            int previousActiveCount = poolingRepository.getNumActive();
-            
-            // Check if the session pool is not affected.
-            session = poolingRepository.login(credentials);
-            assertEquals("Active session count changed by creating a writable session.", 
-                         previousActiveCount, poolingRepository.getNumActive()); 
+            // Check if the session pool returns a session by a same credentials info.
+            session = poolingRepository.login(testCredentials);
+            assertNotNull("session is null.", session);
             
             session.save();
         }

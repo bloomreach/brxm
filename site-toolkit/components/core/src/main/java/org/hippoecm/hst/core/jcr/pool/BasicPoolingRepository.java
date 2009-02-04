@@ -10,6 +10,7 @@ import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
+import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.repository.HippoRepository;
 
 /** 
@@ -20,12 +21,13 @@ import org.hippoecm.repository.HippoRepository;
  * @version $Id$
  */
 public class BasicPoolingRepository implements PoolingRepository {
-    private HippoRepository repository;
-    private Credentials defaultCredentials;
-    private boolean refreshOnPassivate = true;
-    private boolean keepChangesOnRefresh = false;
-    private SessionDecorator readOnlySessionDecorator;
-    private SessionDecorator writableSessionDecorator;
+    
+    protected HippoRepository repository;
+    protected SimpleCredentials defaultCredentials;
+    protected boolean refreshOnPassivate = true;
+    protected boolean keepChangesOnRefresh = false;
+    protected SessionDecorator sessionDecorator;
+    protected ResourceLifecycleManagement pooledSessionLifecycleManagement;
 
     public void setRepository(HippoRepository repository) throws RepositoryException {
         this.repository = repository;
@@ -35,11 +37,11 @@ public class BasicPoolingRepository implements PoolingRepository {
         return this.repository;
     }
 
-    public void setDefaultCredentials(Credentials defaultCredentials) {
+    public void setDefaultCredentials(SimpleCredentials defaultCredentials) {
         this.defaultCredentials = defaultCredentials;
     }
 
-    public Credentials getDefaultCredentials() {
+    public SimpleCredentials getDefaultCredentials() {
         return this.defaultCredentials;
     }
     
@@ -59,28 +61,24 @@ public class BasicPoolingRepository implements PoolingRepository {
         return this.keepChangesOnRefresh;
     }
 
-    public void setReadOnlySessionDecorator(SessionDecorator readOnlySessionDecorator) {
-        this.readOnlySessionDecorator = readOnlySessionDecorator;
+    public void setSessionDecorator(SessionDecorator sessionDecorator) {
+        this.sessionDecorator = sessionDecorator;
 
-        if (this.readOnlySessionDecorator != null && (this.readOnlySessionDecorator instanceof PoolingRepositoryAware)) {
-            ((PoolingRepositoryAware) this.readOnlySessionDecorator).setPoolingRepository(this);
+        if (this.sessionDecorator != null && (this.sessionDecorator instanceof PoolingRepositoryAware)) {
+            ((PoolingRepositoryAware) this.sessionDecorator).setPoolingRepository(this);
         }
     }
 
-    public SessionDecorator getReadOnlySessionDecorator() {
-        return this.readOnlySessionDecorator;
+    public SessionDecorator getSessionDecorator() {
+        return this.sessionDecorator;
     }
 
-    public void setWritableSessionDecorator(SessionDecorator writableSessionDecorator) {
-        this.writableSessionDecorator = writableSessionDecorator;
-
-        if (this.writableSessionDecorator != null && (this.writableSessionDecorator instanceof PoolingRepositoryAware)) {
-            ((PoolingRepositoryAware) this.writableSessionDecorator).setPoolingRepository(this);
-        }
+    public void setPooledSessionLifecycleManagement(ResourceLifecycleManagement pooledSessionLifecycleManagement) {
+        this.pooledSessionLifecycleManagement = pooledSessionLifecycleManagement;
     }
-
-    public SessionDecorator getWritableSessionDecorator() {
-        return this.writableSessionDecorator;
+    
+    public ResourceLifecycleManagement getPooledSessionLifecycleManagement() {
+        return this.pooledSessionLifecycleManagement;
     }
 
     public String getDescriptor(String key) {
@@ -121,8 +119,8 @@ public class BasicPoolingRepository implements PoolingRepository {
             throw new LoginException("Failed to borrow session from the pool.", e);
         }
 
-        if (session != null && this.readOnlySessionDecorator != null) {
-            session = this.readOnlySessionDecorator.decorate(session);
+        if (session != null && this.sessionDecorator != null) {
+            session = this.sessionDecorator.decorate(session);
         }
 
         return session;
@@ -136,13 +134,8 @@ public class BasicPoolingRepository implements PoolingRepository {
      * @return a writable session
      */
     public Session login(Credentials credentials) throws LoginException, RepositoryException {
-        if (credentials instanceof SimpleCredentials) {
+        if (equalsCredentials(credentials)) {
             Session session = getRepository().login((SimpleCredentials) credentials);
-
-            if (session != null && this.writableSessionDecorator != null) {
-                session = this.writableSessionDecorator.decorate(session);
-            }
-
             return session;
         } else {
             throw new LoginException("login by credentials other than SimpleCredentials is not supported.");
@@ -171,7 +164,7 @@ public class BasicPoolingRepository implements PoolingRepository {
             NoSuchWorkspaceException, RepositoryException {
         return login(credentials);
     }
-
+    
     public void returnSession(Session session) {
         try {
             this.sessionPool.returnObject(session);
@@ -632,10 +625,23 @@ public class BasicPoolingRepository implements PoolingRepository {
     public synchronized void setValidationQuery(String validationQuery) {
         this.validationQuery = (validationQuery != null ? validationQuery.trim() : null);
     }
-
+    
+    private boolean equalsCredentials(Credentials credentials) {
+        if (credentials instanceof SimpleCredentials) {
+            SimpleCredentials other = (SimpleCredentials) credentials;
+            return (this.defaultCredentials.getUserID().equals(other.getUserID()));
+        }
+        
+        return false;
+    }
+    
     private class SessionFactory implements PoolableObjectFactory {
         
         public void activateObject(Object object) throws Exception {
+            // If client retrieves a session, then register it as a disposable. 
+            if (pooledSessionLifecycleManagement != null && pooledSessionLifecycleManagement.isActive()) {
+                pooledSessionLifecycleManagement.registerResource(object);
+            }
         }
 
         public void destroyObject(Object object) throws Exception {
@@ -648,12 +654,17 @@ public class BasicPoolingRepository implements PoolingRepository {
         }
 
         public Object makeObject() throws Exception {
-            return login(getDefaultCredentials());
+            return getRepository().login(defaultCredentials);
         }
 
         public void passivateObject(Object object) throws Exception {
             if (refreshOnPassivate) {
                 ((Session) object).refresh(keepChangesOnRefresh);
+            }
+            
+            // If client returns the session he used, then unregister it 
+            if (pooledSessionLifecycleManagement != null && pooledSessionLifecycleManagement.isActive()) {
+                pooledSessionLifecycleManagement.unregisterResource(object);
             }
         }
 
