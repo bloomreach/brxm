@@ -1,4 +1,4 @@
-package org.hippoecm.hst.core.container;
+package org.hippoecm.hst.site.container;
 
 import org.hippoecm.hst.configuration.components.HstComponent;
 import org.hippoecm.hst.core.request.HstRequestContext;

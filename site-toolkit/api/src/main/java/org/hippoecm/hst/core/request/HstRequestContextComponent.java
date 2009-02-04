@@ -1,9 +1,5 @@
 package org.hippoecm.hst.core.request;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 public interface HstRequestContextComponent
 {
     /**
@@ -14,7 +10,7 @@ public interface HstRequestContextComponent
      * @param config
      * @return
      */
-    HstRequestContext create(HttpServletRequest req, HttpServletResponse resp, ServletConfig config);
+    HstRequestContext create(Object request, Object response, Object config);
 
     /**
      * Release a request context back to the context pool.

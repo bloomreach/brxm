@@ -1,4 +1,4 @@
-package org.hippoecm.hst.core.container;
+package org.hippoecm.hst.site.container;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -69,7 +69,7 @@ public class HstSiteServlet extends HttpServlet {
 
         try {
             console.info("HSTSiteServlet attempting to create the  portlet engine...");
-            engine = new HstSiteEngineImpl(config.getServletContext(), initProperties);
+            engine = new HstSiteEngineImpl(initProperties);
             console.info("HSTSiteServlet attempting to start the Jetspeed Portal Engine...");
             engine.start();
             console.info("HSTSiteServlet has successfuly started the Jetspeed Portal Engine....");

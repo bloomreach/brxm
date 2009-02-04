@@ -18,13 +18,13 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
   <!-- Commons configuration from collab.properties -->
-  <bean id="org.hippoecm.hst.core.request.HstRequestContextComponent" class="org.hippoecm.hst.core.request.HstRequestContextComponentImpl">
+  <bean id="org.hippoecm.hst.core.request.HstRequestContextComponent" class="org.hippoecm.hst.site.request.HstRequestContextComponentImpl">
     <constructor-arg>
       <ref bean="org.hippoecm.hst.core.jcr.pool.PoolingRepository" />
     </constructor-arg>
   </bean>
   
-  <bean id="org.hippoecm.hst.core.request.HstRequestProcessor" class="org.hippoecm.hst.core.container.HstRequestProcessorImpl">
+  <bean id="org.hippoecm.hst.core.request.HstRequestProcessor" class="org.hippoecm.hst.site.container.HstRequestProcessorImpl">
   </bean>
    
 </beans>

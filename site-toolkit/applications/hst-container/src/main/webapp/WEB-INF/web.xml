@@ -41,7 +41,7 @@
 
   <servlet>
     <servlet-name>HstSiteServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.core.container.HstSiteServlet</servlet-class>
+    <servlet-class>org.hippoecm.hst.site.container.HstSiteServlet</servlet-class>
     <init-param>
         <param-name>properties.repository.address</param-name>
         <param-value>rmi://127.0.0.1:1099/hipporepository</param-value>

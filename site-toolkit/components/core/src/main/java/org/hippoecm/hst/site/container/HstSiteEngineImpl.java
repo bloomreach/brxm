@@ -1,8 +1,6 @@
-package org.hippoecm.hst.core.container;
+package org.hippoecm.hst.site.container;
 
 import java.util.Properties;
-
-import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.HstSiteEngine;
@@ -14,11 +12,11 @@ public class HstSiteEngineImpl implements HstSiteEngine {
 
     protected ComponentManager componentManager;
 
-    public HstSiteEngineImpl(ServletContext servletContext) {
-        this(servletContext, null);
+    public HstSiteEngineImpl() {
+        this(null);
     }
     
-    public HstSiteEngineImpl(ServletContext servletContext, Properties initProps) {
+    public HstSiteEngineImpl(Properties initProps) {
         this.componentManager = new SpringComponentManager(initProps);
     }
 

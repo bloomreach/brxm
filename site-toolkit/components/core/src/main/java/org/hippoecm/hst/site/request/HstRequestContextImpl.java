@@ -13,11 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.request;
+package org.hippoecm.hst.site.request;
 
 import javax.jcr.Repository;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.domain.RepositoryMapping;
@@ -29,8 +27,6 @@ import org.hippoecm.hst.core.template.node.PageNode;
 public class HstRequestContextImpl implements HstRequestContext {
 
     protected Repository repository;
-    protected HstRequest request;
-    protected HstResponse response;
     protected ContextBase contentContextBase;
     protected ContextBase hstConfigurationContextBase;
     protected URLMapping absoluteUrlMapping;
@@ -48,34 +44,6 @@ public class HstRequestContextImpl implements HstRequestContext {
         return repositoryMapping;
     }
     
-    public HstRequest getRequest()
-    {
-        // TODO:
-        return null;
-    }
-    
-    public HstResponse getResponse()
-    {
-        // TODO:
-        return null;
-    }
-    
-    public HstRequestDispatcher getDispatcher()
-    {
-        // TODO:
-        return null;
-    }
-    
-    public void setRequest(HstRequest request) 
-    {
-        this.request = request;
-    }
-    
-    public void setResponse(HstResponse response) 
-    {
-        this.response = response;
-    }
-
     public PageNode getPageNode() {
         return pageNode;   
     }

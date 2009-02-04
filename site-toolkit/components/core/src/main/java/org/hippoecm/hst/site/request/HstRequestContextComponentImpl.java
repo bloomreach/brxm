@@ -1,9 +1,12 @@
-package org.hippoecm.hst.core.request;
+package org.hippoecm.hst.site.request;
 
 import javax.jcr.Repository;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.HstRequestContextComponent;
 
 public class HstRequestContextComponentImpl implements HstRequestContextComponent
 {
@@ -15,14 +18,14 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
         this.repository = repository;
     }
     
-    public HstRequestContext create(HttpServletRequest req, HttpServletResponse res, ServletConfig config)
+    public HstRequestContext create(Object request, Object response, Object config)
     {
-        HstRequestContextImpl context = new HstRequestContextImpl();
+        HttpServletRequest servletRequest = (HttpServletRequest) request;
+        HttpServletResponse servletResponse = (HttpServletResponse) response;
+        ServletConfig servletConfig = (ServletConfig) config;
+
         // TODO:
-        HstRequest hstRequest = null;
-        HstResponse hstResponse = null;
-        context.setRequest(hstRequest);
-        context.setResponse(hstResponse);
+        HstRequestContextImpl context = new HstRequestContextImpl();
         context.setRepository(this.repository);
         return context;
     }

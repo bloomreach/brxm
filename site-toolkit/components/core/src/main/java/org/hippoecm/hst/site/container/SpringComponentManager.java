@@ -1,7 +1,8 @@
-package org.hippoecm.hst.core.container;
+package org.hippoecm.hst.site.container;
 
 import java.util.Properties;
 
+import org.hippoecm.hst.core.container.ComponentManager;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

@@ -27,12 +27,6 @@ public interface HstRequestContext {
     
     public Repository getRepository();
     
-    public HstRequest getRequest();
-    
-    public HstResponse getResponse();
-    
-    public HstRequestDispatcher getDispatcher();
-    
     public String getUserID();
 
     public RepositoryMapping getRepositoryMapping();
