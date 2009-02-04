@@ -310,6 +310,11 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
         return wicketId;
     }
 
+    @Override
+    public String getMarkupId(boolean createIfDoesNotExist) {
+        return wicketServiceId;
+    }
+
     public void bind(IRenderService parent, String wicketId) {
         this.parent = parent;
         this.wicketId = wicketId;

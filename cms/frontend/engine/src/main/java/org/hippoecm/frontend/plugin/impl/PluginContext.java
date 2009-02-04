@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IDetachable;
@@ -48,9 +49,8 @@ public class PluginContext implements IPluginContext, IDetachable {
     private IPlugin plugin;
     private Map<String, List<IClusterable>> services;
     private Map<String, List<IServiceTracker<? extends IClusterable>>> listeners;
-    private List<ClusterControl> children;
+    private Map<String, ClusterControl> children;
     private PluginManager manager;
-    private int clusterCount = 0;
     private transient boolean initializing;
     private transient boolean stopping;
 
@@ -61,17 +61,22 @@ public class PluginContext implements IPluginContext, IDetachable {
 
         this.services = new HashMap<String, List<IClusterable>>();
         this.listeners = new HashMap<String, List<IServiceTracker<? extends IClusterable>>>();
-        this.children = new LinkedList<ClusterControl>();
+        this.children = new TreeMap<String,ClusterControl>();
         this.initializing = true;
     }
 
     public IClusterControl newCluster(IClusterConfig template, IPluginConfig parameters) {
-        String clusterId = controlId + ":" + template.getName() + (clusterCount++);
+        String clusterIdBase = controlId + ".cluster." + template.getName();
+        String clusterId = clusterIdBase;
+        int counter = 0;
+        while (children.containsKey(clusterId)) {
+            clusterId = clusterIdBase + counter++;
+        }
         IClusterConfig decorator = new ClusterConfigDecorator(template, clusterId);
         ClusterControl cluster = new ClusterControl(manager, this, decorator, clusterId);
 
         for (String service : template.getServices()) {
-            String serviceId = clusterId + ":" + service + "(srv)";
+            String serviceId = clusterId + ".service." + service;
             decorator.put(service, serviceId);
             if (parameters != null && parameters.getString(service) != null) {
                 cluster.forward(serviceId, parameters.getString(service));
@@ -80,7 +85,7 @@ public class PluginContext implements IPluginContext, IDetachable {
         for (String reference : template.getReferences()) {
             String serviceId;
             if (!template.getServices().contains(reference)) {
-                serviceId = clusterId + ":" + reference + "(ref)";
+                serviceId = clusterId + ".reference." + reference;
                 decorator.put(reference, serviceId);
             } else {
                 serviceId = decorator.getString(reference);
@@ -182,11 +187,11 @@ public class PluginContext implements IPluginContext, IDetachable {
     }
 
     void registerControl(ClusterControl control) {
-        children.add(control);
+        children.put(control.getClusterId(), control);
     }
 
     void unregisterControl(ClusterControl control) {
-        children.remove(control);
+        children.remove(control.getClusterId());
     }
 
     PluginContext start(IPluginConfig plugin, String clusterId) {
@@ -201,7 +206,7 @@ public class PluginContext implements IPluginContext, IDetachable {
                 ((IActivator) plugin).stop();
             }
     
-            ClusterControl[] controls = children.toArray(new ClusterControl[children.size()]);
+            ClusterControl[] controls = children.values().toArray(new ClusterControl[children.size()]);
             for (ClusterControl control : controls) {
                 control.stop();
             }
@@ -233,7 +238,7 @@ public class PluginContext implements IPluginContext, IDetachable {
             }
         }
 
-        for (ClusterControl control : children) {
+        for (ClusterControl control : children.values()) {
             control.detach();
         }
 

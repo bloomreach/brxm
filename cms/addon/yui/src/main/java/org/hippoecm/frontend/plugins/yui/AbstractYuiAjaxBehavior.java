@@ -57,7 +57,7 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
      */
     protected String getCallbackFunction() {
         StringBuilder buf = new StringBuilder();
-        buf.append("function doCallBack").append(getComponent().getMarkupId(true)).append("(myCallbackUrl){ ");
+        buf.append("function (myCallbackUrl) { ");
         buf.append(generateCallbackScript("wicketAjaxGet(myCallbackUrl")).append(" }");
         return buf.toString();
     }
