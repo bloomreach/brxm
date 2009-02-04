@@ -63,17 +63,16 @@ public class AuthorizationQuery {
      * The lucene query
      */
     private final BooleanQuery query;
+
     private final NodeTypeManager ntMgr;
     private final NamespaceMappings nsMappings;
     private final ServicingIndexingConfiguration indexingConfig;
     private final Set<String> memberships = new HashSet<String>();
     private final SessionImpl session;
     private final static String MESSAGE_ZEROMATCH_QUERY = "returning a match zero nodes query";
-    
-    public AuthorizationQuery(Subject subject, NamespaceMappings nsMappings,
-            ServicingIndexingConfiguration indexingConfig, NodeTypeManager ntMgr, Session session)
-            throws RepositoryException {
 
+    public AuthorizationQuery(Subject subject, NamespaceMappings nsMappings, ServicingIndexingConfiguration indexingConfig,
+                              NodeTypeManager ntMgr, Session session) throws RepositoryException {
         // set the max clauses for booleans higher than the default 1024.
         BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
         this.nsMappings = nsMappings;
@@ -84,7 +83,7 @@ public class AuthorizationQuery {
         }
         this.session = (SessionImpl) session;
 
-        for(GroupPrincipal groupPrincipal : subject.getPrincipals(GroupPrincipal.class)) {
+        for (GroupPrincipal groupPrincipal : subject.getPrincipals(GroupPrincipal.class)) {
             memberships.add(groupPrincipal.getName());
         }
         log.debug("----START CREATION AUTHORIZATION QUERY---------");
@@ -93,7 +92,6 @@ public class AuthorizationQuery {
     }
 
     private BooleanQuery initQuery(Set<FacetAuthPrincipal> facetAuths) {
-
         BooleanQuery authQuery = new BooleanQuery(true);
         Iterator<FacetAuthPrincipal> facetAuthsIt = facetAuths.iterator();
         while (facetAuthsIt.hasNext()) {
@@ -115,7 +113,7 @@ public class AuthorizationQuery {
                         hasMatchAllDocsQuery = true;
                     }
                     log.debug("Adding to FacetQuery: FacetRuleQuery = {}", q);
-                    log.debug("FacetRuleQuery has {} clauses.", (q instanceof BooleanQuery)? ((BooleanQuery)q).getClauses().length : 1   );
+                    log.debug("FacetRuleQuery has {} clauses.", (q instanceof BooleanQuery) ? ((BooleanQuery) q).getClauses().length : 1);
                     facetQuery.add(q, Occur.MUST);
                 }
                 if (domainRule.getFacetRules().size() == 1 && hasMatchAllDocsQuery) {
@@ -123,8 +121,7 @@ public class AuthorizationQuery {
                      * we have a domain rule, with only one facetrule, a MatchAllDocsQuery: this means
                      * visibility for every node. Return instantly with an empty boolean query
                      */
-                    log.debug("found domain rule with only one facetrule which is a "
-                            + "MatchAllDocsQuery: return empty booleanQuery because user is allowed to see all");
+                    log.debug("found domain rule with only one facetrule which is a " + "MatchAllDocsQuery: return empty booleanQuery because user is allowed to see all");
                     return new BooleanQuery(true);
                 }
                 log.debug("Adding to Authorization query: FacetQuery = {}", facetQuery);
@@ -135,116 +132,108 @@ public class AuthorizationQuery {
 
         log.debug("Authorization query is : " + authQuery);
         log.debug("Authorization query has {} clauses", authQuery.getClauses().length);
-        
+
         return authQuery;
     }
 
     private Query getFacetRuleQuery(FacetRule facetRule, Set<String> roles) {
         switch (facetRule.getType()) {
-        case PropertyType.STRING:
-            Name nodeName = facetRule.getFacetName();
-            try {
-                if (indexingConfig.isFacet(nodeName)) {
-                    String internalFieldName = ServicingNameFormat.getInternalFacetName(nodeName, nsMappings);
-                    String internalNameTerm = nsMappings.translatePropertyName(nodeName);
-                    if (facetRule.getValue().equals(FacetAuthConstants.WILDCARD)) {
-                        if (facetRule.isEqual()) {
-                            return new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm));
+            case PropertyType.STRING:
+                Name nodeName = facetRule.getFacetName();
+                try {
+                    if (indexingConfig.isFacet(nodeName)) {
+                        String internalFieldName = ServicingNameFormat.getInternalFacetName(nodeName, nsMappings);
+                        String internalNameTerm = nsMappings.translatePropertyName(nodeName);
+                        if (facetRule.getValue().equals(FacetAuthConstants.WILDCARD)) {
+                            if (facetRule.isEqual()) {
+                                return new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm));
+                            } else {
+                                // When the rule is : facet != * , the authorization is allowed on all nodes not having the property
+                                return QueryHelper.negateQuery(new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm)));
+                            }
+                        } else if (facetRule.getValue().equals(FacetAuthConstants.EXPANDER_USER)) {
+                            if (facetRule.isEqual()) {
+                                return new TermQuery(new Term(internalFieldName, session.getUserID()));
+                            } else {
+                                return QueryHelper.negateQuery(new TermQuery(new Term(internalFieldName, session.getUserID())));
+                            }
+                        } else if (facetRule.getValue().equals(FacetAuthConstants.EXPANDER_ROLE)) {
+                            // boolean Or query of roles
+                            if (roles.size() == 0) {
+                                return QueryHelper.getNoHitsQuery();
+                            }
+                            BooleanQuery b = new BooleanQuery(true);
+                            for (String role : roles) {
+                                Term term = new Term(internalFieldName, role);
+                                b.add(new TermQuery(term), Occur.SHOULD);
+                            }
+                            if (facetRule.isEqual()) {
+                                return b;
+                            } else {
+                                return QueryHelper.negateQuery(b);
+                            }
+                        } else if (facetRule.getValue().equals(FacetAuthConstants.EXPANDER_GROUP)) {
+                            // boolean OR query of groups
+                            if (memberships.isEmpty()) {
+                                return QueryHelper.getNoHitsQuery();
+                            }
+                            BooleanQuery b = new BooleanQuery(true);
+                            for (String groupName : memberships) {
+                                Term term = new Term(internalFieldName, groupName);
+                                b.add(new TermQuery(term), Occur.SHOULD);
+                            }
+                            if (facetRule.isEqual()) {
+                                return b;
+                            } else {
+                                return QueryHelper.negateQuery(b);
+                            }
                         } else {
-                            // When the rule is : facet != * , the authorization is allowed on all nodes not having the property
-                            return QueryHelper.negateQuery(new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm)));
+                            Query wq = new WildcardQuery(new Term(internalFieldName, facetRule.getValue() + "?"));
+                            if (facetRule.isEqual()) {
+                                return wq;
+                            } else {
+                                BooleanQuery b = new BooleanQuery(false);
+                                Query propExists = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET,
+                                        internalNameTerm));
+                                b.add(propExists, Occur.MUST);
+                                b.add(wq, Occur.MUST_NOT);
+                                return b;
+                            }
                         }
+                    } else {
+                        log.warn("Property " + nodeName.getNamespaceURI() + ":" + nodeName.getLocalName() + " not allowed for facetted search. " + "Add the property to the indexing configuration to be defined as FACET");
                     }
-                    else if (facetRule.getValue().equals(FacetAuthConstants.EXPANDER_USER)) {
-                        if (facetRule.isEqual()) {
-                            return new TermQuery(new Term(internalFieldName, session.getUserID()));
-                        } else {
-                            return  QueryHelper.negateQuery(new TermQuery(new Term(internalFieldName, session.getUserID())));
-                        }
-                    }
-                    else if (facetRule.getValue().equals(FacetAuthConstants.EXPANDER_ROLE)) {
-                        // boolean Or query of roles
-                        if(roles.size() == 0) {
-                            return QueryHelper.getNoHitsQuery();
-                        }
-                        BooleanQuery b = new BooleanQuery(true);
-                        for(String role : roles) {
-                            Term term = new Term(internalFieldName,role);
-                            b.add(new TermQuery(term), Occur.SHOULD);
-                        }
-                        if (facetRule.isEqual()) {
-                            return b;
-                        } else {
-                            return QueryHelper.negateQuery(b);
-                        }
-                    }
-                    else if (facetRule.getValue().equals(FacetAuthConstants.EXPANDER_GROUP)) {
-                     // boolean OR query of groups
-                        if(memberships.isEmpty()) {
-                            return QueryHelper.getNoHitsQuery();
-                        }
-                        BooleanQuery b = new BooleanQuery(true);
-                        for(String groupName : memberships) {
-                            Term term = new Term(internalFieldName, groupName);
-                            b.add(new TermQuery(term), Occur.SHOULD);
-                        }
-                        if (facetRule.isEqual()) {
-                            return b;
-                        } else {
-                            return QueryHelper.negateQuery(b);
-                        }
-                    }
-                    else {
-                        Query wq = new WildcardQuery(new Term(internalFieldName, facetRule.getValue() + "?"));
-                        if (facetRule.isEqual()) {
-                            return wq;
-                        } else {
-                            BooleanQuery b = new BooleanQuery(false);
-                            Query propExists = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET,
-                                    internalNameTerm));
-                            b.add(propExists, Occur.MUST);
-                            b.add(wq, Occur.MUST_NOT);
-                            return b;
-                        }
-                    }
-                } else {
-                    log.warn("Property " + nodeName.getNamespaceURI() + ":" + nodeName.getLocalName()
-                            + " not allowed for facetted search. "
-                            + "Add the property to the indexing configuration to be defined as FACET");
+                } catch (IllegalNameException e) {
+                    log.error(e.toString());
                 }
-            } catch (IllegalNameException e) {
-                log.error(e.toString());
-            }
-            break;
-        case PropertyType.NAME:
-            String nodeNameString = facetRule.getFacet();
-            if (facetRule.getValue().equals("*")) {
-                if (facetRule.isEqual()) {
-                    return new MatchAllDocsQuery();
-                } else {
+                break;
+            case PropertyType.NAME:
+                String nodeNameString = facetRule.getFacet();
+                if (facetRule.getValue().equals("*")) {
+                    if (facetRule.isEqual()) {
+                        return new MatchAllDocsQuery();
+                    } else {
+                        return QueryHelper.getNoHitsQuery();
+                    }
+                } else if ("nodetype".equalsIgnoreCase(nodeNameString)) {
+                    Query q = getNodeTypeDescendantQuery(facetRule);
+                    if (facetRule.isEqual()) {
+                        return q;
+                    } else {
+                        return QueryHelper.negateQuery(q);
+                    }
+                } else if ("nodename".equalsIgnoreCase(nodeNameString)) {
+                    // FIXME: implement
+                    log.debug("Nodename match not implemented yet.");
                     return QueryHelper.getNoHitsQuery();
-                }
-            } else if ("nodetype".equalsIgnoreCase(nodeNameString)) {
-                Query q = getNodeTypeDescendantQuery(facetRule);
-                if (facetRule.isEqual()) {
-                    return q;
+                } else if ("jcr:primaryType".equals(nodeNameString)) {
+                    return getNodeTypeQuery(ServicingFieldNames.HIPPO_PRIMARYTYPE, facetRule);
+                } else if ("jcr:mixinTypes".equals(nodeNameString)) {
+                    return getNodeTypeQuery(ServicingFieldNames.HIPPO_MIXINTYPE, facetRule);
                 } else {
-                    return QueryHelper.negateQuery(q);
+                    log.error("Ignoring facetrule with facet '" + nodeNameString + "'. hippo:facet must be either 'nodetype', 'jcr:primaryType' " + "or 'jcr:mixinTypes' when hippo:type = Name.");
                 }
-            } else if ("nodename".equalsIgnoreCase(nodeNameString)) {
-                // FIXME: implement
-                log.debug("Nodename match not implemented yet.");
-                return QueryHelper.getNoHitsQuery();
-            } else if ("jcr:primaryType".equals(nodeNameString)) {
-                return getNodeTypeQuery(ServicingFieldNames.HIPPO_PRIMARYTYPE, facetRule);
-            } else if ("jcr:mixinTypes".equals(nodeNameString)) {
-                return getNodeTypeQuery(ServicingFieldNames.HIPPO_MIXINTYPE, facetRule);
-            } else {
-                log.error("Ignoring facetrule with facet '" + nodeNameString
-                        + "'. hippo:facet must be either 'nodetype', 'jcr:primaryType' "
-                        + "or 'jcr:mixinTypes' when hippo:type = Name.");
-            }
-            break;
+                break;
         }
         log.error("Incorrect FacetRule: returning a match zero nodes query");
         return QueryHelper.getNoHitsQuery();
@@ -283,7 +272,6 @@ public class AuthorizationQuery {
                     terms.add(t);
                 }
             }
-
         } catch (NoSuchNodeTypeException e) {
             log.error("invalid nodetype" + e.getMessage() + "\n" + MESSAGE_ZEROMATCH_QUERY);
         } catch (RepositoryException e) {
@@ -301,7 +289,6 @@ public class AuthorizationQuery {
             }
             return b;
         }
-
     }
 
     private Query getNodeTypeQuery(String luceneFieldName, FacetRule facetRule) {
@@ -322,5 +309,4 @@ public class AuthorizationQuery {
     public String toString() {
         return "authorisation query: " + query.toString();
     }
-
 }

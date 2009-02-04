@@ -22,7 +22,7 @@ import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.Searchable;
 import org.apache.lucene.search.Weight;
 
-public class ParallelMultiSearcher extends org.apache.lucene.search.ParallelMultiSearcher{
+public class ParallelMultiSearcher extends org.apache.lucene.search.ParallelMultiSearcher {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -31,26 +31,22 @@ public class ParallelMultiSearcher extends org.apache.lucene.search.ParallelMult
 
     public ParallelMultiSearcher(Searchable[] searchables) throws IOException {
         super(searchables);
-        this.searchables=searchables;
-        this.starts=getStarts();
+        this.searchables = searchables;
+        this.starts = getStarts();
     }
 
     /**
      *
      * @TODO parallelize and cache
      */
-   public void search(Weight weight, Filter filter, final HitCollector results)
-     throws IOException {
-     for (int i = 0; i < searchables.length; i++) {
-
-       final int start = starts[i];
-
-       searchables[i].search(weight, filter, new HitCollector() {
-           public void collect(int doc, float score) {
-             results.collect(doc + start, score);
-           }
-         });
-
-     }
-   }
+    public void search(Weight weight, Filter filter, final HitCollector results) throws IOException {
+        for (int i = 0; i < searchables.length; i++) {
+            final int start = starts[i];
+            searchables[i].search(weight, filter, new HitCollector() {
+                public void collect(int doc, float score) {
+                    results.collect(doc + start, score);
+                }
+            });
+        }
+    }
 }

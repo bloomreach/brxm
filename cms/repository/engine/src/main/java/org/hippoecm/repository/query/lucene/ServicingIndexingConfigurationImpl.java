@@ -49,7 +49,6 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
      */
     private static final Logger log = LoggerFactory.getLogger(IndexingConfigurationImpl.class);
 
-
     /**
      * Set of properties that are configured to be facets
      */
@@ -64,16 +63,15 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
      * QName's of all the child node that should be aggregated
      */
     private Name[] hippoAggregates;
-    
+
     /**
      * set of QName's that should not be nodescoped indexed and not tokenized (for example hippo:path)
      */
     private Set<Name> excludeNamesFromNodeScope = new HashSet<Name>();
-    
+
     /**
      * set of QName's of properties that are not allowed to be indexed as a single term (for example hippostd:content)
      */
-    
     private Set<Name> excludePropertiesSingleIndexTerm = new HashSet<Name>();
 
     @Override
@@ -95,7 +93,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                         // get property name
                         Name propName = resolver.getQName(getTextContent(propertyNode));
                         excludePropertiesForFacet.add(propName);
-                        log.debug("Added property '"+propName.getNamespaceURI()+":"+propName.getLocalName()+"' to be indexed as facet.");
+                        log.debug("Added property '" + propName.getNamespaceURI() + ":" + propName.getLocalName() + "' to be indexed as facet.");
                     }
                 }
             }
@@ -107,11 +105,11 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                         // get property name
                         Name nodeTypeName = resolver.getQName(getTextContent(nodeTypeNode));
                         idxHippoAggregates.add(nodeTypeName);
-                        log.debug("Added nodetype '"+nodeTypeName.getNamespaceURI()+":"+nodeTypeName.getLocalName()+"' to be indexed as a hippo aggregate.");
+                        log.debug("Added nodetype '" + nodeTypeName.getNamespaceURI() + ":" + nodeTypeName.getLocalName() + "' to be indexed as a hippo aggregate.");
                     }
                 }
             }
-            
+
             if (configNode.getNodeName().equals("excludefromnodescope")) {
                 NodeList nameChildNodes = configNode.getChildNodes();
                 for (int k = 0; k < nameChildNodes.getLength(); k++) {
@@ -120,7 +118,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                         // get property name
                         Name nodeTypeName = resolver.getQName(getTextContent(nodeTypeNode));
                         excludeNamesFromNodeScope.add(nodeTypeName);
-                        log.debug("nodetype '"+nodeTypeName.getNamespaceURI()+":"+nodeTypeName.getLocalName()+"' will not be indexed in the nodescope.");
+                        log.debug("nodetype '" + nodeTypeName.getNamespaceURI() + ":" + nodeTypeName.getLocalName() + "' will not be indexed in the nodescope.");
                     }
                 }
             }
@@ -132,30 +130,26 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                         // get property name
                         Name nodeTypePropertyName = resolver.getQName(getTextContent(nodeTypeProperty));
                         excludePropertiesSingleIndexTerm.add(nodeTypePropertyName);
-                        log.debug("property '"+nodeTypePropertyName.getNamespaceURI()+":"+nodeTypePropertyName.getLocalName()+"' will not be indexed as a single term.");
+                        log.debug("property '" + nodeTypePropertyName.getNamespaceURI() + ":" + nodeTypePropertyName.getLocalName() + "' will not be indexed as a single term.");
                     }
                 }
             }
-            
-            
-            
         }
         hippoPath = resolver.getQName(HippoNodeType.HIPPO_PATHS);
 
         hippoAggregates = (Name[]) idxHippoAggregates.toArray(
                 new Name[idxHippoAggregates.size()]);
-
     }
 
     public boolean isFacet(Name propertyName) {
-        if(this.excludePropertiesForFacet.contains(propertyName)) {
+        if (this.excludePropertiesForFacet.contains(propertyName)) {
             return false;
         }
         return true;
     }
 
     public boolean isHippoPath(Name propertyName) {
-        if(this.hippoPath.equals(propertyName)){
+        if (this.hippoPath.equals(propertyName)) {
             return true;
         }
         return false;
@@ -173,8 +167,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         for (int i = 0; i < attributes.getLength(); i++) {
             Attr attribute = (Attr) attributes.item(i);
             if (attribute.getName().startsWith("xmlns:")) {
-                namespaces.setProperty(
-                        attribute.getName().substring(6), attribute.getValue());
+                namespaces.setProperty(attribute.getName().substring(6), attribute.getValue());
             }
         }
         return namespaces;
@@ -200,12 +193,11 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         return hippoAggregates;
     }
 
-    public Set<Name> getExcludedFromNodeScope(){
+    public Set<Name> getExcludedFromNodeScope() {
         return this.excludeNamesFromNodeScope;
     }
-    
-    public Set<Name> getExcludePropertiesSingleIndexTerm(){
+
+    public Set<Name> getExcludePropertiesSingleIndexTerm() {
         return this.excludePropertiesSingleIndexTerm;
     }
-
 }

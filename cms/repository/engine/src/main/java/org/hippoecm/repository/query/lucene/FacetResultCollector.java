@@ -40,27 +40,27 @@ public class FacetResultCollector extends HitCollector {
     private String internalName;
     private int numhits;
     private Set<NodeId> hits;
-    private Map<String,Count> facetMap;
+    private Map<String, Count> facetMap;
     private FieldSelector fieldSelector;
     private int offset;
     private int limit;
 
-    public FacetResultCollector(IndexReader reader, String facet,  Map<String,Count> facetMap, HitsRequested hitsRequested, NamespaceMappings nsMappings) {
+    public FacetResultCollector(IndexReader reader, String facet, Map<String, Count> facetMap, HitsRequested hitsRequested, NamespaceMappings nsMappings) {
         this.reader = reader;
-        if(facet != null){
-             try {
-              this.internalName = ServicingNameFormat.getInternalFacetName(facet, nsMappings);
-             } catch(Exception ex) {
-                  System.err.println(ex.getMessage());
-                  ex.printStackTrace(System.err);
-             }
+        if (facet != null) {
+            try {
+                this.internalName = ServicingNameFormat.getInternalFacetName(facet, nsMappings);
+            } catch (Exception ex) {
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
+            }
         }
         this.numhits = 0;
 
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add(FieldNames.UUID);
         this.fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet<String>());
-        if(hitsRequested.isResultRequested()) {
+        if (hitsRequested.isResultRequested()) {
             this.hits = new HashSet<NodeId>();
             this.offset = hitsRequested.getOffset();
             this.limit = hitsRequested.getLimit();
@@ -70,40 +70,41 @@ public class FacetResultCollector extends HitCollector {
 
         this.facetMap = facetMap;
     }
+
     public final void collect(final int docid, final float score) {
         try {
-            if(hits != null) {
-                if(offset == 0 && hits.size() < limit ) {
-                    Document d = reader.document(docid,fieldSelector);
+            if (hits != null) {
+                if (offset == 0 && hits.size() < limit) {
+                    Document d = reader.document(docid, fieldSelector);
                     Field uuidField = d.getField(FieldNames.UUID);
-                    if(uuidField != null) {
+                    if (uuidField != null) {
                         hits.add(NodeId.valueOf(uuidField.stringValue()));
                     }
-                } else if (offset > 0){
+                } else if (offset > 0) {
                     // decrement offset untill it is 0. Then start gathering results above
                     offset--;
                 }
             }
-             if(facetMap != null){
-                 final TermFreqVector tfv = reader.getTermFreqVector(docid, internalName);
-                 if(tfv != null) {
-                     for(int i=0; i<tfv.getTermFrequencies().length; i++) {
-                         Count count = facetMap.get(tfv.getTerms()[i]);
-                         if(count == null) {
-                             facetMap.put(tfv.getTerms()[i], new Count(1));
-                         } else {
-                             count.count += 1;
-                          }
-                     }
-                 }
-             } else {
-                 /*
-                  * only without facetMap the numHits are correct directly. With a non-null
-                  * facet map, a seperate query is needed to get the correct count
-                  */
-                 ++numhits;
-             }
-        } catch(Exception ex) {
+            if (facetMap != null) {
+                final TermFreqVector tfv = reader.getTermFreqVector(docid, internalName);
+                if (tfv != null) {
+                    for (int i = 0; i < tfv.getTermFrequencies().length; i++) {
+                        Count count = facetMap.get(tfv.getTerms()[i]);
+                        if (count == null) {
+                            facetMap.put(tfv.getTerms()[i], new Count(1));
+                        } else {
+                            count.count += 1;
+                        }
+                    }
+                }
+            } else {
+                /*
+                 * only without facetMap the numHits are correct directly. With a non-null
+                 * facet map, a seperate query is needed to get the correct count
+                 */
+                ++numhits;
+            }
+        } catch (Exception ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
         }
@@ -119,7 +120,5 @@ public class FacetResultCollector extends HitCollector {
 
     public void setNumhits(int numhits) {
         this.numhits = numhits;
-}
-
-
+    }
 }

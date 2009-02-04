@@ -24,7 +24,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.TermPositions;
 
-public class AuthorizedOnlyIndexReader extends FilterIndexReader{
+public class AuthorizedOnlyIndexReader extends FilterIndexReader {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -39,6 +39,7 @@ public class AuthorizedOnlyIndexReader extends FilterIndexReader{
         this.authorized = authorized;
     }
 
+    @Override
     public TermDocs termDocs(Term term) throws IOException {
         // do not wrap for empty TermDocs
         TermDocs td = in.termDocs(term);
@@ -46,22 +47,22 @@ public class AuthorizedOnlyIndexReader extends FilterIndexReader{
         return td;
     }
 
-
+    @Override
     public TermDocs termDocs() throws IOException {
         return new AuthorizedTermDocs(super.termDocs());
     }
 
+    @Override
     public TermPositions termPositions() throws IOException {
         return new AuthorizedTermPositions(super.termPositions());
     }
 
-
     private class AuthorizedTermDocs extends FilterTermDocs {
-
         public AuthorizedTermDocs(TermDocs in) {
             super(in);
         }
 
+        @Override
         public boolean next() throws IOException {
             boolean hasNext = super.next();
             while (hasNext && !authorized.get(super.doc())) {
@@ -70,6 +71,7 @@ public class AuthorizedOnlyIndexReader extends FilterIndexReader{
             return hasNext;
         }
 
+        @Override
         public boolean skipTo(int i) throws IOException {
             boolean exists = super.skipTo(i);
             while (exists && !authorized.get(doc())) {
@@ -79,14 +81,12 @@ public class AuthorizedOnlyIndexReader extends FilterIndexReader{
         }
     }
 
-  //---------------------< FilteredTermPositions >----------------------------
-
+    //---------------------< FilteredTermPositions >----------------------------
     /**
      * Filters a wrapped TermPositions by omitting documents marked as deleted.
      */
     private final class AuthorizedTermPositions extends AuthorizedTermDocs
             implements TermPositions {
-
 
         public AuthorizedTermPositions(TermPositions in) {
             super(in);
@@ -107,7 +107,5 @@ public class AuthorizedOnlyIndexReader extends FilterIndexReader{
         public boolean isPayloadAvailable() {
             return ((TermPositions) in).isPayloadAvailable();
         }
-
     }
-
 }

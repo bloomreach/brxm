@@ -25,15 +25,14 @@ public class ServicingNameFormat {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private ServicingNameFormat(){
+    private ServicingNameFormat() {
         // private constructor: only static methods
     }
 
     public static String getInternalFacetName(Name nodeName, NamespaceMappings nsMappings) throws IllegalNameException {
         String internalName = nsMappings.translatePropertyName(nodeName);
         int idx = internalName.indexOf(':');
-        internalName = internalName.substring(0, idx + 1)
-                + ServicingFieldNames.HIPPO_FACET + internalName.substring(idx + 1);
+        internalName = internalName.substring(0,idx+1) + ServicingFieldNames.HIPPO_FACET + internalName.substring(idx+1);
         return internalName;
     }
 
@@ -41,10 +40,7 @@ public class ServicingNameFormat {
 
         String internalName = facet;
         int idx = internalName.indexOf(':');
-        internalName = internalName.substring(0, idx + 1)
-                + ServicingFieldNames.HIPPO_FACET + internalName.substring(idx + 1);
+        internalName = internalName.substring(0,idx+1) + ServicingFieldNames.HIPPO_FACET + internalName.substring(idx+1);
         return internalName;
     }
-
-
 }

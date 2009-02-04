@@ -20,7 +20,7 @@ import java.util.Set;
 import org.apache.jackrabbit.core.query.lucene.IndexingConfiguration;
 import org.apache.jackrabbit.spi.Name;
 
-public interface ServicingIndexingConfiguration extends IndexingConfiguration{
+public interface ServicingIndexingConfiguration extends IndexingConfiguration {
     final static String SVN_ID = "$Id$";
 
     /**
@@ -38,7 +38,6 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration{
      *
      * @return all the QName's of the child nodes that must be aggregated
      */
-
     Name[] getHippoAggregates();
 
     /**
@@ -49,14 +48,12 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration{
      *         otherwise.
      */
     boolean isHippoPath(Name propertyName);
-    
 
     /**
      * Returns the set of all nodescope exluded property names
      *
      */
     public Set<Name> getExcludedFromNodeScope();
-    
 
     /**
      * Returns the set of all properties which should not be indexed as a single term

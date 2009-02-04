@@ -27,7 +27,7 @@ import org.hippoecm.repository.query.lucene.caching.CachedQueryBitSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FacetsQueryFilter extends Filter{
+public class FacetsQueryFilter extends Filter {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -37,7 +37,7 @@ public class FacetsQueryFilter extends Filter{
     private static final long serialVersionUID = 1L;
     private BitSet bits;
 
-    public FacetsQueryFilter(BitSet authorized){
+    public FacetsQueryFilter(BitSet authorized) {
         this.bits = authorized;
     }
 
@@ -50,5 +50,4 @@ public class FacetsQueryFilter extends Filter{
     public BitSet bits(IndexReader in) throws IOException {
         return this.bits;
     }
-
 }
