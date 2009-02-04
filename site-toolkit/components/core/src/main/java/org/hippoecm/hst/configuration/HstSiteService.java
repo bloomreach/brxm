@@ -6,7 +6,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.components.HstComponents;
 import org.hippoecm.hst.configuration.components.HstComponentsService;
-import org.hippoecm.hst.configuration.sitemap.JCRSiteMapService;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
@@ -60,7 +60,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite{
        }
        
        Node siteMapNode = getValueProvider().getJcrNode().getNode(Configuration.NODEPATH_HST_SITEMAP);
-       this.siteMapService = new JCRSiteMapService(siteMapNode, componentsService);
+       this.siteMapService = new HstSiteMapService(siteMapNode, componentsService);
        
        if(log.isDebugEnabled()){
            StringBuffer buf = new StringBuffer();

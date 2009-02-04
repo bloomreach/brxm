@@ -7,14 +7,14 @@ import org.hippoecm.hst.service.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JCRMatchingSiteMapItemService extends AbstractJCRService implements HstMatchingSiteMapItem{
+public class HstMatchingSiteMapItemService extends AbstractJCRService implements HstMatchingSiteMapItem{
 
     private static final Logger log = LoggerFactory.getLogger(HstMatchingSiteMapItem.class);
     
     private HstSiteMapItem delegatee;
     private String urlResidue;
     
-    public JCRMatchingSiteMapItemService(HstSiteMapItem siteMapItemService, String urlResidue) {
+    public HstMatchingSiteMapItemService(HstSiteMapItem siteMapItemService, String urlResidue) {
         // we do not have a jcr node anymore at this point
         super(null);
         this.delegatee = siteMapItemService;

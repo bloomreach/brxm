@@ -9,7 +9,7 @@ import org.hippoecm.hst.configuration.Configuration;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.slf4j.LoggerFactory;
 
-public class JCRComponentService extends AbstractJCRService implements AugmentableHstComponent{
+public class HstComponentService extends AbstractJCRService implements AugmentableHstComponent{
     
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponent.class);
     
@@ -40,7 +40,7 @@ public class JCRComponentService extends AbstractJCRService implements Augmentab
     
     private HstComponents components;
     
-    public JCRComponentService(HstComponents components,Node jcrNode) {
+    public HstComponentService(HstComponents components,Node jcrNode) {
         super(jcrNode);
         this.name = getValueProvider().getName();
         this.components = components;
@@ -89,7 +89,6 @@ public class JCRComponentService extends AbstractJCRService implements Augmentab
         return this.getChildComponents();
     }
 
-
     
     public String getComponentClassName(){
         return this.componentClassName;
@@ -116,4 +115,9 @@ public class JCRComponentService extends AbstractJCRService implements Augmentab
         return this.name;
     }
 
+
+    public void dump(StringBuffer buf, String indent) {
+        buf.append(indent + getComponentClassName());
+    }
+    
 }

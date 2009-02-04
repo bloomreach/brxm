@@ -13,7 +13,7 @@ import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
 
-public class JCRSiteMapService extends AbstractJCRService implements HstSiteMap{
+public class HstSiteMapService extends AbstractJCRService implements HstSiteMap{
     
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstSiteMap.class);
     
@@ -23,14 +23,14 @@ public class JCRSiteMapService extends AbstractJCRService implements HstSiteMap{
     
     private HstSiteMapItem rootSiteMapItemService; 
     
-    public JCRSiteMapService(Node siteMapNode, HstComponents pageMappingService) throws RepositoryException, ServiceException {
+    public HstSiteMapService(Node siteMapNode, HstComponents pageMappingService) throws RepositoryException, ServiceException {
         super(siteMapNode);
         this.pageMappingService = pageMappingService;
         if(!siteMapNode.isNodeType(Configuration.NODETYPE_HST_SITEMAP)) {
             throw new ServiceException("Cannot create SitemapServiceImpl: Expected nodeType '"+Configuration.NODETYPE_HST_SITEMAP+"' but was '"+siteMapNode.getPrimaryNodeType().getName()+"'");
         }
-        rootSiteMapItemService = new JCRSiteMapItemService(siteMapNode,null);
-        populate(siteMapNode, (JCRSiteMapItemService)rootSiteMapItemService);
+        rootSiteMapItemService = new HstSiteMapItemService(siteMapNode,null);
+        populate(siteMapNode, (HstSiteMapItemService)rootSiteMapItemService);
         
     }
 
@@ -39,7 +39,7 @@ public class JCRSiteMapService extends AbstractJCRService implements HstSiteMap{
         return rootSiteMapItemService.getChildServices();
     }
 
-    private void populate(Node siteMapNode, JCRSiteMapItemService parentSiteMapItemService) throws RepositoryException {
+    private void populate(Node siteMapNode, HstSiteMapItemService parentSiteMapItemService) throws RepositoryException {
         for(NodeIterator nodeIt = siteMapNode.getNodes(); nodeIt.hasNext();) {
             Node child = nodeIt.nextNode();
             if(child == null) {
@@ -47,7 +47,7 @@ public class JCRSiteMapService extends AbstractJCRService implements HstSiteMap{
                 continue;
             }
             if(child.isNodeType(Configuration.NODETYPE_HST_SITEMAPITEM)) {
-                JCRSiteMapItemService siteMapItemService = new JCRSiteMapItemService(child,parentSiteMapItemService);
+                HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child,parentSiteMapItemService);
                 String componentLocation = siteMapItemService.getComponentLocation();
                 if(componentLocation != null) {
                     HstComponent componentService = pageMappingService.getComponent(componentLocation);
@@ -90,7 +90,7 @@ public class JCRSiteMapService extends AbstractJCRService implements HstSiteMap{
             log.error("Impossible found SiteMapItemService as its url does not start with the url to match. Return null");
             return null;
         }
-        return new JCRMatchingSiteMapItemService(currentSiteMapItemService,url.substring(siteMapItemUrl.length()) );
+        return new HstMatchingSiteMapItemService(currentSiteMapItemService,url.substring(siteMapItemUrl.length()) );
     }
     
     

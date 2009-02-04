@@ -28,7 +28,7 @@ public class HstComponentsService  extends AbstractJCRService  implements HstCom
         super(componentsNode);
         this.componentsNodePath = componentsNode.getPath();
         this.componentServices = new HashMap<String, HstComponent>();
-        JCRComponentService rootComponentService = new JCRComponentRootService(this,componentsNode);
+        HstComponentService rootComponentService = new HstComponentRootService(this,componentsNode);
         populate(componentsNode, rootComponentService);
     }
      
@@ -59,7 +59,7 @@ public class HstComponentsService  extends AbstractJCRService  implements HstCom
                         continue;
                     }
                     
-                    componentService = new JCRComponentService(this, child);
+                    componentService = new HstComponentService(this, child);
                     /*
                      * put the component service with the key as a relative path of the component wrt the hst:pagemappings node
                      * The childPath will always be longer then the ancestors pageMappingNodePath
@@ -90,7 +90,7 @@ public class HstComponentsService  extends AbstractJCRService  implements HstCom
     
     public void dump(StringBuffer buf, String indent) {
         
-        buf.append("\n\n------ PageMappingService ------ \n\n");
+        buf.append("\n\n------ HstComponentsService ------ \n\n");
         buf.append(this.toString()  + "\n");
         for(Iterator<Entry<String, HstComponent>> entries = componentServices.entrySet().iterator(); entries.hasNext();) {
             Entry<String, HstComponent> entry = entries.next();
@@ -99,7 +99,7 @@ public class HstComponentsService  extends AbstractJCRService  implements HstCom
             appendChildComponents(entry.getValue(), buf, "\n\t\t\t");
         }
         
-        buf.append("\n\n------ End PageMappingService ------");
+        buf.append("\n\n------ End HstComponentsService ------");
     }
 
 

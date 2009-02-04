@@ -13,7 +13,7 @@ import org.hippoecm.hst.service.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JCRSiteMapItemService extends AbstractJCRService implements HstSiteMapItem{
+public class HstSiteMapItemService extends AbstractJCRService implements HstSiteMapItem{
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItem.class);
     
@@ -26,7 +26,7 @@ public class JCRSiteMapItemService extends AbstractJCRService implements HstSite
     private String componentLocation;
     private boolean repositoryBased;
    
-    public JCRSiteMapItemService(Node jcrNode, HstSiteMapItem parentSiteMapItemService) {
+    public HstSiteMapItemService(Node jcrNode, HstSiteMapItem parentSiteMapItemService) {
         super(jcrNode);
         childSiteMapItemServices = new HashMap<String, HstSiteMapItem>();
         this.parentSiteMapItemService = parentSiteMapItemService;
