@@ -17,9 +17,6 @@ package org.hippoecm.hst.core.filters;
 
 import java.io.IOException;
 
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.RequestDispatcher;
@@ -32,8 +29,8 @@ import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.filters.base.HstBaseFilter;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.HstRequestContextImpl;
 import org.hippoecm.hst.core.template.node.PageNode;
+import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

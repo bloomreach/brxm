@@ -20,7 +20,7 @@ import org.hippoecm.hst.core.mapping.URLMappingException;
 import org.hippoecm.hst.core.mapping.URLMappingManager;
 import org.hippoecm.hst.core.mapping.URLMappingManagerImpl;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.HstRequestContextImpl;
+import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
