@@ -4,13 +4,8 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
-<<<<<<< .mine
-import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
-import org.hippoecm.hst.configuration.components.HstComponentsService;
-=======
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
->>>>>>> .r16280
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.service.AbstractJCRService;
