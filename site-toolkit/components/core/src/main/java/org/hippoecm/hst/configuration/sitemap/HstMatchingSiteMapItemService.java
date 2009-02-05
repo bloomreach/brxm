@@ -1,6 +1,6 @@
 package org.hippoecm.hst.configuration.sitemap;
 
-import org.hippoecm.hst.configuration.components.HstComponent;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.mapping.UrlUtilities;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
@@ -33,7 +33,7 @@ public class HstMatchingSiteMapItemService extends AbstractJCRService implements
         return delegatee.getComponentLocation();
     }
 
-    public HstComponent getComponentService() {
+    public HstComponentConfiguration getComponentService() {
         return delegatee.getComponentService();
     }
 

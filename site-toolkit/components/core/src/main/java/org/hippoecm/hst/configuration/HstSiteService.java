@@ -4,8 +4,8 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.components.HstComponents;
-import org.hippoecm.hst.configuration.components.HstComponentsService;
+import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.service.AbstractJCRService;
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 public class HstSiteService extends AbstractJCRService implements HstSite{
 
     private HstSiteMap siteMapService;
-    private HstComponents componentsService;
+    private HstComponentsConfiguration componentsService;
     private String name;
     private String contentPath;
     
@@ -51,7 +51,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite{
     
     private void init() throws PathNotFoundException, RepositoryException, ServiceException {
        Node componentsNode = getValueProvider().getJcrNode().getNode(Configuration.NODEPATH_HST_PAGEMAPPING); 
-       this.componentsService = new HstComponentsService(componentsNode); 
+       this.componentsService = new HstComponentsConfigurationService(componentsNode); 
        
        if(log.isDebugEnabled()){
            StringBuffer buf = new StringBuffer();
@@ -69,7 +69,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite{
        }
     }
 
-    public HstComponents getComponents() {
+    public HstComponentsConfiguration getComponents() {
         return this.componentsService;
     }
 

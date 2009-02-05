@@ -5,8 +5,8 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.Configuration;
-import org.hippoecm.hst.configuration.components.HstComponent;
-import org.hippoecm.hst.configuration.components.HstComponents;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.core.mapping.UrlUtilities;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
@@ -19,11 +19,11 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap{
     
     private DataSourceTree dataSourceTree;
     
-    private HstComponents pageMappingService;
+    private HstComponentsConfiguration pageMappingService;
     
     private HstSiteMapItem rootSiteMapItemService; 
     
-    public HstSiteMapService(Node siteMapNode, HstComponents pageMappingService) throws RepositoryException, ServiceException {
+    public HstSiteMapService(Node siteMapNode, HstComponentsConfiguration pageMappingService) throws RepositoryException, ServiceException {
         super(siteMapNode);
         this.pageMappingService = pageMappingService;
         if(!siteMapNode.isNodeType(Configuration.NODETYPE_HST_SITEMAP)) {
@@ -50,7 +50,7 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap{
                 HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child,parentSiteMapItemService);
                 String componentLocation = siteMapItemService.getComponentLocation();
                 if(componentLocation != null) {
-                    HstComponent componentService = pageMappingService.getComponent(componentLocation);
+                    HstComponentConfiguration componentService = pageMappingService.getComponent(componentLocation);
                     if(componentService != null) {
                         log.debug("Adding componentService for component location '{}'", componentLocation);
                         siteMapItemService.setComponentService(componentService);

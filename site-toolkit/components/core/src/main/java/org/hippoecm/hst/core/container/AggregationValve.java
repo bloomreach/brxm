@@ -1,6 +1,6 @@
 package org.hippoecm.hst.core.container;
 
-import org.hippoecm.hst.configuration.components.HstComponent;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstRequestProcessor;
@@ -16,7 +16,7 @@ public class AggregationValve extends AbstractValve {
     @Override
     public void invoke(HstRequestContext request, ValveContext context) throws Exception {
 
-        HstComponent root = null;
+        HstComponentConfiguration root = null;
         //Page page = request.getPage();
         //root = page.getRootComponent();
         
@@ -28,11 +28,11 @@ public class AggregationValve extends AbstractValve {
         context.invokeNext(request);
     }
 
-    protected void aggregateAndRender(HstRequestContext context, HstComponent component) throws Exception {
-        HstComponent [] childComponents = (HstComponent []) component.getChildServices();
+    protected void aggregateAndRender(HstRequestContext context, HstComponentConfiguration component) throws Exception {
+        HstComponentConfiguration [] childComponents = (HstComponentConfiguration []) component.getChildServices();
 
         if (childComponents != null) {
-            for (HstComponent child : childComponents)
+            for (HstComponentConfiguration child : childComponents)
             {
                 aggregateAndRender(context, child);
             }

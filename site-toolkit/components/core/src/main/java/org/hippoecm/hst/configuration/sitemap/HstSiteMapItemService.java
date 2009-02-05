@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.Configuration;
-import org.hippoecm.hst.configuration.components.HstComponent;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.slf4j.Logger;
@@ -17,7 +17,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItem.class);
     
-    private HstComponent componentService;
+    private HstComponentConfiguration componentService;
     private HstSiteMapItem parentSiteMapItemService;
     private Map<String, HstSiteMapItem> childSiteMapItemServices;
     private String dataSource;
@@ -60,7 +60,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         return componentLocation;
     }
 
-    public HstComponent getComponentService() {
+    public HstComponentConfiguration getComponentService() {
         return this.componentService;
     }
 
@@ -84,7 +84,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         return this.repositoryBased;
     }
 
-    public void setComponentService(HstComponent componentService) {
+    public void setComponentService(HstComponentConfiguration componentService) {
         this.componentService = componentService;
     }
    

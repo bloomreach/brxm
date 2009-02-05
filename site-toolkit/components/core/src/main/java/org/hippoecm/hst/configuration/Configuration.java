@@ -9,7 +9,7 @@ public class Configuration {
 
     public final static String PROPERTYNAME_COMPONENT_CLASSNAME = "hst:classname";
     public final static String PROPERTYNAME_COMPONENTS = "hst:components";
-    public final static String PROPERTYNAME_JSP = "hst:jsp";
+    public final static String PROPERTYNAME_RENDER_PATH = "hst:renderpath";
     public final static String PROPERTYNAME_NAMESPACE = "hst:namespace";
     public final static String PROPERTYNAME_COMPONENTSOURCE = "hst:componentsource";
     public final static String PROPERTYNAME_COMPONENTLOCATION = "hst:componentlocation";

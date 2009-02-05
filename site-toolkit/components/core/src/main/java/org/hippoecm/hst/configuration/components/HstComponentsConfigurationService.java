@@ -10,26 +10,29 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.Configuration;
-import org.hippoecm.hst.configuration.components.AugmentableHstComponent;
-import org.hippoecm.hst.configuration.components.HstComponent;
-import org.hippoecm.hst.configuration.components.HstComponents;
+import org.hippoecm.hst.configuration.components.AugmentableHstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.slf4j.LoggerFactory;
 
-public class HstComponentsService  extends AbstractJCRService  implements HstComponents{
+public class HstComponentsConfigurationService  extends AbstractJCRService  implements HstComponentsConfiguration{
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponents.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentsConfiguration.class);
     
-    private Map<String, HstComponent> componentServices;
+    private Map<String, HstComponentConfiguration> componentServices;
     private String componentsNodePath;
     
-    public HstComponentsService(Node componentsNode) throws RepositoryException {
+    public HstComponentsConfigurationService(Node componentsNode) throws RepositoryException {
         super(componentsNode);
         this.componentsNodePath = componentsNode.getPath();
-        this.componentServices = new HashMap<String, HstComponent>();
-        HstComponentService rootComponentService = new HstComponentRootService(this,componentsNode);
-        populate(componentsNode, rootComponentService);
+        this.componentServices = new HashMap<String, HstComponentConfiguration>();
+        HstComponentConfigurationService rootComponentService = new HstComponentConfigurationRootService(this,componentsNode);
+        init(componentsNode, rootComponentService);
+        
+        // during populate, resolve all referenced components, and possibly indicated circular deps?
+        // populate(rootComponentService);
     }
      
     public Service[] getChildServices() {
@@ -37,11 +40,11 @@ public class HstComponentsService  extends AbstractJCRService  implements HstCom
     }
 
     
-    public HstComponent getComponent(String path) {
+    public HstComponentConfiguration getComponent(String path) {
         return this.componentServices.get(path);
     }
     
-    private void populate(Node node, AugmentableHstComponent parentComponent) throws RepositoryException {
+    private void init(Node node, AugmentableHstComponentConfiguration parentComponent) throws RepositoryException {
         
         for(NodeIterator nodeIt = node.getNodes(); nodeIt.hasNext();) {
             Node child = nodeIt.nextNode();
@@ -49,9 +52,9 @@ public class HstComponentsService  extends AbstractJCRService  implements HstCom
                 log.warn("skipping null node");
                 continue;
             }
-            AugmentableHstComponent componentService = null;
+            AugmentableHstComponentConfiguration componentService = null;
             if(child.isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
-                if(child.hasProperty(Configuration.PROPERTYNAME_COMPONENT_CLASSNAME) && child.hasProperty(Configuration.PROPERTYNAME_JSP)) {
+                if(child.hasProperty(Configuration.PROPERTYNAME_COMPONENT_CLASSNAME) && child.hasProperty(Configuration.PROPERTYNAME_RENDER_PATH)) {
                     String childPath = child.getPath();
                     String clazz = child.getProperty(Configuration.PROPERTYNAME_COMPONENT_CLASSNAME).getString();
                     if("".equals(clazz)) {
@@ -59,7 +62,7 @@ public class HstComponentsService  extends AbstractJCRService  implements HstCom
                         continue;
                     }
                     
-                    componentService = new HstComponentService(this, child);
+                    componentService = new HstComponentConfigurationService(this, parentComponent, child);
                     /*
                      * put the component service with the key as a relative path of the component wrt the hst:pagemappings node
                      * The childPath will always be longer then the ancestors pageMappingNodePath
@@ -73,7 +76,7 @@ public class HstComponentsService  extends AbstractJCRService  implements HstCom
                     }
 
                 } else {
-                    log.debug("Skipping '{}' hst:component because it does not contain the mandatory properties '"+Configuration.PROPERTYNAME_COMPONENT_CLASSNAME+"' and '"+Configuration.PROPERTYNAME_JSP+"'.", child.getPath());
+                    log.debug("Skipping '{}' hst:component because it does not contain the mandatory properties '"+Configuration.PROPERTYNAME_COMPONENT_CLASSNAME+"' and '"+Configuration.PROPERTYNAME_RENDER_PATH+"'.", child.getPath());
                 }
             } else {
                 log.warn("Skipping node '{}' because is not of type {}", child.getPath(), Configuration.NODETYPE_HST_COMPONENT);
@@ -82,7 +85,7 @@ public class HstComponentsService  extends AbstractJCRService  implements HstCom
             /*
              * Populate hierarchical child components
              */
-            populate(child, componentService);
+            init(child, componentService);
             
         }
     }
@@ -92,8 +95,8 @@ public class HstComponentsService  extends AbstractJCRService  implements HstCom
         
         buf.append("\n\n------ HstComponentsService ------ \n\n");
         buf.append(this.toString()  + "\n");
-        for(Iterator<Entry<String, HstComponent>> entries = componentServices.entrySet().iterator(); entries.hasNext();) {
-            Entry<String, HstComponent> entry = entries.next();
+        for(Iterator<Entry<String, HstComponentConfiguration>> entries = componentServices.entrySet().iterator(); entries.hasNext();) {
+            Entry<String, HstComponentConfiguration> entry = entries.next();
             buf.append("\n\tComponent: '" + entry.getKey() +"'");
             buf.append("\n\t\t"+entry.getValue().getComponentClassName());
             appendChildComponents(entry.getValue(), buf, "\n\t\t\t");
