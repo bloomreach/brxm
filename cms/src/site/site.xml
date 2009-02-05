@@ -70,6 +70,7 @@
 
     <menu name="Hippo CMS Support">
       <item name="Commercial support" href="http://www.onehippo.com/en/support"/>
+      <item name="Public Forums" href="/support/forums.html"/>
       <item name="Community support" href="/support/community.html"/>
       <item name="Contributing" href="/support/contributing.html"/>
     </menu>
