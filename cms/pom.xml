@@ -136,15 +136,6 @@
     </snapshotRepository>
   </distributionManagement>
 
-  <!-- 
-   Contineous integration managament.
-   Used in the documentation at target/site/integration.html
-  -->
-  <ciManagement>
-    <system>Bamboo</system>
-    <url>http://bamboo-intern.hippocms.org/</url>
-  </ciManagement>
-
   <!-- Where issues (bugs reports and improvement requests) are handled. 
        Used in the documentation at target/site/issue-tracking.html 
   -->
