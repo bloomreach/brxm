@@ -1,6 +1,6 @@
-<sv:node sv:name="hst:pagemappings" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="hst:components" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:pagemappings</sv:value>
+        <sv:value>hst:components</sv:value>
     </sv:property>
     <sv:node sv:name="pages">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -10,7 +10,7 @@
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:component</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:jsp" sv:type="String">
+            <sv:property sv:name="hst:renderpath" sv:type="String">
                 <sv:value>newspage.jsp</sv:value>
             </sv:property>
             <sv:property sv:name="hst:classname" sv:type="String">
@@ -35,7 +35,7 @@
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:component</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:jsp" sv:type="String">
+            <sv:property sv:name="hst:renderpath" sv:type="String">
                 <sv:value>header.jsp</sv:value>
             </sv:property>
             <sv:property sv:name="hst:classname" sv:type="String">
@@ -48,7 +48,7 @@
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:component</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:jsp" sv:type="String">
+                <sv:property sv:name="hst:renderpath" sv:type="String">
                     <sv:value>title.jsp</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:classname" sv:type="String">
@@ -64,7 +64,7 @@
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:component</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:jsp" sv:type="String">
+            <sv:property sv:name="hst:renderpath" sv:type="String">
                 <sv:value>navigation.jsp</sv:value>
             </sv:property>
             <sv:property sv:name="hst:classname" sv:type="String">
@@ -79,7 +79,7 @@
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:component</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:jsp" sv:type="String">
+            <sv:property sv:name="hst:renderpath" sv:type="String">
                 <sv:value>archive.jsp</sv:value>
             </sv:property>
             <sv:property sv:name="hst:classname" sv:type="String">
@@ -92,7 +92,7 @@
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:component</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:jsp" sv:type="String">
+                <sv:property sv:name="hst:renderpath" sv:type="String">
                     <sv:value>paging.jsp</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:classname" sv:type="String">
