@@ -19,7 +19,7 @@
 <hippo='http://www.hippoecm.org/nt/1.2'>
 
 [hst:component]
-- hst:jsp
+- hst:renderpath
 - hst:classname
 - hst:namespace
 - hst:componentsource
@@ -27,7 +27,7 @@
 + * (hst:component)
 + * (hippo:facetselect)
 
-[hst:pagemappings] 
+[hst:components] 
 + * (hst:component)
 
 [hst:sitemapitem]
@@ -43,7 +43,7 @@
 
 
 [hst:configuration] > hippo:document, hippostd:publishable, hippostd:publishableSummary, hippostd:languageable
-+ hst:pagemappings (hst:pagemappings) = hst:pagemappings 
++ hst:components (hst:components) = hst:components 
 + hst:sitemap (hst:sitemap) = hst:sitemap  
 
 
@@ -54,6 +54,13 @@
 + * (hst:domainmapping)
 + * (hst:redirectmapping)
 - hst:repositorypath (string) multiple 
+
+[hst:site]
++ hst:content (hippo:facetselect) mandatory
++ hst:configuration (hippo:facetselect) mandatory
+
+[hst:sites]
++ * (hst:site) = hst:site
 
 [hst:primarydomain] mixin
 
