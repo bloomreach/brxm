@@ -259,10 +259,10 @@
 
   <mailingLists>
    <mailingList>
-    <name>Hippo cms7 User List</name>
+    <name>Hippo CMS 7 User Forums</name>
     <subscribe>hippo-cms7-user-join@lists.onehippo.org</subscribe>
     <unsubscribe>hippo-cms7-user-leave@lists.onehippo.org</unsubscribe>
-    <post>hippo-cms7-user@lists.onehippo.org</post>
+    <!--<post>hippo-cms7-user@lists.onehippo.org</post>-->
     <archive>http://lists.onehippo.org/pipermail/hippo-cms7-user/</archive>
    </mailingList>
    <mailingList>
