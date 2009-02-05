@@ -1,6 +1,8 @@
 package org.hippoecm.hst.core.component;
 
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import java.util.Map;
+
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
  * A HstComponent can be invoked by a HstComponent container
@@ -8,15 +10,17 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
  */
 public interface HstComponent {
 
-    void init(HstComponentConfiguration config);
+    void init(Map<String, Object> properties);
     
-    void beforeRender(HstRequest request, HstResponse response);
+    void doBeforeRender(HstRequestContext requestContext, HstRequest request, HstResponse response);
     
-    void doRender(HstRequest request, HstResponse response);
+    void doRender(HstRequestContext requestContext, HstRequest request, HstResponse response);
     
-    void doAction(HstRequest request, HstResponse response);
+    void doAction(HstRequestContext requestContext, HstRequest request, HstResponse response);
     
-    void doServingResource(HstRequest request, HstResponse response);
+    void doBeforeServeResource(HstRequestContext requestContext, HstRequest request, HstResponse response);
+    
+    void doServeResource(HstRequestContext requestContext, HstRequest request, HstResponse response);
     
     void destroy();
     

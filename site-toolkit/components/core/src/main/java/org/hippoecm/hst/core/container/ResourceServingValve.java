@@ -5,32 +5,27 @@ import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstRequestProcessor;
 
-public class ActionValve extends AbstractValve
-{
+public class ResourceServingValve extends AbstractValve {
     
     protected HstRequestProcessor requestProcessor;
-
-    public ActionValve(HstRequestProcessor requestProcessor) {
+    
+    public ResourceServingValve(HstRequestProcessor requestProcessor) {
         this.requestProcessor = requestProcessor;
     }
     
     @Override
-    public void invoke(HstRequestContext request, ValveContext context) throws Exception
-    {
-        if (isActionRequest()) {
+    public void invoke(HstRequestContext request, ValveContext context) throws Exception {
+
+        if (isResourceRequest()) {
             HstComponentConfiguration target = null;
             
             if (target != null) {
-                this.requestProcessor.processAction(request, target);
-                sendRedirectNavigation(request);
+                this.requestProcessor.processBeforeServeResource(request, target);
+                this.requestProcessor.processServeResource(request, target);
             }
         }
         
         // continue
         context.invokeNext(request);
-    }
-    
-    protected void sendRedirectNavigation(HstRequestContext request) {
-        
     }
 }

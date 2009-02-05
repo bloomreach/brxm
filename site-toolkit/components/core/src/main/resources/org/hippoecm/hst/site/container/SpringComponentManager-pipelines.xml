@@ -19,18 +19,28 @@
 
   <!-- Valves -->
   
-  <bean id="initializationValve" class="org.hippoecm.hst.core.container.InitializationValve">
-    <property name="resourceLifecycleManagements">
+  <bean id="resourceLifecycleManagementList" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
       <list>
-        <ref bean="org.hippoecm.hst.core.jcr.pool.PoolingRepository.pooledSessionLifecycleManagement" />
+        <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+          <property name="targetBeanName" value="org.hippoecm.hst.core.jcr.pool.PoolingRepository" />
+          <property name="propertyPath" value="pooledSessionLifecycleManagement" />
+        </bean>
       </list>
     </property>
+  </bean>
+  
+  <bean id="initializationValve" class="org.hippoecm.hst.core.container.InitializationValve">
+    <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
   </bean>
     
   <bean id="contextResolvingValve" class="org.hippoecm.hst.core.container.ContextResolvingValve">
   </bean>
   
   <bean id="actionValve" class="org.hippoecm.hst.core.container.ActionValve">
+    <constructor-arg>
+      <ref bean="org.hippoecm.hst.core.request.HstRequestProcessor" />
+    </constructor-arg>
   </bean>
   
   <bean id="aggregationValve" class="org.hippoecm.hst.core.container.AggregationValve">
@@ -39,12 +49,14 @@
     </constructor-arg>
   </bean>
   
+  <bean id="resourceServingValve" class="org.hippoecm.hst.core.container.ResourceServingValve">
+    <constructor-arg>
+      <ref bean="org.hippoecm.hst.core.request.HstRequestProcessor" />
+    </constructor-arg>
+  </bean>
+  
   <bean id="cleanupValve" class="org.hippoecm.hst.core.container.CleanupValve">
-    <property name="resourceLifecycleManagements">
-      <list>
-        <ref bean="org.hippoecm.hst.core.jcr.pool.PoolingRepository.pooledSessionLifecycleManagement" />
-      </list>
-    </property>
+    <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
   </bean>
   
   <!-- Pipelines -->
@@ -59,6 +71,7 @@
               <ref bean="initializationValve" />
               <ref bean="contextResolvingValve" />
               <ref bean="actionValve" />
+              <ref bean="resourceServingValve" />
               <ref bean="aggregationValve" />
               <ref bean="cleanupValve" />
             </list>
