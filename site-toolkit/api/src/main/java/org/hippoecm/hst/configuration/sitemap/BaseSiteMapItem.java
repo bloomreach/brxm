@@ -1,7 +1,7 @@
 package org.hippoecm.hst.configuration.sitemap;
 
 
-import org.hippoecm.hst.configuration.components.HstComponent;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.service.Service;
 
 public interface BaseSiteMapItem extends Service{
@@ -36,5 +36,5 @@ public interface BaseSiteMapItem extends Service{
     
     public SiteMapItem getParent();
 
-    public HstComponent getComponentService();
+    public HstComponentConfiguration getComponentService();
 }
