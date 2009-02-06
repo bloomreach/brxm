@@ -36,16 +36,13 @@ public class AggregationValve extends AbstractValve {
     }
 
     protected void aggregateAndProcessBeforeRender(HstRequestContext context, HstComponentConfiguration component) throws Exception {
-        HstComponentConfiguration [] children = null;
+        
+        for(Iterator<HstComponentConfiguration> it = component.getChildren().iterator(); it.hasNext();) {
+            aggregateAndProcessBeforeRender(context, it.next());
+        }
         
         this.requestProcessor.processBeforeRender(context, component);
 
-        if (children != null) {
-            for (HstComponentConfiguration child : children)
-            {
-                aggregateAndProcessRender(context, child);
-            }
-        }
     }
     
     protected void aggregateAndProcessRender(HstRequestContext context, HstComponentConfiguration component) throws Exception {
