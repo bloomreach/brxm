@@ -26,7 +26,7 @@
 
        <span class='shortdesc'>Get support from the Hippo community</span>
 
- <subsection name='Community Support Tools'> 
+ <subsection name='Community Support Tools'>
 	<div class='nav'>
 	 <table>
 <!--	  <tr>
@@ -59,26 +59,54 @@
 	  <tr>
 	   <td>Public Forums</td>
 	   <td>
-	     <span class='mail-48 icon-48'/> 
+	     <span class='multiuser-48 icon-48'/>
+             <span class='rewrite'>add forum icon</span>
 	   </td>
 	   <td>
-		 <a href="forums.html">Hippo CMS 7 Public Forums</a>: Get answers to your questions from
-		  users and Hippo developers.  
-		 <br/>
-		  Allow for a few hours or days to receive answers. Allthough many questions
-		  are answered on the forums, no guarantees can be given. 
+            <a href="./forums.html">Hippo CMS 7 Public Forums</a>: Get answers to your questions from
+	    users and Hippo developers.
+	    <br/>
+	    Allow for a few hours or days to receive answers. Allthough many questions
+	    are answered on the forums, no guarantees can be given.
 	   </td>
 	  </tr>
 	  <tr>
 	   <td>Issue Tracker</td>
 	   <td>
-	     <span class='issue-48 icon-48'/> 
+	     <span class='issue-48 icon-48'/>
 	   </td>
 	   <td> 
 		  <a href="../issue-tracking.html">${product_name} issue tracker</a>:
 		  Read here what issues the developers of ${product_name} have been and are currently working on.
 	   </td>
+          </tr>
+
+	  <tr>
+	   <td><a name='blogs'/>Blogs</td>
+	   <td>
+            <span class='user-48 icon-48'/>
+            <span class='rewrite'>add blog icon</span>
+	   </td>
+	   <td>
+            You can learn about the newest features, opinions and plans regarding the Hippo CMS, by
+            reading the <a href="http://planet.hippocms.org/">blogs</a>.
+	   </td>
 	  </tr>
+
+	  <tr>
+	   <td><a name='forge'/>Forge</td>
+	   <td>
+	     <span class='forge-48 icon-48'/>
+	   </td>
+	   <td>
+	     <a href="http://forge.onehippo.org/">Hippo Forge</a>
+	     is a repository filled with all kinds of useful frontend and repository
+	     plugins, which you can
+	     <a href="http://www.onehippo.org/cms7/delve_into/sysadmin/installation/plugins.html">install</a>
+	     and use.
+	   </td>
+	  </tr>
+
 	  <tr>
 	   <td>Wiki</td>
 	   <td>
@@ -87,19 +115,6 @@
 	   <td> 
 		<a href="http://${public_project_wiki}">${product_name} wiki</a>:
 		Find documentation contributed by other users and by Hippo developers.
-	   </td>
-	  </tr>
-	  <tr>
-	   <td><a name='forge'/>Forge</td>
-	   <td>
-	     <span class='forge-48 icon-48'/> 
-	   </td>
-	   <td>
-	     <a href="http://forge.onehippo.org/">Hippo Forge</a>
-	     is a repository filled with all kinds of useful frontend and repository
-	     plugins, which you can
-	     <a href="http://www.onehippo.org/cms7/delve_into/sysadmin/installation/plugins.html">install</a>
-	     and use.
 	   </td>
 	  </tr>
 	 </table>

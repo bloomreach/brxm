@@ -550,36 +550,43 @@
   will link to the tools section where needed and thereby become cleaner.
  </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
  </afterlist>
-   <document ext="xml.vm" filename="build_core_Hippo_CMS" relpath="delve_into/tools/howto">Building the core Hippo CMS
-   <section>Building the core Hippo CMS</section>
-   <shortdesc>How to build the core Hippo CMS package from the sources?</shortdesc>
-  </document><document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/howto">Configure Workspace
+   <folder>eclipse
+   
+   <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/howto/eclipse">Configure Workspace
    <section>Configure Workspace</section>
    <shortdesc>Configure Eclipse Workspace for Hippo CMS addon projects.</shortdesc>
    <subsection>Identify Maven local repository</subsection>
    <subsection>Configure update sites</subsection>
    <subsection>Install plugins</subsection>
    <subsection>War overlays</subsection>
+  </document><document ext="xml" filename="start_eclipse" relpath="delve_into/tools/howto/eclipse">Start Eclipse
+   <section>Start Eclipse</section>
+   <shortdesc>Start Eclipse to work on Hippo CMS addon projects.</shortdesc>
+  </document><document ext="xml.vm" filename="war_overlays_in_eclipse" relpath="delve_into/tools/howto/eclipse">War overlays in eclipse
+   <section>War overlays in eclipse</section>
+   <shortdesc>How to use War overlays in eclipse</shortdesc>
+  </document></folder><document ext="xml" filename="export_node" relpath="delve_into/tools/howto">Export node
+   <section>Export node</section>
+   <shortdesc>Export node from Hippo repository in XML format</shortdesc>
   </document><document ext="xml.vm" filename="get_Hippo_CMS_source" relpath="delve_into/tools/howto">Get the Hippo CMS source
    <section>Get the Hippo CMS source</section>
    <shortdesc>Get the Hippo CMS source from the Hippo subversion repository.</shortdesc>
   </document><document ext="xml" filename="index" relpath="delve_into/tools/howto">
-  </document><document ext="xml" filename="install_maven" relpath="delve_into/tools/howto">Install Maven
+  </document><folder>maven
+   
+   <document ext="xml.vm" filename="build_core_Hippo_CMS" relpath="delve_into/tools/howto/maven">Building the core Hippo CMS
+   <section>Building the core Hippo CMS</section>
+   <shortdesc>How to build the core Hippo CMS package from the sources?</shortdesc>
+  </document><document ext="xml" filename="install_maven" relpath="delve_into/tools/howto/maven">Install Maven
    <section>Install Maven</section>
    <shortdesc>Howto install Maven.</shortdesc>
-  </document><document ext="xml" filename="learning_maven" relpath="delve_into/tools/howto">Learning Maven
+  </document><document ext="xml" filename="learning_maven" relpath="delve_into/tools/howto/maven">Learning Maven
    <section>Learning Maven</section>
    <shortdesc>References to good Maven pages (TODO) and some handy notes.</shortdesc>
-  </document><document ext="xml" filename="run_development_package" relpath="delve_into/tools/howto">Run a development package
+  </document><document ext="xml" filename="run_development_package" relpath="delve_into/tools/howto/maven">Run a development package
    <section>Run a development package</section>
    <shortdesc>How to build the package of a project and run it, all on the fly?</shortdesc>
-  </document><document ext="xml" filename="start_eclipse" relpath="delve_into/tools/howto">Start Eclipse
-   <section>Start Eclipse</section>
-   <shortdesc>Start Eclipse to work on Hippo CMS addon projects.</shortdesc>
-  </document><document ext="xml.vm" filename="war_overlays_in_eclipse" relpath="delve_into/tools/howto">War overlays in eclipse
-   <section>War overlays in eclipse</section>
-   <shortdesc>How to use War overlays in eclipse</shortdesc>
-  </document></folder><document ext="xml" filename="index" relpath="delve_into/tools">
+  </document></folder></folder><document ext="xml" filename="index" relpath="delve_into/tools">
   </document></folder><folder>user
    
    <folder>cms_admins
@@ -1303,12 +1310,16 @@
    
    <document ext="xml.vm" filename="community" relpath="support">Community Support
    <section>Community Support</section>
-   <shortdesc>Get support from the Hippo community:</shortdesc>
+   <shortdesc>Get support from the Hippo community</shortdesc>
+   <subsection>Community Support Tools</subsection>
    <subsection>Alternatives</subsection>
   </document><document ext="xml.vm" filename="contributing" relpath="support">Contributing
    <section>Contributing</section>
    <shortdesc>Contribute to ${product_name}, either in code, documentation, support, bug reports, improvement requests
      or whatever form you think is useful.</shortdesc>
    <subsection>Alternative</subsection>
+  </document><document ext="xml.vm" filename="forums" relpath="support">Public Forums
+   <section>Public Forums</section>
+   <shortdesc>Get support from others on the Hippo public forums</shortdesc>
   </document></folder></folder>
 </document_list>

@@ -27,23 +27,24 @@
      or whatever form you think is useful.</span>
 
     <p>
-      Contributions are very welcome!  
+      Contributions are very welcome!
     </p>
 
 <div class='nav'>
  <table>
   <tr>
-   <td>Mail</td>
+   <td>Public Forums</td>
    <td>
-     <span class='mail-48 icon-48'/> 
+     <span class='multiuser-48 icon-48'/>
+     <span class='rewrite'>add forum icon</span>
    </td>
    <td>
-         <a href="../mail-lists.html">Hippo mailing list</a>:
-            The Hippo developers will gladly discuss your
-            proposals on the developers mailing list.
+    <a href="./forums.html">Hippo CMS 7 Public Forums</a>:
+       The Hippo developers will gladly discuss your
+       proposals on the public forum.
    </td>
   </tr>
- <!-- 
+ <!--
   Hippo developers should not be contacted personally, so contributions related to the issue tracker 
   are not possible/allowed.
   <tr>

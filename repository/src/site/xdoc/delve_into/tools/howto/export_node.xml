@@ -19,29 +19,16 @@
 -->
 <document>
  <properties>
-  <title>Learning Maven</title>
+  <title>Export node</title>
  </properties>
  <body>
 
-    <section name="Learning Maven">
+  <section name="Export node">
+   <span class='shortdesc'>Export node from Hippo repository in XML format</span>
 
-     <span class='shortdesc'>References to good Maven pages (TODO) and some handy notes.</span>
-     <span class='add'>References to Maven pages</span>
 
-     <ol>
-      <li>
-       Maven commands always works on the current directory, so you have to cd to
-       the directory you want Maven to work on.
-      </li>
-      <li>
-       Maven commands will only work on directories
-       containing a pom.xml file, which defines a maven project.
-      </li>
-      <li>A project may contain subprojects, of which the root directory contains its
-       own pom.xml.
-     </li>
-    </ol>
 
   </section>
  </body>
 </document>
+

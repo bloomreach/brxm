@@ -33,14 +33,14 @@
       <span class='web-48 icon-48'/>
      </td>
      <td> 
-      Hippo CMS uses a client/server model. The client side runs in a web browser.     
+      Hippo CMS uses a client/server model. The client side runs in a web browser.
       <table>
        <tr>
         <td>
          <img src='../../images/firefox_logo_tiny.png' alt='Firefox logo'/>
         </td>
         <td>
-         Firefox 1.5 just works, <a href='http://www.mozilla.com/en-US/firefox/'>3.0</a> is recommended.
+         Firefox 1.5 just works, <a href='http://www.mozilla.com/en-US/firefox/'>3.0</a> is recommended and supported.
         </td>
        </tr>
        <tr>
@@ -48,7 +48,7 @@
          <img src='../../images/internet_explorer_logo_tiny.png' alt='internet explorer logo'/>
         </td>
         <td>
-          Internet explorer 6 just works, <a href='http://www.microsoft.com/netherlands/windows/products/winfamily/ie/default.mspx'>7</a> is recommended.
+          Internet explorer 6 just works, <a href='http://www.microsoft.com/netherlands/windows/products/winfamily/ie/default.mspx'>7</a> is recommended and supported.
         </td>
        </tr>
       </table>
@@ -60,6 +60,7 @@
       <span class='OS-48 icon-48'/>
      </td>
      <td>The client side of Hippo CMS runs on every OS that runs one of the required web browsers.
+         Windows XP and Vista and Linux Redhat, Suse and Ubuntu are supported.
      </td>
     </tr>
     <tr>
