@@ -343,8 +343,8 @@
         <module>client</module>
         -->
         <module>toolkit-resources</module>
-        <module>maven</module>
         <module>applications</module>
+        <module>maven</module>
       </modules>
     </profile>
     <profile>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
-
+  
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="properties">
       <props>
-        <prop key="repository.address">rmi://127.0.0.1:1099/hipporepository</prop>
+        <prop key="repository.address">rmi://127.0.0.1/hipporepository</prop>
         <prop key="repository.user.name">admin</prop>
         <prop key="repository.password">admin</prop>
       </props>
@@ -48,7 +48,12 @@
     -->
     
     <property name="pooledSessionLifecycleManagement">
-      <ref bean="org.hippoecm.hst.core.jcr.pool.PoolingRepository.pooledSessionLifecycleManagement" />
+      <bean id="org.hippoecm.hst.core.jcr.pool.PoolingRepository.pooledSessionLifecycleManagement" 
+            class=" org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement">
+        <constructor-arg>
+          <value>org.hippoecm.hst.core.jcr.pool.PoolingRepository.pooledSessionLifecycleManagement</value>
+        </constructor-arg>
+      </bean>
     </property>
     
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
@@ -65,11 +70,4 @@
     <property name="minEvictableIdleTimeMillis" value="60000" />
   </bean>
   
-  <bean id="org.hippoecm.hst.core.jcr.pool.PoolingRepository.pooledSessionLifecycleManagement" 
-        class=" org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement">
-    <constructor-arg>
-      <value>org.hippoecm.hst.core.jcr.pool.PoolingRepository.pooledSessionLifecycleManagement</value>
-    </constructor-arg>
-  </bean>
-
 </beans>
