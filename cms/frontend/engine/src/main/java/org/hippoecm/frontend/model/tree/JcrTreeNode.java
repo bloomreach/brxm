@@ -69,12 +69,7 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
     public IJcrTreeNode getChild(String name) throws RepositoryException {
         if (getNodeModel().getNode().hasNode(name)) {
             JcrNodeModel childModel = new JcrNodeModel(getNodeModel().getNode().getNode(name));
-            ensureChildrenLoaded();
-            for (TreeNode child : children) {
-                if (child instanceof IJcrTreeNode && ((IJcrTreeNode) child).getNodeModel().equals(childModel)) {
-                    return (IJcrTreeNode) child;
-                }
-            }
+            return new JcrTreeNode(childModel, this);
         }
         return null;
     }
@@ -139,7 +134,7 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
         }
         super.detach();
     }
-
+    
     protected int loadChildcount() throws RepositoryException {
         int result;
         Node node = nodeModel.getNode();

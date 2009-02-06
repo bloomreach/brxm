@@ -49,6 +49,7 @@ class NodeEditor extends Form {
     @SuppressWarnings("unused")
     private String primaryType;
     private String mixinTypes;
+    private PropertyProvider propertyProvider;
     private PropertiesEditor propertiesEditor;
     private NodeTypesEditor typesEditor;
 
@@ -59,7 +60,8 @@ class NodeEditor extends Form {
         add(new Label("primarytype", new PropertyModel(this, "primaryType")));
         add(new Label("types", new PropertyModel(this, "mixinTypes")));
 
-        propertiesEditor = new PropertiesEditor("properties", new EmptyDataProvider());
+        propertyProvider = new PropertyProvider(new EmptyDataProvider());
+        propertiesEditor = new PropertiesEditor("properties", propertyProvider);
         add(propertiesEditor);
 
         typesEditor = new NodeTypesEditor("mixintypes", new ArrayList<String>(), null);
@@ -70,12 +72,11 @@ class NodeEditor extends Form {
     public void onModelChanged() {
         super.onModelChanged();
         IModel model = getModel();
-        if (model instanceof JcrNodeModel) {
+        if ((model != null) && (model instanceof JcrNodeModel) && (((JcrNodeModel) model).getNode() != null)) {
             try {
                 JcrNodeModel newModel = (JcrNodeModel) model;
 
-                IDataProvider dataProvider = new PropertiesFilter(new JcrPropertiesProvider(newModel));
-                replace(new PropertiesEditor("properties", dataProvider));
+                propertyProvider.setWrappedProvider(new PropertiesFilter(new JcrPropertiesProvider(newModel)));
 
                 List<String> result = new ArrayList<String>();
                 NodeType[] nodeTypes = newModel.getNode().getMixinNodeTypes();
@@ -84,6 +85,7 @@ class NodeEditor extends Form {
                 }
                 typesEditor.setModelObject(result);
                 typesEditor.setNodeModel(newModel);
+                typesEditor.setVisible(true);
 
                 primaryType = newModel.getNode().getPrimaryNodeType().getName();
                 mixinTypes = new String();
@@ -95,6 +97,39 @@ class NodeEditor extends Form {
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
+        } else {
+            typesEditor.setVisible(false);
+            propertiesEditor.setVisible(false);
+        }
+    }
+
+    private static class PropertyProvider implements IDataProvider {
+        private static final long serialVersionUID = 1L;
+
+        private IDataProvider wrapped;
+
+        public PropertyProvider(IDataProvider wrapped) {
+            this.wrapped = wrapped;
+        }
+
+        void setWrappedProvider(IDataProvider provider) {
+            this.wrapped = provider;
+        }
+
+        public void detach() {
+            wrapped.detach();
+        }
+
+        public Iterator iterator(int first, int count) {
+            return wrapped.iterator(first, count);
+        }
+
+        public IModel model(Object object) {
+            return wrapped.model(object);
+        }
+
+        public int size() {
+            return wrapped.size();
         }
     }
 

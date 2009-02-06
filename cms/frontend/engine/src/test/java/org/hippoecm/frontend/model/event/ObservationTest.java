@@ -2,11 +2,19 @@ package org.hippoecm.frontend.model.event;
 
 import static junit.framework.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.observation.Event;
 
+import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.Home;
@@ -135,14 +143,24 @@ public class ObservationTest extends TestCase {
         context.registerService(observer, IObserver.class.getName());
 
         // when a node is added, observer should be notified
-        
+
         root.addNode("test", "nt:unstructured");
+
+        // in-session event
+        JcrObservationManager.getInstance().processEvents();
+        assertTrue(events.size() == 1);
+
+        // shouldn't receive new event on next processing
+        JcrObservationManager.getInstance().processEvents();
+        assertTrue(events.size() == 1);
+
         session.save();
 
         Thread.sleep(1000);
         JcrObservationManager.getInstance().processEvents();
 
-        assertTrue(events.size() == 1);
+        // "out-of-session" event
+        assertTrue(events.size() == 3);
 
         context.unregisterService(observer, IObserver.class.getName());
 
@@ -154,7 +172,41 @@ public class ObservationTest extends TestCase {
         Thread.sleep(1000);
         JcrObservationManager.getInstance().processEvents();
 
+        assertTrue(events.size() == 3);
+    }
+
+    @Test
+    public void testInSessionEventSuppression() throws Exception {
+        Node root = session.getRootNode();
+        List<IEvent> events = new LinkedList<IEvent>();
+        IObserver observer = new TestObserver(new JcrNodeModel(root), events);
+        context.registerService(observer, IObserver.class.getName());
+
+        // when a node is added, observer should be notified
+
+        Node testNode = root.addNode("test", "nt:unstructured");
+
+        // shouldn't receive new event on next processing
+        JcrObservationManager.getInstance().processEvents();
         assertTrue(events.size() == 1);
+
+        testNode.setProperty("test", "bla");
+
+        JcrObservationManager.getInstance().processEvents();
+        assertTrue(events.size() == 2);
+
+        JcrObservationManager.getInstance().processEvents();
+        assertTrue(events.size() == 2);
+
+        testNode.setProperty("test", "die");
+
+        JcrObservationManager.getInstance().processEvents();
+        assertTrue(events.size() == 3);
+
+        JcrObservationManager.getInstance().processEvents();
+        assertTrue(events.size() == 3);
+
+        session.save();
     }
 
     @Test
@@ -181,6 +233,50 @@ public class ObservationTest extends TestCase {
         JcrObservationManager.getInstance().processEvents();
 
         assertTrue(events.size() == 0);
+    }
+
+    private static class SerializationTestContext implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        int count = 0;
+        JcrEventListener listener = new JcrEventListener(new IObservationContext() {
+            private static final long serialVersionUID = 1L;
+
+            public Page getPage() {
+                return null;
+            }
+
+            public void notifyObservers(IEvent event) {
+                count++;
+            }
+
+        }, Event.NODE_ADDED, "/", false, null, null);
+    }
+
+    @Test
+    /**
+     * test whether deserialized event listeners re-register
+     */
+    public void testListenerSerialization() throws Exception {
+        Node root = session.getRootNode();
+        SerializationTestContext original = new SerializationTestContext();
+        original.listener.start();
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(os);
+        oos.writeObject(original);
+
+        InputStream is = new ByteArrayInputStream(os.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(is);
+        SerializationTestContext copy = (SerializationTestContext) ois.readObject();
+
+        root.addNode("test", "nt:unstructured");
+        session.save();
+
+        Thread.sleep(1000);
+        JcrObservationManager.getInstance().processEvents();
+
+        assertTrue(copy.count == 1);
     }
 
 }

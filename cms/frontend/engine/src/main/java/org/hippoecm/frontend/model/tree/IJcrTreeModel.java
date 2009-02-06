@@ -16,10 +16,11 @@
 package org.hippoecm.frontend.model.tree;
 
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 
 public interface IJcrTreeModel extends TreeModel {
 
-    IJcrTreeNode lookup(JcrNodeModel model);
+    TreePath lookup(JcrNodeModel model);
 }

@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
 import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.tree.ITreeState;
@@ -24,7 +25,6 @@ import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.tree.CachedTreeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
-import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -58,9 +58,8 @@ public class FolderTreePlugin extends RenderPlugin {
         DocumentListFilter folderTreeConfig = new DocumentListFilter(config);
         this.rootNode = new FolderTreeNode(rootModel, folderTreeConfig);
 
-        treeModel = new CachedTreeModel(new JcrTreeModel(rootNode));
+        treeModel = new CachedTreeModel(rootNode);
         context.registerService(treeModel, IObserver.class.getName());
-
         tree = new CmsJcrTree("tree", treeModel) {
             private static final long serialVersionUID = 1L;
 
@@ -98,20 +97,18 @@ public class FolderTreePlugin extends RenderPlugin {
         super.onModelChanged();
 
         JcrNodeModel model = (JcrNodeModel) getModel();
-        IJcrTreeNode node = null;
-        node = treeModel.lookup(model);
-        if (node != null) {
-            TreeNode parentNode = node.getParent();
-            while (parentNode != null) {
-                if (!tree.getTreeState().isNodeExpanded(parentNode)) {
-                    tree.getTreeState().expandNode(parentNode);
+
+        ITreeState treeState = tree.getTreeState();
+        TreePath treePath = treeModel.lookup(model);
+        if (treePath != null) {
+            for (Object component : treePath.getPath()) {
+                TreeNode treeNode = (TreeNode) component;
+                if (!treeState.isNodeExpanded(treeNode)) {
+                    treeState.expandNode(treeNode);
                 }
-                parentNode = parentNode.getParent();
             }
-            ITreeState state = tree.getTreeState();
-            if (!state.isNodeSelected(node)) {
-                tree.getTreeState().selectNode(node, true);
-            }
+    
+            treeState.selectNode((TreeNode) treePath.getLastPathComponent(), true);
             redraw();
         }
     }

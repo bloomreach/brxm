@@ -24,8 +24,8 @@ import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
+import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -64,6 +64,15 @@ public class FolderTreeNode extends JcrTreeNode {
         }
     }
 
+    @Override
+    public IJcrTreeNode getChild(String name) throws RepositoryException {
+        if (getNodeModel().getNode().hasNode(name)) {
+            JcrNodeModel childModel = new JcrNodeModel(getNodeModel().getNode().getNode(name));
+            return new FolderTreeNode(childModel, this);
+        }
+        return null;
+    }
+    
     @Override
     protected List<TreeNode> loadChildren() throws RepositoryException {
         List<TreeNode> result = new ArrayList<TreeNode>();

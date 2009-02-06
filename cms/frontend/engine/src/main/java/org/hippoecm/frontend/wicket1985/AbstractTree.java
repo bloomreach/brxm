@@ -970,8 +970,21 @@ public abstract class AbstractTree extends Panel implements ITreeStateListener, 
 			{
 				TreeItem item = (TreeItem)i.next();
 
-				// add the component to target
-				addComponent(target, item);
+				// ignore item if ancestor is in list
+				TreeItem parent = item.getParentItem();
+				boolean found = false;
+				while (parent != null) {
+				    if (dirtyItems.contains(parent)) {
+				        found = true;
+				        item.setRenderChildren(false);
+				        break;
+				    }
+				    parent = parent.getParentItem();
+				}
+				if (!found) {
+    				// add the component to target
+    				addComponent(target, item);
+				}
 			}
 
 			// clear dirty flags
@@ -1097,6 +1110,8 @@ public abstract class AbstractTree extends Panel implements ITreeStateListener, 
 			// create tree item
 			TreeItem item = newTreeItem(node, level);
 			itemContainer.add(item);
+
+			dirtyItemsCreateDOM.add(item);
 
 			// builds it children (recursively)
 			buildItemChildren(item);

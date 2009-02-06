@@ -15,16 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.console.dialog;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.widgets.JcrTree;
@@ -57,23 +53,18 @@ class LookupTargetTreeView extends JcrTree {
     }
 
     void setSelectedNode(JcrNodeModel selectedNode, JcrTreeModel treeModel) {
-        List<JcrNodeModel> parents = new ArrayList<JcrNodeModel>();
-        JcrNodeModel parent = selectedNode.getParentModel();
-        if (parent != null) {
-            while (parent != null) {
-                parents.add(parent);
-                parent = parent.getParentModel();
+        ITreeState treeState = getTreeState();
+        TreePath treePath = treeModel.lookup(selectedNode);
+        if (treePath != null) {
+            for (TreeNode component : (TreeNode[]) treePath.getPath()) {
+                treeState.expandNode(component);
             }
-
-            Collections.reverse(parents);
-            ITreeState treeState = getTreeState();
-            for (JcrNodeModel ancestor : parents) {
-                treeState.expandNode(treeModel.lookup(ancestor));
+    
+            TreeNode treeNode = (TreeNode) treePath.getLastPathComponent();
+            treeState.selectNode((TreeNode) treePath.getLastPathComponent(), true);
+            if (treeNode instanceof IJcrTreeNode) {
+                this.selectedNode = (IJcrTreeNode) treeNode;
             }
-
-            IJcrTreeNode treeNode= treeModel.lookup(selectedNode.getParentModel());
-            treeState.selectNode(treeNode, true);
-            this.selectedNode = treeNode;
         }
     }
 }

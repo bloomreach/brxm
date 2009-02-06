@@ -61,7 +61,7 @@ public class PluginContext implements IPluginContext, IDetachable {
 
         this.services = new HashMap<String, List<IClusterable>>();
         this.listeners = new HashMap<String, List<IServiceTracker<? extends IClusterable>>>();
-        this.children = new TreeMap<String,ClusterControl>();
+        this.children = new TreeMap<String, ClusterControl>();
         this.initializing = true;
     }
 
@@ -205,19 +205,19 @@ public class PluginContext implements IPluginContext, IDetachable {
             if (plugin instanceof IActivator) {
                 ((IActivator) plugin).stop();
             }
-    
+
             ClusterControl[] controls = children.values().toArray(new ClusterControl[children.size()]);
             for (ClusterControl control : controls) {
                 control.stop();
             }
-    
+
             for (Map.Entry<String, List<IServiceTracker<? extends IClusterable>>> entry : listeners.entrySet()) {
                 for (IServiceTracker<? extends IClusterable> service : entry.getValue()) {
                     manager.unregisterTracker(service, entry.getKey());
                 }
             }
             listeners = new HashMap<String, List<IServiceTracker<? extends IClusterable>>>();
-    
+
             for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
                 for (IClusterable service : entry.getValue()) {
                     manager.unregisterService(service, entry.getKey());

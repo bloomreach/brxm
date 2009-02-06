@@ -15,9 +15,10 @@
  */
 package org.hippoecm.frontend.model.event;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.Page;
 
-public interface IObservationContext {
+public interface IObservationContext extends IClusterable {
 
     void notifyObservers(IEvent event);
 

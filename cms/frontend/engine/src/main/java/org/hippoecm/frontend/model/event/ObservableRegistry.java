@@ -30,6 +30,7 @@ public class ObservableRegistry implements IPlugin {
     private static final long serialVersionUID = 1L;
 
     private class ObservationContext implements IObservationContext {
+        private static final long serialVersionUID = 1L;
 
         List<IObserver> observers;
         IObservable observable;
@@ -57,7 +58,9 @@ public class ObservableRegistry implements IPlugin {
 
         public void notifyObservers(IEvent event) {
             for (IObserver observer : new ArrayList<IObserver>(observers)) {
-                observer.onEvent(event);
+                if (observers.contains(observer)) {
+                    observer.onEvent(event);
+                }
             }
             getPage().dirty();
         }
