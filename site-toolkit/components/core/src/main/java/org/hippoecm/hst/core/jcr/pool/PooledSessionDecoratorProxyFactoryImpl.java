@@ -11,7 +11,7 @@ import javax.jcr.RepositoryException;
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.hippoecm.hst.util.ProxyUtils;
+import org.hippoecm.hst.proxy.ProxyUtils;
 import org.springframework.aop.framework.ProxyFactory;
 
 public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator, PoolingRepositoryAware

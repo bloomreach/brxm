@@ -4,6 +4,8 @@ import org.hippoecm.hst.provider.ValueProvider;
 
 public interface Service {
     
+    static final String hstServiceNamespace = "";
+    
     /**
      * @return ValueProvider giving access to the underlying object providing the values
      */
