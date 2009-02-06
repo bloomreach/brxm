@@ -1,8 +1,7 @@
 package org.hippoecm.hst.configuration.components;
 
-import org.hippoecm.hst.service.Service;
 
-public interface HstComponentsConfiguration extends Service{
+public interface HstComponentsConfiguration {
 
     public HstComponentConfiguration getComponent(String path);
     

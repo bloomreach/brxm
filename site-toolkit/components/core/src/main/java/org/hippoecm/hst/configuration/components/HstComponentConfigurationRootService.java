@@ -4,7 +4,7 @@ import javax.jcr.Node;
 
 public class HstComponentConfigurationRootService extends HstComponentConfigurationService{
 
-    public HstComponentConfigurationRootService(HstComponentsConfiguration pageMappingService, Node jcrNode) {
+    public HstComponentConfigurationRootService(HstComponentsConfigurationService pageMappingService, Node jcrNode) {
         super(pageMappingService, null ,jcrNode);
     }
 

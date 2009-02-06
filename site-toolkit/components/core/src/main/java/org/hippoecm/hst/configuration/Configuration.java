@@ -1,6 +1,9 @@
 package org.hippoecm.hst.configuration;
 
 public class Configuration {
+    public final static String NODETYPE_HST_SITES = "hst:sites";
+    public final static String NODETYPE_HST_SITE = "hst:site";
+    
     public final static String NODETYPE_HST_CONFIGURATION = "hst:configuration";
     public final static String NODETYPE_HST_SITEMAP = "hst:sitemap";
     public final static String NODETYPE_HST_SITEMAPITEM = "hst:sitemapitem";
@@ -19,5 +22,5 @@ public class Configuration {
     
     public final static String NODEPATH_HST_CONFIGURATION = "hst:configuration/hst:configuration";
     public final static String NODEPATH_HST_SITEMAP = "hst:sitemap";
-    public final static String NODEPATH_HST_PAGEMAPPING = "hst:pagemappings";
+    public final static String NODEPATH_HST_COMPONENTS = "hst:components";
 }

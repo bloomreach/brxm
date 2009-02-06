@@ -14,10 +14,10 @@ public class HstMatchingSiteMapItemService extends AbstractJCRService implements
     private HstSiteMapItem delegatee;
     private String urlResidue;
     
-    public HstMatchingSiteMapItemService(HstSiteMapItem siteMapItemService, String urlResidue) {
+    public HstMatchingSiteMapItemService(HstSiteMapItem siteMapItem, String urlResidue) {
         // we do not have a jcr node anymore at this point
         super(null);
-        this.delegatee = siteMapItemService;
+        this.delegatee = siteMapItem;
         this.urlResidue = UrlUtilities.normalizeUrl(urlResidue);
     }
 
@@ -62,11 +62,12 @@ public class HstMatchingSiteMapItemService extends AbstractJCRService implements
     }
 
     public void dump(StringBuffer buf, String indent) {
-        delegatee.dump(buf, indent);
+        //delegatee.dump(buf, indent);
+        buf.append("\n\n what needs to come here!! ****** \n\n");
         buf.append("\n\t").append(indent).append("- URL Residue: ").append(this.getUrlResidue());
         buf.append("\n\t").append(indent).append(":: Components ::").append("\n");
-        if(this.getComponentService() != null) {
-            dump(buf, indent+ "\t", this.getComponentService());
+        if(this.getComponentService() != null && this.getComponentService() instanceof Service) {
+            dump(buf, indent+ "\t", (Service)this.getComponentService());
         } else {
             buf.append("\t").append(indent).append("No Component for matched sitemap item");
             log.warn("The matched sitemap url does not have a ComponentService");

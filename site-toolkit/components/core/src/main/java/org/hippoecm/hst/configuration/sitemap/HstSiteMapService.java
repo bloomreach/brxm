@@ -13,7 +13,7 @@ import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
 
-public class HstSiteMapService extends AbstractJCRService implements HstSiteMap{
+public class HstSiteMapService extends AbstractJCRService implements HstSiteMap, Service{
     
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstSiteMap.class);
     
@@ -21,7 +21,7 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap{
     
     private HstComponentsConfiguration pageMappingService;
     
-    private HstSiteMapItem rootSiteMapItemService; 
+    private HstSiteMapItemService rootSiteMapItemService; 
     
     public HstSiteMapService(Node siteMapNode, HstComponentsConfiguration pageMappingService) throws RepositoryException, ServiceException {
         super(siteMapNode);
@@ -30,7 +30,7 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap{
             throw new ServiceException("Cannot create SitemapServiceImpl: Expected nodeType '"+Configuration.NODETYPE_HST_SITEMAP+"' but was '"+siteMapNode.getPrimaryNodeType().getName()+"'");
         }
         rootSiteMapItemService = new HstSiteMapItemService(siteMapNode,null);
-        populate(siteMapNode, (HstSiteMapItemService)rootSiteMapItemService);
+        populate(siteMapNode, rootSiteMapItemService);
         
     }
 
@@ -106,18 +106,18 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap{
         buf.append("\n\n------ SiteMapService ------ \n\n");
         
         for(Service child : rootSiteMapItemService.getChildServices()) {
-            if(child instanceof HstSiteMapItem)
-            appendChild(buf, (HstSiteMapItem)child, "");
+            if(child instanceof HstSiteMapItemService)
+            appendChild(buf, (HstSiteMapItemService)child, "");
         }
         buf.append("\n\n------ End SiteMapService ------");
         
     }
 
-    private void appendChild(StringBuffer buf, HstSiteMapItem child, String indent) {
+    private void appendChild(StringBuffer buf, HstSiteMapItemService child, String indent) {
         child.dump(buf, indent);
         for(Service s : child.getChildServices()) {
-            if(s instanceof HstSiteMapItem)
-            appendChild(buf, (HstSiteMapItem)s, indent + "\t");
+            if(s instanceof HstSiteMapItemService)
+            appendChild(buf, (HstSiteMapItemService)s, indent + "\t");
         }
     }
 

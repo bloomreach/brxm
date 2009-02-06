@@ -13,13 +13,13 @@ import org.hippoecm.hst.service.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstSiteMapItemService extends AbstractJCRService implements HstSiteMapItem{
+public class HstSiteMapItemService extends AbstractJCRService implements HstSiteMapItem, Service{
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItem.class);
     
     private HstComponentConfiguration componentService;
     private HstSiteMapItem parentSiteMapItemService;
-    private Map<String, HstSiteMapItem> childSiteMapItemServices;
+    private Map<String, HstSiteMapItemService> childSiteMapItemServices;
     private String dataSource;
     private String urlPartName;
     private String url;
@@ -28,7 +28,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
    
     public HstSiteMapItemService(Node jcrNode, HstSiteMapItem parentSiteMapItemService) {
         super(jcrNode);
-        childSiteMapItemServices = new HashMap<String, HstSiteMapItem>();
+        childSiteMapItemServices = new HashMap<String, HstSiteMapItemService>();
         this.parentSiteMapItemService = parentSiteMapItemService;
         
         this.dataSource = this.getValueProvider().getString(Configuration.PROPERTYNAME_DATASOURCE);
@@ -52,7 +52,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     }
 
     public Service[] getChildServices() {
-        return this.getChilds();
+        return this.childSiteMapItemServices.values().toArray(new HstSiteMapItemService[childSiteMapItemServices.size()]);
     }
 
     
@@ -92,7 +92,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         return this.childSiteMapItemServices.values().toArray(new HstSiteMapItem[childSiteMapItemServices.size()]);
     }
 
-    public void addChild(HstSiteMapItem siteMapService) {
+    public void addChild(HstSiteMapItemService siteMapService) {
         this.childSiteMapItemServices.put(siteMapService.getUrlPartName(), siteMapService);
     }
 

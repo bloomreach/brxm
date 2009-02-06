@@ -12,7 +12,7 @@ import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.slf4j.LoggerFactory;
 
-public class HstComponentConfigurationService extends AbstractJCRService implements AugmentableHstComponentConfiguration{
+public class HstComponentConfigurationService extends AbstractJCRService implements HstComponentConfiguration, Service{
     
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentConfiguration.class);
     
@@ -26,13 +26,8 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     /**
      * List of ComponentService's that are a child component by hierarchy
      */
-    private List<HstComponentConfiguration> hierchicalChildComponents;
+    private List<HstComponentConfigurationService> childComponentConfigurations;
     
-    /**
-     * Array of ComponentService's that is composed of the String[] childComponents and List<ComponentService> hierchicalChildComponents
-     */
-    private List<HstComponentConfiguration> allComponents;
-
     private String namespace;
     
     private String name;
@@ -47,12 +42,12 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     
     private Map<String, Object> allProperties;
     
-    public HstComponentConfigurationService(HstComponentsConfiguration components, HstComponentConfiguration parentComponent,Node jcrNode) {
+    public HstComponentConfigurationService(HstComponentsConfigurationService components, HstComponentConfiguration parentComponent,Node jcrNode) {
         super(jcrNode);
         this.name = getValueProvider().getName();
         this.components = components;
         this.parentComponent = parentComponent;
-        this.hierchicalChildComponents = new ArrayList<HstComponentConfiguration>();
+        this.childComponentConfigurations = new ArrayList<HstComponentConfigurationService>();
         if (getValueProvider().isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
             this.renderPath = getValueProvider().getString(Configuration.PROPERTYNAME_RENDER_PATH);
             this.namespace = getValueProvider().getString(Configuration.PROPERTYNAME_NAMESPACE);
@@ -62,34 +57,14 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
             this.allProperties = getValueProvider().getProperties();
         } 
     }
-    
-    public void addHierarchicalChildComponent(HstComponentConfiguration hierarchicalChildComponent){
-        this.hierchicalChildComponents.add(hierarchicalChildComponent);
-    }
-    
 
     public Service[] getChildServices() {
-        return hierchicalChildComponents.toArray(new HstComponentConfiguration[hierchicalChildComponents.size()]);
+        return childComponentConfigurations.toArray(new HstComponentConfigurationService[childComponentConfigurations.size()]);
     } 
-
-   
-//            List<HstComponent> childs = new ArrayList<HstComponent>();
-//            if(referencedComponents != null) {
-//                for(String childComponent : this.referencedComponents) {
-//                    HstComponent c = this.components.getComponent(childComponent);
-//                    if(c!=null) {
-//                        childs.add(c);
-//                    } else {
-//                        log.warn("Cannot find a child component called '{}' for '{}'", childComponent, this);
-//                    }
-//                }
-//            }
-            
-   
 
     public List<HstComponentConfiguration> getChildren() {
         // next step is to also return referenced components
-        return hierchicalChildComponents;
+        return Arrays.asList(childComponentConfigurations.toArray(new HstComponentConfiguration[childComponentConfigurations.size()]));
     }
     
     public String getComponentClassName(){

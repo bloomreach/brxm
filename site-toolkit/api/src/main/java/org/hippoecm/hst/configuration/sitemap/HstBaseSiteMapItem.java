@@ -1,9 +1,8 @@
 package org.hippoecm.hst.configuration.sitemap;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.service.Service;
 
-public interface HstBaseSiteMapItem extends Service{
+public interface HstBaseSiteMapItem {
 
     
     public String getComponentLocation();

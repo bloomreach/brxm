@@ -1,5 +1,7 @@
 package org.hippoecm.hst.core.container;
 
+import java.util.Iterator;
+
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -47,15 +49,10 @@ public class AggregationValve extends AbstractValve {
     }
     
     protected void aggregateAndProcessRender(HstRequestContext context, HstComponentConfiguration component) throws Exception {
-        HstComponentConfiguration [] children = null;
-
-        if (children != null) {
-            for (HstComponentConfiguration child : children)
-            {
-                aggregateAndProcessRender(context, child);
-            }
+        for(Iterator<HstComponentConfiguration> it = component.getChildren().iterator(); it.hasNext();) {
+            aggregateAndProcessRender(context, it.next());
         }
-        
+    
         this.requestProcessor.processRender(context, component);
     }
 }

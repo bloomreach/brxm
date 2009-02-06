@@ -1,9 +1,8 @@
 package org.hippoecm.hst.configuration.sitemap;
 
-import org.hippoecm.hst.service.Service;
 
 
-public interface SiteMapService extends Service{
+public interface SiteMapService {
     
     public MatchingSiteMapItem match(String url);
    
