@@ -262,14 +262,19 @@ repository is;
   will link to the tools section where needed and thereby become cleaner.
  </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
  </afterlist>
-   <document ext="xml.vm" filename="build_core_Hippo_CMS" relpath="delve_into/tools/howto">Building the core Hippo CMS<linkto_unchecked/></document><document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/howto">Configure Workspace<linkto_unchecked/>
+   <folder>eclipse
+   
+   <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/howto/eclipse">Configure Workspace<linkto_unchecked/>
     <add>Explanation about installing JPOX eclipse plugin</add>
-    <typo>Select JPOX -&gt; Enhancer and enter 'BCEL' in<span class="bad"> the the </span>'Class Enhancer' field.</typo></document><document ext="xml.vm" filename="get_Hippo_CMS_source" relpath="delve_into/tools/howto">Get the Hippo CMS source<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/tools/howto"><linkto_unchecked/>
+    <typo>Select JPOX -&gt; Enhancer and enter 'BCEL' in<span class="bad"> the the </span>'Class Enhancer' field.</typo></document><document ext="xml" filename="start_eclipse" relpath="delve_into/tools/howto/eclipse">Start Eclipse<linkto_unchecked/></document><document ext="xml.vm" filename="war_overlays_in_eclipse" relpath="delve_into/tools/howto/eclipse">War overlays in eclipse<linkto_unchecked/></document></folder><document ext="xml" filename="export_node" relpath="delve_into/tools/howto">Export node<linkto_unchecked/>
+    <dummyref>Export node from Hippo repository<span class="bad"> in X </span>ML format</dummyref></document><document ext="xml.vm" filename="get_Hippo_CMS_source" relpath="delve_into/tools/howto">Get the Hippo CMS source<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/tools/howto"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="install_maven" relpath="delve_into/tools/howto">Install Maven<linkto_unchecked/></document><document ext="xml" filename="learning_maven" relpath="delve_into/tools/howto">Learning Maven<linkto_unchecked/>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><folder>maven
+   
+   <document ext="xml.vm" filename="build_core_Hippo_CMS" relpath="delve_into/tools/howto/maven">Building the core Hippo CMS<linkto_unchecked/></document><document ext="xml" filename="install_maven" relpath="delve_into/tools/howto/maven">Install Maven<linkto_unchecked/></document><document ext="xml" filename="learning_maven" relpath="delve_into/tools/howto/maven">Learning Maven<linkto_unchecked/>
     <add>References to Maven pages</add>
     <badtext>Maven commands always works on the<span class="bad"> current </span>directory, so you have to cd to the directory you want Maven to work on.</badtext>
-    <todo>References to good Maven pages (<span class="bad"> TODO </span>) and some handy notes.</todo></document><document ext="xml" filename="run_development_package" relpath="delve_into/tools/howto">Run a development package<linkto_unchecked/></document><document ext="xml" filename="start_eclipse" relpath="delve_into/tools/howto">Start Eclipse<linkto_unchecked/></document><document ext="xml.vm" filename="war_overlays_in_eclipse" relpath="delve_into/tools/howto">War overlays in eclipse<linkto_unchecked/></document></folder><document ext="xml" filename="index" relpath="delve_into/tools"><linkto_unchecked/>
+    <todo>References to good Maven pages (<span class="bad"> TODO </span>) and some handy notes.</todo></document><document ext="xml" filename="run_development_package" relpath="delve_into/tools/howto/maven">Run a development package<linkto_unchecked/></document></folder></folder><document ext="xml" filename="index" relpath="delve_into/tools"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document></folder><folder>user
    
@@ -419,5 +424,8 @@ repository is;
     <multisection>Has 2 sections.</multisection></document><folder>support
    
    <document ext="xml.vm" filename="community" relpath="support">Community Support<linkto_unchecked/>
-    <badtext>: Read here what issues the developers of ${product_name} have been and are<span class="bad"> current </span>ly working on.</badtext></document><document ext="xml.vm" filename="contributing" relpath="support">Contributing<linkto_unchecked/></document></folder></folder>
+    <rewrite>add forum icon</rewrite>
+    <badtext>: Read here what issues the developers of ${product_name} have been and are<span class="bad"> current </span>ly working on.</badtext></document><document ext="xml.vm" filename="contributing" relpath="support">Contributing<linkto_unchecked/>
+    <rewrite>add forum icon</rewrite></document><document ext="xml.vm" filename="forums" relpath="support">Public Forums<linkto_unchecked/>
+    <empty_elem>&lt;script src='../nabble.js'/&gt;</empty_elem></document></folder></folder>
 </document_list>

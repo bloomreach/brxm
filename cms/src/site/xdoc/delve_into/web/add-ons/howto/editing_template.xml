@@ -41,7 +41,7 @@
             <img src="../../../../images/addons/fancy_document_thumbnail.png" alt="Fancy Document" />
           </a>
         </p>
-        
+
         <subsection name="Create a new project">
           <p>
             In the following we will create a Maven project with the following structure:

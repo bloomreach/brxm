@@ -24,11 +24,11 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">392 errors and/or todos in 219 out of 219 documents (100%).</span>
+      <span class="shortdesc">398 errors and/or todos in 221 out of 221 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
-        <li>1 documents using dummy references.
+        <li>2 documents using dummy references.
      </li>
         <li> 
         Checking if documents are linked to was not possible (no previous, readable linkreport to compare to).
@@ -43,7 +43,7 @@
      </li>
         <li>3 empty documents.
      </li>
-        <li>9 documents to rewrite.
+        <li>11 documents to rewrite.
      </li>
         <li>11 documents requiring additions.
      </li>
@@ -56,7 +56,7 @@
         <li>10 multisection documents.
      </li>
       </ul>
-      <subsection name="Documents with dummy references: 1">
+      <subsection name="Documents with dummy references: 2">
         <ol>
           <li>
             <a href="./delve_into/custom/howto/customize_versioning.html">customize_versioning: Customize versioning</a>
@@ -65,19 +65,25 @@
               <li>mes with the interface for remote access and the implementation of the document, similar as described<span xmlns="" class="bad"> in X </span>.</li>
             </ul>
           </li>
+          <li>
+            <a href="./delve_into/tools/howto/export_node.html">export_node: Export node</a>
+            <ul>
+              <li>Export node from Hippo repository<span xmlns="" class="bad"> in X </span>ML format</li>
+            </ul>
+          </li>
         </ol>
       </subsection>
       <subsection name="Documents with standard typos: 1">
         <ol>
           <li>
-            <a href="./delve_into/tools/howto/configure_workspace.html">configure_workspace: Configure Workspace</a>
+            <a href="./delve_into/tools/howto/eclipse/configure_workspace.html">configure_workspace: Configure Workspace</a>
             <ul>
               <li>Select JPOX -&gt; Enhancer and enter 'BCEL' in<span xmlns="" class="bad"> the the </span>'Class Enhancer' field.</li>
             </ul>
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents with empty elements: 10">
+      <subsection name="Documents with empty elements: 11">
         <ol>
           <li>
             <a href="./about/roadmap.html">roadmap: Roadmap Hippo CMS</a>
@@ -160,6 +166,12 @@
               <li>...&lt;span class='content_browse_16'/&gt;,
      at the left of the screen. 
     .../&lt;p&gt;<br xmlns=""/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./support/forums.html">forums: Public Forums</a>
+            <ul>
+              <li>&lt;script src='../nabble.js'/&gt;</li>
             </ul>
           </li>
         </ol>
@@ -514,7 +526,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="rewrite documents: 9">
+      <subsection name="rewrite documents: 11">
         <ol>
           <li>
             <a href="./delve_into/core/building/eclipse.html">eclipse: Developing Hippo CMS with Eclipse</a>
@@ -573,6 +585,18 @@ repository is;
               <li>all text</li>
             </ul>
           </li>
+          <li>
+            <a href="./support/community.html">community: Community Support</a>
+            <ul>
+              <li>add forum icon</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./support/contributing.html">contributing: Contributing</a>
+            <ul>
+              <li>add forum icon</li>
+            </ul>
+          </li>
         </ol>
       </subsection>
       <subsection name="Add something to documents: 11">
@@ -593,13 +617,13 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/tools/howto/configure_workspace.html">configure_workspace: Configure Workspace</a>
+            <a href="./delve_into/tools/howto/eclipse/configure_workspace.html">configure_workspace: Configure Workspace</a>
             <ul>
               <li>Explanation about installing JPOX eclipse plugin</li>
             </ul>
           </li>
           <li>
-            <a href="./delve_into/tools/howto/learning_maven.html">learning_maven: Learning Maven</a>
+            <a href="./delve_into/tools/howto/maven/learning_maven.html">learning_maven: Learning Maven</a>
             <ul>
               <li>References to Maven pages</li>
             </ul>
@@ -709,7 +733,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/tools/howto/learning_maven.html">learning_maven: Learning Maven</a>
+            <a href="./delve_into/tools/howto/maven/learning_maven.html">learning_maven: Learning Maven</a>
             <ul>
               <li>References to good Maven pages (<span xmlns="" class="bad"> TODO </span>) and some handy notes.</li>
             </ul>
@@ -850,7 +874,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/tools/howto/learning_maven.html">learning_maven: Learning Maven</a>
+            <a href="./delve_into/tools/howto/maven/learning_maven.html">learning_maven: Learning Maven</a>
             <ul>
               <li>Maven commands always works on the<span xmlns="" class="bad"> current </span>directory, so you have to cd to the directory you want Maven to work on.</li>
             </ul>

@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 872 terms</span>
+      <span class="shortdesc">Term index, 877 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -868,9 +868,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/build_core_Hippo_CMS.html#Building_the_core_Hippo_CMS">Building the core Hippo CMS</a>
+              <a href="../delve_into/tools/howto/maven/build_core_Hippo_CMS.html#Building_the_core_Hippo_CMS">Building the core Hippo CMS</a>
             </td>
-            <td>Howto: Building the core Hippo CMS</td>
+            <td>Building the core Hippo CMS</td>
           </tr>
           <tr>
             <td>
@@ -1054,6 +1054,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../support/community.html#Community_Support_Tools">Community Support Tools</a>
+            </td>
+            <td>Community Support</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/jcr/jcr.html#Complete_Example_Class">Complete Example Class</a>
             </td>
             <td>JCR Basics</td>
@@ -1084,9 +1090,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/configure_workspace.html#Configure_Eclipse_Workspace_for_Hippo_CMS_addon_projects_">Configure Eclipse Workspace for Hippo CMS addon projects.</a>
+              <a href="../delve_into/tools/howto/eclipse/configure_workspace.html#Configure_Eclipse_Workspace_for_Hippo_CMS_addon_projects_">Configure Eclipse Workspace for Hippo CMS addon projects.</a>
             </td>
-            <td>Howto: Configure Workspace</td>
+            <td>Configure Workspace</td>
           </tr>
           <tr>
             <td>
@@ -1102,15 +1108,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/configure_workspace.html#Configure_update_sites">Configure update sites</a>
+              <a href="../delve_into/tools/howto/eclipse/configure_workspace.html#Configure_update_sites">Configure update sites</a>
             </td>
-            <td>Howto: Configure Workspace</td>
+            <td>Configure Workspace</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/configure_workspace.html#Configure_Workspace">Configure Workspace</a>
+              <a href="../delve_into/tools/howto/eclipse/configure_workspace.html#Configure_Workspace">Configure Workspace</a>
             </td>
-            <td>Howto: Configure Workspace</td>
+            <td>Configure Workspace</td>
           </tr>
           <tr>
             <td>
@@ -1805,6 +1811,18 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/tools/howto/export_node.html#Export_node">Export node</a>
+            </td>
+            <td>Howto: Export node</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/export_node.html#Export_node_from_Hippo_repository_in_XML_format">Export node from Hippo repository in XML format</a>
+            </td>
+            <td>Howto: Export node</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/jcr/data_migration.html#Exporting_Content">Exporting Content</a>
             </td>
             <td>Data Migration</td>
@@ -2154,7 +2172,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../support/community.html#Get_support_from_the_Hippo_community:">Get support from the Hippo community:</a>
+              <a href="../support/forums.html#Get_support_from_others_on_the_Hippo_public_forums">Get support from others on the Hippo public forums</a>
+            </td>
+            <td>Public Forums</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../support/community.html#Get_support_from_the_Hippo_community">Get support from the Hippo community</a>
             </td>
             <td>Community Support</td>
           </tr>
@@ -2670,15 +2694,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/build_core_Hippo_CMS.html#How_to_build_the_core_Hippo_CMS_package_from_the_sources_">How to build the core Hippo CMS package from the sources?</a>
+              <a href="../delve_into/tools/howto/maven/build_core_Hippo_CMS.html#How_to_build_the_core_Hippo_CMS_package_from_the_sources_">How to build the core Hippo CMS package from the sources?</a>
             </td>
-            <td>Howto: Building the core Hippo CMS</td>
+            <td>Building the core Hippo CMS</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/run_development_package.html#How_to_build_the_package_of_a_project_and_run_it,_all_on_the_fly_">How to build the package of a project and run it, all on the fly?</a>
+              <a href="../delve_into/tools/howto/maven/run_development_package.html#How_to_build_the_package_of_a_project_and_run_it,_all_on_the_fly_">How to build the package of a project and run it, all on the fly?</a>
             </td>
-            <td>Howto: Run a development package</td>
+            <td>Run a development package</td>
           </tr>
           <tr>
             <td>
@@ -3027,9 +3051,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/war_overlays_in_eclipse.html#How_to_use_War_overlays_in_eclipse">How to use War overlays in eclipse</a>
+              <a href="../delve_into/tools/howto/eclipse/war_overlays_in_eclipse.html#How_to_use_War_overlays_in_eclipse">How to use War overlays in eclipse</a>
             </td>
-            <td>Howto: War overlays in eclipse</td>
+            <td>War overlays in eclipse</td>
           </tr>
           <tr>
             <td>
@@ -3063,9 +3087,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/install_maven.html#Howto_install_Maven_">Howto install Maven.</a>
+              <a href="../delve_into/tools/howto/maven/install_maven.html#Howto_install_Maven_">Howto install Maven.</a>
             </td>
-            <td>Howto: Install Maven</td>
+            <td>Install Maven</td>
           </tr>
           <tr>
             <td>
@@ -3075,9 +3099,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/configure_workspace.html#Identify_Maven_local_repository">Identify Maven local repository</a>
+              <a href="../delve_into/tools/howto/eclipse/configure_workspace.html#Identify_Maven_local_repository">Identify Maven local repository</a>
             </td>
-            <td>Howto: Configure Workspace</td>
+            <td>Configure Workspace</td>
           </tr>
           <tr>
             <td>
@@ -3141,15 +3165,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/install_maven.html#Install_Maven">Install Maven</a>
+              <a href="../delve_into/tools/howto/maven/install_maven.html#Install_Maven">Install Maven</a>
             </td>
-            <td>Howto: Install Maven</td>
+            <td>Install Maven</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/configure_workspace.html#Install_plugins">Install plugins</a>
+              <a href="../delve_into/tools/howto/eclipse/configure_workspace.html#Install_plugins">Install plugins</a>
             </td>
-            <td>Howto: Configure Workspace</td>
+            <td>Configure Workspace</td>
           </tr>
           <tr>
             <td>
@@ -3339,9 +3363,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/learning_maven.html#Learning_Maven">Learning Maven</a>
+              <a href="../delve_into/tools/howto/maven/learning_maven.html#Learning_Maven">Learning Maven</a>
             </td>
-            <td>Howto: Learning Maven</td>
+            <td>Learning Maven</td>
           </tr>
           <tr>
             <td>
@@ -4119,6 +4143,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../support/forums.html#Public_Forums">Public Forums</a>
+            </td>
+            <td>Public Forums</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/web/index.html#Publish_your_Hippo_CMS_managed_content_on_the_web_">Publish your Hippo CMS managed content on the web.</a>
             </td>
             <td>Welcome: Website Development</td>
@@ -4149,9 +4179,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/learning_maven.html#References_to_good_Maven_pages_(TODO)_and_some_handy_notes_">References to good Maven pages (TODO) and some handy notes.</a>
+              <a href="../delve_into/tools/howto/maven/learning_maven.html#References_to_good_Maven_pages_(TODO)_and_some_handy_notes_">References to good Maven pages (TODO) and some handy notes.</a>
             </td>
-            <td>Howto: Learning Maven</td>
+            <td>Learning Maven</td>
           </tr>
           <tr>
             <td>
@@ -4287,9 +4317,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/run_development_package.html#Run_a_development_package">Run a development package</a>
+              <a href="../delve_into/tools/howto/maven/run_development_package.html#Run_a_development_package">Run a development package</a>
             </td>
-            <td>Howto: Run a development package</td>
+            <td>Run a development package</td>
           </tr>
           <tr>
             <td>
@@ -4575,15 +4605,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/start_eclipse.html#Start_Eclipse">Start Eclipse</a>
+              <a href="../delve_into/tools/howto/eclipse/start_eclipse.html#Start_Eclipse">Start Eclipse</a>
             </td>
-            <td>Howto: Start Eclipse</td>
+            <td>Start Eclipse</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/start_eclipse.html#Start_Eclipse_to_work_on_Hippo_CMS_addon_projects_">Start Eclipse to work on Hippo CMS addon projects.</a>
+              <a href="../delve_into/tools/howto/eclipse/start_eclipse.html#Start_Eclipse_to_work_on_Hippo_CMS_addon_projects_">Start Eclipse to work on Hippo CMS addon projects.</a>
             </td>
-            <td>Howto: Start Eclipse</td>
+            <td>Start Eclipse</td>
           </tr>
           <tr>
             <td>
@@ -4906,15 +4936,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/configure_workspace.html#War_overlays">War overlays</a>
+              <a href="../delve_into/tools/howto/eclipse/configure_workspace.html#War_overlays">War overlays</a>
             </td>
-            <td>Howto: Configure Workspace</td>
+            <td>Configure Workspace</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/war_overlays_in_eclipse.html#War_overlays_in_eclipse">War overlays in eclipse</a>
+              <a href="../delve_into/tools/howto/eclipse/war_overlays_in_eclipse.html#War_overlays_in_eclipse">War overlays in eclipse</a>
             </td>
-            <td>Howto: War overlays in eclipse</td>
+            <td>War overlays in eclipse</td>
           </tr>
           <tr>
             <td>

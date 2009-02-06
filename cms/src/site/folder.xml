@@ -224,10 +224,6 @@
    fullname='delve_into/quickstart.xml.vm'
    relpath='delve_into'
   >quickstart</file>
-   <file ext='xml.vm~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/quickstart.xml.vm~'
-   relpath='delve_into'
-  >quickstart</file>
    <folder>sysadmin
 <info>
  <title>System Administration Guide</title>
@@ -462,42 +458,50 @@
  <afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
  </afterlist>
 </info>
-     <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
-   fullname='delve_into/tools/howto/build_core_Hippo_CMS.xml.vm'
-   relpath='delve_into/tools/howto'
-  >build_core_Hippo_CMS</file>
-     <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
-   fullname='delve_into/tools/howto/configure_workspace.xml.vm'
-   relpath='delve_into/tools/howto'
+     <folder>eclipse
+      <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+   fullname='delve_into/tools/howto/eclipse/configure_workspace.xml.vm'
+   relpath='delve_into/tools/howto/eclipse'
   >configure_workspace</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/tools/howto/eclipse/start_eclipse.xml'
+   relpath='delve_into/tools/howto/eclipse'
+  >start_eclipse</file>
+      <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/tools/howto/eclipse/war_overlays_in_eclipse.xml.vm'
+   relpath='delve_into/tools/howto/eclipse'
+  >war_overlays_in_eclipse</file>
+     </folder>
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/tools/howto/export_node.xml'
+   relpath='delve_into/tools/howto'
+  >export_node</file>
      <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/tools/howto/get_Hippo_CMS_source.xml.vm'
    relpath='delve_into/tools/howto'
   >get_Hippo_CMS_source</file>
-     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/tools/howto/index.xml'
    relpath='delve_into/tools/howto'
   >index</file>
-     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
-   fullname='delve_into/tools/howto/install_maven.xml'
-   relpath='delve_into/tools/howto'
+     <folder>maven
+      <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/tools/howto/maven/build_core_Hippo_CMS.xml.vm'
+   relpath='delve_into/tools/howto/maven'
+  >build_core_Hippo_CMS</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/tools/howto/maven/install_maven.xml'
+   relpath='delve_into/tools/howto/maven'
   >install_maven</file>
-     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
-   fullname='delve_into/tools/howto/learning_maven.xml'
-   relpath='delve_into/tools/howto'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+   fullname='delve_into/tools/howto/maven/learning_maven.xml'
+   relpath='delve_into/tools/howto/maven'
   >learning_maven</file>
-     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
-   fullname='delve_into/tools/howto/run_development_package.xml'
-   relpath='delve_into/tools/howto'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/tools/howto/maven/run_development_package.xml'
+   relpath='delve_into/tools/howto/maven'
   >run_development_package</file>
-     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
-   fullname='delve_into/tools/howto/start_eclipse.xml'
-   relpath='delve_into/tools/howto'
-  >start_eclipse</file>
-     <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
-   fullname='delve_into/tools/howto/war_overlays_in_eclipse.xml.vm'
-   relpath='delve_into/tools/howto'
-  >war_overlays_in_eclipse</file>
+     </folder>
     </folder>
     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/tools/index.xml'
@@ -528,80 +532,40 @@
    fullname='delve_into/user/cms_admins/howto/add_group.xml'
    relpath='delve_into/user/cms_admins/howto'
   >add_group</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/cms_admins/howto/add_group.xml~'
-   relpath='delve_into/user/cms_admins/howto'
-  >add_group</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/cms_admins/howto/add_user.xml'
-   relpath='delve_into/user/cms_admins/howto'
-  >add_user</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/cms_admins/howto/add_user.xml~'
    relpath='delve_into/user/cms_admins/howto'
   >add_user</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/cms_admins/howto/assign_user_to_group.xml'
    relpath='delve_into/user/cms_admins/howto'
   >assign_user_to_group</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/cms_admins/howto/assign_user_to_group.xml~'
-   relpath='delve_into/user/cms_admins/howto'
-  >assign_user_to_group</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/cms_admins/howto/change_group_properties.xml'
-   relpath='delve_into/user/cms_admins/howto'
-  >change_group_properties</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/cms_admins/howto/change_group_properties.xml~'
    relpath='delve_into/user/cms_admins/howto'
   >change_group_properties</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/cms_admins/howto/change_password.xml'
    relpath='delve_into/user/cms_admins/howto'
   >change_password</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/cms_admins/howto/change_password.xml~'
-   relpath='delve_into/user/cms_admins/howto'
-  >change_password</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/cms_admins/howto/change_user_properties.xml'
-   relpath='delve_into/user/cms_admins/howto'
-  >change_user_properties</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/cms_admins/howto/change_user_properties.xml~'
    relpath='delve_into/user/cms_admins/howto'
   >change_user_properties</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/cms_admins/howto/deactivate_account.xml'
    relpath='delve_into/user/cms_admins/howto'
   >deactivate_account</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/cms_admins/howto/deactivate_account.xml~'
-   relpath='delve_into/user/cms_admins/howto'
-  >deactivate_account</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/cms_admins/howto/goto_group_properties.xml'
-   relpath='delve_into/user/cms_admins/howto'
-  >goto_group_properties</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/cms_admins/howto/goto_group_properties.xml~'
    relpath='delve_into/user/cms_admins/howto'
   >goto_group_properties</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/cms_admins/howto/goto_user_management_tab.xml'
    relpath='delve_into/user/cms_admins/howto'
   >goto_user_management_tab</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/cms_admins/howto/goto_user_management_tab.xml~'
-   relpath='delve_into/user/cms_admins/howto'
-  >goto_user_management_tab</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/cms_admins/howto/goto_user_properties.xml'
-   relpath='delve_into/user/cms_admins/howto'
-  >goto_user_properties</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/cms_admins/howto/goto_user_properties.xml~'
    relpath='delve_into/user/cms_admins/howto'
   >goto_user_properties</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
@@ -612,40 +576,20 @@
    fullname='delve_into/user/cms_admins/howto/login.xml'
    relpath='delve_into/user/cms_admins/howto'
   >login</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/cms_admins/howto/login.xml~'
-   relpath='delve_into/user/cms_admins/howto'
-  >login</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/cms_admins/howto/logout.xml'
-   relpath='delve_into/user/cms_admins/howto'
-  >logout</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/cms_admins/howto/logout.xml~'
    relpath='delve_into/user/cms_admins/howto'
   >logout</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/cms_admins/howto/save_settings.xml'
    relpath='delve_into/user/cms_admins/howto'
   >save_settings</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/cms_admins/howto/save_settings.xml~'
-   relpath='delve_into/user/cms_admins/howto'
-  >save_settings</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/cms_admins/howto/start_CMS.xml'
    relpath='delve_into/user/cms_admins/howto'
   >start_CMS</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/cms_admins/howto/start_CMS.xml~'
-   relpath='delve_into/user/cms_admins/howto'
-  >start_CMS</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/cms_admins/howto/type_in_editing_region.xml'
-   relpath='delve_into/user/cms_admins/howto'
-  >type_in_editing_region</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/cms_admins/howto/type_in_editing_region.xml~'
    relpath='delve_into/user/cms_admins/howto'
   >type_in_editing_region</file>
      </folder>
@@ -830,10 +774,6 @@
    fullname='delve_into/user/contributors/howto/learn_meaning_of_inputfield.xml'
    relpath='delve_into/user/contributors/howto'
   >learn_meaning_of_inputfield</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/contributors/howto/learn_meaning_of_inputfield.xml~'
-   relpath='delve_into/user/contributors/howto'
-  >learn_meaning_of_inputfield</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/howto/login.xml'
    relpath='delve_into/user/contributors/howto'
@@ -992,16 +932,8 @@
    fullname='delve_into/user/information_architects/concepts/boolean.xml'
    relpath='delve_into/user/information_architects/concepts'
   >boolean</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/concepts/boolean.xml~'
-   relpath='delve_into/user/information_architects/concepts'
-  >boolean</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/concepts/documenttype.xml'
-   relpath='delve_into/user/information_architects/concepts'
-  >documenttype</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/concepts/documenttype.xml~'
    relpath='delve_into/user/information_architects/concepts'
   >documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
@@ -1012,10 +944,6 @@
    fullname='delve_into/user/information_architects/concepts/mandatory_or_optional.xml'
    relpath='delve_into/user/information_architects/concepts'
   >mandatory_or_optional</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/concepts/mandatory_or_optional.xml~'
-   relpath='delve_into/user/information_architects/concepts'
-  >mandatory_or_optional</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/concepts/namespaces_folder.xml'
    relpath='delve_into/user/information_architects/concepts'
@@ -1024,24 +952,12 @@
    fullname='delve_into/user/information_architects/concepts/namespace.xml'
    relpath='delve_into/user/information_architects/concepts'
   >namespace</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/concepts/namespace.xml~'
-   relpath='delve_into/user/information_architects/concepts'
-  >namespace</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/concepts/string.xml'
    relpath='delve_into/user/information_architects/concepts'
   >string</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/concepts/string.xml~'
-   relpath='delve_into/user/information_architects/concepts'
-  >string</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/concepts/URL.xml'
-   relpath='delve_into/user/information_architects/concepts'
-  >URL</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/concepts/URL.xml~'
    relpath='delve_into/user/information_architects/concepts'
   >URL</file>
      </folder>
@@ -1050,64 +966,32 @@
    fullname='delve_into/user/information_architects/howto/add_boolean_to_documenttype.xml'
    relpath='delve_into/user/information_architects/howto'
   >add_boolean_to_documenttype</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/add_boolean_to_documenttype.xml~'
-   relpath='delve_into/user/information_architects/howto'
-  >add_boolean_to_documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/add_date_to_documenttype.xml'
-   relpath='delve_into/user/information_architects/howto'
-  >add_date_to_documenttype</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/add_date_to_documenttype.xml~'
    relpath='delve_into/user/information_architects/howto'
   >add_date_to_documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/add_markuped_text_to_documenttype.xml'
    relpath='delve_into/user/information_architects/howto'
   >add_markuped_text_to_documenttype</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/add_markuped_text_to_documenttype.xml~'
-   relpath='delve_into/user/information_architects/howto'
-  >add_markuped_text_to_documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/add_number_to_documenttype.xml'
-   relpath='delve_into/user/information_architects/howto'
-  >add_number_to_documenttype</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/add_number_to_documenttype.xml~'
    relpath='delve_into/user/information_architects/howto'
   >add_number_to_documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/add_string_to_documenttype.xml'
    relpath='delve_into/user/information_architects/howto'
   >add_string_to_documenttype</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/add_string_to_documenttype.xml~'
-   relpath='delve_into/user/information_architects/howto'
-  >add_string_to_documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/change_field_in_documenttype.xml'
-   relpath='delve_into/user/information_architects/howto'
-  >change_field_in_documenttype</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/change_field_in_documenttype.xml~'
    relpath='delve_into/user/information_architects/howto'
   >change_field_in_documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/create_documenttype.xml'
    relpath='delve_into/user/information_architects/howto'
   >create_documenttype</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/create_documenttype.xml~'
-   relpath='delve_into/user/information_architects/howto'
-  >create_documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/create_namespace.xml'
-   relpath='delve_into/user/information_architects/howto'
-  >create_namespace</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/create_namespace.xml~'
    relpath='delve_into/user/information_architects/howto'
   >create_namespace</file>
       <folder>document_types
@@ -1136,44 +1020,20 @@
    fullname='delve_into/user/information_architects/howto/fieldcaption.xml'
    relpath='delve_into/user/information_architects/howto'
   >fieldcaption</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/fieldcaption.xml~'
-   relpath='delve_into/user/information_architects/howto'
-  >fieldcaption</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/fieldsize.xml'
-   relpath='delve_into/user/information_architects/howto'
-  >fieldsize</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/fieldsize.xml~'
    relpath='delve_into/user/information_architects/howto'
   >fieldsize</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/goto_content_browse_tab.xml'
    relpath='delve_into/user/information_architects/howto'
   >goto_content_browse_tab</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/goto_content_browse_tab.xml~'
-   relpath='delve_into/user/information_architects/howto'
-  >goto_content_browse_tab</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/goto_documenttypes_tab.xml~'
-   relpath='delve_into/user/information_architects/howto'
-  >goto_documenttypes_tab</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/goto_documenttype_tab.xml'
    relpath='delve_into/user/information_architects/howto'
   >goto_documenttype_tab</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/goto_documenttype_tab.xml~'
-   relpath='delve_into/user/information_architects/howto'
-  >goto_documenttype_tab</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/goto_namespace.xml'
-   relpath='delve_into/user/information_architects/howto'
-  >goto_namespace</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/goto_namespace.xml~'
    relpath='delve_into/user/information_architects/howto'
   >goto_namespace</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
@@ -1184,48 +1044,24 @@
    fullname='delve_into/user/information_architects/howto/login.xml'
    relpath='delve_into/user/information_architects/howto'
   >login</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/login.xml~'
-   relpath='delve_into/user/information_architects/howto'
-  >login</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/logout.xml'
-   relpath='delve_into/user/information_architects/howto'
-  >logout</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/logout.xml~'
    relpath='delve_into/user/information_architects/howto'
   >logout</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/mandatory_or_optional.xml'
    relpath='delve_into/user/information_architects/howto'
   >mandatory_or_optional</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/mandatory_or_optional.xml~'
-   relpath='delve_into/user/information_architects/howto'
-  >mandatory_or_optional</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/naming_a_field.xml'
-   relpath='delve_into/user/information_architects/howto'
-  >naming_a_field</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/naming_a_field.xml~'
    relpath='delve_into/user/information_architects/howto'
   >naming_a_field</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/remove_field_from_documenttype.xml'
    relpath='delve_into/user/information_architects/howto'
   >remove_field_from_documenttype</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/remove_field_from_documenttype.xml~'
-   relpath='delve_into/user/information_architects/howto'
-  >remove_field_from_documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/save_documenttype.xml'
-   relpath='delve_into/user/information_architects/howto'
-  >save_documenttype</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/save_documenttype.xml~'
    relpath='delve_into/user/information_architects/howto'
   >save_documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
@@ -1236,10 +1072,6 @@
    fullname='delve_into/user/information_architects/howto/update_content.xml'
    relpath='delve_into/user/information_architects/howto'
   >update_content</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/howto/update_content.xml~'
-   relpath='delve_into/user/information_architects/howto'
-  >update_content</file>
      </folder>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/index.xml'
@@ -1247,10 +1079,6 @@
   >index</file>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/tour.xml'
-   relpath='delve_into/user/information_architects'
-  >tour</file>
-     <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/information_architects/tour.xml~'
    relpath='delve_into/user/information_architects'
   >tour</file>
     </folder>
@@ -1315,13 +1143,25 @@
    relpath='.'
   >releasing</file>
   <folder>support
-   <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
+   <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='support/community.xml.vm'
    relpath='support'
   >community</file>
-   <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
+   <file ext='xml.vm~' mimetype='text/html charset=us-ascii' note='todo'
+   fullname='support/community.xml.vm~'
+   relpath='support'
+  >community</file>
+   <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='support/contributing.xml.vm'
    relpath='support'
   >contributing</file>
+   <file ext='xml.vm~' mimetype='text/html charset=us-ascii' note='todo'
+   fullname='support/contributing.xml.vm~'
+   relpath='support'
+  >contributing</file>
+   <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='support/forums.xml.vm'
+   relpath='support'
+  >forums</file>
   </folder>
  </folder>

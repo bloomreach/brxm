@@ -70,8 +70,8 @@
 
     <menu name="Hippo CMS Support">
       <item name="Commercial support" href="http://www.onehippo.com/en/support"/>
-      <item name="Public Forums" href="/support/forums.html"/>
       <item name="Community support" href="/support/community.html"/>
+      <item name="Public Forums" href="/support/forums.html"/>
       <item name="Contributing" href="/support/contributing.html"/>
     </menu>
 
@@ -182,13 +182,13 @@
       </item>
 
       <item name="Sysadmin Guide" href="delve_into/sysadmin/index.html" collapse="true">
-        <item name="Supported stacks" href="supported_stacks.html" collapse="false"/>
         <item name="Requirements" collapse="true" href="/delve_into/sysadmin/requirements.html">
           <item name="OS" collapse="true" href="/delve_into/sysadmin/requirements.html#Operating_System"/>
           <item name="Java" collapse="true" href="/delve_into/sysadmin/requirements.html#Java"/>
           <item name="Servlet Container" collapse="true" href="/delve_into/sysadmin/requirements.html#Java_Servlet_Container"/>
           <item name="Relational Database" collapse="true" href="/delve_into/sysadmin/requirements.html#Relational_Database"/>
         </item>
+        <item name="Supported stacks" href="supported_stacks.html" collapse="false"/>
         <item name="Installation" href="/delve_into/sysadmin/installation/index.html" collapse="true">
           <item name="in Servlet Container" collapse="true" href="/delve_into/sysadmin/installation/in_servlet_container.html">
             <item name="Tomcat" href="/delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat"/>
