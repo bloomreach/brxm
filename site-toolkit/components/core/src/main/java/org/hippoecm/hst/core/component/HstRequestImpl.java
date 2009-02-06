@@ -23,6 +23,10 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         this.requestContext = requestContext;
         this.componentConfiguration = componentConfiguration;
     }
+    
+    public void setRequest(HttpServletRequest servletRequest) {
+        super.setRequest(servletRequest);
+    }
 
     public Map<String, Object> getParameterMap() {
         String namespace = this.componentConfiguration.getNamespace();

@@ -108,7 +108,7 @@ public class HstSiteServlet extends HttpServlet {
         try {
             // send request through pipeline
             context = contextComponent.create(req, res, getServletConfig());
-            engine.service(context);
+            engine.service(req, res, context);
         } catch (Exception e) {
             final String msg = "Fatal error encountered while processing portal request: " + e.toString();
             log.fatal(msg, e);

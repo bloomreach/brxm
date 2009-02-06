@@ -16,12 +16,12 @@ public class ResourceServingValve extends AbstractValve {
     @Override
     public void invoke(HstRequestContext request, ValveContext context) throws Exception {
 
-        if (isResourceRequest()) {
+        if (!context.getServletResponse().isCommitted() && isResourceRequest()) {
             HstComponentConfiguration target = null;
             
             if (target != null) {
-                this.requestProcessor.processBeforeServeResource(request, target);
-                this.requestProcessor.processServeResource(request, target);
+                this.requestProcessor.processBeforeServeResource(context.getServletRequest(), context.getServletResponse(), request, target);
+                this.requestProcessor.processServeResource(context.getServletRequest(), context.getServletResponse(), request, target);
             }
         }
         

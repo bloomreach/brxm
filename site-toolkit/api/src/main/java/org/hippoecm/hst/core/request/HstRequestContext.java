@@ -23,6 +23,12 @@ import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.mapping.URLMappingManager;
 import org.hippoecm.hst.core.template.node.PageNode;
 
+/**
+ * HstRequestContext provides repository content context
+ * and page/components configuration context.
+ * 
+ * @version $Id$
+ */
 public interface HstRequestContext {
     
     public Repository getRepository();

@@ -21,8 +21,7 @@ public class ActionValve extends AbstractValve
             HstComponentConfiguration target = null;
             
             if (target != null) {
-                this.requestProcessor.processAction(request, target);
-                sendRedirectNavigation(request);
+                this.requestProcessor.processAction(context.getServletRequest(), context.getServletResponse(), request, target);
             }
         }
         

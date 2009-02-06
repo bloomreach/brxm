@@ -2,8 +2,10 @@ package org.hippoecm.hst.core.container;
 
 import java.util.Iterator;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstRequestProcessor;
 
@@ -18,7 +20,7 @@ public class AggregationValve extends AbstractValve {
     @Override
     public void invoke(HstRequestContext request, ValveContext context) throws Exception {
         
-        if (!isResourceRequest()) {
+        if (!context.getServletResponse().isCommitted() && !isResourceRequest()) {
             HstComponentConfiguration root = null;
             
             //
@@ -26,8 +28,8 @@ public class AggregationValve extends AbstractValve {
             //root = page.getRootComponent();
             
             if (root != null) {
-                aggregateAndProcessBeforeRender(request, root);
-                aggregateAndProcessRender(request, root);
+                aggregateAndProcessBeforeRender(context.getServletRequest(), context.getServletResponse(), request, root);
+                aggregateAndProcessRender(context.getServletRequest(), context.getServletResponse(), request, root);
             }
         }
         
@@ -35,21 +37,21 @@ public class AggregationValve extends AbstractValve {
         context.invokeNext(request);
     }
 
-    protected void aggregateAndProcessBeforeRender(HstRequestContext context, HstComponentConfiguration component) throws Exception {
+    protected void aggregateAndProcessBeforeRender(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext context, HstComponentConfiguration component) throws Exception {
         
         for(Iterator<HstComponentConfiguration> it = component.getChildren().iterator(); it.hasNext();) {
-            aggregateAndProcessBeforeRender(context, it.next());
+            aggregateAndProcessBeforeRender(servletRequest, servletResponse, context, it.next());
         }
         
-        this.requestProcessor.processBeforeRender(context, component);
+        this.requestProcessor.processBeforeRender(servletRequest, servletResponse, context, component);
 
     }
     
-    protected void aggregateAndProcessRender(HstRequestContext context, HstComponentConfiguration component) throws Exception {
+    protected void aggregateAndProcessRender(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext context, HstComponentConfiguration component) throws Exception {
         for(Iterator<HstComponentConfiguration> it = component.getChildren().iterator(); it.hasNext();) {
-            aggregateAndProcessRender(context, it.next());
+            aggregateAndProcessRender(servletRequest, servletResponse, context, it.next());
         }
     
-        this.requestProcessor.processRender(context, component);
+        this.requestProcessor.processRender(servletRequest, servletResponse, context, component);
     }
 }

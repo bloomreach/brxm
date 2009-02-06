@@ -2,6 +2,9 @@ package org.hippoecm.hst.site.container;
 
 import java.util.Properties;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.HstSiteEngine;
 import org.hippoecm.hst.core.container.Pipeline;
@@ -20,9 +23,9 @@ public class HstSiteEngineImpl implements HstSiteEngine {
         this.componentManager = new SpringComponentManager(initProps);
     }
 
-    public void service(HstRequestContext context) throws Exception {
+    public void service(ServletRequest request, ServletResponse response, HstRequestContext context) throws Exception {
         Pipeline pipeline = getDefaultPipeline();
-        pipeline.invoke(context);
+        pipeline.invoke(request, response, context);
     }
 
     public void shutdown() throws Exception {

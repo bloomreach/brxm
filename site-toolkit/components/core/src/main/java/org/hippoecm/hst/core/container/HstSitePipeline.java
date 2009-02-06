@@ -1,8 +1,8 @@
 package org.hippoecm.hst.core.container;
 
-import org.hippoecm.hst.core.container.Pipeline;
-import org.hippoecm.hst.core.container.Valve;
-import org.hippoecm.hst.core.container.ValveContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstSitePipeline implements Pipeline
@@ -25,20 +25,24 @@ public class HstSitePipeline implements Pipeline
     {
     }
 
-    public void invoke(HstRequestContext request) throws Exception
+    public void invoke(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext request) throws Exception
     {
-        new Invocation(valves).invokeNext(request);
+        new Invocation(servletRequest, servletResponse, valves).invokeNext(request);
     }
     
     private static final class Invocation implements ValveContext
     {
 
+        private final ServletRequest servletRequest;
+        private final ServletResponse servletResponse;
         private final Valve[] valves;
 
         private int at = 0;
 
-        public Invocation(Valve[] valves)
+        public Invocation(ServletRequest servletRequest, ServletResponse servletResponse, Valve[] valves)
         {
+            this.servletRequest = servletRequest;
+            this.servletResponse = servletResponse;
             this.valves = valves;
         }
 
@@ -50,6 +54,14 @@ public class HstSitePipeline implements Pipeline
                 at++;
                 next.invoke(request, this);
             }
+        }
+
+        public ServletRequest getServletRequest() {
+            return this.servletRequest;
+        }
+
+        public ServletResponse getServletResponse() {
+            return this.servletResponse;
         }
     }
 }

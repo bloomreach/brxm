@@ -1,5 +1,8 @@
 package org.hippoecm.hst.core.container;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -31,7 +34,7 @@ public interface HstSiteEngine
      * @param context a <code>RequestContext</code> with the state of the request.
      * @throws Exception when the engine fails to initilialize
      */
-    public void service(HstRequestContext context) throws Exception;
+    public void service(ServletRequest request, ServletResponse response, HstRequestContext context) throws Exception;
 
     /**
      * Gets the engine's request default pipeline.
