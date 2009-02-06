@@ -39,11 +39,11 @@ public class AggregationValve extends AbstractValve {
 
     protected void aggregateAndProcessBeforeRender(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext context, HstComponentConfiguration component) throws Exception {
         
+        this.requestProcessor.processBeforeRender(servletRequest, servletResponse, context, component);
+        
         for(Iterator<HstComponentConfiguration> it = component.getChildren().iterator(); it.hasNext();) {
             aggregateAndProcessBeforeRender(servletRequest, servletResponse, context, it.next());
         }
-        
-        this.requestProcessor.processBeforeRender(servletRequest, servletResponse, context, component);
 
     }
     
