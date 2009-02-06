@@ -83,6 +83,8 @@ public class JcrEventListener implements EventListener, IClusterable {
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         ois.defaultReadObject();
 
-        start();
+        if (context != null) {
+            start();
+        }
     }
 }

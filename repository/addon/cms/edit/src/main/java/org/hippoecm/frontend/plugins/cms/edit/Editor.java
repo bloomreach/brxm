@@ -75,5 +75,6 @@ class Editor implements IClusterable {
 
     void close() {
         plugin.stop();
+        modelService.destroy();
     }
 }

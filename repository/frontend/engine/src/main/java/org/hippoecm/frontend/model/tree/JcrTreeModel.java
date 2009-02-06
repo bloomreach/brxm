@@ -15,9 +15,13 @@
  */
 package org.hippoecm.frontend.model.tree;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -39,7 +43,7 @@ public class JcrTreeModel extends DefaultTreeModel implements IJcrTreeModel, IOb
 
     private IObservationContext observationContext;
     private JcrEventListener listener;
-    private IJcrTreeNode root;
+    protected final IJcrTreeNode root;
 
     public JcrTreeModel(IJcrTreeNode rootModel) {
         super(rootModel);
@@ -47,17 +51,20 @@ public class JcrTreeModel extends DefaultTreeModel implements IJcrTreeModel, IOb
         root = rootModel;
     }
 
-    public IJcrTreeNode lookup(JcrNodeModel nodeModel) {
+    public TreePath lookup(JcrNodeModel nodeModel) {
         IJcrTreeNode node = root;
         if (nodeModel != null) {
             String basePath = root.getNodeModel().getItemModel().getPath();
             String path = nodeModel.getItemModel().getPath();
             if (path.startsWith(basePath)) {
                 String[] elements = StringUtils.split(path.substring(basePath.length()), '/');
+                List<Object> nodes = new LinkedList<Object>();
+                nodes.add(node);
                 try {
                     for (String element : elements) {
                         IJcrTreeNode child = node.getChild(element);
                         if (child != null) {
+                            nodes.add(child);
                             node = child;
                         } else {
                             break;
@@ -66,9 +73,10 @@ public class JcrTreeModel extends DefaultTreeModel implements IJcrTreeModel, IOb
                 } catch (RepositoryException ex) {
                     log.error("Unable to find node in tree", ex.getMessage());
                 }
+                return new TreePath(nodes.toArray(new Object[nodes.size()]));
             }
         }
-        return node;
+        return null;
     }
 
     public void detach() {

@@ -65,6 +65,7 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
     private Map<String, Extension> extensions;
     private List<ServiceForwarder> forwarders;
     private PluginContext[] contexts;
+    private boolean running = false;
 
     ClusterControl(PluginManager mgr, PluginContext context, IClusterConfig config, String id) {
         this.mgr = mgr;
@@ -80,10 +81,21 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
     }
 
     public <S extends IClusterable> S getService(String name, Class<S> clazz) {
-        return context.getService(config.getString(name), clazz);
+        if (running) {
+            return context.getService(config.getString(name), clazz);
+        } else {
+            log.warn("service cannot be acquired after cluster has been stopped");
+            return null;
+        }
     }
 
     public void start() {
+        if (running) {
+            log.warn("cluster has already been started");
+            return;
+        }
+
+        running = true;
         for (ServiceForwarder forwarder : forwarders) {
             forwarder.start();
         }
@@ -102,6 +114,12 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
     }
 
     public void stop() {
+        if (!running) {
+            log.debug("cluster has already been stopped");
+            return;
+        }
+        running = false;
+
         context.unregisterControl(this);
 
         for (PluginContext context : contexts) {

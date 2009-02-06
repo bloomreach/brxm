@@ -24,6 +24,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 public interface IJcrTreeNode extends TreeNode, IDetachable {
 
     JcrNodeModel getNodeModel();
-
+    
     IJcrTreeNode getChild(String name) throws RepositoryException;
 }
