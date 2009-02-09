@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 public class Utilities {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id:$";
+    private final static String SVN_ID = "$Id: XXXX$";
 
     private final static Logger log = LoggerFactory.getLogger(Utilities.class);
 
