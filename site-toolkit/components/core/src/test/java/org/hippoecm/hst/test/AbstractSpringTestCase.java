@@ -34,6 +34,7 @@ public abstract class AbstractSpringTestCase extends TestCase {
      * close Spring context as part of test teardown
      */
     protected void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**

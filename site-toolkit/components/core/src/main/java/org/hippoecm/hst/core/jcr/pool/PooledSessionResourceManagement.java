@@ -1,92 +1,92 @@
 package org.hippoecm.hst.core.jcr.pool;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Session;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 
-public class PooledSessionResourceManagement implements ResourceLifecycleManagement {
+public class PooledSessionResourceManagement implements ResourceLifecycleManagement, PoolingRepositoryAware {
     
-    static Log log = LogFactory.getLog(PooledSessionResourceManagement.class);
-    
-    private static ThreadLocal<Map<String, Boolean>> tlActiveStates = new ThreadLocal<Map<String, Boolean>>() {
-        protected synchronized Map<String, Boolean> initialValue() {
-            return new HashMap<String, Boolean>();
-        }
-    };
-
-    private static ThreadLocal<Map<String, List<Session>>> tlPooledSessionList = new ThreadLocal<Map<String, List<Session>>>() {
-        protected synchronized Map<String, List<Session>> initialValue() {
-            return new HashMap<String, List<Session>>();
+    private static ThreadLocal<Map<String, boolean []>> tlActiveStates = new ThreadLocal<Map<String, boolean []>>() {
+        protected synchronized Map<String, boolean []> initialValue() {
+            return new HashMap<String, boolean []>();
         }
     };
     
-    private String name;
+    private static ThreadLocal<Set<Session>> tlPooledSessions = new ThreadLocal<Set<Session>>();
 
-    public PooledSessionResourceManagement(String name) {
-        this.name = name;
+    protected PoolingRepository poolingRepository;
+    
+    protected String namespace = "default";
+    
+    public PooledSessionResourceManagement() {
+    }
+    
+    public PooledSessionResourceManagement(String namespace) {
+        if (namespace != null) {
+            this.namespace = namespace;
+        }
+    }
+    
+    public void setPoolingRepository(PoolingRepository poolingRepository) {
+        this.poolingRepository = poolingRepository;
     }
     
     public boolean isActive() {
-        Boolean active = tlActiveStates.get().get(this.name);
-        return (active != null && active.booleanValue());
+        boolean [] activeState = tlActiveStates.get().get(this.namespace);
+        return (activeState != null && activeState[0]);
     }
     
     public void setActive(boolean active) {
-        tlActiveStates.get().put(this.name, Boolean.valueOf(active));
+        boolean [] activeState = tlActiveStates.get().get(this.namespace);
+        
+        if (activeState == null) {
+            activeState = new boolean[] { active };
+            tlActiveStates.get().put(this.namespace, activeState);
+        } else {
+            activeState[0] = active;
+        }
     }
 
     public void registerResource(Object session) {
-        List<Session> sessionList = getSessionList(true);
-        sessionList.add((Session) session);
+        Set<Session> sessions = tlPooledSessions.get();
+        
+        if (sessions == null) {
+            sessions = new HashSet<Session>();
+            sessions.add((Session) session);
+            tlPooledSessions.set(sessions);
+        } else {
+            sessions.add((Session) session);
+        }
     }
     
     public void unregisterResource(Object session) {
-        List<Session> sessionList = getSessionList(false);
+        Set<Session> sessions = tlPooledSessions.get();
         
-        if (sessionList != null) {
-            sessionList.remove((Session) session);
+        if (sessions != null) {
+            sessions.remove((Session) session);
         }
     }
     
     public void disposeResource(Object session) {
-        try {
-            ((Session) session).logout();
-        } catch (Throwable th) {
-        }
-        
+        this.poolingRepository.returnSession((Session) session);
         unregisterResource(session);
     }
     
     public void disposeAllResources() {
-        List<Session> sessionList = getSessionList(false);
+        Set<Session> sessions = tlPooledSessions.get();
         
-        if (sessionList != null) {
-            for (Session session : sessionList) {
-                try {
-                    session.logout();
-                } catch (Throwable th) {
-                }
+        if (sessions != null) {
+            for (Session session : sessions) {
+                this.poolingRepository.returnSession((Session) session);
             }
             
-            sessionList.clear();
+            sessions.clear();
         }
     }
-    
-    private List<Session> getSessionList(boolean createNew) {
-        List<Session> sessionList = tlPooledSessionList.get().get(this.name);
-        
-        if (sessionList == null && createNew) {
-            sessionList = new LinkedList<Session>();
-            tlPooledSessionList.get().put(this.name, sessionList);
-        }
-        
-        return sessionList;
-    }
+
 }

@@ -78,7 +78,7 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
             } else if (type.equals("readonly") && Boolean.parseBoolean(value)) {
                 poolingRepository.setSessionDecorator(new ReadOnlyPooledSessionDecoratorProxyFactoryImpl());
             } else if (type.equals("sessionLifecycleManageable") && Boolean.parseBoolean(value)) {
-                poolingRepository.setPooledSessionLifecycleManagement(new PooledSessionResourceManagement("" + name + ".pooledSessionLifecycleManagement"));
+                poolingRepository.setPooledSessionLifecycleManagement(new PooledSessionResourceManagement());
             } else if (type.equals("maxActive")) {
                 poolingRepository.setMaxActive(Integer.parseInt(value));
             } else if (type.equals("maxIdle")) {

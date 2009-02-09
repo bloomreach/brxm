@@ -75,6 +75,10 @@ public class BasicPoolingRepository implements PoolingRepository {
 
     public void setPooledSessionLifecycleManagement(ResourceLifecycleManagement pooledSessionLifecycleManagement) {
         this.pooledSessionLifecycleManagement = pooledSessionLifecycleManagement;
+        
+        if (this.pooledSessionLifecycleManagement != null && this.pooledSessionLifecycleManagement instanceof PoolingRepositoryAware) {
+            ((PoolingRepositoryAware) this.pooledSessionLifecycleManagement).setPoolingRepository(this);
+        }
     }
     
     public ResourceLifecycleManagement getPooledSessionLifecycleManagement() {
@@ -135,10 +139,9 @@ public class BasicPoolingRepository implements PoolingRepository {
      */
     public Session login(Credentials credentials) throws LoginException, RepositoryException {
         if (equalsCredentials(credentials)) {
-            Session session = getRepository().login((SimpleCredentials) credentials);
-            return session;
+            return login();
         } else {
-            throw new LoginException("login by credentials other than SimpleCredentials is not supported.");
+            throw new LoginException("login by credentials other than the default is not supported.");
         }
     }
 

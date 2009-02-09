@@ -50,9 +50,6 @@
     <property name="pooledSessionLifecycleManagement">
       <bean id="org.hippoecm.hst.core.jcr.pool.PoolingRepository.pooledSessionLifecycleManagement" 
             class=" org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement">
-        <constructor-arg>
-          <value>org.hippoecm.hst.core.jcr.pool.PoolingRepository.pooledSessionLifecycleManagement</value>
-        </constructor-arg>
       </bean>
     </property>
     
