@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 public class ResourceUploadPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ResourceUploadPlugin.java 12039 2008-06-13 09:27:05Z bvanhalderen $";
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
