@@ -50,14 +50,10 @@ public class PathsTest extends TestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        if(session.getRootNode().hasNode("test"))
-            session.getRootNode().getNode("test").remove();
     }
 
     @After
     public void tearDown() throws Exception {
-        if(session.getRootNode().hasNode("test"))
-            session.getRootNode().getNode("test").remove();
         super.tearDown();
     }
 
