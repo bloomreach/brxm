@@ -55,8 +55,6 @@ public class Group implements Comparable<Group>, IClusterable {
     private String path;
     private String groupname;
     
-    private final Set<String> members = new TreeSet<String>();
-    
     private String description;
     private boolean external = false;
 
@@ -203,17 +201,18 @@ public class Group implements Comparable<Group>, IClusterable {
             setDescription(node.getProperty("description").getString());
             
         }
+    }
 
+    public List<String> getMembers() throws RepositoryException {
+        List<String> members = new ArrayList<String>();
         if (node.hasProperty(HippoNodeType.HIPPO_MEMBERS)) {
             Value[] vals = node.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues();
             for (Value val : vals) {
                 members.add(val.getString());
             }
         }
-    }
-
-    public List<String> getMembers() {
-        return new ArrayList<String>(members);
+        Collections.sort(members);
+        return members;
     }
 
     //-------------------- persistence helpers ----------//
@@ -264,12 +263,14 @@ public class Group implements Comparable<Group>, IClusterable {
     }
 
     public void removeMembership(String user) throws RepositoryException {
+        List<String> members = getMembers();
         members.remove(user);
         node.setProperty(HippoNodeType.HIPPO_MEMBERS, members.toArray(new String[members.size()]));
         node.getSession().save();
     }
 
     public void addMembership(String user) throws RepositoryException {
+        List<String> members = getMembers();
         members.add(user);
         node.setProperty(HippoNodeType.HIPPO_MEMBERS, members.toArray(new String[members.size()]));
         node.getSession().save();
@@ -283,23 +284,18 @@ public class Group implements Comparable<Group>, IClusterable {
         if (obj == this) {
             return true;
         }
-        if (obj == null) {
+        if (obj == null || (obj.getClass() != this.getClass())) {
             return false;
         }
-        if (obj instanceof Group) {
-            Group other = (Group) obj;
-            return other.getPath().equals(getPath());
-
-        }
-        return false;
+        Group other = (Group) obj;
+        return other.getPath().equals(getPath());
     }
 
-    /**
-     * Sort on group name
-     * TODO: Not needed when soring on node names works
-     */
+    public int hashCode() {
+        return (null == path ? 0 : path.hashCode());
+    }
+    
     public int compareTo(Group o) {
-        
         String thisName = getGroupname();
         String otherName = o.getGroupname();
         // 

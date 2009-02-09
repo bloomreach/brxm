@@ -15,8 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
+import java.util.List;
+
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
+import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -24,9 +31,15 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
+import org.hippoecm.frontend.plugins.cms.admin.users.UserDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxBreadCrumbPanelLink;
+import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
+import org.hippoecm.frontend.plugins.cms.admin.widgets.ConfirmDeleteDialog;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +71,57 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         AjaxBreadCrumbPanelLink edit = new AjaxBreadCrumbPanelLink("edit-group", context, this, EditGroupPanel.class, model);
         edit.setVisible(!group.isExternal());
         add(edit);
-    }
+        
+        AjaxBreadCrumbPanelLink members = new AjaxBreadCrumbPanelLink("set-group-members", context, this, SetMembersPanel.class, model);
+        members.setVisible(!group.isExternal());
+        add(members);
 
+        add(new AjaxLinkLabel("delete-group", new ResourceModel("group-delete")) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                context.getService(IDialogService.class.getName(), IDialogService.class).show(
+                        new ConfirmDeleteDialog(model, this) {
+                            private static final long serialVersionUID = 1L;
+
+                            @Override
+                            protected void onOk() {
+                                deleteGroup(model);
+                            }
+
+                            @Override
+                            protected String getTitleKey() {
+                                return "group-delete-title";
+                            }
+
+                            @Override
+                            protected String getTextKey() {
+                                return "group-delete-text";
+                            }
+                        });
+            }
+        });
+    }
+    
+    private void deleteGroup(IModel model) {
+        Group group = (Group) model.getObject();
+        String groupname = group.getGroupname();
+        try {
+            group.delete();
+            log.info("Group '" + groupname + "' deleted by "
+                    + ((UserSession) Session.get()).getCredentials().getStringValue("username"));
+            GroupDataProvider.setDirty();
+            Session.get().info(getString("group-removed", model));
+            // one up
+            List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
+            getBreadCrumbModel().setActive(l.get(l.size() -2));
+        } catch (RepositoryException e) {
+            Session.get().warn(getString("group-remove-failed", model));
+            log.error("Unable to delete group '" + groupname + "' : ", e);
+        }
+    }
+    
     /** list view to be nested in the form. */
     private static final class MembershipsListView extends ListView {
         private static final long serialVersionUID = 1L;
@@ -68,6 +130,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         public MembershipsListView(final String id, final String labelId, IModel listModel) {
             super(id, listModel);
             this.labelId = labelId;
+            setReuseItems(false);
         }
 
         protected void populateItem(ListItem item) {

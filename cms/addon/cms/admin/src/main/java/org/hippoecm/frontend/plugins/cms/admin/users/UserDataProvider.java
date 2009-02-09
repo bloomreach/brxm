@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,39 +47,19 @@ public class UserDataProvider extends SortableDataProvider {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DetachableUser.class);
 
-    private static final String QUERY_USER_LIST = "SELECT * FROM hippo:user WHERE jcr:primaryType<>'hippo:user'";
-
-    private static int totalCount = -1;
+    private static final String QUERY_USER_LIST = "SELECT * FROM hippo:user";
+    private static transient List<User> userList = new ArrayList<User>();
+    private static volatile boolean dirty = true;
+    
     private static String sessionId = "none";
 
     public UserDataProvider() {
-        setSort("frontend:lastname", true);
-    }
-
-    protected QueryManager getQueryManager() throws RepositoryException {
-        return ((UserSession) Session.get()).getQueryManager();
     }
 
     public Iterator<User> iterator(int first, int count) {
         List<User> users = new ArrayList<User>();
-        NodeIterator iter;
-        try {
-            HippoQuery listQuery = (HippoQuery) getQueryManager().createQuery(buildListQuery(), Query.SQL);
-            listQuery.setOffset(first);
-            listQuery.setLimit(count);
-            iter = listQuery.execute().getNodes();
-            while (iter.hasNext()) {
-                Node node = iter.nextNode();
-                if (node != null) {
-                    try {
-                        users.add(new User(node));
-                    } catch (RepositoryException e) {
-                        log.warn("Unable to instantiate new user.", e);
-                    }
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("Error while trying to query user nodes.", e);
+        for (int i = first; i < (count + first); i++) {
+            users.add(userList.get(i));
         }
         return users.iterator();
     }
@@ -88,47 +69,47 @@ public class UserDataProvider extends SortableDataProvider {
     }
 
     public int size() {
-        // just count once, until there is an option to do authorized queries
-        if (totalCount > -1 && sessionId.equals(Session.get().getId())) {
-            return totalCount;
+        populateUserList();
+        return userList.size();
+    }
+
+    /**
+     * Actively invalidate cached list
+     */
+    public static void setDirty() {
+        dirty = true;
+    }
+
+    /**
+     * Populate list, refresh when a new session id is found or when dirty
+     */
+    private static void populateUserList() {
+        synchronized (UserDataProvider.class) {
+            if (!dirty && sessionId.equals(Session.get().getId())) {
+                return;
+            }
+            userList.clear();
+            NodeIterator iter;
+            try {
+                Query listQuery = ((UserSession) Session.get()).getQueryManager().createQuery(QUERY_USER_LIST, Query.SQL);
+                iter = listQuery.execute().getNodes();
+                while (iter.hasNext()) {
+                    Node node = iter.nextNode();
+                    if (node != null) {
+                        try {
+                            userList.add(new User(node));
+                        } catch (RepositoryException e) {
+                            log.warn("Unable to instantiate new user.", e);
+                        }
+                    }
+                }
+                Collections.sort(userList);
+                sessionId = Session.get().getId();
+                dirty = false;
+            } catch (RepositoryException e) {
+                log.error("Error while trying to query user nodes.", e);
+            }   
         }
-        try {
-            HippoQuery countQuery = (HippoQuery) getQueryManager().createQuery(QUERY_USER_LIST, Query.SQL);
-            // must return int instead of long
-            totalCount = (int) countQuery.execute().getNodes().getSize();
-            sessionId = Session.get().getId();
-            return totalCount;
-        } catch (RepositoryException e) {
-            log.error("Unable to count the total number of users, returning 0", e);
-            return 0;
-        }
-    }
-
-    public static void countMinusOne() {
-        totalCount--;
-    }
-
-    public static void countPlusOne() {
-        totalCount++;
-    }
-
-    @Override
-    public void detach() {
-    }
-
-    private String buildListQuery() {
-        SortParam sortParam = getSort();
-        sortParam.getProperty();
-        StringBuilder sb = new StringBuilder();
-        sb.append(QUERY_USER_LIST).append(" ");
-        sb.append("ORDER BY ");
-        sb.append(sortParam.getProperty()).append(" ");
-        if (sortParam.isAscending()) {
-            sb.append("ASC");
-        } else {
-            sb.append("DESC");
-        }
-        return sb.toString();
     }
 
 }

@@ -29,7 +29,7 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 
-public class Domain implements IClusterable {
+public class Domain implements Comparable<Domain>, IClusterable {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -167,13 +167,49 @@ public class Domain implements IClusterable {
         if (obj == this) {
             return true;
         }
-        if (obj == null) {
+        if (obj == null || (obj.getClass() != this.getClass())) {
             return false;
         }
-        if (obj instanceof Domain) {
-            Domain other = (Domain) obj;
-            return other.getPath().equals(getPath());
+        Domain other = (Domain) obj;
+        return other.getPath().equals(getPath());
+    }
+
+    public int hashCode() {
+        return (null == path ? 0 : path.hashCode());
+    }
+    
+    public int compareTo(Domain o) {
+        String thisName = getName();
+        String otherName = o.getName();
+        // 
+        int len1 = thisName.length();
+        int len2 = otherName.length();
+        int n = Math.min(len1, len2);
+        char v1[] = thisName.toCharArray();
+        char v2[] = otherName.toCharArray();
+        int i = 0;
+        int j = 0;
+
+        if (i == j) {
+            int k = i;
+            int lim = n + i;
+            while (k < lim) {
+            char c1 = v1[k];
+            char c2 = v2[k];
+            if (c1 != c2) {
+                return c1 - c2;
+            }
+            k++;
+            }
+        } else {
+            while (n-- != 0) {
+            char c1 = v1[i++];
+            char c2 = v2[j++];
+            if (c1 != c2) {
+                return c1 - c2;
+            }
+            }
         }
-        return false;
+        return len1 - len2;
     }
 }

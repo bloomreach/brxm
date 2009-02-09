@@ -16,25 +16,21 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-  <div class="admin-user-panel">
-
-    <wicket:message key="permissions-set"/>
+    <h2><wicket:message key="permissions-set"/></h2>
     <form wicket:id="form">
-      Grant role 
-      <select wicket:id="roles-select">
-        <option>role1</option>
-      </select>
-       to group 
+      I want to give the:
       <select wicket:id="groups-select">
         <option>group1</option>
       </select>
-       
-      <input type="button" value="add" wicket:id="submit"/>
+      group the   
+      <select wicket:id="roles-select">
+        <option>role1</option>
+      </select>
+      role. for this security domain
+      <input type="button" value="Do it" wicket:id="submit"/>
     </form>
-    
-    
-    <span wicket:id="current-permissions-label"/>
-    <table class="admin-permissions-roles" style="border: thin solid black;">
+    <h3><span wicket:id="current-permissions-label"/></h3>
+    <table class="hippo-controlpanel-table-default hippo-list-details">
     <thead>
       <tr>
         <th><wicket:message key="permissions-role-header"/></th>
@@ -42,25 +38,22 @@
       </tr>
       </thead>
       <tbody>
-      <tr wicket:id="role-row"  style="border: thin solid black; margin: 2px; padding: 2px;">
-        <td style="border: thin solid black;"><label wicket:id="role" /></td>
-        <td style="border: thin solid black;">
-        <table>
-          <tr class="admin-role-group-edit" wicket:id="groups">
-            <td style="padding: 2px;">
-              <span wicket:id="group-label"/>
-            </td>
-            <td style="padding: 2px;">
-              <label wicket:id="group-remove"/>
-            </td>
-          </tr>
-        </table>
-        </td>
-      </tr>
+        <tr wicket:id="role-row" >
+          <td><label wicket:id="role" /></td>
+          <td>
+            <table class="hippo-controlpanel-table-nested">
+              <tr wicket:id="groups">
+                <td>
+                  <span wicket:id="group-label"/>
+                </td>
+                <td>
+                  <span class="icon-16 delete-inline-16" wicket:id="group-remove"/>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
       </tbody>
     </table>
-    
-        
-  </div>
   </wicket:panel>
 </html>

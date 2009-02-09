@@ -78,7 +78,7 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
                     group.create();
                     log.info("Group '" + groupname + "' created by "
                             + ((UserSession) Session.get()).getCredentials().getStringValue("username"));
-                    GroupDataProvider.countPlusOne();
+                    GroupDataProvider.setDirty();
                     Session.get().info(getString("group-created", groupModel));
                     // one up
                     List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();

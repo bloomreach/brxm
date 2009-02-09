@@ -16,7 +16,15 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-   <div class="hippo-controlpanel-form">
+    <h2><wicket:message key="user-view-options-title" /></h2>
+      <ul class="hippo-controlpanel-options">
+        <li wicket:id="edit-user"><a href="#"><wicket:message key="user-edit"/></a></li>
+        <li wicket:id="set-user-password"><a href="#"><wicket:message key="user-set-password"/></a></li>
+        <li wicket:id="set-user-memberships"><a href="#"><wicket:message key="user-set-memberships"/></a></li>
+        <li class="delete" wicket:id="delete-user"/>
+      </ul>
+    <div class="hippo-controlpanel-form">
+   <div class="icons-128 user-128">
    <table>
       <tr>
         <td><wicket:message key="user-username"/>: </td>
@@ -43,33 +51,28 @@
         <td><label wicket:id="provider"/> </td>
       </tr>
     </table>
-    <label wicket:id="local-memberships-label"/>
-    <ul class="admin-user-memberships">
-      <li wicket:id="local-memberships">
-        <label wicket:id="local-membership"/>
-      </li>
-    </ul>
-    <label wicket:id="external-memberships-label"/>
-    <ul class="admin-user-memberships">
-      <li wicket:id="external-memberships">
-        <label wicket:id="external-membership"/>
-      </li>
-    </ul>
+    </div>
+    <h3 wicket:id="local-memberships-label"/>
+      <table class="hippo-controlpanel-table-default hippo-list-details">
+        <tr wicket:id="local-memberships">
+          <td><label wicket:id="local-membership"/></td>
+          <td><li class="delete-16-disabled icon-16" /></td>
+        </tr>
+      </table>
+    <h3 wicket:id="external-memberships-label"/>
+      <table class="hippo-controlpanel-table-default hippo-list-details">
+        <tr wicket:id="external-memberships">
+          <td><label wicket:id="external-membership"/></td>
+          <td><li class="delete-16 icon-16" /></td>
+        </tr>
+      </table>
     <label wicket:id="properties-label"/>
-    <table class="admin-user-properties">
+      <table class="hippo-controlpanel-table-default hippo-list-details">
       <tr wicket:id="properties">
         <td><label wicket:id="key"/>: </td>
         <td><label wicket:id="value"/></td>
       </tr>
     </table>
    </div>
-    <div class="hippo-controlpanel-actions">
-      <ul>
-        <li class="edit-16 icon-16" wicket:id="edit-user"><wicket:message key="user-edit"/></li>
-        <li class="permissions-16 icon-16" wicket:id="set-user-password"><wicket:message key="user-set-password"/></li>
-        <li class="groups-16 icon-16" wicket:id="set-user-memberships"><wicket:message key="user-set-memberships"/></li>
-        <li class="delete-16 icon-16" wicket:id="delete-user"/>
-      </ul>
-    </div>
   </wicket:panel>
 </html>

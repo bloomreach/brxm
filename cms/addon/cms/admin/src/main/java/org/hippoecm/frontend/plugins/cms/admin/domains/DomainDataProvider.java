@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.admin.domains;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,11 +27,9 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Session;
-import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,41 +43,19 @@ public class DomainDataProvider extends SortableDataProvider {
 
     private static final String QUERY_DOMAIN_LIST = "SELECT * FROM hippo:domain";
 
-    private static int totalCount = -1;
+    private static transient List<Domain> domainList = new ArrayList<Domain>();
+    private static volatile boolean dirty = true;
 
+    private static String sessionId = "none";
+    
     public DomainDataProvider() {
-        setSort("nodename", true);
-    }
-
-    protected Node getRootNode() throws RepositoryException {
-        return ((UserSession) Session.get()).getJcrSession().getRootNode();
-    }
-
-    protected QueryManager getQueryManager() throws RepositoryException {
-        return getRootNode().getSession().getWorkspace().getQueryManager();
     }
 
     public Iterator<Domain> iterator(int first, int count) {
-
+        populateDomainList();
         List<Domain> domains = new ArrayList<Domain>();
-        NodeIterator iter;
-        try {
-            HippoQuery listQuery = (HippoQuery) getQueryManager().createQuery(buildListQuery(), Query.SQL);
-            listQuery.setOffset(first);
-            listQuery.setLimit(count);
-            iter = listQuery.execute().getNodes();
-            while (iter.hasNext()) {
-                Node node = iter.nextNode();
-                if (node != null) {
-                    try {
-                        domains.add(new Domain(node));
-                    } catch (RepositoryException e) {
-                        log.warn("Unable to instantiate new group.", e);
-                    }
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("Error while trying to query domain nodes.", e);
+        for (int i = first; i < (count + first); i++) {
+            domains.add(domainList.get(i));
         }
         return domains.iterator();
     }
@@ -88,37 +65,46 @@ public class DomainDataProvider extends SortableDataProvider {
     }
 
     public int size() {
-        // just count once, until there is an option to do authorized queries
-        if (totalCount > -1) {
-            return totalCount;
+        populateDomainList();
+        return domainList.size();
+    }
+
+    /**
+     * Actively invalidate cached list
+     */
+    public static void setDirty() {
+        dirty = true;
+    }
+
+    /**
+     * Populate list, refresh when a new session id is found or when dirty
+     */
+    private static void populateDomainList() {
+        synchronized (DomainDataProvider.class) {
+            if (!dirty && sessionId.equals(Session.get().getId())) {
+                return;
+            }
+            domainList.clear();
+            NodeIterator iter;
+            try {
+                Query listQuery = ((UserSession) Session.get()).getQueryManager().createQuery(QUERY_DOMAIN_LIST, Query.SQL);
+                iter = listQuery.execute().getNodes();
+                while (iter.hasNext()) {
+                    Node node = iter.nextNode();
+                    if (node != null) {
+                        try {
+                            domainList.add(new Domain(node));
+                        } catch (RepositoryException e) {
+                            log.warn("Unable to instantiate new domain.", e);
+                        }
+                    }
+                }
+                Collections.sort(domainList);
+                sessionId = Session.get().getId();
+                dirty = false;
+            } catch (RepositoryException e) {
+                log.error("Error while trying to query domain nodes.", e);
+            }   
         }
-        try {
-            HippoQuery countQuery = (HippoQuery) getQueryManager().createQuery(QUERY_DOMAIN_LIST, Query.SQL);
-            // must return int instead of long
-            totalCount = (int) countQuery.execute().getNodes().getSize();
-            return totalCount;
-        } catch (RepositoryException e) {
-            log.error("Unable to count the total number of domains, returning 0", e);
-            return 0;
-        }
     }
-
-    public void detach() {
-    }
-
-    private String buildListQuery() {
-        SortParam sortParam = getSort();
-        sortParam.getProperty();
-        StringBuilder sb = new StringBuilder();
-        sb.append(QUERY_DOMAIN_LIST).append(" ");
-        //        sb.append("ORDER BY ");
-        //        sb.append(sortParam.getProperty()).append(" ");
-        //        if (sortParam.isAscending()) {
-        //            sb.append("ASC");
-        //        } else {
-        //            sb.append("DESC");
-        //        }
-        return sb.toString();
-    }
-
 }
