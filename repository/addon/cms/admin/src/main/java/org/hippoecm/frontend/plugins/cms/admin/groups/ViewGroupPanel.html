@@ -16,9 +16,14 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-  <div class="admin-group-panel">
-
-    <table class="admin-group-details">
+    <h2><wicket:message key="group-title"/></h2>
+    <ul class="hippo-controlpanel-options">
+		<li><a wicket:id="edit-group"><wicket:message key="group-edit"/></a></li>
+        <li><a wicket:id="set-group-members"><wicket:message key="group-set-members"/></a></li>
+        <li class="delete" wicket:id="delete-group" />
+    </ul>
+    <div class="icons-128 groups-128">
+    <table class="hippo-controlpanel-form">
       <tr>
         <td><wicket:message key="group-name"/>: </td>
         <td><label wicket:id="groupname"/> </td>
@@ -28,25 +33,12 @@
         <td><label wicket:id="description"/> </td>
       </tr>
     </table>
-
-    <br/>
-
-    <label wicket:id="group-members-label"/>
-    <ul class="admin-group-memberships">
-      <li wicket:id="members">
-        <label wicket:id="member"/>
-      </li>
-    </ul>
-
-    <br/>
-    
-    <div class="admin-user-action-container">
-      <ul>
-        <li class="admin-user-action" wicket:id="edit-group"><wicket:message key="group-edit"/></li>
-      </ul>
     </div>
-
-    
-  </div>
+    <h3 class="hippo-controlpanel-section-title" wicket:id="group-members-label" />
+    <table class="hippo-list-details hippo-controlpanel-table-default">
+      <tr wicket:id="members">
+        <td wicket:id="member"/>
+      </tr>
+    </table>
   </wicket:panel>
 </html>

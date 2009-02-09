@@ -16,6 +16,11 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <table class="hippo-controlpanel-permissions hippo-list-details" cellspacing="0" wicket:id="table">[table]</table>
+    <h2><wicket:message key="permissions-view-title"/></h2>
+    <ul class="hippo-controlpanel-options">
+      <li> Click on a permission set to change it </li>
+    </ul>
+    <h3>These are the current active permissions settings</h3>
+    <table class="hippo-controlpanel-table-default hippo-list-details" wicket:id="table">[table]</table>
   </wicket:panel>
 </html>

@@ -41,7 +41,7 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class User implements IClusterable {
+public class User implements Comparable<User>, IClusterable {
 
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
@@ -80,7 +80,7 @@ public class User implements IClusterable {
         return ((UserSession) Session.get()).getQueryManager();
     }
 
-    public static boolean exists(String username) {
+    public static boolean userExists(String username) {
         String queryString = QUERY_USER_EXISTS.replace("{}", username);
         try {
             Query query = getQueryManager().createQuery(queryString, Query.SQL);
@@ -283,7 +283,7 @@ public class User implements IClusterable {
      * @throws RepositoryException
      */
     public void create() throws RepositoryException {
-        if (exists(getUsername())) {
+        if (userExists(getUsername())) {
             throw new RepositoryException("User already exists");
         }
 
@@ -347,13 +347,50 @@ public class User implements IClusterable {
         if (obj == this) {
             return true;
         }
-        if (obj == null) {
+        if (obj == null || (obj.getClass() != this.getClass())) {
             return false;
         }
-        if (obj instanceof User) {
-            User other = (User) obj;
-            return other.getPath().equals(getPath());
+        User other = (User) obj;
+        return other.getPath().equals(getPath());
+    }
+    
+    public int hashCode() {
+        return (null == path ? 0 : path.hashCode());
+    }
+    
+    public int compareTo(User o) {
+        
+        String thisName = getUsername();
+        String otherName = o.getUsername();
+        // 
+        int len1 = thisName.length();
+        int len2 = otherName.length();
+        int n = Math.min(len1, len2);
+        char v1[] = thisName.toCharArray();
+        char v2[] = otherName.toCharArray();
+        int i = 0;
+        int j = 0;
+
+        if (i == j) {
+            int k = i;
+            int lim = n + i;
+            while (k < lim) {
+            char c1 = v1[k];
+            char c2 = v2[k];
+            if (c1 != c2) {
+                return c1 - c2;
+            }
+            k++;
+            }
+        } else {
+            while (n-- != 0) {
+            char c1 = v1[i++];
+            char c2 = v2[j++];
+            if (c1 != c2) {
+                return c1 - c2;
+            }
+            }
         }
-        return false;
+        return len1 - len2;
     }
 }

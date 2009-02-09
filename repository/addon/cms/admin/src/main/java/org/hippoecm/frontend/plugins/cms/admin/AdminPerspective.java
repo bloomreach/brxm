@@ -51,6 +51,7 @@ public class AdminPerspective extends Perspective {
     // override to do unconditional redraw
     @Override
     public void render(PluginRequestTarget target) {
+        //
         if (target != null) {
             target.addComponent(this);
         }

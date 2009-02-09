@@ -16,6 +16,7 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
+    <h2><wicket:message key="user-edit-head"/></h2>
     <form class="hippo-controlpanel-form" wicket:id="form">
       <table>
         <tr>
@@ -36,10 +37,8 @@
         </tr>
       </table>
     <div class="hippo-controlpanel-actions">
-      <ul>
-        <li class="save-16 icon-16"><input type="submit" value="Save" wicket:id="save-button"/></li>
-        <li class="cancel-16 icon-16"><input type="submit" value="Cancel" wicket:id="cancel-button"/></li>
-      </ul>
+        <input type="submit" value="Save" wicket:id="save-button"/>
+        <input type="submit" value="Cancel" wicket:id="cancel-button"/>
     </div>
     </form>
   </wicket:panel>

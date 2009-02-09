@@ -60,16 +60,7 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
         List<String> roles = Group.getAllRoles();        
         List<IColumn> columns = new ArrayList<IColumn>();
 
-        //        columns.add(new AbstractColumn(new Model("Actions"))
-        //        {
-        //            public void populateItem(Item cellItem, String componentId,
-        //                IModel model)
-        //            {
-        //                cellItem.add(new ActionPanel(componentId, model));
-        //            }
-        //        });
-
-        columns.add(new AbstractColumn(new Model("SecurityDomain"), "name") {
+        columns.add(new AbstractColumn(new Model("SecurityDomain")) {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(final Item item, final String componentId, final IModel model) {

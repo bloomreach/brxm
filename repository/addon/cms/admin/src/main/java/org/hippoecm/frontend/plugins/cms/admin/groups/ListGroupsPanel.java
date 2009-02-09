@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.cms.admin.groups;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
@@ -37,13 +39,15 @@ import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxBreadCrumbPanelLink;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ListGroupsPanel extends AdminBreadCrumbPanel {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
+    private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(ListGroupsPanel.class);
 
     private AdminDataTable table;
 
@@ -55,7 +59,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
 
         List<IColumn> columns = new ArrayList<IColumn>();
 
-        columns.add(new AbstractColumn(new Model("Name"), "groupname") {
+        columns.add(new AbstractColumn(new Model("Name")) {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(final Item item, final String componentId, final IModel model) {
@@ -80,7 +84,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        columns.add(new PropertyColumn(new Model("Description"), "description", "description"));
+        columns.add(new PropertyColumn(new Model("Description"), "description"));
         columns.add(new AbstractColumn(new Model("Members")) {
             private static final long serialVersionUID = 1L;
 
@@ -88,13 +92,18 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
                 Group group = (Group) model.getObject();
                 StringBuilder sb = new StringBuilder();
                 boolean first = true;
-                for (String user : group.getMembers()) {
-                    if (first) {
-                        sb.append(user);
-                        first = false;
-                    } else {
-                        sb.append(',').append(user);
+                try {
+                    for (String user : group.getMembers()) {
+                        if (first) {
+                            sb.append(user);
+                            first = false;
+                        } else {
+                            sb.append(',').append(user);
+                        }
                     }
+                } catch (RepositoryException e) {
+                    sb.append("Failed to retrieve members.");
+                    log.error("Failed to retrieve members of group", e);
                 }
                 cellItem.add(new Label(componentId, sb.toString()));
             }

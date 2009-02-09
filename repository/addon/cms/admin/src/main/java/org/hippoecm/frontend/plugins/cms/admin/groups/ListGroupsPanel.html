@@ -16,9 +16,11 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="hippo-controlpanel-actions">
-      <a href="#" wicket:id="create-group"><wicket:message key="group-create"/></a>
-    </div>
-    <table class="hippo-controlpanel-groups hippo-list-details" cellspacing="0" wicket:id="table">[table]</table>
+    <h2><wicket:message key="group-title"/></h2>
+    <ul class="hippo-controlpanel-options">
+      <li><a href="#" wicket:id="create-group"><wicket:message key="group-create"/></a></li>
+      <li><wicket:message key="group-view-instructions"/></li>
+    </ul>
+    <table class="hippo-controlpanel-table-default hippo-list-details" cellspacing="0" wicket:id="table">[table]</table>
   </wicket:panel>
 </html>

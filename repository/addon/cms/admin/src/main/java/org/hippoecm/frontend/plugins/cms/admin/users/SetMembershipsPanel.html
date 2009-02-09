@@ -16,27 +16,30 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-   <wicket:message key="user-membership-available-groups"/>
-<div class="hippo-controlpanel-actions">
-    <form wicket:id="form">
-      <select wicket:id="local-groups">
-        <option>group1</option>
-      </select>
-      <input type="button" value="add" wicket:id="submit"/>
-    </form>
+    <h2><wicket:message key="user-membership-groups-title"/></h2>
+    <div class="hippo-controlpanel-actions hippo-controlpanel-actions-top">
+      <form wicket:id="form">
+        Make this user member of the 
+        <select wicket:id="local-groups">
+          <option>group1</option>
+        </select>
+        group
+        <input type="button" value="Do it" wicket:id="submit"/>
+      </form>
     </div>
-    <span wicket:id="local-memberships-label"/>
-    <table class="hippo-list-details">
+    <h3 wicket:id="local-memberships-label"/>
+    <table class="hippo-controlpanel-table-nested hippo-list-details">
       <tr wicket:id="local-memberships">
         <td><label wicket:id="local-membership"/></td>
-        <td><li class="delete-16 icon-16" wicket:id="remove"/></td>
+        <td><span class="delete-inline-16 icon-16" wicket:id="remove"/></td>
       </tr>
     </table>
-    <span wicket:id="external-memberships-label"/>
-    <ul class="admin-user-memberships">
-      <li wicket:id="external-memberships">
-        <label wicket:id="external-membership"/>
-      </li>
-    </ul>
+    <h3 wicket:id="external-memberships-label"/>
+    <table class="hippo-controlpanel-table-default hippo-list-details">
+      <tr wicket:id="external-memberships">
+        <td><label wicket:id="external-membership"/></td>
+        <td><li class="delete-inline-16-disabled icon-16"/></td>
+      </tr>
+    </table>
   </wicket:panel>
 </html>

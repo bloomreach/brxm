@@ -100,6 +100,7 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
         Label externalLabel = new Label("external-memberships-label", new ResourceModel("user-external-memberships"));
         externalList = new MembershipsListView("external-memberships", "external-membership", user);
         externalLabel.setVisible((user.getExternalMemberships().size() > 0));
+        externalList.setVisible((user.getExternalMemberships().size() > 0));
         add(externalLabel);
         add(externalList);
     }
@@ -147,7 +148,7 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
         private String labelId;
 
         public MembershipsListView(final String id, final String labelId, final User user) {
-            super(id, new PropertyModel(user, "localMemberships"));
+            super(id, new PropertyModel(user, "externalMemberships"));
             this.labelId = labelId;
             setReuseItems(true);
         }

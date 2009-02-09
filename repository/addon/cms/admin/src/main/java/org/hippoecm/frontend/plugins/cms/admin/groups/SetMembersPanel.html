@@ -16,22 +16,14 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <h2><wicket:message key="group-new-panel-title"/></h2>
-      <form class="hippo-controlpanel-form" wicket:id="form">
-      <table>
-        <tr>
-          <td><wicket:message key="group-groupname"/>: </td>
-          <td><input type="text" wicket:id="groupname"/></td>
-        </tr>
-        <tr>
-          <td><wicket:message key="group-description"/>: </td>
-          <td><input type="text" wicket:id="description"/></td>
+      <h2 wicket:id="group-members-label" />
+    <table class="hippo-controlpanel-table-nested hippo-list-details">
+        <tr wicket:id="group-members">
+          <td><label wicket:id="group-member"/></td>
+          <td><span class="delete-inline-16 icon-16" wicket:id="remove"/></td>
         </tr>
       </table>
-        <div class="hippo-controlpanel-actions">
-          <input type="submit" value="Create" wicket:id="create-button"/>
-          <input type="submit" value="Cancel" wicket:id="cancel-button"/>
-        </div>
-    </form>
+      <h3><wicket:message key="group-users-label"/></h3>
+      <table class="hippo-controlpanel-table-default hippo-list-details" wicket:id="table">[table]</table>
   </wicket:panel>
 </html>

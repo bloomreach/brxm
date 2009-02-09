@@ -16,9 +16,11 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="hippo-controlpanel-actions">
-      <a href="#" wicket:id="create-user"><wicket:message key="user-create"/></a>
-    </div>
-    <table class="hippo-controlpanel-users hippo-list-details" cellspacing="0" wicket:id="table">[table]</table>
+    <h2>Things you can do</h2>
+    <ul class="hippo-controlpanel-options">
+      <li><a href="#" wicket:id="create-user"><wicket:message key="user-create"/></a></li>
+      <li>Or click on a username to edit one</li>
+    </ul>
+    <table class="hippo-controlpanel-table-default hippo-list-details" cellspacing="0" wicket:id="table">[table]</table>
   </wicket:panel>
 </html>
