@@ -30,7 +30,7 @@ public class SingledViewFacetSelectTest  extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static String[] contents = new String[] {
+    private static String[] content1 = new String[] {
         "/test",                                                             "nt:unstructured",
         "/test/documents",                                                   "nt:unstructured",
         "jcr:mixinTypes", "mix:referenceable",
@@ -61,7 +61,9 @@ public class SingledViewFacetSelectTest  extends TestCase {
         "/test/documents/articles/war-of-the-worlds/war-of-the-worlds/handle-below-document/handle-below-document", "hippo:testdocument",
         "language","english",
         "/test/documents/articles/war-of-the-worlds/war-of-the-worlds/handle-below-document/handle-below-document", "hippo:testdocument",
-        "language","dutch",
+        "language","dutch"
+    };
+    private static String[] content2 = new String[] {
         "/test/documents/articles/war-of-the-worlds/war-of-the-worlds/related", "hippo:facetselect",
         "hippo:docbase", "/test/documents/articles/foo",
         "hippo:facets",  "state",
@@ -86,7 +88,9 @@ public class SingledViewFacetSelectTest  extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
-        build(session, contents);
+        build(session, content1);
+        session.save();
+        build(session, content2);
         session.save();
     }
 

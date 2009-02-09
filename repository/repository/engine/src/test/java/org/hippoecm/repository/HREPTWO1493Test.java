@@ -53,6 +53,7 @@ public class HREPTWO1493Test extends TestCase {
         Property property;
         Node node;
         build(session, content1);
+        session.save();
 
         node = session.getRootNode().getNode("test").addNode("virtual", "hippo:facetselect");
         node.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getUUID());
@@ -72,6 +73,7 @@ public class HREPTWO1493Test extends TestCase {
         Property property;
         Node node;
         build(session, content1);
+        session.save();
 
         node = session.getRootNode().getNode("test").addNode("virtual", "hippo:facetselect");
         node.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getUUID());

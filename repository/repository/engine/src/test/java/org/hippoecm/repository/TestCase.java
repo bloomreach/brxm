@@ -104,7 +104,8 @@ public abstract class TestCase
             clear();
     }
 
-    @Before public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         setUp(false);
     }
 
@@ -122,8 +123,9 @@ public abstract class TestCase
         }
         session.save();
     }
-
-    @After public void tearDown() throws Exception {
+    
+    @After
+    public void tearDown() throws Exception {
         tearDown(false);
     }
 

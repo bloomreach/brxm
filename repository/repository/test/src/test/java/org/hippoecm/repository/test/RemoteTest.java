@@ -32,39 +32,27 @@ import org.junit.runners.Suite;
 @RunWith(RemoteTest.class)
 @Suite.SuiteClasses({
   org.hippoecm.repository.TrivialServerTest.class,
-  org.hippoecm.repository.FacetedAuthorizationTest.class,
-  org.hippoecm.repository.RepositoryLoginTest.class,
-  //org.hippoecm.repository.ConfigurationTest.class,
+  org.hippoecm.repository.ConfigurationTest.class,
   org.hippoecm.repository.CopyNodeTest.class,
   org.hippoecm.repository.DerivedDataTest.class,
   org.hippoecm.repository.FacetedNavigationChildNameTest.class,
   org.hippoecm.repository.FacetedNavigationHippoCountTest.class,
   org.hippoecm.repository.FacetedNavigationNamespaceTest.class,
-  org.hippoecm.repository.FacetedNavigationPerfTest.class,
   org.hippoecm.repository.FacetedNavigationTest.class,
   org.hippoecm.repository.HREPTWO280Test.class,
-  org.hippoecm.repository.HREPTWO425Test.class,
-  org.hippoecm.repository.HREPTWO451Test.class,
-  org.hippoecm.repository.HREPTWO456Test.class,
-  org.hippoecm.repository.HREPTWO475Test.class,
-  org.hippoecm.repository.HREPTWO650Test.class,
   org.hippoecm.repository.HippoISMTest.class,
   org.hippoecm.repository.HREPTWO283IssueTest.class,
   org.hippoecm.repository.CanonicalPathTest.class,
   org.hippoecm.repository.HREPTWO690Test.class,
-  org.hippoecm.repository.HippoNodeTypeSanityTest.class,
-  org.hippoecm.repository.HippoQueryTest.class,
-  org.hippoecm.repository.PendingChangesTest.class,
   org.hippoecm.repository.decorating.FacetedReferenceTest.class,
   org.hippoecm.repository.decorating.PathsTest.class,
   org.hippoecm.repository.decorating.MirrorTest.class,
   org.hippoecm.repository.HREPTWO1493Test.class,
-  org.hippoecm.repository.HREPTWO548Test.class,
   org.hippoecm.repository.RepositoryMapTest.class,
-  org.hippoecm.repository.decorating.SingledViewFacetSelectTest.class
+  org.hippoecm.repository.decorating.SingledViewFacetSelectTest.class,
+  org.hippoecm.repository.PendingChangesTest.class
 })
 public class RemoteTest extends Suite
-    // used to extends junit.framework.TestCase
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

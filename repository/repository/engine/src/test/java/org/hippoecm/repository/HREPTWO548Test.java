@@ -47,13 +47,29 @@ public class HREPTWO548Test extends TestCase {
         "jcr:mixinTypes", "hippo:harddocument"
     };
 
-    @Before public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
+        while (session.getRootNode().hasNode("test")) {
+            session.getRootNode().getNode("test").remove();
+            session.save();
+        }
     }
 
-    @Test public void testIssue() throws RepositoryException {
+    @After
+    public void tearDown() throws Exception {
+        session.refresh(false);
+        if (session.getRootNode().hasNode("test")) {
+            session.getRootNode().getNode("test").remove();
+            session.save();
+        }
+    }
+
+    @Test
+    public void testIssue() throws RepositoryException {
         Node result;
         build(session, content1);
+        session.save();
         build(session, content2);
         session.save();
         session.refresh(false);

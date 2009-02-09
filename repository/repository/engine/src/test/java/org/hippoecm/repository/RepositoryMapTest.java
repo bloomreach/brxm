@@ -15,14 +15,12 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.util.Map;
 
 import javax.jcr.Node;
 
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
-
 
 public class RepositoryMapTest extends TestCase {
     @SuppressWarnings("unused")

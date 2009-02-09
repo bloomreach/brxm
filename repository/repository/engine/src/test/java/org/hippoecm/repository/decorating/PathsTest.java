@@ -98,12 +98,14 @@ public class PathsTest extends TestCase {
 
         Node source = session.getRootNode().getNode("test/d/x");
         Node target = session.getRootNode().getNode("test/f");
+        session.save();
 
         target = target.addNode(source.getName(), source.getPrimaryNodeType().getName());
 
         NodeType[] mixinNodeTypes = source.getMixinNodeTypes();
-        for(int i=0; i<mixinNodeTypes.length; i++)
+        for(int i=0; i<mixinNodeTypes.length; i++) {
             target.addMixin(mixinNodeTypes[i].getName());
+        }
         NodeType[] nodeTypes = new NodeType[mixinNodeTypes.length + 1];
         nodeTypes[0] = target.getPrimaryNodeType();
         if(mixinNodeTypes.length > 0) {

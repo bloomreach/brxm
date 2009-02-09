@@ -31,57 +31,24 @@ import org.junit.runners.Suite;
 
 @RunWith(RemoteSPITest.class)
 @Suite.SuiteClasses({
-org.hippoecm.repository.HREPTWO2182Test.class
-    // org.hippoecm.repository.FacetedAuthorizationTest.class  // failure
-    // org.hippoecm.repository.CopyNodeTest.class // failure
-    // org.hippoecm.repository.FacetedNavigationTest.class // failure
-    // org.hippoecm.repository.HREPTWO456Test.class uuid
-    // org.hippoecm.repository.HREPTWO475Test.class uuid
-    // org.hippoecm.repository.HREPTWO650Test.class date
-    // org.hippoecm.repository.HippoISMTest.class // docid
-    // org.hippoecm.repository.HREPTWO283IssueTest.class uuid
-    // org.hippoecm.repository.HREPTWO690Test.class uuid
-    // org.hippoecm.repository.PendingChangesTest.class fails
-    // org.hippoecm.repository.decorating.FacetedReferenceTest.class uuid
-    // org.hippoecm.repository.decorating.PathsTest.class paths not set yet, needs save/invalidate?
-    // org.hippoecm.repository.HREPTWO1493Test.class uuid
-    // org.hippoecm.repository.HREPTWO548Test.class uuid
-    // org.hippoecm.repository.decorating.SingledViewFacetSelectTest.class uuid
-
-
-/*
-    org.hippoecm.repository.TrivialServerTest.class, // ok
-    // org.hippoecm.repository.FacetedAuthorizationTest.class,  // failure
-    org.hippoecm.repository.RepositoryLoginTest.class, // ok
-    org.hippoecm.repository.ConfigurationTest.class, // ok
-    // org.hippoecm.repository.CopyNodeTest.class uuid
-    org.hippoecm.repository.DerivedDataTest.class, // ok
-    org.hippoecm.repository.FacetedNavigationChildNameTest.class, // ok
-    org.hippoecm.repository.FacetedNavigationHippoCountTest.class, // ok
-org.hippoecm.repository.FacetedNavigationNamespaceTest.class uuid
-org.hippoecm.repository.FacetedNavigationPerfTest.class, // docid
-    // org.hippoecm.repository.FacetedNavigationTest.class idem
-org.hippoecm.repository.HREPTWO280Test.class, // docid
-org.hippoecm.repository.HREPTWO425Test.class uuid
-    org.hippoecm.repository.HREPTWO451Test.class, // ok
-    // org.hippoecm.repository.HREPTWO456Test.class uuid
-    // org.hippoecm.repository.HREPTWO475Test.class uuid
-    // org.hippoecm.repository.HREPTWO650Test.class date
-    // org.hippoecm.repository.HippoISMTest.class // docid
-    // org.hippoecm.repository.HREPTWO283IssueTest.class uuid
-org.hippoecm.repository.CanonicalPathTest.class  uuid
-    // org.hippoecm.repository.HREPTWO690Test.class uuid
-    org.hippoecm.repository.HippoNodeTypeSanityTest.class, // ok
-    org.hippoecm.repository.HippoQueryTest.class, // ok
-    // org.hippoecm.repository.PendingChangesTest.class fails
-    // org.hippoecm.repository.decorating.FacetedReferenceTest.class uuid
-    // org.hippoecm.repository.decorating.PathsTest.class paths not set yet, needs save/invalidate?
-org.hippoecm.repository.decorating.MirrorTest.class uuid
-    // org.hippoecm.repository.HREPTWO1493Test.class uuid
-    // org.hippoecm.repository.HREPTWO548Test.class uuid
-    org.hippoecm.repository.RepositoryMapTest.class // ok
-    // org.hippoecm.repository.decorating.SingledViewFacetSelectTest.class uuid
-*/
+  org.hippoecm.repository.TrivialServerTest.class,
+  org.hippoecm.repository.ConfigurationTest.class,
+  org.hippoecm.repository.CopyNodeTest.class,
+  org.hippoecm.repository.DerivedDataTest.class,
+  org.hippoecm.repository.FacetedNavigationChildNameTest.class,
+  org.hippoecm.repository.FacetedNavigationHippoCountTest.class,
+  org.hippoecm.repository.FacetedNavigationNamespaceTest.class,
+  org.hippoecm.repository.FacetedNavigationTest.class,
+  org.hippoecm.repository.HREPTWO280Test.class,
+  org.hippoecm.repository.HREPTWO283IssueTest.class,
+  org.hippoecm.repository.CanonicalPathTest.class,
+  org.hippoecm.repository.HREPTWO690Test.class,
+  org.hippoecm.repository.decorating.FacetedReferenceTest.class,
+  org.hippoecm.repository.decorating.PathsTest.class,
+  org.hippoecm.repository.decorating.MirrorTest.class,
+  org.hippoecm.repository.HREPTWO1493Test.class,
+  org.hippoecm.repository.RepositoryMapTest.class,
+  org.hippoecm.repository.decorating.SingledViewFacetSelectTest.class
 })
 public class RemoteSPITest extends Suite
 {

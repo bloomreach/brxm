@@ -326,7 +326,7 @@ public class FolderWorkflowTest extends TestCase {
         }
     }
 
-    @Test
+    @Ignore
     public void testConcurrent() throws Exception {
         final int niters = 50;
         Thread thread1 = new ConcurrentRunner(2095487L, niters);
@@ -340,7 +340,7 @@ public class FolderWorkflowTest extends TestCase {
         }
     }
 
-    @Test
+    @Ignore
     public void testMoreConcurrent() throws Exception {
         final int nthreads = 20;
         final int niters = 30;

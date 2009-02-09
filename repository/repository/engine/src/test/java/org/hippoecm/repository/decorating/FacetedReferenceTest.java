@@ -35,7 +35,7 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static String[] contents = new String[] {
+    private static String[] content1 = new String[] {
         "/test",                                                             "nt:unstructured",
         "/test/documents",                                                   "nt:unstructured",
         "jcr:mixinTypes", "mix:referenceable",
@@ -71,7 +71,9 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         "language","english",
         "/test/documents/articles/nineteeneightyfour/nineteeneightyfour",    "hippo:testdocument",
         "jcr:mixinTypes", "mix:referenceable",
-        "language","dutch",
+        "language","dutch"
+    };
+    private static String[] content2 = new String[] {
         "/test/english",                                                     "hippo:facetselect",
         "hippo:docbase", "/test/documents",
         "hippo:facets",  "language",
@@ -105,12 +107,23 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        build(session, contents);
+        while (session.getRootNode().hasNode("test")) {
+            session.getRootNode().getNode("test").remove();
+            session.save();
+        }
+        build(session, content1);
+        session.save();
+        build(session, content2);
         session.save();
     }
 
     @After
     public void tearDown() throws Exception {
+        session.refresh(false);
+        if (session.getRootNode().hasNode("test")) {
+            session.getRootNode().getNode("test").remove();
+            session.save();
+        }
         super.tearDown();
     }
     
@@ -177,12 +190,11 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
     
     @Test
     public void testSimpleMirrorAfterPreferSingle() throws Exception {
-        /**
-         * After a prefer-single mode, a facetselects below this prefer single should inherit the prefer-single (thus correct ordening).
-         *
+        /*
+         * After a prefer-single mode, a facetselects below this prefer single
+         * should inherit the prefer-single (thus correct ordening).
          * This is a test for this scenario
          */
-
         HippoNode n = (HippoNode)session.getItem("/test/preferonce/articles/war-of-the-worlds/war-of-the-worlds");
         assertEquals("dutch", n.getProperty("language").getString());
         assertNotNull(n.getCanonicalNode());
@@ -193,7 +205,8 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         mirror.setProperty(HippoNodeType.HIPPO_FACETS, new String[]{});
         mirror.setProperty(HippoNodeType.HIPPO_VALUES, new String[]{});
         mirror.setProperty(HippoNodeType.HIPPO_MODES, new String[]{});
-        dutchNodeCanonical.save();
+        session.save();
+        session.refresh(false);
         HippoNode n2 = (HippoNode)session.getItem("/test/preferonce/articles/war-of-the-worlds/war-of-the-worlds");
         n2.getNode("mirror/nineteeneightyfour").getProperty("language").getString();
         assertEquals("dutch", n2.getNode("mirror/nineteeneightyfour").getProperty("language").getString());

@@ -91,6 +91,7 @@ public class DerivedDataTest extends TestCase {
         document.setProperty("hippo:b", 4);
         document.setProperty("hippo:c", 6);
         session.save();
+        session.refresh(false);
         assertEquals(5, session.getRootNode().getNode("test/folder/document").getProperty("hippo:c").getLong());
     }
 

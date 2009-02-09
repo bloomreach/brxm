@@ -18,6 +18,7 @@ package org.hippoecm.repository;
 import static org.junit.Assert.assertTrue;
 
 import javax.jcr.Node;
+import javax.jcr.Session;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
@@ -33,10 +34,18 @@ public class CopyNodeTest extends TestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        while(session.getRootNode().hasNode("test")) {
+            session.getRootNode().getNode("test").remove();
+            session.save();
+        }
     }
 
     @After
     public void tearDown() throws Exception {
+        while(session.getRootNode().hasNode("test")) {
+            session.getRootNode().getNode("test").remove();
+            session.save();
+        }
         super.tearDown();
     }
 
@@ -64,6 +73,7 @@ public class CopyNodeTest extends TestCase {
         session.save();
         session.refresh(false);
 
+        root = session.getRootNode().getNode("test");
         assertTrue(root.getNode("copy").getNode("search").hasNode("documents"));
         assertTrue(root.getNode("copy").getNode("search").getNode("documents").hasNode("document"));
     }

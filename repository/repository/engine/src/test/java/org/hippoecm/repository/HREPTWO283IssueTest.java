@@ -27,11 +27,13 @@ public class HREPTWO283IssueTest extends TestCase {
     private final static String SVN_ID = "$Id$";
 
     private String[] content1 = {
-        "/test",            "nt:unstructured",
-        "/test/docs",       "nt:unstructured",
-        "jcr:mixinTypes",   "mix:referenceable",
-        "/test/docs/funny", "hippo:baddocument",
-        "hippo:x",          "test"
+        "/test",             "nt:unstructured",
+        "/test/docs",        "nt:unstructured",
+        "jcr:mixinTypes",    "mix:referenceable",
+        "/test/docs/funny",  "hippo:baddocument",
+        "hippo:x",           "test",
+        "/test/docs/proper", "hippo:document",
+        "jcr:mixinTypes",    "hippo:harddocument"
     };
     private String[] content2 = {
         "/test/nav",     "hippo:facetselect",
@@ -41,13 +43,27 @@ public class HREPTWO283IssueTest extends TestCase {
         "hippo:modes",   "select"
     };
 
+    @Before
     public void setUp() throws Exception {
         super.setUp(true);
     }
 
-    @Test public void testIssue() throws RepositoryException {
+    @After
+    public void tearDown() throws Exception {
+        if (session.getRootNode().hasNode("test/nav")) {
+            session.getRootNode().getNode("test/nav").remove();
+            session.save();
+            session.refresh(false);
+        }
+        super.tearDown();
+    }
+
+    @Test
+    public void testIssue() throws RepositoryException {
         Node result;
         build(session, content1);
+        session.save();
+        session.refresh(false);
         build(session, content2);
         session.save();
         session.refresh(false);
@@ -64,5 +80,26 @@ public class HREPTWO283IssueTest extends TestCase {
 
         // Actual test for issue follows (assert should be assertFalse)
         assertTrue(result.isNodeType("mix:referenceable"));
+    }
+
+    @Test
+    public void testNoBadRemove() throws RepositoryException {
+        Node result;
+        build(session, content1);
+        session.save();
+        session.refresh(false);
+        build(session, content2);
+        session.save();
+        session.refresh(false);
+
+        assertNotNull(traverse(session, "/test/docs/funny"));
+        assertNotNull(traverse(session, "/test/docs/proper"));
+        assertNotNull(traverse(session, "/test/nav/funny"));
+        assertNotNull(traverse(session, "/test/nav/proper"));
+        traverse(session, "/test/nav").remove();
+        session.save();
+        session.refresh(false);
+        assertNotNull(traverse(session, "/test/docs/funny"));
+        assertNotNull(traverse(session, "/test/docs/proper"));
     }
 }

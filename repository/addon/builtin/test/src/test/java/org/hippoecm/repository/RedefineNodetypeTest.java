@@ -103,6 +103,8 @@ public class RedefineNodetypeTest extends TestCase {
 
         // this update is asynchronously
         waitForRefresh(session, "hippotest1");
+        session.logout();
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
 
         node = root.addNode("node2", "hippotest1:test");
         node.setProperty("hippotest1:second", "mies");

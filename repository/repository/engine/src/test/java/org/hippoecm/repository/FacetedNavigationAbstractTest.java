@@ -191,6 +191,10 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        while (session.getRootNode().hasNode("test")) {
+            session.getRootNode().getNode("test").remove();
+            session.save();
+        }
         if (!session.getRootNode().hasNode("test")) {
             session.getRootNode().addNode("test");
         }
@@ -202,14 +206,23 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         session.refresh(false);
         if(session.getRootNode().getNode("test").hasNode("navigation")) {
             session.getRootNode().getNode("test").getNode("navigation").remove();
+            session.save();
         }
+        session.save();
+        session.refresh(false);
         if(session.getRootNode().getNode("test").hasNode("documents")) {
             session.getRootNode().getNode("test").getNode("documents").remove();
+            session.save();
+        }
+        if (session.getRootNode().hasNode("test")) {
+            session.getRootNode().getNode("test").remove();
+            session.save();
         }
     }
 
     protected Node commonStart() throws RepositoryException {
         documents = fill();
+        session.save();
         Node node = session.getRootNode().getNode("test/navigation");
         node = node.addNode("xyz", HippoNodeType.NT_FACETSEARCH);
         node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "xyz");
