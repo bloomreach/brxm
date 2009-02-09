@@ -51,7 +51,7 @@ public class CndExportDialog extends AbstractDialog {
     static final Logger log = LoggerFactory.getLogger(CndExportDialog.class);
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id";
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

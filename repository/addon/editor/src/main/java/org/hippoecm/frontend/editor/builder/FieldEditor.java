@@ -27,7 +27,7 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 
 public class FieldEditor extends Panel {
     @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id";
+    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
