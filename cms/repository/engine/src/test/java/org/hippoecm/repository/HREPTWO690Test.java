@@ -50,6 +50,7 @@ public class HREPTWO690Test extends TestCase {
     @Test public void testIssue() throws RepositoryException {
         Node result;
         build(session, content1);
+        session.save();
         build(session, content2);
         session.save();
         session.refresh(false);

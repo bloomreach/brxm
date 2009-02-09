@@ -118,6 +118,9 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
 
                 public Node getNode(Node node, String field) throws InvalidItemStateException, RepositoryException {
                     node = remoteHierarchyResolver.getNode(node, field);
+                    if(node == null) {
+                        return null;
+                    }
                     node = session.getRootNode().getNode(node.getPath().substring(1));
                     return factory.getNodeDecorator(session, node);
                 }

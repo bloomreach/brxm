@@ -148,6 +148,7 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
         child.setProperty("x", "x1");
         child.setProperty("y", "yy");
         session.save();
+        session.refresh(false);
 
         searchNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
         assertTrue(searchNode.getNode("x1").hasNode("yy"));

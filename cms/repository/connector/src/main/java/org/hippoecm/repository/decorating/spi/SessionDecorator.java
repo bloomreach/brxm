@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.jcr.AccessDeniedException;
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
@@ -61,31 +63,38 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
     public Node copy(Node srcNode, String destAbsNodePath) throws PathNotFoundException, ItemExistsException,
             LockException, VersionException, RepositoryException {
-        Node node = remoteSession.copy(srcNode, destAbsNodePath);
+        Node node = remoteSession.copy(remoteSession.getRootNode().getNode(srcNode.getPath().substring(1)), destAbsNodePath);
         String path = node.getPath();
-        return factory.getNodeDecorator(this, session.getRootNode().getNode(path.substring(1)));
+        Node parent = session.getRootNode().getNode(path.substring(1,path.lastIndexOf("/")));
+        parent.refresh(false);
+        return factory.getNodeDecorator(this, parent.getNode(path.substring(path.lastIndexOf("/")+1)));
     }
 
-    Node root;
+    public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
+            VersionException, LockException, RepositoryException {
+        super.save();
+        remoteSession.save();
+    }
 
-    public Node getRootNode() throws RepositoryException {
-        if(root == null) {
-            root = super.getRootNode();
-        }
-        return root;
+    public void refresh(boolean keepChanges) throws RepositoryException {
+        remoteSession.refresh(keepChanges);
+        super.refresh(keepChanges);
     }
 
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
                                                                             NoSuchNodeTypeException, RepositoryException {
+        // FIXME probably broken
         return new NodeIteratorPendingChanges(factory, this, remoteSession.pendingChanges(remoteSession.getRootNode().getNode(node.getPath().substring(1)), nodeType, prune));
     }
 
     public NodeIterator pendingChanges(Node node, String nodeType) throws NamespaceException, NoSuchNodeTypeException,
                                                                           RepositoryException {
+        // FIXME probably broken
         return new NodeIteratorPendingChanges(factory, this, remoteSession.pendingChanges(remoteSession.getRootNode().getNode(node.getPath().substring(1)), nodeType));
     }
 
     public NodeIterator pendingChanges() throws RepositoryException {
+        // FIXME probably broken
         return new NodeIteratorPendingChanges(factory, this, remoteSession.pendingChanges());
     }
 
