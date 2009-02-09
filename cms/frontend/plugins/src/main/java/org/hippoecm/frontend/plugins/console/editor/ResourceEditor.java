@@ -24,7 +24,7 @@ import org.hippoecm.frontend.resource.JcrResourceStream;
 
 class ResourceEditor extends Panel {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id:  $";
+    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     private static final long ONE_KB = 1024;

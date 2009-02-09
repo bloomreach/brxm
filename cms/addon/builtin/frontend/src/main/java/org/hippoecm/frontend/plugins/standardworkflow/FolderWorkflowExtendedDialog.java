@@ -39,7 +39,7 @@ import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
 public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: FolderWorkflowExtendedDialog.java 13107 2008-08-20 15:01:57Z fvlankvelt $";
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

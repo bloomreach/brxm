@@ -19,7 +19,7 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
 public interface IBrowseService<T extends IModel> extends IClusterable {
-    final static String SVN_ID = "$Id: IViewService.java 12039 2008-06-13 09:27:05Z bvanhalderen $";
+    final static String SVN_ID = "$Id$";
 
     String BROWSER_ID = "browser.id";
 

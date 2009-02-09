@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 public class JavascriptUtil {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: JavascriptUtil.java 12789 2008-07-29 11:44:21Z abogaart $";
+    private final static String SVN_ID = "$Id$";
 
     public static final String SINGLE_QUOTE = "'";
 

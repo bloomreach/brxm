@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 public class FacetJcrPropertyValueGroupProvider extends NodeModelWrapper implements IDataProvider {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: FacetJcrPropertyValueGroupProvider.java 12039 2008-06-13 09:27:05Z bvanhalderen $";
+    private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(FacetJcrPropertyValueGroupProvider.class);
 

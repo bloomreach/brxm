@@ -27,7 +27,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 
 public class SizeRenderer extends AbstractNodeRenderer {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
+    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     public static final long ONE_KB = 1024;

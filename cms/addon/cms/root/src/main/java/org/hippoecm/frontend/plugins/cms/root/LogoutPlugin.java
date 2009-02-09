@@ -39,7 +39,7 @@ import org.hippoecm.repository.standardworkflow.EventLoggerWorkflow;
 
 public class LogoutPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: LogoutPlugin.java 12171 2008-06-25 13:59:53Z fvlankvelt $";
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

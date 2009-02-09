@@ -22,7 +22,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 
 class ButtonBar extends Panel {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
+    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     public ButtonBar(String id, UploadWizard wizard) {

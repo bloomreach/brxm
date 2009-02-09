@@ -35,7 +35,7 @@ import org.hippoecm.repository.decorating.remote.RemoteRepository;
 public class ServerRepository extends org.apache.jackrabbit.rmi.server.ServerRepository implements RemoteRepository {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ServerQuery.java 12563 2008-07-15 20:21:22Z wgrevink $";
+    private final static String SVN_ID = "$Id$";
     private Repository repository;
     private RemoteServicingAdapterFactory factory;
 

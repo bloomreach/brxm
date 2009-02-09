@@ -36,7 +36,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModif
 
 public class TypesListingPlugin extends AbstractListingPlugin {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: DocumentListingPlugin.java 12651 2008-07-18 11:59:05Z fvlankvelt $";
+    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     public TypesListingPlugin(IPluginContext context, IPluginConfig config) {
