@@ -136,7 +136,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
-        String groupId = normalizeId(rawGroupId);
+        String groupId = sanitizeId(rawGroupId);
         log.trace("Creating node for group: {} in path: {}", groupId, groupsPath);
         int length = groupId.length();
         int pos = 0;
@@ -169,7 +169,7 @@ public abstract class AbstractGroupManager implements GroupManager {
      * @return the fully encoded normalized path
      */
     private String buildGroupPath(String rawGroupId) {
-        String groupId = normalizeId(rawGroupId);
+        String groupId = sanitizeId(rawGroupId);
         if (dirLevels == 0) {
             return groupsPath + "/" + NodeNameCodec.encode(groupId, true);
         }
@@ -187,20 +187,20 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     /**
-     * Normalize the rawId: trim and convert to lower case if needed. This
+     * Sanitize the rawId: trim and convert to lowercase if needed. This
      * function does NOT encode the groupId.
-     * @param rawId
-     * @return the trimmed and if needed converted to lower case groupId
+     * @param rawGruopId
+     * @return the trimmed and if needed converted to lowercase groupId
      */
-    private String normalizeId(String rawId) {
-        if (rawId == null) {
+    private String sanitizeId(String rawGruopId) {
+        if (rawGruopId == null) {
             // anonymous
             return null;
         }
         if (isCaseSensitive()) {
-            return rawId.trim();
+            return rawGruopId.trim();
         } else {
-            return rawId.trim().toLowerCase();
+            return rawGruopId.trim().toLowerCase();
         }
     }
 
@@ -252,7 +252,7 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     public final Set<String> getMemberships(String rawUserId, String providerId) {
-        String userId = normalizeId(rawUserId);
+        String userId = sanitizeId(rawUserId);
         Set<String> memberships = new HashSet<String>();
 
         StringBuffer statement = new StringBuffer();
@@ -296,7 +296,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         Set<String> repositoryMemberships = getMemberships(userId, providerId);
         Set<String> backendMemberships = new HashSet<String>();
         for (String groupId : backendGetMemberships(user)) {
-            backendMemberships.add(normalizeId(groupId));
+            backendMemberships.add(sanitizeId(groupId));
         }
         Set<String> inSync = new HashSet<String>();
         for (String groupId : repositoryMemberships) {
@@ -348,14 +348,14 @@ public abstract class AbstractGroupManager implements GroupManager {
         String[] normalizedMembers = new String[members.size()];
         int i = 0;
         for (String member : members) {
-            normalizedMembers[i] = normalizeId(member);
+            normalizedMembers[i] = sanitizeId(member);
             i++;
         }
         group.setProperty(HippoNodeType.HIPPO_MEMBERS, normalizedMembers);
     }
 
     public final void addMember(Node group, String rawUserId) throws RepositoryException {
-        String userId = normalizeId(rawUserId);
+        String userId = sanitizeId(rawUserId);
         if (!isManagerForGroup(group)) {
             log.warn("Group '" + group.getName() + "' is nog managed by provider '" + providerId
                     + "' skipping addMember '" + userId + "'");
@@ -369,7 +369,7 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     public final void removeMember(Node group, String rawUserId) throws RepositoryException {
-        String userId = normalizeId(rawUserId);
+        String userId = sanitizeId(rawUserId);
         if (!isManagerForGroup(group)) {
             log.warn("Group '" + group.getName() + "' is nog managed by provider '" + providerId
                     + "' skipping removeMember '" + userId + "'");

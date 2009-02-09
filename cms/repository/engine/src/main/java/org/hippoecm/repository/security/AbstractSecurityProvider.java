@@ -48,7 +48,7 @@ public abstract class AbstractSecurityProvider implements SecurityProvider {
     /**
      * {@inheritDoc}
      */
-    public UserManager getUserManger() {
+    public UserManager getUserManager() {
         return userManager;
     }
 

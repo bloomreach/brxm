@@ -159,9 +159,9 @@ public class HippoLoginModule implements LoginModule {
                 securityManager = SecurityManager.getInstance();
                 securityManager.init(rootSession);
 
-                setUserPrincipals(creds.getUserID());
-                setGroupPrincipals(creds.getUserID());
-                setFacetAuthPrincipals(creds.getUserID());
+                setUserPrincipals(creds);
+                setGroupPrincipals(creds);
+                setFacetAuthPrincipals(creds);
                 return !principals.isEmpty();
             }
 
@@ -171,10 +171,8 @@ public class HippoLoginModule implements LoginModule {
 
             // check for anonymous login
             if (creds == null || creds.getUserID() == null) {
-                // authenticate as anonymous
-                principals.add(new AnonymousPrincipal());
                 log.info("Authenticated as anonymous.");
-                setUserPrincipals(null);
+                principals.add(new AnonymousPrincipal());
                 setGroupPrincipals(null);
                 setFacetAuthPrincipals(null);
                 return true;
@@ -183,13 +181,12 @@ public class HippoLoginModule implements LoginModule {
             log.debug("Trying to authenticate as {}", creds.getUserID());
             if (authenticate(creds)) {
                 log.info("Authenticated as {}", creds.getUserID());
-                setUserPrincipals(creds.getUserID());
-                setGroupPrincipals(creds.getUserID());
-                setFacetAuthPrincipals(creds.getUserID());
+                setUserPrincipals(creds);
+                setGroupPrincipals(creds);
+                setFacetAuthPrincipals(creds);
                 return !principals.isEmpty();
             } else {
                 log.info("NOT Authenticated as {}", creds.getUserID());
-                // authentication failed: clean out state
                 principals.clear();
                 throw new FailedLoginException("Wrong username or password.");
             }
@@ -260,12 +257,12 @@ public class HippoLoginModule implements LoginModule {
      * Set the user principals for the user.
      * @param userId
      */
-    private void setUserPrincipals(String userId) {
-        if (userId == null) {
+    private void setUserPrincipals(SimpleCredentials creds) {
+        if (creds == null) {
             return;
         }
         UserPrincipal userPrincipal;
-        userPrincipal = new UserPrincipal(userId);
+        userPrincipal = new UserPrincipal(creds.getUserID());
         log.debug("Adding principal: {}", userPrincipal);
         principals.add(userPrincipal);
     }
@@ -274,8 +271,14 @@ public class HippoLoginModule implements LoginModule {
      * Find the memberships and set the group principals
      * @param userId
      */
-    private void setGroupPrincipals(String userId) {
-        Set<String> memberships = securityManager.getMemberships(userId);
+    private void setGroupPrincipals(SimpleCredentials creds) {
+        String userId = null;
+        String providerId = null;
+        if (creds != null) {
+            userId = creds.getUserID();
+            providerId = (String) creds.getAttribute("providerId");
+        }
+        Set<String> memberships = securityManager.getMemberships(userId, providerId);
         for (String groupId : memberships) {
             GroupPrincipal groupPrincipal = new GroupPrincipal(groupId);
             principals.add(groupPrincipal);
@@ -287,13 +290,19 @@ public class HippoLoginModule implements LoginModule {
      * Create the facet auth principals based on the domains and roles in the repository.
      * @param userId
      */
-    private void setFacetAuthPrincipals(String userId) {
+    private void setFacetAuthPrincipals(SimpleCredentials creds) {
+        String userId = null;
+        String providerId = null;
+        if (creds != null) {
+            userId = creds.getUserID();
+            providerId = (String) creds.getAttribute("providerId");
+        }
         // Find domains that the user is associated with
         Set<Domain> userDomains = new HashSet<Domain>();
-        userDomains.addAll(securityManager.getDomainsForUser(userId));
+        userDomains.addAll(securityManager.getDomainsForUser(userId, providerId));
         for (Principal principal : principals) {
             if (principal instanceof GroupPrincipal) {
-                userDomains.addAll(securityManager.getDomainsForGroup(principal.getName()));
+                userDomains.addAll(securityManager.getDomainsForGroup(principal.getName(), providerId));
             }
         }
 

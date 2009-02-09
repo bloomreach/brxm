@@ -129,7 +129,7 @@ public class SecurityManager {
                 return false;
             }
 
-            Node user = providers.get(INTERNAL_PROVIDER).getUserManger().getUser(userId);
+            Node user = providers.get(INTERNAL_PROVIDER).getUserManager().getUser(userId);
 
             // find security provider.
             String providerId = null;
@@ -147,7 +147,7 @@ public class SecurityManager {
                 }
 
                 // check the password
-                if (!providers.get(providerId).getUserManger().authenticate(creds)) {
+                if (!providers.get(providerId).getUserManager().authenticate(creds)) {
                     log.debug("Invalid username and password: {}, provider: {}", userId, providerId);
                     return false;
                 }
@@ -157,7 +157,7 @@ public class SecurityManager {
                 for(Iterator<String> iter = providers.keySet().iterator(); iter.hasNext();) {
                     providerId = iter.next();
                     log.debug("Trying to authenticate user {} with provider {}", userId, providerId);
-                    if (providers.get(providerId).getUserManger().authenticate(creds)) {
+                    if (providers.get(providerId).getUserManager().authenticate(creds)) {
                         authenticated = true;
                         break;
                     }
@@ -169,8 +169,9 @@ public class SecurityManager {
             }
 
             log.debug("Found provider: {} for authenticated user: {}", providerId, userId);
-
-            UserManager userMgr = providers.get(providerId).getUserManger();
+            creds.setAttribute("providerId", providerId);
+            
+            UserManager userMgr = providers.get(providerId).getUserManager();
             GroupManager groupMgr = providers.get(providerId).getGroupManager();
 
             // check if user is active
@@ -267,24 +268,29 @@ public class SecurityManager {
 
     /**
      * Get the memberships for a user. See the AbstractUserManager.getMemberships for details.
-     * @param userId
+     * @param rawUserId the unparsed userId
      * @return a set of Strings with the memberships or an empty set if no memberships are found.
      */
-    public Set<String> getMemberships(String userId) {
+    public Set<String> getMemberships(String rawUserId, String providerId) {
         try {
-            return providers.get(INTERNAL_PROVIDER).getGroupManager().getMemberships(userId);
+            if (providers.containsKey(providerId)) {
+                return providers.get(providerId).getGroupManager().getMemberships(rawUserId);
+            } else {
+                return providers.get(INTERNAL_PROVIDER).getGroupManager().getMemberships(sanitizeUserId(rawUserId, providerId));
+            }
         } catch (RepositoryException e) {
-            log.warn("Unable to get memberships for userId: " + userId, e);
+            log.warn("Unable to get memberships for userId: " + rawUserId, e);
             return new HashSet<String>(0);
         }
     }
 
     /**
      * Get the domains in which the user has a role.
-     * @param userId
+     * @param rawUserId the unparsed userId
      * @return
      */
-    public Set<Domain> getDomainsForUser(String userId) {
+    public Set<Domain> getDomainsForUser(String rawUserId, String providerId) {
+        String userId = sanitizeUserId(rawUserId, providerId);
         Set<Domain> domains = new HashSet<Domain>();
         StringBuffer statement = new StringBuffer();
         statement.append("SELECT * FROM ").append(HippoNodeType.NT_AUTHROLE);
@@ -310,10 +316,11 @@ public class SecurityManager {
 
     /**
      * Get the domains in which the group has a role.
-     * @param groupId
+     * @param rawGroupId
      * @return
      */
-    public Set<Domain> getDomainsForGroup(String groupId) {
+    public Set<Domain> getDomainsForGroup(String rawGroupId, String providerId) {
+        String groupId = sanitizeGroupId(rawGroupId, providerId);
         Set<Domain> domains = new HashSet<Domain>();
         StringBuffer statement = new StringBuffer();
         statement.append("SELECT * FROM ").append(HippoNodeType.NT_AUTHROLE);
@@ -390,4 +397,59 @@ public class SecurityManager {
         return permissions;
     }
 
+    /**
+     * Sanitize the raw userId input according to the case sensitivity of the 
+     * security provider.
+     * @param rawUserId
+     * @param providerId
+     * @return the trimmed and if needed converted to lowercase userId
+     */
+    private String sanitizeUserId(String rawUserId, String providerId) {
+        if (rawUserId == null) {
+            return null;
+        }
+        if (providers.containsKey(providerId)) {
+            if (providers.get(providerId).getUserManager().isCaseSensitive()) {
+                return rawUserId.trim();
+            } else {
+                return rawUserId.trim().toLowerCase();
+            }
+        } else {
+            // fallback to internal provider
+            if (providers.get(INTERNAL_PROVIDER).getUserManager().isCaseSensitive()) {
+                return rawUserId.trim();
+            } else {
+                return rawUserId.trim().toLowerCase();
+            }
+            
+        }
+    }
+
+    /**
+     * Sanitize the raw userId input according to the case sensitivity of the 
+     * security provider.
+     * @param rawGroupId
+     * @param providerId
+     * @return the trimmed and if needed converted to lowercase groupId
+     */
+    private String sanitizeGroupId(String rawGroupId, String providerId) {
+        if (rawGroupId == null) {
+            return null;
+        }
+        if (providers.containsKey(providerId)) {
+            if (providers.get(providerId).getGroupManager().isCaseSensitive()) {
+                return rawGroupId.trim();
+            } else {
+                return rawGroupId.trim().toLowerCase();
+            }
+        } else {
+            // fallback to internal provider
+            if (providers.get(INTERNAL_PROVIDER).getGroupManager().isCaseSensitive()) {
+                return rawGroupId.trim();
+            } else {
+                return rawGroupId.trim().toLowerCase();
+            }
+            
+        }
+    }
 }
