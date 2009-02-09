@@ -21,11 +21,11 @@ public class HstSitePipeline implements Pipeline
         return this.name;
     }
 
-    public void initialize() throws Exception
+    public void initialize() throws ContainerException
     {
     }
 
-    public void invoke(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext request) throws Exception
+    public void invoke(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext request) throws ContainerException
     {
         new Invocation(servletRequest, servletResponse, valves).invokeNext(request);
     }
@@ -46,7 +46,7 @@ public class HstSitePipeline implements Pipeline
             this.valves = valves;
         }
 
-        public void invokeNext(HstRequestContext request) throws Exception
+        public void invokeNext(HstRequestContext request) throws ContainerException
         {
             if (at < valves.length)
             {

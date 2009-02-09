@@ -7,7 +7,6 @@ import javax.servlet.ServletResponse;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.HstRequestProcessor;
 
 public class AggregationValve extends AbstractValve {
     
@@ -18,7 +17,7 @@ public class AggregationValve extends AbstractValve {
     }
     
     @Override
-    public void invoke(HstRequestContext request, ValveContext context) throws Exception {
+    public void invoke(HstRequestContext request, ValveContext context) throws ContainerException {
         
         if (!context.getServletResponse().isCommitted() && !isResourceRequest()) {
             HstComponentConfiguration root = null;
@@ -37,7 +36,7 @@ public class AggregationValve extends AbstractValve {
         context.invokeNext(request);
     }
 
-    protected void aggregateAndProcessBeforeRender(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext context, HstComponentConfiguration component) throws Exception {
+    protected void aggregateAndProcessBeforeRender(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext context, HstComponentConfiguration component) throws ContainerException {
         
         this.requestProcessor.processBeforeRender(servletRequest, servletResponse, context, component);
         
@@ -47,7 +46,7 @@ public class AggregationValve extends AbstractValve {
 
     }
     
-    protected void aggregateAndProcessRender(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext context, HstComponentConfiguration component) throws Exception {
+    protected void aggregateAndProcessRender(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext context, HstComponentConfiguration component) throws ContainerException {
         for(Iterator<HstComponentConfiguration> it = component.getChildren().iterator(); it.hasNext();) {
             aggregateAndProcessRender(servletRequest, servletResponse, context, it.next());
         }

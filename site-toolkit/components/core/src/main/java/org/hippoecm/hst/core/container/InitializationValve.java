@@ -15,7 +15,7 @@ public class InitializationValve extends AbstractValve
     }
     
     @Override
-    public void invoke(HstRequestContext request, ValveContext context) throws Exception
+    public void invoke(HstRequestContext request, ValveContext context) throws ContainerException
     {
         if (this.resourceLifecycleManagements != null) {
             for (ResourceLifecycleManagement resourceLifecycleManagement : this.resourceLifecycleManagements) {

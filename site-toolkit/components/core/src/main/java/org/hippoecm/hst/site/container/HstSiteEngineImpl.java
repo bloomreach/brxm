@@ -6,6 +6,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstSiteEngine;
 import org.hippoecm.hst.core.container.Pipeline;
 import org.hippoecm.hst.core.container.Pipelines;
@@ -23,16 +24,16 @@ public class HstSiteEngineImpl implements HstSiteEngine {
         this.componentManager = new SpringComponentManager(initProps);
     }
 
-    public void service(ServletRequest request, ServletResponse response, HstRequestContext context) throws Exception {
+    public void service(ServletRequest request, ServletResponse response, HstRequestContext context) throws ContainerException {
         Pipeline pipeline = getDefaultPipeline();
         pipeline.invoke(request, response, context);
     }
 
-    public void shutdown() throws Exception {
+    public void shutdown() throws ContainerException {
         this.componentManager.stop();
     }
 
-    public void start() throws Exception {
+    public void start() throws ContainerException {
         this.componentManager.start();
     }
 

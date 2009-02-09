@@ -17,13 +17,14 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstResponseImpl;
+import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.core.container.HstRequestProcessor;
 import org.hippoecm.hst.core.container.HttpBufferedResponse;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.HstRequestProcessor;
 
 public class HstRequestProcessorImpl implements HstRequestProcessor {
 
-    public void processAction(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, HstComponentConfiguration componentConfiguration) throws Exception {
+    public void processAction(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, HstComponentConfiguration componentConfiguration) throws ContainerException {
         
         HstRequest request = createHstRequest(servletRequest, requestContext, componentConfiguration);
         HstResponse response = createHstResponse(servletResponse, requestContext, componentConfiguration);
@@ -44,7 +45,7 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         redirect(request, response, location);
     }
 
-    public void processBeforeRender(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, HstComponentConfiguration componentConfiguration) throws Exception {
+    public void processBeforeRender(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, HstComponentConfiguration componentConfiguration) throws ContainerException {
         HstRequest request = createHstRequest(servletRequest, requestContext, componentConfiguration);
         HstResponse response = createHstResponse(servletResponse, requestContext, componentConfiguration);
 
@@ -55,7 +56,7 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         }
     }
 
-    public void processRender(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, HstComponentConfiguration componentConfiguration) throws Exception {
+    public void processRender(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, HstComponentConfiguration componentConfiguration) throws ContainerException {
         HstRequest request = createHstRequest(servletRequest, requestContext, componentConfiguration);
         PrintWriter contentWriter = getComponentContentWriter(requestContext, componentConfiguration);
         HttpBufferedResponse bufferedResponse = new HttpBufferedResponse((HttpServletResponse) servletResponse, contentWriter);
@@ -64,7 +65,7 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         dispatchComponentRenderPath(requestContext, componentConfiguration, request, response);
     }
 
-    public void processBeforeServeResource(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, HstComponentConfiguration componentConfiguration) throws Exception {
+    public void processBeforeServeResource(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, HstComponentConfiguration componentConfiguration) throws ContainerException {
         HstRequest request = createHstRequest(servletRequest, requestContext, componentConfiguration);
         HstResponse response = createHstResponse(servletResponse, requestContext, componentConfiguration);
 
@@ -75,18 +76,23 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         }
     }
     
-    public void processServeResource(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, HstComponentConfiguration componentConfiguration) throws Exception {
+    public void processServeResource(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, HstComponentConfiguration componentConfiguration) throws ContainerException {
         HstRequest request = createHstRequest(servletRequest, requestContext, componentConfiguration);
         HstResponse response = createHstResponse(servletResponse, requestContext, componentConfiguration);
 
         dispatchComponentRenderPath(requestContext, componentConfiguration, request, response);
     }
 
-    protected void redirect(HstRequest request, HstResponse response, String location) throws IOException
+    protected void redirect(HstRequest request, HstResponse response, String location) throws ContainerException
     {
         // Here we intentionally use the original response
-        // instead of the wrapped internal response.        
-        response.sendRedirect(location);
+        // instead of the wrapped internal response.
+
+        try {
+            response.sendRedirect(location);
+        } catch (IOException e) {
+            throw new ContainerException(e);
+        }
     }
     
     protected HstRequest createHstRequest(ServletRequest servletRequest, HstRequestContext requestContext, HstComponentConfiguration componentConfiguration) {
@@ -115,13 +121,19 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         return contentWriter;
     }
     
-    protected void dispatchComponentRenderPath(HstRequestContext requestContext, HstComponentConfiguration componentConfiguration, ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
+    protected void dispatchComponentRenderPath(HstRequestContext requestContext, HstComponentConfiguration componentConfiguration, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         ServletContext componentServletContext = null;
         // TODO: find component's servlet context here.
         RequestDispatcher dispatcher = componentServletContext.getRequestDispatcher(componentConfiguration.getRenderPath());
         
         servletRequest.setAttribute(HstComponent.HST_COMPONENT_REQUEST_CONTEXT, requestContext);
-        
-        dispatcher.include(servletRequest, servletResponse);
+ 
+        try {
+            dispatcher.include(servletRequest, servletResponse);
+        } catch (IOException e) {
+            throw new ContainerException(e);
+        } catch (ServletException e) {
+            throw new ContainerException(e);
+        }
     }
 }

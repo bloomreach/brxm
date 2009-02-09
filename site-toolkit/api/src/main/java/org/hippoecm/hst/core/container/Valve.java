@@ -4,11 +4,11 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 public interface Valve
 {
-    public void invoke(HstRequestContext request, ValveContext context) throws Exception;
+    public void invoke(HstRequestContext request, ValveContext context) throws ContainerException;
 
     /**
      * Initialize the valve before using in a pipeline.
      */
-    public void initialize() throws Exception;
+    public void initialize() throws ContainerException;
 
 }

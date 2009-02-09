@@ -18,7 +18,7 @@ public interface HstSiteEngine
      *
      * @throws Exception when the engine fails to initilialize
      */
-    public void start() throws Exception;
+    public void start() throws ContainerException;
 
     
     /**
@@ -26,7 +26,7 @@ public interface HstSiteEngine
      *
      * @throws Exception when the engine fails to shutdown
      */
-    public void shutdown() throws Exception;
+    public void shutdown() throws ContainerException;
 
     /**
      * Makes a service request to the engine.
@@ -34,7 +34,7 @@ public interface HstSiteEngine
      * @param context a <code>RequestContext</code> with the state of the request.
      * @throws Exception when the engine fails to initilialize
      */
-    public void service(ServletRequest request, ServletResponse response, HstRequestContext context) throws Exception;
+    public void service(ServletRequest request, ServletResponse response, HstRequestContext context) throws ContainerException;
 
     /**
      * Gets the engine's request default pipeline.
