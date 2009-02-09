@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.hippoecm.hst.provider.ValueProvider;
 
+@org.hippoecm.hst.service.ServiceNamespace(prefix = "myblog")
 public class BlogService implements Service, ValueProvider {
     
     private Map<String, Object> properties = new HashMap<String, Object>();

@@ -1,7 +1,6 @@
 package org.hippoecm.hst.service;
 
 import java.util.Calendar;
-import java.util.Map;
 
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.proxy.BeanAccessProvider;
@@ -19,18 +18,27 @@ public class ServiceBeanAccessProvider implements BeanAccessProvider {
     private static Class LONG_ARRAY_CLASS = new Long[0].getClass();
     private static Class CALENDAR_ARRAY_CLASS = new Calendar[0].getClass();
     
-    protected String namespace;
+    protected String namespacePrefix;
     protected Service service;
     protected ValueProvider valueProvider;
+    
+    public ServiceBeanAccessProvider(Service service) throws IllegalAccessException, NoSuchFieldException {
+        this.service = service;
+        this.valueProvider = service.getValueProvider();
+        
+        if (service.getClass().isAnnotationPresent(ServiceNamespace.class)) {
+            this.namespacePrefix = this.service.getClass().getAnnotation(ServiceNamespace.class).prefix();
+        }
+    }
     
     public ServiceBeanAccessProvider(Service service, String namespace) throws IllegalAccessException, NoSuchFieldException {
         this.service = service;
         this.valueProvider = service.getValueProvider();
-        this.namespace = namespace;
+        this.namespacePrefix = namespace;
     }
 
     public Object getProperty(String name, Class returnType) {
-        String nodePropName = this.namespace + HST_SERVICE_NAMESPACE_SEPARATOR + name;
+        String nodePropName = (this.namespacePrefix != null ? this.namespacePrefix + HST_SERVICE_NAMESPACE_SEPARATOR + name : name);
         
         if (returnType == null) {
             return this.valueProvider.getProperties().get(nodePropName);
@@ -66,7 +74,8 @@ public class ServiceBeanAccessProvider implements BeanAccessProvider {
     }
 
     public Object setProperty(String name, Object value, Class returnType) {
-        this.valueProvider.getProperties().put(this.namespace + HST_SERVICE_NAMESPACE_SEPARATOR + name, value);
+        String nodePropName = (this.namespacePrefix != null ? this.namespacePrefix + HST_SERVICE_NAMESPACE_SEPARATOR + name : name);
+        this.valueProvider.getProperties().put(nodePropName, value);
         return null;
     }
 

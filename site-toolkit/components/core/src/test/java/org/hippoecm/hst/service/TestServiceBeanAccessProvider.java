@@ -11,10 +11,9 @@ public class TestServiceBeanAccessProvider extends TestCase {
 
     public void testServiceBeanProxy() throws IllegalAccessException, NoSuchFieldException {
         BlogService blogService = new BlogService();
-        String namespace = "myblog";
 
         // create proxied implementation bean for IBlog interface.
-        BeanAccessProvider provider = new ServiceBeanAccessProvider(blogService, namespace);
+        BeanAccessProvider provider = new ServiceBeanAccessProvider(blogService);
         IBlog blog = (IBlog) ProxyUtils.createBeanAccessProviderProxy(new Class [] { IBlog.class }, provider);
         
         // Now, play with the proxied bean
