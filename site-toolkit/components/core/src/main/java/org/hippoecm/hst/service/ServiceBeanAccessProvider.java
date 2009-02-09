@@ -17,28 +17,17 @@ public class ServiceBeanAccessProvider implements BeanAccessProvider {
     private static Class PRIMITIVE_LONG_ARRAY_CLASS = new long[0].getClass();
     private static Class LONG_ARRAY_CLASS = new Long[0].getClass();
     private static Class CALENDAR_ARRAY_CLASS = new Calendar[0].getClass();
-    
-    protected String namespacePrefix;
+
     protected Service service;
     protected ValueProvider valueProvider;
     
     public ServiceBeanAccessProvider(Service service) throws IllegalAccessException, NoSuchFieldException {
         this.service = service;
         this.valueProvider = service.getValueProvider();
-        
-        if (service.getClass().isAnnotationPresent(ServiceNamespace.class)) {
-            this.namespacePrefix = this.service.getClass().getAnnotation(ServiceNamespace.class).prefix();
-        }
     }
     
-    public ServiceBeanAccessProvider(Service service, String namespace) throws IllegalAccessException, NoSuchFieldException {
-        this.service = service;
-        this.valueProvider = service.getValueProvider();
-        this.namespacePrefix = namespace;
-    }
-
-    public Object getProperty(String name, Class returnType) {
-        String nodePropName = (this.namespacePrefix != null ? this.namespacePrefix + HST_SERVICE_NAMESPACE_SEPARATOR + name : name);
+    public Object getProperty(String namespacePrefix, String name, Class returnType) {
+        String nodePropName = (namespacePrefix != null ? namespacePrefix + HST_SERVICE_NAMESPACE_SEPARATOR + name : name);
         
         if (returnType == null) {
             return this.valueProvider.getProperties().get(nodePropName);
@@ -73,13 +62,13 @@ public class ServiceBeanAccessProvider implements BeanAccessProvider {
         return this.valueProvider.getProperties().get(nodePropName);
     }
 
-    public Object setProperty(String name, Object value, Class returnType) {
-        String nodePropName = (this.namespacePrefix != null ? this.namespacePrefix + HST_SERVICE_NAMESPACE_SEPARATOR + name : name);
+    public Object setProperty(String namespacePrefix, String name, Object value, Class returnType) {
+        String nodePropName = (namespacePrefix != null ? namespacePrefix + HST_SERVICE_NAMESPACE_SEPARATOR + name : name);
         this.valueProvider.getProperties().put(nodePropName, value);
         return null;
     }
 
-    public Object invoke(String name, Object[] args, Class returnType) {
+    public Object invoke(String namespacePrefix, String name, Object[] args, Class returnType) {
         throw new UnsupportedOperationException("Service value provider does not support invocation on operations.");
     }
 

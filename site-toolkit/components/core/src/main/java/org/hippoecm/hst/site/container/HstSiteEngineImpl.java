@@ -25,8 +25,18 @@ public class HstSiteEngineImpl implements HstSiteEngine {
     }
 
     public void service(ServletRequest request, ServletResponse response, HstRequestContext context) throws ContainerException {
-        Pipeline pipeline = getDefaultPipeline();
-        pipeline.invoke(request, response, context);
+        Pipeline pipeline = null;
+        
+        try {
+            pipeline = getDefaultPipeline();
+            pipeline.beforeInvoke(request, response, context);
+            pipeline.invoke(request, response, context);
+        } catch (Throwable th) {
+            throw new ContainerException(th);
+        } finally {
+            if (pipeline != null)
+                pipeline.afterInvoke(request, response, context);
+        }
     }
 
     public void shutdown() throws ContainerException {

@@ -30,9 +30,13 @@
     </property>
   </bean>
   
+  <!-- Pre-processing valves -->
+  
   <bean id="initializationValve" class="org.hippoecm.hst.core.container.InitializationValve">
     <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
   </bean>
+  
+  <!-- Main invocable valves for each request -->
     
   <bean id="contextResolvingValve" class="org.hippoecm.hst.core.container.ContextResolvingValve">
   </bean>
@@ -55,6 +59,8 @@
     </constructor-arg>
   </bean>
   
+  <!-- Post-processing valves -->
+  
   <bean id="cleanupValve" class="org.hippoecm.hst.core.container.CleanupValve">
     <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
   </bean>
@@ -62,24 +68,33 @@
   <!-- Pipelines -->
   
   <bean id="org.hippoecm.hst.core.container.Pipelines" class="org.hippoecm.hst.core.container.HstSitePipelines">
-    <constructor-arg>
-      <list>
-        <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
-          <constructor-arg value="DefaultSitePipeline"/>
-          <constructor-arg>
-            <list>
-              <ref bean="initializationValve" />
-              <ref bean="contextResolvingValve" />
-              <ref bean="actionValve" />
-              <ref bean="resourceServingValve" />
-              <ref bean="aggregationValve" />
-              <ref bean="cleanupValve" />
-            </list>
-          </constructor-arg>
-        </bean>
-      </list>
-    </constructor-arg>
-    <constructor-arg value="DefaultSitePipeline" />
+    <property name="defaultPipelineName" value="DefaultSitePipeline" />
+    <property name="pipelines">
+      <map>
+        <entry key="DefaultSitePipeline">
+          <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+            <property name="preInvokingValves">
+              <list>
+                <ref bean="initializationValve" />
+              </list>
+            </property>
+            <property name="invokingValves">
+              <list>
+                <ref bean="contextResolvingValve" />
+                <ref bean="actionValve" />
+                <ref bean="resourceServingValve" />
+                <ref bean="aggregationValve" />
+              </list>
+            </property>
+            <property name="postInvokingValves">
+              <list>
+                <ref bean="cleanupValve" />
+              </list>
+            </property>
+          </bean>
+        </entry>
+      </map>
+    </property>
   </bean>
    
 </beans>

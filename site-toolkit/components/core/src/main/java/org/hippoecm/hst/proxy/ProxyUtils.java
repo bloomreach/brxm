@@ -1,10 +1,10 @@
 package org.hippoecm.hst.proxy;
 
-import java.lang.reflect.Method;
 import java.util.Set;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.hippoecm.hst.service.ServiceNamespace;
 import org.springframework.aop.framework.ProxyFactory;
 
 public class ProxyUtils
@@ -33,46 +33,21 @@ public class ProxyUtils
         return factory.getProxy();
     }
     
-    public static Object createBeanAccessProviderProxy(Class [] proxyInterfaces, final BeanAccessProvider provider) {
+    public static Object createBeanAccessProviderProxy(final BeanAccessProvider provider, Class ... proxyInterfaces) {
         ProxyFactory factory = new ProxyFactory(proxyInterfaces);
-
-        factory.addAdvice(new MethodInterceptor()
-        {
-            public Object invoke(MethodInvocation invocation) throws Throwable
-            {
-                Method method = invocation.getMethod();
-                String methodName = method.getName();
-                Class [] paramTypes = method.getParameterTypes();
-                Class returnType = method.getReturnType();
-                Object [] args = invocation.getArguments();
-                
-                if (methodName.startsWith("get") && paramTypes.length == 0) {
-                    String propName = getCamelString(methodName.substring(3));
-                    return provider.getProperty(propName, returnType);
-                } else if (methodName.startsWith("is") && paramTypes.length == 0 && (returnType == boolean.class || returnType == Boolean.class)) {
-                    String propName = getCamelString(methodName.substring(2));
-                    return provider.getProperty(propName, returnType);
-                } else if (methodName.startsWith("set") && paramTypes.length == 1) {
-                    String propName = getCamelString(methodName.substring(3));
-                    return provider.setProperty(propName, args[0], returnType);
-                } else {
-                    return provider.invoke(methodName, args, returnType);
-                }
+        
+        String defaultNamespacePrefix = null;
+        
+        for (int i = 0; i < proxyInterfaces.length; i++) {
+            if (proxyInterfaces[i].isAnnotationPresent(ServiceNamespace.class)) {
+                defaultNamespacePrefix = ((ServiceNamespace) proxyInterfaces[i].getAnnotation(ServiceNamespace.class)).prefix();
+                break;
             }
-        });
+        }
+        
+        factory.addAdvice(new NamespacedBeanMethodInterceptor(provider, defaultNamespacePrefix));
         
         return factory.getProxy();
     }
     
-    private static String getCamelString(String s) {
-        char firstChar = s.charAt(0);
-        
-        if (Character.isUpperCase(firstChar)) {
-            StringBuilder sb = new StringBuilder(s);
-            sb.setCharAt(0, Character.toLowerCase(firstChar));
-            s = sb.toString();
-        }
-        
-        return s;
-    }
 }

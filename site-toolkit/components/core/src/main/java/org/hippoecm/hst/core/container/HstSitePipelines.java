@@ -1,36 +1,41 @@
 package org.hippoecm.hst.core.container;
 
-import java.util.HashMap;
 import java.util.Map;
-
-import org.hippoecm.hst.core.container.Pipeline;
-import org.hippoecm.hst.core.container.Pipelines;
 
 public class HstSitePipelines implements Pipelines
 {
     
-    protected Map<String, Pipeline> pipelineMap;
     protected String defaultPipelineName;
+    protected Map<String, Pipeline> pipelines;
     
-    public HstSitePipelines(Pipeline [] pipelines, String defaultPipelineName)
+    public HstSitePipelines()
     {
+    }
+    
+    public void setDefaultPipelineName(String defaultPipelineName) {
         this.defaultPipelineName = defaultPipelineName;
-        this.pipelineMap = new HashMap<String, Pipeline>();
-        
-        for (Pipeline pipeline : pipelines)
-        {
-            this.pipelineMap.put(pipeline.getName(), pipeline);
-        }
+    }
+    
+    public String getDefaultPipelineName() {
+        return this.defaultPipelineName;
     }
     
     public Pipeline getDefaultPipeline()
     {
-        return this.pipelineMap.get(this.defaultPipelineName);
+        return this.pipelines.get(this.defaultPipelineName);
     }
 
+    public void setPipelines(Map<String, Pipeline> pipelines) {
+        this.pipelines = pipelines;
+    }
+    
+    public Map<String, Pipeline> getPipelines() {
+        return this.pipelines;
+    }
+    
     public Pipeline getPipeline(String name)
     {
-        return this.pipelineMap.get(name);
+        return this.pipelines.get(name);
     }
     
 }

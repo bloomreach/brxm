@@ -7,28 +7,50 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstSitePipeline implements Pipeline
 {
-    protected String name;
-    protected Valve [] valves;
+
+    protected Valve [] preInvokingValves;
+    protected Valve [] invokingValves;
+    protected Valve [] postInvokingValves;
     
-    public HstSitePipeline(String name, Valve [] valves) throws Exception
-    {
-        this.name = name;
-        this.valves = valves;
-    }
-
-    public String getName()
-    {
-        return this.name;
-    }
-
-    public void initialize() throws ContainerException
+    public HstSitePipeline() throws Exception
     {
     }
 
-    public void invoke(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext request) throws ContainerException
-    {
-        new Invocation(servletRequest, servletResponse, valves).invokeNext(request);
+    public void setPreInvokingValves(Valve [] preInvokingValves) {
+        this.preInvokingValves = preInvokingValves;
     }
+    
+    public void setInvokingValves(Valve [] invokingValves) {
+        this.invokingValves = invokingValves;
+    }
+    
+    public void setPostInvokingValves(Valve [] postInvokingValves) {
+        this.postInvokingValves = postInvokingValves;
+    }
+
+    public void initialize() throws ContainerException {
+    }
+    
+    public void beforeInvoke(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext request) throws ContainerException {
+        invokeValves(servletRequest, servletResponse, request, preInvokingValves);
+    }
+
+    public void invoke(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext request) throws ContainerException {
+        invokeValves(servletRequest, servletResponse, request, invokingValves);
+    }
+    
+    public void afterInvoke(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext request) throws ContainerException {
+        invokeValves(servletRequest, servletResponse, request, postInvokingValves);
+    }
+    
+    private void invokeValves(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext request, Valve [] valves) throws ContainerException {
+        if (valves != null && valves.length > 0) {
+            new Invocation(servletRequest, servletResponse, valves).invokeNext(request);
+        }
+    }
+
+    public void destroy() throws ContainerException {
+    }    
     
     private static final class Invocation implements ValveContext
     {
