@@ -40,4 +40,11 @@ public interface Content {
 
     Iterator<Content> getChildren();
 
+    /**
+     * Returns the filesystem base location used by the content importer for iterating it's children.
+     * In the import.properties this is represented by <code>filesystem.path</code>.
+     * @return The base filesystem location.
+     */
+    String getImportBase();
+
 }

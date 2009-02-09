@@ -78,10 +78,10 @@ public class FolderContent extends FileContent {
                             continue;
                         }
                         if (child.isDirectory()) {
-                            next = new FolderContent(child, getBase());
+                            next = new FolderContent(child, getImportBase());
                             break;
                         } else {
-                            next = new FileContent(child, getBase());
+                            next = new FileContent(child, getImportBase());
                             break;
                         }
                     }
