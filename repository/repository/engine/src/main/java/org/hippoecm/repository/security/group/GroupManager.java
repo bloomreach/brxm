@@ -110,7 +110,7 @@ public interface GroupManager {
 
     /**
      * Get memberships from the repository for a user
-     * @param userId
+     * @param userId the unparsed userId
      * @throws RepositoryException
      */
     public Set<String> getMemberships(String userId) throws RepositoryException;

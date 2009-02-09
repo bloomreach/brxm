@@ -53,7 +53,7 @@ public interface SecurityProvider {
      * @see DummyUserManager
      * @return the implemented manager or a dummy manager
      */
-    UserManager getUserManger();
+    UserManager getUserManager();
 
     /**
      * Get the {@link GroupManager} from the provider

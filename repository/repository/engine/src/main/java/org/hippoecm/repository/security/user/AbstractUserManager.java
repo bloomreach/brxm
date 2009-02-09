@@ -105,7 +105,7 @@ public abstract class AbstractUserManager implements UserManager {
             throw new IllegalStateException("Not initialized.");
         }
         if (useQueries) {
-            String userId = normalizeId(rawUserId);
+            String userId = sanitizeId(rawUserId);
             StringBuilder statement = new StringBuilder();
             // Triggers: https://issues.apache.org/jira/browse/JCR-1573 don't use path in query for now
             //statement.append("//").append(usersPath).append("//element");
@@ -137,7 +137,7 @@ public abstract class AbstractUserManager implements UserManager {
         }
 
         if (useQueries) {
-            String userId = normalizeId(rawUserId);
+            String userId = sanitizeId(rawUserId);
             StringBuilder statement = new StringBuilder();
             // Triggers: https://issues.apache.org/jira/browse/JCR-1573 don't use path in query for now
             //statement.append("//").append(usersPath).append("//element");
@@ -172,7 +172,7 @@ public abstract class AbstractUserManager implements UserManager {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
-        String userId = normalizeId(rawUserId);
+        String userId = sanitizeId(rawUserId);
         log.trace("Creating node for user: {} in path: {}", userId, usersPath);
         int length = userId.length();
         int pos = 0;
@@ -204,7 +204,7 @@ public abstract class AbstractUserManager implements UserManager {
      * @return the fully encoded normalized path
      */
     private String buildUserPath(String rawUserId) {
-        String userId = normalizeId(rawUserId);
+        String userId = sanitizeId(rawUserId);
         if (dirLevels == 0) {
             return usersPath + "/" + NodeNameCodec.encode(userId, true);
         }
@@ -222,20 +222,20 @@ public abstract class AbstractUserManager implements UserManager {
     }
 
     /**
-     * Normalize the rawId: trim and convert to lowercase if needed. This
+     * Sanitize the rawUserId: trim and convert to lowercase if needed. This
      * function does NOT encode the userId.
-     * @param rawId
+     * @param rawUserId
      * @return the trimmed and if needed converted to lowercase userId
      */
-    private String normalizeId(String rawId) {
-        if (rawId == null) {
+    private String sanitizeId(String rawUserId) {
+        if (rawUserId == null) {
             // anonymous
             return null;
         }
         if (isCaseSensitive()) {
-            return rawId.trim();
+            return rawUserId.trim();
         } else {
-            return rawId.trim().toLowerCase();
+            return rawUserId.trim().toLowerCase();
         }
     }
 
@@ -316,10 +316,10 @@ public abstract class AbstractUserManager implements UserManager {
                     user.setProperty(HippoNodeType.HIPPO_LASTLOGIN, Calendar.getInstance());
                 }
             } else {
-                log.debug("Unable to set lastlogin for user, user not found: " + normalizeId(rawUserId));
+                log.debug("Unable to set lastlogin for user, user not found: " + sanitizeId(rawUserId));
             }
         } catch (RepositoryException e) {
-            log.info("Unable to set lastlogin for user: {}", normalizeId(rawUserId));
+            log.info("Unable to set lastlogin for user: {}", sanitizeId(rawUserId));
         }
     }
 
