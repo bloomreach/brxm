@@ -99,7 +99,10 @@ public class FileContent implements Content {
         return file;
     }
 
-    protected String getBase() {
+    /* (non-Javadoc)
+     * @see org.hippoecm.tools.importer.api.Content#getImportBase()
+     */
+    public String getImportBase() {
         return base;
     }
 
