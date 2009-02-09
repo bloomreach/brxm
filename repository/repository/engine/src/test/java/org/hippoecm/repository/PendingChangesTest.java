@@ -21,26 +21,26 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 
-import junit.framework.TestCase;
-
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
 
 public class PendingChangesTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
-    private HippoRepository server;
-    private HippoSession session;
     private HippoNode root;
 
+    @Before
     @Override
     public void setUp() throws Exception {
-        server = HippoRepositoryFactory.getHippoRepository();
-        session = (HippoSession) server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        super.setUp(true);
         while(session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
         }
@@ -49,6 +49,7 @@ public class PendingChangesTest extends TestCase {
         session.save();
     }
 
+    @After
     @Override
     public void tearDown() throws Exception {
         session.refresh(false);
@@ -56,17 +57,17 @@ public class PendingChangesTest extends TestCase {
             session.getRootNode().getNode("test").remove();
             session.save();
         }
-        session.logout();
-        server.close();
+        super.tearDown();
     }
 
+    @Test
     public void testSanity() throws Exception {
         NodeIterator changes;
         Node node;
         Set<String> paths = new HashSet<String>();
 
         assertFalse(session.hasPendingChanges());
-        changes = session.pendingChanges();
+        changes = ((HippoSession)session).pendingChanges();
         assertFalse(changes.hasNext());
 
         assertFalse(root.isModified());
@@ -84,7 +85,7 @@ public class PendingChangesTest extends TestCase {
 
         assertTrue(session.hasPendingChanges());
 
-        changes = session.pendingChanges();
+        changes = ((HippoSession)session).pendingChanges();
         for(paths.clear(); changes.hasNext(); ) {
             paths.add(changes.nextNode().getPath());
         }
@@ -111,7 +112,7 @@ public class PendingChangesTest extends TestCase {
         assertTrue(paths.contains("/test/test1/mies"));
         assertTrue(paths.contains("/test/test1/mies/zus"));
 
-        changes = session.pendingChanges(null, "hippo:document");
+        changes = ((HippoSession)session).pendingChanges(null, "hippo:document");
         for(paths.clear(); changes.hasNext(); )
             paths.add(changes.nextNode().getPath());
         assertEquals(4, paths.size());
@@ -120,7 +121,7 @@ public class PendingChangesTest extends TestCase {
         assertTrue(paths.contains("/test/test1/mies"));
         assertTrue(paths.contains("/test/test1/mies/zus"));
 
-        changes = session.pendingChanges(null, "hippo:testdocument");
+        changes = ((HippoSession)session).pendingChanges(null, "hippo:testdocument");
         for(paths.clear(); changes.hasNext(); )
             paths.add(changes.nextNode().getPath());
         assertEquals(3, paths.size());
@@ -131,12 +132,12 @@ public class PendingChangesTest extends TestCase {
         session.save();
 
         assertFalse(session.hasPendingChanges());
-        changes = session.pendingChanges();
+        changes = ((HippoSession)session).pendingChanges();
         assertFalse(changes.hasNext());
 
         root.getNode("test1").addNode("vuur");
 
-        changes = session.pendingChanges();
+        changes = ((HippoSession)session).pendingChanges();
         for(paths.clear(); changes.hasNext(); ) {
             paths.add(changes.nextNode().getPath());
         }
