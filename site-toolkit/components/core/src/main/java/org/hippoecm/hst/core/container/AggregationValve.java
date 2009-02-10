@@ -13,6 +13,7 @@ public class AggregationValve extends AbstractValve {
     protected HstRequestProcessor requestProcessor;
     
     public AggregationValve(HstRequestProcessor requestProcessor) {
+        super();
         this.requestProcessor = requestProcessor;
     }
     

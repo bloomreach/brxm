@@ -9,6 +9,8 @@ public class ResourceServingValve extends AbstractValve {
     protected HstRequestProcessor requestProcessor;
     
     public ResourceServingValve(HstRequestProcessor requestProcessor) {
+        super();
+        
         this.requestProcessor = requestProcessor;
     }
     
