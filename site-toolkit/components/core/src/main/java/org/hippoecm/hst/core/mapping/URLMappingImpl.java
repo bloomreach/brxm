@@ -41,7 +41,6 @@ import javax.jcr.Value;
 import org.apache.commons.collections.map.LRUMap;
 import org.hippoecm.hst.core.domain.DomainMapping;
 import org.hippoecm.hst.core.domain.RepositoryMapping;
-import org.hippoecm.hst.core.filters.base.HstBaseFilter;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.repository.api.HippoNode;
@@ -51,6 +50,8 @@ import org.slf4j.LoggerFactory;
 
 public class URLMappingImpl implements URLMapping {
 
+    public static final String SITEMAP_RELATIVE_LOCATION = "hst:sitemap";
+    
     private static final Logger log = LoggerFactory.getLogger(URLMapping.class);
 
     private Repository repository;
@@ -88,7 +89,7 @@ public class URLMappingImpl implements URLMapping {
             // TODO when the configuration is a combination of multiple facetselects, we need to add all canonical path
             // configurations. currently, only the base path is added
 
-            Node siteMapRootNode = hstConf.getNode(HstBaseFilter.SITEMAP_RELATIVE_LOCATION);
+            Node siteMapRootNode = hstConf.getNode(SITEMAP_RELATIVE_LOCATION);
             siteMapRootNodePath = siteMapRootNode.getPath();
 
             NodeIterator subNodes;
