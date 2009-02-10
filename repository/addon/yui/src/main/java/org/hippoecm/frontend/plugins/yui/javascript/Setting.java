@@ -17,9 +17,10 @@ package org.hippoecm.frontend.plugins.yui.javascript;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public abstract class Setting<K> implements ISetting<K> {
+public abstract class Setting<K> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -28,6 +29,7 @@ public abstract class Setting<K> implements ISetting<K> {
     K defaultValue;
     String configKey;
     String javascriptKey;
+    boolean allowNull = false;
 
     public Setting(String javascriptKey, K defaultValue) {
         this.javascriptKey = javascriptKey;
@@ -35,16 +37,16 @@ public abstract class Setting<K> implements ISetting<K> {
         this.defaultValue = defaultValue;
     }
 
-    public final K get(Settings settings) {
-        return getValue(settings).get();
+    public final K get(YuiObject settings) {
+        return settings.get(this);
     }
 
-    public final void set(K value, Settings settings) {
-        getValue(settings).set(value);
+    public final void set(K value, YuiObject settings) {
+        settings.set(this, value);
     }
 
-    public void setFromConfig(IPluginConfig config, Settings settings) {
-        if(config.containsKey(configKey)) {
+    public void setFromConfig(IPluginConfig config, YuiObject settings) {
+        if (config.containsKey(configKey)) {
             set(getValueFromConfig(config, settings), settings);
         }
     }
@@ -53,17 +55,29 @@ public abstract class Setting<K> implements ISetting<K> {
         return javascriptKey;
     }
 
-    abstract protected K getValueFromConfig(IPluginConfig config, Settings settings);
-
-    @SuppressWarnings("unchecked")
-    Value<K> getValue(Settings settings) {
-        return (Value<K>) settings.get(this);
+    public boolean isValid(K value) {
+        if (value == null && !allowNull) {
+            return false;
+        }
+        return true;
     }
 
+    public void setAllowNull(boolean allowNull) {
+        this.allowNull = allowNull;
+    }
+
+    abstract public String getScriptValue(K value);
+
+    abstract public K newValue();
+
+    abstract public void setFromString(String value, YuiObject settings);
+
+    abstract protected K getValueFromConfig(IPluginConfig config, YuiObject settings);
+
     private String toConfigKey(String camelKey) {
-        StringBuilder b = new StringBuilder(camelKey.length()+4);
-        for(char ch : camelKey.toCharArray()) {
-            if(Character.isUpperCase(ch)) {
+        StringBuilder b = new StringBuilder(camelKey.length() + 4);
+        for (char ch : camelKey.toCharArray()) {
+            if (Character.isUpperCase(ch)) {
                 b.append('.').append(Character.toLowerCase(ch));
             } else {
                 b.append(ch);
@@ -74,8 +88,8 @@ public abstract class Setting<K> implements ISetting<K> {
 
     @Override
     public boolean equals(Object o) {
-        if(o != null && o instanceof Setting) {
-            Setting os = (Setting)o;
+        if (o != null && o instanceof Setting) {
+            Setting os = (Setting) o;
             return os.getKey().equals(getKey());
         }
         return false;
@@ -83,11 +97,12 @@ public abstract class Setting<K> implements ISetting<K> {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("key", javascriptKey).toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("key", javascriptKey).toString();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 13).append(javascriptKey).toHashCode();
     }
+
 }

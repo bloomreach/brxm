@@ -158,30 +158,30 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onServiceAdded(IBehaviorService behavior, String name) {
-                    String path = behavior.getComponentPath();
+                public void onServiceAdded(IBehaviorService service, String name) {
+                    String path = service.getComponentPath();
                     if (path != null) {
                         Component component = get(path);
                         if (component != null) {
-                            component.add(behavior);
+                            component.add(service.getBehavior());
                         } else {
                             log.warn("No component found under {}", path);
                         }
                     } else {
-                        add(behavior);
+                        add(service.getBehavior());
                     }
                 }
 
                 @Override
-                public void onRemoveService(IBehaviorService behavior, String name) {
-                    String path = behavior.getComponentPath();
+                public void onRemoveService(IBehaviorService service, String name) {
+                    String path = service.getComponentPath();
                     if (path != null) {
-                        Component component = get(behavior.getComponentPath());
+                        Component component = get(service.getComponentPath());
                         if (component != null) {
-                            component.remove(behavior);
+                            component.remove(service.getBehavior());
                         }
                     } else {
-                        remove(behavior);
+                        remove(service.getBehavior());
                     }
                 }
             };

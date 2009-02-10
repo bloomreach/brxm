@@ -19,6 +19,7 @@ package org.hippoecm.frontend.plugins.yui.dragdrop;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.javascript.BooleanSetting;
 import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiType;
 
 public class DragSettings extends DragDropSettings {
     @SuppressWarnings("unused")
@@ -35,14 +36,11 @@ public class DragSettings extends DragDropSettings {
             "YAHOO.hippo.DDModel", false);
     private static final StringSetting FIRST_ANCESTOR_TO_BLUR = new StringSetting("firstAncestorToBlur", "");
 
-    public DragSettings(IPluginConfig config) {
-        super(config);
-    }
+    private static final YuiType TYPE = new YuiType(DragDropSettings.TYPE, CENTER_FRAME, RESIZE_FRAME, LABEL,
+            IE_FALLBACK_CLASS, WRAPPED_MODEL_CLASS, FIRST_ANCESTOR_TO_BLUR);
 
-    @Override
-    protected void initValues() {
-        super.initValues();
-        add(CENTER_FRAME, RESIZE_FRAME, LABEL, IE_FALLBACK_CLASS, WRAPPED_MODEL_CLASS, FIRST_ANCESTOR_TO_BLUR);
+    public DragSettings(IPluginConfig config) {
+        super(TYPE, config);
     }
 
     public DragSettings setCenterFrame(boolean center) {

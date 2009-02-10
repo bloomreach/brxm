@@ -20,12 +20,15 @@ import java.util.Iterator;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Component.IVisitor;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
-import org.hippoecm.frontend.plugins.yui.javascript.Settings;
+import org.hippoecm.frontend.plugins.yui.javascript.IYuiListener;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiId;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public class WireframeBehavior extends AbstractYuiBehavior implements IWireframeService {
@@ -37,65 +40,63 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
     private static final PackagedTextTemplate behaviorJs = new PackagedTextTemplate(WireframeBehavior.class,
             "add_wireframe.js");
 
-    public WireframeSettings settings;
+    private WireframeSettings settings;
     private boolean initialized = false;
     private Component component;
+    private HippoTextTemplate template;
 
-    public WireframeBehavior(IYuiManager manager, WireframeSettings settings) {
+    public WireframeBehavior(IYuiManager manager, final WireframeSettings settings) {
         super(manager);
         this.settings = settings;
-    }
+        this.settings.addListener(new IYuiListener() {
+            private static final long serialVersionUID = 1L;
 
-    //    public WireframeBehavior registerUnitElement(String position, String elId) {
-    //        settings.registerUnitElement(position, elId);
-    //        return this;
-    //    }
-    //
-    //    public WireframeBehavior addUnit(String position, Map<String, String> options) {
-    //        settings.addUnit(position, options);
-    //        return this;
-    //    }
-    //
-    //    public WireframeBehavior addUnit(String position, String... options) {
-    //        settings.addUnit(position, options);
-    //        return this;
-    //    }
+            public void onEvent(Event event) {
+                if (initialized) {
+                    initialized = false;
+                    if (component != null) {
+                        AjaxRequestTarget target = AjaxRequestTarget.get();
+                        if (target != null) {
+                            target.addComponent(component);
+                        }
+                    }
+                }
+            }
+
+        });
+
+        template = new HippoTextTemplate(behaviorJs, "YAHOO.hippo.Wireframe") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public String getId() {
+                return settings.getRootElementId().getElementId();
+            }
+
+            @Override
+            public YuiObject getSettings() {
+                return settings;
+            }
+        };
+    }
 
     /**
      * Implements IWireframeService
      */
-    public String getParentId() {
+    public YuiId getParentId() {
         return settings.getRootElementId();
     }
-
-    //    @Override
-    //    protected void respond(AjaxRequestTarget target) {
-    //        RequestCycle requestCycle = RequestCycle.get();
-    //        String sizes = requestCycle.getRequest().getParameter("sizes");
-    //        if (sizes != null) {
-    //            JSONObject json = JSONObject.fromObject(sizes);
-    //            Iterator<String> i = json.keys();
-    //            while (i.hasNext()) {
-    //                String key = i.next();
-    //                UnitSettings unitSettings = settings.getUnitSettingsByPosition(key);
-    //                unitSettings.setWidth(json.getJSONObject(key).getString("w"));
-    //                unitSettings.setHeight(json.getJSONObject(key).getString("h"));
-    //            }
-    //        }
-    //    }
-
-    //    @Override
-    //    protected void onBind() {
-    //        super.onBind();
-    //        if (!(getComponent() instanceof MarkupContainer)) {
-    //            throw new RuntimeException("YuiWireframeBehavior can only be added to a MarkupContainer");
-    //        }
-    //    }
 
     @Override
     public void bind(Component component) {
         super.bind(component);
         this.component = component;
+    }
+
+    @Override
+    public void detach(Component component) {
+        super.detach(component);
+        template.detach();
     }
 
     @Override
@@ -108,19 +109,7 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
 
     @Override
     public void addHeaderContribution(IYuiContext context) {
-        context.addTemplate(new HippoTextTemplate(behaviorJs, settings.getClientClassName()) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public String getId() {
-                return settings.getRootElementId();
-            }
-
-            @Override
-            public Settings getSettings() {
-                return settings;
-            }
-        });
+        context.addTemplate(template);
         context.addOnload("YAHOO.hippo.LayoutManager.render()");
     }
 
@@ -155,9 +144,7 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
                     if (behavior instanceof IWireframeService) {
                         return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
                     } else if (behavior instanceof UnitBehavior) {
-                        UnitSettings unitSettings = ((UnitBehavior) behavior).getSettings();
-                        unitSettings.setMarkupId(component.getMarkupId(true));
-                        settings.register(unitSettings);
+                        settings.register(((UnitBehavior) behavior).getSettings());
                         return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
                     }
                 }

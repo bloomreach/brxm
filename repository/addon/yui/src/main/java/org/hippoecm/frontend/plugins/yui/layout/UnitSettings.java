@@ -19,18 +19,25 @@ import java.util.Map;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.javascript.BooleanSetting;
-import org.hippoecm.frontend.plugins.yui.javascript.Settings;
 import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiId;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiIdSetting;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class UnitSettings extends Settings {
+public class UnitSettings extends YuiObject {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(UnitSettings.class);
+    
     private static final StringSetting POSITION = new StringSetting("position");
-    private static final StringSetting ID = new StringSetting("id");
-    private static final StringSetting BODY = new StringSetting("body");
+    private static final YuiIdSetting ID = new YuiIdSetting("id");
+    private static final YuiIdSetting BODY = new YuiIdSetting("body");
 
     private static final StringSetting WIDTH = new StringSetting("width");
     private static final StringSetting HEIGHT = new StringSetting("height");
@@ -38,51 +45,33 @@ public class UnitSettings extends Settings {
     private static final StringSetting GUTTER = new StringSetting("gutter");
     private static final BooleanSetting SCROLL = new BooleanSetting("scroll");
 
+    protected final static YuiType TYPE = new YuiType(POSITION, ID, BODY, WIDTH, HEIGHT, GUTTER, SCROLL);
+
     public static final String TOP = "top";
     public static final String RIGHT = "right";
     public static final String BOTTOM = "bottom";
     public static final String LEFT = "left";
     public static final String CENTER = "center";
 
-
     private String wrapperId;
     private String markupId;
 
     public UnitSettings(String position) {
+        super(TYPE);
         POSITION.set(position, this);
     }
 
     public UnitSettings(String position, Map<String, String> options) {
+        super(TYPE);
         POSITION.set(position, this);
         updateValues(options);
     }
 
     public UnitSettings(IPluginConfig config) {
-        super(config);
+        super(TYPE, config);
     }
 
-    @Override
-    protected void initValues() {
-        add(POSITION, ID, BODY, WIDTH, HEIGHT, GUTTER, SCROLL);
-    }
-
-    public void setId(String value) {
-        ID.set(value, this);
-    }
-
-    public String getId() {
-        return ID.get(this);
-    }
-
-    public void setBody(String value) {
-        BODY.set(value, this);
-    }
-
-    public String getBody() {
-        return BODY.get(this);
-    }
-
-    public void setPosition(String position, Settings settings) {
+    public void setPosition(String position, YuiObject settings) {
         POSITION.set(position, settings);
     }
 
@@ -100,31 +89,64 @@ public class UnitSettings extends Settings {
 
     public void setWrapperId(String id) {
         wrapperId = id;
+        notifyListeners();
     }
 
     public String getWrapperId() {
         return wrapperId;
     }
 
-    public void setMarkupId(String markupId) {
-        this.markupId = markupId;
+    public String getMarkupId() {
+        return markupId;
     }
 
-    public void enhanceIds(String parentMarkupId) {
-        if(wrapperId != null) {
-            setId(parentMarkupId + ":" + wrapperId);
-            setBody(markupId);
-        } else if(getId() != null) {
-            setId(parentMarkupId + ":" + getId());
-            if(getBody() != null) {
-                setBody(parentMarkupId + ":" + getBody());
+    public String getBody() {
+        return BODY.getScriptValue(BODY.get(this));
+    }
+    
+    public void setMarkupId(String markupId) {
+        this.markupId = markupId;
+        if (wrapperId != null) {
+            if (BODY.get(this) != null) {
+                BODY.get(this).setId(markupId);
             }
         }
+        notifyListeners();
     }
 
     @Override
     public boolean isValid() {
         return ID.get(this) != null;
+    }
+
+    public void setParentMarkupId(String parentMarkupId) {
+        if (wrapperId != null) {
+            YuiId id = ID.get(this);
+            if (id == null) {
+                ID.set(new YuiId(wrapperId), this);
+                id = ID.get(this);
+            } else {
+                id.setId(wrapperId);
+            }
+            id.setParentId(parentMarkupId);
+
+            YuiId body = BODY.get(this);
+            if (body == null) {
+                BODY.set(new YuiId(markupId), this);
+            } else {
+                body.setId(markupId);
+                body.setParentId(null);
+            }
+        } else if (ID.get(this) != null) {
+            YuiId id = ID.get(this);
+            id.setParentId(parentMarkupId);
+
+            YuiId body = BODY.get(this);
+            if (body != null) {
+                body.setParentId(parentMarkupId);
+            }
+        }
+        notifyListeners();
     }
 
 }

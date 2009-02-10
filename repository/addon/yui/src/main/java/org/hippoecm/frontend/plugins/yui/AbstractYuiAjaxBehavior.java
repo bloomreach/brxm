@@ -53,7 +53,7 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
     }
 
     /**
-     * Wrap the callback script in a function called doCallBack*component-id*(url){}
+     * Wrap the callback script in an anonymous function
      */
     protected String getCallbackFunction() {
         StringBuilder buf = new StringBuilder();

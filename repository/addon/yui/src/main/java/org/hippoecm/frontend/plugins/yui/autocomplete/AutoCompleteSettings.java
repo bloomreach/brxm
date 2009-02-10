@@ -26,6 +26,7 @@ import org.hippoecm.frontend.plugins.yui.javascript.IntSetting;
 import org.hippoecm.frontend.plugins.yui.javascript.StringArraySetting;
 import org.hippoecm.frontend.plugins.yui.javascript.StringMapSetting;
 import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiType;
 
 /**
  * This class encapsulates various settings for {@link AutoCompleteBehavior}
@@ -50,16 +51,12 @@ public final class AutoCompleteSettings extends AjaxSettings {
     private static final StringArraySetting SCHEMA_FIELDS = new StringArraySetting("schemaFields");
     private static final StringMapSetting SCHEMA_META_FIELDS = new StringMapSetting("schemaMetaFields");
 
+    protected static final YuiType TYPE = new YuiType(AjaxSettings.TYPE, CONTAINER_ID, PRE_HIGHLIGHT_CLASSNAME, USE_SHADOW, USE_IFRAME, ANIM_VERT, MAX_RESULTS_DISPLAYED,
+            MIN_QUERY_LENGTH, QUERY_DELAY, SUBMIT_ONLY_ON_ENTER, SCHEMA_RESULT_LIST, SCHEMA_FIELDS,
+            SCHEMA_META_FIELDS);
+    
     public AutoCompleteSettings(IPluginConfig config) {
-        super(config);
-    }
-
-    @Override
-    protected void initValues() {
-        super.initValues();
-        add(CONTAINER_ID, PRE_HIGHLIGHT_CLASSNAME, USE_SHADOW, USE_IFRAME, ANIM_VERT, MAX_RESULTS_DISPLAYED,
-                MIN_QUERY_LENGTH, QUERY_DELAY, SUBMIT_ONLY_ON_ENTER, SCHEMA_RESULT_LIST, SCHEMA_FIELDS,
-                SCHEMA_META_FIELDS);
+        super(TYPE, config);
     }
 
     public AutoCompleteSettings setContainerId(String containerId) {

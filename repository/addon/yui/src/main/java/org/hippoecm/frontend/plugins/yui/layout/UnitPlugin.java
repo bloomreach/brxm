@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
+import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -24,7 +25,7 @@ import org.hippoecm.frontend.service.IBehaviorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UnitPlugin extends UnitBehavior implements IPlugin, IBehaviorService {
+public class UnitPlugin implements IPlugin, IBehaviorService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -35,14 +36,16 @@ public class UnitPlugin extends UnitBehavior implements IPlugin, IBehaviorServic
     private IPluginConfig config;
 
     public UnitPlugin(IPluginContext context, IPluginConfig config) {
-        super(createSettings(YuiPluginHelper.getConfig(config)));
-
         this.config = config;
         context.registerService(this, config.getString(ID));
     }
 
     public String getComponentPath() {
         return config.getString(IBehaviorService.PATH);
+    }
+
+    public IBehavior getBehavior() {
+        return new UnitBehavior(createSettings(YuiPluginHelper.getConfig(config)));
     }
 
     static UnitSettings createSettings(IPluginConfig config) {

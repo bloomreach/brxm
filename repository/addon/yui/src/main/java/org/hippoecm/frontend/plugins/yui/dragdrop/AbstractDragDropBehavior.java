@@ -21,7 +21,7 @@ import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
-import org.hippoecm.frontend.plugins.yui.javascript.Settings;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
@@ -51,7 +51,7 @@ public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
             }
 
             @Override
-            public Settings getSettings() {
+            public YuiObject getSettings() {
                 updateAjaxSettings();
                 return AbstractDragDropBehavior.this.settings;
             }

@@ -15,7 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.yui.javascript;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -26,6 +28,8 @@ public class StringMapSetting extends Setting<Map<String, String>> {
 
     private static final long serialVersionUID = 1L;
 
+    private boolean escaped = true;//TODO: make configurable
+
     public StringMapSetting(String javascriptKey) {
         this(javascriptKey, null);
     }
@@ -34,18 +38,49 @@ public class StringMapSetting extends Setting<Map<String, String>> {
         super(javascriptKey, defaultValue);
     }
 
-    public Value<Map<String, String>> newValue() {
-        return new StringMapValue(defaultValue);
+    public Map<String, String> newValue() {
+        if (defaultValue != null) {
+            return new HashMap<String, String>(defaultValue);
+        } else {
+            return new HashMap<String, String>();
+        }
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Map<String, String> getValueFromConfig(IPluginConfig config, Settings settings) {
+    protected Map<String, String> getValueFromConfig(IPluginConfig config, YuiObject settings) {
         return config.getPluginConfig(configKey);
     }
 
-    public void setFromString(String value, Settings settings) {
+    public void setFromString(String value, YuiObject settings) {
         set(new ValueMap(value), settings);
+    }
+
+    public String getScriptValue(Map<String, String> value) {
+        if(value == null)  {
+            return null;
+        }
+        StringBuilder buf = new StringBuilder();
+        boolean first = true;
+        for (Entry<String, String> e : value.entrySet()) {
+            //TODO: A IPluginConfig map can be passed into this method, which will results in a jcr:primaryType key-value entry, which breaks
+            //the js-object and shouldn't be present. We could just try and ignore it by wrapping the js-object key's with quotes as well.
+            if (e.getKey().startsWith("jcr:"))
+                continue;
+            if (first) {
+                first = false;
+            } else {
+                buf.append(',');
+            }
+            buf.append(e.getKey()).append(':');
+            if (escaped) {
+                buf.append(StringSetting.escapeString(e.getValue()));
+            } else {
+                buf.append(e.getValue());
+            }
+        }
+        buf.insert(0, '{').append('}');
+        return buf.toString();
     }
 
 }

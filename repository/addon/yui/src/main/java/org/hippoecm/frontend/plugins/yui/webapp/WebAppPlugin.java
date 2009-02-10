@@ -16,15 +16,15 @@
 
 package org.hippoecm.frontend.plugins.yui.webapp;
 
+import org.apache.wicket.behavior.IBehavior;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.service.IBehaviorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebAppPlugin extends WebAppBehavior implements IPlugin, IBehaviorService, IYuiManager {
+public class WebAppPlugin extends WebAppBehavior implements IPlugin, IBehaviorService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -41,12 +41,12 @@ public class WebAppPlugin extends WebAppBehavior implements IPlugin, IBehaviorSe
         context.registerService(this, config.getString(ID));
     }
 
-    public String getComponentPath() {
-        return config.getString(IBehaviorService.PATH);
+    public IBehavior getBehavior() {
+        return this;
     }
 
-    public IYuiContext newContext() {
-        return headerContributor.new YuiContext();
+    public String getComponentPath() {
+        return config.getString(IBehaviorService.PATH);
     }
 
 }

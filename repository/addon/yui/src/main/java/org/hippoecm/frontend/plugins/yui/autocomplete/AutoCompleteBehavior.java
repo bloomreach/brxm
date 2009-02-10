@@ -16,12 +16,13 @@
 
 package org.hippoecm.frontend.plugins.yui.autocomplete;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
-import org.hippoecm.frontend.plugins.yui.javascript.Settings;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
@@ -34,16 +35,12 @@ public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
             "init_autocomplete.js");
 
     protected final AutoCompleteSettings settings;
+    private HippoTextTemplate template;
 
     public AutoCompleteBehavior(IYuiManager service, AutoCompleteSettings settings) {
         super(service, settings);
         this.settings = settings;
-    }
-
-    @Override
-    public void addHeaderContribution(IYuiContext context) {
-        context.addModule(HippoNamespace.NS, "autocompletemanager");
-        context.addTemplate(new HippoTextTemplate(INIT_AUTOCOMPLETE, getClientClassname()) {
+        this.template = new HippoTextTemplate(INIT_AUTOCOMPLETE, getClientClassname()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -52,11 +49,23 @@ public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
             }
 
             @Override
-            public Settings getSettings() {
+            public YuiObject getSettings() {
                 return AutoCompleteBehavior.this.getSettings();
             }
-        });
+        };
+    }
+
+    @Override
+    public void addHeaderContribution(IYuiContext context) {
+        context.addModule(HippoNamespace.NS, "autocompletemanager");
+        context.addTemplate(template);
         context.addOnload("YAHOO.hippo.AutoCompleteManager.onLoad()");
+    }
+
+    @Override
+    public void detach(Component component) {
+        super.detach(component);
+        template.detach();
     }
 
     protected AutoCompleteSettings getSettings() {

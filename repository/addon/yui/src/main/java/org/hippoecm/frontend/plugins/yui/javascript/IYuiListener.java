@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,18 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.yui.javascript;
 
-public class DoubleValue extends Value<Double> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+import org.apache.wicket.IClusterable;
 
-    private static final long serialVersionUID = 1L;
+public interface IYuiListener extends IClusterable {
 
-    public DoubleValue(Double value) {
-        super(value);
+    abstract class Event {
+        abstract public YuiObject getSource();
     }
 
-    public String getScriptValue() {
-        return Double.toString(value);
-    }
-
+    void onEvent(Event event);
 }

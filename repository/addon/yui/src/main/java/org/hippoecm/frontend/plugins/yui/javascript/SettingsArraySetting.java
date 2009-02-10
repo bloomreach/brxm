@@ -15,7 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.yui.javascript;
 
-public abstract class SettingsArraySetting<K extends Settings> extends Setting<K[]> {
+
+public abstract class SettingsArraySetting<K extends YuiObject> extends Setting<K[]> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -25,8 +26,27 @@ public abstract class SettingsArraySetting<K extends Settings> extends Setting<K
         super(javascriptKey, defaultValue);
     }
 
-    public Value<K[]> newValue() {
-        return new SettingsArrayValue<K>(defaultValue);
+    public K[] newValue() {
+        return defaultValue.clone();
+    }
+
+    public String getScriptValue(K[] value) {
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        boolean first = true;
+        for(K k : value) {
+            if(!k.isValid()) {
+                continue;
+            }
+            if(first) {
+                first = false;
+            } else {
+                sb.append(',');
+            }
+            sb.append(k.toScript());
+        }
+        sb.append(']');
+        return sb.toString();
     }
 
 }

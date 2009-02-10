@@ -19,6 +19,7 @@ package org.hippoecm.frontend.plugins.yui.dragdrop;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.javascript.AjaxSettings;
 import org.hippoecm.frontend.plugins.yui.javascript.StringArraySetting;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiType;
 
 public class DragDropSettings extends AjaxSettings {
     @SuppressWarnings("unused")
@@ -28,14 +29,14 @@ public class DragDropSettings extends AjaxSettings {
 
     private static final StringArraySetting GROUPS = new StringArraySetting("groups", "default");
 
+    protected static final YuiType TYPE = new YuiType(AjaxSettings.TYPE, GROUPS);
+
     public DragDropSettings(IPluginConfig config) {
-        super(config);
+        this(TYPE, config);
     }
 
-    @Override
-    protected void initValues() {
-        super.initValues();
-        add(GROUPS);
+    public DragDropSettings(YuiType type, IPluginConfig config) {
+        super(type, config);
     }
 
     public DragDropSettings setGroups(String... groups) {

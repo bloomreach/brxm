@@ -31,17 +31,21 @@ public class IntSetting extends Setting<Integer> {
         super(javascriptKey, defaultValue);
     }
 
-    public Value<Integer> newValue() {
-        return new IntValue(defaultValue);
+    public Integer newValue() {
+        return new Integer(defaultValue != null ? defaultValue : 0);
     }
 
     @Override
-    protected Integer getValueFromConfig(IPluginConfig config, Settings settings) {
+    protected Integer getValueFromConfig(IPluginConfig config, YuiObject settings) {
         return config.getInt(configKey);
     }
 
-    public void setFromString(String value, Settings settings) {
+    public void setFromString(String value, YuiObject settings) {
         set(Integer.valueOf(value), settings);
+    }
+
+    public String getScriptValue(Integer value) {
+        return value.toString();
     }
 
 }

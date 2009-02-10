@@ -16,10 +16,9 @@
 
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import java.util.Map;
-
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AbstractBehavior;
-import org.hippoecm.frontend.plugins.yui.util.OptionsUtil;
 
 public class UnitBehavior extends AbstractBehavior {
     @SuppressWarnings("unused")
@@ -33,22 +32,27 @@ public class UnitBehavior extends AbstractBehavior {
         this.settings = settings;
     }
 
-    /**
-     * Configure a LayoutUnit
-     * @param position  Position in the wireframe
-     * @param options   String array containing options in key=value scheme
-     */
-    public UnitBehavior(String position, String... options) {
-        this(position, OptionsUtil.keyValuePairsToMap(options));
-    }
-
-    public UnitBehavior(String position, Map<String, String> options) {
-        settings = new UnitSettings(position);
-        settings.updateValues(options);
+    @Override
+    public void bind(Component component) {
+        super.bind(component);
+        settings.setMarkupId(component.getMarkupId(true));
     }
 
     public UnitSettings getSettings() {
         return settings;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof UnitBehavior) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(11, 97).toHashCode();
     }
 
 }

@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.yui.javascript;
 
-import java.util.StringTokenizer;
-
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public class StringArraySetting extends Setting<String[]> {
@@ -36,18 +34,37 @@ public class StringArraySetting extends Setting<String[]> {
         this.escaped = escaped;
     }
 
-    public Value<String[]> newValue() {
-        return new StringArrayValue(defaultValue, escaped);
+    public String[] newValue() {
+        return defaultValue.clone();
     }
 
     @Override
-    protected String[] getValueFromConfig(IPluginConfig config, Settings settings) {
+    protected String[] getValueFromConfig(IPluginConfig config, YuiObject settings) {
         return config.getStringArray(configKey);
     }
 
-    public void setFromString(String value, Settings settings) {
+    public void setFromString(String value, YuiObject settings) {
         //TODO: check if I need to strip [] chars
         set(value.split(","), settings);
+    }
+
+    public String getScriptValue(String[] value) {
+        StringBuilder buf = new StringBuilder();
+        buf.append('[');
+        if (value != null) {
+            for (int i = 0; i < value.length; i++) {
+                if (i > 0) {
+                    buf.append(',');
+                }
+                if (escaped) {
+                    buf.append(StringSetting.escapeString(value[i]));
+                } else {
+                    buf.append(value[i]);
+                }
+            }
+        }
+        buf.append(']');
+        return buf.toString();
     }
 
 }
