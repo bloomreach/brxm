@@ -46,7 +46,6 @@ public class BasicSeleniumTest {
         doLogin();
         doLogout();
     }
-
     public void doLogin() throws Exception {
         try {
             selenium.open("http://localhost:4849/");
@@ -54,16 +53,16 @@ public class BasicSeleniumTest {
             assert(selenium.isTextPresent("Password"));
 
             // enter username
-            selenium.type("username3", "admin");
+            selenium.type("service.root_3", "admin");
 
             // enter password
-            selenium.type("password4", "admin");
+            selenium.type("service.root_5", "admin");
 
             // click ok
-            selenium.click("submit5");
+            selenium.click("service.root_7");
             for (int second = 0;; second++) {
                 if (second >= 60) fail("timeout");
-                try { if (selenium.isTextPresent("Dashboard")) break; } catch (Exception e) {}
+                try { if (selenium.isTextPresent("Welcome to Hippo CMS 7")) break; } catch (Exception e) {}
                 Thread.sleep(1000);
             }
         } catch (SeleniumException ex) {
@@ -74,7 +73,7 @@ public class BasicSeleniumTest {
 
     public void doLogout() throws Exception {
         try {
-            selenium.click("logout_link9");
+            selenium.click("service.logout_1");
             for (int second = 0;; second++) {
                 if (second >= 60) fail("timeout");
                 try { if (selenium.isTextPresent("Password")) break; } catch (Exception e) {}
