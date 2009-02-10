@@ -12,17 +12,25 @@ public class TestServiceBeanAccessProvider extends TestCase {
         BlogService blogService = new BlogService();
 
         // create proxied implementation bean for IBlog interface.
-        IBlog blog = (IBlog) ProxyUtils.createBeanAccessProviderProxy(new ServiceBeanAccessProvider(blogService), IBlog.class);
+        IBlogArticle blog = (IBlogArticle) ProxyUtils.createBeanAccessProviderProxy(new ServiceBeanAccessProviderImpl(blogService), IBlogArticle.class);
         
         // Now, play with the proxied bean
         
         blog.setTitle("Wonderful HST2!");
         assertEquals("The title is not equal.", "Wonderful HST2!", blog.getTitle());
-        assertEquals("The title is not equal.", "Wonderful HST2!", blogService.getProperties().get("myblog:title"));
+        assertEquals("The title is not equal.", "Wonderful HST2!", blogService.getProperties().get("myproject:title"));
         
         blog.setContent("HST2 is two thumbs up!");
         assertEquals("The content is not equal.", "HST2 is two thumbs up!", blog.getContent());
-        assertEquals("The content is not equal.", "HST2 is two thumbs up!", blogService.getProperties().get("myblog:content"));
+        assertEquals("The content is not equal.", "HST2 is two thumbs up!", blogService.getProperties().get("myproject:content"));
+        
+        String [] comments = new String [] { "good article!", "thanks!" };
+        blog.setComments(comments);
+        assertEquals("The comment is not equal.", "good article!", blog.getComments()[0]);
+        assertEquals("The comment is not equal.", "thanks!", blog.getComments()[1]);
+        String [] commentsFromProps = (String []) blogService.getProperties().get("myproject:comments");
+        assertEquals("The comment is not equal.", "good article!", commentsFromProps[0]);
+        assertEquals("The comment is not equal.", "thanks!", commentsFromProps[1]);
         
         blog.setVersion(1);
         assertEquals("The version is not equal.", 1, blog.getVersion());

@@ -1,6 +1,6 @@
-package org.hippoecm.hst.proxy;
+package org.hippoecm.hst.service;
 
-public interface BeanAccessProvider {
+public interface ServiceBeanAccessProvider {
     
     Object getProperty(String namespacePrefix, String name, Class returnType);
     

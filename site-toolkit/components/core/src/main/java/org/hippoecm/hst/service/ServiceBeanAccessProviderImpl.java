@@ -3,9 +3,8 @@ package org.hippoecm.hst.service;
 import java.util.Calendar;
 
 import org.hippoecm.hst.provider.ValueProvider;
-import org.hippoecm.hst.proxy.BeanAccessProvider;
 
-public class ServiceBeanAccessProvider implements BeanAccessProvider {
+public class ServiceBeanAccessProviderImpl implements ServiceBeanAccessProvider {
     
     public static final String HST_SERVICE_NAMESPACE_SEPARATOR = ":";
     
@@ -21,7 +20,7 @@ public class ServiceBeanAccessProvider implements BeanAccessProvider {
     protected Service service;
     protected ValueProvider valueProvider;
     
-    public ServiceBeanAccessProvider(Service service) throws IllegalAccessException, NoSuchFieldException {
+    public ServiceBeanAccessProviderImpl(Service service) throws IllegalAccessException, NoSuchFieldException {
         this.service = service;
         this.valueProvider = service.getValueProvider();
     }

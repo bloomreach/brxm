@@ -18,23 +18,27 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  *  
  */
 public abstract class AbstractSpringTestCase extends TestCase {
-    
+
     protected AbstractApplicationContext appContext;
 
     /**
      * setup Spring context as part of test setup
      */
-    protected void setUp() throws Exception {
+    @Override
+    public void setUp() throws Exception {
         super.setUp();
         this.appContext = new ClassPathXmlApplicationContext(getConfigurations(), false);
         this.appContext.refresh();
+        this.appContext.start();
     }
 
     /**
      * close Spring context as part of test teardown
      */
-    protected void tearDown() throws Exception {
+    @Override
+    public void tearDown() throws Exception {
         super.tearDown();
+        this.appContext.stop();
     }
 
     /**

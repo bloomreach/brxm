@@ -4,14 +4,15 @@ import java.lang.reflect.Method;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.hippoecm.hst.service.ServiceBeanAccessProvider;
 import org.hippoecm.hst.service.ServiceNamespace;
 
 public class NamespacedBeanMethodInterceptor implements MethodInterceptor {
     
-    private BeanAccessProvider provider;
+    private ServiceBeanAccessProvider provider;
     private String defaultNamespacePrefix;
     
-    public NamespacedBeanMethodInterceptor(final BeanAccessProvider provider, String defaultNamespacePrefix) {
+    public NamespacedBeanMethodInterceptor(final ServiceBeanAccessProvider provider, String defaultNamespacePrefix) {
         this.provider = provider;
         this.defaultNamespacePrefix = defaultNamespacePrefix;
     }
@@ -43,6 +44,8 @@ public class NamespacedBeanMethodInterceptor implements MethodInterceptor {
         
         if (method.isAnnotationPresent(ServiceNamespace.class)) {
             namespacePrefix = method.getAnnotation(ServiceNamespace.class).prefix();
+        } else if (method.getDeclaringClass().isAnnotationPresent(ServiceNamespace.class)) {
+            namespacePrefix = method.getDeclaringClass().getAnnotation(ServiceNamespace.class).prefix();
         }
         
         return namespacePrefix;
