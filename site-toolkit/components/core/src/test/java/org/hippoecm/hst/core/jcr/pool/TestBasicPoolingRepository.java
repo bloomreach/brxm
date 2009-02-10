@@ -1,5 +1,9 @@
 package org.hippoecm.hst.core.jcr.pool;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.Session;
@@ -7,18 +11,21 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TestBasicPoolingRepository extends AbstractSpringTestCase {
 
     protected BasicPoolingRepository poolingRepository;
     
-    @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         this.poolingRepository = (BasicPoolingRepository) getComponent(PoolingRepository.class.getName());
     }
     
-    public void testBasicPoolingRepository() throws Exception {
+    @Test
+    public void playBasicPoolingRepository() throws Exception {
         Repository repository = poolingRepository;
         int maxActive = poolingRepository.getMaxActive();
 
@@ -83,7 +90,8 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
         }
     }
 
-    public void testSessionLifeCycleManagementPerThread() throws Exception {
+    @Test
+    public void playSessionLifeCycleManagementPerThread() throws Exception {
 
         final Repository repository = poolingRepository;
         int maxActive = poolingRepository.getMaxActive();

@@ -4,6 +4,8 @@ import junit.framework.TestCase;
 
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.container.SpringComponentManager;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * <p>
@@ -17,17 +19,12 @@ import org.hippoecm.hst.site.container.SpringComponentManager;
  * @version $Id$
  *  
  */
-public abstract class AbstractSpringTestCase extends TestCase {
-
+public abstract class AbstractSpringTestCase
+{
     protected ComponentManager componentManager;
 
-    /**
-     * setup Spring context as part of test setup
-     */
-    @Override
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
-        
         this.componentManager = new SpringComponentManager();
         ((SpringComponentManager) this.componentManager).setConfigurations(getConfigurations());
         
@@ -35,13 +32,8 @@ public abstract class AbstractSpringTestCase extends TestCase {
         this.componentManager.start();
     }
 
-    /**
-     * close Spring context as part of test teardown
-     */
-    @Override
+    @After
     public void tearDown() throws Exception {
-        super.tearDown();
-        
         this.componentManager.stop();
         this.componentManager.close();
     }

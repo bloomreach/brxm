@@ -57,8 +57,8 @@
     </property>
     
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
-    <property name="maxActive" value="250" />
-    <property name="maxIdle" value="50" />
+    <property name="maxActive" value="25" />
+    <property name="maxIdle" value="5" />
     <property name="minIdle" value="0" />
     <property name="initialSize" value="0" />
     <property name="maxWait" value="10000" />

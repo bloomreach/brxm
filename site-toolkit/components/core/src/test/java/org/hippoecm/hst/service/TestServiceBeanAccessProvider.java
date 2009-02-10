@@ -1,13 +1,16 @@
 package org.hippoecm.hst.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Calendar;
 
-import junit.framework.TestCase;
-
 import org.hippoecm.hst.proxy.ProxyUtils;
+import org.junit.Test;
 
-public class TestServiceBeanAccessProvider extends TestCase {
+public class TestServiceBeanAccessProvider {
 
+    @Test
     public void testServiceBeanProxy() throws IllegalAccessException, NoSuchFieldException {
         BlogService blogService = new BlogService();
 

@@ -8,40 +8,25 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstSite;
-import org.hippoecm.hst.configuration.HstSiteService;
 import org.hippoecm.hst.configuration.sitemap.HstMatchingSiteMapItem;
 import org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository;
 import org.hippoecm.hst.core.jcr.pool.PoolingRepository;
-import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.junit.Ignore;
+import org.junit.Test;
 
+@Ignore
 public class TestURLMappingMatcher extends AbstractSpringTestCase {
 
     public static final String PREVIEW_NODEPATH = "preview";
     public static final String CONFIGURATION_NODEPATH = "hst:configuration/hst:configuration";
     public static final String CONTENT_NODEPATH = "content";
 
-    public void testURLMapping() {
-//        TODO: Commented out because of compilation error
-//
-//        try {
-//            HstSiteNodes hstSiteNodes = getHstSiteNodes();
-//            HstSite hstSiteService = new HstSiteService("test", hstSiteNodes.getConfigNode(), hstSiteNodes.getContentNode());
-//            HstMatchingSiteMapItem m = hstSiteService.getSiteMap().match("news/inland");
-//            if (m != null) {
-//                StringBuffer buf = new StringBuffer();
-//                m.dump(buf, "");
-//
-//                System.out.println(buf.toString());
-//
-//            }
-//
-//        } catch (ServiceException e) {
-//            e.printStackTrace();
-//        } catch (RepositoryException e) {
-//            e.printStackTrace();
-//        }
-//
+    @Test
+    public void playURLMapping() throws Exception {
+        HstSiteNodes hstSiteNodes = getHstSiteNodes();
+        HstSite hstSiteService = null; //new HstSiteService("test", hstSiteNodes.getConfigNode(), hstSiteNodes.getContentNode());
+        HstMatchingSiteMapItem m = hstSiteService.getSiteMap().match("news/inland");
     }
 
     protected String[] getConfigurations() {
