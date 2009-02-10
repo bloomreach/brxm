@@ -7,33 +7,35 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.HstSite;
-import org.hippoecm.hst.configuration.sitemap.HstMatchingSiteMapItem;
+import org.hippoecm.hst.configuration.HstSites;
+import org.hippoecm.hst.configuration.HstSitesService;
 import org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository;
 import org.hippoecm.hst.core.jcr.pool.PoolingRepository;
+import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
-import org.junit.Ignore;
-import org.junit.Test;
 
-@Ignore
 public class TestURLMappingMatcher extends AbstractSpringTestCase {
 
     public static final String PREVIEW_NODEPATH = "preview";
     public static final String CONFIGURATION_NODEPATH = "hst:configuration/hst:configuration";
     public static final String CONTENT_NODEPATH = "content";
 
-    @Test
-    public void playURLMapping() throws Exception {
-        HstSiteNodes hstSiteNodes = getHstSiteNodes();
-        HstSite hstSiteService = null; //new HstSiteService("test", hstSiteNodes.getConfigNode(), hstSiteNodes.getContentNode());
-        HstMatchingSiteMapItem m = hstSiteService.getSiteMap().match("news/inland");
+    public void testURLMapping() {
+
+          try {
+            HstSites hstSites = new HstSitesService(getHstSitesNode()) ;
+        } catch (ServiceException e) {
+            
+            e.printStackTrace();
+        }
+
     }
 
     protected String[] getConfigurations() {
-        return new String[] { "org/hippoecm/hst/core/jcr/pool/GeneralBasicPoolingRepository.xml" };
+        return new String[] { "org/hippoecm/hst/jcr/pool/GeneralBasicPoolingRepository.xml" };
     }
 
-    protected HstSiteNodes getHstSiteNodes() {
+    protected Node getHstSitesNode() {
         
         BasicPoolingRepository poolingRepository = (BasicPoolingRepository) getComponent(PoolingRepository.class.getName());
         Repository repository = poolingRepository;
@@ -48,9 +50,8 @@ public class TestURLMappingMatcher extends AbstractSpringTestCase {
         }
 
         try {
-            Node hstConfNode  = session.getRootNode().getNode(PREVIEW_NODEPATH + "/" + CONFIGURATION_NODEPATH);
-            Node contentNode  = session.getRootNode().getNode(PREVIEW_NODEPATH + "/" + CONTENT_NODEPATH);
-            return new HstSiteNodes(hstConfNode, contentNode);
+            Node previewSites  = session.getRootNode().getNode(PREVIEW_NODEPATH);
+            return previewSites;
         } catch (PathNotFoundException e) {
             e.printStackTrace();
         } catch (RepositoryException e) {
@@ -60,24 +61,4 @@ public class TestURLMappingMatcher extends AbstractSpringTestCase {
         return null;
     }
 
-    class HstSiteNodes {
-        
-        Node configNode;
-        Node contentNode;
-        
-        HstSiteNodes(Node configNode, Node contentNode){
-            this.configNode = configNode;
-            this.contentNode = contentNode;
-        }
-
-        public Node getConfigNode() {
-            return configNode;
-        }
-
-        public Node getContentNode() {
-            return contentNode;
-        }
-        
-        
-    }
 }

@@ -1,13 +1,17 @@
 package org.hippoecm.hst.configuration.sitemap;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.Configuration;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
-import org.hippoecm.hst.core.mapping.UrlUtilities;
+import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -17,29 +21,35 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
     
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstSiteMap.class);
     
-    private DataSourceTree dataSourceTree;
     
-    private HstComponentsConfiguration pageMappingService;
+    private HstSite hstSite;
     
-    private HstSiteMapItemService rootSiteMapItemService; 
+    private String siteMapRootNodePath;
     
-    public HstSiteMapService(Node siteMapNode, HstComponentsConfiguration pageMappingService) throws RepositoryException, ServiceException {
+    private Map<String, HstSiteMapItem> rootSiteMapItems = new HashMap<String, HstSiteMapItem>();
+    
+    private Map<String, HstSiteMapItem> siteMapDescendants = new HashMap<String, HstSiteMapItem>();
+    
+    public HstSiteMapService(HstSite hstSite, Node siteMapNode) throws RepositoryException, ServiceException {
         super(siteMapNode);
-        this.pageMappingService = pageMappingService;
+        this.hstSite = hstSite;
+        this.siteMapRootNodePath = siteMapNode.getPath();
+        
         if(!siteMapNode.isNodeType(Configuration.NODETYPE_HST_SITEMAP)) {
             throw new ServiceException("Cannot create SitemapServiceImpl: Expected nodeType '"+Configuration.NODETYPE_HST_SITEMAP+"' but was '"+siteMapNode.getPrimaryNodeType().getName()+"'");
         }
-        rootSiteMapItemService = new HstSiteMapItemService(siteMapNode,null);
-        populate(siteMapNode, rootSiteMapItemService);
+        
+        // initialize all sitemap items
+        init(siteMapNode);
+        
+        // add lookups to any descendant sitemap item
+        for(Iterator<HstSiteMapItem> childsIt = this.rootSiteMapItems.values().iterator(); childsIt.hasNext();) {
+            populateDescendants(childsIt.next());
+        }
         
     }
-
-
-    public Service[] getChildServices() {
-        return rootSiteMapItemService.getChildServices();
-    }
-
-    private void populate(Node siteMapNode, HstSiteMapItemService parentSiteMapItemService) throws RepositoryException {
+    
+    private void init(Node siteMapNode) throws RepositoryException {
         for(NodeIterator nodeIt = siteMapNode.getNodes(); nodeIt.hasNext();) {
             Node child = nodeIt.nextNode();
             if(child == null) {
@@ -47,79 +57,51 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
                 continue;
             }
             if(child.isNodeType(Configuration.NODETYPE_HST_SITEMAPITEM)) {
-                HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child,parentSiteMapItemService);
-                String componentLocation = siteMapItemService.getComponentLocation();
-                if(componentLocation != null) {
-                    HstComponentConfiguration componentService = pageMappingService.getComponent(componentLocation);
-                    if(componentService != null) {
-                        log.debug("Adding componentService for component location '{}'", componentLocation);
-                        siteMapItemService.setComponentService(componentService);
-                    } else {
-                        log.warn("No ComponentService found for component location '{}' for node '{}'", componentLocation, siteMapItemService.getValueProvider().getPath());
-                    }
+                try {
+                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath);
+                    rootSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
+                } catch (ServiceException e) {
+                    log.warn("Skipping root sitemap '{}'", child.getPath(), e);
                 }
-                parentSiteMapItemService.addChild(siteMapItemService);
-                populate(child, siteMapItemService);
+                
             } else {
                 log.warn("Skipping node '{}' because is not of type {}", child.getPath(), Configuration.NODETYPE_HST_SITEMAPITEM);
             }
         }
     }
 
-    public HstMatchingSiteMapItem match(String url) {
-        url = UrlUtilities.normalizeUrl(url);
-        String[] tokens  = url.split("/");
-        HstSiteMapItem currentSiteMapItemService = rootSiteMapItemService;
-        for(String token : tokens) {
-            HstSiteMapItem match = currentSiteMapItemService.getChild(token);
-            if(match != null) {
-                currentSiteMapItemService = match;
-            } else {
-                // token is not part of the sitemap structure anymore, but part of the repository source
-                break;
-            }
+    
+    private void populateDescendants(HstSiteMapItem hstSiteMapItem) {
+        siteMapDescendants.put(hstSiteMapItem.getId(), hstSiteMapItem);
+        for(Iterator<HstSiteMapItem> childsIt = hstSiteMapItem.getChildren().iterator(); childsIt.hasNext();) {
+            populateDescendants(childsIt.next());
         }
-        if(currentSiteMapItemService == rootSiteMapItemService) {
-            log.warn("Did not find matching child node SiteMapItem for '{}'. Return null.", url);
-            return null;
-        }
-        
-        String siteMapItemUrl = UrlUtilities.normalizeUrl(currentSiteMapItemService.getUrl());
-        
-        if(!url.startsWith(siteMapItemUrl)){
-            log.error("Impossible found SiteMapItemService as its url does not start with the url to match. Return null");
-            return null;
-        }
-        return new HstMatchingSiteMapItemService(currentSiteMapItemService,url.substring(siteMapItemUrl.length()) );
+    }
+    
+    public Service[] getChildServices() {
+        return rootSiteMapItems.values().toArray(new Service[rootSiteMapItems.size()]);
+    }
+
+    public HstSiteMapItem getSiteMapItem(String value) {
+        return rootSiteMapItems.get(value);
+    }
+    
+
+    public HstSiteMapItem getSiteMapItemById(String id) {
+        return siteMapDescendants.get(id);
+    }
+
+
+    public List<HstSiteMapItem> getSiteMapItems() {
+        return new ArrayList<HstSiteMapItem>(rootSiteMapItems.values());
+    }
+
+    public HstSite getSite() {
+        return this.hstSite;
     }
     
     
     
-    public class DataSourceTree {
-        
-    }
-
-
-
-    public void dump(StringBuffer buf, String indent) {
-        
-        buf.append("\n\n------ SiteMapService ------ \n\n");
-        
-        for(Service child : rootSiteMapItemService.getChildServices()) {
-            if(child instanceof HstSiteMapItemService)
-            appendChild(buf, (HstSiteMapItemService)child, "");
-        }
-        buf.append("\n\n------ End SiteMapService ------");
-        
-    }
-
-    private void appendChild(StringBuffer buf, HstSiteMapItemService child, String indent) {
-        child.dump(buf, indent);
-        for(Service s : child.getChildServices()) {
-            if(s instanceof HstSiteMapItemService)
-            appendChild(buf, (HstSiteMapItemService)s, indent + "\t");
-        }
-    }
 
 
 }

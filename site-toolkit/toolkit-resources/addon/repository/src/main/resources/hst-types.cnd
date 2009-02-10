@@ -18,25 +18,29 @@
 <hippostd='http://www.hippoecm.org/hippostd/nt/1.2'>
 <hippo='http://www.hippoecm.org/nt/1.2'>
 
+
 [hst:component]
+- hst:componentclassname
 - hst:renderpath
-- hst:classname
-- hst:namespace
-- hst:componentsource
-- hst:components (string) multiple
+- hst:referencename mandatory
+- hst:referencecomponent
+- hst:componentcontentbasepath
+- hst:contextrelativepath
 + * (hst:component)
-+ * (hippo:facetselect)
+
+[hst:componentgroup]
++ * (hst:component)
++ * (hst:componentgroup)
 
 [hst:components] 
 + * (hst:component)
++ * (hst:componentgroup)
 
 [hst:sitemapitem]
-- hst:urlname
-- hst:datasource (string)
-- hst:repositorybased (boolean) = false
-- hst:componentlocation (string)
+- hst:value
+- hst:relativecontentpath (string)
+- hst:componentconfigurationid (string)
 + * (hst:sitemapitem)
-+ * (hippo:facetselect)
 
 [hst:sitemap] 
 + * (hst:sitemapitem)

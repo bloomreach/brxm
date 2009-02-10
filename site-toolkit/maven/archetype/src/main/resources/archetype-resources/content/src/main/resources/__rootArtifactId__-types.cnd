@@ -9,3 +9,4 @@
 - ${rootArtifactId.replace($hyphen,$empty)}:summary (string)
 - ${rootArtifactId.replace($hyphen,$empty)}:title (string)
 - ${rootArtifactId.replace($hyphen,$empty)}:date (date)
+

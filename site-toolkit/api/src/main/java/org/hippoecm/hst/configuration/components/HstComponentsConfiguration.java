@@ -1,8 +1,11 @@
 package org.hippoecm.hst.configuration.components;
 
+import java.util.Map;
 
 public interface HstComponentsConfiguration {
 
-    public HstComponentConfiguration getComponent(String path);
-    
+    Map<String, HstComponentConfiguration> getComponentConfigurations();
+
+    HstComponentConfiguration getComponent(String id);
+
 }

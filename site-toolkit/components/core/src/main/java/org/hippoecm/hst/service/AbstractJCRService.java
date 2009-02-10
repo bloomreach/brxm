@@ -26,8 +26,4 @@ public abstract class AbstractJCRService implements Service{
         this.valueProvider.detach();
     }
 
-    public void dump(StringBuffer buf, String indent) {
-        buf.append(indent + this.toString());
-    }
-    
 }

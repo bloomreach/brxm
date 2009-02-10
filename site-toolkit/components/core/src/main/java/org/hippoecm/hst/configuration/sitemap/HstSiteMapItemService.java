@@ -1,15 +1,22 @@
 package org.hippoecm.hst.configuration.sitemap;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.Configuration;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
+import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,106 +24,120 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItem.class);
     
-    private HstComponentConfiguration componentService;
-    private HstSiteMapItem parentSiteMapItemService;
-    private Map<String, HstSiteMapItemService> childSiteMapItemServices;
-    private String dataSource;
-    private String urlPartName;
-    private String url;
-    private String componentLocation;
-    private boolean repositoryBased;
+    private static final String WILDCARD = "_default_";
+    
+    private Map<String, HstSiteMapItem> childSiteMapItems = new HashMap<String, HstSiteMapItem>();
    
-    public HstSiteMapItemService(Node jcrNode, HstSiteMapItem parentSiteMapItemService) {
+    private String siteMapRootNodePath;
+    
+    private String id;
+    
+    private String value;
+    
+    private String path;
+    
+    private String relativeContentPath;
+    
+    private String componentConfigurationId;
+    
+    private List<String> roles;
+    
+    private boolean isWildCard;
+    
+    private Map<String, Object> properties;
+    
+    public HstSiteMapItemService(Node jcrNode, String siteMapRootNodePath) throws ServiceException{
         super(jcrNode);
-        childSiteMapItemServices = new HashMap<String, HstSiteMapItemService>();
-        this.parentSiteMapItemService = parentSiteMapItemService;
-        
-        this.dataSource = this.getValueProvider().getString(Configuration.PROPERTYNAME_DATASOURCE);
-        this.componentLocation = this.getValueProvider().getString(Configuration.PROPERTYNAME_COMPONENTLOCATION);
-        /*
-         * if there is a Configuration.PROPERTYNAME_URLNAME property which is non null, this is used as url part, otherwise, which is the common default
-         * the nodes nodename is used 
-         */ 
-        this.urlPartName = this.getValueProvider().getString(Configuration.PROPERTYNAME_URLNAME) == null ? this.getValueProvider().getName() : this.getValueProvider().getString(Configuration.PROPERTYNAME_URLNAME);
-        this.repositoryBased = this.getValueProvider().getBoolean(Configuration.PROPERTYNAME_REPOSITORYBASED);
-        
-        if(parentSiteMapItemService == null) {
-            this.url = null;
-        } else {
-            if(parentSiteMapItemService.getUrl() == null) {
-                this.url = urlPartName;
-            } else {
-                this.url = parentSiteMapItemService.getUrl() + "/" +urlPartName;
-            }
+        String nodePath = getValueProvider().getPath();
+        if(!getValueProvider().getPath().startsWith(siteMapRootNodePath)) {
+            throw new ServiceException("Node path of the sitemap cannot start without the global sitemap root path. Skip SiteMapItem");
         }
+        this.siteMapRootNodePath = siteMapRootNodePath;
+        // path & id are the same
+        this.id = this.path = nodePath.substring(siteMapRootNodePath.length()+1);
+        // currently, the value is always the nodename
+        this.value = getValueProvider().getName();
+        if(WILDCARD.equals(value)) {
+            this.isWildCard = true;
+        }
+        this.relativeContentPath = getValueProvider().getString(Configuration.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
+        this.componentConfigurationId = getValueProvider().getString(Configuration.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
+        String[] rolesProp = getValueProvider().getStrings(Configuration.SITEMAPITEM_PROPERTY_ROLES);
+        if(rolesProp!=null) {
+            this.roles = Arrays.asList(rolesProp);
+        }
+        this.properties = getValueProvider().getProperties();
+        
+        init(jcrNode);
     }
 
+    private void init(Node node) {
+        try{
+            for(NodeIterator nodeIt = node.getNodes(); nodeIt.hasNext();) {
+                Node child = nodeIt.nextNode();
+                if(child == null) {
+                    log.warn("skipping null node");
+                    continue;
+                }
+                if(child.isNodeType(Configuration.NODETYPE_HST_SITEMAPITEM)) {
+                    try {
+                        HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath);
+                        childSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
+                    } catch (ServiceException e) {
+                        log.warn("Skipping root sitemap '{}'", child.getPath(), e);
+                    }
+                }
+                else {
+                    log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(), Configuration.NODETYPE_HST_SITEMAPITEM);
+                }
+            } 
+        } catch (RepositoryException e) {
+            log.warn("Skipping SiteMap structure due to Repository Exception ", e);
+        }
+    }
+    
     public Service[] getChildServices() {
-        return this.childSiteMapItemServices.values().toArray(new HstSiteMapItemService[childSiteMapItemServices.size()]);
+        return childSiteMapItems.values().toArray(new Service[childSiteMapItems.size()]);
     }
 
-    
-    public String getComponentLocation() {
-        return componentLocation;
+    public HstSiteMapItem getChild(String value) {
+        return this.childSiteMapItems.get(value);
     }
 
-    public HstComponentConfiguration getComponentService() {
-        return this.componentService;
+    public List<HstSiteMapItem> getChildren() {
+        return new ArrayList<HstSiteMapItem>(this.childSiteMapItems.values());
     }
 
-    public String getDataSource() {
-        return this.dataSource;
+    public String getComponentConfigurationId() {
+        return this.componentConfigurationId;
     }
 
-    public HstSiteMapItem getParent() {
-        return this.parentSiteMapItemService;
+    public String getId() {
+        return this.id;
     }
 
-    public String getUrlPartName() {
-        return this.urlPartName;
-    }
-    
-    public String getUrl() {
-        return this.url;
+    public String getPath() {
+        return this.path;
     }
 
-    public boolean isRepositoryBased() {
-        return this.repositoryBased;
+    public Map<String, Object> getProperties() {
+        return this.properties;
     }
 
-    public void setComponentService(HstComponentConfiguration componentService) {
-        this.componentService = componentService;
-    }
-   
-    public HstSiteMapItem[] getChilds() {
-        return this.childSiteMapItemServices.values().toArray(new HstSiteMapItem[childSiteMapItemServices.size()]);
+    public String getRelativeContentPath() {
+        return this.relativeContentPath;
     }
 
-    public void addChild(HstSiteMapItemService siteMapService) {
-        this.childSiteMapItemServices.put(siteMapService.getUrlPartName(), siteMapService);
+    public List<String> getRoles() {
+        return this.roles;
     }
 
-    public HstSiteMapItem getChild(String urlPartName) {
-        return this.childSiteMapItemServices.get(urlPartName);
+    public String getValue() {
+        return this.value;
     }
 
-    public HstSiteMapItem getChild(HstSiteMapItemMatcher siteMapItemMatcher) {
-        HstSiteMapItem[] allChilds =  getChilds();
-        for(HstSiteMapItem child : allChilds) {
-            if(siteMapItemMatcher.matches(child)) {
-                // return the first child that matches
-                return child;
-            }
-        }
-        log.debug("No matching child found");
-        return null;
-    }
-    
-    public void dump(StringBuffer buf, String indent) {
-        buf.append("\n").append(indent).append("+").append(this.getUrl());
-        buf.append("\n\t").append(indent).append("- Datasource: ").append(this.getDataSource());
-        buf.append("\n\t").append(indent).append("- Component location: ").append(this.getComponentLocation());
-        buf.append("\n\t").append(indent).append("- Repository based: ").append(this.isRepositoryBased());
+    public boolean isWildCard() {
+        return this.isWildCard;
     }
 
 }

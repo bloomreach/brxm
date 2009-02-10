@@ -29,8 +29,8 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     }
 
     public Map<String, Object> getParameterMap() {
-        String namespace = this.componentConfiguration.getNamespace();
-        return getParameterMap(namespace);
+        String referenceName = this.componentConfiguration.getReferenceName();
+        return getParameterMap(referenceName);
     }
     
     public Map<String, Object> getParameterMap(String namespace) {
@@ -58,8 +58,8 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     }
     
     public Map<String, Object> getAttributeMap() {
-        String namespace = this.componentConfiguration.getNamespace();
-        return getAttributeMap(namespace);
+        String referenceName = this.componentConfiguration.getReferenceName();
+        return getAttributeMap(referenceName);
     }
     
     public Map<String, Object> getAttributeMap(String namespace) {

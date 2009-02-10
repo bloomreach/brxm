@@ -17,8 +17,4 @@ public interface Service {
     
     public void closeValueProvider(boolean closeChildServices);
     
-    /**
-    * string representation of the Service
-    */
-   public void dump(StringBuffer buf, String indent);
 }

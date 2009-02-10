@@ -1,15 +1,17 @@
 package org.hippoecm.hst.configuration.components;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.Configuration;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
+import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
 
 public class HstComponentConfigurationService extends AbstractJCRService implements HstComponentConfiguration, Service{
@@ -18,54 +20,80 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     
     private String renderPath;
     
-    /**
-     * String array of all the child components which are referenced by nodepath wrt hst:pagemappings in the hst:components multivalued property
-     */
-    private String[] referencedComponents;
+    private SortedMap<String, HstComponentConfiguration> componentConfigurations = new TreeMap<String, HstComponentConfiguration>();
     
-    /**
-     * List of ComponentService's that are a child component by hierarchy
-     */
-    private List<HstComponentConfigurationService> childComponentConfigurations;
-    
-    private String namespace;
-    
-    private String name;
+    private String id;
 
-    private String componentSource;
+    private String componentContentBasePath;
     
+    private String contextRelativePath;
+
     private String componentClassName;
+    
+    private String referenceName;
+    
+    private String referencedComponent;
 
-    private HstComponentsConfiguration components;
-    
-    private HstComponentConfiguration parentComponent;
-    
     private Map<String, Object> allProperties;
     
-    public HstComponentConfigurationService(HstComponentsConfigurationService components, HstComponentConfiguration parentComponent,Node jcrNode) {
+    private String componentsRootNodePath;
+    
+    public HstComponentConfigurationService(Node jcrNode, String componentsRootNodePath) throws ServiceException {
         super(jcrNode);
-        this.name = getValueProvider().getName();
-        this.components = components;
-        this.parentComponent = parentComponent;
-        this.childComponentConfigurations = new ArrayList<HstComponentConfigurationService>();
+        if(!getValueProvider().getPath().startsWith(componentsRootNodePath)) {
+            throw new ServiceException("Node path of the component cannot start without the global components path. Skip Component");
+        }
+        this.componentsRootNodePath = componentsRootNodePath;
+        // id is the relative path wrt configuration components path
+        this.id = getValueProvider().getPath().substring(componentsRootNodePath.length()+1);
         if (getValueProvider().isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
-            this.renderPath = getValueProvider().getString(Configuration.PROPERTYNAME_RENDER_PATH);
-            this.namespace = getValueProvider().getString(Configuration.PROPERTYNAME_NAMESPACE);
-            this.componentSource = getValueProvider().getString(Configuration.PROPERTYNAME_COMPONENTSOURCE);
-            this.referencedComponents = getValueProvider().getStrings(Configuration.PROPERTYNAME_COMPONENTS);
-            this.componentClassName = getValueProvider().getString(Configuration.PROPERTYNAME_COMPONENT_CLASSNAME);
+            this.referenceName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCENAME);
+            this.renderPath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_RENDER_PATH);
+            this.componentContentBasePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_CONTENTBASEPATH);
+            this.contextRelativePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_CONTEXTRELATIVEPATH);
+            this.componentClassName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
+            this.referencedComponent = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
             this.allProperties = getValueProvider().getProperties();
         } 
+        
+        init(jcrNode);
+       
     }
 
+    public void init(Node jcrNode) {
+        try {
+            for(NodeIterator nodeIt = jcrNode.getNodes(); nodeIt.hasNext();) {
+                Node child = nodeIt.nextNode();
+                if(child == null) {
+                    log.warn("skipping null node");
+                    continue;
+                }
+                if(child.isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
+                    if(child.hasProperty(Configuration.COMPONENT_PROPERTY_REFERECENCENAME)) {
+                        try {
+                            HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child, componentsRootNodePath);
+                            componentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
+                            log.debug("Added component service with key '{}'",componentConfiguration.getId());
+                        } catch (ServiceException e) {
+                            log.warn("Skipping component '{}'", child.getPath(), e);
+                        }
+                    } else {
+                        log.debug("Skipping '{}' hst:component + child components because it does not contain the mandatory property '{}'",Configuration.COMPONENT_PROPERTY_REFERECENCENAME, child.getPath());
+                    }
+                } else {
+                    log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(), (Configuration.NODETYPE_HST_COMPONENT + " | " + Configuration.NODETYPE_HST_COMPONENTGROUP));
+                }
+            }
+        } catch (RepositoryException e) {
+            log.warn("Skipping Component due to Repository Exception ", e);
+        }
+        
+    }
+    
     public Service[] getChildServices() {
-        return childComponentConfigurations.toArray(new HstComponentConfigurationService[childComponentConfigurations.size()]);
+        return componentConfigurations.values().toArray(new Service[componentConfigurations.size()]);
     } 
 
-    public List<HstComponentConfiguration> getChildren() {
-        // next step is to also return referenced components
-        return Arrays.asList(childComponentConfigurations.toArray(new HstComponentConfiguration[childComponentConfigurations.size()]));
-    }
     
     public String getComponentClassName(){
         return this.componentClassName;
@@ -75,44 +103,28 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         return this.renderPath;
     }
 
-   
-    public String getNamespace() {
-        return this.namespace;
-    }
-    
-    public HstComponentConfiguration getParentComponent() {
-        return this.parentComponent;
-    }
-
-    
-    public HstComponentsConfiguration getHstComponents(){
-        return this.components;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
     public Map<String, Object> getProperties() {
         return allProperties;
     }
     
-    
-    public void dump(StringBuffer buf, String indent) {
-        buf.append(indent + getComponentClassName());
-    }
-
-    public String getAlias() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public String getComponentContentBasePath() {
-        return this.componentSource;
+        return this.componentContentBasePath;
     }
 
     public String getContextRelativePath() {
-        return this.componentSource;
+        return this.contextRelativePath;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public String getReferenceName() {
+        return this.referenceName;
+    }
+
+    public SortedMap<String, HstComponentConfiguration> getChildren() {
+       return this.componentConfigurations;
     }
 
 }

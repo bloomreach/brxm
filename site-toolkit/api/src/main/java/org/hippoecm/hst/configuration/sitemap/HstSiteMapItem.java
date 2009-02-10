@@ -1,20 +1,19 @@
 package org.hippoecm.hst.configuration.sitemap;
 
+import java.util.List;
+import java.util.Map;
 
-public interface HstSiteMapItem extends HstBaseSiteMapItem{
 
-    /**
-     * get a SiteMapItemService child based on the urlpart
-     * @param urlPartName
-     * @return SiteMapItemService or null when not found
-     */
-    public HstSiteMapItem getChild(String urlPartName);
-    
-    /**
-     * get the first SiteMapItemService that matches according the SiteMapItemMatcher
-     * @param HstSiteMapItemMatcher siteMapItemMatcher
-     * @return SiteMapItemService or null when not found
-     */
-    public HstSiteMapItem getChild(HstSiteMapItemMatcher siteMapItemMatcher);
-    
+public interface HstSiteMapItem {
+
+    String getId(); // optional but needs to be unique within the containing HstSiteMap
+    String getValue();
+    String getPath(); // returns the full path from the item
+    boolean isWildCard();
+    String getRelativeContentPath();
+    String getComponentConfigurationId();
+    List<String> getRoles();  
+    Map<String, Object> getProperties();
+    List<HstSiteMapItem> getChildren();
+    HstSiteMapItem getChild(String value);
 }

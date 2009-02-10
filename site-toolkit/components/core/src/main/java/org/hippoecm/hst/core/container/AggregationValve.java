@@ -40,14 +40,14 @@ public class AggregationValve extends AbstractValve {
         
         this.requestProcessor.processBeforeRender(servletRequest, servletResponse, context, component);
         
-        for(Iterator<HstComponentConfiguration> it = component.getChildren().iterator(); it.hasNext();) {
+        for(Iterator<HstComponentConfiguration> it = component.getChildren().values().iterator(); it.hasNext();) {
             aggregateAndProcessBeforeRender(servletRequest, servletResponse, context, it.next());
         }
 
     }
     
     protected void aggregateAndProcessRender(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext context, HstComponentConfiguration component) throws ContainerException {
-        for(Iterator<HstComponentConfiguration> it = component.getChildren().iterator(); it.hasNext();) {
+        for(Iterator<HstComponentConfiguration> it = component.getChildren().values().iterator(); it.hasNext();) {
             aggregateAndProcessRender(servletRequest, servletResponse, context, it.next());
         }
     

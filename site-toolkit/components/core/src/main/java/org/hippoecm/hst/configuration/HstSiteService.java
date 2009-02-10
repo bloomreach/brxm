@@ -1,13 +1,12 @@
 package org.hippoecm.hst.configuration;
 
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -20,25 +19,41 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     private HstComponentsConfigurationService componentsService;
     private String name;
     private String contentPath;
+    private String configurationPath;
+    
     private HstSites hstSites;
     
     private static final Logger log = LoggerFactory.getLogger(HstSite.class);
     
     
-    public HstSiteService(Node site, HstSites hstSites) throws ServiceException, RepositoryException{
+    public HstSiteService(Node site, HstSites hstSites) throws ServiceException{
         super(site);
-        this.name = site.getName();
-        this.hstSites = hstSites;
-        if(hstSites.getSite(name) != null) {
-            throw new ServiceException("Duplicate subsite with same name for '"+name+"'. Skipping this one");
-        } else {
-            init();
-            /*
-             * After initialization, all needed jcr properties and nodes have to be loaded. The underlying jcr nodes in 
-             * the value providers now will all be closed.
-             */
-            this.closeValueProvider(true);
+        try {
+            this.name = site.getName();
+            this.hstSites = hstSites;
+            if(site.hasNode(Configuration.NODENAME_HST_CONTENTNODE) && site.hasNode(Configuration.NODEPATH_HST_CONFIGURATION)) {
+                if(hstSites.getSite(name) != null) {
+                    throw new ServiceException("Duplicate subsite with same name for '"+name+"'. Skipping this one");
+                } else {
+                    contentPath = site.getNode(Configuration.NODENAME_HST_CONTENTNODE).getPath();
+                    
+                    Node configurationNode = site.getNode(Configuration.NODEPATH_HST_CONFIGURATION);
+                    configurationPath = configurationNode.getPath();
+                    
+                    init(configurationNode);
+                    /*
+                     * After initialization, all needed jcr properties and nodes have to be loaded. The underlying jcr nodes in 
+                     * the value providers now will all be closed.
+                     */
+                    this.closeValueProvider(true);
+                }
+            } else {
+                throw new ServiceException("Subsite '"+name+"' cannot be instantiated because it does not contain the mandatory nodes. Skipping this one");
+            } 
+        } catch (RepositoryException e) {
+            throw new ServiceException("Repository Exception during instantiating '"+name+"'. Skipping subsite.");
         }
+        
     }
 
     public Service[] getChildServices() {
@@ -46,22 +61,20 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
        return services;
     }
     
-    private void init() throws PathNotFoundException, RepositoryException, ServiceException {
-       Node componentsNode = getValueProvider().getJcrNode().getNode(Configuration.NODEPATH_HST_COMPONENTS); 
+    private void init(Node configurationNode) throws  RepositoryException, ServiceException {
+       Node componentsNode = configurationNode.getNode(Configuration.NODENAME_HST_COMPONENTS); 
        this.componentsService = new HstComponentsConfigurationService(componentsNode); 
        
        if(log.isDebugEnabled()){
            StringBuffer buf = new StringBuffer();
-           componentsService.dump(buf, "");
            log.debug(buf.toString());
        }
        
-       Node siteMapNode = getValueProvider().getJcrNode().getNode(Configuration.NODEPATH_HST_SITEMAP);
-       this.siteMapService = new HstSiteMapService(siteMapNode, componentsService);
+       Node siteMapNode = configurationNode.getNode(Configuration.NODENAME_HST_SITEMAP);
+       this.siteMapService = new HstSiteMapService(this, siteMapNode);
        
        if(log.isDebugEnabled()){
            StringBuffer buf = new StringBuffer();
-           siteMapService.dump(buf, "");
            log.debug(buf.toString());
        }
     }
@@ -76,6 +89,10 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
 
     public String getContentPath() {
         return contentPath;
+    }
+    
+    public String getConfigurationPath() {
+        return this.configurationPath;
     }
 
     public String getName() {

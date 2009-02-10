@@ -5,13 +5,14 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 
 public interface HstSite {
 
-    public String getName();
-    
-    public String getContentPath();
+    String getName();
 
-    public HstSiteMap getSiteMap();
-    
-    public HstSites getHstSites();
-    
-    public HstComponentsConfiguration getComponents();
+    String getContentPath();
+
+    HstComponentsConfiguration getComponents();
+
+    HstSiteMap getSiteMap();
+
+    HstSites getHstSites();
+
 }

@@ -22,21 +22,21 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:datasource" sv:type="String">
+        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>pagecontent/news</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:componentlocation" sv:type="String">
-            <sv:value>pages/newsoverview</sv:value>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+            <sv:value>news</sv:value>
         </sv:property>
         <sv:node sv:name="inland">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:datasource" sv:type="String">
+            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                 <sv:value>pagecontent/news/inland</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:componentlocation" sv:type="String">
-                <sv:value>pages/newsoverview</sv:value>
+            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                <sv:value>news</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
