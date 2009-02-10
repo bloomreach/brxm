@@ -30,64 +30,38 @@
   <artifactId>hst-container</artifactId>
   <packaging>war</packaging>
 
-  <properties>
-    <hst.version>2.02.05-SNAPSHOT</hst.version>
-    <spring.version>2.5.6</spring.version>
-  </properties>
-
   <dependencies>
-    <!-- Servlet -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
-      <version>2.4</version>
       <scope>provided</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-api</artifactId>
-      <version>${hst.version}</version>
-      <type>jar</type>
-    </dependency>
-
     <dependency>
       <groupId>org.onehippo.ecm.hst.components</groupId>
       <artifactId>hst-core</artifactId>
-      <version>${hst.version}</version>
-      <type>jar</type>
+      <version>${pom.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.4.2</version>
     </dependency>
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.4.2</version>
     </dependency>
-
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>1.2.13</version>
     </dependency>
-
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>${spring.version}</version>
     </dependency>
-
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
-      <version>${spring.version}</version>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-api</artifactId>
+      <version>${pom.version}</version>
     </dependency>
-    
   </dependencies>
 
   <build>

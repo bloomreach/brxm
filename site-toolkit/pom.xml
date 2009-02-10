@@ -22,6 +22,7 @@
   </issueManagement>
 
   <properties>
+  
     <!-- Documentation properties (variables).
          May not contain dots as they are processed by Apache velocity.
          Can be used in xdoc files with the extension .xml.vm
@@ -30,11 +31,11 @@
     <product_name>Hippo HST</product_name>
     <product_abr>HST</product_abr>
     
-    <!--
-    -->
     <wagon.ftp.version>1.0-alpha-6</wagon.ftp.version>
     <javax.jcr.version>1.0</javax.jcr.version>
     <hippoecm.version>2.03.00</hippoecm.version>
+    <spring.version>2.5.6</spring.version>
+    
   </properties>
   
   <!-- 
@@ -193,20 +194,154 @@
   </organization>
 
   <dependencyManagement>
+  
     <dependencies>
+    
+      <!-- JCR API dependency -->
+      
+      <dependency>
+        <groupId>javax.jcr</groupId>
+        <artifactId>jcr</artifactId>
+        <version>${javax.jcr.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <!-- Servlet API dependencies -->
+      
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.4</version>
+        <scope>provided</scope>
+      </dependency>
+      
+      <!-- JSP-related API dependencies -->
+      
+      <dependency>
+        <groupId>javax.servlet.jsp</groupId>
+        <artifactId>jsp-api</artifactId>
+        <version>2.0</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jstl</artifactId>
+        <version>1.1.2</version>
+        <type>jar</type>
+        <scope>compile</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>taglibs</groupId>
+        <artifactId>standard</artifactId>
+        <version>1.1.2</version>
+        <type>jar</type>
+        <scope>compile</scope>
+      </dependency>
+      
+      <!-- JTA Dependency -->
+      
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jta_1.1_spec</artifactId>
+        <scope>provided</scope>
+        <version>1.1</version>
+      </dependency>
+      
+      <!-- Apache Commons -->
+      
+      <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.2.1</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>commons-pool</groupId>
+        <artifactId>commons-pool</artifactId>
+        <version>1.4</version>
+      </dependency>
+      
+      <!-- Logging -->
+      
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.4.2</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>1.4.2</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.13</version>
+      </dependency>
+      
+      <!-- Spring Framework -->
+      
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <!-- Hippo ECM Depedencies -->
+    
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-package-war</artifactId>
         <version>${hippoecm.version}</version>
         <type>war</type>
       </dependency>
+      
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-repository-connector</artifactId>
         <version>${hippoecm.version}</version>
-        <type>jar</type>
       </dependency>
+      
+      <!-- Test dependencies -->
+    
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>[4.0,]</version>
+        <scope>test</scope>
+      </dependency>
+    
+      <dependency>
+        <groupId>org.hippoecm</groupId>
+        <artifactId>hippo-ecm-repository-engine</artifactId>
+        <version>${hippoecm.version}</version>
+        <scope>test</scope>
+      </dependency>
+    
     </dependencies>
+    
   </dependencyManagement>
 
   <build>

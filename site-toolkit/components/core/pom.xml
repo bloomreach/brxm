@@ -14,112 +14,77 @@
   <artifactId>hst-core</artifactId>
   <packaging>jar</packaging>
   
-  <properties>
-    <spring.version>2.5.6</spring.version>
-  </properties>
-
   <dependencies>
+
     <!-- Servlet -->
+    
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
-      <version>2.4</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet.jsp</groupId>
-      <artifactId>jsp-api</artifactId>
-      <version>2.0</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
-      <version>1.1.2</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>taglibs</groupId>
-      <artifactId>standard</artifactId>
-      <version>1.1.2</version>
-      <type>jar</type>
-      <scope>compile</scope>
     </dependency>
     
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jta_1.1_spec</artifactId>
       <scope>provided</scope>
-      <version>1.1</version>
     </dependency>
     
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-      <version>3.2.1</version>
     </dependency>
     
     <dependency>
       <groupId>commons-pool</groupId>
       <artifactId>commons-pool</artifactId>
-      <version>1.4</version>
     </dependency>
     
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.4.2</version>
     </dependency>
     
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.4.2</version>
     </dependency>
     
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>1.2.13</version>
     </dependency>
     
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>${spring.version}</version>
     </dependency>
     
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>${spring.version}</version>
     </dependency>
     
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>${spring.version}</version>
     </dependency>
     
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-connector</artifactId>
-      <version>${hippoecm.version}</version>
     </dependency>
     
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-api</artifactId>
       <version>${pom.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Test dependencies -->
@@ -127,14 +92,12 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>[4.0,]</version>
       <scope>test</scope>
     </dependency>
     
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>${hippoecm.version}</version>
       <scope>test</scope>
     </dependency>
     
@@ -142,7 +105,7 @@
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
       <artifactId>hst-addon-repository</artifactId>
       <version>${pom.version}</version>
-      <scope>test</scope>
+      <scope>test</scope>      
     </dependency>
 
   </dependencies>
