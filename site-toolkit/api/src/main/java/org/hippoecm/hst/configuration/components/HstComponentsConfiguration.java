@@ -6,6 +6,6 @@ public interface HstComponentsConfiguration {
 
     Map<String, HstComponentConfiguration> getComponentConfigurations();
 
-    HstComponentConfiguration getComponent(String id);
+    HstComponentConfiguration getComponentConfiguration(String id);
 
 }

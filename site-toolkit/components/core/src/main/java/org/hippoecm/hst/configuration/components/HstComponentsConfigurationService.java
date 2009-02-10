@@ -32,7 +32,7 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
     }
 
     
-    public HstComponentConfiguration getComponent(String id) {
+    public HstComponentConfiguration getComponentConfiguration(String id) {
         return this.componentConfigurations.get(id);
     }
     

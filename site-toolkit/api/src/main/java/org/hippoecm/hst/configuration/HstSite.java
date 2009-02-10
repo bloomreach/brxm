@@ -9,7 +9,7 @@ public interface HstSite {
 
     String getContentPath();
 
-    HstComponentsConfiguration getComponents();
+    HstComponentsConfiguration getComponentsConfiguration();
 
     HstSiteMap getSiteMap();
 

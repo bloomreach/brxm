@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 public class HstSiteService extends AbstractJCRService implements HstSite, Service{
 
     private HstSiteMapService siteMapService;
-    private HstComponentsConfigurationService componentsService;
+    private HstComponentsConfigurationService componentsConfigurationService;
     private String name;
     private String contentPath;
     private String configurationPath;
@@ -57,13 +57,13 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     }
 
     public Service[] getChildServices() {
-       Service[] services = {siteMapService,componentsService};
+       Service[] services = {siteMapService,componentsConfigurationService};
        return services;
     }
     
     private void init(Node configurationNode) throws  RepositoryException, ServiceException {
        Node componentsNode = configurationNode.getNode(Configuration.NODENAME_HST_COMPONENTS); 
-       this.componentsService = new HstComponentsConfigurationService(componentsNode); 
+       this.componentsConfigurationService = new HstComponentsConfigurationService(componentsNode); 
        
        if(log.isDebugEnabled()){
            StringBuffer buf = new StringBuffer();
@@ -79,8 +79,8 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
        }
     }
 
-    public HstComponentsConfiguration getComponents() {
-        return this.componentsService;
+    public HstComponentsConfiguration getComponentsConfiguration() {
+        return this.componentsConfigurationService;
     }
 
     public HstSiteMap getSiteMap() {
