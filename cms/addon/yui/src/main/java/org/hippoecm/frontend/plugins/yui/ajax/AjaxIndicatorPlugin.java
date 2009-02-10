@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.yui.ajax;
 
+import org.apache.wicket.behavior.IBehavior;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -39,6 +40,10 @@ public class AjaxIndicatorPlugin extends AjaxIndicatorBehavior implements IPlugi
         this.config = config;
 
         context.registerService(this, config.getString(ID));
+    }
+
+    public IBehavior getBehavior() {
+        return this;
     }
 
     public String getComponentPath() {

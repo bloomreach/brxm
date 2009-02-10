@@ -15,14 +15,17 @@
  */
 package org.hippoecm.frontend.service;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.behavior.IBehavior;
 
-public interface IBehaviorService extends IBehavior {
+public interface IBehaviorService extends IClusterable {
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     String ID = "behavior.id";
     String PATH = "behavior.path";
 
+    IBehavior getBehavior();
+    
     String getComponentPath();
 }

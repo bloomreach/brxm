@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,35 +17,43 @@ package org.hippoecm.frontend.plugins.yui.javascript;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public class BooleanSetting extends Setting<Boolean> {
+public class YuiIdSetting extends Setting<YuiId> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    public BooleanSetting(String javascriptKey) {
-        this(javascriptKey, false);
+    public YuiIdSetting(String javascriptKey) {
+        super(javascriptKey, null);
     }
 
-    public BooleanSetting(String javascriptKey, Boolean defaultValue) {
+    public YuiIdSetting(String javascriptKey, YuiId defaultValue) {
         super(javascriptKey, defaultValue);
     }
 
-    public Boolean newValue() {
-        return new Boolean(defaultValue);
+    public YuiId newValue() {
+        if (defaultValue != null) {
+            YuiId id =  new YuiId(defaultValue.id);
+            if (defaultValue.parentId != null) {
+                id.setParentId(defaultValue.parentId);
+            }
+            return id;
+        } else {
+            return null;
+        }
     }
 
     @Override
-    protected Boolean getValueFromConfig(IPluginConfig config, YuiObject settings) {
-        return config.getBoolean(configKey);
+    protected YuiId getValueFromConfig(IPluginConfig config, YuiObject settings) {
+        return new YuiId(config.getString(configKey));
     }
 
     public void setFromString(String value, YuiObject settings) {
-        set(Boolean.valueOf(value), settings);
+        set(new YuiId(value), settings);
     }
 
-    public String getScriptValue(Boolean value) {
-        return value.toString();
+    public String getScriptValue(YuiId value) {
+        return StringSetting.escapeString(value.getElementId());
     }
-    
+
 }

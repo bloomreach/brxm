@@ -21,12 +21,13 @@ import java.util.Map;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
-import org.hippoecm.frontend.plugins.yui.javascript.Settings;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
 
-public abstract class DynamicTextTemplate implements IHeaderContributor {
+public abstract class DynamicTextTemplate implements IHeaderContributor, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -54,6 +55,10 @@ public abstract class DynamicTextTemplate implements IHeaderContributor {
         headerContributor.renderHead(response);
     }
 
+    public void detach() {
+        headerContributor.detach(null);
+    }
+
     Map<String, Object> getVariables() {
         if (variables == null) {
             variables = new MiniMap(5);
@@ -62,8 +67,7 @@ public abstract class DynamicTextTemplate implements IHeaderContributor {
         return variables;
     }
 
-    abstract public Settings getSettings();
-
+    abstract public YuiObject getSettings();
 
     private static abstract class DynamicReadOnlyModel extends AbstractReadOnlyModel {
         private static final long serialVersionUID = 1L;

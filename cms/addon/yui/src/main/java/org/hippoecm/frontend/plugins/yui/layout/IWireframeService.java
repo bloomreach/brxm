@@ -15,9 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
+import org.hippoecm.frontend.plugins.yui.javascript.YuiId;
+
 public interface IWireframeService {
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
-    String getParentId();
+    YuiId getParentId();
 }

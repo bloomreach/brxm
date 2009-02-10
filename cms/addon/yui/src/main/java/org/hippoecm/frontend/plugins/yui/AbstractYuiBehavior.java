@@ -48,7 +48,7 @@ public class AbstractYuiBehavior extends AbstractBehavior {
      */
     public void addHeaderContribution(IYuiContext helper) {
     }
-
+    
     /**
      * Don't call super since WicketAjax is loaded by Yui webapp behavior
      * TODO: webapp ajax is configurable, maybe check here and still load it.

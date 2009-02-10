@@ -16,79 +16,95 @@
 package org.hippoecm.frontend.plugins.yui.javascript;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public abstract class Settings implements IClusterable {
+public class YuiObject implements IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private Map<Setting<?>, Value<?>> settings;
+    private YuiType type;
+    private Map<Setting<?>, Object> settings;
+    private List<IYuiListener> listeners;
 
-    public Settings() {
-        settings = new HashMap<Setting<?>, Value<?>>();
-        initValues();
+    public YuiObject(YuiType type) {
+        this.type = type;
+        listeners = new LinkedList<IYuiListener>();
+        settings = new HashMap<Setting<?>, Object>();
+        for (Setting<?> setting : type.getProperties()) {
+            this.settings.put(setting, setting.newValue());
+        }
     }
 
-    public Settings(IPluginConfig config) {
-        this();
+    public YuiObject(YuiType type, IPluginConfig config) {
+        this(type);
         for (Setting<?> setting : settings.keySet()) {
             setting.setFromConfig(config, this);
         }
     }
 
-    /**
-     * Template method for settings
-     */
-    protected abstract void initValues();
+    public YuiType getType() {
+        return type;
+    }
 
     public void updateValues(Map<String, String> options) {
-        for (Entry<Setting<?>, Value<?>> entry : settings.entrySet()) {
-            Setting<?> setting = entry.getKey();
+        for (Setting<?> setting : settings.keySet()) {
             if (options.containsKey(setting.getKey())) {
                 setting.setFromString(options.get(setting.getKey()), this);
             }
         }
     }
 
-    //initialise settings
-    protected void add(Setting<?>... settings) {
-        for (Setting<?> setting : settings) {
-            this.settings.put(setting, setting.newValue());
-        }
+    <T> T get(Setting<T> key) {
+        return (T) settings.get(key);
     }
 
-    protected void skip(Setting<?>... settings) {
-        for (Setting<?> setting : settings) {
-            this.settings.get(setting).setSkip(true);
-        }
-    }
-
-    Value<?> get(Setting<?> key) {
-        return settings.get(key);
-    }
-
-    void set(Setting<?> key, Value<?> value) {
+    void set(Setting<?> key, Object value) {
         settings.put(key, value);
+        notifyListeners();
+    }
+
+    public void addListener(IYuiListener listener) {
+        listeners.add(listener);
+    }
+    
+    public void removeListener(IYuiListener listener) {
+        listeners.remove(listener);
+    }
+    
+    protected void notifyListeners() {
+        if (listeners.size() > 0) {
+            IYuiListener.Event event = new IYuiListener.Event() {
+                @Override
+                public YuiObject getSource() {
+                    return YuiObject.this;
+                }
+            };
+            for (IYuiListener listener : listeners) {
+                listener.onEvent(event);
+            }
+        }
     }
 
     public String toScript() {
         StringBuilder sb = new StringBuilder();
         sb.append('{');
         boolean first = true;
-        for (Entry<Setting<?>, Value<?>> entry : settings.entrySet()) {
-            if(entry.getValue().isValid()) {
+        for (Setting setting : type.getProperties()) {
+            Object value = setting.get(this);
+            if (setting.isValid(value)) {
                 if (first) {
                     first = false;
                 } else {
                     sb.append(',');
                 }
-                sb.append(entry.getKey().getKey() + ": " + entry.getValue().getScriptValue());
+                sb.append(setting.getKey() + ": " + setting.getScriptValue(value));
             }
         }
         sb.append('}');

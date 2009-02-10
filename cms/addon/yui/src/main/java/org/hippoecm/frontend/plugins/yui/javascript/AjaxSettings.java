@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public class AjaxSettings extends Settings {
+public class AjaxSettings extends YuiObject {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -29,17 +29,14 @@ public class AjaxSettings extends Settings {
     protected static final StringSetting CALLBACK_FUNCTION = new StringSetting("callbackFunction", "", false);
     protected static final StringMapSetting CALLBACK_PARAMETERS = new StringMapSetting("callbackParameters", null);
 
-    public AjaxSettings() {
-        super();
+    protected static final YuiType TYPE = new YuiType(CALLBACK_URL, CALLBACK_FUNCTION, CALLBACK_PARAMETERS);
+
+    public AjaxSettings(YuiType type) {
+        super(type);
     }
 
-    public AjaxSettings(IPluginConfig config) {
-        super(config);
-    }
-
-    @Override
-    protected void initValues() {
-        add(CALLBACK_URL, CALLBACK_FUNCTION, CALLBACK_PARAMETERS);
+    public AjaxSettings(YuiType type, IPluginConfig config) {
+        super(type, config);
     }
 
     public void setCallbackUrl(String url) {

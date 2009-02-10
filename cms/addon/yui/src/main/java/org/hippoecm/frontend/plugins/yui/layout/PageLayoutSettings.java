@@ -19,6 +19,9 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.javascript.AjaxSettings;
 import org.hippoecm.frontend.plugins.yui.javascript.IntSetting;
 import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiId;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiIdSetting;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiType;
 
 public class PageLayoutSettings extends AjaxSettings {
     @SuppressWarnings("unused")
@@ -26,7 +29,7 @@ public class PageLayoutSettings extends AjaxSettings {
 
     private static final long serialVersionUID = 1L;
 
-    private static final StringSetting ROOT_ID  = new StringSetting("rootId", "doc3");
+    private static final YuiIdSetting ROOT_ID = new YuiIdSetting("rootId", new YuiId("doc3"));
 
     private static final IntSetting HEADER_HEIGHT = new IntSetting("headerHeight");
     private static final IntSetting FOOTER_HEIGHT = new IntSetting("headerHeight");
@@ -35,17 +38,14 @@ public class PageLayoutSettings extends AjaxSettings {
     private static final StringSetting BODY_GUTTER = new StringSetting("bodyGutter");
     private static final StringSetting FOOTER_GUTTER = new StringSetting("footerGutter");
 
+    protected static final YuiType TYPE = new YuiType(AjaxSettings.TYPE, ROOT_ID, HEADER_HEIGHT, FOOTER_HEIGHT,
+            HEADER_GUTTER, BODY_GUTTER, FOOTER_GUTTER);
+
     public PageLayoutSettings(IPluginConfig config) {
-        super(config);
+        super(TYPE, config);
     }
 
-    @Override
-    protected void initValues() {
-        super.initValues();
-        add(ROOT_ID, HEADER_HEIGHT, FOOTER_HEIGHT, HEADER_GUTTER, BODY_GUTTER, FOOTER_GUTTER);
-    }
-
-    public String getRootId() {
+    public YuiId getRootId() {
         return ROOT_ID.get(this);
     }
 

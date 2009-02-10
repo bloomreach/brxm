@@ -19,13 +19,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.apache.wicket.Application;
 import org.onehippo.yui.YuiDependency;
 import org.onehippo.yui.YuiDependencyResolver;
 import org.onehippo.yui.YuiNamespace;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CachedYuiDependencyResolver {
     @SuppressWarnings("unused")
@@ -33,28 +32,42 @@ public class CachedYuiDependencyResolver {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(CachedYuiDependencyResolver.class);
+    private static class CacheEntry {
+        private final Map<String, Set<YuiDependency>> modulesLoaded = Collections
+        .synchronizedMap(new HashMap<String, Set<YuiDependency>>());
 
-    private static final Map<String, Set<YuiDependency>> modulesLoaded = Collections
-            .synchronizedMap(new HashMap<String, Set<YuiDependency>>());
+        private boolean cacheEnabled = true;
+        private YuiDependencyResolver dependencyResolver = null;
 
-    private static boolean cacheEnabled = true;
-    private static YuiDependencyResolver dependencyResolver = null;
-
-    public static Set<YuiDependency> getDependencies(YuiNamespace ns, String module) {
-        if (dependencyResolver == null) {
-            cacheEnabled = Application.get().getConfigurationType().equals(Application.DEPLOYMENT);
+        CacheEntry(Application application) {
+            cacheEnabled = application.getConfigurationType().equals(Application.DEPLOYMENT);
             dependencyResolver = new YuiDependencyResolver(cacheEnabled);
         }
+        
+        Set<YuiDependency> getDependencies(YuiNamespace ns, String module) {
+            if (cacheEnabled && modulesLoaded.containsKey(module)) {
+                return modulesLoaded.get(module);
+            }
 
-        if (cacheEnabled && modulesLoaded.containsKey(module)) {
-            return modulesLoaded.get(module);
+            Set<YuiDependency> dependencies = dependencyResolver.resolveDependencies(ns, module);
+            if (cacheEnabled)
+                modulesLoaded.put(module, dependencies);
+            return dependencies;
         }
+    }
 
-        Set<YuiDependency> dependencies = dependencyResolver.resolveDependencies(ns, module);
-        if (cacheEnabled)
-            modulesLoaded.put(module, dependencies);
-        return dependencies;
+
+    private static WeakHashMap<Application, CacheEntry> cache = new WeakHashMap<Application, CacheEntry>();
+    
+    public static Set<YuiDependency> getDependencies(YuiNamespace ns, String module) {
+        Application application = Application.get();
+        synchronized (cache) {
+            if (!cache.containsKey(application)) {
+                cache.put(application, new CacheEntry(application));
+            }
+    
+            return cache.get(application).getDependencies(ns, module);
+        }
     }
 
 }

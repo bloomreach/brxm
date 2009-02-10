@@ -33,16 +33,20 @@ public class DoubleSetting extends Setting<Double> {
     }
 
     @Override
-    protected Double getValueFromConfig(IPluginConfig config, Settings settings) {
+    protected Double getValueFromConfig(IPluginConfig config, YuiObject settings) {
         return config.getDouble(configKey);
     }
 
-    public  Value<Double> newValue() {
-        return new DoubleValue(defaultValue);
+    public  Double newValue() {
+        return new Double(defaultValue);
     }
 
-    public void setFromString(String value, Settings settings) {
+    public void setFromString(String value, YuiObject settings) {
         set(Double.valueOf(value), settings);
+    }
+
+    public String getScriptValue(Double value) {
+        return value.toString();
     }
 
 }

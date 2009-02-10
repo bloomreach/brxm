@@ -18,57 +18,52 @@ package org.hippoecm.frontend.plugins.yui.layout;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.javascript.BooleanSetting;
-import org.hippoecm.frontend.plugins.yui.javascript.Settings;
+import org.hippoecm.frontend.plugins.yui.javascript.IYuiListener;
 import org.hippoecm.frontend.plugins.yui.javascript.SettingsArraySetting;
-import org.hippoecm.frontend.plugins.yui.javascript.SettingsArrayValue;
 import org.hippoecm.frontend.plugins.yui.javascript.StringArraySetting;
-import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
-import org.hippoecm.frontend.plugins.yui.javascript.Value;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiId;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiIdSetting;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiType;
 
-public class WireframeSettings extends Settings {
+public class WireframeSettings extends YuiObject {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private static final StringSetting ROOT_ID = new StringSetting("rootId", "");
-    private static final StringSetting PARENT_ID = new StringSetting("parentId", "");
+    private static final YuiIdSetting ROOT_ID = new YuiIdSetting("rootId", new YuiId(""));
+    private static final YuiIdSetting PARENT_ID = new YuiIdSetting("parentId", new YuiId(""));
     private static final BooleanSetting LINKED_WITH_PARENT = new BooleanSetting("linkedWithParent", false);
-
-    private static final StringSetting CLIENT_CLASS_NAME = new StringSetting("clientClassName",
-            "YAHOO.hippo.Wireframe", false);
 
     private static final UnitSettingsArraySetting UNITS = new UnitSettingsArraySetting("units");
     private static final WrappersArraySetting WRAPPERS = new WrappersArraySetting("wrappers", new String[5]);
 
+    protected static final YuiType TYPE = new YuiType(ROOT_ID, PARENT_ID, LINKED_WITH_PARENT, UNITS, WRAPPERS);
+
+    private IYuiListener unitListener = new IYuiListener() {
+        private static final long serialVersionUID = 1L;
+
+        public void onEvent(IYuiListener.Event event) {
+            notifyListeners();
+        };
+    };
+
     private String markupId;
 
     public WireframeSettings(IPluginConfig config) {
-        super(config);
-    }
-
-    protected void initValues() {
-        add(ROOT_ID, PARENT_ID, LINKED_WITH_PARENT, CLIENT_CLASS_NAME, UNITS, WRAPPERS);
-        skip(WRAPPERS);
+        super(TYPE, config);
     }
 
     public void setMarkupId(String markupId) {
         this.markupId = markupId;
     }
 
-    public String getRootElementId() {
+    public YuiId getRootElementId() {
         return ROOT_ID.get(this);
     }
 
-    public String getClientClassName() {
-        return CLIENT_CLASS_NAME.get(this);
-    }
-
-    public void setClientClassName(String value) {
-        CLIENT_CLASS_NAME.set(value, this);
-    }
-
-    public void setParentId(String id) {
+    public void setParentId(YuiId id) {
         PARENT_ID.set(id, this);
     }
 
@@ -81,20 +76,22 @@ public class WireframeSettings extends Settings {
     }
 
     public void register(UnitSettings newSettings) {
+        UnitSettings current = UNITS.getByPosition(newSettings.getPosition(), this);
+        if (current != null) {
+            current.removeListener(unitListener);
+        }
+        if (newSettings != null) {
+            newSettings.addListener(unitListener);
+        }
         UNITS.setByPosition(newSettings, this);
     }
 
     protected void enhanceIds() {
-        String rootId = getRootElementId();
-        if (rootId == null || rootId.equals("")) {
-            rootId = markupId;
-        } else {
-            rootId = markupId + ':' + rootId;
-        }
-        ROOT_ID.set(rootId, this);
+        YuiId root = getRootElementId();
+        root.setParentId(markupId);
 
         for (UnitSettings us : UNITS.get(this)) {
-            us.enhanceIds(markupId);
+            us.setParentMarkupId(markupId);
         }
     }
 
@@ -106,18 +103,14 @@ public class WireframeSettings extends Settings {
         }
 
         @Override
-        public Value<UnitSettings[]> newValue() {
-            return new SettingsArrayValue<UnitSettings>( new UnitSettings[] {
-                new UnitSettings(UnitSettings.TOP),
-                new UnitSettings(UnitSettings.BOTTOM),
-                new UnitSettings(UnitSettings.LEFT),
-                new UnitSettings(UnitSettings.RIGHT),
-                new UnitSettings(UnitSettings.CENTER)
-            });
+        public UnitSettings[] newValue() {
+            return new UnitSettings[] { new UnitSettings(UnitSettings.TOP), new UnitSettings(UnitSettings.BOTTOM),
+                    new UnitSettings(UnitSettings.LEFT), new UnitSettings(UnitSettings.RIGHT),
+                    new UnitSettings(UnitSettings.CENTER) };
         }
 
         @Override
-        protected UnitSettings[] getValueFromConfig(IPluginConfig config, Settings settings) {
+        protected UnitSettings[] getValueFromConfig(IPluginConfig config, YuiObject settings) {
             String[] ids = config.getStringArray(getKey());
             UnitSettings[] unitSettings = get(settings);
             for (String id : ids) {
@@ -127,7 +120,7 @@ public class WireframeSettings extends Settings {
             return unitSettings;
         }
 
-        protected UnitSettings getByPosition(String position, Settings settings) {
+        protected UnitSettings getByPosition(String position, YuiObject settings) {
             UnitSettings[] unitSettings = get(settings);
             for (UnitSettings setting : unitSettings) {
                 if (setting.getPosition().equals(position)) {
@@ -148,7 +141,7 @@ public class WireframeSettings extends Settings {
             }
         }
 
-        public void setFromString(String value, Settings settings) {
+        public void setFromString(String value, YuiObject settings) {
             // TODO:implement
             System.out.println("WWWAAARRRNNNIIINNNGGG!!!: SHOULDN'T SEE THIS!");
         }
@@ -163,7 +156,12 @@ public class WireframeSettings extends Settings {
         }
 
         @Override
-        protected String[] getValueFromConfig(IPluginConfig config, Settings settings) {
+        public boolean isValid(String[] value) {
+            return false;
+        }
+
+        @Override
+        protected String[] getValueFromConfig(IPluginConfig config, YuiObject settings) {
             String[] ids = config.getStringArray(getKey());
             WireframeSettings ws = (WireframeSettings) settings;
             for (String id : ids) {

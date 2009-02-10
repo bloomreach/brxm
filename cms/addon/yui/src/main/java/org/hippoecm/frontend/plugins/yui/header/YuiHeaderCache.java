@@ -16,16 +16,11 @@
 
 package org.hippoecm.frontend.plugins.yui.header;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -37,38 +32,40 @@ import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
-import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
-import org.hippoecm.frontend.plugins.yui.header.templates.FinalTextTemplate;
-import org.onehippo.yui.YahooNamespace;
 import org.onehippo.yui.YuiDependency;
 import org.onehippo.yui.YuiNamespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class YuiHeaderContributor implements IHeaderContributor {
+public class YuiHeaderCache implements IHeaderContributor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private final static Logger log = LoggerFactory.getLogger(YuiHeaderContributor.class);
+    private final static Logger log = LoggerFactory.getLogger(YuiHeaderCache.class);
 
-    private static final List<String> debugModules = Collections.synchronizedList(new ArrayList<String>());
-    private static boolean CACHE_ENABLED = Application.get().getConfigurationType().equals(Application.DEPLOYMENT);
+    private static boolean isCacheEnabled() {
+        return Application.get().getConfigurationType().equals(Application.DEPLOYMENT);
+    }
+
+    private static boolean isDebugEnabled() {
+        return Application.get().getConfigurationType().equals(Application.DEVELOPMENT);
+    }
 
     final Map<String, CachedHeaderContributor> referencesCache = new HashMap<String, CachedHeaderContributor>();
     final Map<String, Module> moduleCache = new HashMap<String, Module>();
     final Map<String, ModuleSet> moduleSetsCache = new HashMap<String, ModuleSet>();
 
     //final Set<ModuleSet> localModules = new LinkedHashSet<ModuleSet>();
-    final YuiContext localContext = new YuiContext();
+    final YuiContext localContext = new YuiContext(this);
 
     private boolean loadWicketAjax = false;
 
-    public YuiHeaderContributor(boolean loadWicketAjax) {
+    public YuiHeaderCache(boolean loadWicketAjax) {
         this.loadWicketAjax = loadWicketAjax;
 
-        if (log.isDebugEnabled()) {
+        if (isDebugEnabled()) {
             localContext.addModule(HippoNamespace.NS, "hippologger");
         }
         if (loadWicketAjax) {
@@ -105,37 +102,8 @@ public class YuiHeaderContributor implements IHeaderContributor {
         localContext.renderHead(response);
     }
 
-    private void renderModules(Set<ModuleSet> modules, IHeaderResponse response) {
-        for(ModuleSet ms : modules) {
-            ms.renderHead(response);
-        }
-    }
-
-    private void renderTemplates(Set<IHeaderContributor> _templates, IHeaderResponse response) {
-        for (IHeaderContributor contrib : _templates) {
-            contrib.renderHead(response);
-        }
-    }
-
-    private void renderReferences(Set<CachedHeaderContributor> _references, IHeaderResponse response) {
-        for (CachedHeaderContributor contrib : _references) {
-            if (!contrib.rendered || !CACHE_ENABLED) {
-                contrib.renderHead(response);
-                contrib.rendered = true;
-            }
-        }
-    }
-
-    public void renderOnloads(Set<String> _onloads, IHeaderResponse response) {
-        for (String onload : _onloads) {
-            //TODO: make configurable
-            response.renderOnDomReadyJavascript(onload);
-            //response.renderOnLoadJavascript(onload);
-        }
-    }
-
-    private ModuleSet getDependenciesSet(YuiNamespace ns, String module) {
-        if(moduleSetsCache.containsKey(module)) {
+    IHeaderContributor getDependenciesSet(YuiNamespace ns, String module) {
+        if (moduleSetsCache.containsKey(module)) {
             return moduleSetsCache.get(module);
         } else {
             Set<YuiDependency> dependencies = CachedYuiDependencyResolver.getDependencies(ns, module);
@@ -145,8 +113,8 @@ public class YuiHeaderContributor implements IHeaderContributor {
         }
     }
 
-    private CachedHeaderContributor getCssReference(ResourceReference reference) {
-        if(referencesCache.containsKey(reference.getSharedResourceKey())) {
+    IHeaderContributor getCssReference(ResourceReference reference) {
+        if (referencesCache.containsKey(reference.getSharedResourceKey())) {
             return referencesCache.get(reference.getSharedResourceKey());
         } else {
             CssHeaderContributor ref = new CssHeaderContributor(reference);
@@ -155,8 +123,8 @@ public class YuiHeaderContributor implements IHeaderContributor {
         }
     }
 
-    private CachedHeaderContributor getJavascriptReference(ResourceReference reference) {
-        if(referencesCache.containsKey(reference.getSharedResourceKey())) {
+    IHeaderContributor getJavascriptReference(ResourceReference reference) {
+        if (referencesCache.containsKey(reference.getSharedResourceKey())) {
             return referencesCache.get(reference.getSharedResourceKey());
         } else {
             JavascriptHeaderContributor ref = new JavascriptHeaderContributor(reference);
@@ -165,101 +133,22 @@ public class YuiHeaderContributor implements IHeaderContributor {
         }
     }
 
-    public class YuiContext implements IYuiContext {
-        private static final long serialVersionUID = 1L;
-
-        Set<IHeaderContributor> templates;
-        Set<CachedHeaderContributor> refs;
-        Set<String> onloads;
-        Set<ModuleSet> modules;
-
-        private void initModules() {
-            if(modules == null) {
-                modules = new LinkedHashSet<ModuleSet>();
-            }
-        }
-
-        private void initRefs() {
-            if(refs == null) {
-                refs = new LinkedHashSet<CachedHeaderContributor>();
-            }
-        }
-
-        private void initTemplates() {
-            if(templates == null) {
-                templates = new LinkedHashSet<IHeaderContributor>();
-            }
-        }
-
-        private void initOnloads() {
-            if(onloads == null) {
-                onloads = new LinkedHashSet<String>();
-            }
-        }
-
-        public void addModule(String module) {
-            addModule(YahooNamespace.NS, module);
-        }
-
-        public void addModule(YuiNamespace ns, String module) {
-            initModules();
-            modules.add(getDependenciesSet(ns, module));
-        }
-
-        public void addTemplate(FinalTextTemplate template) {
-            initTemplates();
-            templates.add(template);
-        }
-
-
-        public void addTemplate(Class<?> clazz, String filename, Map<String, Object> parameters) {
-            initTemplates();
-            templates.add(new FinalTextTemplate(clazz, filename, parameters));
-        }
-
-        public void addTemplate(DynamicTextTemplate template) {
-            initTemplates();
-            templates.add(template);
-        }
-
-        public void addOnload(String string) {
-            initOnloads();
-            onloads.add(string);
-        }
-
-        public void addCssReference(ResourceReference reference) {
-            initRefs();
-            refs.add(getCssReference(reference));
-        }
-
-        public void addJavascriptReference(ResourceReference reference) {
-            initRefs();
-            refs.add(getJavascriptReference(reference));
-        }
-
-        public void renderHead(IHeaderResponse response) {
-            if(modules != null) {
-                renderModules(modules, response);
-            }
-            if(refs != null) {
-                renderReferences(refs, response);
-            }
-            if(templates != null) {
-                renderTemplates(templates, response);
-            }
-            if(onloads != null) {
-                renderOnloads(onloads, response);
-            }
-        }
-    }
-
-    abstract class CachedHeaderContributor implements IHeaderContributor {
+    static abstract class CachedHeaderContributor implements IHeaderContributor {
         private static final long serialVersionUID = 1L;
 
         boolean rendered = false;
+
+        public final void renderHead(IHeaderResponse response) {
+            if (!rendered || !YuiHeaderCache.isCacheEnabled()) {
+                onRenderHead(response);
+                rendered = true;
+            }
+        }
+
+        abstract public void onRenderHead(IHeaderResponse response);
     }
 
-    abstract class ResourceHeaderContributor extends CachedHeaderContributor {
+    static abstract class ResourceHeaderContributor extends CachedHeaderContributor {
         private static final long serialVersionUID = 1L;
 
         ResourceReference reference;
@@ -294,37 +183,36 @@ public class YuiHeaderContributor implements IHeaderContributor {
         */
     }
 
-    class CssHeaderContributor extends ResourceHeaderContributor {
+    static class CssHeaderContributor extends ResourceHeaderContributor {
         private static final long serialVersionUID = 1L;
 
         CssHeaderContributor(ResourceReference reference) {
             super(reference);
         }
 
-        public void renderHead(IHeaderResponse response) {
+        public void onRenderHead(IHeaderResponse response) {
             response.renderCSSReference(reference, "screen"); //TODO: find out why screen
         }
     }
 
-    class JavascriptHeaderContributor extends ResourceHeaderContributor {
+    static class JavascriptHeaderContributor extends ResourceHeaderContributor {
         private static final long serialVersionUID = 1L;
 
         JavascriptHeaderContributor(ResourceReference reference) {
             super(reference);
         }
 
-        public void renderHead(IHeaderResponse response) {
+        public void onRenderHead(IHeaderResponse response) {
             response.renderJavascriptReference(reference);
         }
     }
 
-    class Module implements IClusterable {
+    class Module extends CachedHeaderContributor {
         private static final long serialVersionUID = 1L;
 
-        CachedHeaderContributor file;
-        CachedHeaderContributor css;
-        CachedHeaderContributor coreCss;
-        boolean rendered;
+        IHeaderContributor file;
+        IHeaderContributor css;
+        IHeaderContributor coreCss;
 
         public Module(YuiDependency dependency) {
             if (dependency.isSourceNotFound() || dependency.getNamespace() == null) {
@@ -333,10 +221,9 @@ public class YuiHeaderContributor implements IHeaderContributor {
                 log.error(errorMsg);
                 throw new IllegalArgumentException(errorMsg);
             } else {
-                final boolean debug = log.isDebugEnabled()
-                        && (debugModules.size() == 0 || debugModules.contains(dependency.getModule()));
+                final boolean debug = isDebugEnabled();
 
-                String path = dependency.getFilePath(debug, CACHE_ENABLED);
+                String path = dependency.getFilePath(debug, isCacheEnabled());
                 Class<? extends YuiNamespace> clazz = dependency.getNamespace().getClass();
 
                 if (debug) {
@@ -354,34 +241,30 @@ public class YuiHeaderContributor implements IHeaderContributor {
             }
         }
 
-        public void renderHead(IHeaderResponse response) {
-            if(!rendered) {
-                if(file != null) {
-                    file.renderHead(response);
-                }
-                if(css != null) {
-                    css.renderHead(response);
-                }
-                if(coreCss != null) {
-                    coreCss.renderHead(response);
-                }
-                rendered = true;
+        public void onRenderHead(IHeaderResponse response) {
+            if (file != null) {
+                file.renderHead(response);
+            }
+            if (css != null) {
+                css.renderHead(response);
+            }
+            if (coreCss != null) {
+                coreCss.renderHead(response);
             }
         }
 
     }
 
-    class ModuleSet implements IClusterable {
+    class ModuleSet extends CachedHeaderContributor {
         private static final long serialVersionUID = 1L;
 
         Module[] modules;
         int count = 0;
-        boolean rendered;
 
         public ModuleSet(Set<YuiDependency> dependencies) {
             modules = new Module[dependencies.size()];
             for (YuiDependency dep : dependencies) {
-                if(moduleCache.containsKey(dep.getModule())) {
+                if (moduleCache.containsKey(dep.getModule())) {
                     addModule(moduleCache.get(dep.getModule()));
                 } else {
                     Module mod = new Module(dep);
@@ -395,12 +278,9 @@ public class YuiHeaderContributor implements IHeaderContributor {
             modules[count++] = m;
         }
 
-        public void renderHead(IHeaderResponse response) {
-            if(!rendered) {
-                for(Module mod : modules) {
-                    mod.renderHead(response);
-                }
-                rendered = true;
+        public void onRenderHead(IHeaderResponse response) {
+            for (Module mod : modules) {
+                mod.renderHead(response);
             }
         }
     }

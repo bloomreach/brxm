@@ -23,6 +23,9 @@ public class StringSetting extends Setting<String> {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String SINGLE_QUOTE = "'";
+    private static final String SINGLE_QUOTE_ESCAPED = "\\'";
+
     private boolean escape = true;
 
     public StringSetting(String javascriptKey) {
@@ -42,16 +45,30 @@ public class StringSetting extends Setting<String> {
         this.escape = escape;
     }
 
-    public Value<String> newValue() {
-        return new StringValue(defaultValue, escape);
+    public String newValue() {
+        return defaultValue;
     }
 
     @Override
-    protected String getValueFromConfig(IPluginConfig config, Settings settings) {
+    protected String getValueFromConfig(IPluginConfig config, YuiObject settings) {
         return config.getString(configKey, defaultValue);
     }
 
-    public void setFromString(String value, Settings settings) {
+    public void setFromString(String value, YuiObject settings) {
         set(value, settings);
+    }
+
+    public String getScriptValue(String value) {
+      if(escape) {
+          return escapeString(value);
+      }
+      return value;
+    }
+
+    static String escapeString(String value) {
+        //TODO: backslash should be escaped as well
+        if (value != null)
+            value = SINGLE_QUOTE + value.replace(SINGLE_QUOTE, SINGLE_QUOTE_ESCAPED) + SINGLE_QUOTE;
+        return value;
     }
 }
