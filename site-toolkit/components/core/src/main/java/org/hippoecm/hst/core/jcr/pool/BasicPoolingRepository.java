@@ -284,6 +284,10 @@ public class BasicPoolingRepository implements PoolingRepository {
     public synchronized void close() throws Exception {
         sessionPool.close();
         sessionPool = null;
+        
+        if (this.repository != null) {
+            this.repository.close();
+        }
     }
 
     /**

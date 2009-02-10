@@ -22,7 +22,6 @@
   </issueManagement>
 
   <properties>
-    <skipTests>true</skipTests>
     <!-- Documentation properties (variables).
          May not contain dots as they are processed by Apache velocity.
          Can be used in xdoc files with the extension .xml.vm
@@ -261,38 +260,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.portals.jetspeed-2</groupId>
-        <artifactId>jetspeed-mvn-maven-plugin</artifactId>
-        <version>2.2-SNAPSHOT</version>
-        <inherited>false</inherited>
-        <configuration>
-          <targets combine.children="append">
-            <target>
-              <id>run-repository</id>
-              <name>run</name>
-              <dir>maven/archetype</dir>
-              <goals>initialize</goals>
-              <profiles>run-war</profiles>
-            </target>
-            <target>
-              <id>run-and-test</id>
-              <dir>.</dir>
-              <goals>test</goals>
-              <profiles>test</profiles>
-              <depends>run-repository</depends>
-            </target>
-            <target>
-              <id>test</id>
-              <name>run</name>
-              <dir>maven/archetype</dir>
-              <goals>verify</goals>
-              <profiles>stop-jetty</profiles>
-              <depends>run-and-test</depends>
-            </target>
-          </targets>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 
@@ -323,28 +290,6 @@
         <module>toolkit-resources</module>
         <module>maven</module>
         <module>applications</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>test</id>
-      <activation>
-        <property>
-          <name>skipTests</name>
-          <value>false</value>
-        </property>
-      </activation>
-      <properties>
-        <skipTests>false</skipTests>
-      </properties>
-      <modules>
-        <module>api</module>
-        <module>components</module>
-        <!-- 
-        <module>client</module>
-        -->
-        <module>toolkit-resources</module>
-        <module>applications</module>
-        <module>maven</module>
       </modules>
     </profile>
     <profile>

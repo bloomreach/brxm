@@ -5,7 +5,10 @@
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="properties">
       <props>
+        <prop key="repository.address">target/storage</prop>
+        <!-- If you want the external repository, use the following instead of the above.
         <prop key="repository.address">rmi://127.0.0.1/hipporepository</prop>
+        -->
         <prop key="repository.user.name">admin</prop>
         <prop key="repository.password">admin</prop>
       </props>

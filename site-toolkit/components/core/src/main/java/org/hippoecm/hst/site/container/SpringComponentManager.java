@@ -9,43 +9,60 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringComponentManager implements ComponentManager {
     
-    private AbstractApplicationContext applicationContext;
+    protected AbstractApplicationContext applicationContext;
+    protected Properties initProps;
+    protected String [] configurations;
 
     public SpringComponentManager() {
         this(null);
     }
     
     public SpringComponentManager(Properties initProps) {
-        this.applicationContext = new ClassPathXmlApplicationContext(getConfigurations(), false);
+        this.initProps = initProps;
+    }
+    
+    public void initialize() {
+        String [] configurations = getConfigurations();
         
-        if (initProps != null) {
+        if (null == configurations) {
+            String classXmlFileName = getClass().getName().replace(".", "/") + "*.xml";
+            configurations = new String[] { classXmlFileName };            
+        }
+
+        this.applicationContext = new ClassPathXmlApplicationContext(configurations, false);
+        
+        if (this.initProps != null) {
             PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
             ppc.setIgnoreUnresolvablePlaceholders(true);
             ppc.setSystemPropertiesMode(PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK);
-            ppc.setProperties(initProps);
+            ppc.setProperties(this.initProps);
             this.applicationContext.addBeanFactoryPostProcessor(ppc);
         }
+        
+        this.applicationContext.refresh();
     }
 
     public void start() {
-        this.applicationContext.refresh();
         this.applicationContext.start();
     }
 
     public void stop() {
         this.applicationContext.stop();
     }
+    
+    public void close() {
+        this.applicationContext.close();
+    }
 
     public Object getComponent(String name) {
         return this.applicationContext.getBean(name);
     }
 
-    /**
-     * required specification of spring configurations
-     * the derived class can override this.
-     */
-    protected String[] getConfigurations() {
-        String classXmlFileName = getClass().getName().replace(".", "/") + "*.xml";
-        return new String[] { classXmlFileName };
+    public String[] getConfigurations() {
+        return this.configurations;
+    }
+    
+    public void setConfigurations(String [] configurations) {
+        this.configurations = configurations;
     }
 }

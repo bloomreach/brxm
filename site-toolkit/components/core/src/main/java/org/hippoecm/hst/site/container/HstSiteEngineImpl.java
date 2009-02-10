@@ -39,12 +39,14 @@ public class HstSiteEngineImpl implements HstSiteEngine {
         }
     }
 
-    public void shutdown() throws ContainerException {
-        this.componentManager.stop();
+    public void start() throws ContainerException {
+        this.componentManager.initialize();
+        this.componentManager.start();
     }
 
-    public void start() throws ContainerException {
-        this.componentManager.start();
+    public void shutdown() throws ContainerException {
+        this.componentManager.stop();
+        this.componentManager.close();
     }
 
     public ComponentManager getComponentManager() {

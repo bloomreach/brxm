@@ -2,8 +2,8 @@ package org.hippoecm.hst.test;
 
 import junit.framework.TestCase;
 
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.site.container.SpringComponentManager;
 
 /**
  * <p>
@@ -19,7 +19,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public abstract class AbstractSpringTestCase extends TestCase {
 
-    protected AbstractApplicationContext appContext;
+    protected ComponentManager componentManager;
 
     /**
      * setup Spring context as part of test setup
@@ -27,9 +27,12 @@ public abstract class AbstractSpringTestCase extends TestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        this.appContext = new ClassPathXmlApplicationContext(getConfigurations(), false);
-        this.appContext.refresh();
-        this.appContext.start();
+        
+        this.componentManager = new SpringComponentManager();
+        ((SpringComponentManager) this.componentManager).setConfigurations(getConfigurations());
+        
+        this.componentManager.initialize();
+        this.componentManager.start();
     }
 
     /**
@@ -38,7 +41,9 @@ public abstract class AbstractSpringTestCase extends TestCase {
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-        this.appContext.stop();
+        
+        this.componentManager.stop();
+        this.componentManager.close();
     }
 
     /**
@@ -51,6 +56,6 @@ public abstract class AbstractSpringTestCase extends TestCase {
     }
 
     protected Object getComponent(String name) {
-        return this.appContext.getBean(name);
+        return this.componentManager.getComponent(name);
     }
 }
