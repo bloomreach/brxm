@@ -458,7 +458,7 @@ public class FacetedAuthorizationTest extends TestCase {
         }
     }
 
-    @Ignore // FIXME HREPTWO-2126
+    @Ignore // FIXME HREPTWO-1956
     public void testSubDeletesNotAllowed() throws RepositoryException {
         try {
             testData.getNode("readdoc0/subread").remove();
