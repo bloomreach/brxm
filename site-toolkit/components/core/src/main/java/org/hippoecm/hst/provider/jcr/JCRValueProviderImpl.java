@@ -1,7 +1,9 @@
 package org.hippoecm.hst.provider.jcr;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -22,6 +24,14 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     private String nodePath;
     private String nodeName;
     private boolean detached = false;
+    private List<Integer> supportedPropertyTypes = new ArrayList<Integer>();
+    {
+        supportedPropertyTypes.add(PropertyType.STRING);
+        supportedPropertyTypes.add(PropertyType.BOOLEAN);
+        supportedPropertyTypes.add(PropertyType.DATE);
+        supportedPropertyTypes.add(PropertyType.DOUBLE);
+        supportedPropertyTypes.add(PropertyType.LONG);
+    }
     
     public JCRValueProviderImpl(Node jcrNode) {
         this.jcrNode = jcrNode;
@@ -177,7 +187,12 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         try {
             for(PropertyIterator allProps = jcrNode.getProperties(); allProps.hasNext();) {
                 Property p = allProps.nextProperty();
-                properties.put(p.getName(), this.getWrappedProp(p).getObject());
+                if(supportedPropertyTypes.contains(p.getType())) {
+                    WrappedProp prop = getWrappedProp(p);
+                    if(prop!= null) {
+                        properties.put(p.getName(), prop.getObject());
+                    }
+                }
             }
         } catch (RepositoryException e) {
             log.error("Repository Exception: {}", e.getMessage());
