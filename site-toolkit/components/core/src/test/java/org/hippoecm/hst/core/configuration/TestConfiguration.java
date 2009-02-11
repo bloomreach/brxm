@@ -1,4 +1,4 @@
-package org.hippoecm.hst.hstconfiguration;
+package org.hippoecm.hst.core.configuration;
 
 import javax.jcr.LoginException;
 import javax.jcr.Node;
@@ -23,7 +23,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
-public class TestURLMappingMatcher extends AbstractSpringTestCase {
+public class TestConfiguration extends AbstractSpringTestCase {
 
     public static final String PREVIEW_NODEPATH = "preview";
     
@@ -44,21 +44,24 @@ public class TestURLMappingMatcher extends AbstractSpringTestCase {
     
     @Test
     public void testPathMatcher(){
+        
         HstSites hstSites;
         try {
+            
             hstSites = new HstSitesService(getHstSitesNode());
-            HstSite s =  hstSites.getSite("myproject");
+            HstSite hstSite =  hstSites.getSite("myproject");
+            
             HstSiteMapMatcher hstSiteMapMatcher = new SimpleHstSiteMapMatcher();
 
-            MatchResult matchResult = hstSiteMapMatcher.match("/news/foo/bar", s);
+            MatchResult matchResult = hstSiteMapMatcher.match("/news/foo/bar", hstSite);
             assertEquals(matchResult.getRemainder(), "foo/bar");
             assertEquals(matchResult.getCompontentConfiguration().getId(), "pages/newsoverview");
             
 
-            matchResult = hstSiteMapMatcher.match("/news/foo/bar/", s);
+            matchResult = hstSiteMapMatcher.match("/news/foo/bar/", hstSite);
             assertEquals(matchResult.getRemainder(), "foo/bar");
             
-            matchResult = hstSiteMapMatcher.match("/news", s);
+            matchResult = hstSiteMapMatcher.match("/news", hstSite);
             assertEquals(matchResult.getRemainder(), "");
             
         } catch (ServiceException e) {
@@ -66,9 +69,6 @@ public class TestURLMappingMatcher extends AbstractSpringTestCase {
         }
     }
 
-    protected String[] getConfigurations() {
-        return new String[] { "org/hippoecm/hst/core/jcr/pool/GeneralBasicPoolingRepository.xml" };
-    }
 
     protected Node getHstSitesNode() {
         
