@@ -85,7 +85,7 @@ public class TestConfiguration extends AbstractSpringTestCase {
         }
 
         try {
-            Node previewSites  = session.getRootNode().getNode(PREVIEW_NODEPATH);
+            Node previewSites  = session.getRootNode().getNode("preview");
             return previewSites;
         } catch (PathNotFoundException e) {
             e.printStackTrace();

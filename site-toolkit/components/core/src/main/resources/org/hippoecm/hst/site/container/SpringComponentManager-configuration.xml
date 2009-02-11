@@ -17,10 +17,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-  <bean id="org.hippoecm.hst.configuration.HstSites" class="org.hippoecm.hst.configuration.HstSitesService">
-    <constructor-arg>
-      <null/>
-    </constructor-arg>
+  <bean id="org.hippoecm.hst.configuration.HstSites" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetClass" value="org.hippoecm.hst.configuration.HstSitesFactory" />
+    <property name="targetMethod" value="create" />
+    <property name="arguments">
+      <list>
+        <ref bean="org.hippoecm.hst.core.jcr.pool.PoolingRepository" />
+        <value>preview</value>
+      </list>
+    </property>
   </bean>
 
 </beans>

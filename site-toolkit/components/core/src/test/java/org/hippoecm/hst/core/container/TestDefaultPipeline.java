@@ -39,7 +39,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         try {
             this.defaultPipeline.invoke(servletRequest, servletResponse, context);
         } catch (Exception e) {
-            fail("Exception!!!");
+            throw new ContainerException(e);
         } finally {
             this.defaultPipeline.afterInvoke(servletRequest, servletResponse, context);
         }
