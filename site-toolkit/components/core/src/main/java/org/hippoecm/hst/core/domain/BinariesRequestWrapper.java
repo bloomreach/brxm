@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.hippoecm.hst.core.domain.RepositoryMapping;
-import org.hippoecm.hst.core.mapping.UrlUtilities;
+import org.hippoecm.hst.core.mapping.PathUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ public class BinariesRequestWrapper  extends HttpServletRequestWrapper{
              * we forward the url without the context path and without the repository prefix.
              * On the hstRequestContext we have the RepositoryMapping object available
              */  
-            uri = UrlUtilities.decodeUrl(uri);
+            uri = PathUtilities.decodePath(uri);
             log.debug("wrapped request uri to internal uri '{}' --> '{}'", super.getRequestURI(), uri);
             transformedUri = uri;
             return transformedUri;   

@@ -62,18 +62,10 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
                     
                     
                 } else {
-                    log.debug("Skipping '{}' hst:component + child components because it does not contain the mandatory property '{}'",Configuration.COMPONENT_PROPERTY_REFERECENCENAME, child.getPath());
+                    log.warn("Skipping '{}' hst:component + child components because it does not contain the mandatory property '{}'",Configuration.COMPONENT_PROPERTY_REFERECENCENAME, child.getPath());
                 }
             } else if(child.isNodeType(Configuration.NODETYPE_HST_COMPONENTGROUP)) {
-                for(NodeIterator groupIt = child.getNodes(); groupIt.hasNext();) {
-                    Node groupChild = groupIt.nextNode();
-                    if(groupChild == null) {
-                        log.warn("skipping null node");
-                        continue;
-                    } else {
-                        init(groupChild);
-                    }
-                }
+                init(child);
             }
             else {
                 log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(), (Configuration.NODETYPE_HST_COMPONENT + " | " + Configuration.NODETYPE_HST_COMPONENTGROUP));
