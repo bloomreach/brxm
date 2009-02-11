@@ -1,8 +1,11 @@
 package org.hippoecm.hst.core.container;
 
+import javax.jcr.Credentials;
+import javax.jcr.Repository;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.jcr.pool.PoolingRepository;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
@@ -10,17 +13,19 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TestDefaultPipeline extends AbstractSpringTestCase {
-    
-    HttpServletRequest servletRequest;
-    HttpServletResponse servletResponse;
-    
+
+    protected Repository repository;
+    protected Credentials defaultCredentials;
     protected Pipelines pipelines;
     protected Pipeline defaultPipeline;
+    protected HttpServletRequest servletRequest;
+    protected HttpServletResponse servletResponse;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        
+        this.repository = (Repository) getComponent(PoolingRepository.class.getName());
+        this.defaultCredentials = (Credentials) getComponent(Credentials.class.getName());
         this.pipelines = (Pipelines) getComponent(Pipelines.class.getName());
         this.defaultPipeline = this.pipelines.getDefaultPipeline();
         this.servletRequest = (HttpServletRequest) getComponent(HttpServletRequest.class.getName());
@@ -30,7 +35,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
     @Test
     public void testDefaultPipeline() throws ContainerException {
         
-        HstRequestContext context = new HstRequestContextImpl();
+        HstRequestContext context = new HstRequestContextImpl(this.repository, this.defaultCredentials);
         
         this.defaultPipeline.beforeInvoke(servletRequest, servletResponse, context);
         

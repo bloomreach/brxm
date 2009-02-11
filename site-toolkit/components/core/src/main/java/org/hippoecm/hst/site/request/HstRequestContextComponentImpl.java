@@ -1,36 +1,25 @@
 package org.hippoecm.hst.site.request;
 
+import javax.jcr.Credentials;
 import javax.jcr.Repository;
-import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContextComponent;
 
-public class HstRequestContextComponentImpl implements HstRequestContextComponent
-{
-    
+public class HstRequestContextComponentImpl implements HstRequestContextComponent {
+
     protected Repository repository;
-    
-    public HstRequestContextComponentImpl(Repository repository)
-    {
+    protected Credentials defaultCredentials;
+
+    public HstRequestContextComponentImpl(Repository repository, Credentials defaultCredentials) {
         this.repository = repository;
-    }
-    
-    public HstRequestContext create(Object request, Object response, Object config)
-    {
-        HttpServletRequest servletRequest = (HttpServletRequest) request;
-        HttpServletResponse servletResponse = (HttpServletResponse) response;
-        ServletConfig servletConfig = (ServletConfig) config;
-
-        // TODO:
-        HstRequestContextImpl context = new HstRequestContextImpl();
-        context.setRepository(this.repository);
-        return context;
+        this.defaultCredentials = defaultCredentials;
     }
 
-    public void release(HstRequestContext context)
-    {
+    public HstRequestContext create() {
+        return new HstRequestContextImpl(this.repository, this.defaultCredentials);
+    }
+
+    public void release(HstRequestContext context) {
     }
 }

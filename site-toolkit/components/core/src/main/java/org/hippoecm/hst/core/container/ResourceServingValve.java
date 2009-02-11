@@ -1,7 +1,6 @@
 package org.hippoecm.hst.core.container;
 
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.core.container.ValveContext;
+import org.hippoecm.hst.core.component.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class ResourceServingValve extends AbstractValve {
@@ -10,15 +9,21 @@ public class ResourceServingValve extends AbstractValve {
     public void invoke(HstRequestContext request, ValveContext context) throws ContainerException {
 
         if (!context.getServletResponse().isCommitted() && isResourceRequest()) {
-            HstComponentConfiguration target = null;
             
-            if (target != null) {
-                this.requestProcessor.processBeforeServeResource(context.getServletRequest(), context.getServletResponse(), request, target);
-                this.requestProcessor.processServeResource(context.getServletRequest(), context.getServletResponse(), request, target);
+            HstComponentWindow window = findResourceServingWindow(context.getRootComponentWindow());
+            
+            if (window != null) {
+                this.requestProcessor.processBeforeServeResource(context.getServletRequest(), context.getServletResponse(), request, window);
+                this.requestProcessor.processServeResource(context.getServletRequest(), context.getServletResponse(), request, window);
             }
         }
         
         // continue
         context.invokeNext(request);
+    }
+
+    private HstComponentWindow findResourceServingWindow(HstComponentWindow rootComponentWindow) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

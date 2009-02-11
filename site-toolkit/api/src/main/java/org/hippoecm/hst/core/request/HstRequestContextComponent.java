@@ -10,7 +10,7 @@ public interface HstRequestContextComponent
      * @param config
      * @return
      */
-    HstRequestContext create(Object request, Object response, Object config);
+    HstRequestContext create();
 
     /**
      * Release a request context back to the context pool.

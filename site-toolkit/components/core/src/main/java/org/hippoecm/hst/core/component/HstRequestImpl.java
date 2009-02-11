@@ -8,20 +8,19 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequest {
     
     protected HstRequestContext requestContext;
-    protected HstComponentConfiguration componentConfiguration;
     protected Map<String, Map<String, Object>> namespaceParametersMap = new HashMap<String, Map<String, Object>>();
     protected Map<String, Map<String, Object>> namespaceAttributesMap = new HashMap<String, Map<String, Object>>();
+    protected HstComponentWindow componentWindow;
     
-    public HstRequestImpl(HttpServletRequest servletRequest, HstRequestContext requestContext, HstComponentConfiguration componentConfiguration) {
+    public HstRequestImpl(HttpServletRequest servletRequest, HstRequestContext requestContext, HstComponentWindow componentWindow) {
         super(servletRequest);
         this.requestContext = requestContext;
-        this.componentConfiguration = componentConfiguration;
+        this.componentWindow = componentWindow;
     }
     
     public void setRequest(HttpServletRequest servletRequest) {
@@ -29,7 +28,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     }
 
     public Map<String, Object> getParameterMap() {
-        String referenceName = this.componentConfiguration.getReferenceName();
+        String referenceName = this.componentWindow.getReferenceName();
         return getParameterMap(referenceName);
     }
     
@@ -58,7 +57,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     }
     
     public Map<String, Object> getAttributeMap() {
-        String referenceName = this.componentConfiguration.getReferenceName();
+        String referenceName = this.componentWindow.getReferenceName();
         return getAttributeMap(referenceName);
     }
     
@@ -139,6 +138,10 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     protected String getReferenceByNamespace(String namespace) {
         // TODO: find the reference name of the current request context by both absolute namespace and relative namespace.
         return namespace;
+    }
+
+    public HstComponentWindow getComponentWindow() {
+        return this.componentWindow;
     }
 
 }

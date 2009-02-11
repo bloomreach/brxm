@@ -15,60 +15,25 @@
  */
 package org.hippoecm.hst.site.request;
 
+import javax.jcr.Credentials;
 import javax.jcr.Repository;
 
-import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.template.node.PageNode;
 
 public class HstRequestContextImpl implements HstRequestContext {
 
     protected Repository repository;
-    protected ContextBase contentContextBase;
-    protected ContextBase hstConfigurationContextBase;
-    protected PageNode pageNode;
-    // TODO: remove this.
-    protected String hstRequestUri;
+    protected Credentials defaultCredentials;
+    protected HstSiteMapItem siteMapItem;
 
-    public HstRequestContextImpl() {
+    public HstRequestContextImpl(Repository repository) {
+        this(repository, null);
     }
     
-    public PageNode getPageNode() {
-        return pageNode;   
-    }
-    
-    public ContextBase getContentContextBase() {
-        return contentContextBase;
-    }
-
-    public ContextBase getHstConfigurationContextBase() {
-        return hstConfigurationContextBase;
-    }
-
-    // TODO: remove this.
-    public String getHstRequestUri() {
-        return hstRequestUri;
-    }
-    
-    public void setPageNode(PageNode pageNode) {
-        this.pageNode = pageNode;
-    }
-    
-    public void setContentContextBase(ContextBase contentContextBase) {
-        this.contentContextBase = contentContextBase;
-    }
-
-    public void setHstConfigurationContextBase(ContextBase hstConfigurationContextBase) {
-        this.hstConfigurationContextBase = hstConfigurationContextBase;
-    }
-
-    public void setHstRequestUri(String hstRequestUri) {
-        this.hstRequestUri = hstRequestUri;
-    }
-
-    public void setRepository(Repository repository)
-    {
+    public HstRequestContextImpl(Repository repository, Credentials defaultCredentials) {
         this.repository = repository;
+        this.defaultCredentials = defaultCredentials;
     }
     
     public Repository getRepository()
@@ -76,23 +41,16 @@ public class HstRequestContextImpl implements HstRequestContext {
         return this.repository;
     }
 
-    // TODO: remove this.
-    public String getServerName()
-    {
-        return null;
+    public Credentials getDefaultCredentials() {
+        return this.defaultCredentials;
+    }
+    
+    public void setSiteMapItem(HstSiteMapItem siteMapItem) {
+        this.siteMapItem = siteMapItem;
     }
 
-    public String getUserID()
-    {
-        // TODO Auto-generated method stub
-        return null;
+    public HstSiteMapItem getSiteMapItem() {
+        return this.siteMapItem;
     }
-
-    // TODO: remove this.
-    public String getRequestURI()
-    {
-        return null;
-    }
-
 
 }

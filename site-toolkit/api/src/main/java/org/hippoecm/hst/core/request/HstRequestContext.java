@@ -15,10 +15,10 @@
  */
 package org.hippoecm.hst.core.request;
 
+import javax.jcr.Credentials;
 import javax.jcr.Repository;
 
-import org.hippoecm.hst.core.context.ContextBase;
-import org.hippoecm.hst.core.template.node.PageNode;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 /**
  * HstRequestContext provides repository content context
@@ -30,21 +30,8 @@ public interface HstRequestContext {
     
     public Repository getRepository();
     
-    public String getUserID();
-
-    public PageNode getPageNode();
+    public Credentials getDefaultCredentials();
     
-    public ContextBase getContentContextBase();
-
-    public ContextBase getHstConfigurationContextBase();
-    
-    // TODO: remove this.
-    public String getServerName();
-    
-    // TODO: remove this.
-    public String getRequestURI();
-    
-    // TODO: remove this.
-    public String getHstRequestUri();
+    public HstSiteMapItem getSiteMapItem();
     
 }

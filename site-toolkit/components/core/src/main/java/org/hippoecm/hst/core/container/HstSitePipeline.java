@@ -3,6 +3,7 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.hippoecm.hst.core.component.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstSitePipeline implements Pipeline
@@ -55,9 +56,11 @@ public class HstSitePipeline implements Pipeline
     private static final class Invocation implements ValveContext
     {
 
+        private final Valve[] valves;
+
         private final ServletRequest servletRequest;
         private final ServletResponse servletResponse;
-        private final Valve[] valves;
+        private HstComponentWindow rootComponentWindow;
 
         private int at = 0;
 
@@ -84,6 +87,14 @@ public class HstSitePipeline implements Pipeline
 
         public ServletResponse getServletResponse() {
             return this.servletResponse;
+        }
+
+        public void setRootComponentWindow(HstComponentWindow rootComponentWindow) {
+            this.rootComponentWindow = rootComponentWindow;
+        }
+        
+        public HstComponentWindow getRootComponentWindow() {
+            return this.rootComponentWindow;
         }
     }
 }

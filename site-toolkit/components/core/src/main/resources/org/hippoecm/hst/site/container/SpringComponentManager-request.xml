@@ -19,9 +19,8 @@
 
   <!-- Commons configuration from collab.properties -->
   <bean id="org.hippoecm.hst.core.request.HstRequestContextComponent" class="org.hippoecm.hst.site.request.HstRequestContextComponentImpl">
-    <constructor-arg>
-      <ref bean="org.hippoecm.hst.core.jcr.pool.PoolingRepository" />
-    </constructor-arg>
+    <constructor-arg ref="org.hippoecm.hst.core.jcr.pool.PoolingRepository" />
+    <constructor-arg ref="javax.jcr.Credentials" />
   </bean>
   
   <bean id="org.hippoecm.hst.core.request.HstRequestProcessor" class="org.hippoecm.hst.site.container.HstRequestProcessorImpl">

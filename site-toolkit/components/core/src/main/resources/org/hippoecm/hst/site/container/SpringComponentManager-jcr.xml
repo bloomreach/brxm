@@ -17,6 +17,11 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
+  <bean id="javax.jcr.Credentials" class="javax.jcr.SimpleCredentials">
+    <constructor-arg value="${repository.user.name}" />
+    <constructor-arg value="${repository.password}" />
+  </bean>
+      
   <!-- JCR Session Pool -->
   <bean id="org.hippoecm.hst.core.jcr.pool.PoolingRepository" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
         init-method="initialize" destroy-method="close">
@@ -34,13 +39,7 @@
       </bean>
     </property>
     
-    <!-- default credentials for read-only sessions -->
-    <property name="defaultCredentials">
-      <bean class="javax.jcr.SimpleCredentials">
-        <constructor-arg value="${repository.user.name}" />
-        <constructor-arg value="${repository.password}" />
-      </bean>
-    </property>
+    <property name="defaultCredentials" ref="javax.jcr.Credentials" />
     
     <!-- session proxy factories -->
     <property name="sessionDecorator">

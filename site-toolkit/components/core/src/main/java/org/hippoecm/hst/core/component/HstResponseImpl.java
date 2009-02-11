@@ -15,13 +15,13 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public class HstResponseImpl extends HttpServletResponseWrapper implements HstResponse
 {
     protected HstRequestContext requestContext;
-    protected HstComponentConfiguration componentConfiguration;
+    protected HstComponentWindow componentWindow;
     protected String redirectLocation;
     
-    public HstResponseImpl(HttpServletResponse response, HstRequestContext requestContext, HstComponentConfiguration componentConfiguration) {
+    public HstResponseImpl(HttpServletResponse response, HstRequestContext requestContext, HstComponentWindow componentWindow) {
         super(response);
         this.requestContext = requestContext;
-        this.componentConfiguration = componentConfiguration;
+        this.componentWindow = componentWindow;
     }
 
     public void setResponse(HttpServletResponse response) {
