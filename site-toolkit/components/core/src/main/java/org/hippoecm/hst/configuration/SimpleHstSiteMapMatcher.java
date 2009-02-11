@@ -3,12 +3,12 @@ package org.hippoecm.hst.configuration;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher;
-import org.hippoecm.hst.core.mapping.PathUtilities;
+import org.hippoecm.hst.core.util.PathUtils;
 
 public class SimpleHstSiteMapMatcher implements HstSiteMapMatcher{
 
     public MatchResult match(String path, HstSite hstSite) {
-        path = PathUtilities.normalizePath(path);
+        path = PathUtils.normalizePath(path);
         String[] elements = path.split("/"); 
         
         HstSiteMapItem hstSiteMapItem = hstSite.getSiteMap().getSiteMapItem(elements[0]);

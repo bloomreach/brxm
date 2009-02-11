@@ -18,9 +18,6 @@ package org.hippoecm.hst.site.request;
 import javax.jcr.Repository;
 
 import org.hippoecm.hst.core.context.ContextBase;
-import org.hippoecm.hst.core.domain.RepositoryMapping;
-import org.hippoecm.hst.core.mapping.URLMapping;
-import org.hippoecm.hst.core.mapping.URLMappingManager;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.template.node.PageNode;
 
@@ -29,40 +26,15 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected Repository repository;
     protected ContextBase contentContextBase;
     protected ContextBase hstConfigurationContextBase;
-    protected URLMapping absoluteUrlMapping;
-    protected URLMapping relativeUrlMapping;
     protected PageNode pageNode;
-    protected RepositoryMapping repositoryMapping;
-    protected URLMappingManager urlMappingManager;
     // TODO: remove this.
     protected String hstRequestUri;
 
     public HstRequestContextImpl() {
     }
     
-    public RepositoryMapping getRepositoryMapping() {
-        return repositoryMapping;
-    }
-    
     public PageNode getPageNode() {
         return pageNode;   
-    }
-    
-    public URLMappingManager getURLMappingManager(){
-        return this.urlMappingManager;
-    }
-    
-    public URLMapping getUrlMapping() {
-        // default the relative url mapping is returned
-        return this.getRelativeUrlMapping();
-    }
-    
-    public URLMapping getAbsoluteUrlMapping() {
-        return absoluteUrlMapping;
-    }
-
-    public URLMapping getRelativeUrlMapping() {
-        return relativeUrlMapping;
     }
     
     public ContextBase getContentContextBase() {
@@ -78,32 +50,16 @@ public class HstRequestContextImpl implements HstRequestContext {
         return hstRequestUri;
     }
     
-    public void setRepositoryMapping(RepositoryMapping repositoryMapping) {
-        this.repositoryMapping = repositoryMapping;
-    }
-    
     public void setPageNode(PageNode pageNode) {
         this.pageNode = pageNode;
     }
     
-    public void setAbsoluteUrlMapping(URLMapping absoluteUrlMapping) {
-        this.absoluteUrlMapping = absoluteUrlMapping;
-    }
-
-    public void setRelativeUrlMapping(URLMapping relativeUrlMapping) {
-        this.relativeUrlMapping = relativeUrlMapping;
-    }
-
     public void setContentContextBase(ContextBase contentContextBase) {
         this.contentContextBase = contentContextBase;
     }
 
     public void setHstConfigurationContextBase(ContextBase hstConfigurationContextBase) {
         this.hstConfigurationContextBase = hstConfigurationContextBase;
-    }
-
-    public void setURLMappingManager(URLMappingManager urlMappingManager) {
-        this.urlMappingManager = urlMappingManager;
     }
 
     public void setHstRequestUri(String hstRequestUri) {

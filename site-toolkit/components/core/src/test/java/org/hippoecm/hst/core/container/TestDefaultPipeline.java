@@ -1,7 +1,5 @@
 package org.hippoecm.hst.core.container;
 
-import static org.junit.Assert.fail;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

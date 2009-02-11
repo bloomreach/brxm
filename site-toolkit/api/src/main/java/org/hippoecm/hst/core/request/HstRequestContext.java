@@ -18,9 +18,6 @@ package org.hippoecm.hst.core.request;
 import javax.jcr.Repository;
 
 import org.hippoecm.hst.core.context.ContextBase;
-import org.hippoecm.hst.core.domain.RepositoryMapping;
-import org.hippoecm.hst.core.mapping.URLMapping;
-import org.hippoecm.hst.core.mapping.URLMappingManager;
 import org.hippoecm.hst.core.template.node.PageNode;
 
 /**
@@ -35,17 +32,7 @@ public interface HstRequestContext {
     
     public String getUserID();
 
-    public RepositoryMapping getRepositoryMapping();
-
     public PageNode getPageNode();
-    
-    public URLMappingManager getURLMappingManager();
-    
-    public URLMapping getUrlMapping();
-    
-    public URLMapping getAbsoluteUrlMapping();
-
-    public URLMapping getRelativeUrlMapping();
     
     public ContextBase getContentContextBase();
 

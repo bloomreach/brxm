@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.mapping;
+package org.hippoecm.hst.core.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -27,11 +27,15 @@ import org.slf4j.LoggerFactory;
  * Helper class to encode and decode node from and to urls
  * TODO: Add test cases: without them it's very tricky to get this exactly right
  */
-public class PathUtilities {
+public class PathUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(PathUtilities.class);
+    private static final Logger log = LoggerFactory.getLogger(PathUtils.class);
     private static final String HTML_SUFFIX = ".html";
     private static final String SLASH_ENCODED = "__slash__";
+    
+    private PathUtils() {
+        
+    }
 
     /**
      * remove trailing and leading slashes
@@ -190,3 +194,4 @@ public class PathUtilities {
     }
 
 }
+
