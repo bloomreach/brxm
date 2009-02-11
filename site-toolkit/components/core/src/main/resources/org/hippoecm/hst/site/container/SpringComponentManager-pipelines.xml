@@ -39,6 +39,7 @@
   <!-- Main invocable valves for each request -->
     
   <bean id="contextResolvingValve" class="org.hippoecm.hst.core.container.ContextResolvingValve">
+    <constructor-arg ref="org.hippoecm.hst.configuration.HstSites" />
   </bean>
   
   <bean id="actionValve" class="org.hippoecm.hst.core.container.ActionValve">

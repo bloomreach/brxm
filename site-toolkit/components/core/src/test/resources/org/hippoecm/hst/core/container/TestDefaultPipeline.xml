@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-*.xml" />
+  
+  <bean id="javax.servlet.http.HttpServletRequest"
+        class="com.mockrunner.mock.web.MockHttpServletRequest">
+     <property name="serverName" value="preview.hippoecm.org" />
+     <property name="serverPort" value="80" />
+     <property name="contextPath" value="/site" />
+     <property name="requestURI" value="/content/news/2009" />
+     <property name="servletPath" value="/content" />
+     <property name="pathInfo" value="/news/2009" />
+  </bean>
+  
+  <bean id="javax.servlet.http.HttpServletResponse"
+        class="com.mockrunner.mock.web.MockHttpServletResponse">
+  </bean>
+
+</beans>
