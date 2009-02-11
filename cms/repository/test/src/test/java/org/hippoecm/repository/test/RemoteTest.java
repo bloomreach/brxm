@@ -40,7 +40,6 @@ import org.junit.runners.Suite;
   org.hippoecm.repository.FacetedNavigationNamespaceTest.class,
   org.hippoecm.repository.FacetedNavigationTest.class,
   org.hippoecm.repository.HREPTWO280Test.class,
-  org.hippoecm.repository.HippoISMTest.class,
   org.hippoecm.repository.HREPTWO283IssueTest.class,
   org.hippoecm.repository.CanonicalPathTest.class,
   org.hippoecm.repository.HREPTWO690Test.class,

@@ -83,57 +83,18 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
                                                                             NoSuchNodeTypeException, RepositoryException {
-        // FIXME probably broken
-        return new NodeIteratorPendingChanges(factory, this, remoteSession.pendingChanges(remoteSession.getRootNode().getNode(node.getPath().substring(1)), nodeType, prune));
+        Node target = org.hippoecm.repository.decorating.NodeDecorator.unwrap(node);
+        return ((org.apache.jackrabbit.jcr2spi.HippoSessionImpl)session).pendingChanges(target, nodeType, prune);
     }
 
     public NodeIterator pendingChanges(Node node, String nodeType) throws NamespaceException, NoSuchNodeTypeException,
                                                                           RepositoryException {
-        // FIXME probably broken
-        return new NodeIteratorPendingChanges(factory, this, remoteSession.pendingChanges(remoteSession.getRootNode().getNode(node.getPath().substring(1)), nodeType));
+        Node target = org.hippoecm.repository.decorating.NodeDecorator.unwrap(node);
+        return ((org.apache.jackrabbit.jcr2spi.HippoSessionImpl)session).pendingChanges(target, nodeType, false);
     }
 
     public NodeIterator pendingChanges() throws RepositoryException {
-        // FIXME probably broken
-        return new NodeIteratorPendingChanges(factory, this, remoteSession.pendingChanges());
-    }
-
-    private class NodeIteratorPendingChanges extends org.hippoecm.repository.decorating.RangeIteratorDecorator implements NodeIterator {
-        public NodeIteratorPendingChanges(DecoratorFactory factory, Session session, NodeIterator iterator) {
-            super(factory, session, iterator);
-        }
-
-        public Node nextNode() {
-            try {
-                Node node = (Node) next();
-                String path = node.getPath();
-                return factory.getNodeDecorator(session, session.getRootNode().getNode(path.substring(1)));
-            } catch(RepositoryException ex) {
-                return null;
-            }
-        }
-
-        public Object next() {
-            try {
-                Object object = iterator.next();
-                if (object instanceof Version) {
-                    return factory.getVersionDecorator(session, (Version) session.getRootNode().getNode(((Version) object).getPath().substring(1)));
-                } else if (object instanceof VersionHistory) {
-                    return factory.getVersionHistoryDecorator(session, (VersionHistory) session.getRootNode().getNode(((VersionHistory) object).getPath().substring(1)));
-                } else if (object instanceof Node) {
-                    return factory.getNodeDecorator(session, session.getRootNode().getNode(((Node) object).getPath().substring(1)));
-                } else if (object instanceof Property) {
-                    return factory.getPropertyDecorator(session, session.getRootNode().getProperty(((Property) object).getPath().substring(1)));
-                } else if (object instanceof Item) {
-                    throw new UnsupportedOperationException("No decorator available for " + object);
-                } else {
-                    throw new UnsupportedOperationException("No decorator available for " + object);
-                }
-
-            } catch(RepositoryException ex) {
-                return null;
-            }
-        }
+        return ((org.apache.jackrabbit.jcr2spi.HippoSessionImpl)session).pendingChanges(null, null, false);
     }
 
     public void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
