@@ -66,7 +66,7 @@ class SPIHippoRepository extends HippoRepositoryImpl {
         @SuppressWarnings("unused")
         Repository clientRepository = repositoryFactory.getRepository(location);
         final ClientRepositoryService clientService = new ClientRepositoryService(remoteRepository.getRepositoryService());
-        repository = RepositoryImpl.create(new RepositoryConfig() {
+        repository = org.apache.jackrabbit.jcr2spi.HippoRepositoryImpl.create(new RepositoryConfig() {
 
             public RepositoryService getRepositoryService() throws RepositoryException {
                 return clientService;
