@@ -23,15 +23,27 @@
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:component</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:referencecomponent" sv:type="String">
+                <sv:property sv:name="hst:renderpath" sv:type="String">
+                    <sv:value>header.jsp</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:componentclassname" sv:type="String">
+                    <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Header</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:referencename" sv:type="String">
                     <sv:value>h</sv:value>
                 </sv:property>
                 <sv:node sv:name="title">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>hst:component</sv:value>
                     </sv:property>
-                    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                        <sv:value>h.t</sv:value>
+                    <sv:property sv:name="hst:renderpath" sv:type="String">
+                        <sv:value>title.jsp</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:componentclassname" sv:type="String">
+                        <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.DocumentTitle</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:referencename" sv:type="String">
+                        <sv:value>t</sv:value>
                     </sv:property>
                 </sv:node>
             </sv:node>
