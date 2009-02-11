@@ -1,0 +1,11 @@
+
+<'testproject'='http://www.hippoecm.org/hst/nt/testproject/1.0'>
+<'hippostd'='http://www.hippoecm.org/hippostd/nt/1.2'>
+<'hippo'='http://www.hippoecm.org/nt/1.2'>
+
+[testproject:textpage] > hippostd:publishable, hippostd:publishableSummary, hippo:document
++ testproject:body (hippostd:html)
+- testproject:summary (string)
+- testproject:title (string)
+- testproject:date (date)
+

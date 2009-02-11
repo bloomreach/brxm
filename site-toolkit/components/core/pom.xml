@@ -113,58 +113,18 @@
       <artifactId>mockrunner</artifactId>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
+      <artifactId>hst-addon-testcontents</artifactId>
+      <version>${pom.version}</version>
+      <scope>test</scope>      
+    </dependency>
 
   </dependencies>
 
   <build>
     <defaultGoal>package</defaultGoal>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.2</version>
-        <executions>
-          <execution>
-            <id>generate-myproject-content-extension</id>
-            <phase>process-test-resources</phase>
-            <configuration>
-              <tasks>
-
-                <taskdef name="texen" classname="org.apache.texen.ant.TexenTask"/>
-                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy"/>
-                
-                <property name="texenContextProperties" value="${basedir}/myproject.properties" />
-                <property name="texenTemplatePath" value="${basedir}/../../maven/archetype/src/main/resources/archetype-resources/content/src/main/resources" />
-                <property name="texenOutputDirectory" value="${basedir}/target/test-classes" />
-
-                <fileset id="contentFiles" dir="${basedir}/../../maven/archetype/src/main/resources/archetype-resources/content/src/main/resources">
-                  <include name="**/*.xml" />
-                  <include name="**/*.cnd" />
-                </fileset>
-                
-                <groovy src="GenerateMyProjectContents.groovy" />
-                
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.texen</groupId>
-            <artifactId>texen</artifactId>
-            <version>1.0</version>
-          </dependency>
-          <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>1.5.7</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-    </plugins>
   </build>
 
 </project>
