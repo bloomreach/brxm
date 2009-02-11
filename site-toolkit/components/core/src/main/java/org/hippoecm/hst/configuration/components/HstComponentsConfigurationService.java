@@ -65,7 +65,7 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
                     log.debug("Skipping '{}' hst:component + child components because it does not contain the mandatory property '{}'",Configuration.COMPONENT_PROPERTY_REFERECENCENAME, child.getPath());
                 }
             } else if(child.isNodeType(Configuration.NODETYPE_HST_COMPONENTGROUP)) {
-                for(NodeIterator groupIt = child.getNodes(); nodeIt.hasNext();) {
+                for(NodeIterator groupIt = child.getNodes(); groupIt.hasNext();) {
                     Node groupChild = groupIt.nextNode();
                     if(groupChild == null) {
                         log.warn("skipping null node");
