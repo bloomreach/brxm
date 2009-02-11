@@ -10,13 +10,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class AggregationValve extends AbstractValve {
     
-    protected HstRequestProcessor requestProcessor;
-    
-    public AggregationValve(HstRequestProcessor requestProcessor) {
-        super();
-        this.requestProcessor = requestProcessor;
-    }
-    
     @Override
     public void invoke(HstRequestContext request, ValveContext context) throws ContainerException {
         

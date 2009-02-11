@@ -126,8 +126,6 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         // TODO: find component's servlet context here.
         RequestDispatcher dispatcher = componentServletContext.getRequestDispatcher(componentConfiguration.getRenderPath());
         
-        servletRequest.setAttribute(HstComponent.HST_COMPONENT_REQUEST_CONTEXT, requestContext);
- 
         try {
             dispatcher.include(servletRequest, servletResponse);
         } catch (IOException e) {

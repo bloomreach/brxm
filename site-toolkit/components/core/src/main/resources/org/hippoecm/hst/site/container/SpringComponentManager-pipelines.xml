@@ -29,40 +29,37 @@
       </list>
     </property>
   </bean>
-  
+
+  <bean id="abstractValve" abstract="true">
+    <property name="hstSites" ref="org.hippoecm.hst.configuration.HstSites" />
+    <property name="domainMappings" ref="org.hippoecm.hst.core.domain.DomainMappings" />
+    <property name="siteMapMatcher" ref="org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher" />
+    <property name="requestProcessor" ref="org.hippoecm.hst.core.request.HstRequestProcessor" />
+  </bean>
+
   <!-- Pre-processing valves -->
   
-  <bean id="initializationValve" class="org.hippoecm.hst.core.container.InitializationValve">
+  <bean id="initializationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.InitializationValve">
     <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
   </bean>
   
   <!-- Main invocable valves for each request -->
     
-  <bean id="contextResolvingValve" class="org.hippoecm.hst.core.container.ContextResolvingValve">
-    <constructor-arg ref="org.hippoecm.hst.configuration.HstSites" />
+  <bean id="contextResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ContextResolvingValve">
   </bean>
   
-  <bean id="actionValve" class="org.hippoecm.hst.core.container.ActionValve">
-    <constructor-arg>
-      <ref bean="org.hippoecm.hst.core.request.HstRequestProcessor" />
-    </constructor-arg>
+  <bean id="actionValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ActionValve">
   </bean>
   
-  <bean id="aggregationValve" class="org.hippoecm.hst.core.container.AggregationValve">
-    <constructor-arg>
-      <ref bean="org.hippoecm.hst.core.request.HstRequestProcessor" />
-    </constructor-arg>
+  <bean id="aggregationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.AggregationValve">
   </bean>
   
-  <bean id="resourceServingValve" class="org.hippoecm.hst.core.container.ResourceServingValve">
-    <constructor-arg>
-      <ref bean="org.hippoecm.hst.core.request.HstRequestProcessor" />
-    </constructor-arg>
+  <bean id="resourceServingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ResourceServingValve">
   </bean>
   
   <!-- Post-processing valves -->
   
-  <bean id="cleanupValve" class="org.hippoecm.hst.core.container.CleanupValve">
+  <bean id="cleanupValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CleanupValve">
     <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
   </bean>
   

@@ -6,14 +6,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class ResourceServingValve extends AbstractValve {
     
-    protected HstRequestProcessor requestProcessor;
-    
-    public ResourceServingValve(HstRequestProcessor requestProcessor) {
-        super();
-        
-        this.requestProcessor = requestProcessor;
-    }
-    
     @Override
     public void invoke(HstRequestContext request, ValveContext context) throws ContainerException {
 

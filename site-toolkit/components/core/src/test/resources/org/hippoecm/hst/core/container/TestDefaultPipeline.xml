@@ -10,7 +10,7 @@
   
   <bean id="javax.servlet.http.HttpServletRequest"
         class="com.mockrunner.mock.web.MockHttpServletRequest">
-     <property name="serverName" value="preview.hippoecm.org" />
+     <property name="serverName" value="preview.myproject.hippoecm.org" />
      <property name="serverPort" value="80" />
      <property name="contextPath" value="/site" />
      <property name="requestURI" value="/content/news/2009" />
@@ -21,5 +21,5 @@
   <bean id="javax.servlet.http.HttpServletResponse"
         class="com.mockrunner.mock.web.MockHttpServletResponse">
   </bean>
-
+  
 </beans>

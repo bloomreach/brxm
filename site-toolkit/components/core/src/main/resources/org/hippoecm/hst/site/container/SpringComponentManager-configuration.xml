@@ -27,6 +27,20 @@
       </list>
     </property>
   </bean>
+  
+  <bean id="org.hippoecm.hst.core.domain.DomainMappings" class="org.hippoecm.hst.core.domain.DomainMappingsImpl">
+    <constructor-arg>
+      <list>
+        <bean class="org.hippoecm.hst.core.domain.DomainMappingImpl">
+          <constructor-arg value="preview.myproject.hippoecm.org" />
+          <constructor-arg value="myproject" />
+        </bean>
+      </list>
+    </constructor-arg>
+  </bean>
+  
+  <bean id="org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher" class="org.hippoecm.hst.configuration.SimpleHstSiteMapMatcher">
+  </bean>
 
 </beans>
 
