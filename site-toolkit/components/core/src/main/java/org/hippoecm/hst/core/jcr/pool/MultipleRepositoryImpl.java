@@ -32,10 +32,20 @@ public class MultipleRepositoryImpl implements MultipleRepository {
     public Repository getRepositoryByCredentials(Credentials credentials) {
         return this.repositoryMap.get(new CredentialsWrapper(credentials));
     }
+    
+    public Map<Credentials, Repository> getRepositoryMap() {
+        Map<Credentials, Repository> repoMap = new HashMap<Credentials, Repository>();
+        
+        for (Map.Entry<CredentialsWrapper, Repository> entry : this.repositoryMap.entrySet()) {
+            repoMap.put(entry.getKey().getCredentials(), entry.getValue());
+        }
+        
+        return repoMap;
+    }
 
     public String getDescriptor(String arg0) {
         String descriptor = null;
-        Repository curRepository = tlCurrentRepository.get();
+        Repository curRepository = getCurrentThreadRepository();
         
         if (curRepository != null) {
             descriptor = curRepository.getDescriptor(arg0);
@@ -46,7 +56,7 @@ public class MultipleRepositoryImpl implements MultipleRepository {
 
     public String[] getDescriptorKeys() {
         String [] descriptorKeys = null;
-        Repository curRepository = tlCurrentRepository.get();
+        Repository curRepository = getCurrentThreadRepository();
         
         if (curRepository != null) {
             descriptorKeys = curRepository.getDescriptorKeys();
@@ -56,52 +66,39 @@ public class MultipleRepositoryImpl implements MultipleRepository {
     }
 
     public Session login() throws LoginException, RepositoryException {
-        Repository repository = this.repositoryMap.get(this.defaultCredentialsWrapper);
-        
-        if (repository == null) {
-            throw new RepositoryException("The default repository is not available."); 
-        }
-        
-        tlCurrentRepository.set(repository);
-        
-        return repository.login();
+        return login(this.defaultCredentialsWrapper);
     }
 
-    public Session login(Credentials arg0) throws LoginException, RepositoryException {
-        Repository repository = this.repositoryMap.get(arg0);
+    public Session login(Credentials credentials) throws LoginException, RepositoryException {
+        return login(new CredentialsWrapper(credentials));
+    }
+    
+    protected Session login(CredentialsWrapper credentialsWrapper) throws LoginException, RepositoryException {
+        Repository repository = this.repositoryMap.get(credentialsWrapper);
         
         if (repository == null) {
             throw new RepositoryException("The repository is not available."); 
         }
 
-        tlCurrentRepository.set(repository);
+        setCurrentThreadRepository(repository);
         
-        return repository.login(arg0);
+        return repository.login(credentialsWrapper.getCredentials());
     }
 
-    public Session login(String arg0) throws LoginException, NoSuchWorkspaceException, RepositoryException {
-        Repository repository = this.repositoryMap.get(this.defaultCredentialsWrapper);
-        
-        if (repository == null) {
-            throw new RepositoryException("The default repository is not available."); 
-        }
-
-        tlCurrentRepository.set(repository);
-        
-        return repository.login(arg0);
+    public Session login(String workspace) throws LoginException, NoSuchWorkspaceException, RepositoryException {
+        return login();
     }
 
-    public Session login(Credentials arg0, String arg1) throws LoginException, NoSuchWorkspaceException,
-            RepositoryException {
-        Repository repository = this.repositoryMap.get(arg0);
-        
-        if (repository == null) {
-            throw new RepositoryException("The repository is not available."); 
-        }
-        
+    public Session login(Credentials credentials, String workspace) throws LoginException, NoSuchWorkspaceException, RepositoryException {
+        return login(credentials);
+    }
+    
+    protected Repository getCurrentThreadRepository() {
+        return tlCurrentRepository.get();
+    }
+    
+    protected void setCurrentThreadRepository(Repository repository) {
         tlCurrentRepository.set(repository);
-
-        return repository.login(arg0, arg1);
     }
 
     private boolean equalsCredentials(Credentials credentials1, Credentials credentials2) {
@@ -119,10 +116,22 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         private static final long serialVersionUID = 1L;
         
         private final Credentials credentials;
+        private String userID;
+        private String password;
+        private int hash;
 
         private CredentialsWrapper(final Credentials credentials) {
             super();
             this.credentials = credentials;
+            
+            if (this.credentials instanceof SimpleCredentials) {
+                SimpleCredentials sc = (SimpleCredentials) this.credentials;
+                this.userID = sc.getUserID();
+                this.password = new String(sc.getPassword());
+                this.hash = new StringBuilder(this.userID).append(':').append(this.password).toString().hashCode();
+            } else {
+                this.hash = this.credentials.hashCode();
+            }
         }
         
         public Credentials getCredentials() {
@@ -131,7 +140,13 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         
         @Override
         public boolean equals(final Object other) {
-            return equalsCredentials(this.credentials, (Credentials) other);
+            CredentialsWrapper cwOther = (CredentialsWrapper) other;
+            return (this.userID.equals(cwOther.userID) && this.password.equals(cwOther.password));
+        }
+        
+        @Override
+        public int hashCode() {
+            return this.hash;
         }
     }
 }

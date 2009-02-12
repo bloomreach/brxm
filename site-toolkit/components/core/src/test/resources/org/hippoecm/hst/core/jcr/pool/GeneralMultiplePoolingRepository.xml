@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+  
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="properties">
+      <props>
+        
+        <prop key="repository.address">target/storage</prop>
+        <prop key="writable.repository.address">target/storage-writable</prop>
+        <!-- If you want the external repository, use the following instead of the above.-->
+        <!--
+        <prop key="repository.address">rmi://127.0.0.1/hipporepository</prop>
+        <prop key="writable.repository.address">rmi://127.0.0.1/hipporepository</prop>
+        -->
+        
+        <prop key="repository.user.name">editor</prop>
+        <prop key="repository.password">editor</prop>
+        
+        <prop key="writable.repository.user.name">admin</prop>
+        <prop key="writable.repository.password">admin</prop>
+        
+      </props>
+    </property>
+  </bean>
+
+  <bean id="javax.jcr.Credentials.readOnly" class="javax.jcr.SimpleCredentials">
+    <constructor-arg value="${repository.user.name}" />
+    <constructor-arg value="${repository.password}" />
+  </bean>
+  
+  <bean id="javax.jcr.Credentials.writable" class="javax.jcr.SimpleCredentials">
+    <constructor-arg value="${writable.repository.user.name}" />
+    <constructor-arg value="${writable.repository.password}" />
+  </bean>
+  
+  <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.MultipleRepositoryImpl">
+    <!-- Delegating session pool repositories -->
+    <constructor-arg>
+      <map>
+        <entry key-ref="javax.jcr.Credentials.readOnly" value-ref="javax.jcr.Repository.readOnly" />
+        <entry key-ref="javax.jcr.Credentials.writable" value-ref="javax.jcr.Repository.writable" />
+      </map>
+    </constructor-arg>
+    <!-- The default credentials for login() without credentials parameter. -->
+    <constructor-arg ref="javax.jcr.Credentials.readOnly" />
+  </bean>
+  
+  <bean id="javax.jcr.Repository.readOnly" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
+        init-method="initialize" destroy-method="close">
+    
+    <!-- delegated JCR repository -->
+    <property name="repository">
+      <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="org.hippoecm.repository.HippoRepositoryFactory" />
+        <property name="targetMethod" value="getHippoRepository" />
+        <property name="arguments">
+          <list>
+            <value>${repository.address}</value>
+          </list>
+        </property>
+      </bean>
+    </property>
+    
+    <property name="defaultCredentials" ref="javax.jcr.Credentials.readOnly" />
+    
+    <!-- session proxy factories -->
+    <property name="sessionDecorator">
+      <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionDecoratorProxyFactoryImpl" />
+    </property>
+    
+    <!-- If you want read-only sessions, then use the following instead.  
+    <property name="sessionDecorator">
+      <bean class="org.hippoecm.hst.core.jcr.pool.ReadOnlySessionDecoratorProxyFactoryImpl" />
+    </property>
+    -->
+    
+    <property name="pooledSessionLifecycleManagement">
+      <bean id="org.hippoecm.hst.core.jcr.pool.PoolingRepository.pooledSessionLifecycleManagement" 
+            class=" org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement">
+      </bean>
+    </property>
+    
+    <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
+    <property name="maxActive" value="25" />
+    <property name="maxIdle" value="5" />
+    <property name="minIdle" value="0" />
+    <property name="initialSize" value="0" />
+    <property name="maxWait" value="10000" />
+    <property name="testOnBorrow" value="true" />
+    <property name="testOnReturn" value="false" />
+    <property name="testWhileIdle" value="false" />
+    <property name="timeBetweenEvictionRunsMillis" value="60000" />
+    <property name="numTestsPerEvictionRun" value="1" />
+    <property name="minEvictableIdleTimeMillis" value="60000" />
+  </bean>
+
+  <bean id="javax.jcr.Repository.writable" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
+        init-method="initialize" destroy-method="close">
+    
+    <!-- delegated JCR repository -->
+    <property name="repository">
+      <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="org.hippoecm.repository.HippoRepositoryFactory" />
+        <property name="targetMethod" value="getHippoRepository" />
+        <property name="arguments">
+          <list>
+            <value>${writable.repository.address}</value>
+          </list>
+        </property>
+      </bean>
+    </property>
+    
+    <property name="defaultCredentials" ref="javax.jcr.Credentials.writable" />
+    
+    <!-- session proxy factories -->
+    <property name="sessionDecorator">
+      <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionDecoratorProxyFactoryImpl" />
+    </property>
+    
+    <!-- If you want read-only sessions, then use the following instead.  
+    <property name="sessionDecorator">
+      <bean class="org.hippoecm.hst.core.jcr.pool.ReadOnlySessionDecoratorProxyFactoryImpl" />
+    </property>
+    -->
+    
+    <property name="pooledSessionLifecycleManagement">
+      <bean class=" org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement" />
+    </property>
+    
+    <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
+    <property name="maxActive" value="25" />
+    <property name="maxIdle" value="5" />
+    <property name="minIdle" value="0" />
+    <property name="initialSize" value="0" />
+    <property name="maxWait" value="10000" />
+    <property name="testOnBorrow" value="true" />
+    <property name="testOnReturn" value="false" />
+    <property name="testWhileIdle" value="false" />
+    <property name="timeBetweenEvictionRunsMillis" value="60000" />
+    <property name="numTestsPerEvictionRun" value="1" />
+    <property name="minEvictableIdleTimeMillis" value="60000" />
+  </bean>
+  
+</beans>

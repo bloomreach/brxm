@@ -53,9 +53,7 @@
     -->
     
     <property name="pooledSessionLifecycleManagement">
-      <bean id="org.hippoecm.hst.core.jcr.pool.PoolingRepository.pooledSessionLifecycleManagement" 
-            class="org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement">
-      </bean>
+      <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement" />
     </property>
     
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
