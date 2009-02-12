@@ -20,6 +20,8 @@ import static org.junit.Assert.assertTrue;
 import javax.jcr.RepositoryException;
 
 import org.junit.Test;
+import org.junit.After;
+import org.junit.Before;
 
 public class FacetedNavigationHippoCountTest extends TestCase
 {
@@ -43,7 +45,18 @@ public class FacetedNavigationHippoCountTest extends TestCase
         "hippo:facets", "type"
     };
 
-    @Test public void testHippoCount() {
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    @Test
+    public void testHippoCount() {
         try {
             build(session, contents1);
             session.save();

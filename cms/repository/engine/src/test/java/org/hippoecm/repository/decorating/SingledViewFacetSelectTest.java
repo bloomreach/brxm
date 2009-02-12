@@ -25,8 +25,10 @@ import javax.jcr.Session;
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
 
-public class SingledViewFacetSelectTest  extends TestCase {
+public class SingledViewFacetSelectTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -86,6 +88,7 @@ public class SingledViewFacetSelectTest  extends TestCase {
         "hippo:modes",   "single"
     };
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         build(session, content1);
@@ -94,46 +97,28 @@ public class SingledViewFacetSelectTest  extends TestCase {
         session.save();
     }
 
-    @Test public void testFacetedSingledocumentView() throws Exception {
-        Session session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        Node normalSelectNode = session.getRootNode().getNode("test/normalselect");
-        Node singledViewNode = session.getRootNode().getNode("test/singledview");
-        assertTrue(confirmMultiple(normalSelectNode));
-        assertTrue(confirmSingle(singledViewNode));
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
-    private boolean confirmSingle(Node singledViewNode) throws RepositoryException {
-        SingledView singledView = new SingledView();
-        traverse(singledViewNode,singledView);
-        return singledView.isSingleView();
+    @Test
+    public void testFacetedSingledocumentView() throws Exception {
+        assertTrue(determineMaxVariants(session.getRootNode().getNode("test/normalselect")) > 1);
+        assertTrue(determineMaxVariants(session.getRootNode().getNode("test/singledview")) <= 1);
     }
 
-    private boolean confirmMultiple(Node normalSelectNode) throws RepositoryException {
-        SingledView singledView = new SingledView();
-        traverse(normalSelectNode,singledView);
-        return !singledView.isSingleView();
-
-    }
-
-    protected void traverse(Node node, SingledView singledView) throws RepositoryException {
-        if(node.getPrimaryNodeType().isNodeType(HippoNodeType.NT_HANDLE) && node.getNodes().getSize() > 1) {
-            singledView.setSingleView(false);
+    private int determineMaxVariants(Node node) throws RepositoryException {
+        int count = 0;
+        if (node.getPrimaryNodeType().isNodeType(HippoNodeType.NT_HANDLE)) {
+            count = (int) node.getNodes(node.getName()).getSize();
         }
-        for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
+        for (NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
             Node child = iter.nextNode();
-            traverse(child, singledView);
+            int subcount = determineMaxVariants(child);
+            if(subcount > count)
+                count = subcount;
         }
-    }
-
-    class SingledView {
-        boolean singleView = true;
-
-        public boolean isSingleView() {
-            return singleView;
-        }
-
-        public void setSingleView(boolean singleView) {
-            this.singleView = singleView;
-        }
+        return count;
     }
 }

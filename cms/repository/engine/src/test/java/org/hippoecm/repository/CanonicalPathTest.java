@@ -80,7 +80,8 @@ public class CanonicalPathTest extends TestCase {
      * A virtual node in facetsearch which is not a mirror of a hippo document returns null
      * for getCanonicalNode()
      */
-    @Test public void testFacetSearchNullCanonicalPath() throws RepositoryException{
+    @Test
+    public void testFacetSearchNullCanonicalPath() throws RepositoryException{
         Node facetSearchNode = commonFacetSearchSetup();
         assertTrue(((HippoNode)facetSearchNode.getNode("foo")).getCanonicalNode() == null);
     }
@@ -89,7 +90,8 @@ public class CanonicalPathTest extends TestCase {
      * A virtual node in facetsearch which IS a mirror of a hippo document returns
      * a node for getCanonicalNode()
      */
-    @Test public void testFacetSearchNotNullCanonicalPath() throws RepositoryException{
+    @Test
+    public void testFacetSearchNotNullCanonicalPath() throws RepositoryException{
         Node facetSearchNode = commonFacetSearchSetup();
         assertTrue(((HippoNode)facetSearchNode.getNode("foo").getNode(HippoNodeType.HIPPO_RESULTSET).getNode("mynode")).getCanonicalNode() != null);
     }
@@ -97,7 +99,8 @@ public class CanonicalPathTest extends TestCase {
     /*
      * Assert that the canonical node of a mirrored hippo document is not the same
      */
-    @Test public void testFacetSearchCanonicalNodeIsNotSameTest() throws RepositoryException{
+    @Test
+    public void testFacetSearchCanonicalNodeIsNotSameTest() throws RepositoryException{
         Node facetSearchNode = commonFacetSearchSetup();
         Node mirroredHippoDoc = facetSearchNode.getNode("foo").getNode(HippoNodeType.HIPPO_RESULTSET).getNode("mynode");
         Node canonical = ((HippoNode)mirroredHippoDoc).getCanonicalNode();
@@ -108,7 +111,8 @@ public class CanonicalPathTest extends TestCase {
      * A virtual node in facetselet which is not a mirror of a hippo document returns null
      * for getCanonicalNode()
      */
-    @Test public void testFacetSelectNullCanonicalPath() throws RepositoryException{
+    @Test
+    public void testFacetSelectNullCanonicalPath() throws RepositoryException{
         Node facetSelectNode = commonFacetSelectSetup();
         assertTrue(((HippoNode)facetSelectNode.getNode("nodes")).getCanonicalNode() == null);
     }
@@ -117,7 +121,8 @@ public class CanonicalPathTest extends TestCase {
      * A virtual node in facetselet which IS a mirror of a hippo document returns
      * a node for getCanonicalNode()
      */
-    @Test public void testFacetSelectNotNullCanonicalPath() throws RepositoryException{
+    @Test
+    public void testFacetSelectNotNullCanonicalPath() throws RepositoryException{
         Node facetSelectNode = commonFacetSelectSetup();
         assertTrue(((HippoNode)facetSelectNode.getNode("nodes").getNode("mynode")).getCanonicalNode() != null);
     }
@@ -125,7 +130,8 @@ public class CanonicalPathTest extends TestCase {
     /*
      * Assert that the canonical node of a mirrored hippo document is not the same
      */
-    @Test public void testFacetSelectCanonicalNodeIsNotSameTest() throws RepositoryException{
+    @Test
+    public void testFacetSelectCanonicalNodeIsNotSameTest() throws RepositoryException{
         Node facetSelectNode = commonFacetSelectSetup();
         Node mirroredHippoDoc = facetSelectNode.getNode("nodes").getNode("mynode");
         Node canonical = ((HippoNode)mirroredHippoDoc).getCanonicalNode();

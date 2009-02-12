@@ -43,11 +43,18 @@ public class HREPTWO690Test extends TestCase {
         "hippo:modes", "select"
     };
 
-    @Before public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
     }
 
-    @Test public void testIssue() throws RepositoryException {
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    @Test
+    public void testIssue() throws RepositoryException {
         Node result;
         build(session, content1);
         session.save();

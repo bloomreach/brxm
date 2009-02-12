@@ -189,12 +189,9 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
     }
 
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
-        while (session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-            session.save();
-        }
         if (!session.getRootNode().hasNode("test")) {
             session.getRootNode().addNode("test");
         }
@@ -202,22 +199,9 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
-        session.refresh(false);
-        if(session.getRootNode().getNode("test").hasNode("navigation")) {
-            session.getRootNode().getNode("test").getNode("navigation").remove();
-            session.save();
-        }
-        session.save();
-        session.refresh(false);
-        if(session.getRootNode().getNode("test").hasNode("documents")) {
-            session.getRootNode().getNode("test").getNode("documents").remove();
-            session.save();
-        }
-        if (session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-            session.save();
-        }
+        super.tearDown();
     }
 
     protected Node commonStart() throws RepositoryException {
@@ -234,7 +218,6 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
     }
 
     protected void commonEnd() throws RepositoryException {
-        session.refresh(false);
     }
 
     public boolean getVerbose() {

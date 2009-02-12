@@ -37,16 +37,6 @@ public class PathsTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private String[] content = {
-        "/test", "nt:unstructured",
-        "/test/d", "nt:unstructured",
-        "jcr:mixinTypes", "mix:referenceable",
-        "/test/f", "nt:unstructured",
-        "jcr:mixinTypes", "mix:referenceable",
-        "/test/d/x", "hippo:document",
-        "jcr:mixinTypes", "hippo:harddocument"
-    };
-
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -69,6 +59,7 @@ public class PathsTest extends TestCase {
 
             });
         session.save();
+        session.refresh(false);
         Node node = session.getRootNode().getNode("test/sub/node");
 
         Property prop = node.getProperty(HippoNodeType.HIPPO_PATHS);
