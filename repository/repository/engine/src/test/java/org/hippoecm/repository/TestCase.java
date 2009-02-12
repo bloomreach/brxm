@@ -118,10 +118,10 @@ public abstract class TestCase
             server = HippoRepositoryFactory.getHippoRepository();
         }
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        if (session.getRootNode().hasNode("test")) {
+        while (session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
+            session.save();
         }
-        session.save();
     }
     
     @After
@@ -132,8 +132,9 @@ public abstract class TestCase
     public void tearDown(boolean clearRepository) throws Exception {
         if (session != null) {
             session.refresh(false);
-            if (session.getRootNode().hasNode("test")) {
+            while (session.getRootNode().hasNode("test")) {
                 session.getRootNode().getNode("test").remove();
+                session.save();
             }
             session.logout();
             session = null;

@@ -32,33 +32,29 @@ public class MirrorTest extends TestCase {
     private final static String SVN_ID = "$Id$";
 
     private static String[] contents1 = new String[] {
-        "/documents", "nt:unstructured",
+        "/test", "nt:unstructured",
+        "/test/documents", "nt:unstructured",
         "jcr:mixinTypes", "mix:referenceable",
         "niet", "hier",
-        "/documents/test1", "nt:unstructured",
-        "/documents/test2", "nt:unstructured",
+        "/test/documents/test1", "nt:unstructured",
+        "/test/documents/test2", "nt:unstructured",
         "wel","anders",
-        "/documents/test3", "nt:unstructured",
-        "/documents/test3/test4", "nt:unstructured",
+        "/test/documents/test3", "nt:unstructured",
+        "/test/documents/test3/test4", "nt:unstructured",
         "lachen", "zucht",
-        "/documents/test3/test4/test5", "nt:unstructured",
+        "/test/documents/test3/test4/test5", "nt:unstructured",
     };
 
     private static String[] contents2 = new String[] {
-        "/navigation", "nt:unstructured",
-        "/navigation/mirror", "hippo:mirror",
-        "hippo:docbase", "/documents"
+        "/test/navigation", "nt:unstructured",
+        "/test/navigation/mirror", "hippo:mirror",
+        "hippo:docbase", "/test/documents"
     };
 
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
-        if(session.getRootNode().hasNode("documents")) {
-            session.getRootNode().getNode("documents").remove();
-        }
-        if(session.getRootNode().hasNode("navigation")) {
-            session.getRootNode().getNode("navigation").remove();
-        }
         build(session, contents1);
         session.save();
         build(session, contents2);
@@ -66,39 +62,33 @@ public class MirrorTest extends TestCase {
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
-        if(session.getRootNode().hasNode("documents")) {
-            session.getRootNode().getNode("documents").remove();
-        }
-        if(session.getRootNode().hasNode("navigation")) {
-            session.getRootNode().getNode("navigation").remove();
-        }
-        session.save();
         super.tearDown();
     }
 
     @Test
     public void testMirror() throws Exception {
         assertNotNull(session.getRootNode());
-        assertTrue(session.getRootNode().hasNode("navigation"));
-        assertNotNull(session.getRootNode().getNode("navigation"));
-        assertTrue(session.getRootNode().getNode("navigation").hasNode("mirror"));
-        assertNotNull(session.getRootNode().getNode("navigation").getNode("mirror"));
-        assertTrue(session.getRootNode().getNode("navigation").getNode("mirror").hasProperty("hippo:docbase"));
-        assertNotNull(session.getRootNode().getNode("navigation").getNode("mirror").getProperty("hippo:docbase"));
-        assertTrue(session.getRootNode().getNode("navigation").getNode("mirror").hasNode("test1"));
-        assertNotNull(session.getRootNode().getNode("navigation").getNode("mirror").getNode("test1"));
+        assertTrue(session.getRootNode().hasNode("test/navigation"));
+        assertNotNull(session.getRootNode().getNode("test/navigation"));
+        assertTrue(session.getRootNode().getNode("test/navigation").hasNode("mirror"));
+        assertNotNull(session.getRootNode().getNode("test/navigation").getNode("mirror"));
+        assertTrue(session.getRootNode().getNode("test/navigation").getNode("mirror").hasProperty("hippo:docbase"));
+        assertNotNull(session.getRootNode().getNode("test/navigation").getNode("mirror").getProperty("hippo:docbase"));
+        assertTrue(session.getRootNode().getNode("test/navigation").getNode("mirror").hasNode("test1"));
+        assertNotNull(session.getRootNode().getNode("test/navigation").getNode("mirror").getNode("test1"));
 
-        session.getRootNode().addNode("dummy");
-        session.getRootNode().getNode("documents").addNode("test-a","nt:unstructured").setProperty("test-b","test-c");
-        session.getRootNode().getNode("documents").getNode("test1").addNode("test-x");
+        session.getRootNode().getNode("test").addNode("dummy");
+        session.getRootNode().getNode("test/documents").addNode("test-a","nt:unstructured").setProperty("test-b","test-c");
+        session.getRootNode().getNode("test/documents").getNode("test1").addNode("test-x");
         session.save();
         session.refresh(true);
 
-        assertTrue(session.getRootNode().getNode("navigation").getNode("mirror").hasNode("test-a"));
-        assertNotNull(session.getRootNode().getNode("navigation").getNode("mirror").getNode("test-a"));
-        assertTrue(session.getRootNode().getNode("navigation").getNode("mirror").getNode("test1").hasNode("test-x"));
-        assertNotNull(session.getRootNode().getNode("navigation").getNode("mirror").getNode("test1").getNode("test-x"));
-        assertFalse(session.getRootNode().getNode("navigation").getNode("mirror").hasNode("test1[2]"));
+        assertTrue(session.getRootNode().getNode("test/navigation").getNode("mirror").hasNode("test-a"));
+        assertNotNull(session.getRootNode().getNode("test/navigation").getNode("mirror").getNode("test-a"));
+        assertTrue(session.getRootNode().getNode("test/navigation").getNode("mirror").getNode("test1").hasNode("test-x"));
+        assertNotNull(session.getRootNode().getNode("test/navigation").getNode("mirror").getNode("test1").getNode("test-x"));
+        assertFalse(session.getRootNode().getNode("test/navigation").getNode("mirror").hasNode("test1[2]"));
     }
 }

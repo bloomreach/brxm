@@ -44,17 +44,14 @@ public class HREPTWO283IssueTest extends TestCase {
     };
 
     @Before
+    @Override
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp();
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
-        if (session.getRootNode().hasNode("test/nav")) {
-            session.getRootNode().getNode("test/nav").remove();
-            session.save();
-            session.refresh(false);
-        }
         super.tearDown();
     }
 
@@ -67,7 +64,6 @@ public class HREPTWO283IssueTest extends TestCase {
         build(session, content2);
         session.save();
         session.refresh(false);
-        //Utilities.dump(session.getRootNode());
 
         result = traverse(session, "/test/docs/funny");
         assertNotNull(result);
@@ -84,7 +80,6 @@ public class HREPTWO283IssueTest extends TestCase {
 
     @Test
     public void testNoBadRemove() throws RepositoryException {
-        Node result;
         build(session, content1);
         session.save();
         session.refresh(false);

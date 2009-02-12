@@ -27,11 +27,13 @@ public class HREPTWO280Test extends FacetedNavigationAbstractTest {
     private final static String SVN_ID = "$Id$";
 
     @Before
+    @Override
     public void setUp() throws Exception {
       super.setUp();
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
       super.tearDown();
     }
@@ -49,13 +51,6 @@ public class HREPTWO280Test extends FacetedNavigationAbstractTest {
 
         searchNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
         traverse(searchNode);
-
-        session.getRootNode().getNode("test/navigation").remove();
-        session.save();
-        session.refresh(false);
-        session.getRootNode().getNode("test/documents").remove();
-        session.save();
-        session.refresh(false);
 
         commonEnd();
     }

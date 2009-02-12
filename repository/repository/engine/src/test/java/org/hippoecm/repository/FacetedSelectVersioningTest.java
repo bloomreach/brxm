@@ -22,14 +22,16 @@ public class FacetedSelectVersioningTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    String[] content = new String[] {
+    String[] content1 = new String[] {
         "/test", "nt:unstructured",
         "/test/doc", "hippo:handle",
         "jcr:mixinTypes", "hippo:hardhandle",
         "/test/doc/doc", "hippo:realdocument",
-        "jcr:mixinTypes", "hippo:harddocument",
+        "jcr:mixinTypes", "hippo:harddocument"
+    };
+    String[] content2 = new String[] {
         "/test/doc/doc/hippo:mirror", "hippo:facetselect",
-        "jcr:mixinTypes", "mix:versionable",
+        //"jcr:mixinTypes", "mix:versionable",
         "hippo:docbase", "/test/doc",
         "hippo:values", null,
         "hippo:facets", null,
@@ -38,7 +40,9 @@ public class FacetedSelectVersioningTest extends TestCase {
 
     @Test
     public void testIssue() throws Exception {
-        build(session, content);
+        build(session, content1);
+        session.save();
+        build(session, content2);
         session.save();
         traverse(session, "/test/doc/doc").checkin();
         session.save();

@@ -46,6 +46,8 @@ public class HREPTWO456Test extends TestCase {
         session.refresh(false);
         if(session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
+	    session.save();
+	    session.refresh(false);
         }
         if(session != null) {
             session.logout();

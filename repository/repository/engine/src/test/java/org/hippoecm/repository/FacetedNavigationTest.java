@@ -31,6 +31,18 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
     @Test
     public void testTraversal() throws RepositoryException, IOException {
         Node node = commonStart();

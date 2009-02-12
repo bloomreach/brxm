@@ -28,28 +28,22 @@ import javax.jcr.nodetype.ConstraintViolationException;
 
 import org.hippoecm.repository.ext.DerivedDataFunction;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.junit.Ignore;
+import org.junit.After;
+import org.junit.Before;
 
 public class DerivedDataTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
-    protected HippoRepository server;
-    protected Session session;
     protected Node root;
 
+    @Before
     public void setUp() throws Exception {
-        server = HippoRepositoryFactory.getHippoRepository();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        session.save();
-
+        super.setUp();
         Node configuration = session.getRootNode().getNode("hippo:configuration/hippo:derivatives");
         configuration = configuration.addNode("org.hippoecm.repository.DerivedDataTest");
         configuration.setProperty("hippo:nodetype", "hippo:testderived");
@@ -64,23 +58,17 @@ public class DerivedDataTest extends TestCase {
         root = session.getRootNode().addNode("test","nt:unstructured");
     }
 
+    @After
     public void tearDown() throws Exception {
         session.refresh(false);
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
         if(session.getRootNode().hasNode("hippo:configuration/hippo:derivatives/org.hippoecm.repository.DerivedDataTest")) {
             session.getRootNode().getNode("hippo:configuration/hippo:derivatives/org.hippoecm.repository.DerivedDataTest") .
                 remove();
         }
-        if(session != null) {
-            session.logout();
-        }
-        if (server != null) {
-            server.close();
-        }
+        super.tearDown();
     }
 
+    @Test
     public void testSimple() throws Exception {
         Node folder = root.addNode("folder","nt:unstructured");
         folder.addMixin("mix:referenceable");
@@ -95,6 +83,7 @@ public class DerivedDataTest extends TestCase {
         assertEquals(5, session.getRootNode().getNode("test/folder/document").getProperty("hippo:c").getLong());
     }
 
+    @Test
     public void testAncestors() throws Exception {
         Node folder1 = root.addNode("folder1","nt:unstructured");
         folder1.addMixin("mix:referenceable");
@@ -127,7 +116,8 @@ public class DerivedDataTest extends TestCase {
         values[2].getString().equals(folder1.getNode("document").getUUID());
     }
 
-    private void disabledTest() throws RepositoryException {
+    @Ignore
+    public void disabledTest() throws RepositoryException {
         try {
             Node node, other;
             node = session.getRootNode().addNode("test");
