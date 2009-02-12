@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;

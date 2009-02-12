@@ -78,7 +78,6 @@ public class Sorter extends Panel {
 
                         MenuPlugin menu = (MenuPlugin) findParent(MenuPlugin.class);
                         menu.redraw();
-                        menu.flushNodeModel(nodeModel.getParentModel());
                     } catch (RepositoryException e) {
                         log.error(e.getMessage(), e);
                     }
@@ -122,7 +121,6 @@ public class Sorter extends Panel {
 
                         MenuPlugin menu = (MenuPlugin) findParent(MenuPlugin.class);
                         menu.redraw();
-                        menu.flushNodeModel(nodeModel.getParentModel());
                     } catch (RepositoryException e) {
                         log.error(e.getMessage(), e);
                     }

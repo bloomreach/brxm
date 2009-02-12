@@ -128,7 +128,6 @@ public class CopyDialog extends LookupDialog {
                 Node rootNode = nodeModel.getNode().getSession().getRootNode();
                 Node targetNode = rootNode.getNode(targetPath.substring(1));
                 plugin.setModel(new JcrNodeModel(targetNode));
-                plugin.flushNodeModel(new JcrNodeModel(rootNode));
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());

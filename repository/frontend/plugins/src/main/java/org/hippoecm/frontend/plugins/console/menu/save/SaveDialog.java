@@ -76,7 +76,6 @@ public class SaveDialog extends AbstractDialog {
             Node rootNode = nodeModel.getNode().getSession().getRootNode();
             if (hasPendingChanges) {
                 rootNode.getSession().save();
-                plugin.flushNodeModel(new JcrNodeModel(rootNode));
             }
         } catch (RepositoryException ex) {
             error(ex.getMessage());

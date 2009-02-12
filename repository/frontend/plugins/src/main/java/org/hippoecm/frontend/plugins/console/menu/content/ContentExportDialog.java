@@ -40,12 +40,14 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.repository.api.HippoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 public class ContentExportDialog extends AbstractDialog {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
+    private static final String SVN_ID = "$Id$";
+    private static final Logger log = LoggerFactory.getLogger(ContentExportDialog.class);
     private static final long serialVersionUID = 1L;
 
     private boolean skipBinary = false;
@@ -56,10 +58,11 @@ public class ContentExportDialog extends AbstractDialog {
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         IModel skipBinaryModel = new PropertyModel(this, "skipBinary");
         CheckBox skipBinaries = new CheckBox("skip-binaries", skipBinaryModel);
+        skipBinaries.add(new Label("skip-binaries-text", new Model("Do not include binary properties in export")));
         add(skipBinaries);
         
         DownloadExportLink link = new DownloadExportLink("download-link", nodeModel, skipBinaryModel);
-        link.add(new Label("download-link-text", "Download"));
+        link.add(new Label("download-link-text", "Download (or right click and choose \"Save as..\""));
         add(link);
 
         final MultiLineLabel dump = new MultiLineLabel("dump", "");
@@ -76,7 +79,6 @@ public class ContentExportDialog extends AbstractDialog {
                         Node node = nodeModel.getNode();
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
                         ((HippoSession) node.getSession()).exportDereferencedView(node.getPath(), out, skipBinary, false);
-                        //((HippoSession) node.getSession()).exportSystemView(node.getPath(), out, skipBinary, false);
                         export = prettyPrint(out.toByteArray());
                     } catch (Exception e) {
                         export = e.getMessage();
@@ -85,10 +87,17 @@ public class ContentExportDialog extends AbstractDialog {
                     target.addComponent(dump);
                 }
             };
-        viewLink.add(new Label("view-link-text", "View"));
+        viewLink.add(new Label("view-link-text", "Show export in this window"));
         add(viewLink);
 
-        cancel.setVisible(false);
+        ok.setVisible(false);
+        
+        try {
+            info("Export content from : " + nodeModel.getNode().getPath());
+        } catch (RepositoryException e) {
+            log.error("Error getting node from model for contant import",e);
+            throw new RuntimeException("Error getting node from model for contant import: " + e.getMessage());
+        }
     }
 
     public IModel getTitle() {

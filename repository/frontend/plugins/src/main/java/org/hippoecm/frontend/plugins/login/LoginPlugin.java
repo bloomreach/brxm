@@ -28,9 +28,8 @@ import java.util.jar.Manifest;
 
 import javax.jcr.Repository;
 import javax.servlet.ServletContext;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;

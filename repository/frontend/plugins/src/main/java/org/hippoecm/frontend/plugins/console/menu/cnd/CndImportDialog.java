@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
@@ -56,8 +56,9 @@ public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
 
         msgText = new Model("Import a CND file.");
         message = new Label("message", msgText);
-        cancel.setVisible(false);
         add(message);
+        
+        ok.addOrReplace(new Label("label", new Model("import")));
     }
 
     public IModel getTitle() {
