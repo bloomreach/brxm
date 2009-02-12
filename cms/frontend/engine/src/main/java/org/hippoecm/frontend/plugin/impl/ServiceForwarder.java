@@ -21,10 +21,14 @@ import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.service.ServiceTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServiceForwarder extends ServiceTracker<IClusterable> {
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(ServiceForwarder.class.getName());
+    
     private static final ThreadLocal<Set<StackEntry>> threadLocal = new ThreadLocal<Set<StackEntry>>();
 
     private static class StackEntry {
@@ -81,6 +85,7 @@ public class ServiceForwarder extends ServiceTracker<IClusterable> {
         if (!stack.contains(targetEntry)) {
             StackEntry sourceEntry = new StackEntry(name, service);
             stack.add(sourceEntry);
+            log.debug("Forwarding " + service + " from " + source + " to " + target);
             pluginMgr.registerService(service, target);
             stack.remove(sourceEntry);
         }
@@ -99,6 +104,7 @@ public class ServiceForwarder extends ServiceTracker<IClusterable> {
         if (!stack.contains(targetEntry)) {
             StackEntry sourceEntry = new StackEntry(name, service);
             stack.add(sourceEntry);
+            log.debug("Removing " + service + " from " + target + " (source: " + source + ")");
             pluginMgr.unregisterService(service, target);
             stack.remove(sourceEntry);
         }

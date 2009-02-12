@@ -61,9 +61,6 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
         return pluginInstanceName;
     }
 
-    public void detach() {
-    }
-
     public Set<IPluginConfig> getPluginConfigSet() {
         if (upstream != null) {
             return upstream.getPluginConfigSet();

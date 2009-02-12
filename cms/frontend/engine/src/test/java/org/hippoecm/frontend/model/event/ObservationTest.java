@@ -23,6 +23,7 @@ import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.repository.TestCase;
 import org.junit.Test;
@@ -103,7 +104,7 @@ public class ObservationTest extends TestCase {
         };
         tester = new HippoTester(sessionModel);
         home = (Home) tester.startPage(Home.class);
-        context = new PluginContext(home.getPluginManager(), "test", null);
+        context = new PluginContext(home.getPluginManager(), new JavaPluginConfig("test"));
     }
 
     @Test
@@ -223,7 +224,7 @@ public class ObservationTest extends TestCase {
         // need to do this twice, test application maintains a reference to the previously rendered page
         home = (Home) tester.startPage(Home.class);
         home = (Home) tester.startPage(Home.class);
-        context = new PluginContext(home.getPluginManager(), "test", null);
+        context = new PluginContext(home.getPluginManager(), new JavaPluginConfig("test"));
         System.gc();
 
         root.addNode("test", "nt:unstructured");

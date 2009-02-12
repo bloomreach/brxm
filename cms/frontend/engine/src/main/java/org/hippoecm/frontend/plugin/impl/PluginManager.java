@@ -77,8 +77,8 @@ public class PluginManager implements IClusterable {
         nextReferenceId = 0;
     }
 
-    public PluginContext start(IPluginConfig config, String controlId) {
-        final PluginContext context = new PluginContext(this, controlId, config);
+    public PluginContext start(IPluginConfig config) {
+        final PluginContext context = new PluginContext(this, config);
         IPlugin plugin = factory.createPlugin(context, config);
         if (plugin != null) {
             context.connect(plugin);
@@ -200,6 +200,15 @@ public class PluginManager implements IClusterable {
             return;
         } else {
             log.debug("unregistering listener " + listener + " for " + name);
+        }
+
+        List<IClusterable> notify = services.get(name);
+        if (notify != null) {
+            for (IClusterable service : new ArrayList<IClusterable>(notify)) {
+                if (notify.contains(service)) {
+                    listener.removeService(service, name);
+                }
+            }
         }
 
         List<IServiceTracker> list = listeners.get(name);

@@ -82,11 +82,7 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
 
         this.children = new LinkedHashMap<String, ExtensionPoint>();
 
-        if (properties.getString(WICKET_ID) != null) {
-            this.wicketServiceId = properties.getString(WICKET_ID);
-        } else {
-            log.warn("No service id ({}) defined for {}", WICKET_ID, getClass().getName());
-        }
+        this.wicketServiceId = properties.getName() + ".service.wicket.id";
 
         if (properties.getString(MODEL_ID) != null) {
             modelReference = context.getService(properties.getString(MODEL_ID), IModelReference.class);
@@ -191,7 +187,7 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
             }
         }
 
-        context.registerService(this, wicketServiceId);
+        context.registerService(this, config.getString("wicket.id"));
     }
 
     // override model change methods

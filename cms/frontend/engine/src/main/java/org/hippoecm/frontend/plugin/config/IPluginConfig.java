@@ -17,10 +17,9 @@ package org.hippoecm.frontend.plugin.config;
 
 import java.util.Set;
 
-import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.util.value.IValueMap;
 
-public interface IPluginConfig extends IValueMap, IDetachable {
+public interface IPluginConfig extends IValueMap {
     final static String SVN_ID = "$Id$";
 
     public String getName();

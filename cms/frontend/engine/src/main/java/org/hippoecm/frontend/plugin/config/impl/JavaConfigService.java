@@ -55,7 +55,7 @@ class JavaConfigService implements IPluginConfigService {
     private IClusterConfig initLogin() {
         JavaClusterConfig plugins = new JavaClusterConfig();
 
-        IPluginConfig config = new JavaPluginConfig();
+        IPluginConfig config = new JavaPluginConfig("login");
         config.put("plugin.class", "org.hippoecm.frontend.plugins.login.LoginPlugin");
         config.put("wicket.id", "service.root");
         plugins.addPlugin(config);
@@ -66,7 +66,7 @@ class JavaConfigService implements IPluginConfigService {
     private IClusterConfig initConsole() {
         JavaClusterConfig plugins = new JavaClusterConfig();
 
-        IPluginConfig config = new JavaPluginConfig();
+        IPluginConfig config = new JavaPluginConfig("root");
         config.put("plugin.class", "org.hippoecm.frontend.plugins.console.RootPlugin");
         config.put("wicket.id", "service.root");
         config.put("wicket.dialog", "service.dialog");
@@ -82,32 +82,32 @@ class JavaConfigService implements IPluginConfigService {
         config.put("extension.logout", "service.logout");
         plugins.addPlugin(config);
 
-        config = new JavaPluginConfig();
+        config = new JavaPluginConfig("browser");
         config.put("plugin.class", "org.hippoecm.frontend.plugins.console.browser.BrowserPlugin");
         config.put("wicket.id", "service.browser");
         config.put("wicket.model", "service.model");
         plugins.addPlugin(config);
 
-        config = new JavaPluginConfig();
+        config = new JavaPluginConfig("breadcrumb");
         config.put("plugin.class", "org.hippoecm.frontend.plugins.console.breadcrumb.BreadcrumbPlugin");
         config.put("wicket.id", "service.breadcrumb");
         config.put("wicket.model", "service.model");
         plugins.addPlugin(config);
 
-        config = new JavaPluginConfig();
+        config = new JavaPluginConfig("editor");
         config.put("plugin.class", "org.hippoecm.frontend.plugins.console.editor.EditorPlugin");
         config.put("wicket.id", "service.editor");
         config.put("wicket.model", "service.model");
         plugins.addPlugin(config);
 
-        config = new JavaPluginConfig();
+        config = new JavaPluginConfig("menu");
         config.put("plugin.class", "org.hippoecm.frontend.plugins.console.menu.MenuPlugin");
         config.put("wicket.id", "service.menu");
         config.put("wicket.model", "service.model");
         config.put("wicket.dialog", "service.dialog");
         plugins.addPlugin(config);
 
-        config = new JavaPluginConfig();
+        config = new JavaPluginConfig("logout");
         config.put("plugin.class", "org.hippoecm.frontend.plugins.logout.LogoutPlugin");
         config.put("wicket.id", "service.logout");
         config.put("wicket.model", "service.model");

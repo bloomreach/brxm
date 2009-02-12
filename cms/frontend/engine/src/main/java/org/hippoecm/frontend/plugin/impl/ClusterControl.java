@@ -106,8 +106,7 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
 
         int i = 0;
         for (IPluginConfig plugin : config.getPlugins()) {
-            String pluginId = clusterId + ".plugin." + plugin.getName();
-            contexts[i++] = context.start(plugin, pluginId);
+            contexts[i++] = context.start(plugin);
         }
 
         context.registerControl(this);

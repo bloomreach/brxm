@@ -44,7 +44,6 @@ public class PluginContext implements IPluginContext, IDetachable {
 
     private static final Logger log = LoggerFactory.getLogger(PluginContext.class);
 
-    private String controlId;
     private IPluginConfig config;
     private IPlugin plugin;
     private Map<String, List<IClusterable>> services;
@@ -54,10 +53,12 @@ public class PluginContext implements IPluginContext, IDetachable {
     private transient boolean initializing;
     private transient boolean stopping;
 
-    public PluginContext(PluginManager manager, String controlId, IPluginConfig config) {
-        this.controlId = controlId;
+    public PluginContext(PluginManager manager, IPluginConfig config) {
         this.manager = manager;
         this.config = config;
+        if (config == null || config.getName() == null) {
+            throw new RuntimeException("Config (name) is null");
+        }
 
         this.services = new HashMap<String, List<IClusterable>>();
         this.listeners = new HashMap<String, List<IServiceTracker<? extends IClusterable>>>();
@@ -66,7 +67,13 @@ public class PluginContext implements IPluginContext, IDetachable {
     }
 
     public IClusterControl newCluster(IClusterConfig template, IPluginConfig parameters) {
-        String clusterIdBase = controlId + ".cluster." + template.getName();
+        String name = template.getName();
+        if (name != null) {
+            name = name.replace(':', '_');
+        } else {
+            name = "";
+        }
+        String clusterIdBase = config.getName() + ".cluster." + name;
         String clusterId = clusterIdBase;
         int counter = 0;
         while (children.containsKey(clusterId)) {
@@ -76,7 +83,7 @@ public class PluginContext implements IPluginContext, IDetachable {
         ClusterControl cluster = new ClusterControl(manager, this, decorator, clusterId);
 
         for (String service : template.getServices()) {
-            String serviceId = clusterId + ".service." + service;
+            String serviceId = clusterId + ".service." + service.replace(':', '_');
             decorator.put(service, serviceId);
             if (parameters != null && parameters.getString(service) != null) {
                 cluster.forward(serviceId, parameters.getString(service));
@@ -85,7 +92,7 @@ public class PluginContext implements IPluginContext, IDetachable {
         for (String reference : template.getReferences()) {
             String serviceId;
             if (!template.getServices().contains(reference)) {
-                serviceId = clusterId + ".reference." + reference;
+                serviceId = clusterId + ".reference." + reference.replace(':', '_');
                 decorator.put(reference, serviceId);
             } else {
                 serviceId = decorator.getString(reference);
@@ -194,8 +201,8 @@ public class PluginContext implements IPluginContext, IDetachable {
         children.remove(control.getClusterId());
     }
 
-    PluginContext start(IPluginConfig plugin, String clusterId) {
-        return manager.start(plugin, clusterId);
+    PluginContext start(IPluginConfig plugin) {
+        return manager.start(plugin);
     }
 
     void stop() {
@@ -242,8 +249,8 @@ public class PluginContext implements IPluginContext, IDetachable {
             control.detach();
         }
 
-        if (config != null) {
-            config.detach();
+        if (config != null && config instanceof IDetachable) {
+            ((IDetachable) config).detach();
         }
     }
 
