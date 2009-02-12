@@ -66,7 +66,6 @@ public class JcrSessionModel extends LoadableDetachableModel {
     public void flush() {
         Session session = (Session) getObject();
         if (session != null) {
-            setObject(null);
             session.logout();
             detach();
         }
