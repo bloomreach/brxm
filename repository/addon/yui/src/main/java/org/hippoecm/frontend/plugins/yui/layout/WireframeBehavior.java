@@ -41,7 +41,6 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
             "add_wireframe.js");
 
     private WireframeSettings settings;
-    private boolean initialized = false;
     private Component component;
     private HippoTextTemplate template;
 
@@ -52,20 +51,17 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
             private static final long serialVersionUID = 1L;
 
             public void onEvent(Event event) {
-                if (initialized) {
-                    initialized = false;
-                    if (component != null) {
-                        AjaxRequestTarget target = AjaxRequestTarget.get();
-                        if (target != null) {
-                            target.addComponent(component);
-                        }
+                if (component != null) {
+                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    if (target != null) {
+                        target.addComponent(component);
                     }
                 }
             }
 
         });
 
-        template = new HippoTextTemplate(behaviorJs, "YAHOO.hippo.Wireframe") {
+        template = new HippoTextTemplate(behaviorJs, settings.getClientClassName()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -100,20 +96,13 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
     }
 
     @Override
-    public void renderHead(IHeaderResponse response) {
-        if (!initialized) {
-            initialize();
-        }
-        super.renderHead(response);
-    }
-
-    @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addTemplate(template);
         context.addOnload("YAHOO.hippo.LayoutManager.render()");
     }
 
-    private void initialize() {
+    @Override
+    public void renderHead(IHeaderResponse response) {
         settings.setMarkupId(component.getMarkupId(true));
 
         if (settings.isLinkedWithParent()) {
@@ -151,8 +140,8 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
                 return IVisitor.CONTINUE_TRAVERSAL;
             }
         });
-        settings.enhanceIds();
-        initialized = true;
+
+        super.renderHead(response);
     }
 
 }
