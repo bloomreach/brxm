@@ -575,7 +575,12 @@ public class HippoAccessManager implements AccessManager {
     }
 
     public boolean isGranted(Path path, int permissions) throws RepositoryException {
-        ItemId itemId = hierMgr.resolvePath(path);
+        ItemId itemId;
+        try {
+            itemId = hierMgr.resolvePath(path);
+        } catch(RepositoryException ex) {
+            itemId = null;
+        }
         if (itemId != null) {
             return isGranted(itemId, permissions);
         } else {
