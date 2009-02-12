@@ -45,18 +45,40 @@ public class WireframeSettings extends YuiObject {
         private static final long serialVersionUID = 1L;
 
         public void onEvent(IYuiListener.Event event) {
-            notifyListeners();
+            if (!active) {
+                notifyListeners();
+            }
         };
     };
 
+    private String clientClassName;
     private String markupId;
+    private transient boolean active = false;
 
     public WireframeSettings(IPluginConfig config) {
         super(TYPE, config);
+        clientClassName = config.getString("client.class.name", "YAHOO.hippo.Wireframe");
+    }
+
+    public String getClientClassName() {
+        return clientClassName;
     }
 
     public void setMarkupId(String markupId) {
         this.markupId = markupId;
+
+        // don't send any notifications
+        active = true;
+        try {
+            YuiId root = getRootElementId();
+            root.setParentId(markupId);
+            for (UnitSettings us : UNITS.get(this)) {
+                us.setParentMarkupId(markupId);
+            }
+        } finally {
+            active = false;
+        }
+        notifyListeners();
     }
 
     public YuiId getRootElementId() {
@@ -80,19 +102,15 @@ public class WireframeSettings extends YuiObject {
         if (current != null) {
             current.removeListener(unitListener);
         }
+
+        UNITS.setByPosition(newSettings, this);
+        newSettings.setWrapperId(current.getWrapperId());
+        newSettings.setParentMarkupId(markupId);
+
         if (newSettings != null) {
             newSettings.addListener(unitListener);
         }
-        UNITS.setByPosition(newSettings, this);
-    }
-
-    protected void enhanceIds() {
-        YuiId root = getRootElementId();
-        root.setParentId(markupId);
-
-        for (UnitSettings us : UNITS.get(this)) {
-            us.setParentMarkupId(markupId);
-        }
+        notifyListeners();
     }
 
     static class UnitSettingsArraySetting extends SettingsArraySetting<UnitSettings> {
@@ -134,7 +152,6 @@ public class WireframeSettings extends YuiObject {
             UnitSettings[] usAr = get(ws);
             for (int i = 0; i < usAr.length; i++) {
                 if (usAr[i].getPosition().equals(us.getPosition())) {
-                    us.setWrapperId(usAr[i].getWrapperId()); //only value that can be set before registering
                     usAr[i] = us;
                     break;
                 }
