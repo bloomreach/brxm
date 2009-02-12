@@ -94,7 +94,6 @@
     <poi.version>2.5.1-final-20040804</poi.version>
     <pdfbox.version>0.6.4</pdfbox.version>
     <org.textmining.version>0.4</org.textmining.version>
-    <nekohtml.version>0.9.4</nekohtml.version>
     <javax.servlet.version>2.3</javax.servlet.version>
     <xerces.version>2.8.1</xerces.version>
     <cglib.version>2.1_3</cglib.version>
@@ -525,6 +524,11 @@
         </exclusions>
       </dependency>
       <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.1.1</version>
+      </dependency>
+      <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>${org.slf4j.version}</version>
@@ -607,11 +611,6 @@
         <groupId>org.textmining</groupId>
         <artifactId>tm-extractors</artifactId>
         <version>${org.textmining.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>nekohtml</groupId>
-        <artifactId>nekohtml</artifactId>
-        <version>${nekohtml.version}</version>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>

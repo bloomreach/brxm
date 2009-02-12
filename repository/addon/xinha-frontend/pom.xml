@@ -39,13 +39,11 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
       <version>2.04.00-SNAPSHOT</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
       <version>2.04.00-SNAPSHOT</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -55,14 +53,18 @@
     <dependency>
       <groupId>hippo</groupId>
       <artifactId>htmlcleaner</artifactId>
-      <version>1.01.02</version>
-      <scope>compile</scope>
+      <version>1.01.03</version>
+      <exclusions>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-yui</artifactId>
       <version>2.04.00-SNAPSHOT</version>
-      <scope>compile</scope>
     </dependency>
 
     <!-- test  -->
