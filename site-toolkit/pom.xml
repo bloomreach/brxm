@@ -35,7 +35,7 @@
     <javax.jcr.version>1.0</javax.jcr.version>
     <hippoecm.version>2.03.00</hippoecm.version>
     <spring.version>2.5.6</spring.version>
-    <mockrunner.version>0.3.8</mockrunner.version>
+    <spring-mock.version>2.0.8</spring-mock.version>
     
   </properties>
   
@@ -309,6 +309,13 @@
         <artifactId>spring-aop</artifactId>
         <version>${spring.version}</version>
       </dependency>
+      
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-mock</artifactId>
+        <version>${spring-mock.version}</version>
+        <scope>test</scope>
+      </dependency>
 
       <!-- Hippo ECM Depedencies -->
     
@@ -338,13 +345,6 @@
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-repository-engine</artifactId>
         <version>${hippoecm.version}</version>
-        <scope>test</scope>
-      </dependency>
-    
-      <dependency>
-        <groupId>mockrunner</groupId>
-        <artifactId>mockrunner</artifactId>
-        <version>${mockrunner.version}</version>
         <scope>test</scope>
       </dependency>
       

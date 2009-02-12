@@ -8,18 +8,31 @@
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-request.xml" />
   <import resource="classpath:/org/hippoecm/hst/core/jcr/pool/GeneralBasicPoolingRepository.xml" />
   
-  <bean id="javax.servlet.http.HttpServletRequest"
-        class="com.mockrunner.mock.web.MockHttpServletRequest">
-     <property name="serverName" value="preview.myproject.hippoecm.org" />
-     <property name="serverPort" value="80" />
-     <property name="contextPath" value="/site" />
-     <property name="requestURI" value="/content/news/2009" />
-     <property name="servletPath" value="/content" />
-     <property name="pathInfo" value="/news/2009" />
+  <bean id="javax.servlet.ServletContext"
+        class="org.springframework.mock.web.MockServletContext">
   </bean>
   
-  <bean id="javax.servlet.http.HttpServletResponse"
-        class="com.mockrunner.mock.web.MockHttpServletResponse">
+  <bean id="javax.servlet.ServletConfig"
+        class="org.springframework.mock.web.MockServletConfig">
+    <constructor-arg ref="javax.servlet.ServletContext" />
+  </bean>
+  
+  <bean id="javax.servlet.http.HttpServletRequest" scope="prototype"
+        class="org.springframework.mock.web.MockHttpServletRequest">
+     <!-- servletContext -->
+     <constructor-arg ref="javax.servlet.ServletContext" />
+     <!-- method -->
+     <constructor-arg value="GET" />
+     <!-- requestURI -->
+     <constructor-arg>
+       <value><![CDATA[
+       /site/content/news/2009?pagesize=10&pageindex=2
+       ]]></value>
+     </constructor-arg>
+  </bean>
+  
+  <bean id="javax.servlet.http.HttpServletResponse" scope="prototype"
+        class="org.springframework.mock.web.MockHttpServletResponse">
   </bean>
   
 </beans>
