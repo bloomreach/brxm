@@ -48,11 +48,9 @@ import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 
-import org.apache.jackrabbit.core.version.VersionManager;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
-import org.hippoecm.repository.jackrabbit.version.VersionManagerImpl;
 
 public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     @SuppressWarnings("unused")
@@ -99,12 +97,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         return new HippoSharedItemStateManager(this, persistMgr, rootNodeId, ntReg, true, cacheFactory, locking);
     }
 
-    /*@Override
-    protected org.apache.jackrabbit.core.SessionImpl createSessionInstance(AuthContext loginContext,
-            WorkspaceConfig wspConfig) throws AccessDeniedException, RepositoryException {
-        return new XASessionImpl(this, loginContext, wspConfig);
-    }*/
-    
     @Override
     protected org.apache.jackrabbit.core.SessionImpl createSessionInstance(AuthContext loginContext,
                                                 WorkspaceConfig wspConfig)
@@ -177,24 +169,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
             String msg = "Cannot instantiate persistence manager " + pmConfig.getClassName();
             throw new RepositoryException(msg, e);
         }
-    }
-
-    @Override
-    protected org.apache.jackrabbit.core.version.VersionManagerImpl createVersionManager(VersioningConfig vConfig,
-                                                      DelegatingObservationDispatcher delegatingDispatcher)
-            throws RepositoryException {
-
-        FileSystem fs = vConfig.getFileSystem();
-        PersistenceManager pm = createPersistenceManager(vConfig.getHomeDir(),
-                fs,
-                vConfig.getPersistenceManagerConfig(), getRootNodeId(), getNamespaceRegistry(),
-                getNodeTypeRegistry(),
-                getDataStore());
-        ISMLocking ismLocking = vConfig.getISMLockingConfig().createISMLocking();
-
-        return new VersionManagerImpl(pm, fs, getNodeTypeRegistry(), delegatingDispatcher,
-                VERSION_STORAGE_NODE_ID, SYSTEM_ROOT_NODE_ID, getItemStateCacheFactory(),
-                ismLocking);
     }
 
     protected class WorkspaceInfo extends org.apache.jackrabbit.core.RepositoryImpl.WorkspaceInfo {
@@ -277,9 +251,5 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     @Override
     public Session login() throws LoginException, RepositoryException {
         return login(null, null);
-    }
-
-    protected VersionManager getVersionManager() {
-        return super.getVersionManager();
     }
 }

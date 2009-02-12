@@ -210,8 +210,4 @@ public abstract class HippoVirtualProvider implements DataProviderModule
             throw new RepositoryException(ex.getMessage(), ex);
         }
     }
-
-    public boolean isEnabled() {
-        return stateMgr.isEnabled(); // FIXME HREPTWO-2125
-    }
 }

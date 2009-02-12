@@ -106,7 +106,7 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
         virtualPropertyNames = new HashSet<Name>();
     }
 
-    int removal = 0;
+    private int removal = 0;
     public boolean isEnabled() {
         return virtualLayerEnabled && removal==0;
     }
@@ -247,13 +247,13 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
                 NodeState nodeState;
                 if(state != null) {
                     nodeState = (NodeState) state;
-                    if(isEnabled() || true) { // FIXME HREPTWO-2125
+                    if(isEnabled()) {
                         nodeState = ((HippoNodeId)id).populate(nodeState);
                     } else {
                         // keep nodestate as is
                     }
                 } else {
-                    if(isEnabled() || true) { // FIXME HREPTWO-2125
+                    if(isEnabled()) {
                         nodeState = ((HippoNodeId)id).populate();
                     } else {
                         nodeState = populate((HippoNodeId)id);
@@ -333,7 +333,7 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
         } else if(state == null && id instanceof HippoNodeId) {
             edit();
             NodeState nodeState;
-            if (isEnabled() || true) { // FIXME HREPTWO-2125
+            if (isEnabled()) {
                 nodeState = ((HippoNodeId)id).populate();
             } else {
                 nodeState = populate((HippoNodeId)id);

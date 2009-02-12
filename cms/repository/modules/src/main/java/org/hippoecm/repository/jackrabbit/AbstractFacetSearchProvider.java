@@ -131,8 +131,10 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
             search = facetSearchNodeId.search;
             count = facetSearchNodeId.count;
         } else {
-            queryname = getProperty(nodeId, querynameName)[0];
-            docbase = getProperty(nodeId, docbaseName)[0];
+            String[] property = getProperty(nodeId, querynameName);
+            queryname = (property != null && property.length > 0 ? property[0] : null);
+            property = getProperty(nodeId, docbaseName);
+            docbase = (property != null && property.length > 0 ? property[0] : null);
             facets = getProperty(nodeId, facetsName);
             search = getProperty(nodeId, searchName);
         }
@@ -160,7 +162,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
                 }
             }
             FacetedNavigationEngine.Query initialQuery;
-            initialQuery = facetedEngine.parse(docbase);
+            initialQuery = (docbase != null ? facetedEngine.parse(docbase) : null);
 
             HitsRequested hitsRequested = new HitsRequested();
             hitsRequested.setResultRequested(false);

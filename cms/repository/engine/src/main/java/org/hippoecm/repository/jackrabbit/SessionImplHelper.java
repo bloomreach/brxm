@@ -162,8 +162,8 @@ abstract class SessionImplHelper {
 
     abstract SessionItemStateManager getItemStateManager();
 
-    public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
-                                                                                         NoSuchNodeTypeException, RepositoryException {
+    public NodeIterator pendingChanges(Node node, String nodeType, boolean prune)
+        throws NamespaceException, NoSuchNodeTypeException, RepositoryException {
         Name ntName;
         try {
             ntName = (nodeType!=null ? sessionImpl.getQName(nodeType) : null);
@@ -188,7 +188,6 @@ abstract class SessionImplHelper {
                     if (filteredResults.contains(itemState.getParentId()))
                         continue;
                     state = (NodeState)getItemStateManager().getItemState(itemState.getParentId());
-                //continue;
                 } catch (NoSuchItemStateException ex) {
                     log.error("Cannot find parent of changed property", ex);
                     continue;

@@ -96,12 +96,10 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         if(docbase != null) {
             dereference = getNodeState(new NodeId(new UUID(docbase[0])));
         }
-        if(isEnabled()) {
         for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             ChildNodeEntry entry = (ChildNodeEntry) iter.next();
             NodeId childNodeId = new MirrorNodeId(dereference.getNodeId(), entry.getId(), entry.getName());
             state.addChildNodeEntry(entry.getName(), childNodeId);
-        }
         }
         return state;
     }
@@ -129,7 +127,6 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         state.setMixinTypeNames(mixins);
 
         state.setDefinitionId(dereference.getDefinitionId());
-        if(isEnabled()) {
         for(Iterator iter = dereference.getPropertyNames().iterator(); iter.hasNext(); ) {
             Name propName = (Name) iter.next();
             PropertyId upstreamPropId = new PropertyId(dereference.getNodeId(), propName);
@@ -153,7 +150,6 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         }
 
         populateChildren(nodeId, state, dereference);
-        }
         return state;
     }
 
