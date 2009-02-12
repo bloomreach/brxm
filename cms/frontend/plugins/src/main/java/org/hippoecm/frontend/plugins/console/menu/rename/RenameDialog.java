@@ -76,7 +76,6 @@ public class RenameDialog extends AbstractDialog {
                 Session jcrSession = ((UserSession) getSession()).getJcrSession();
                 jcrSession.move(oldPath, newPath);
 
-                plugin.flushNodeModel(parentModel);
                 JcrNodeModel newNodeModel = new JcrNodeModel(parentModel.getNode().getNode(getName()));
                 plugin.setModel(newNodeModel);
             }

@@ -86,7 +86,7 @@ class NodeTypesEditor extends CheckGroup {
                     actualTypes.add(nodeType.getName());
                 }
 
-                HashSet toBeAdded = new HashSet<String>(selection);
+                HashSet<String> toBeAdded = new HashSet<String>(selection);
                 toBeAdded.removeAll(actualTypes);
                 for (String add : new ArrayList<String>(toBeAdded)){
                     nodeModel.getNode().addMixin(add);

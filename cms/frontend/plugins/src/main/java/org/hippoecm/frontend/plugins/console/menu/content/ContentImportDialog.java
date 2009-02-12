@@ -32,6 +32,7 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -51,11 +52,9 @@ import org.slf4j.LoggerFactory;
 
 public class ContentImportDialog  extends AbstractDialog implements ITitleDecorator {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
+    private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(ContentImportDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(ContentImportDialog.class);
 
     public class LookupHashMap<K,V> extends HashMap<K,V> {
         private static final long serialVersionUID = 9065806784464553409L;
@@ -79,9 +78,11 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
 
     private final JcrNodeModel nodeModel;
     private FileUploadField fileUploadField;
-    private String uuidBehavior = uuidOpts.get(ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
-    private String mergeBehavior = mergeOpts.get(ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
-    private String derefBehavior = derefOpts.get(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE);
+    
+    // hard coded defaults
+    private String uuidBehavior = "Create new uuids on import";
+    private String mergeBehavior = "Try to add, else skip same name nodes";
+    private String derefBehavior = "Throw error when not found";
 
     MenuPlugin plugin;
 
@@ -121,11 +122,11 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
         setMultiPart(true);
         setAjaxSubmit(false);
         add(fileUploadField = new FileUploadField("fileInput"));
-
+        
+        ok.addOrReplace(new Label("label", new Model("import")));
+        
         try {
             info("Import content from a file to node: " + nodeModel.getNode().getPath());
-            cancel.setVisible(false);
-
         } catch (RepositoryException e) {
             log.error("Error getting node from model for contant import",e);
             throw new RuntimeException("Error getting node from model for contant import: " + e.getMessage());
@@ -155,9 +156,8 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
 
                 ((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
                 info("Import done.");
-        
+
                 plugin.setModel(nodeModel);
-                plugin.flushNodeModel(nodeModel);
 
             } catch (PathNotFoundException ex) {
                 log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);

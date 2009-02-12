@@ -76,7 +76,6 @@ public class ResetDialog extends AbstractDialog {
             // always refresh regardless of the local changes, so external changes
             // can also be exposed.
             rootNode.refresh(false);
-            plugin.flushNodeModel(new JcrNodeModel(rootNode));
         } catch (RepositoryException ex) {
             error(ex.getMessage());
         }

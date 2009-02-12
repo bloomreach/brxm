@@ -49,8 +49,6 @@ public class DeleteDialog extends AbstractDialog {
             //set the parent model as current model
             plugin.setModel(parentModel);
 
-            //flush the JCR tree
-            plugin.flushNodeModel(parentModel.findRootModel());
         } catch (RepositoryException ex) {
             error(ex.getMessage());
         }

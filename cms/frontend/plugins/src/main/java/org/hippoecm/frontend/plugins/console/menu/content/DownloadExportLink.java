@@ -34,6 +34,7 @@ import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,9 +66,15 @@ public class DownloadExportLink extends Link {
         private File tempFile;
         private FileInputStream fis;
         private Node node;
+        private String fileName = "export.xml";
 
         JcrExportRequestTarget(Node node) {
             this.node = node;
+            try {
+                fileName = NodeNameCodec.decode(node.getName()) + ".xml";
+            } catch (RepositoryException e) {
+                log.error("Unable to get node name for file name, using default", e);
+            }
         }
 
         /**
@@ -92,7 +99,7 @@ public class DownloadExportLink extends Link {
             response.setLastModifiedTime(Time.now());
 
             // set filename
-            response.setAttachmentHeader("export.xml");
+            response.setAttachmentHeader(fileName);
 
             try {
                 tempFile = File.createTempFile("export-" + Time.now().toString() + "-", ".xml");
