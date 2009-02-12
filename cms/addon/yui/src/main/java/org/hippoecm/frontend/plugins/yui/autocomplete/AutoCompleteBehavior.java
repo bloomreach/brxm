@@ -31,6 +31,7 @@ public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
 
     private static final long serialVersionUID = 1L;
 
+    //Provide a more generic approach by making the function call variable as well
     private static final PackagedTextTemplate INIT_AUTOCOMPLETE = new PackagedTextTemplate(AutoCompleteBehavior.class,
             "init_autocomplete.js");
 
@@ -50,7 +51,7 @@ public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
 
             @Override
             public YuiObject getSettings() {
-                return AutoCompleteBehavior.this.getSettings();
+                return AutoCompleteBehavior.this.settings;
             }
         };
     }
@@ -66,15 +67,6 @@ public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
     public void detach(Component component) {
         super.detach(component);
         template.detach();
-    }
-
-    protected AutoCompleteSettings getSettings() {
-        updateAjaxSettings();
-        StringBuffer buf = new StringBuffer();
-        buf.append("function doCallBack").append(getComponent().getMarkupId(true)).append("(myCallbackUrl){ ");
-        buf.append(generateCallbackScript("wicketAjaxGet(myCallbackUrl")).append(" }");
-        settings.setCallbackFunction(buf.toString());
-        return settings;
     }
 
     /**
