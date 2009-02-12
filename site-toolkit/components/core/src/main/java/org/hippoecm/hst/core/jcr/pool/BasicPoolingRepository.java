@@ -1,5 +1,7 @@
 package org.hippoecm.hst.core.jcr.pool;
 
+import java.util.NoSuchElementException;
+
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.NoSuchWorkspaceException;
@@ -119,6 +121,8 @@ public class BasicPoolingRepository implements PoolingRepository {
 
         try {
             session = (Session) this.sessionPool.borrowObject();
+        } catch (NoSuchElementException e) {
+            throw new NoAvailableSessionException("No session is available now. Probably the session pool was exhasuted.");
         } catch (Exception e) {
             throw new LoginException("Failed to borrow session from the pool.", e);
         }
@@ -197,6 +201,29 @@ public class BasicPoolingRepository implements PoolingRepository {
      */
     protected int minIdle = GenericObjectPool.DEFAULT_MIN_IDLE;
     /**
+     * The behavior of borrowing a session when the pool is exhausted.
+     * <ul>
+     *   <li>
+     *     When {@link #whenExhaustedAction} is {@link PoolingRepository#WHEN_EXHAUSTED_FAIL}, 
+     *     borrowing will throw a {@link NoAvailableSessionException}.
+     *   </li>
+     *   <li>
+     *     When {@link #whenExhaustedAction} is {@link PoolingRepository#WHEN_EXHAUSTED_GROW}, 
+     *     borrowing will create a new session and return it, 
+     *     essentially making {@link #maxActive} meaningless.
+     *   </li>
+     *   <li>
+     *     When {@link #whenExhaustedAction} is {@link PoolingRepository#WHEN_EXHAUSTED_BLOCK}, 
+     *     borrowing will block until a new or idle session is available. 
+     *     If a positive {@link #maxWait} value is supplied, 
+     *     borrowing will block for at most that many milliseconds, 
+     *     after which a {@link NoAvailableSessionException} will be thrown.
+     *     If {@link #maxWait} is non-positive, borrowing will block indefinitely.
+     *   </li>
+     * </ul> 
+     */
+    protected String whenExhaustedAction = WHEN_EXHAUSTED_BLOCK;
+    /**
      * The initial number of sessions that are created when the pool
      * is started.
      */
@@ -261,6 +288,18 @@ public class BasicPoolingRepository implements PoolingRepository {
         sessionPool.setMaxActive(maxActive);
         sessionPool.setMaxIdle(maxIdle);
         sessionPool.setMinIdle(minIdle);
+        
+        byte whenExhaustedActionFlag = GenericObjectPool.WHEN_EXHAUSTED_BLOCK;
+        String whenExhaustedActionParam = new StringBuilder().append(this.getWhenExhaustedAction()).toString();
+        
+        if (WHEN_EXHAUSTED_FAIL.equalsIgnoreCase(whenExhaustedActionParam)) {
+            whenExhaustedActionFlag = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
+        } else if (WHEN_EXHAUSTED_GROW.equalsIgnoreCase(whenExhaustedActionParam)) {
+            whenExhaustedActionFlag = GenericObjectPool.WHEN_EXHAUSTED_GROW;
+        }
+        
+        sessionPool.setWhenExhaustedAction(whenExhaustedActionFlag);
+        
         sessionPool.setMaxWait(maxWait);
         sessionPool.setTestOnBorrow(testOnBorrow);
         sessionPool.setTestOnReturn(testOnReturn);
@@ -631,6 +670,26 @@ public class BasicPoolingRepository implements PoolingRepository {
      */
     public synchronized void setValidationQuery(String validationQuery) {
         this.validationQuery = (validationQuery != null ? validationQuery.trim() : null);
+    }
+
+    /**
+     * Returns the action when the pool is exhausted
+     * returning them.
+     * 
+     * @return the action when the pool is exhausted
+     * @see #whenExhaustedAction
+     */
+    public synchronized String getWhenExhaustedAction() {
+        return this.whenExhaustedAction;
+    }
+    
+    /** 
+     * <p>Sets the {@link #whenExhaustedAction}.</p>
+     * 
+     * @param whenExhaustedAction the new value for the action when the pool is exhausted
+     */
+    public synchronized void setWhenExhaustedAction(String whenExhaustedAction) {
+        this.whenExhaustedAction = (whenExhaustedAction != null ? whenExhaustedAction.trim() : WHEN_EXHAUSTED_BLOCK);
     }
     
     private boolean equalsCredentials(Credentials credentials) {

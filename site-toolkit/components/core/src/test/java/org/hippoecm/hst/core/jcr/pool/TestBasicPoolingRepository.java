@@ -2,7 +2,12 @@ package org.hippoecm.hst.core.jcr.pool;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.jcr.Node;
 import javax.jcr.Repository;
@@ -10,11 +15,16 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestBasicPoolingRepository extends AbstractSpringTestCase {
+    
+    static Log log = LogFactory.getLog(TestBasicPoolingRepository.class);
 
     protected BasicPoolingRepository poolingRepository;
     
@@ -22,10 +32,16 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
     public void setUp() throws Exception {
         super.setUp();
         this.poolingRepository = (BasicPoolingRepository) getComponent(PoolingRepository.class.getName());
+
+        assertTrue("The maxActive configuration must be greater than zero for test.", this.poolingRepository.getMaxActive() > 0);
+        assertTrue("The maxActive configuration must not be smaller than maxIdle configuration for test.", 
+                this.poolingRepository.getMaxActive() >= this.poolingRepository.getMaxIdle());
+        assertEquals("The whenExhaustedAction must be 'block' for test", PoolingRepository.WHEN_EXHAUSTED_BLOCK, this.poolingRepository.getWhenExhaustedAction());
+        assertTrue("The maxWait configuration must be greater than zero for test.", this.poolingRepository.getMaxWait() > 0);
     }
     
     @Test
-    public void playBasicPoolingRepository() throws Exception {
+    public void testBasicPoolingRepository() throws Exception {
         Repository repository = poolingRepository;
         int maxActive = poolingRepository.getMaxActive();
 
@@ -35,20 +51,26 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
             sessions[i] = repository.login();
         }
 
-        assertEquals("Active session count is not the same as the maximum available session count.", poolingRepository
-                .getMaxActive(), poolingRepository.getNumActive());
+        assertTrue("Active session count is not the same as the maximum available session count.", 
+                poolingRepository.getMaxActive() == poolingRepository.getNumActive());
 
+        long start = System.currentTimeMillis();
+        
         try {
+            
             Session oneMore = repository.login();
-            fail("The pool should limit the maximum active session object.");
-        } catch (Exception e) {
+            fail("The session must not be borrowed here because of the active session limit.");
+        } catch (NoAvailableSessionException e) {
+            long end = System.currentTimeMillis();
+            assertTrue("The waiting time is smaller than the maxWait configuration.", 
+                    (end - start) >= this.poolingRepository.getMaxWait());
         }
 
         for (int i = 0; i < maxActive; i++) {
             sessions[i].logout();
         }
 
-        assertEquals("Active session count is not zero.", 0, poolingRepository.getNumActive());
+        assertTrue("Active session count is not zero.", 0 == poolingRepository.getNumActive());
 
         Session session = null;
 
@@ -78,8 +100,8 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
             int curNumActive = poolingRepository.getNumActive();
             session = repository.login(testCredentials);
             assertNotNull("session is null.", session);
-            assertEquals("Active session count is not " + (curNumActive + 1), curNumActive + 1, poolingRepository
-                    .getNumActive());
+            assertTrue("Active session count is not " + (curNumActive + 1), 
+                    (curNumActive + 1) == poolingRepository.getNumActive());
 
             session.save();
         } catch (UnsupportedRepositoryOperationException uroe) {
@@ -91,62 +113,94 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
     }
 
     @Test
-    public void playSessionLifeCycleManagementPerThread() throws Exception {
+    public void testSessionLifeCycleManagementPerThread() throws Exception {
 
         final Repository repository = poolingRepository;
         int maxActive = poolingRepository.getMaxActive();
+        
+        LinkedList<Runnable> jobQueue = new LinkedList<Runnable>();
+        
+        for (int i = 0; i < 1000 * maxActive; i++) {
+            jobQueue.add(new UncautiousJob(repository));
+        }
+        
+        assertTrue("Active session count is not zero.", 0 == poolingRepository.getNumActive());
 
-        assertEquals("Active session count is not zero.", 0, poolingRepository.getNumActive());
-
-        // Each worker thread will mimic the servlet container's worker thread.
-        Thread[] workers = new Thread[maxActive];
+        Thread[] workers = new Thread[maxActive * 2];
 
         for (int i = 0; i < maxActive; i++) {
-            workers[i] = new Thread() {
-                // Each thread worker will run 100 times simultaneously.
-                public void run() {
-                    // Container will invoke this (InitializationValve) initial step:
-                    poolingRepository.getPooledSessionLifecycleManagement().setActive(true);
-
-                    try {
-                        // a job execution 
-                        UncautiousJob job = new UncautiousJob(repository);
-                        job.foo();
-                    } catch (Exception e) {
-                    } finally {
-                        // Container will invoke this (CleanUpValve) clean up step:
-                        poolingRepository.getPooledSessionLifecycleManagement().disposeAllResources();
-                    }
-                }
-            };
+            workers[i] = new Worker(jobQueue);
         }
 
         for (int i = 0; i < maxActive; i++) {
             workers[i].start();
-        }
-
-        for (int i = 0; i < maxActive; i++) {
             workers[i].join();
         }
+        
+        assertTrue("The job queue is not empty.", jobQueue.isEmpty());
+        assertTrue("Active session count is not zero.", 0 == poolingRepository.getNumActive());
+    }
+    
+    @Ignore
+    private class Worker extends Thread {
+        
+        private LinkedList<Runnable> jobQueue;
+        
+        public Worker(LinkedList<Runnable> jobQueue) {
+            this.jobQueue = jobQueue;
+        }
+        
+        public void run() {
+            // Container will invoke this (InitializationValve) initial step:
+            poolingRepository.getPooledSessionLifecycleManagement().setActive(true);
 
-        assertEquals("Active session count is not zero.", 0, poolingRepository.getNumActive());
+            while (true) {
+                Runnable job = null;
+                
+                synchronized (this.jobQueue) {
+                    try {
+                        job = this.jobQueue.removeFirst();
+                    } catch (NoSuchElementException e) {
+                        // job queue is empty, so stop here.
+                        break;
+                    }
+                }
+                    
+                try {
+                    job.run();
+                } finally {
+                    // Container will invoke this (CleanUpValve) clean up step:
+                    poolingRepository.getPooledSessionLifecycleManagement().disposeAllResources();
+                }
+            }
+        }        
     }
 
-    private class UncautiousJob {
+    @Ignore
+    private class UncautiousJob implements Runnable {
 
         private Repository repository;
+        private long maxWait;
 
         public UncautiousJob(Repository repository) {
             this.repository = repository;
+            this.maxWait = poolingRepository.getMaxWait();
         }
 
-        public void foo() {
+        public void run() {
+            long start = System.currentTimeMillis();
+            
             try {
                 Session session = this.repository.login();
-                Node root = session.getRootNode();
-                // forgot to invoke logout() to return the session to the pool!
+                // forgot to invoke logout() to return the session to the pool by invoking the following:
+                //session.logout();
+            } catch (NoAvailableSessionException e) {
+                long end = System.currentTimeMillis();
+                assertTrue("No waiting occurred.", (end - start) >= this.maxWait);
+                log.warn("NoAvailableSessionException occurred.");
+                log.warn("Current active sessions: " + poolingRepository.getNumActive() + " / " + poolingRepository.getMaxActive() + ", waiting time: " + (end - start));
             } catch (Exception e) {
-                fail("Cannot borrow session from the pool!");
+                throw new RuntimeException(e);
             }
         }
     }
