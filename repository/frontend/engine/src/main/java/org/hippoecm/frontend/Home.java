@@ -29,6 +29,7 @@ import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.PluginConfigFactory;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.frontend.plugin.impl.PluginManager;
@@ -52,7 +53,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         add(new EmptyPanel("root"));
 
         mgr = new PluginManager(this);
-        context = new PluginContext(mgr, "home", null);
+        context = new PluginContext(mgr, new JavaPluginConfig("home"));
         context.connect(null);
 
         context.registerTracker(this, "service.root");

@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -58,10 +59,10 @@ public class ConfigTraversingPlugin extends AbstractTranslateService implements 
         return null;
     }
 
-    @Override
     public void detach() {
-        super.detach();
-        translations.detach();
+        if (translations instanceof IDetachable) {
+            ((IDetachable) translations).detach();
+        }
     }
 
 }

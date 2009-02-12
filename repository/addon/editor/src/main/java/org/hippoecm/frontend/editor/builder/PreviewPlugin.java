@@ -28,6 +28,9 @@ import org.hippoecm.frontend.editor.config.BuiltinTemplateStore;
 import org.hippoecm.frontend.editor.impl.TemplateEngine;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -56,6 +59,8 @@ public class PreviewPlugin extends RenderPlugin {
     private IClusterControl child;
     private ModelReference helperModel;
     private Map<String, String> paths;
+    private IClusterConfig template;
+    private IObserver templateObserver;
 
     public PreviewPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -68,6 +73,19 @@ public class PreviewPlugin extends RenderPlugin {
 
         paths = new HashMap<String, String>();
 
+        templateObserver = new IObserver() {
+            private static final long serialVersionUID = 1L;
+
+            public IObservable getObservable() {
+                return (IObservable) template;
+            }
+
+            public void onEvent(IEvent event) {
+                modelChanged();
+            }
+            
+        };
+        
         onModelChanged();
     }
 
@@ -82,6 +100,8 @@ public class PreviewPlugin extends RenderPlugin {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
+
+        final IPluginContext context = getPluginContext();
 
         if (child != null) {
             child.stop();
@@ -98,24 +118,21 @@ public class PreviewPlugin extends RenderPlugin {
             String prefix = typeName.substring(0, typeName.indexOf(':'));
             String mode = getPluginConfig().getString("mode");
 
-            IPluginContext context = getPluginContext();
-
             typeStore = new JcrTypeStore(prefix);
 
-            TemplateEngine engine = new TemplateEngine(context, typeStore);
+            final TemplateEngine engine = new TemplateEngine(context, typeStore);
             context.registerService(engine, ITemplateEngine.class.getName());
             String engineId = context.getReference(engine).getServiceId();
 
-            IClusterConfig template;
             JcrNodeModel templateModel = typeHelper.getTemplate();
             if (templateModel == null) {
                 BuiltinTemplateStore builtinStore = new BuiltinTemplateStore(typeStore, null);
                 if ("edit".equals(mode)) {
-                    IClusterConfig cluster = builtinStore.getTemplate(type, "edit");
+                    IClusterConfig cluster = builtinStore.getTemplate(type, "edit", typeName.replace(':', '_'));
                     templateModel = typeHelper.storeTemplate(cluster);
                     template = new PreviewClusterConfig(context, templateModel, helperModel, engineId);
                 } else {
-                    template = builtinStore.getTemplate(type, mode);
+                    template = builtinStore.getTemplate(type, mode, typeName.replace(':', '_'));
                 }
             } else {
                 if ("edit".equals(mode)) {
@@ -135,12 +152,23 @@ public class PreviewPlugin extends RenderPlugin {
             JcrNodeModel prototypeModel = typeHelper.getPrototype();
             final ModelReference modelService = new ModelReference(modelId, prototypeModel);
 
+            modelService.init(getPluginContext());
+            control.start();
+
+            if (template instanceof IObservable) {
+                context.registerService(templateObserver, IObserver.class.getName());
+            }
+
             child = new IClusterControl() {
                 private static final long serialVersionUID = 1L;
 
                 public void stop() {
                     control.stop();
                     modelService.destroy();
+                    context.unregisterService(engine, ITemplateEngine.class.getName());
+                    if (template instanceof IObservable) {
+                        context.unregisterService(templateObserver, IObserver.class.getName());
+                    }
                 }
 
                 public IClusterConfig getClusterConfig() {
@@ -148,11 +176,9 @@ public class PreviewPlugin extends RenderPlugin {
                 }
 
                 public void start() {
-                    modelService.init(getPluginContext());
-                    control.start();
                 }
             };
-            child.start();
+
             redraw();
         }
     }

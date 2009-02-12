@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -46,17 +47,25 @@ public class BuiltinTemplateStore implements IClusterable {
         this.component = component;
     }
 
-    public IClusterConfig getTemplate(ITypeDescriptor type, String mode) {
-        return new BuiltinTemplateConfig(type, mode);
+    public IClusterConfig getTemplate(ITypeDescriptor type, String mode, String name) {
+        return new BuiltinTemplateConfig(type, mode, name);
     }
 
-    class BuiltinTemplateConfig extends JavaClusterConfig {
+    class BuiltinTemplateConfig extends JavaClusterConfig implements IDetachable {
         private static final long serialVersionUID = 1L;
 
         private ITypeDescriptor type;
+        private String name;
 
-        public BuiltinTemplateConfig(ITypeDescriptor type, String mode) {
+        public BuiltinTemplateConfig(ITypeDescriptor type, String mode, String name) {
             this.type = type;
+            this.name = name;
+            put("mode", mode);
+        }
+
+        @Override
+        public String getName() {
+            return name;
         }
 
         @Override
@@ -84,7 +93,7 @@ public class BuiltinTemplateStore implements IClusterable {
         @Override
         public List<IPluginConfig> getPlugins() {
             List<IPluginConfig> list = new LinkedList<IPluginConfig>();
-            IPluginConfig config = new JavaPluginConfig();
+            IPluginConfig config = new JavaPluginConfig("root");
             config.put("plugin.class", ListViewPlugin.class.getName());
             config.put("wicket.id", "${wicket.id}");
             config.put("item", "${cluster.id}.field");
@@ -95,7 +104,7 @@ public class BuiltinTemplateStore implements IClusterable {
                 IFieldDescriptor field = entry.getValue();
                 ITypeDescriptor type = typeConfig.getTypeDescriptor(field.getType());
 
-                config = new JavaPluginConfig();
+                config = new JavaPluginConfig(entry.getKey());
                 if (type.isNode()) {
                     config.put("plugin.class", NodeFieldPlugin.class.getName());
                 } else {
@@ -116,7 +125,6 @@ public class BuiltinTemplateStore implements IClusterable {
             return list;
         }
 
-        @Override
         public void detach() {
             type.detach();
         }

@@ -18,6 +18,7 @@ package org.hippoecm.frontend.service.render;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -110,6 +111,7 @@ public class ListViewService extends RenderService {
             protected void destroyItem(Item item) {
                 // FIXME: this assumes that the IRenderService is the Component itself
                 IRenderService renderer = (IRenderService) item.get("item");
+                item.remove((Component) renderer);
                 ListViewService.this.onRemoveRenderService(item, renderer);
                 renderer.unbind();
             }
@@ -123,6 +125,7 @@ public class ListViewService extends RenderService {
 
                 @Override
                 public void onServiceAdded(IRenderService service, String name) {
+                    log.debug("adding " + service + " to ListViewService at " + name);
                     services.add(service);
                     redraw();
                 }
@@ -133,6 +136,7 @@ public class ListViewService extends RenderService {
 
                 @Override
                 public void onRemoveService(IRenderService service, String name) {
+                    log.debug("removing " + service + " from ListViewService at " + name);
                     services.remove(service);
                     redraw();
                 }

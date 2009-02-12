@@ -40,6 +40,11 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
             super(conf);
         }
 
+        @Override
+        public String getName() {
+            return clusterId + ".plugin." + super.getName();
+        }
+
         public IPluginConfig getPluginConfig(Object key) {
             return (IPluginConfig) decorate(super.getPluginConfig(key));
         }
@@ -50,11 +55,6 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
                 result.add((IPluginConfig) decorate(config));
             }
             return result;
-        }
-
-        public void detach() {
-            ClusterConfigDecorator.this.detach();
-            super.detach();
         }
 
         @Override
@@ -107,7 +107,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
                                     public Object setValue(Object value) {
                                         return entry.setValue(value);
                                     }
-                                    
+
                                 };
                             }
                             return null;
@@ -116,7 +116,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
                         public void remove() {
                             origIter.remove();
                         }
-                        
+
                     };
                 }
 
@@ -124,7 +124,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
                 public int size() {
                     return orig.size();
                 }
-                
+
             };
         }
 
@@ -178,7 +178,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
                                 public Object setValue(Object value) {
                                     return ClusterConfigDecorator.this.put(entry.getKey(), value);
                                 }
-                                
+
                             };
                         }
                         return null;
@@ -187,7 +187,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
                     public void remove() {
                         origIter.remove();
                     }
-                    
+
                 };
             }
 
@@ -195,7 +195,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
             public int size() {
                 return orig.size();
             }
-            
+
         };
     }
 
@@ -203,7 +203,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
     protected IPluginConfig newPluginConfig(IPluginConfig config) {
         return new PluginConfigDecorator(config);
     }
-    
+
     private Object decorate(Object object) {
         if (object instanceof String) {
             String value = (String) object;
@@ -238,7 +238,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
                 public int size() {
                     return list.size();
                 }
-                
+
             };
         }
         return object;

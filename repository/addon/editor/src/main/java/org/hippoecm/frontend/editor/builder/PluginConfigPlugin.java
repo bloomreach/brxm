@@ -229,7 +229,7 @@ public class PluginConfigPlugin extends RenderPlugin {
         final String engineId = getExtensionId(extension + ".engine");
         context.registerService(engine, engineId);
 
-        IClusterConfig templateConfig = templateStore.getTemplate(typeDescriptor, "edit");
+        IClusterConfig templateConfig = templateStore.getTemplate(typeDescriptor, "edit", extension);
         IPluginConfig parameters = new JavaPluginConfig();
         parameters.put("wicket.id", getExtensionId(extension));
         parameters.put("engine", engineId);
