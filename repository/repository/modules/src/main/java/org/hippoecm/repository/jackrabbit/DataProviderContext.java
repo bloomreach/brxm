@@ -64,6 +64,4 @@ public interface DataProviderContext {
     public Name getQName(String name) throws IllegalNameException, NamespaceException;
     
     public Path getQPath(String path) throws MalformedPathException, IllegalNameException, NamespaceException;
-    
-    public boolean isEnabled(); // FIXME HREPTWO-2125
 }

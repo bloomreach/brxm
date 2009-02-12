@@ -134,7 +134,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
         if(docbase != null) {
             dereference = getNodeState(new NodeId(new UUID(docbase[0])));
         }
-        if(isEnabled() && dereference != null) {
+        if(dereference != null) {
             LinkedHashMap<Name,String> view = new LinkedHashMap<Name,String>();
             for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
                 ChildNodeEntry entry = (ChildNodeEntry) iter.next();

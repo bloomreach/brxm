@@ -48,10 +48,7 @@ import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-import org.apache.jackrabbit.core.version.VersionManager;
 
-import org.hippoecm.repository.jackrabbit.version.VersionManagerImpl;
-import org.hippoecm.repository.jackrabbit.version.XAVersionManager;
 import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
 import org.hippoecm.repository.security.HippoAMContext;
 
@@ -163,14 +160,6 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
         ContentHandler handler =
             getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
         new DefaultContentHandler(handler).parse(in);
-    }
-
-    @Override
-    protected VersionManager createVersionManager(org.apache.jackrabbit.core.RepositoryImpl rep)
-            throws RepositoryException {
-
-        VersionManagerImpl vMgr = (VersionManagerImpl) ((RepositoryImpl)rep).getVersionManager();
-        return new XAVersionManager(vMgr, ((RepositoryImpl)rep).getNodeTypeRegistry(), this, rep.getItemStateCacheFactory());
     }
 
     @Override
