@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 public class UserSession extends WebSession {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: UserSession.java 15919 2009-01-13 12:43:27Z bvanhalderen $";
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
@@ -54,6 +54,10 @@ public class UserSession extends WebSession {
         //Calling the dirty() method causes this wicket session to be reset in the http session
         //so that it knows that the wicket session has changed (we've just added the jcr session model etc.)
         dirty();
+    }
+
+    protected void finalize() {
+        jcrSessionModel.logout();
     }
 
     public Session getJcrSession() {
