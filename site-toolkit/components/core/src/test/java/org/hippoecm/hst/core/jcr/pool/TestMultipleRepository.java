@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -15,6 +16,7 @@ import javax.jcr.Session;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -85,7 +87,7 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
         Thread[] workers = new Thread[maxActive * 2];
 
         for (int i = 0; i < maxActive; i++) {
-            workers[i] = new Worker(jobQueue, readOnlyRepository, writableRepository);
+            workers[i] = new Worker(jobQueue);
         }
 
         for (int i = 0; i < maxActive; i++) {
@@ -102,19 +104,17 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
     private class Worker extends Thread {
         
         private LinkedList<Runnable> jobQueue;
-        private BasicPoolingRepository readOnlyRepository;
-        private BasicPoolingRepository writableRepository;
         
-        public Worker(LinkedList<Runnable> jobQueue, BasicPoolingRepository readOnlyRepository, BasicPoolingRepository writableRepository) {
+        public Worker(LinkedList<Runnable> jobQueue) {
             this.jobQueue = jobQueue;
-            this.readOnlyRepository = readOnlyRepository;
-            this.writableRepository = writableRepository;
         }
         
         public void run() {
             // Container will invoke this (InitializationValve) initial step:
-            this.readOnlyRepository.getPooledSessionLifecycleManagement().setActive(true);
-            this.writableRepository.getPooledSessionLifecycleManagement().setActive(true);
+            List<ResourceLifecycleManagement> rlms = multipleRepository.getResourceLifecycleManagementList();
+            for (ResourceLifecycleManagement rlm : rlms) {
+                rlm.setActive(true);
+            }
 
             while (true) {
                 Runnable job = null;
@@ -132,8 +132,9 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
                     job.run();
                 } finally {
                     // Container will invoke this (CleanUpValve) clean up step:
-                    this.readOnlyRepository.getPooledSessionLifecycleManagement().disposeAllResources();
-                    this.writableRepository.getPooledSessionLifecycleManagement().disposeAllResources();
+                    for (ResourceLifecycleManagement rlm : rlms) {
+                        rlm.disposeAllResources();
+                    }
                 }
             }
         }        

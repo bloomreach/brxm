@@ -49,7 +49,7 @@
     </property>
     -->
     
-    <property name="pooledSessionLifecycleManagement">
+    <property name="resourceLifecycleManagement">
       <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement" />
     </property>
     

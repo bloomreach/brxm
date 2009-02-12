@@ -75,7 +75,7 @@ public class BasicPoolingRepository implements PoolingRepository {
         return this.sessionDecorator;
     }
 
-    public void setPooledSessionLifecycleManagement(ResourceLifecycleManagement pooledSessionLifecycleManagement) {
+    public void setResourceLifecycleManagement(ResourceLifecycleManagement pooledSessionLifecycleManagement) {
         this.pooledSessionLifecycleManagement = pooledSessionLifecycleManagement;
         
         if (this.pooledSessionLifecycleManagement != null && this.pooledSessionLifecycleManagement instanceof PoolingRepositoryAware) {
@@ -83,7 +83,7 @@ public class BasicPoolingRepository implements PoolingRepository {
         }
     }
     
-    public ResourceLifecycleManagement getPooledSessionLifecycleManagement() {
+    public ResourceLifecycleManagement getResourceLifecycleManagement() {
         return this.pooledSessionLifecycleManagement;
     }
 

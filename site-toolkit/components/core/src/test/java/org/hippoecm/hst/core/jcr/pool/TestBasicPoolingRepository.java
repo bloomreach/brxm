@@ -151,7 +151,7 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
         
         public void run() {
             // Container will invoke this (InitializationValve) initial step:
-            poolingRepository.getPooledSessionLifecycleManagement().setActive(true);
+            poolingRepository.getResourceLifecycleManagement().setActive(true);
 
             while (true) {
                 Runnable job = null;
@@ -169,7 +169,7 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
                     job.run();
                 } finally {
                     // Container will invoke this (CleanUpValve) clean up step:
-                    poolingRepository.getPooledSessionLifecycleManagement().disposeAllResources();
+                    poolingRepository.getResourceLifecycleManagement().disposeAllResources();
                 }
             }
         }        

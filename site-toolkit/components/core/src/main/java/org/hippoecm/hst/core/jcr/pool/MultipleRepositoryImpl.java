@@ -2,6 +2,8 @@ package org.hippoecm.hst.core.jcr.pool;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Credentials;
@@ -11,6 +13,8 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+
+import org.hippoecm.hst.core.ResourceLifecycleManagement;
 
 public class MultipleRepositoryImpl implements MultipleRepository {
 
@@ -91,6 +95,21 @@ public class MultipleRepositoryImpl implements MultipleRepository {
 
     public Session login(Credentials credentials, String workspace) throws LoginException, NoSuchWorkspaceException, RepositoryException {
         return login(credentials);
+    }
+    
+    public List<ResourceLifecycleManagement> getResourceLifecycleManagementList() {
+        List<ResourceLifecycleManagement> list = new LinkedList<ResourceLifecycleManagement>();
+        
+        for (Map.Entry<CredentialsWrapper, Repository> entry : repositoryMap.entrySet()) {
+            if (entry.getValue() instanceof PoolingRepository) {
+                ResourceLifecycleManagement rlm = ((PoolingRepository) entry.getValue()).getResourceLifecycleManagement();
+                
+                if (rlm != null)
+                    list.add(rlm);
+            }
+        }
+        
+        return list;
     }
     
     protected Repository getCurrentThreadRepository() {

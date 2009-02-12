@@ -6,13 +6,13 @@
     <property name="properties">
       <props>
         
-        <!--
         <prop key="repository.address">target/storage</prop>
         <prop key="writable.repository.address">target/storage-writable</prop>
-        -->
         <!-- If you want the external repository, use the following instead of the above.-->
+        <!--
         <prop key="repository.address">rmi://127.0.0.1/hipporepository</prop>
         <prop key="writable.repository.address">rmi://127.0.0.1/hipporepository</prop>
+        -->
         
         <prop key="repository.user.name">editor</prop>
         <prop key="repository.password">editor</prop>
@@ -75,7 +75,7 @@
     </property>
     -->
     
-    <property name="pooledSessionLifecycleManagement">
+    <property name="resourceLifecycleManagement">
       <bean class=" org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement" />
     </property>
     
@@ -122,7 +122,7 @@
     </property>
     -->
     
-    <property name="pooledSessionLifecycleManagement">
+    <property name="resourceLifecycleManagement">
       <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement" />
     </property>
     
