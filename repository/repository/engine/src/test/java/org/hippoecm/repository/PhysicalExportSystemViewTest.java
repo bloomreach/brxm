@@ -35,19 +35,21 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.junit.Test;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
+import org.hippoecm.repository.api.HippoNodeType;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
-    private static final String FACETSELECTNODE = "facetselect";
-    private static final String FACETSEARCHNODE = "facetsearch";
 
     @Override
     protected Node commonStart() throws RepositoryException {
@@ -61,14 +63,24 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
         return null;
     }
 
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
     @Test
     public void testFacetSearchExport() throws RepositoryException, Exception {
         commonStart();
         Result result = new Result();
-        ContentHandler handler = new ContentHandlerImpl(result, new String[] {FACETSEARCHNODE} );
-        this.session.exportSystemView("/"+FACETSEARCHNODE, handler, true, false);
+        ContentHandler handler = new ContentHandlerImpl(result, new String[] {"facetsearch"} );
+        this.session.exportSystemView("/test/facetsearch", handler, true, false);
         if(verbose) {
-            printSystemView("/"+FACETSEARCHNODE);
+            printSystemView("/test/factsearch");
         }
         // if issue solved, assertTrue
         assertTrue(result.isSucces());
@@ -78,12 +90,11 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
     public void testFacetSelectExport() throws RepositoryException, Exception {
         commonStart();
         Result result = new Result();
-        ContentHandler handler = new ContentHandlerImpl(result,  new String[] {FACETSELECTNODE});
-        this.session.exportSystemView("/"+FACETSELECTNODE, handler, true, false);
+        ContentHandler handler = new ContentHandlerImpl(result,  new String[] {"facetselect"});
+        this.session.exportSystemView("/test/facetselect", handler, true, false);
         if(verbose) {
-            printSystemView("/"+FACETSELECTNODE);
+            printSystemView("/test/facetselect");
         }
-        // if issue solved, assertTrue
         assertTrue(result.isSucces());
     }
 
@@ -91,24 +102,23 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
     public void testTotalExport() throws RepositoryException, Exception {
         commonStart();
         Result result = new Result();
-        ContentHandler handler = new ContentHandlerImpl(result, new String[] {FACETSELECTNODE, FACETSELECTNODE});
-        this.session.exportSystemView("/", handler, true, false);
+        ContentHandler handler = new ContentHandlerImpl(result, new String[] {"facetsearch", "facetselect"});
+        this.session.exportSystemView("/test", handler, true, false);
         if(verbose) {
-        printSystemView("/");
+            printSystemView("/test");
         }
-        // if issue solved, assertTrue
         assertTrue(result.isSucces());
     }
 
     private void addFacetSearch() throws RepositoryException {
-        Node facetsearchNode = session.getRootNode().addNode(FACETSEARCHNODE, HippoNodeType.NT_FACETSEARCH);
+        Node facetsearchNode = session.getRootNode().getNode("test").addNode("facetsearch", HippoNodeType.NT_FACETSEARCH);
         facetsearchNode.setProperty(HippoNodeType.HIPPO_QUERYNAME, "xyz");
         facetsearchNode.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
         facetsearchNode.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x", "y", "z" });
     }
 
     private void addFacetSelect() throws RepositoryException {
-        Node facetselectNode = session.getRootNode().addNode(FACETSELECTNODE, HippoNodeType.NT_FACETSELECT);
+        Node facetselectNode = session.getRootNode().getNode("test").addNode("facetselect", HippoNodeType.NT_FACETSELECT);
         facetselectNode.setProperty("hippo:docbase", session.getRootNode().getNode("test/documents").getUUID());
         facetselectNode.setProperty("hippo:facets", new String[] {});
         facetselectNode.setProperty("hippo:values", new String[] {});
