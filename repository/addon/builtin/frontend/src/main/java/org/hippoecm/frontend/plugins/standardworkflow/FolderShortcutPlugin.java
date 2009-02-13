@@ -143,10 +143,9 @@ public class FolderShortcutPlugin extends RenderPlugin {
                                 EditableWorkflow editableWorkflow = (EditableWorkflow) workflow;
                                 Document editableDocument = editableWorkflow.obtainEditableInstance();
                                 if (editableDocument != null) {
-                                    Session jcrSession = ((UserSession) org.apache.wicket.Session.get())
-                                            .getJcrSession();
-                                    editNodeModel = new JcrNodeModel(jcrSession.getNodeByUUID(editableDocument
-                                            .getIdentity()));
+                                    Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+                                    jcrSession.refresh(true);
+                                    editNodeModel = new JcrNodeModel(jcrSession.getNodeByUUID(editableDocument.getIdentity()));
                                 } else {
                                     editNodeModel = null;
                                 }

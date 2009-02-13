@@ -188,6 +188,7 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
                                 EditableWorkflow editableWorkflow = (EditableWorkflow) workflow;
                                 Document editableDocument = editableWorkflow.obtainEditableInstance();
                                 if (editableDocument != null) {
+                                    ((UserSession) Session.get()).getJcrSession().refresh(true);
                                     editNodeModel = new JcrNodeModel(((UserSession) Session.get()).getJcrSession()
                                             .getNodeByUUID(editableDocument.getIdentity()));
                                 } else {
