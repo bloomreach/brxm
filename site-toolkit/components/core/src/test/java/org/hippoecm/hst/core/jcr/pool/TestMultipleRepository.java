@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -28,7 +27,7 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
 
     protected MultipleRepository multipleRepository;
     protected Repository repository;
-    protected Credentials readOnlyCredentials;
+    protected Credentials defaultCredentials;
     protected Credentials writableCredentials;
 
     @Before
@@ -37,28 +36,28 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
         
         this.multipleRepository = (MultipleRepository) getComponent(Repository.class.getName());
         this.repository = this.multipleRepository;
-        this.readOnlyCredentials = (Credentials) getComponent(Credentials.class.getName() + ".readOnly");
+        this.defaultCredentials = (Credentials) getComponent(Credentials.class.getName() + ".default");
         this.writableCredentials = (Credentials) getComponent(Credentials.class.getName() + ".writable");
     }
 
     @Test
     public void testMultipleRepository() throws LoginException, RepositoryException {
-        Repository readOnlyRepository = this.multipleRepository.getRepositoryByCredentials(this.readOnlyCredentials);
+        Repository defaultRepository = this.multipleRepository.getRepositoryByCredentials(this.defaultCredentials);
         Repository writableRepository = this.multipleRepository.getRepositoryByCredentials(this.writableCredentials);
         
-        assertFalse("The readOnly repository must be different one from the writable repository.", readOnlyRepository == writableRepository);
+        assertFalse("The default repository must be different one from the writable repository.", defaultRepository == writableRepository);
         
         Map<Credentials, Repository> repoMap = this.multipleRepository.getRepositoryMap();
         
         assertTrue("The repository retrieved by credentials is different from the entry of the map.", 
-                readOnlyRepository == repoMap.get(this.readOnlyCredentials));
+                defaultRepository == repoMap.get(this.defaultCredentials));
         assertTrue("The repository retrieved by credentials is different from the entry of the map.", 
                 writableRepository == repoMap.get(this.writableCredentials));
         
-        Session sessionFromReadOnlyRepository = this.repository.login(this.readOnlyCredentials);
+        Session sessionFromDefaultRepository = this.repository.login(this.defaultCredentials);
         assertTrue("Current session's repository is not the expected repository", 
-                readOnlyRepository == ((MultipleRepositoryImpl) this.multipleRepository).getCurrentThreadRepository());
-        sessionFromReadOnlyRepository.logout();
+                defaultRepository == ((MultipleRepositoryImpl) this.multipleRepository).getCurrentThreadRepository());
+        sessionFromDefaultRepository.logout();
         
         Session sessionFromWritableRepository = this.repository.login(this.writableCredentials);
         assertTrue("Current session's repository is not the expected repository", 
@@ -70,18 +69,18 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
     public void testSessionLifeCycleManagementPerThread() throws Exception {
 
         final Repository repository = multipleRepository;
-        BasicPoolingRepository readOnlyRepository = (BasicPoolingRepository) this.multipleRepository.getRepositoryByCredentials(this.readOnlyCredentials);
+        BasicPoolingRepository defaultRepository = (BasicPoolingRepository) this.multipleRepository.getRepositoryByCredentials(this.defaultCredentials);
         BasicPoolingRepository writableRepository = (BasicPoolingRepository) this.multipleRepository.getRepositoryByCredentials(this.writableCredentials);
         
-        int maxActive = Math.max(readOnlyRepository.getMaxActive(), writableRepository.getMaxActive());
+        int maxActive = Math.max(defaultRepository.getMaxActive(), writableRepository.getMaxActive());
         
         LinkedList<Runnable> jobQueue = new LinkedList<Runnable>();
         
         for (int i = 0; i < 1000 * maxActive; i++) {
-            jobQueue.add(new UncautiousJob(repository, readOnlyRepository, writableRepository));
+            jobQueue.add(new UncautiousJob(repository, defaultRepository, writableRepository));
         }
         
-        assertTrue("Active session count is not zero.", 0 == readOnlyRepository.getNumActive());
+        assertTrue("Active session count is not zero.", 0 == defaultRepository.getNumActive());
         assertTrue("Active session count is not zero.", 0 == writableRepository.getNumActive());
 
         Thread[] workers = new Thread[maxActive * 2];
@@ -96,7 +95,7 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
         }
         
         assertTrue("The job queue is not empty.", jobQueue.isEmpty());
-        assertTrue("Active session count is not zero.", 0 == readOnlyRepository.getNumActive());
+        assertTrue("Active session count is not zero.", 0 == defaultRepository.getNumActive());
         assertTrue("Active session count is not zero.", 0 == writableRepository.getNumActive());
     }
     
@@ -111,7 +110,7 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
         
         public void run() {
             // Container will invoke this (InitializationValve) initial step:
-            List<ResourceLifecycleManagement> rlms = multipleRepository.getResourceLifecycleManagementList();
+            ResourceLifecycleManagement [] rlms = multipleRepository.getResourceLifecycleManagements();
             for (ResourceLifecycleManagement rlm : rlms) {
                 rlm.setActive(true);
             }
@@ -133,7 +132,11 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
                 } finally {
                     // Container will invoke this (CleanUpValve) clean up step:
                     for (ResourceLifecycleManagement rlm : rlms) {
-                        rlm.disposeAllResources();
+                        try {
+                            rlm.disposeAllResources();
+                        } catch (Exception e) {
+                            log.error("Failed to disposeAll: " + Thread.currentThread() + ", " + rlm + ", " + rlms, e);
+                        }
                     }
                 }
             }
@@ -144,16 +147,16 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
     private class UncautiousJob implements Runnable {
 
         private Repository repository;
-        private BasicPoolingRepository readOnlyRepository;
+        private BasicPoolingRepository defaultRepository;
         private BasicPoolingRepository writableRepository;
-        private long maxWaitOfReadOnlyRepository;
+        private long maxWaitOfDefaultRepository;
         private long maxWaitOfWritableRepository;
 
-        public UncautiousJob(Repository repository, BasicPoolingRepository readOnlyRepository, BasicPoolingRepository writableRepository) {
+        public UncautiousJob(Repository repository, BasicPoolingRepository defaultRepository, BasicPoolingRepository writableRepository) {
             this.repository = repository;
-            this.readOnlyRepository = readOnlyRepository;
+            this.defaultRepository = defaultRepository;
             this.writableRepository = writableRepository;
-            this.maxWaitOfReadOnlyRepository = readOnlyRepository.getMaxWait();
+            this.maxWaitOfDefaultRepository = defaultRepository.getMaxWait();
             this.maxWaitOfWritableRepository = writableRepository.getMaxWait();
         }
 
@@ -161,14 +164,14 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
             long start = System.currentTimeMillis();
             
             try {
-                Session readOnlySession = this.repository.login(readOnlyCredentials);
+                Session defaultSession = this.repository.login(defaultCredentials);
                 // forgot to invoke logout() to return the session to the pool by invoking the following:
-                //session.logout();
+                //defaultSession.logout();
             } catch (NoAvailableSessionException e) {
                 long end = System.currentTimeMillis();
-                assertTrue("No waiting occurred.", (end - start) >= this.maxWaitOfReadOnlyRepository);
+                assertTrue("No waiting occurred.", (end - start) >= this.maxWaitOfDefaultRepository);
                 log.warn("NoAvailableSessionException occurred.");
-                log.warn("Current active sessions: " + readOnlyRepository.getNumActive() + " / " + readOnlyRepository.getMaxActive() + ", waiting time: " + (end - start));
+                log.warn("Current active sessions: " + defaultRepository.getNumActive() + " / " + defaultRepository.getMaxActive() + ", waiting time: " + (end - start));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -176,9 +179,9 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
             start = System.currentTimeMillis();
             
             try {
-                Session readOnlySession = this.repository.login(writableCredentials);
+                Session writableSession = this.repository.login(writableCredentials);
                 // forgot to invoke logout() to return the session to the pool by invoking the following:
-                //session.logout();
+                //writableSession.logout();
             } catch (NoAvailableSessionException e) {
                 long end = System.currentTimeMillis();
                 assertTrue("No waiting occurred.", (end - start) >= this.maxWaitOfWritableRepository);

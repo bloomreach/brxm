@@ -2,9 +2,9 @@ package org.hippoecm.hst.core.jcr.pool;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -21,10 +21,12 @@ public class MultipleRepositoryImpl implements MultipleRepository {
     private static ThreadLocal<Repository> tlCurrentRepository = new ThreadLocal<Repository>();
     
     protected Map<CredentialsWrapper, Repository> repositoryMap;
+    protected ResourceLifecycleManagement [] resourceLifecycleManagements;
     protected CredentialsWrapper defaultCredentialsWrapper;
     
     public MultipleRepositoryImpl(Map<Credentials, Repository> repoMap, Credentials defaultCredentials) {
         this.repositoryMap = new HashMap<CredentialsWrapper, Repository>();
+        Set<ResourceLifecycleManagement> resourceLifecycleManagementSet = new HashSet<ResourceLifecycleManagement>();
         
         for (Map.Entry<Credentials, Repository> entry : repoMap.entrySet()) {
             Repository repo = entry.getValue();
@@ -34,8 +36,23 @@ public class MultipleRepositoryImpl implements MultipleRepository {
             }
             
             this.repositoryMap.put(new CredentialsWrapper(entry.getKey()), repo);
+
+            if (repo instanceof PoolingRepository) {
+                ResourceLifecycleManagement rlm = ((PoolingRepository) repo).getResourceLifecycleManagement();
+                
+                if (rlm != null) {
+                    resourceLifecycleManagementSet.add(rlm);
+                }
+            }
         }
+
+        this.resourceLifecycleManagements = new ResourceLifecycleManagement[resourceLifecycleManagementSet.size()];
+        int index = 0;
         
+        for (ResourceLifecycleManagement rlm : resourceLifecycleManagementSet) {
+            this.resourceLifecycleManagements[index++] = rlm;
+        }
+
         this.defaultCredentialsWrapper = new CredentialsWrapper(defaultCredentials);
     }
     
@@ -103,19 +120,8 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         return login(credentials);
     }
     
-    public List<ResourceLifecycleManagement> getResourceLifecycleManagementList() {
-        List<ResourceLifecycleManagement> list = new LinkedList<ResourceLifecycleManagement>();
-        
-        for (Map.Entry<CredentialsWrapper, Repository> entry : repositoryMap.entrySet()) {
-            if (entry.getValue() instanceof PoolingRepository) {
-                ResourceLifecycleManagement rlm = ((PoolingRepository) entry.getValue()).getResourceLifecycleManagement();
-                
-                if (rlm != null)
-                    list.add(rlm);
-            }
-        }
-        
-        return list;
+    public ResourceLifecycleManagement [] getResourceLifecycleManagements() {
+        return this.resourceLifecycleManagements;
     }
     
     protected Repository getCurrentThreadRepository() {

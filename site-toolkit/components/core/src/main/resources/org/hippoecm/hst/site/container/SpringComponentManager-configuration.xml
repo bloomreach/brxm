@@ -22,7 +22,7 @@
     <property name="targetMethod" value="create" />
     <property name="arguments">
       <list>
-        <ref bean="org.hippoecm.hst.core.jcr.pool.PoolingRepository" />
+        <ref bean="javax.jcr.Repository" />
         <value>preview</value>
       </list>
     </property>

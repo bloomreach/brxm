@@ -3,11 +3,35 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-base.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-configuration.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-pipelines.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-request.xml" />
-  <import resource="classpath:/org/hippoecm/hst/core/jcr/pool/GeneralBasicPoolingRepository.xml" />
+  <import resource="classpath:/org/hippoecm/hst/core/jcr/pool/GeneralMultiplePoolingRepository.xml" />
+
+  <bean id="org.hippoecm.hst.configuration.HstSites" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetClass" value="org.hippoecm.hst.configuration.HstSitesFactory" />
+    <property name="targetMethod" value="create" />
+    <property name="arguments">
+      <list>
+        <ref bean="javax.jcr.Repository" />
+        <value>testpreview</value>
+      </list>
+    </property>
+  </bean>
   
+  <bean id="org.hippoecm.hst.core.domain.DomainMappings" class="org.hippoecm.hst.core.domain.DomainMappingsImpl">
+    <constructor-arg>
+      <list>
+        <bean class="org.hippoecm.hst.core.domain.DomainMappingImpl">
+          <constructor-arg value="preview.myproject.hippoecm.org" />
+          <constructor-arg value="testproject" />
+        </bean>
+      </list>
+    </constructor-arg>
+  </bean>
+  
+  <bean id="org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher" class="org.hippoecm.hst.configuration.SimpleHstSiteMapMatcher">
+  </bean>
+    
   <bean id="javax.servlet.ServletContext"
         class="org.springframework.mock.web.MockServletContext">
   </bean>
@@ -19,16 +43,14 @@
   
   <bean id="javax.servlet.http.HttpServletRequest" scope="prototype"
         class="org.springframework.mock.web.MockHttpServletRequest">
-     <!-- servletContext -->
      <constructor-arg ref="javax.servlet.ServletContext" />
-     <!-- method -->
-     <constructor-arg value="GET" />
-     <!-- requestURI -->
-     <constructor-arg>
-       <value><![CDATA[
-       /site/content/news/2009?pagesize=10&pageindex=2
-       ]]></value>
-     </constructor-arg>
+     <property name="protocol" value="http" />
+     <property name="serverName" value="preview.myproject.hippoecm.org" />
+     <property name="serverPort" value="8080" />
+     <property name="method" value="GET" />
+     <property name="contextPath" value="/site" />
+     <property name="servletPath" value="/content" />
+     <property name="pathInfo" value="/news/2008/08" />
   </bean>
   
   <bean id="javax.servlet.http.HttpServletResponse" scope="prototype"

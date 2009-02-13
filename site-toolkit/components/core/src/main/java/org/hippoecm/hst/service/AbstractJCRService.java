@@ -20,7 +20,8 @@ public abstract class AbstractJCRService implements Service{
     public void closeValueProvider(boolean closeChildServices) {
         if(closeChildServices) {
             for(Service s : getChildServices()) {
-                s.closeValueProvider(closeChildServices);
+                if (s != null)
+                    s.closeValueProvider(closeChildServices);
             }
         }
         this.valueProvider.detach();

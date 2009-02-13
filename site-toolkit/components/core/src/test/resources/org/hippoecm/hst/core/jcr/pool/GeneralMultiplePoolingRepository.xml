@@ -20,7 +20,7 @@
     </property>
   </bean>
 
-  <bean id="javax.jcr.Credentials.readOnly" class="javax.jcr.SimpleCredentials">
+  <bean id="javax.jcr.Credentials.default" class="javax.jcr.SimpleCredentials">
     <constructor-arg value="${test.default.repository.user.name}" />
     <constructor-arg value="${test.default.repository.password}" />
   </bean>
@@ -34,21 +34,21 @@
     <!-- Delegating session pool repositories -->
     <constructor-arg>
       <map>
-        <entry key-ref="javax.jcr.Credentials.readOnly" value-ref="javax.jcr.Repository.readOnly" />
+        <entry key-ref="javax.jcr.Credentials.default" value-ref="javax.jcr.Repository.default" />
         <entry key-ref="javax.jcr.Credentials.writable" value-ref="javax.jcr.Repository.writable" />
       </map>
     </constructor-arg>
     <!-- The default credentials for login() without credentials parameter. -->
-    <constructor-arg ref="javax.jcr.Credentials.readOnly" />
+    <constructor-arg ref="javax.jcr.Credentials.default" />
   </bean>
   
-  <bean id="javax.jcr.Repository.readOnly" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
+  <bean id="javax.jcr.Repository.default" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
         init-method="initialize" destroy-method="close">
     <!-- delegated JCR repository -->
     <property name="repositoryAddress" value="${test.default.repository.address}" />
     <property name="defaultCredentialsUserID" value="${test.default.repository.user.name}" />
     <property name="defaultCredentialsPassword" value="${test.default.repository.password}" />
-    <property name="readOnly" value="true" />
+    <property name="readOnly" value="false" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="25" />
     <property name="maxIdle" value="5" />

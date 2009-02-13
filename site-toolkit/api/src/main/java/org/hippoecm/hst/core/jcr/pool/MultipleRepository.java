@@ -1,6 +1,5 @@
 package org.hippoecm.hst.core.jcr.pool;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Credentials;
@@ -14,6 +13,6 @@ public interface MultipleRepository extends Repository {
     
     Repository getRepositoryByCredentials(Credentials credentials);
     
-    List<ResourceLifecycleManagement> getResourceLifecycleManagementList();
+    ResourceLifecycleManagement [] getResourceLifecycleManagements();
 
 }

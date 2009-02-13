@@ -17,6 +17,7 @@ public class ContextResolvingValve extends AbstractValve
     public void invoke(HstRequestContext request, ValveContext context) throws ContainerException
     {
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
+        
         String domainName = servletRequest.getServerName();
         DomainMapping domainMapping = this.domainMappings.findDomainMapping(domainName);
         
@@ -32,7 +33,14 @@ public class ContextResolvingValve extends AbstractValve
         }
         
         String pathInfo = servletRequest.getPathInfo();
-        MatchResult matchResult = this.siteMapMatcher.match(pathInfo, hstSite);
+        
+        MatchResult matchResult = null;
+        
+        try {
+            matchResult = this.siteMapMatcher.match(pathInfo, hstSite);
+        } catch (Exception e) {
+            throw new ContainerException("No match for " + pathInfo, e);
+        }
         
         if (matchResult == null) {
             throw new ContainerException("No match for " + pathInfo);

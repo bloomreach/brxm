@@ -21,12 +21,10 @@
   
   <bean id="resourceLifecycleManagementList" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
-      <list>
-        <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
-          <property name="targetBeanName" value="org.hippoecm.hst.core.jcr.pool.PoolingRepository" />
-          <property name="propertyPath" value="pooledSessionLifecycleManagement" />
-        </bean>
-      </list>
+      <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+        <property name="targetBeanName" value="javax.jcr.Repository" />
+        <property name="propertyPath" value="resourceLifecycleManagements" />
+      </bean>
     </property>
   </bean>
 
