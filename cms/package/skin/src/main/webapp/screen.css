@@ -109,13 +109,13 @@ padding: 2px;
 
 .hippo-login-panel-copyright{color: #999999; padding-bottom: 20px; text-align: center; margin-top: 23px; background: url("images/loginbottom.png") no-repeat bottom center}
 
-/* feedback */
+/* Login feedback */
 .hippo-login-feedback ul {
 text-align: left;
 margin-left: 60px; 
 margin-right: 60px; 
-border: 1px solid #afafaf; 
-color: #1691e7;
+border: 1px solid #69849f; 
+color: #69849f;
 background-color: #fff8d5; 
 margin-bottom: 15px; 
 font-weight: bold;
@@ -133,7 +133,7 @@ padding-top: 8px;
 /* Wicket Ajaxloader */
 /* ================================================ */
 .hippo-root .wicket-ajax-indicator{position: absolute; top: 0px; left:0px; display: block; visibility: visible; background:url("images/ajaxback.png") repeat-x; width: 25px; padding: 4px;}
-.hippo-window .hippo-root .wicket-ajax-indicator{position:absolute; top: 6px; left: 16px; background:transparent;}
+.hippo-dialog-picker .wicket-ajax-indicator, .hippo-window .hippo-root .wicket-ajax-indicator{position:absolute; bottom: 16px; left: 12px; background:transparent; top: auto;}
 
 /* Header */
 /* ================================================ */
@@ -153,8 +153,8 @@ padding-top: 8px;
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li span a span{display: none}
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab0 span{background-image: url(images/icons/home-32.png);}
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab1 span{background-image: url(images/icons/emblem-documents-32.png);}
-.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab2 span{background-image: url(images/icons/groups-32.png);}
-.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab3 span{background-image: url(images/icons/controlpanel-32.png);}
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab3 span{background-image: url(images/icons/groups-32.png);}
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab2 span{background-image: url(images/icons/controlpanel-32.png);}
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab0 .close{background-image: none}
 
 /* TabsPlugin Document switcher */
@@ -275,13 +275,20 @@ padding-right: 9px;
 .hippo-list-details td.icon-48 span span{display: block; height: 55px; width: 55px; background: white; margin-left: 2px; overflow: hidden}
 .hippo-list-details td.icon-48 span span img{height: 60px; width: auto}
 
+/* Wicket Table Paging */
+/* ================================================ */
 .hippo-list-paging{position: absolute; bottom: 0px; left: 0px; background: url("images/hippo-paging-back.png") repeat-x left bottom; width: 100%; color: #afafaf}
-.hippo-list-details .hippo-list-paging td{padding: 4px; text-align: center; border-bottom: 0px; width: 190px;}
-.hippo-list-paging td div{margin-top: 20px; margin-bottom: 2px; width: 100%;}
-.hippo-list-paging td a{padding: 3px; color: #909090; border: 1px solid #afafaf}
-.hippo-list-paging td span{padding: 3px;}
-.hippo-list-paging td a:hover{background: white; color: black; border: 1px solid #666666}
-.hippo-list-paging td span em, .hippo-list-paging td a em{font-style: normal}
+.hippo-list-details tr.hippo-list-paging  td{width: 100%; padding: 0px; border-bottom: 0px;}
+.hippo-list-paging td div{margin-top: 15px; text-align: right; color: #666666}
+
+.hippo-list-paging td em,
+.hippo-list-paging td a{text-align: center; color: #909090; border: 1px solid #afafaf; border-right: 0px; float: left; display: block; width: 22px; height: 16px; padding-top: 6px; padding-bottom: 1px}
+
+.hippo-list-paging td span{display: block; float: left;}
+
+.hippo-list-paging td a:hover{color: black; background: #f2f2f2}
+.hippo-list-paging td span em, 
+.hippo-list-paging td a em{font-style: normal}
 
 /* Dashboard */
 /* ================================================ */
@@ -338,10 +345,32 @@ padding-right: 9px;
 .hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-caption span,
 .hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-status span{padding-left: 5px; color: black}
 
+/* Default feedback */
+/* ================================================ */
+.hippo-feedback ul {
+text-align: left;
+margin-left: 60px; 
+margin-right: 60px; 
+border: 1px solid #69849f; 
+color: #69849f;
+background-color: #fff8d5; 
+margin-bottom: 15px; 
+font-weight: bold;
+background-image: url("images/icons/dialog-information-32.png");
+background-repeat: no-repeat;
+background-position: 10px 5px;
+padding-left: 70px;
+min-height: 35px;
+height: 35px;
+padding-top: 8px;
+}
+.hippo-feedback ul li{list-style-type: disc}
+
 /* Windows */
 /* ================================================ */
 .hippo-window{padding: 25px; background: none}
 .hippo-window .hippo-root{background: none}
+
 .hippo-window h1, .hippo-window h1{margin-bottom: 10px; font-size: 16px;}
 .hippo-window-buttons{text-align: right; position: absolute; right: 15px; bottom: 15px; }
 .hippo-window .wicketExtensionsWizardInnerTable .wicketExtensionsWizardButtonBar{}
@@ -407,7 +436,7 @@ background-image:url(images/box-blue2.png);}
 */
 
 .hippo-picker-navigation{background: url("images/silver4.png") repeat-x; height: 20px; width: 635px; border-bottom: 1px solid #afafaf; margin-left: 194px; padding-top: 2px; padding-bottom: 2px; padding-left: 2px;}
-
+.hippo-picker-list-details tr.hippo-list-paging td div {margin-top: 10px}
 .hippo-picker-navigation-buttons{background: url("images/hippo-picker-navigation-back.png") repeat-x;}
 .hippo-picker-navigation-buttons input{float: left; padding: 0px; height: 22px; width: 24px; font-size: 11px; background: url("images/hippo-picker-navigation-buttons-back.png") no-repeat; background-position: 0px -20px; border: none; margin: 0px; text-indent: -9999px;}
 
@@ -524,6 +553,11 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 
 .hippo-tree .icon-16{padding: 0px; width: 16px; height: 16px; display: block; float: left; margin-right: 5px; margin-left: 3px;}
 
+/* mimetypes icons */
+table tr.selected span.document-16, .document-16{background-image:url("images/icons/document-16.png")}
+table tr.selected span.folder-16, .folder-16{background-image:url("images/icons/folder-16.png")}
+table tr.selected span.folder-open-16, .folder-open-16{background-image:url("images/icons/folder-open-16.png")}
+
 /* Accordion */
 .hippo-accordion-unit{background: #f4f4f4;}
 /* change the tree if he's inside an accordion */
@@ -588,7 +622,6 @@ font-weight: bold;
 .hippo-editor-field-title{font-size: 11px; font-weight: bold; color: #666666; margin-bottom: 8px;}
 
 /* Text Input elements */
-.hippo-controlpanel-form input,
 .hippo-window-form input,
 .hippo-picker-properties input,
 .hippo-editor-field textarea,
@@ -727,49 +760,87 @@ margin-top: 10px;
 
 /* Control panel */
 /* ================================================ */
-.hippo-controlpanel {margin-top: 30px;}
+.hippo-controlpanel {padding-top: 25px;}
 .hippo-controlpanel-panel{padding: 15px;}
 
-.hippo-controlpanel .hippo-login-feedback ul{margin-left: 0px; margin-right: 0px}
+.hippo-controlpanel .hippo-feedback{position: absolute; top: 15px; right: 15px; width: 500px;} 
+.hippo-controlpanel .hippo-feedback ul{margin-left: 0px; margin-right: 0px}
 
-.hippo-controlpanel-form {padding: 5px;}
-.hippo-controlpanel-form table tr td{padding: 4px}
+.hippo-controlpanel-body{margin-left: 15%; margin-right: 15%; padding: 15px; position: relative;}
+.hippo-controlpanel-body h2{font-size: 20px; color: #0d496f; margin-top: 0px; margin-bottom: 15px;}
+.hippo-controlpanel-body h3{font-size: 12px; font-weight: bold; color: #0d496f;  margin-bottom: 5px;}
 
-.hippo-controlpanel-form input{border: 1px solid #afafaf; padding: 3px; line-height: 16px;}
+.hippo-controlpanel-form {}
+.hippo-controlpanel-form tr td,
+.hippo-controlpanel-form table tr td{padding: 4px; padding-left: 0px; vertical-align: top;}
+.hippo-controlpanel-form textarea{width: 400px; height: 200px}
+.hippo-controlpanel-form input[type="password"],
+.hippo-controlpanel-form input[type="text"]{border: 1px solid #afafaf; padding: 3px; line-height: 16px;}
 
-.hippo-controlpanel-panel .hippo-list-details{border: 1px solid #afafaf;}
-.hippo-controlpanel-panel .hippo-list-details tr th{border-bottom: 1px solid #afafaf}
-.hippo-controlpanel-panel .hippo-list-details tr.odd td{background: #f4f4f4}
-.hippo-controlpanel-panel .hippo-list-details tr.even td{background: white;}
+.hippo-controlpanel .icons-128{background-repeat: no-repeat; background-position: left center;
+padding-left: 150px; padding-top: 10px; padding-bottom: 10px; border-top: 1px solid #afafaf; border-bottom: 1px solid #afafaf; min-height: 128px;}
 
-.hippo-controlpanel-breadcrumbs{background: url("images/hippo-panels-headerback.png") repeat-x; border-bottom: 1px dotted #afafaf; padding: 7px; font-weight: bold}
-.hippo-controlpanel-breadcrumbs a, .hippo-controlpanel-breadcrumbs span em{font-weight: bold; color: #666666;}
+.hippo-controlpanel-table-default{border: 1px solid #afafaf; border-collapse: separate}
+.hippo-controlpanel-table-default tr th{
+background: url("images/hippo-panels-headerback.png") repeat-x;
+border-bottom: 1px solid #afafaf; border-left: none; border-right: 1px solid #afafaf; font-size: 12px; font-weight: bold; color: black; padding: 4px;}
+.hippo-controlpanel-table-default tr td{vertical-align: top}
+
+.hippo-controlpanel-table-default tr.navigation td{padding: 15px;}
+.hippo-controlpanel-table-default tr.navigation .navigatorLabel{font-size: 18px;}
+.hippo-controlpanel-table-default tr.navigation td em,
+.hippo-controlpanel-table-default tr.navigation td a{padding: 8px; padding-left: 10px; padding-right: 10px; background: #f2f2f2; color: #666666; line-height: 13px; font-weight: bold}
+.hippo-controlpanel-table-default tr.navigation td a:hover{background: #afafaf; color: white}
+.hippo-controlpanel-table-default tr.navigation td em{color: #cccccc}
+
+.hippo-controlpanel-table-default tr td:hover{cursor: default}
+.hippo-controlpanel-table-default tr.odd td{background: #f4f4f4; border-right: 1px solid #afafaf}
+.hippo-controlpanel-table-default tr.even td{background: white; border-right: 1px solid #afafaf}
+
+.hippo-controlpanel-table-nested {border-collapse: separate}
+.hippo-controlpanel-table-nested tr td{background: #f2f2f2; border: 1px solid white; border-bottom: none; border-top: none; padding: 4px;line-height: 15px;}
+.hippo-controlpanel-table-nested span.icon-16 {padding: 0px; padding-left: 17px; background-position: 0px 0px;}
+.hippo-controlpanel-table-nested span.icon-16 a{color: #cf2d27}
+.hippo-controlpanel-table-nested span.icon-16 a:hover{text-decoration: underline}
+
+.hippo-controlpanel-membership-item-label{display: block; width: 200px}
+
+.hippo-controlpanel-breadcrumbs{background: url("images/hippo-panels-headerback.png") repeat-x; border-bottom: 1px dotted #afafaf; font-weight: bold}
+.hippo-controlpanel-breadcrumbs-backbutton{background: url("images/hippo-controlpanel-back.png") no-repeat; display: block; padding: 8px; padding-left: 33px;}
+.hippo-controlpanel-breadcrumbs span a, .hippo-controlpanel-breadcrumbs span em{font-weight: normal; color: #666666; padding: 4px; padding-right: 8px; background: url("images/hippo-controlpanel-breacrumbs-arrow.png") no-repeat right center; margin-right: 0px;}
 .hippo-controlpanel-breadcrumbs a:hover{text-decoration: underline}
 
 .hippo-controlpanel-navigation li{display: block; float: left}
-.hippo-controlpanel-navigation li a{color: #666666; width: 200px; height: 100px; border: 1px solid #afafaf; padding: 15px; float: left; margin: 10px; padding-left: 80px; font-size: 17px;}
-.hippo-controlpanel-navigation li a:hover{background-color: #fff6e0}   
+.hippo-controlpanel-navigation li span{display: block; float: left; font-weight: normal; color: #afafaf; font-size: 11px}
+.hippo-controlpanel-navigation li a{color: #666666; width: 150px; border: 1px solid #f2f2f2; height: 47px; padding: 10px; float: left; margin: 10px; padding-left: 80px; font-size: 12px; font-weight: bold}
+.hippo-controlpanel-navigation li a:hover{border: 1px solid #afafaf}   
 
-.hippo-controlpanel-actions{padding: 5px; background: #f4f4f4; border: 1px solid #afafaf; margin-bottom: 15px; height: 27px}   
-.hippo-controlpanel-actions input{padding: 15px;}
-.hippo-controlpanel-actions li{float: left; margin-right: 10px; cursor: pointer}
-.hippo-controlpanel-actions a{padding: 6px; display: block; float: left; border: 1px solid #afafaf; background: #f4f4f4; font-weight: bold;}
-.hippo-controlpanel-actions a:hover{background: #fff6e0; text-decoration: underline; cursor: pointer}
+div.hippo-controlpanel-actions-top{border-bottom: 1px solid #afafaf; border-top: none; text-align: left; padding-top: 2px; margin-bottom: 5px}
+.hippo-controlpanel-actions{padding: 10px; border-top: 1px solid #afafaf; text-align: right; padding-right: 25px; margin-top: 15px;}   
+.hippo-controlpanel-actions input{padding: 15px; margin-left: 15px; margin-right: 15px;}
+.hippo-controlpanel-actions li{margin-left: 10px; cursor: pointer}
 
+.hippo-controlpanel-options{margin-top: 15px; padding-bottom: 15px;}
+.hippo-controlpanel-options li{list-style-type: disc; margin: 5px; color: #afafaf; list-style-position: inside; font-size: 12px;}
+.hippo-controlpanel-options li.delete{margin-top: 15px;}
+.hippo-controlpanel-options li a{font-size: 12px; color: #0467b4}
+.hippo-controlpanel-options li a:hover{text-decoration: underline; font-size: 12px; color: #0467b4}
+
+.hippo-root .hippo-controlpanel-actions a{padding: 6px; padding-left: 22px; display: block; float: left; border: 1px solid #afafaf; background-color: #f4f4f4; font-weight: bold;}
+.hippo-root .hippo-controlpanel-actions a:hover{background-color: #fff6e0; text-decoration: underline; cursor: pointer}
+
+.hippo-controlpanel-section-title{font-size: 14px; color: #69889c}
+
+.hippo-controlpanel-table-default{}
+
+.hippo-controlpanel-help-permissionsdiagram{background: url("images/hippo-controlpanel-help-permissions-en.png") no-repeat; width: 580px; height: 190px; background-position: bottom center;margin-bottom: 15px;}
 
 /* Global Icon Management */
 /* ================================================ */
-.hippo-list-small{background-position: center left; background-repeat: no-repeat; padding: 3px; margin-bottom: 1px;}
-.hippo-list-small a{display: block; padding-left: 15px; color: #666666;}
-
-.icon-48 a{background-repeat: no-repeat;}
-.icon-24 a{background-repeat: no-repeat;}
 .icon-16 {background-repeat: no-repeat; background-position: center left; padding-left: 22px; padding-top:4px; padding-bottom: 4px; }
-.icon-48 a{background-position: 8px 8px;}
-/* mimetypes icons */
-table tr.selected span.document-16, .document-16{background-image:url("images/icons/document-16.png")}
-table tr.selected span.folder-16, .folder-16{background-image:url("images/icons/folder-16.png")}
-table tr.selected span.folder-open-16, .folder-open-16{background-image:url("images/icons/folder-open-16.png")}
+.icon-24 a{background-repeat: no-repeat; background-position: 4px 4px;}.icon-24 a{background-repeat: no-repeat; background-position: 4px 4px;}
+.icon-48 a{background-repeat: no-repeat; background-position: 8px 8px;}
+.icon-128 a{background-repeat: no-repeat; background-position: 8px 8px;}
 
 .mimetype-application-vnd-ms-excel-16{background-image:url("images/icons/mimetype-excel-16.png")}
 .mimetype-application-pdf-16{background-image:url("images/icons/mimetype-pdf-16.png")}
@@ -791,10 +862,14 @@ table tr.selected span.folder-open-16, .folder-open-16{background-image:url("ima
 /* control panel */
 .users-48{background-image:url("images/icons/user-48.png")}
 .groups-48{background-image:url("images/icons/groups-48.png")}
+.groups-16{background-image:url("images/icons/groups-16.png")}
+.documents-32{background-image: url(images/icons/emblem-documents-32.png)}
+
 .permissions-48{background-image:url("images/icons/permissions-48.png")}
 .controlpanel-48{background-image:url("images/icons/controlpanel-48.png")}
 .commandline-48{background-image:url("images/icons/commandline-48.png")}
 .system-properties-48{background-image:url("images/icons/system-properties-48.png")}
+.system-info-48{background-image:url("images/icons/system-info-48.png")}
 
 .state-review-16{background-image:url("images/icons/state-review-16.gif")}
 .state-changed-16{background-image:url("images/icons/state-changed-16.gif")}
@@ -850,6 +925,11 @@ table tr.selected span.folder-open-16, .folder-open-16{background-image:url("ima
 .delete-16{background-image:url("images/icons/edit-delete-16.png")}
 .add-16{background-image:url("images/icons/list-add-16.png")}
 .remove-16{background-image:url("images/icons/edit-delete-16.png")}
+
+.delete-inline-16{background-image:url("images/icons/delete-inline-16.png")}
+.delete-inline-24{background-image:url("images/icons/delete-inline-24.png")}
+.delete-inline-48{background-image:url("images/icons/delete-inline-48.png")}
+.delete-inline-128{background-image:url("images/icons/delete-inline-128.png")}
 
 .up-16{background-image:url("images/icons/go-up-16.png")}
 .down-16{background-image:url("images/icons/go-down-16.png")}
