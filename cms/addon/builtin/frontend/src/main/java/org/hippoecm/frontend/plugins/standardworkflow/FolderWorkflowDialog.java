@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextField;
@@ -31,6 +32,7 @@ import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
@@ -118,6 +120,9 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
                 throw new WorkflowException("Unknown folder type " + prototype);
             }
             String path = workflow.add(category, prototype, NodeNameCodec.encode(name, true));
+
+            ((UserSession) Session.get()).getJcrSession().refresh(true);
+
             JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
             folderWorkflowPlugin.select(nodeModel);
         } else {

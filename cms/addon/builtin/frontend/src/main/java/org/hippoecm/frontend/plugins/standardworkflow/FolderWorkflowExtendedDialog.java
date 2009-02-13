@@ -100,7 +100,7 @@ public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
 
         enableButtons();
     }
-    
+
     public IModel getTitle() {
         return title;
     }
@@ -128,8 +128,10 @@ public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
             arguments.put("facet", facet);
             arguments.put("value", value);
             path = workflow.add(category, prototype, arguments);
-            JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
 
+            ((UserSession) Session.get()).getJcrSession().refresh(true);
+
+            JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
             folderWorkflowPlugin.select(nodeModel);
         } else {
             log.error("no workflow defined on model for selected node");

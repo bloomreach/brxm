@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.standardworkflow.reorder;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -26,7 +25,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,8 +61,6 @@ public class ReorderDialog extends AbstractWorkflowDialog {
     protected void execute() throws Exception {
         FolderWorkflow workflow = (FolderWorkflow) getWorkflow();
         workflow.reorder(panel.getMapping());
-
-        ((UserSession) Session.get()).getJcrSession().refresh(true);
     }
 
 }
