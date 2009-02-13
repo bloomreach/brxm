@@ -21,7 +21,6 @@ public class HstSitesService extends AbstractJCRService implements HstSites, Ser
     private Map<String, HstSite> hstSites = new HashMap<String, HstSite>();
     
     private String sitesContentPath;
-    private Map<String, HstSiteService> sites;
     
     public HstSitesService(Node node) throws ServiceException {
         super(node);
@@ -29,6 +28,11 @@ public class HstSitesService extends AbstractJCRService implements HstSites, Ser
             if(node.isNodeType(Configuration.NODETYPE_HST_SITES)) {
                 this.sitesContentPath = node.getPath();
                 init(node);
+                /*
+                 * After initialization, all needed jcr properties and nodes have to be loaded. The underlying jcr nodes in 
+                 * the value providers now will all be closed.
+                 */
+                this.closeValueProvider(true);
             } 
             else {
                 throw new ServiceException("Cannot instantiate a HstSites object for a node of type '"+node.getPrimaryNodeType().getName()+"' for node '"+node.getPath()+"'");
@@ -39,7 +43,7 @@ public class HstSitesService extends AbstractJCRService implements HstSites, Ser
     }
     
     public Service[] getChildServices() {
-        return sites.values().toArray(new HstSiteService[sites.size()]);
+        return hstSites.values().toArray(new HstSiteService[hstSites.size()]);
     }
     
     private void init(Node node) throws RepositoryException {

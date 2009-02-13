@@ -41,11 +41,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
                     configurationPath = configurationNode.getPath();
                     
                     init(configurationNode);
-                    /*
-                     * After initialization, all needed jcr properties and nodes have to be loaded. The underlying jcr nodes in 
-                     * the value providers now will all be closed.
-                     */
-                    this.closeValueProvider(true);
+                    
                 }
             } else {
                 throw new ServiceException("Subsite '"+name+"' cannot be instantiated because it does not contain the mandatory nodes. Skipping this one");
