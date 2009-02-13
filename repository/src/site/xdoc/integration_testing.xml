@@ -41,7 +41,7 @@ Requirements:
 <ul>
 <li>Hippo ECM, maven, and usual tools to build Hippo ECM</li>
 <li>Firefox 3;</li>
-<li>Selenium IDE 1.0b2 add-on plugin for firefox;</li>
+<li>Selenium IDE 1.0b2 add-on plugin for Firefox;</li>
 <li>Wicket 1.3.5 (which will be patched).</li>
 </ul>
 <p>
@@ -62,11 +62,10 @@ will vary.
 </p>
 
 <p>
-The current trunk of Hippo ECM already contains the proper infrastructure and
-a simple Selenium-based test for integration testing. with this this
-description will first outline how to run this integration test.  Having done
-that, it outlines how to compose tests.  First of all, we start up by setting
-up the required environment.
+The current trunk of Hippo ECM already contains the proper infrastructure for
+Selenium-based integration testing. This description will first outline how to 
+run this integration test.  Having done that, it outlines how to compose tests.  
+First of all, we start by setting up the required environment.
 </p>
 
 <p>
@@ -106,31 +105,29 @@ compile the modified sources and install them in your local maven repository
   mvn -DskipTests install
 </source>
 <p>
-this version will be used in the compilation of hippo-ecm when compiling now:
+this version will now be used in the compilation of hippo-ecm:
 </p>
 <source>
   cd ../hippo-ecm
   mvn -DskipTests install
 </source>
 <p>
-Make sure that in future the modified wicket installation is not overwritten
+Make sure that in the future the modified wicket installation is not overwritten
 or re-downloaded.  The patched wicket 1.3.5 installation is FULLY compatible
 with the original 1.3.5 release.
 </p>
 
-<p><blockquote>
-  background information:
+<blockquote>
+  Background information:
 
   The patched wicket 1.3.5 is necessary to run and develop Selenium based
   tests.  Wicket normally generates markup ids on the fly for wicket
-  components.  These mark up ids vary from requests to requests and heir id
-  contains a number being incremented.  This makes these ids unsuitalbe to
-  identify the actual component from the HTML as received by a browser.
+  components.  These markup ids can vary from request to request making 
+  them unsuitable for identifying a component in the browser DOM.
 
-  Selenium however uses the markup ids from the HTML to identify which element
-  was clicked.  Because these ids differ from one request to the next, the
-  Selenium test have no proper way to identify the items being indicated and
-  will fail.
+  Since Selenium uses the markup ids to identify,  for example,  which element
+  was clicked,  tests might fail because the Selenium test had no proper way 
+  of identifying the items being indicated.
 
   Generation of stable markup ids, that when the same run is done the ids are
   the same as the ids from a previous run, is in certain situations possible.
@@ -139,12 +136,12 @@ with the original 1.3.5 release.
 
   A request for integration on this patch will be submitted to the wicket
   developers.
-</blockquote></p>
+</blockquote>
 
 <p>
 Note that the patch is not required to run the CMS.  Because of the way the
 patch has been constructed and the CMS code works, the generation of stable
-ids is only active with the
+ids is only active with the patched version.
 </p>
 
 </subsection>
@@ -164,7 +161,7 @@ this path is needed later as well as refered to as the installation directory of
 Glassfish is started using:
 </p>
 <source>
-  /usr/local/glassfish-v2ur2/bin/asadmin start-appserv
+  /usr/local/glassfish-v2ur2/bin/asadmin start-domain domain1
 </source>
 <p>
 and can be stopped using
@@ -183,11 +180,11 @@ with default username <code>admin</code> and password <code>adminadmin</code>.
 </p>
 
 <p>
-Because the default it to run applications on port 8080, but this often
-conflicts with other applications, we have configured the tests in such a
-manner that the applications should run on port 4849.  You need to change the
-settings in the application container accordingly.  Within glassfish this can
-be done using the administration console as such:
+By default Glassfish will run applications on port 8080, which often conflicts 
+with other applications. Thus we have setup the tests in such a manner that the 
+applications should run on port 4849.  You need to change the settings in the 
+application container accordingly.  Within glassfish this can be done using the 
+administration console as such:
 </p>
 
 <p>
@@ -241,10 +238,21 @@ maven using the -D flag.
 <p>
 As a prerequisite to the running Selenium tests, the Seleniumn libraries
 require that the firefox-bin executable is found on the system executable
-path.  This may or may not be the case on your system.  Within a Unix-like
-system you can check whether this is found using the command.
+path. This may or may not be the case on your system. 
 </p>
+<p>
+For Ubuntu 8.04 (and higher) in combination with Firefox 3 this requires 
+some extra setup (or at least with current Selenium version in use) as Selenium
+expects the firefox binary to be called firefox-bin, which is not the case on 
+Ubuntu 8.04. Thus we create a symlink in /usr/lib/firefox to the Firefox binary 
+as follows: (version might differ)</p>
+<source>
+sudo ln -s /usr/lib/firefox-3.0.6/firefox /usr/lib/firefox/firefox-bin
+</source>
 
+<p>
+Within most Unix-like system you can find the firefox binary with 
+</p>
 <source>
 which firefox-bin
 </source>
@@ -270,7 +278,7 @@ mvn -B -Dappserver.home=/usr/local/glassfish-v2ur2 integration-test
 <subsection name="Recording a Selenium test">
 
 <p>
-Make sure you download and install the Selenium IDE plugin for firefox.
+Make sure you download and install the Selenium IDE plugin for Firefox.
 Now deploy the EAR installation (it must be an ear installation of
 the package/ear project) into the application server.  You can use
 the console of the application server (for glassfish, available at
@@ -297,30 +305,29 @@ based test using File -> Save Test Case As.
 </p>
 
 <p>
-To integrate the saved test, you can duplicate the source file
-BasicSeleniumTest.java Make sure you leave the outer definitions intact,
+To integrate the saved test, you can subclass the BasicSeleniumTest.java which 
+does the setup/teardown of the Selenium tests and provides some helper functions
+for working with Ajax-requests.  Make sure you leave the outer definitions intact,
 especially the @Before and @After definition.  Just put the generated code
 without the class definition in the @Test marked method.
 </p>
-<p>
 
-The test you have created by duplicating the BasicSeleniumTest class, must now
-be entered into the framework.  To do this, modify the file:
+<p>
+You can also subclass CmsSeleniumTest.java which extends BasicSeleniumTest itself 
+and adds functions for loading the homepage and logging in and out.
+</p>
+
+<p>
+The test class you have created must now be entered into the framework.  To do 
+this, modify the file:
 </p>
 
 <source>
 package/test/src/test/java/org/hippoecm/repository/test/IntegrationTest.java
 </source>
 <p>
-and enter the classname in the section marked:
-</p>
-<source>
-Suite.SuiteClasses
-</source>
-
-<p>
-Like the BasicSeleniumTest (don't forget the comma seperator and
-the <code>.class</code> extension.
+and add the classname to the <code>Suite.SuiteClasses</code> annotation. Don't 
+forget the comma seperator and the <code>.class</code> extension.
 </p>
 
 <p>
