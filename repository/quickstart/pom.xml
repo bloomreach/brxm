@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm</artifactId>
-    <version>2.04.00</version>
+    <version>2.04.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -29,9 +29,9 @@
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_04_00</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_04_00</developerConnection>
-    <url>https://svn.hippocms.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_04_00</url>
+    <connection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/quickstart</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/quickstart</developerConnection>
+    <url>https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/quickstart</url>
   </scm>
 
   <modules>
