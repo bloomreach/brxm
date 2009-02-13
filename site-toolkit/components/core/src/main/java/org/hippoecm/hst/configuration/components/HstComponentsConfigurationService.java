@@ -1,6 +1,9 @@
 package org.hippoecm.hst.configuration.components;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -12,35 +15,61 @@ import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.ComponentScanBeanDefinitionParser;
 
 public class HstComponentsConfigurationService extends AbstractJCRService implements HstComponentsConfiguration, Service{
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentsConfiguration.class);
     
-    private Map<String, HstComponentConfiguration> componentConfigurations;
+    /*
+     * rootComponentConfigurations are component configurations that are directly retrievable through getComponentConfiguration(String id),
+     * in other words, every HstComponent that has a non null id.
+     * 
+     */
+    private Map<String, HstComponentConfiguration> rootComponentConfigurations;
+    
+    /*
+     * Components that are direct childs of the hst:components node. A child component only is a root component when it has a non null
+     * id.
+     */
+    private List<HstComponentConfiguration> childComponents;
+    
     private String componentsNodePath;
     
     public HstComponentsConfigurationService(Node componentsNode) throws RepositoryException {
         super(componentsNode);
         this.componentsNodePath = componentsNode.getPath();
-        this.componentConfigurations = new HashMap<String, HstComponentConfiguration>();
+        this.rootComponentConfigurations = new HashMap<String, HstComponentConfiguration>();
+        this.childComponents = new ArrayList<HstComponentConfiguration>();
         init(componentsNode);
+        
+        for(HstComponentConfiguration child: childComponents) {
+            populateRootComponentConfigurations(child);
+        }
     }
      
     public Service[] getChildServices() {
-        return componentConfigurations.values().toArray(new Service[componentConfigurations.size()]);
+        return childComponents.toArray(new Service[rootComponentConfigurations.size()]);
     }
 
     
     public HstComponentConfiguration getComponentConfiguration(String id) {
-        return this.componentConfigurations.get(id);
+        return this.rootComponentConfigurations.get(id);
     }
     
 
     public Map<String, HstComponentConfiguration> getComponentConfigurations() {
-        return this.componentConfigurations;
+        return this.rootComponentConfigurations;
     }
 
+    private void populateRootComponentConfigurations(HstComponentConfiguration componentConfiguration){
+        if(componentConfiguration.getId() != null) {
+            rootComponentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
+        }
+        for(Iterator<HstComponentConfiguration> childsIt = componentConfiguration.getChildren().values().iterator(); childsIt.hasNext();){
+            populateRootComponentConfigurations(childsIt.next());
+        }
+    }
     
     private void init(Node node) throws RepositoryException {
         
@@ -54,7 +83,7 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
                 if(child.hasProperty(Configuration.COMPONENT_PROPERTY_REFERECENCENAME)) {
                     try {
                         HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child, componentsNodePath);
-                        componentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
+                        childComponents.add(componentConfiguration);
                         log.debug("Added component service with key '{}'",componentConfiguration.getId());
                     } catch (ServiceException e) {
                         log.warn("Skipping component '{}'", child.getPath(), e);
