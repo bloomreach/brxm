@@ -29,6 +29,7 @@ import javax.jcr.version.VersionException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -50,6 +51,7 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
 
     static final Logger log = LoggerFactory.getLogger(HippoQueryTemplatePlugin.class);
 
+    private final String mode;
     private String language;
     private String statement;
     private String incorrectquery = "";
@@ -84,7 +86,20 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
                 queryNode.setProperty("jcr:language", "xpath");
             }
 
-            add(new TextFieldWidget("language", new PropertyModel(this, "language")) {
+        } catch (ValueFormatException e) {
+            log.error(e.getMessage());
+        } catch (PathNotFoundException e) {
+            log.error(e.getMessage());
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+
+        mode = config.getString("mode", "view");
+        Fragment fragment = new Fragment("fragment", mode, this);
+        add(fragment);
+
+        if ("edit".equals(mode)) {
+            fragment.add(new TextFieldWidget("language", new PropertyModel(this, "language")) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -93,7 +108,7 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
                 }
             });
 
-            add(new TextFieldWidget("statement", new PropertyModel(this, "statement")) {
+            fragment.add(new TextFieldWidget("statement", new PropertyModel(this, "statement")) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -103,16 +118,10 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
             });
             incorrectqueryLabel = new Label("incorrectquery", new PropertyModel(this, "incorrectquery"));
             incorrectqueryLabel.setOutputMarkupId(true);
-            add(incorrectqueryLabel);
-
-        } catch (ValueFormatException e) {
-            log.error(e.getMessage());
-        } catch (PathNotFoundException e) {
-            log.error(e.getMessage());
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
+            fragment.add(incorrectqueryLabel);
+        } else {
+            fragment.add(new Label("value", statement + " (" + language + ")"));
         }
-
         setOutputMarkupId(true);
     }
 
@@ -144,8 +153,8 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
              */
             getModel().detach();
             queryNode.remove();
-            if(query instanceof HippoQuery ) {
-                ((HippoQuery)query).storeAsNode(parentNode.getPath() + "/" + nodeName, HippoNodeType.NT_QUERY);
+            if (query instanceof HippoQuery) {
+                ((HippoQuery) query).storeAsNode(parentNode.getPath() + "/" + nodeName, HippoNodeType.NT_QUERY);
             } else {
                 query.storeAsNode(parentNode.getPath() + "/" + nodeName);
             }
