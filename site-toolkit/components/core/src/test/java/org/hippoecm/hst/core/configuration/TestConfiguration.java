@@ -1,5 +1,8 @@
 package org.hippoecm.hst.core.configuration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -20,19 +23,17 @@ import org.hippoecm.hst.core.jcr.pool.PoolingRepository;
 import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Test;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
 
 public class TestConfiguration extends AbstractSpringTestCase {
 
-    public static final String PREVIEW_NODEPATH = "preview";
+    public static final String TESTPREVIEW_NODEPATH = "testpreview";
     
-   
+    @Test
     public void testConfiguration() {
 
          try {
             HstSites hstSites = new HstSitesService(getHstSitesNode()) ;
-            HstSite s =  hstSites.getSite("myproject");
+            HstSite s =  hstSites.getSite("testproject");
             HstSiteMapItem sItem =  s.getSiteMap().getSiteMapItem("news");
             HstComponentConfiguration c = s.getComponentsConfiguration().getComponentConfiguration(sItem.getComponentConfigurationId()); 
             assertNotNull(c);
@@ -49,7 +50,7 @@ public class TestConfiguration extends AbstractSpringTestCase {
         try {
             
             hstSites = new HstSitesService(getHstSitesNode());
-            HstSite hstSite =  hstSites.getSite("myproject");
+            HstSite hstSite =  hstSites.getSite("testproject");
             
             HstSiteMapMatcher hstSiteMapMatcher = new SimpleHstSiteMapMatcher();
 
@@ -85,7 +86,7 @@ public class TestConfiguration extends AbstractSpringTestCase {
         }
 
         try {
-            Node previewSites  = session.getRootNode().getNode("preview");
+            Node previewSites  = session.getRootNode().getNode(TESTPREVIEW_NODEPATH);
             return previewSites;
         } catch (PathNotFoundException e) {
             e.printStackTrace();
