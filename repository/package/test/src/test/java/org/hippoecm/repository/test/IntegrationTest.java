@@ -24,12 +24,9 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 
 @RunWith(IntegrationTest.class)
-@Suite.SuiteClasses({
-  org.hippoecm.repository.test.BasicSeleniumTest.class
-})
-public class IntegrationTest extends Suite
-    // used to extends junit.framework.TestCase
-{
+@Suite.SuiteClasses( { BasicCmsSeleniumTest.class })
+
+public class IntegrationTest extends Suite {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -49,9 +46,10 @@ public class IntegrationTest extends Suite
             try {
                 deployer = new Deployer();
                 deployer.deploy(product);
-            } catch(Exception ex) {
-                notifier.fireTestFailure(new Failure(Description.createSuiteDescription(this.getClass().getName()), ex));
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+            } catch (Exception ex) {
+                notifier
+                        .fireTestFailure(new Failure(Description.createSuiteDescription(this.getClass().getName()), ex));
+                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             }
 
@@ -62,9 +60,10 @@ public class IntegrationTest extends Suite
                 if (deployer != null) {
                     deployer.undeploy(product);
                 }
-            } catch(Exception ex) {
-                notifier.fireTestFailure(new Failure(Description.createSuiteDescription(this.getClass().getName()), ex));
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+            } catch (Exception ex) {
+                notifier
+                        .fireTestFailure(new Failure(Description.createSuiteDescription(this.getClass().getName()), ex));
+                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             }
         }
