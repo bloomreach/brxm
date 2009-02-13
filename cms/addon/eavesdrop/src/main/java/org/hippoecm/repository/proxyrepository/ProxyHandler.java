@@ -25,6 +25,7 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -174,6 +175,7 @@ class ProxyHandler implements InvocationHandler {
         }
         Invocation invocation = new Invocation(upstream, method, args);
         Object result = invocation.invoke();
+        invocation.print(System.err, references);
         result = proxy(result);
         if (ostream != null) {
             ostream.writeObject(invocation);
@@ -222,6 +224,34 @@ class ProxyHandler implements InvocationHandler {
             this.arguments = arguments;
         }
 
+        public void print(PrintStream out, PositionMap map) {
+            print(out, map, object);
+            out.print(".");
+            out.print(method.getName());
+            out.print("(");
+            for (int i=0; arguments != null && i<arguments.length; i++) {
+                print(out, map, arguments[i]);
+                if(i>0) {
+                    out.print(",");
+                }
+            }
+            out.print(") -> ");
+            print(out, map, result);
+            out.println();
+        }
+
+        private static void print(PrintStream out, PositionMap map, Object object) {
+            if(object == null) {
+                out.print("null");
+            } else if(map.containsKey(object)) {
+                out.print("$"+map.indexOf(object));
+            } else if(object instanceof String) {
+                out.print("\""+((String)object)+"\"");
+            } else {
+                out.print(object.toString());
+            }
+        }
+        
         public void writeExternal(ObjectOutput out) throws IOException {
             PositionMap<Object, Object> references = ((ContextObjectOutputStream<PositionMap>)out).getContext();
             out.writeObject(new Reference(object));
@@ -270,21 +300,7 @@ class ProxyHandler implements InvocationHandler {
         }
 
         Object invoke() throws IllegalAccessException, InvocationTargetException {
-            Object result = method.invoke(object, arguments);
-	    /*
-            StringBuffer sb = new StringBuffer();
-            sb.append(object.toString());
-            sb.append(method.getName());
-            sb.append("(");
-            for(int i=0; arguments!=null && i<arguments.length; i++) {
-                if(i>0) {
-                    sb.append(",");
-                }
-                sb.append(arguments[i].getClass().getName());
-            }
-            sb.append(")");
-            */
-            return result;
+            return method.invoke(object, arguments);
         }
     }
 }
