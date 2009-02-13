@@ -5,19 +5,16 @@
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="properties">
       <props>
-        <prop key="repository.address">target/storage</prop>
-        <!-- If you want the external repository, use the following instead of the above.
-        <prop key="repository.address">rmi://127.0.0.1/hipporepository</prop>
-        -->
-        <prop key="repository.user.name">admin</prop>
-        <prop key="repository.password">admin</prop>
+        <prop key="test.default.repository.address">target/storage</prop>
+        <prop key="test.default.repository.user.name">editor</prop>
+        <prop key="test.default.repository.password">editor</prop>
       </props>
     </property>
-  </bean>
-
-  <bean id="javax.jcr.Credentials" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="${repository.user.name}" />
-    <constructor-arg value="${repository.password}" />
+    <property name="locations">
+      <list>
+        <value>classpath:build.properties</value>
+      </list>
+    </property>
   </bean>
   
   <bean id="org.hippoecm.hst.core.jcr.pool.PoolingRepository" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
@@ -30,13 +27,18 @@
         <property name="targetMethod" value="getHippoRepository" />
         <property name="arguments">
           <list>
-            <value>${repository.address}</value>
+            <value>${test.default.repository.address}</value>
           </list>
         </property>
       </bean>
     </property>
     
-    <property name="defaultCredentials" ref="javax.jcr.Credentials" />
+    <property name="defaultCredentials">
+      <bean id="javax.jcr.Credentials" class="javax.jcr.SimpleCredentials">
+        <constructor-arg value="${test.default.repository.user.name}" />
+        <constructor-arg value="${test.default.repository.password}" />
+      </bean>
+    </property>
     
     <!-- session proxy factories -->
     <property name="sessionDecorator">

@@ -125,6 +125,17 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>../..</directory>
+        <includes>
+          <include>*.properties</include>
+        </includes>
+      </testResource>
+    </testResources>
   </build>
 
 </project>
