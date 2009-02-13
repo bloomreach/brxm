@@ -59,8 +59,23 @@ public class TodoPlugin extends RenderPlugin {
 
         @Override
         protected Iterator getItemModels() {
-            IDataProvider dataProvider = (IDataProvider) getModel();
-            return dataProvider.iterator(0, 0);
+            final IDataProvider dataProvider = (IDataProvider) getModel();
+            final Iterator iter = dataProvider.iterator(0, 0);
+            return new Iterator() {
+
+                public boolean hasNext() {
+                    return iter.hasNext();
+                }
+
+                public Object next() {
+                    return dataProvider.model(iter.next());
+                }
+
+                public void remove() {
+                    iter.remove();
+                }
+                
+            };
         }
 
         @Override
