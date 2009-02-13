@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.xinha.XinhaUtil;
 import org.hippoecm.frontend.plugins.xinha.services.XinhaFacetHelper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -60,7 +61,8 @@ public abstract class XinhaLinkService implements IClusterable {
 
     private String createLink(JcrNodeModel nodeModel) {
         try {
-            return createLink(new NodeItem(nodeModel.getNode()));
+            String link = createLink(new NodeItem(nodeModel.getNode()));
+            return XinhaUtil.encode(link);
         } catch (RepositoryException e) {
             log.error("Error creating NodeItem for nodeModel[" + nodeModel.getItemModel().getPath() + "]");
         }
@@ -149,7 +151,7 @@ public abstract class XinhaLinkService implements IClusterable {
         }
 
         public void delete() {
-            String relPath = getHref();
+            String relPath = XinhaUtil.decode(getHref());
             Node node = nodeModel.getNode();
             try {
                 if (node.hasNode(relPath)) {
