@@ -13,15 +13,8 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License. -->
-<sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
-    xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-    xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:hippo="http://www.hippoecm.org/nt/1.2"
-    xmlns:jcr="http://www.jcp.org/jcr/1.0"
-    xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.2"
-    xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.2"
-    sv:name="content">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" 
+    sv:name="testcontent">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippostd:fixeddirectory</sv:value>
     </sv:property>
@@ -29,7 +22,7 @@
         <sv:value>hippo:harddocument</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
+        <sv:value>abababab-511b-49e0-92b5-126970694fa8</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:paths" sv:type="String"/>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
@@ -40,11 +33,8 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippogallery:stdImageGallery</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
-            <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
-        </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>4e557532-98ff-4673-a2a9-5cdbb2822eed</sv:value>
+            <sv:value>abababab-98ff-4673-a2a9-5cdbb2822eed</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
@@ -61,7 +51,7 @@
             <sv:value>hippo:facetsearch</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:docbase" sv:type="String">
-            <sv:value>4e557532-98ff-4673-a2a9-5cdbb2822eed</sv:value>
+            <sv:value>abababab-98ff-4673-a2a9-5cdbb2822eed</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:facets" sv:type="String"/>
         <sv:property sv:name="hippo:queryname" sv:type="String">
@@ -72,11 +62,8 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippogallery:stdAssetGallery</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
-            <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
-        </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>4e557532-bbbb-4673-a2a9-5cdbb2822eed</sv:value>
+            <sv:value>abababab-bbbb-4673-a2a9-5cdbb2822eed</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>

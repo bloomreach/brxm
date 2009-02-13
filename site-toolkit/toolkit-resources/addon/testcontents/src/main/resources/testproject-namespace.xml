@@ -7,7 +7,7 @@
     <sv:value>mix:referenceable</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>a8c54175-9f32-441f-94a6-2d4b6928edcd</sv:value>
+    <sv:value>abababab-9f32-441f-94a6-2d4b6928edcd</sv:value>
   </sv:property>
   <sv:node sv:name="textpage">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -17,7 +17,7 @@
       <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>4cf4c44c-020d-4ae6-bfa4-16f8a8af706f</sv:value>
+      <sv:value>abababab-020d-4ae6-bfa4-16f8a8af706f</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -32,7 +32,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>372a4044-64fe-453d-a3c1-967a33f309f4</sv:value>
+          <sv:value>abababab-64fe-453d-a3c1-967a33f309f4</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -53,7 +53,7 @@
             <sv:value>hippo:field</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>3ceb139b-06ef-46eb-bf5d-196329ed8fc9</sv:value>
+            <sv:value>title</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
             <sv:value>testproject:title</sv:value>
@@ -67,7 +67,7 @@
             <sv:value>hippo:field</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>40f58b2c-4fae-48de-94c1-e17645b9ac5c</sv:value>
+            <sv:value>date</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
             <sv:value>testproject:date</sv:value>
@@ -81,7 +81,7 @@
             <sv:value>hippo:field</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>5f5a0d86-d2b7-4612-b499-de89957ef13b</sv:value>
+            <sv:value>summary</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
             <sv:value>testproject:summary</sv:value>
@@ -95,7 +95,7 @@
             <sv:value>hippo:field</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>9dcca11f-2c83-4e88-afad-399d44ce0ccc</sv:value>
+            <sv:value>body</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
             <sv:value>testproject:body</sv:value>
@@ -119,7 +119,7 @@
           <sv:value>mix:referenceable</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>fa531385-aba3-4780-9e9a-9b02089e994a</sv:value>
+          <sv:value>abababab-aba3-4780-9e9a-9b02089e994a</sv:value>
         </sv:property>
         <sv:property sv:name="testproject:date" sv:type="Date">
           <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
@@ -193,7 +193,7 @@
             <sv:value>${engine}</sv:value>
           </sv:property>
           <sv:property sv:name="field" sv:type="String">
-            <sv:value>3ceb139b-06ef-46eb-bf5d-196329ed8fc9</sv:value>
+            <sv:value>title</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -222,7 +222,7 @@
             <sv:value>${engine}</sv:value>
           </sv:property>
           <sv:property sv:name="field" sv:type="String">
-            <sv:value>40f58b2c-4fae-48de-94c1-e17645b9ac5c</sv:value>
+            <sv:value>date</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -248,7 +248,7 @@
             <sv:value>${engine}</sv:value>
           </sv:property>
           <sv:property sv:name="field" sv:type="String">
-            <sv:value>5f5a0d86-d2b7-4612-b499-de89957ef13b</sv:value>
+            <sv:value>summary</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -280,7 +280,7 @@
             <sv:value>${engine}</sv:value>
           </sv:property>
           <sv:property sv:name="field" sv:type="String">
-            <sv:value>9dcca11f-2c83-4e88-afad-399d44ce0ccc</sv:value>
+            <sv:value>body</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
