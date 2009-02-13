@@ -19,8 +19,6 @@ package org.hippoecm.frontend.plugins.cms.admin.groups;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -217,6 +215,20 @@ public class Group implements Comparable<Group>, IClusterable {
 
     //-------------------- persistence helpers ----------//
     /**
+     * Wrapper needed for spi layer which doesn't know if a property exists or not
+     * @param node
+     * @param name
+     * @param value
+     * @throws RepositoryException
+     */
+    private void setOrRemoveStringProperty(Node node, String name, String value) throws RepositoryException {
+        if (value == null && !node.hasProperty(name)) {
+            return;
+        }
+        node.setProperty(name, value);
+    }
+    
+    /**
      * Create a new group
      * @throws RepositoryException
      */
@@ -234,7 +246,7 @@ public class Group implements Comparable<Group>, IClusterable {
         relPath.append(NodeNameCodec.encode(getGroupname(), true));
 
         node = ((UserSession) Session.get()).getRootNode().addNode(relPath.toString(), HippoNodeType.NT_GROUP);
-        node.setProperty(PROP_DESCRIPTION, getDescription());
+        setOrRemoveStringProperty(node, PROP_DESCRIPTION, getDescription());
         // save parent when adding a node
         node.getParent().getSession().save();
     }
@@ -245,7 +257,7 @@ public class Group implements Comparable<Group>, IClusterable {
      */
     public void save() throws RepositoryException {
         if (node.isNodeType(HippoNodeType.NT_GROUP)) {
-            node.setProperty(PROP_DESCRIPTION, getDescription());
+            setOrRemoveStringProperty(node, PROP_DESCRIPTION, getDescription());
             node.getSession().save();
         } else {
             throw new RepositoryException("Only hippo:group's can be edited.");
