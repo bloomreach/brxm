@@ -56,8 +56,8 @@ class LookupTargetTreeView extends JcrTree {
         ITreeState treeState = getTreeState();
         TreePath treePath = treeModel.lookup(selectedNode);
         if (treePath != null) {
-            for (TreeNode component : (TreeNode[]) treePath.getPath()) {
-                treeState.expandNode(component);
+            for (Object component : treePath.getPath()) {
+                treeState.expandNode((TreeNode) component);
             }
     
             TreeNode treeNode = (TreeNode) treePath.getLastPathComponent();
