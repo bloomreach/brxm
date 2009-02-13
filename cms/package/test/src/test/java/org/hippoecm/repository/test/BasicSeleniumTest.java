@@ -19,7 +19,6 @@ import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.SeleniumException;
@@ -28,11 +27,21 @@ public class BasicSeleniumTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private DefaultSelenium selenium;
+    private static final int DEFAULT_MAX_SECONDS = 20;
+
+    protected DefaultSelenium selenium;
+    
+    public interface SeleniumTest {
+        void execute() throws Exception;
+    }
+
+    protected DefaultSelenium createDefaultSelenium() {
+        return new DefaultSelenium("localhost", 4444, "*firefox", "http://localhost:4849/");
+    }
 
     @Before
     public void setUp() throws Exception {
-        selenium = new DefaultSelenium("localhost", 4444, "*firefox", "http://localhost:4849/");
+        selenium = createDefaultSelenium();
         selenium.start();
     }
 
@@ -40,48 +49,67 @@ public class BasicSeleniumTest {
     public void tearDown() throws Exception {
         selenium.stop();
     }
-
-    @Test
-    public void testLoginLogout() throws Exception {
-        doLogin();
-        doLogout();
-    }
-    public void doLogin() throws Exception {
+    
+    protected void executeTest(SeleniumTest test) throws Exception {
         try {
-            selenium.open("http://localhost:4849/");
-            assert(selenium.isTextPresent("Username"));
-            assert(selenium.isTextPresent("Password"));
-
-            // enter username
-            selenium.type("service.root_3", "admin");
-
-            // enter password
-            selenium.type("service.root_5", "admin");
-
-            // click ok
-            selenium.click("service.root_7");
-            for (int second = 0;; second++) {
-                if (second >= 60) fail("timeout");
-                try { if (selenium.isTextPresent("Welcome to Hippo CMS 7")) break; } catch (Exception e) {}
-                Thread.sleep(1000);
-            }
+            test.execute();
         } catch (SeleniumException ex) {
             fail(ex.getMessage());
             throw ex;
         }
     }
 
-    public void doLogout() throws Exception {
-        try {
-            selenium.click("service.logout_1");
-            for (int second = 0;; second++) {
-                if (second >= 60) fail("timeout");
-                try { if (selenium.isTextPresent("Password")) break; } catch (Exception e) {}
-                Thread.sleep(1000);
+    protected void clickAndWaitForText(String element, String text, String fail) throws InterruptedException {
+        selenium.click(element);
+        waitForTextPresent(text, fail);
+    }
+
+    protected void clickAndWaitForText(String element, String text, String fail, int maxSeconds) throws InterruptedException {
+        selenium.click(element);
+        waitForTextPresent(text, fail, maxSeconds);
+    }
+
+    protected void clickAndWaitForText(String element, String[] text, String fail) throws InterruptedException {
+        selenium.click(element);
+        waitForAllTextPresent(text, fail);
+    }
+    
+    protected void clickAndWaitForText(String element, String[] text, String fail, int maxSeconds)
+            throws InterruptedException {
+        selenium.click(element);
+        waitForAllTextPresent(text, fail, maxSeconds);
+    }
+    
+    protected void waitForTextPresent(String text, String fail) throws InterruptedException {
+        waitForAllTextPresent(new String[] { text }, fail, DEFAULT_MAX_SECONDS);
+    }
+
+    protected void waitForTextPresent(String text, String fail, int maxSeconds) throws InterruptedException {
+        waitForAllTextPresent(new String[] { text }, fail, maxSeconds);
+    }    
+
+    protected void waitForAllTextPresent(String[] text, String fail) throws InterruptedException {
+        waitForAllTextPresent(text, fail, DEFAULT_MAX_SECONDS);
+    }
+    
+    protected void waitForAllTextPresent(String[] text, String fail, int maxSeconds) throws InterruptedException {
+        for (int second = 0;; second++) {
+            if (second >= maxSeconds) {
+                fail(fail);
             }
-        } catch (SeleniumException ex) {
-            fail(ex.getMessage());
-            throw ex;
+            try {
+                int found = 0;
+                for (int i = 0; i < text.length; i++) {
+                    if (selenium.isTextPresent(text[i])) {
+                        found++;
+                    }
+                }
+                if (found == text.length)
+                    break;
+            } catch (Exception e) {
+            }
+            Thread.sleep(1000);
+            
         }
     }
 }

@@ -68,6 +68,13 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-quickstart-ear</artifactId>
+      <version>2.04.00-SNAPSHOT</version>
+      <type>ear</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-tools-testutils</artifactId>
       <version>2.04.00-SNAPSHOT</version>
       <type>jar</type>
@@ -201,7 +208,7 @@
               <systemProperties>
                 <property>
                   <name>product</name>
-                  <value>${basedir}/../ear/target/hippo-ecm-package-ear-${project.version}.ear</value>
+                  <value>${basedir}/../../quickstart/ear/target/hippo-ecm-quickstart-ear-${project.version}.ear</value>
                   <!-- FIXME: should have better reference above -->
                 </property>
               </systemProperties>
