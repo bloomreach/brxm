@@ -27,6 +27,7 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
@@ -48,6 +49,12 @@ public class TodoPlugin extends RenderPlugin {
             throw new IllegalArgumentException("TodoPlugin needs an IDataProvider as Plugin model.");
         }
         add(new TodoView("view", getModel()));
+    }
+
+    @Override
+    public void render(PluginRequestTarget target) {
+        redraw();
+        super.render(target);
     }
 
     private class TodoView extends RefreshingView {
