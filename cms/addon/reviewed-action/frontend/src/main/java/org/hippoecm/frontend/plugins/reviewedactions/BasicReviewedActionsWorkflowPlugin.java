@@ -91,6 +91,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             public void execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
+                ((UserSession) getSession()).getJcrSession().refresh(true);
                 Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
                 IEditService viewer = getPluginContext().getService(
                         getPluginConfig().getString(IEditService.EDITOR_ID), IEditService.class);

@@ -25,7 +25,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.model.StringResourceModel;
+
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -35,10 +39,9 @@ import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IValidateService;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin implements IValidateService {
     @SuppressWarnings("unused")
@@ -65,6 +68,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
             public void execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
+                ((UserSession) getSession()).getJcrSession().refresh(false);
                 close();
             }
         });
@@ -87,6 +91,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
             public void execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.disposeEditableInstance();
+                ((UserSession) getSession()).getJcrSession().refresh(false);
                 close();
             }
         });
