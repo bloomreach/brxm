@@ -20,6 +20,9 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 public class ContextObjectOutputStream<T> extends ObjectOutputStream {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private T context;
 
     ContextObjectOutputStream(OutputStream stream, T context) throws IOException {

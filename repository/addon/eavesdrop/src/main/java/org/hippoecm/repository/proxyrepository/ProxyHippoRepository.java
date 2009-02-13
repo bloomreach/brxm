@@ -31,6 +31,9 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.HippoRepositoryImpl;
 
 public class ProxyHippoRepository extends HippoRepositoryImpl {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     Map<Session, ProxyHandler> sessions;
 
     public ProxyHippoRepository(Repository upstream) throws RepositoryException, IOException {

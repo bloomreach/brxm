@@ -32,7 +32,7 @@ public class HREPTWO451Test extends TestCase {
 
     @Before
     public void setUp() throws Exception {
-	super.setUp();
+        super.setUp();
     }
 
     @After

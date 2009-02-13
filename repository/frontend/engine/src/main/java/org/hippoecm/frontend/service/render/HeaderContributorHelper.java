@@ -25,6 +25,8 @@ import org.apache.wicket.protocol.http.WicketURLDecoder;
 import org.apache.wicket.util.string.PrependingStringBuffer;
 
 public final class HeaderContributorHelper {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private HeaderContributorHelper() {
     }

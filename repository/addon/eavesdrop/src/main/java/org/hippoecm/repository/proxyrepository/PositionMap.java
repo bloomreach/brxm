@@ -22,6 +22,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class PositionMap<K, V> implements Map<K, V> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     LinkedHashMap<K, Integer> forward;
     ArrayList<V> index;
 

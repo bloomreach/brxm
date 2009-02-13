@@ -60,6 +60,9 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
 
 class ProxyHandler implements InvocationHandler {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     static final Class[] proxiedInterfaces = new Class[] {
         DocumentManager.class,
         HierarchyResolver.class,

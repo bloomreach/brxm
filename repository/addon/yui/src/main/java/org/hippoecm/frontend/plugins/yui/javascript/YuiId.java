@@ -20,6 +20,9 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.IClusterable;
 
 public class YuiId implements IClusterable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     String id;

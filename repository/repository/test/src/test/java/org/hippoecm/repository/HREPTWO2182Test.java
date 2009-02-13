@@ -41,7 +41,7 @@ public class HREPTWO2182Test extends TestCase {
 
     @Override
     public void setUp() throws Exception {
-	super.setUp();
+        super.setUp();
         if (session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
         }
@@ -54,7 +54,7 @@ public class HREPTWO2182Test extends TestCase {
         if (session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
         }
-	super.tearDown();
+        super.tearDown();
     }
 
     @Test
