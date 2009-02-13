@@ -75,7 +75,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
                     info(getString("permissions-group-added", model));
                     log.info("Grant " + selectedRole + " role to group " + selectedGroup.getGroupname() + " for domain " + domain.getName());
                     this.removeAll();
-                    target.addComponent(roleList);
+                    target.addComponent(SetPermissionsPanel.this);
                 } catch (RepositoryException e) {
                     error(getString("permissions-group-add-failed", model));
                     log.error("Failed to add permission", e);
@@ -134,7 +134,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
                         info(getString("permissions-group-removed", model));
                         log.info("Revoke " + selectedRole + " role from group " + group + " for domain " + domain.getName());
                         this.removeAll();
-                        target.addComponent(roleList);
+                        target.addComponent(SetPermissionsPanel.this);
                     } catch (RepositoryException e) {
                         error(getString("permissions-group-remove-failed", model));
                         log.error("Failed to revoke permission", e);

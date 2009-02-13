@@ -85,7 +85,7 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
                             group.addMembership(user.getUsername());
                             info(getString("group-member-added", model));
                             localList.removeAll();
-                            target.addComponent(localList);
+                            target.addComponent(SetMembersPanel.this);
                         } catch (RepositoryException e) {
                             error(getString("group-member-add-failed", model));
                             log.error("Failed to add member", e);
@@ -132,7 +132,7 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
                         group.removeMembership(username);
                         info(getString("group-member-removed", null));
                         localList.removeAll();
-                        target.addComponent(localList);
+                        target.addComponent(SetMembersPanel.this);
                     } catch (RepositoryException e) {
                         error(getString("group-member-remove-failed", null));
                         log.error("Failed to remove memberships", e);
