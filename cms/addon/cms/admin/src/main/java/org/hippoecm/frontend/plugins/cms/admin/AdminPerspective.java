@@ -16,8 +16,9 @@
 package org.hippoecm.frontend.plugins.cms.admin;
 
 import org.apache.wicket.extensions.breadcrumb.BreadCrumbBar;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -46,18 +47,25 @@ public class AdminPerspective extends Perspective {
         add(adminPanel);
 
         breadCrumbBar.setActive(adminPanel);
+
+        breadCrumbBar.addListener(new IBreadCrumbModelListener() {
+            private static final long serialVersionUID = 1L;
+
+            public void breadCrumbActivated(IBreadCrumbParticipant previousParticipant,
+                    IBreadCrumbParticipant breadCrumbParticipant) {
+                redraw();
+            }
+
+            public void breadCrumbAdded(IBreadCrumbParticipant breadCrumbParticipant) {
+                redraw();
+            }
+
+            public void breadCrumbRemoved(IBreadCrumbParticipant breadCrumbParticipant) {
+                redraw();
+            }
+        });
     }
 
-    // override to do unconditional redraw
-    @Override
-    public void render(PluginRequestTarget target) {
-        //
-        if (target != null) {
-            target.addComponent(this);
-        }
-        super.render(target);
-    }
-    
     public void showDialog(IDialogService.Dialog dialog) {
         getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(dialog);
     }
