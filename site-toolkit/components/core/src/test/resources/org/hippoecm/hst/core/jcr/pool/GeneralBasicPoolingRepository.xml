@@ -19,42 +19,11 @@
   
   <bean id="org.hippoecm.hst.core.jcr.pool.PoolingRepository" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
         init-method="initialize" destroy-method="close">
-    
     <!-- delegated JCR repository -->
-    <property name="repository">
-      <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetClass" value="org.hippoecm.repository.HippoRepositoryFactory" />
-        <property name="targetMethod" value="getHippoRepository" />
-        <property name="arguments">
-          <list>
-            <value>${test.default.repository.address}</value>
-          </list>
-        </property>
-      </bean>
-    </property>
-    
-    <property name="defaultCredentials">
-      <bean id="javax.jcr.Credentials" class="javax.jcr.SimpleCredentials">
-        <constructor-arg value="${test.default.repository.user.name}" />
-        <constructor-arg value="${test.default.repository.password}" />
-      </bean>
-    </property>
-    
-    <!-- session proxy factories -->
-    <property name="sessionDecorator">
-      <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionDecoratorProxyFactoryImpl" />
-    </property>
-    
-    <!-- If you want read-only sessions, then use the following instead.  
-    <property name="sessionDecorator">
-      <bean class="org.hippoecm.hst.core.jcr.pool.ReadOnlySessionDecoratorProxyFactoryImpl" />
-    </property>
-    -->
-    
-    <property name="resourceLifecycleManagement">
-      <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement" />
-    </property>
-    
+    <property name="repositoryAddress" value="${test.default.repository.address}" />
+    <property name="defaultCredentialsUserID" value="${test.default.repository.user.name}" />
+    <property name="defaultCredentialsPassword" value="${test.default.repository.password}" />
+    <property name="readOnly" value="false" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="25" />
     <property name="maxIdle" value="5" />

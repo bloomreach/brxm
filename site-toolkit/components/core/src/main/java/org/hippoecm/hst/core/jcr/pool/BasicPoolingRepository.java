@@ -14,6 +14,7 @@ import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 
 /** 
  * <p>Basic implementation of <code>javax.jcr.Repository</code> that is
@@ -26,9 +27,15 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     
     protected HippoRepository repository;
     protected SimpleCredentials defaultCredentials;
+    protected SessionDecorator sessionDecorator;
+    
+    protected String repositoryAddress;
+    protected String defaultCredentialsUserID;
+    protected char [] defaultCredentailsPassword;
+    
+    protected boolean readOnly;
     protected boolean refreshOnPassivate = true;
     protected boolean keepChangesOnRefresh = false;
-    protected SessionDecorator sessionDecorator;
     protected ResourceLifecycleManagement pooledSessionLifecycleManagement;
     protected MultipleRepository multipleRepository;
 
@@ -39,6 +46,14 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     public HippoRepository getRepository() throws RepositoryException {
         return this.repository;
     }
+    
+    public void setRepositoryAddress(String repositoryAddress) {
+        this.repositoryAddress = repositoryAddress;
+    }
+    
+    public String getRepositoryAddress() {
+        return this.repositoryAddress;
+    }
 
     public void setDefaultCredentials(SimpleCredentials defaultCredentials) {
         this.defaultCredentials = defaultCredentials;
@@ -46,6 +61,22 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
 
     public SimpleCredentials getDefaultCredentials() {
         return this.defaultCredentials;
+    }
+    
+    public void setDefaultCredentialsUserID(String defaultCredentialsUserID) {
+        this.defaultCredentialsUserID = defaultCredentialsUserID;
+    }
+    
+    public String getDefaultCredentialsUserID() {
+        return this.defaultCredentialsUserID;
+    }
+    
+    public void setDefaultCredentialsPassword(char [] defaultCredentailsPassword) {
+        this.defaultCredentailsPassword = defaultCredentailsPassword;
+    }
+    
+    public char [] getDefaultCredentialsPassword() {
+        return this.defaultCredentailsPassword;
     }
     
     public void setRefreshOnPassivate(boolean refreshOnPassivate) {
@@ -74,6 +105,14 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
 
     public SessionDecorator getSessionDecorator() {
         return this.sessionDecorator;
+    }
+    
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+    
+    public boolean getReadOnly() {
+        return this.readOnly;
     }
 
     public void setResourceLifecycleManagement(ResourceLifecycleManagement pooledSessionLifecycleManagement) {
@@ -292,14 +331,27 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     protected String validationQuery = null;
 
     public synchronized void initialize() throws Exception {
-        if (sessionPool != null) {
-            try {
-                sessionPool.close();
-            } catch (Exception e) {
-
-            }
+        
+        close();
+        
+        // Initialize possible missing properties
+        
+        if (getRepository() == null && getRepositoryAddress() != null) {
+            setRepository(HippoRepositoryFactory.getHippoRepository(getRepositoryAddress()));
+        }
+        
+        if (getDefaultCredentials() == null && getDefaultCredentialsUserID() != null) {
+            setDefaultCredentials(new SimpleCredentials(getDefaultCredentialsUserID(), getDefaultCredentialsPassword()));
+        }
+        
+        setSessionDecorator(this.readOnly ? new ReadOnlyPooledSessionDecoratorProxyFactoryImpl() : new PooledSessionDecoratorProxyFactoryImpl());
+        
+        if (getResourceLifecycleManagement() == null) {
+            setResourceLifecycleManagement(new PooledSessionResourceManagement());
         }
 
+        // Initialize the object pool
+        
         sessionPool = new GenericObjectPool(new SessionFactory());
 
         sessionPool.setMaxActive(maxActive);
@@ -338,11 +390,20 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * @throws Exception 
      */
     public synchronized void close() throws Exception {
-        sessionPool.close();
-        sessionPool = null;
+        if (this.sessionPool != null) {
+            try {
+                this.sessionPool.close();
+            } catch (Exception e) {
+            }
+            this.sessionPool = null;
+        }
         
         if (this.repository != null) {
-            this.repository.close();
+            try {
+                this.repository.close();
+            } catch (Exception e) {
+            }
+            this.repository = null;
         }
     }
 

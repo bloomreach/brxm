@@ -3,14 +3,11 @@ package org.hippoecm.hst.core.jcr.pool;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import javax.jcr.SimpleCredentials;
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.RefAddr;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
-
-import org.hippoecm.repository.HippoRepositoryFactory;
 
 /**
  * JNDI Resource Factory for {@link BasicPoolingRepository}
@@ -25,10 +22,9 @@ import org.hippoecm.repository.HippoRepositoryFactory;
  *             type="javax.jcr.Repository"
  *             factory="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepositoryFactory"
  *             repositoryAddress="rmi://127.0.0.1:1099/hipporepository"
- *             repositoryUsername="admin"
- *             repositoryPassword="admin"
- *             readonly="false"
- *             sessionLifecycleManageable="true"
+ *             defaultCredentialsUserID="admin"
+ *             defaultCredentialsPassword="admin"
+ *             readOnly="false"
  *             maxActive="250"
  *             maxIdle="50"
  *             initialSize="0"
@@ -55,8 +51,8 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
         Reference ref = (Reference) obj;
         Enumeration addrs = ref.getAll();
         
-        String repositoryUsername = null;
-        String repositoryPassword = null; 
+        String defaultCredentialsUserID = null;
+        String defaultCredentialsPassword = null; 
         
         while (addrs.hasMoreElements()) {
             RefAddr addr = (RefAddr) addrs.nextElement();
@@ -64,19 +60,13 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
             String value = (String) addr.getContent();
             
             if (type.equals("repositoryAddress")) {
-                poolingRepository.setRepository(HippoRepositoryFactory.getHippoRepository(value));
-            } else if (type.equals("repositoryUsername")) {
-                repositoryUsername = value;
-                if (repositoryUsername != null && repositoryPassword != null) {
-                    poolingRepository.setDefaultCredentials(new SimpleCredentials(repositoryUsername, repositoryPassword.toCharArray()));
-                }
-            } else if (type.equals("repositoryPassword")) {
-                repositoryPassword = value;
-                if (repositoryUsername != null && repositoryPassword != null) {
-                    poolingRepository.setDefaultCredentials(new SimpleCredentials(repositoryUsername, repositoryPassword.toCharArray()));
-                }
-            } else if (type.equals("readonly") && Boolean.parseBoolean(value)) {
-                poolingRepository.setSessionDecorator(new ReadOnlyPooledSessionDecoratorProxyFactoryImpl());
+                poolingRepository.setRepositoryAddress(value);
+            } else if (type.equals("defaultCredentialsUserID")) {
+                poolingRepository.setDefaultCredentialsUserID(value);
+            } else if (type.equals("defaultCredentialsPassword")) {
+                poolingRepository.setDefaultCredentialsPassword(value.toCharArray());
+            } else if (type.equals("readOnly")) {
+                poolingRepository.setReadOnly(Boolean.parseBoolean(value));
             } else if (type.equals("sessionLifecycleManageable") && Boolean.parseBoolean(value)) {
                 poolingRepository.setResourceLifecycleManagement(new PooledSessionResourceManagement());
             } else if (type.equals("maxActive")) {
