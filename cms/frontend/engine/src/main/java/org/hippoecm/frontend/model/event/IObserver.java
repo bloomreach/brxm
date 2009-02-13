@@ -24,6 +24,8 @@ import org.apache.wicket.IClusterable;
  * response to changes in an observable object (IObservable).
  */
 public interface IObserver extends EventListener, IClusterable {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
     
     IObservable getObservable();
     

@@ -21,6 +21,8 @@ import java.util.List;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public final class YuiType {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private List<Setting> properties = new ArrayList<Setting>();
 

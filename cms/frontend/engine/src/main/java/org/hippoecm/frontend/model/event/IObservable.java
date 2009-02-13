@@ -18,6 +18,8 @@ package org.hippoecm.frontend.model.event;
 import org.apache.wicket.IClusterable;
 
 public interface IObservable extends IClusterable {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     void setObservationContext(IObservationContext context);
     

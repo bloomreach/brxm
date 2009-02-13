@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.model.event;
 
 public interface IEvent {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     IObservable getSource();
 }

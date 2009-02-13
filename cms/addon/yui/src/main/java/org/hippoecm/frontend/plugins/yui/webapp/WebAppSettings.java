@@ -20,6 +20,9 @@ import java.io.Serializable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public class WebAppSettings implements Serializable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private boolean loadWicketAjax = true; //load Wicket-Ajax by default

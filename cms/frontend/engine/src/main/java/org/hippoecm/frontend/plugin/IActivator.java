@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.plugin;
 
 public interface IActivator {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     void start();
 
