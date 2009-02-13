@@ -1,8 +1,6 @@
 package org.hippoecm.hst.core.jcr.pool;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Session;
@@ -11,72 +9,43 @@ import org.hippoecm.hst.core.ResourceLifecycleManagement;
 
 public class PooledSessionResourceManagement implements ResourceLifecycleManagement, PoolingRepositoryAware {
     
-    private static ThreadLocal<Map<String, boolean []>> tlActiveStates = new ThreadLocal<Map<String, boolean []>>() {
-        @Override
-        protected synchronized Map<String, boolean []> initialValue() {
-            return new HashMap<String, boolean []>();
-        }
-    };
-    
-    private static ThreadLocal<Map<String, Set<Session>>> tlPooledSessionsMap = new ThreadLocal<Map<String, Set<Session>>>() {
-        @Override
-        protected synchronized Map<String, Set<Session>> initialValue() {
-            return new HashMap<String, Set<Session>>();
-        }
-    };
+    private ThreadLocal<Boolean> tlActiveState = new ThreadLocal<Boolean>();
+    private ThreadLocal<Set<Session>> tlPooledSessions = new ThreadLocal<Set<Session>>();
 
     protected PoolingRepository poolingRepository;
     
-    protected String namespace = "";
-    
-    public PooledSessionResourceManagement() {
-        this(null);
-    }
-    
-    public PooledSessionResourceManagement(String namespace) {
-        if (namespace != null) {
-            this.namespace = namespace;
-        }
-    }
-    
     public void setPoolingRepository(PoolingRepository poolingRepository) {
         this.poolingRepository = poolingRepository;
-        
-        if ("".equals(this.namespace) && this.poolingRepository != null) {
-            this.namespace = this.poolingRepository.toString() + ":" + this.poolingRepository.hashCode(); 
-        }
     }
     
     public boolean isActive() {
-        boolean [] activeState = tlActiveStates.get().get(this.namespace);
-        return (activeState != null && activeState[0]);
+        Boolean activeState = tlActiveState.get();
+        return (activeState != null && activeState.booleanValue());
     }
     
     public void setActive(boolean active) {
-        boolean [] activeState = tlActiveStates.get().get(this.namespace);
+        Boolean activeState = tlActiveState.get();
         
-        if (activeState == null) {
-            activeState = new boolean[] { active };
-            tlActiveStates.get().put(this.namespace, activeState);
-        } else {
-            activeState[0] = active;
+        if (activeState == null || activeState.booleanValue() != active) {
+            activeState = new Boolean(active);
+            tlActiveState.set(activeState);
         }
     }
 
     public void registerResource(Object session) {
-        Set<Session> sessions = tlPooledSessionsMap.get().get(this.namespace);
+        Set<Session> sessions = tlPooledSessions.get();
         
         if (sessions == null) {
             sessions = new HashSet<Session>();
             sessions.add((Session) session);
-            tlPooledSessionsMap.get().put(this.namespace, sessions);
+            tlPooledSessions.set(sessions);
         } else {
             sessions.add((Session) session);
         }
     }
     
     public void unregisterResource(Object session) {
-        Set<Session> sessions = tlPooledSessionsMap.get().get(this.namespace);
+        Set<Session> sessions = tlPooledSessions.get();
         
         if (sessions != null) {
             sessions.remove((Session) session);
@@ -89,7 +58,7 @@ public class PooledSessionResourceManagement implements ResourceLifecycleManagem
     }
     
     public void disposeAllResources() {
-        Set<Session> sessions = tlPooledSessionsMap.get().get(this.namespace);
+        Set<Session> sessions = tlPooledSessions.get();
         
         if (sessions != null) {
             for (Session session : sessions) {
