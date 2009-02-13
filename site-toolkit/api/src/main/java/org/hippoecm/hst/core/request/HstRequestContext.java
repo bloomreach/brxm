@@ -16,7 +16,9 @@
 package org.hippoecm.hst.core.request;
 
 import javax.jcr.Credentials;
-import javax.jcr.Repository;
+import javax.jcr.LoginException;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
@@ -28,7 +30,14 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
  */
 public interface HstRequestContext {
     
-    public Repository getRepository();
+    /**
+     * Returns a session which is normally retrieved from a session pooling repository.
+     * 
+     * @return a session, which is normally retrieved from a session pooling repository
+     * @throws LoginException
+     * @throws RepositoryException
+     */
+    public Session getSession() throws LoginException, RepositoryException;
     
     public Credentials getDefaultCredentials();
     

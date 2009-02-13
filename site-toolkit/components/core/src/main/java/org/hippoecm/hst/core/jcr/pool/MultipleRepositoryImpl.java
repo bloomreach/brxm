@@ -27,7 +27,13 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         this.repositoryMap = new HashMap<CredentialsWrapper, Repository>();
         
         for (Map.Entry<Credentials, Repository> entry : repoMap.entrySet()) {
-            this.repositoryMap.put(new CredentialsWrapper(entry.getKey()), entry.getValue());
+            Repository repo = entry.getValue();
+            
+            if (repo instanceof MultipleRepositoryAware) {
+                ((MultipleRepositoryAware) repo).setMultipleRepository(this);
+            }
+            
+            this.repositoryMap.put(new CredentialsWrapper(entry.getKey()), repo);
         }
         
         this.defaultCredentialsWrapper = new CredentialsWrapper(defaultCredentials);

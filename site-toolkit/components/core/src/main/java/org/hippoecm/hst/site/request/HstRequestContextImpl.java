@@ -16,14 +16,18 @@
 package org.hippoecm.hst.site.request;
 
 import javax.jcr.Credentials;
+import javax.jcr.LoginException;
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstRequestContextImpl implements HstRequestContext {
 
-    protected Repository repository;
+    private Repository repository;
+    protected Session session;
     protected Credentials defaultCredentials;
     protected HstSiteMapItem siteMapItem;
 
@@ -36,9 +40,20 @@ public class HstRequestContextImpl implements HstRequestContext {
         this.defaultCredentials = defaultCredentials;
     }
     
-    public Repository getRepository()
-    {
-        return this.repository;
+    public Session getSession() throws LoginException, RepositoryException {
+        if (this.session != null && !this.session.isLive()) {
+            try {
+                this.session.logout();
+            } catch (Exception e) {
+            }
+            this.session = null;
+        }
+        
+        if (this.session == null) {
+            this.session = this.repository.login(this.defaultCredentials);
+        }
+        
+        return this.session;
     }
 
     public Credentials getDefaultCredentials() {

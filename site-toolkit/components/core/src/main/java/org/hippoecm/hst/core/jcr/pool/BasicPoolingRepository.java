@@ -22,7 +22,7 @@ import org.hippoecm.repository.HippoRepository;
  * @author <a href="mailto:w.ko@onehippo.com">Woonsan Ko</a>
  * @version $Id$
  */
-public class BasicPoolingRepository implements PoolingRepository {
+public class BasicPoolingRepository implements PoolingRepository, MultipleRepositoryAware {
     
     protected HippoRepository repository;
     protected SimpleCredentials defaultCredentials;
@@ -30,6 +30,7 @@ public class BasicPoolingRepository implements PoolingRepository {
     protected boolean keepChangesOnRefresh = false;
     protected SessionDecorator sessionDecorator;
     protected ResourceLifecycleManagement pooledSessionLifecycleManagement;
+    protected MultipleRepository multipleRepository;
 
     public void setRepository(HippoRepository repository) throws RepositoryException {
         this.repository = repository;
@@ -177,6 +178,22 @@ public class BasicPoolingRepository implements PoolingRepository {
             this.sessionPool.returnObject(session);
         } catch (Exception e) {
         }
+    }
+    
+    public void setMultipleRepository(MultipleRepository multipleRepository) {
+        this.multipleRepository = multipleRepository;
+    }
+    
+    public Session impersonate(Credentials credentials) throws LoginException, RepositoryException {
+        Session session = null;
+        
+        if (this.multipleRepository != null) {
+            session = this.multipleRepository.login(credentials);
+        } else {
+            throw new RepositoryException("Multiple session pooling repositories is not available.");
+        }
+        
+        return session;
     }
 
     // Pool implementation

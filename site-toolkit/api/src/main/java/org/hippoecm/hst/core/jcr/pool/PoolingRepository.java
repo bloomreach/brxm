@@ -1,6 +1,9 @@
 package org.hippoecm.hst.core.jcr.pool;
 
+import javax.jcr.Credentials;
+import javax.jcr.LoginException;
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
@@ -18,5 +21,7 @@ public interface PoolingRepository extends Repository {
     public void returnSession(Session session);
     
     public ResourceLifecycleManagement getResourceLifecycleManagement(); 
+    
+    public Session impersonate(Credentials credentials) throws LoginException, RepositoryException;
 
 }

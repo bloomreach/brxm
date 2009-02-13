@@ -4,9 +4,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.jcr.Credentials;
 import javax.jcr.Item;
-import javax.jcr.Session;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -14,75 +15,71 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.hippoecm.hst.proxy.ProxyUtils;
 import org.springframework.aop.framework.ProxyFactory;
 
-public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator, PoolingRepositoryAware
-{
+public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator, PoolingRepositoryAware {
+    
     protected PoolingRepository poolingRepository;
-    
-    public PooledSessionDecoratorProxyFactoryImpl()
-    {
+
+    public PooledSessionDecoratorProxyFactoryImpl() {
     }
-    
-    public final Session decorate(Session session)
-    {
+
+    public final Session decorate(Session session) {
         ProxyFactory factory = new ProxyFactory(session);
         factory.addAdvice(new PooledSessionInterceptor());
-        
+
         List<Advice> advices = getAdvices();
-        
-        if (advices != null)
-        {
-            for (Advice advice : advices)
-            {
+
+        if (advices != null) {
+            for (Advice advice : advices) {
                 factory.addAdvice(advice);
             }
         }
-        
+
         return (Session) factory.getProxy();
     }
-    
-    public void setPoolingRepository(PoolingRepository poolingRepository)
-    {
+
+    public void setPoolingRepository(PoolingRepository poolingRepository) {
         this.poolingRepository = poolingRepository;
     }
-    
-    protected List<Advice> getAdvices()
-    {
+
+    protected List<Advice> getAdvices() {
         return null;
     }
-    
-    private class PooledSessionInterceptor implements MethodInterceptor
-    {
-        private boolean closed;
-        
-        public Object invoke(MethodInvocation invocation) throws Throwable
-        {
+
+    private class PooledSessionInterceptor implements MethodInterceptor {
+        private boolean alreadyReturned;
+
+        public Object invoke(MethodInvocation invocation) throws Throwable {
             Object ret = null;
-            
-            if (this.closed)
-            {
-                throw new RepositoryException("Session is already closed!");
-            }
-            else
-            {
-                if ("logout".equals(invocation.getMethod().getName()))
-                {
+
+            if (this.alreadyReturned) {
+                throw new RepositoryException("Session is already returned to the pool!");
+            } else {
+                String methodName = invocation.getMethod().getName();
+                
+                if ("logout".equals(methodName)) {
+                    // when logout(), it acturally returns the session to the pool
                     Session session = (Session) invocation.getThis();
-                    this.closed = true;
+                    this.alreadyReturned = true;
                     poolingRepository.returnSession(session);
-                }
-                else
-                {
+                } else if ("getRepository".equals(methodName)) {
+                    // when getRepository(), it actually returns the session pooling repository
+                    ret = poolingRepository;
+                } else if ("impersonate".equals(methodName)) {
+                    // when impersonate(), it actually returns a session which is borrowed 
+                    // from another session pool repository based on the credentials.
+                    Credentials credentials = (Credentials) invocation.getArguments()[0];
+                    ret = poolingRepository.impersonate(credentials);
+                } else {
                     ret = invocation.proceed();
                 }
             }
-            
-            if (ret != null && ret instanceof Item)
-            {
+
+            if (ret != null && ret instanceof Item) {
                 Set<String> unsupportedMethodNames = new HashSet<String>();
                 unsupportedMethodNames.add("getSession");
                 ret = ProxyUtils.createdUnsupportableProxyObject(ret, unsupportedMethodNames);
             }
-            
+
             return ret;
         }
     }
