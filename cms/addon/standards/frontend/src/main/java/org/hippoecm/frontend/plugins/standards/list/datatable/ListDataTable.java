@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.standards.list.datatable;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,6 +31,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDat
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -48,6 +50,7 @@ public class ListDataTable extends DataTable {
     private Map<Item, IObserver> observers;
     private Set<Item> dirty;
     private TableSelectionListener selectionListener;
+    private IDataProvider provider;
 
     public interface TableSelectionListener {
         public void selectionChanged(IModel model);
@@ -59,6 +62,7 @@ public class ListDataTable extends DataTable {
         setOutputMarkupId(true);
         setVersioned(false);
 
+        this.provider = dataProvider;
         this.selectionListener = selectionListener;
 
         if (tableDefinition.showColumnHeaders()) {
@@ -106,6 +110,38 @@ public class ListDataTable extends DataTable {
             }
         }
         dirty.clear();
+    }
+
+    @Override
+    protected void onBeforeRender() {
+        // check if we're on the correct page
+        if (!doesPageContainModel(getCurrentPage())) {
+            for (int i = 0; i < getPageCount(); i++) {
+                if (doesPageContainModel(i)) {
+                    setCurrentPage(i);
+                    break;
+                }
+            }
+        }
+
+        super.onBeforeRender();
+    }
+
+    private boolean doesPageContainModel(int page) {
+        IModel selected = getModel();
+        int count = getRowsPerPage();
+        int offset = page * getRowsPerPage();
+        if (offset + count > provider.size()) {
+            count = provider.size() - offset;
+        }
+        Iterator iter = provider.iterator(offset, count);
+        while (iter.hasNext()) {
+            IModel model = provider.model(iter.next());
+            if (model.equals(selected)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
