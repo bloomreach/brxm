@@ -296,22 +296,36 @@ public class User implements Comparable<User>, IClusterable {
         relPath.append(NodeNameCodec.encode(getUsername(), true));
 
         node = ((UserSession) Session.get()).getRootNode().addNode(relPath.toString(), NT_FRONTEND_USER);
-        node.setProperty(PROP_EMAIL, getEmail());
-        node.setProperty(PROP_FIRSTNAME, getFirstName());
-        node.setProperty(PROP_LASTNAME, getLastName());
+        setOrRemoveStringProperty(node, PROP_EMAIL, getEmail());
+        setOrRemoveStringProperty(node, PROP_FIRSTNAME, getFirstName());
+        setOrRemoveStringProperty(node, PROP_LASTNAME, getLastName());
         // save parent when adding a node
         node.getParent().getSession().save();
     }
 
+    /**
+     * Wrapper needed for spi layer which doesn't know if a property exists or not
+     * @param node
+     * @param name
+     * @param value
+     * @throws RepositoryException
+     */
+    private void setOrRemoveStringProperty(Node node, String name, String value) throws RepositoryException {
+        if (value == null && !node.hasProperty(name)) {
+            return;
+        }
+        node.setProperty(name, value);
+    }
+    
     /**
      * save the current user
      * @throws RepositoryException
      */
     public void save() throws RepositoryException {
         if (node.isNodeType(NT_FRONTEND_USER)) {
-            node.setProperty(PROP_EMAIL, getEmail());
-            node.setProperty(PROP_FIRSTNAME, getFirstName());
-            node.setProperty(PROP_LASTNAME, getLastName());
+            setOrRemoveStringProperty(node, PROP_EMAIL, getEmail());
+            setOrRemoveStringProperty(node, PROP_FIRSTNAME, getFirstName());
+            setOrRemoveStringProperty(node, PROP_LASTNAME, getLastName());
             node.setProperty(HippoNodeType.HIPPO_ACTIVE, isActive());
             node.getSession().save();
         } else {
