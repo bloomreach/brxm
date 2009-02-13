@@ -547,8 +547,6 @@ public class FacetedAuthorizationTest extends TestCase {
     @Test
     public void testFacetSearch() throws RepositoryException {
         Node navNode = testNav.getNode("search");
-        Utilities.dump(testData);
-        Utilities.dump(testNav);
         assertTrue(navNode.hasNode("hippo:resultset/readdoc0"));
         assertTrue(navNode.hasNode("hippo:resultset/writedoc0"));
         NodeIterator iter = navNode.getNode("hippo:resultset").getNodes();
