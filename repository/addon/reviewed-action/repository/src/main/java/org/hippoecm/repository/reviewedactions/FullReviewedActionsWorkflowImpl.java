@@ -42,6 +42,8 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             throw new WorkflowException("cannot delete document with pending publication request");
         if(current2 != null)
             throw new WorkflowException("cannot delete document with pending depublication request");
+        if(current3 != null)
+            throw new WorkflowException("cannot delete document with pending delete request");
         if(published != null)
             throw new WorkflowException("cannot delete published document");
         if(draft != null)
@@ -59,6 +61,8 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             throw new WorkflowException("cannot rename document with pending publication request");
         if(current2 != null)
             throw new WorkflowException("cannot rename document with pending depublication request");
+        if(current3 != null)
+            throw new WorkflowException("cannot rename document with pending delete request");
         if(published != null)
             throw new WorkflowException("cannot rename published document");
         if(draft != null)
