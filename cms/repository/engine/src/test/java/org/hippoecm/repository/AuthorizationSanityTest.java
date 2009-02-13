@@ -48,7 +48,6 @@ public class AuthorizationSanityTest extends TestCase {
         Node root = session.getRootNode();
         Session anonymous = server.login();
         assertNotNull(anonymous);
-        Utilities.dump(System.err, anonymous.getRootNode().getNode("hippo:configuration"));
         visit(root, anonymous);
     }
 }
