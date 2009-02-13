@@ -15,13 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow;
 import org.slf4j.Logger;
@@ -48,7 +46,6 @@ public class CreateTypeDialog extends AbstractWorkflowDialog {
     protected void execute() throws Exception {
         TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) getWorkflow();
         workflow.createType(name);
-        ((UserSession) Session.get()).getJcrSession().refresh(true);
     }
     
     public IModel getTitle() {
