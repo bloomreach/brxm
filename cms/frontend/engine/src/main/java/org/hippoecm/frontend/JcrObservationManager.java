@@ -409,13 +409,6 @@ public class JcrObservationManager implements ObservationManager {
 
         UserSession session = (UserSession) org.apache.wicket.Session.get();
         if (session != null) {
-            // refresh the session
-            try {
-                session.getJcrSession().refresh(true);
-            } catch (RepositoryException ex) {
-                log.error("failed to refresh the session", ex);
-            }
-
             // copy set of listeners; don't synchronize on map while notifying observers
             // as it may need to be modified as a result of the event.
             Set<Map.Entry<EventListener, JcrListener>> set;
