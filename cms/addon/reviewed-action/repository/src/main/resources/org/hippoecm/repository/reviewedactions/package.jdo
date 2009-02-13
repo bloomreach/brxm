@@ -28,6 +28,7 @@
       <field name="published" column="../{.}[hippostd:state='published']"/>
       <field name="current" column="../hippo:request[type='publish']"/>
       <field name="current2" column="../hippo:request[type='depublish']"/>
+      <field name="current3" column="../hippo:request[type='delete']"/>
     </class>
     <class name="FullRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
