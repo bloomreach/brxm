@@ -15,11 +15,12 @@
  */
 package org.hippoecm.frontend.plugin.config;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import org.apache.wicket.util.value.IValueMap;
 
-public interface IPluginConfig extends IValueMap {
+public interface IPluginConfig extends IValueMap, Serializable {
     final static String SVN_ID = "$Id$";
 
     public String getName();
