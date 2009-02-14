@@ -40,12 +40,10 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
         super.setUp();
 
         Node node, root = session.getRootNode();
-        while(root.hasNode("test")) {
-            root.getNode("test").remove();
-            root.save();
-            root.refresh(false);
-        }
-        node = root.addNode("test");
+        if(!root.hasNode("test"))
+            node = root.addNode("test");
+        else
+            node = root.getNode("test");
         node = node.addNode("myarticle", "hippo:handle");
         node.addMixin("mix:referenceable");
         node = node.addNode("myarticle", "hippo:testdocument");
@@ -64,10 +62,6 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
     }
 
     @Test
-    public void testDummy() {
-    }
-
-    @Ignore
     public void testReviewedAction() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Node node, root = session.getRootNode();
         {
