@@ -2,6 +2,8 @@ package org.hippoecm.hst.core.configuration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.jcr.LoginException;
 import javax.jcr.Node;
@@ -10,6 +12,7 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.ConfigurationViewUtilities;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.HstSitesService;
@@ -28,15 +31,19 @@ public class TestConfiguration extends AbstractSpringTestCase {
 
     public static final String TESTPREVIEW_NODEPATH = "testpreview";
     
-    @Test
+    
     public void testConfiguration() {
-
+ 
          try {
             HstSites hstSites = new HstSitesService(getHstSitesNode()) ;
             HstSite s =  hstSites.getSite("testproject");
+            HstSite s2 =  hstSites.getSite("nonexistingproject");
+            assertNull(s2);
+            
             HstSiteMapItem sItem =  s.getSiteMap().getSiteMapItem("news");
             HstComponentConfiguration c = s.getComponentsConfiguration().getComponentConfiguration(sItem.getComponentConfigurationId()); 
             assertNotNull(c);
+            
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -50,20 +57,38 @@ public class TestConfiguration extends AbstractSpringTestCase {
         try {
             
             hstSites = new HstSitesService(getHstSitesNode());
+            
+            StringBuffer buf = new StringBuffer();
+            
+            
             HstSite hstSite =  hstSites.getSite("testproject");
             
             HstSiteMapMatcher hstSiteMapMatcher = new SimpleHstSiteMapMatcher();
 
+            MatchResult matchNoResult = hstSiteMapMatcher.match("/non/exist/ing", hstSite);
+            assertNull(matchNoResult.getSiteMapItem());
+            assertNull(matchNoResult.getCompontentConfiguration());
+            assertEquals(matchNoResult.getRemainder(), "non/exist/ing");
+            
+       
+            
             MatchResult matchResult = hstSiteMapMatcher.match("/news/foo/bar", hstSite);
             assertEquals(matchResult.getRemainder(), "foo/bar");
+            assertEquals(matchResult.getSiteMapItem().getId(), "news");
+
+            ConfigurationViewUtilities.view(buf, matchResult);
+            assertTrue("Buffer should not be empty", buf.length() > 0);
+            
+            assertEquals(matchResult.getSiteMapItem().getChild("inland").getId(), "news/inland");
             assertEquals(matchResult.getCompontentConfiguration().getId(), "pages/newsoverview");
             
-
             matchResult = hstSiteMapMatcher.match("/news/foo/bar/", hstSite);
             assertEquals(matchResult.getRemainder(), "foo/bar");
             
             matchResult = hstSiteMapMatcher.match("/news", hstSite);
             assertEquals(matchResult.getRemainder(), "");
+            
+            
             
         } catch (ServiceException e) {
             e.printStackTrace();
