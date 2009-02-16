@@ -15,7 +15,6 @@ import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.ComponentScanBeanDefinitionParser;
 
 public class HstComponentsConfigurationService extends AbstractJCRService implements HstComponentsConfiguration, Service{
 
