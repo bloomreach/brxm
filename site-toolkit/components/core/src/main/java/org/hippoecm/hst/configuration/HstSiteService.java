@@ -32,7 +32,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
             this.name = site.getName();
             this.hstSites = hstSites;
             if(site.hasNode(Configuration.NODENAME_HST_CONTENTNODE) && site.hasNode(Configuration.NODEPATH_HST_CONFIGURATION)) {
-                if(hstSites.getSite(name) != null) {
+                if(hstSites.getSites().get(name) != null) {
                     throw new ServiceException("Duplicate subsite with same name for '"+name+"'. Skipping this one");
                 } else {
                     contentPath = site.getNode(Configuration.NODENAME_HST_CONTENTNODE).getPath();

@@ -62,7 +62,11 @@ public class HstSitesService extends AbstractJCRService implements HstSites, Ser
     }
 
     public HstSite getSite(String name) {
-        return getSites().get(name);
+        HstSite site = getSites().get(name);
+        if(site == null) {
+            log.warn("Cannot load site with name '{}' because not present at '{}'", name, this.sitesContentPath);
+        }
+        return site;
     }
 
     public Map<String, HstSite> getSites() {
