@@ -46,8 +46,11 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     private Map<String, Object> properties;
     
-    public HstSiteMapItemService(Node jcrNode, String siteMapRootNodePath) throws ServiceException{
+    private HstSiteMap hstSiteMap;
+    
+    public HstSiteMapItemService(Node jcrNode, String siteMapRootNodePath, HstSiteMap hstSiteMap) throws ServiceException{
         super(jcrNode);
+        this.hstSiteMap = hstSiteMap; 
         String nodePath = getValueProvider().getPath();
         if(!getValueProvider().getPath().startsWith(siteMapRootNodePath)) {
             throw new ServiceException("Node path of the sitemap cannot start without the global sitemap root path. Skip SiteMapItem");
@@ -81,7 +84,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
                 }
                 if(child.isNodeType(Configuration.NODETYPE_HST_SITEMAPITEM)) {
                     try {
-                        HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath);
+                        HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, this.hstSiteMap);
                         childSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
                     } catch (ServiceException e) {
                         log.warn("Skipping root sitemap '{}'", child.getPath(), e);
@@ -138,6 +141,10 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
 
     public boolean isWildCard() {
         return this.isWildCard;
+    }
+
+    public HstSiteMap getHstSiteMap() {
+        return this.hstSiteMap;
     }
 
 }
