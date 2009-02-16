@@ -49,7 +49,8 @@ import org.junit.runners.Suite;
   org.hippoecm.repository.HREPTWO1493Test.class,
   org.hippoecm.repository.RepositoryMapTest.class,
   org.hippoecm.repository.decorating.SingledViewFacetSelectTest.class,
-  org.hippoecm.repository.PendingChangesTest.class
+  org.hippoecm.repository.PendingChangesTest.class,
+  org.hippoecm.repository.DescriptorsTest.class
 })
 public class RemoteTest extends Suite
 {
