@@ -1,49 +1,49 @@
 package org.hippoecm.hst.core.container;
 
-import javax.jcr.Credentials;
-import javax.jcr.Repository;
+import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.site.request.HstRequestContextImpl;
+import org.hippoecm.hst.core.component.HstComponentContext;
+import org.hippoecm.hst.core.component.HstComponentFactory;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TestDefaultPipeline extends AbstractSpringTestCase {
 
-    protected Repository repository;
-    protected Credentials defaultCredentials;
+    protected HstComponentFactory componentFactory;
     protected Pipelines pipelines;
     protected Pipeline defaultPipeline;
+    protected ServletConfig servletConfig;
     protected HttpServletRequest servletRequest;
     protected HttpServletResponse servletResponse;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        this.repository = (Repository) getComponent(Repository.class.getName());
-        this.defaultCredentials = (Credentials) getComponent(Credentials.class.getName() + ".default");
+        
+        this.componentFactory = (HstComponentFactory) getComponent(HstComponentFactory.class.getName());
         this.pipelines = (Pipelines) getComponent(Pipelines.class.getName());
         this.defaultPipeline = this.pipelines.getDefaultPipeline();
+        this.servletConfig = (ServletConfig) getComponent(ServletConfig.class.getName());
         this.servletRequest = (HttpServletRequest) getComponent(HttpServletRequest.class.getName());
         this.servletResponse = (HttpServletResponse) getComponent(HttpServletResponse.class.getName());
+        
+        this.componentFactory.registerComponentContext(HstComponentContext.LOCAL_COMPONENT_CONTEXT_NAME, servletConfig, Thread.currentThread().getContextClassLoader());
     }
     
     @Test
     public void testDefaultPipeline() throws ContainerException {
         
-        HstRequestContext context = new HstRequestContextImpl(this.repository, this.defaultCredentials);
-        
-        this.defaultPipeline.beforeInvoke(servletRequest, servletResponse, context);
+        this.defaultPipeline.beforeInvoke(this.servletRequest, this.servletResponse);
         
         try {
-            this.defaultPipeline.invoke(servletRequest, servletResponse, context);
+            this.defaultPipeline.invoke(this.servletRequest, this.servletResponse);
         } catch (Exception e) {
             throw new ContainerException(e);
         } finally {
-            this.defaultPipeline.afterInvoke(servletRequest, servletResponse, context);
+            this.defaultPipeline.afterInvoke(this.servletRequest, this.servletResponse);
         }
     }
     

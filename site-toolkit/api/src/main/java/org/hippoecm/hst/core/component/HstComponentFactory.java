@@ -1,11 +1,17 @@
 package org.hippoecm.hst.core.component;
 
-import java.util.Map;
+import javax.servlet.ServletConfig;
+
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 
 public interface HstComponentFactory {
     
-    void init(Map<String, Object> properties);
+    void registerComponentContext(String contextName, ServletConfig servletConfig, ClassLoader classLoader);
     
-    HstComponent newInstance();
+    void unregisterComponentContext(String contextName);
+    
+    ClassLoader getComponentContextClassLoader(String contextName);
+    
+    HstComponent getComponentInstance(HstComponentConfiguration compConfig) throws HstComponentException;
     
 }

@@ -3,6 +3,7 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-base.xml" />
+  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-component.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-pipelines.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-request.xml" />
   <import resource="classpath:/org/hippoecm/hst/core/jcr/pool/GeneralMultiplePoolingRepository.xml" />
@@ -14,6 +15,17 @@
       <list>
         <ref bean="javax.jcr.Repository" />
         <value>testpreview</value>
+      </list>
+    </property>
+  </bean>
+  
+  <bean id="org.hippoecm.hst.configuration.HstSites.live" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetClass" value="org.hippoecm.hst.configuration.HstSitesFactory" />
+    <property name="targetMethod" value="create" />
+    <property name="arguments">
+      <list>
+        <ref bean="javax.jcr.Repository" />
+        <value>testlive</value>
       </list>
     </property>
   </bean>
@@ -31,7 +43,7 @@
   
   <bean id="org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher" class="org.hippoecm.hst.configuration.SimpleHstSiteMapMatcher">
   </bean>
-    
+  
   <bean id="javax.servlet.ServletContext"
         class="org.springframework.mock.web.MockServletContext">
   </bean>

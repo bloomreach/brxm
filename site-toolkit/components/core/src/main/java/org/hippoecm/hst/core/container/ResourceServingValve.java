@@ -1,25 +1,29 @@
 package org.hippoecm.hst.core.container;
 
+import javax.servlet.ServletRequest;
+
 import org.hippoecm.hst.core.component.HstComponentWindow;
-import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class ResourceServingValve extends AbstractValve {
     
     @Override
-    public void invoke(HstRequestContext request, ValveContext context) throws ContainerException {
+    public void invoke(ValveContext context) throws ContainerException {
 
         if (!context.getServletResponse().isCommitted() && isResourceRequest()) {
             
             HstComponentWindow window = findResourceServingWindow(context.getRootComponentWindow());
             
             if (window != null) {
-                this.requestProcessor.processBeforeServeResource(context.getServletRequest(), context.getServletResponse(), request, window);
-                this.requestProcessor.processServeResource(context.getServletRequest(), context.getServletResponse(), request, window);
+                ServletRequest servletRequest = context.getServletRequest();
+                servletRequest.setAttribute(HstComponentWindow.class.getName() + ".resource", window);
+                HstComponentInvoker invoker = getComponentInvoker(window.getContextName());
+                invoker.invokeBeforeServeResource(servletRequest, context.getServletResponse());
+                invoker.invokeServeResource(servletRequest, context.getServletResponse());
             }
         }
         
         // continue
-        context.invokeNext(request);
+        context.invokeNext();
     }
 
     private HstComponentWindow findResourceServingWindow(HstComponentWindow rootComponentWindow) {

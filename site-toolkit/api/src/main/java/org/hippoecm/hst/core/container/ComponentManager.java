@@ -4,7 +4,7 @@ public interface ComponentManager
 {
     void initialize();
     void start();
-    Object getComponent(String name);
+    <T> T getComponent(String name);
     void stop();
     void close();
 }

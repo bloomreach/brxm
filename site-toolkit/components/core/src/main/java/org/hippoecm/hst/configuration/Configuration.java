@@ -11,6 +11,7 @@ public class Configuration {
     public final static String NODETYPE_HST_COMPONENTGROUP = "hst:componentgroup";
     public final static String NODETYPE_HST_COMPONENT = "hst:component";
 
+    public final static String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
     public final static String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";
     public final static String COMPONENT_PROPERTY_RENDER_PATH = "hst:renderpath";
     public final static String COMPONENT_PROPERTY_REFERECENCENAME = "hst:referencename";

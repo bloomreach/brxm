@@ -54,8 +54,8 @@ public class SpringComponentManager implements ComponentManager {
         this.applicationContext.close();
     }
 
-    public Object getComponent(String name) {
-        return this.applicationContext.getBean(name);
+    public <T> T getComponent(String name) {
+        return (T) this.applicationContext.getBean(name);
     }
 
     public String[] getConfigurations() {

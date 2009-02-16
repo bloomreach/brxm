@@ -9,13 +9,15 @@ public interface HstComponentConfiguration {
 
     String getReferenceName();
 
-    String getRenderPath();
-
     String getContextRelativePath();
 
-    String getComponentContentBasePath();;
+    String getComponentContentBasePath();
 
+    String getComponentContextName();
+    
     String getComponentClassName();
+
+    String getRenderPath();
 
     SortedMap<String, HstComponentConfiguration> getChildren();
 

@@ -33,6 +33,8 @@
     <product_abr>HST</product_abr>
     
     <wagon.ftp.version>1.0-alpha-6</wagon.ftp.version>
+    
+    <portlet-api.version>2.0</portlet-api.version>
     <javax.jcr.version>1.0</javax.jcr.version>
     <hippoecm.version>2.03.00</hippoecm.version>
     <spring.version>2.5.6</spring.version>
@@ -223,6 +225,13 @@
         <groupId>javax.servlet.jsp</groupId>
         <artifactId>jsp-api</artifactId>
         <version>2.0</version>
+        <scope>provided</scope>
+      </dependency>
+      
+      <dependency>
+        <groupId>javax.portlet</groupId>
+        <artifactId>portlet-api</artifactId>
+        <version>${portlet-api.version}</version>
         <scope>provided</scope>
       </dependency>
 

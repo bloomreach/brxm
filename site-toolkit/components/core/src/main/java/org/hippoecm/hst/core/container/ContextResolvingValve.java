@@ -6,15 +6,13 @@ import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher.MatchResult;
 import org.hippoecm.hst.core.component.HstComponentWindow;
-import org.hippoecm.hst.core.component.HstComponentWindowImpl;
 import org.hippoecm.hst.core.domain.DomainMapping;
-import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class ContextResolvingValve extends AbstractValve
 {
     
     @Override
-    public void invoke(HstRequestContext request, ValveContext context) throws ContainerException
+    public void invoke(ValveContext context) throws ContainerException
     {
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
         
@@ -49,14 +47,14 @@ public class ContextResolvingValve extends AbstractValve
         HstComponentConfiguration rootComponentConfig = matchResult.getCompontentConfiguration();
         
         try {
-            HstComponentWindow rootComponentWindow = new HstComponentWindowImpl(rootComponentConfig);
+            HstComponentWindow rootComponentWindow = getComponentWindowFactory().create(rootComponentConfig, getComponentFactory());
             context.setRootComponentWindow(rootComponentWindow);
         } catch (Exception e) {
             throw new ContainerException("Failed to create component window for the configuration, " + rootComponentConfig.getId(), e);
         }
         
         // continue
-        context.invokeNext(request);
+        context.invokeNext();
     }
     
 }

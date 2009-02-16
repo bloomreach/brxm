@@ -32,7 +32,10 @@
     <property name="hstSites" ref="org.hippoecm.hst.configuration.HstSites" />
     <property name="domainMappings" ref="org.hippoecm.hst.core.domain.DomainMappings" />
     <property name="siteMapMatcher" ref="org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher" />
-    <property name="requestProcessor" ref="org.hippoecm.hst.core.request.HstRequestProcessor" />
+    <property name="requestContextComponent" ref="org.hippoecm.hst.core.request.HstRequestContextComponent" />
+    <property name="componentFactory" ref="org.hippoecm.hst.core.component.HstComponentFactory" />
+    <property name="componentWindowFactory" ref="org.hippoecm.hst.core.component.HstComponentWindowFactory" />
+    <property name="componentInvokerProvider" ref="org.hippoecm.hst.core.container.HstComponentInvokerProvider" />
   </bean>
 
   <!-- Pre-processing valves -->

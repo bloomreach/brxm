@@ -18,8 +18,6 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentConfiguration.class);
     
-    private String renderPath;
-    
     private SortedMap<String, HstComponentConfiguration> componentConfigurations = new TreeMap<String, HstComponentConfiguration>();
     
     private String id;
@@ -27,8 +25,12 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     private String componentContentBasePath;
     
     private String contextRelativePath;
+    
+    private String componentContextName;
 
     private String componentClassName;
+    
+    private String renderPath;
     
     private String referenceName;
     
@@ -49,10 +51,11 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
        
         if (getValueProvider().isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
             this.referenceName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCENAME);
-            this.renderPath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_RENDER_PATH);
             this.componentContentBasePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_CONTENTBASEPATH);
             this.contextRelativePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_CONTEXTRELATIVEPATH);
+            this.componentContextName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME);
             this.componentClassName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
+            this.renderPath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_RENDER_PATH);
             this.referencedComponent = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
             this.allProperties = getValueProvider().getProperties();
         } 
@@ -95,6 +98,9 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         return componentConfigurations.values().toArray(new Service[componentConfigurations.size()]);
     } 
 
+    public String getComponentContextName() {
+        return this.componentContextName;
+    }
     
     public String getComponentClassName(){
         return this.componentClassName;

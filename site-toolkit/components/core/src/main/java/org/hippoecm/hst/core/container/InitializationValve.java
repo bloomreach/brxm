@@ -2,8 +2,9 @@ package org.hippoecm.hst.core.container;
 
 import java.util.List;
 
+import javax.servlet.ServletRequest;
+
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
-import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class InitializationValve extends AbstractValve
@@ -15,8 +16,12 @@ public class InitializationValve extends AbstractValve
     }
     
     @Override
-    public void invoke(HstRequestContext request, ValveContext context) throws ContainerException
+    public void invoke(ValveContext context) throws ContainerException
     {
+        HstRequestContext requestContext = getRequestContextComponent().create();
+        ServletRequest servletRequest = context.getServletRequest();
+        servletRequest.setAttribute(HstRequestContext.class.getName(), requestContext);
+        
         if (this.resourceLifecycleManagements != null) {
             for (ResourceLifecycleManagement resourceLifecycleManagement : this.resourceLifecycleManagements) {
                 resourceLifecycleManagement.disposeAllResources();
@@ -25,6 +30,6 @@ public class InitializationValve extends AbstractValve
         }
         
         // continue
-        context.invokeNext(request);
+        context.invokeNext();
     }
 }

@@ -1,5 +1,7 @@
 package org.hippoecm.hst.core.container;
 
+import javax.servlet.ServletRequest;
+
 import org.hippoecm.hst.core.component.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -7,21 +9,24 @@ public class ActionValve extends AbstractValve
 {
 
     @Override
-    public void invoke(HstRequestContext request, ValveContext context) throws ContainerException
+    public void invoke(ValveContext context) throws ContainerException
     {
         if (isActionRequest()) {
             
             HstComponentWindow actionWindow = findActionWindow(context.getRootComponentWindow());
             
             if (actionWindow != null) {
-                this.requestProcessor.processAction(context.getServletRequest(), context.getServletResponse(), request, actionWindow);
+                ServletRequest servletRequest = context.getServletRequest();
+                servletRequest.setAttribute(HstComponentWindow.class.getName() + ".action", actionWindow);
+                HstComponentInvoker invoker = getComponentInvoker(actionWindow.getContextName());
+                invoker.invokeAction(servletRequest, context.getServletResponse());
             } else {
                 throw new ContainerException("No action window.");
             }
         }
         
         // continue
-        context.invokeNext(request);
+        context.invokeNext();
     }
     
     protected void sendRedirectNavigation(HstRequestContext request) {

@@ -1,6 +1,6 @@
 package org.hippoecm.hst.core.component;
 
-import java.util.Map;
+import javax.servlet.ServletConfig;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -10,7 +10,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  */
 public interface HstComponent {
     
-    void init(Map<String, Object> properties);
+    void init(ServletConfig servletConfig);
     
     void doBeforeRender(HstRequestContext requestContext, HstRequest request, HstResponse response);
     

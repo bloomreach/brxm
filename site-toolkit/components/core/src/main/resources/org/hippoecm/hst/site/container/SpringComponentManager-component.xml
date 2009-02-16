@@ -17,15 +17,17 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-  <!-- Commons configuration from collab.properties -->
-  <bean id="org.hippoecm.hst.core.request.HstRequestContextComponent" class="org.hippoecm.hst.site.request.HstRequestContextComponentImpl">
-    <constructor-arg ref="javax.jcr.Repository" />
-    <constructor-arg ref="javax.jcr.Credentials.default" />
+  <bean id="org.hippoecm.hst.core.component.HstComponentFactory"
+        class="org.hippoecm.hst.core.component.HstComponentFactoryImpl">
   </bean>
   
-  <bean id="org.hippoecm.hst.core.request.HstRequestProcessor" class="org.hippoecm.hst.core.container.HstRequestProcessorImpl">
-    <constructor-arg ref="org.hippoecm.hst.core.container.Pipelines" />
+  <bean id="org.hippoecm.hst.core.component.HstComponentWindowFactory"
+        class="org.hippoecm.hst.core.component.HstComponentWindowFactoryImpl">
   </bean>
-   
+  
+  <bean id="org.hippoecm.hst.core.container.HstComponentInvokerProvider"
+        class="org.hippoecm.hst.core.container.HstComponentInvokerProviderImpl">
+  </bean>
+
 </beans>
 

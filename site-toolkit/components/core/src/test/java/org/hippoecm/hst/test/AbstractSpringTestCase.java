@@ -47,7 +47,7 @@ public abstract class AbstractSpringTestCase
         return new String[] { classXmlFileName };
     }
 
-    protected Object getComponent(String name) {
-        return this.componentManager.getComponent(name);
+    protected <T> T getComponent(String name) {
+        return this.componentManager.<T>getComponent(name);
     }
 }

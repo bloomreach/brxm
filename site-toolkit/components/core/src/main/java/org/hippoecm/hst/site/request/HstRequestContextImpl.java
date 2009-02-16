@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstRequestContextImpl implements HstRequestContext {
@@ -41,12 +42,10 @@ public class HstRequestContextImpl implements HstRequestContext {
     }
     
     public Session getSession() throws LoginException, RepositoryException {
-        if (this.session != null && !this.session.isLive()) {
-            //TODO throw hstrequestexception??
-        }
-        
         if (this.session == null) {
             this.session = this.repository.login(this.defaultCredentials);
+        } else if (!this.session.isLive()) {
+            throw new HstComponentException("Invalid session.");
         }
         
         return this.session;

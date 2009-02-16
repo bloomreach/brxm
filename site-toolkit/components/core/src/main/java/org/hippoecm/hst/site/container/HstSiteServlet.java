@@ -12,10 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import org.hippoecm.hst.core.component.HstComponentFactory;
+import org.hippoecm.hst.core.container.HstRequestProcessor;
 import org.hippoecm.hst.core.container.HstSiteEngine;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.HstRequestContextComponent;
 
 /**
  * HST Site Servlet entry point.
@@ -35,7 +34,6 @@ public class HstSiteServlet extends HttpServlet {
     private static Log console;
 
     private HstSiteEngine engine;
-    private HstRequestContextComponent contextComponent;
 
     // -------------------------------------------------------------------
     // I N I T I A L I Z A T I O N
@@ -72,9 +70,11 @@ public class HstSiteServlet extends HttpServlet {
             engine = new HstSiteEngineImpl(initProperties);
             console.info("HSTSiteServlet attempting to start the Jetspeed Portal Engine...");
             engine.start();
+            
+            HstComponentFactory componentFactory = engine.getComponentManager().<HstComponentFactory>getComponent(HstComponentFactory.class.getName());
+            componentFactory.registerComponentContext(null, config, Thread.currentThread().getContextClassLoader());
+            
             console.info("HSTSiteServlet has successfuly started the Jetspeed Portal Engine....");
-            contextComponent = (HstRequestContextComponent) engine.getComponentManager().getComponent(
-                    HstRequestContextComponent.class.getName());
         } catch (Throwable e) {
             // save the exception to complain loudly later :-)
             final String msg = "HSTSite: init() failed.";
@@ -103,19 +103,13 @@ public class HstSiteServlet extends HttpServlet {
      *                a servlet exception.
      */
     public final void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        HstRequestContext context = null;
-
         try {
-            // send request through pipeline
-            context = contextComponent.create();
-            engine.service(req, res, context);
+            HstRequestProcessor processor = this.engine.getComponentManager().<HstRequestProcessor>getComponent(HstRequestProcessor.class.getName());
+            processor.processRequest(req, res);
         } catch (Exception e) {
             final String msg = "Fatal error encountered while processing portal request: " + e.toString();
             log.fatal(msg, e);
             throw new ServletException(msg, e);
-        } finally {
-            if (context != null)
-                contextComponent.release(context);
         }
     }
 

@@ -1,9 +1,5 @@
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
-import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
  * Engine Abstraction - to run from both unit tests and servlet
@@ -28,28 +24,6 @@ public interface HstSiteEngine
      */
     public void shutdown() throws ContainerException;
 
-    /**
-     * Makes a service request to the engine.
-     *
-     * @param context a <code>RequestContext</code> with the state of the request.
-     * @throws Exception when the engine fails to initilialize
-     */
-    public void service(ServletRequest request, ServletResponse response, HstRequestContext context) throws ContainerException;
-
-    /**
-     * Gets the engine's request default pipeline.
-     * 
-     * @return Pipeline The engine's request pipeline.
-     */
-    public Pipeline getDefaultPipeline();
- 
-    /**
-     * Gets the specified engine's request pipeline.
-     * 
-     * @return Pipeline A specific request pipeline.
-     */ 
-    public Pipeline getPipeline(String pipelineName);
- 
     /**
      * Gets the component manager
      */ 

@@ -4,11 +4,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.hippoecm.hst.core.component.HstComponentWindow;
-import org.hippoecm.hst.core.request.HstRequestContext;
 
 public interface ValveContext
 {
-    public void invokeNext(HstRequestContext request) throws ContainerException;
+    public void invokeNext() throws ContainerException;
     
     public ServletRequest getServletRequest();
 

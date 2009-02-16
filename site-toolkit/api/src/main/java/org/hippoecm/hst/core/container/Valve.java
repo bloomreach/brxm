@@ -4,7 +4,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 public interface Valve
 {
-    public void invoke(HstRequestContext request, ValveContext context) throws ContainerException;
+    public void invoke(ValveContext context) throws ContainerException;
 
     /**
      * Initialize the valve before using in a pipeline.

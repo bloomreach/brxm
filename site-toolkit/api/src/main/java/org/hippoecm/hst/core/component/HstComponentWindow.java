@@ -4,6 +4,8 @@ import java.util.Map;
 
 public interface HstComponentWindow {
 
+    String getContextName();
+    
     String getReferenceName();
     
     String getReferenceNamespace();
