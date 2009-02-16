@@ -46,7 +46,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         this.componentsRootNodePath = componentsRootNodePath;
         // id is the relative path wrt configuration components path
         this.id = getValueProvider().getPath().substring(componentsRootNodePath.length()+1);
-        System.out.println(id);
+       
         if (getValueProvider().isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
             this.referenceName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCENAME);
             this.renderPath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_RENDER_PATH);
