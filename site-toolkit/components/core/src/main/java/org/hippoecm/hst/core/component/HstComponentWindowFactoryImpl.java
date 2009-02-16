@@ -23,6 +23,11 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         }
 
         String contextName = compConfig.getComponentContextName();
+        
+        if (contextName == null) {
+            contextName = HstComponentContext.LOCAL_COMPONENT_CONTEXT_NAME;
+        }
+        
         String renderPath = compConfig.getRenderPath();
         HstComponent component = compFactory.getComponentInstance(compConfig);
         

@@ -139,6 +139,10 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         // TODO: find the reference name of the current request context by both absolute namespace and relative namespace.
         return namespace;
     }
+    
+    public HstRequestContext getRequestContext() {
+        return (HstRequestContext) super.getAttribute(HstRequestContext.class.getName());
+    }
 
     public HstComponentWindow getComponentWindow() {
         return this.componentWindow;

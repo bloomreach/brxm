@@ -14,7 +14,7 @@ public class AggregationValve extends AbstractValve {
         
         if (!context.getServletResponse().isCommitted() && !isResourceRequest()) {
 
-            HstComponentWindow rootWindow = null;
+            HstComponentWindow rootWindow = context.getRootComponentWindow();
             
             if (rootWindow != null) {
                 ServletRequest servletRequest = context.getServletRequest();

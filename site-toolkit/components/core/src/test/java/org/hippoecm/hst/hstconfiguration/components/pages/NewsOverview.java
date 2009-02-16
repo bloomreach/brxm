@@ -1,27 +1,18 @@
 package org.hippoecm.hst.hstconfiguration.components.pages;
 
-import javax.servlet.ServletConfig;
-
-import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.hstconfiguration.components.AbstractHstComponent;
 
-public class NewsOverview implements HstComponent {
+public class NewsOverview extends AbstractHstComponent {
 
-    public void init(ServletConfig servletConfig) {
+    public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
+        
     }
 
-    public void destroy() {
-    }
-
-    public void doAction(HstRequestContext requestContext, HstRequest request, HstResponse response) {
-    }
-
-    public void doBeforeRender(HstRequestContext requestContext, HstRequest request, HstResponse response) {
-    }
-
-    public void doBeforeServeResource(HstRequestContext requestContext, HstRequest request, HstResponse response) {
+    public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
+        
     }
 
 }

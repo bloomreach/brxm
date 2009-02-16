@@ -1,7 +1,5 @@
 package org.hippoecm.hst.test;
 
-import junit.framework.TestCase;
-
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
@@ -46,8 +44,12 @@ public abstract class AbstractSpringTestCase
         String classXmlFileName = getClass().getName().replace(".", "/") + "*.xml";
         return new String[] { classXmlFileName };
     }
+    
+    protected ComponentManager getComponentManager() {
+        return this.componentManager;
+    }
 
     protected <T> T getComponent(String name) {
-        return this.componentManager.<T>getComponent(name);
+        return getComponentManager().<T>getComponent(name);
     }
 }
