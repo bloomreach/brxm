@@ -42,11 +42,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     
     public Session getSession() throws LoginException, RepositoryException {
         if (this.session != null && !this.session.isLive()) {
-            try {
-                this.session.logout();
-            } catch (Exception e) {
-            }
-            this.session = null;
+            //TODO throw hstrequestexception??
         }
         
         if (this.session == null) {
