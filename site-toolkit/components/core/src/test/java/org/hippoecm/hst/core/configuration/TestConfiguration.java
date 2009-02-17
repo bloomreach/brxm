@@ -16,7 +16,7 @@ import org.hippoecm.hst.configuration.ConfigurationViewUtilities;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.HstSitesService;
-import org.hippoecm.hst.configuration.SimpleHstSiteMapMatcher;
+import org.hippoecm.hst.configuration.BasicHstSiteMapMatcher;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher;
@@ -63,7 +63,7 @@ public class TestConfiguration extends AbstractSpringTestCase {
             
             HstSite hstSite =  hstSites.getSite("testproject");
             
-            HstSiteMapMatcher hstSiteMapMatcher = new SimpleHstSiteMapMatcher();
+            HstSiteMapMatcher hstSiteMapMatcher = new BasicHstSiteMapMatcher();
 
             MatchResult matchNoResult = hstSiteMapMatcher.match("/non/exist/ing", hstSite);
             assertNull(matchNoResult.getSiteMapItem());

@@ -5,7 +5,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher;
 import org.hippoecm.hst.core.util.PathUtils;
 
-public class SimpleHstSiteMapMatcher implements HstSiteMapMatcher{
+public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
 
     public MatchResult match(String path, HstSite hstSite) {
         path = PathUtils.normalizePath(path);
