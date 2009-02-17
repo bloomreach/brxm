@@ -8,6 +8,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.service.jcr.JCRService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +16,20 @@ public class BasicHstLinkCreator implements HstLinkCreator{
 
     private static final Logger log = LoggerFactory.getLogger(HstLinkCreator.class);
   
-    public HstLink rewrite(Node node, HstSiteMapItem siteMapItem) {
-        // TODO Auto-generated method stub
+    public HstLink create(JCRService jcrService, HstSiteMapItem siteMapItem) {
+        Node n = jcrService.getValueProvider().getJcrNode();
+        if(n != null) {
+          return this.create(n, siteMapItem);
+        } else {
+            log.warn("JCRValueProvider is detached. Trying to create link with detached node path");
+            // TODO create link with nodepath
+        }
+        
+        return null;
+    }
+    
+    public HstLink create(Node node, HstSiteMapItem siteMapItem) {
+        
         return null;
     }
 
@@ -68,5 +81,7 @@ public class BasicHstLinkCreator implements HstLinkCreator{
         }
         return path.toString();
     }
+
+   
 
 }
