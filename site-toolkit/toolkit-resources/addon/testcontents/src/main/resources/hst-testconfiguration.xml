@@ -33,7 +33,6 @@
         <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>abababab-7b53-40d3-a94d-8f6f64cf0d95</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String"/>
         <sv:property sv:name="hippostd:state" sv:type="String">
             <sv:value>published</sv:value>
         </sv:property>

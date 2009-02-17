@@ -133,8 +133,6 @@
         <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:title" sv:type="String">
           <sv:value/>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String"/>
-        <sv:property sv:name="hippo:related" sv:type="Reference"/>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>

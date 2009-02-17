@@ -24,7 +24,6 @@
     <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:paths" sv:type="String"/>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>New Document</sv:value>
         <sv:value>New Folder</sv:value>
@@ -32,9 +31,6 @@
     <sv:node sv:name="gallery">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippogallery:stdImageGallery</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
-            <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>4e557532-98ff-4673-a2a9-5cdbb2822eed</sv:value>
@@ -64,9 +60,6 @@
     <sv:node sv:name="assets">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippogallery:stdAssetGallery</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
-            <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>4e557532-bbbb-4673-a2a9-5cdbb2822eed</sv:value>

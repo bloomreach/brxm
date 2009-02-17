@@ -8,8 +8,6 @@
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:paths" sv:type="String"/>
-    <sv:property sv:name="hippo:related" sv:type="Reference"/>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>New Folder</sv:value>
         <sv:value>New Document</sv:value>
@@ -21,20 +19,18 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String"/>
-        <sv:property sv:name="hippo:related" sv:type="Reference"/>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
             <sv:value>New Folder</sv:value>
             <sv:value>New Document</sv:value>
         </sv:property>
-        <sv:node sv:name="Products">
+        <sv:node sv:name="ProductsPage">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:handle</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                 <sv:value>hippo:hardhandle</sv:value>
             </sv:property>
-            <sv:node sv:name="Products">
+            <sv:node sv:name="ProductsPage">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>${rootArtifactId.replace($hyphen,$empty)}:textpage</sv:value>
                 </sv:property>
@@ -50,8 +46,6 @@
                 <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:title" sv:type="String">
                     <sv:value>Products</sv:value>
                 </sv:property>
-                <sv:property sv:name="hippo:paths" sv:type="String"/>
-                <sv:property sv:name="hippo:related" sv:type="Reference"/>
                 <sv:property sv:name="hippostd:holder" sv:type="String">
                     <sv:value>admin</sv:value>
                 </sv:property>
@@ -118,8 +112,6 @@
                 <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:title" sv:type="String">
                     <sv:value>Hippo CMS</sv:value>
                 </sv:property>
-                <sv:property sv:name="hippo:paths" sv:type="String"/>
-                <sv:property sv:name="hippo:related" sv:type="Reference"/>
                 <sv:property sv:name="hippostd:holder" sv:type="String">
                     <sv:value>admin</sv:value>
                 </sv:property>
@@ -202,20 +194,18 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String"/>
-        <sv:property sv:name="hippo:related" sv:type="Reference"/>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
             <sv:value>New Folder</sv:value>
             <sv:value>New Document</sv:value>
         </sv:property>
-        <sv:node sv:name="Solutions">
+        <sv:node sv:name="SolutionsPage">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:handle</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                 <sv:value>hippo:hardhandle</sv:value>
             </sv:property>
-            <sv:node sv:name="Solutions">
+            <sv:node sv:name="SolutionsPage">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>${rootArtifactId.replace($hyphen,$empty)}:textpage</sv:value>
                 </sv:property>
@@ -231,8 +221,6 @@
                 <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:title" sv:type="String">
                     <sv:value>Solutions</sv:value>
                 </sv:property>
-                <sv:property sv:name="hippo:paths" sv:type="String"/>
-                <sv:property sv:name="hippo:related" sv:type="Reference"/>
                 <sv:property sv:name="hippostd:holder" sv:type="String">
                     <sv:value>admin</sv:value>
                 </sv:property>
@@ -278,8 +266,6 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String"/>
-        <sv:property sv:name="hippo:related" sv:type="Reference"/>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
             <sv:value>New Folder</sv:value>
             <sv:value>New Document</sv:value>
@@ -292,8 +278,6 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String"/>
-        <sv:property sv:name="hippo:related" sv:type="Reference"/>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
             <sv:value>New Folder</sv:value>
             <sv:value>New Document</sv:value>
