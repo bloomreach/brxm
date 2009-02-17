@@ -4,16 +4,20 @@ import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.service.jcr.JCRService;
 
 public interface HstLinkCreator {
    
+   
+    HstLink create(JCRService jcrService, HstSiteMapItem siteMapItem);
+    
     /**
      * Rewrite a jcr Node to a HstLink wrt its current HstSiteMapItem
      * @param node
      * @param siteMapItem
      * @return HstLink 
      */
-    HstLink rewrite(Node node, HstSiteMapItem siteMapItem);
+    HstLink create(Node node, HstSiteMapItem siteMapItem);
     
     /**
      * For creating a link from a HstSiteMapItem to a HstSiteMapItem with toSiteMapItemId within the same Site
