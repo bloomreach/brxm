@@ -4,8 +4,9 @@ import javax.jcr.Node;
 
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
+import org.hippoecm.hst.service.jcr.JCRService;
 
-public abstract class AbstractJCRService implements Service{
+public abstract class AbstractJCRService implements JCRService{
     
     private transient JCRValueProvider valueProvider;
     
