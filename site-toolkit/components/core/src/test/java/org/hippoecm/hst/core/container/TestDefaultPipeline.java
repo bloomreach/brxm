@@ -5,10 +5,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.core.component.HstComponentContext;
-import org.hippoecm.hst.core.component.HstComponentFactory;
+import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.site.container.HstComponentInvokerImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,12 +36,14 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         this.servletRequest = (HttpServletRequest) getComponent(HttpServletRequest.class.getName());
         this.servletResponse = (HttpServletResponse) getComponent(HttpServletResponse.class.getName());
         
-        HstComponentInvokerProvider invokerProvider = HstServices.getComponentInvokerProvider();
-        HstComponentInvoker invoker = new HstComponentInvokerImpl(servletConfig.getServletContext(), "/hstdispatch");
-        invokerProvider.registerComponentInvoker(HstComponentContext.LOCAL_COMPONENT_CONTEXT_NAME, invoker);
+        HstComponentInvoker invoker = HstServices.getComponentInvoker();
+        invoker.setServletContext(this.servletConfig.getServletContext());
+        invoker.setDispatcherPath("/hstdispatch");
         
         HstComponentFactory componentFactory = HstServices.getComponentFactory();
-        componentFactory.registerComponentContext(HstComponentContext.LOCAL_COMPONENT_CONTEXT_NAME, servletConfig, Thread.currentThread().getContextClassLoader());
+        ((HstComponentFactoryImpl) componentFactory).componentMap.put("pages/newsoverview", new NewsOverview());
+        ((HstComponentFactoryImpl) componentFactory).componentMap.put("pages/newsoverview/header", new Header());
+        ((HstComponentFactoryImpl) componentFactory).componentMap.put("pages/newsoverview/header/title", new DocumentTitle());
         
         HttpServlet hstDispatcherServlet = (HttpServlet) getComponent("hstDispatcherServlet");
         hstDispatcherServlet.init(this.servletConfig);
@@ -60,4 +63,61 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         }
     }
     
+    class NewsOverview implements HstComponent {
+
+        public void init(ServletConfig servletConfig) throws HstComponentException {
+        }
+
+        public void destroy() throws HstComponentException {
+        }
+
+        public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
+        }
+
+        public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
+        }
+
+        public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
+        }
+
+    }
+    
+    class Header implements HstComponent {
+
+        public void init(ServletConfig servletConfig) throws HstComponentException {
+        }
+
+        public void destroy() throws HstComponentException {
+        }
+
+        public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
+        }
+
+        public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
+        }
+
+        public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
+        }
+        
+    }
+    
+    class DocumentTitle implements HstComponent {
+
+        public void init(ServletConfig servletConfig) throws HstComponentException {
+        }
+
+        public void destroy() throws HstComponentException {
+        }
+
+        public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
+        }
+
+        public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
+        }
+
+        public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
+        }
+
+    }
+
 }

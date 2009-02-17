@@ -6,7 +6,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.hippoecm.hst.container.ContainerConstants;
-import org.hippoecm.hst.core.component.HstComponentWindow;
 
 public class AggregationValve extends AbstractValve {
     
@@ -33,7 +32,7 @@ public class AggregationValve extends AbstractValve {
 
     protected void aggregateAndProcessBeforeRender(ServletRequest servletRequest, ServletResponse servletResponse, HstComponentWindow window) throws ContainerException {
         
-        HstComponentInvoker invoker = getComponentInvoker(window.getContextName());
+        HstComponentInvoker invoker = getComponentInvoker();
         invoker.invokeBeforeRender(servletRequest, servletResponse);
 
         Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
@@ -55,7 +54,7 @@ public class AggregationValve extends AbstractValve {
             }
         }
         
-        HstComponentInvoker invoker = getComponentInvoker(window.getContextName());
+        HstComponentInvoker invoker = getComponentInvoker();
         invoker.invokeRender(servletRequest, servletResponse);
         
     }

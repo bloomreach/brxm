@@ -1,11 +1,11 @@
-package org.hippoecm.hst.core.component;
+package org.hippoecm.hst.core.container;
 
 import java.util.Map;
 
+import org.hippoecm.hst.core.component.HstComponent;
+
 public interface HstComponentWindow {
 
-    String getContextName();
-    
     String getReferenceName();
     
     String getReferenceNamespace();

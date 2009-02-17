@@ -12,14 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.container.ContainerConstants;
 import org.hippoecm.hst.core.component.HstComponent;
-import org.hippoecm.hst.core.component.HstComponentFactory;
-import org.hippoecm.hst.core.component.HstComponentWindow;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.container.HstComponentInvoker;
-import org.hippoecm.hst.core.container.HstComponentInvokerProvider;
+import org.hippoecm.hst.core.container.HstComponentFactory;
+import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.site.container.HstComponentInvokerImpl;
 
 public class HstDispatcherServlet extends HttpServlet {
     
@@ -43,13 +40,6 @@ public class HstDispatcherServlet extends HttpServlet {
             if (config.getInitParameter("dispatcher") != null) {
                 this.dispatcherPath = config.getInitParameter("dispatcher");
             }
-            
-            HstComponentInvokerProvider invokerProvider = HstServices.getComponentInvokerProvider();
-            HstComponentInvoker invoker = new HstComponentInvokerImpl(context, this.dispatcherPath);
-            invokerProvider.registerComponentInvoker(contextName, invoker);
-            
-            HstComponentFactory componentFactory = HstServices.getComponentFactory();
-            componentFactory.registerComponentContext(contextName, config, Thread.currentThread().getContextClassLoader());
             
             this.initialized = true;
         }
@@ -88,12 +78,6 @@ public class HstDispatcherServlet extends HttpServlet {
         if (HstServices.isAvailable()) {
             ServletContext context = getServletConfig().getServletContext();
             String contextName = context.getServletContextName();
-            
-            HstComponentInvokerProvider invokerProvider = HstServices.getComponentInvokerProvider();
-            invokerProvider.unregisterComponentInvoker(contextName);
-            
-            HstComponentFactory componentFactory = HstServices.getComponentFactory();
-            componentFactory.unregisterComponentContext(contextName);
             
             this.initialized = false;
         }

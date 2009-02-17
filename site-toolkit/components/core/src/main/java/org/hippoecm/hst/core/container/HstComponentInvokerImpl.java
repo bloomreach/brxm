@@ -1,4 +1,4 @@
-package org.hippoecm.hst.site.container;
+package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 
@@ -16,8 +16,11 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
     protected ServletContext servletContext;
     protected String dispatcherPath;
     
-    public HstComponentInvokerImpl(ServletContext servletContext, String dispatcherPath) {
+    public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
+    }
+    
+    public void setDispatcherPath(String dispatcherPath) {
         this.dispatcherPath = dispatcherPath;
     }
 

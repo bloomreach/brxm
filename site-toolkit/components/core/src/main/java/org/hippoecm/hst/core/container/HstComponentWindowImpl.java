@@ -1,11 +1,13 @@
-package org.hippoecm.hst.core.component;
+package org.hippoecm.hst.core.container;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.container.HstComponentWindow;
+
 public class HstComponentWindowImpl implements HstComponentWindow {
     
-    protected String contextName;
     protected String referenceName;
     protected String referenceNamespace;
     protected HstComponent component;
@@ -13,17 +15,12 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected HstComponentWindow parentWindow;
     protected Map<String, HstComponentWindow> childWindowMap;
     
-    public HstComponentWindowImpl(String contextName, String referenceName, String referenceNamespace, HstComponent component, String renderPath, HstComponentWindow parentWindow) {
-        this.contextName = contextName;
+    public HstComponentWindowImpl(String referenceName, String referenceNamespace, HstComponent component, String renderPath, HstComponentWindow parentWindow) {
         this.referenceName = referenceName;
         this.referenceNamespace = referenceNamespace;
         this.component = component;
         this.renderPath = renderPath;
         this.parentWindow = parentWindow;
-    }
-    
-    public String getContextName() {
-        return this.contextName;
     }
     
     public HstComponent getComponent() {

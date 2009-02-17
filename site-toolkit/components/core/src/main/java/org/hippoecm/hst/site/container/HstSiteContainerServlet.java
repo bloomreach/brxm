@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hippoecm.hst.core.component.HstComponentFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.HstRequestProcessor;
 import org.hippoecm.hst.site.HstServices;
@@ -102,9 +101,6 @@ public class HstSiteContainerServlet extends HttpServlet {
             this.componentManager.start();
             HstServices.setComponentManager(this.componentManager);
             
-            HstComponentFactory componentFactory = this.componentManager.<HstComponentFactory>getComponent(HstComponentFactory.class.getName());
-            componentFactory.registerComponentContext(null, config, Thread.currentThread().getContextClassLoader());
-            
             console.info("HSTSiteServlet has successfuly started the Jetspeed Portal Engine....");
         } catch (Throwable e) {
             // save the exception to complain loudly later :-)
@@ -143,7 +139,7 @@ public class HstSiteContainerServlet extends HttpServlet {
         }
 
         try {
-            HstRequestProcessor processor = this.componentManager.<HstRequestProcessor>getComponent(HstRequestProcessor.class.getName());
+            HstRequestProcessor processor = this.componentManager.getComponent(HstRequestProcessor.class.getName());
             processor.processRequest(req, res);
         } catch (Exception e) {
             final String msg = "Fatal error encountered while processing portal request: " + e.toString();

@@ -13,8 +13,6 @@ public interface HstComponentConfiguration {
 
     String getComponentContentBasePath();
 
-    String getComponentContextName();
-    
     String getComponentClassName();
 
     String getRenderPath();

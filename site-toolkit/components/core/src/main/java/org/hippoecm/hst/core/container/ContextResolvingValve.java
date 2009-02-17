@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher.MatchResult;
-import org.hippoecm.hst.core.component.HstComponentWindow;
 import org.hippoecm.hst.core.domain.DomainMapping;
 
 public class ContextResolvingValve extends AbstractValve

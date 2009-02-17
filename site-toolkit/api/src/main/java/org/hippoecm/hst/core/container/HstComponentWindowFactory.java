@@ -1,6 +1,7 @@
-package org.hippoecm.hst.core.component;
+package org.hippoecm.hst.core.container;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.core.component.HstComponentException;
 
 public interface HstComponentWindowFactory {
 

@@ -3,7 +3,6 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.hippoecm.hst.core.component.HstComponentWindow;
 
 public class HstSitePipeline implements Pipeline
 {

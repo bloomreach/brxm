@@ -26,8 +26,6 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     
     private String contextRelativePath;
     
-    private String componentContextName;
-
     private String componentClassName;
     
     private String renderPath;
@@ -53,7 +51,6 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
             this.referenceName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCENAME);
             this.componentContentBasePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_CONTENTBASEPATH);
             this.contextRelativePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_CONTEXTRELATIVEPATH);
-            this.componentContextName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME);
             this.componentClassName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
             this.renderPath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_RENDER_PATH);
             this.referencedComponent = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
@@ -98,10 +95,6 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         return componentConfigurations.values().toArray(new Service[componentConfigurations.size()]);
     } 
 
-    public String getComponentContextName() {
-        return this.componentContextName;
-    }
-    
     public String getComponentClassName(){
         return this.componentClassName;
     }

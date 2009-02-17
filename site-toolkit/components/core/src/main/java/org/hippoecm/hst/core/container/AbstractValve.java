@@ -2,8 +2,6 @@ package org.hippoecm.hst.core.container;
 
 import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher;
-import org.hippoecm.hst.core.component.HstComponentFactory;
-import org.hippoecm.hst.core.component.HstComponentWindowFactory;
 import org.hippoecm.hst.core.domain.DomainMappings;
 import org.hippoecm.hst.core.request.HstRequestContextComponent;
 
@@ -15,7 +13,7 @@ public abstract class AbstractValve implements Valve
     protected HstRequestContextComponent requestContextComponent;
     protected HstComponentFactory componentFactory;
     protected HstComponentWindowFactory componentWindowFactory;
-    protected HstComponentInvokerProvider componentInvokerProvider;
+    protected HstComponentInvoker componentInvoker;
     
     public HstSites getHstSites() {
         return hstSites;
@@ -65,22 +63,12 @@ public abstract class AbstractValve implements Valve
         this.componentWindowFactory = componentWindowFactory;
     }
     
-    public HstComponentInvokerProvider getComponentInvokerProvider() {
-        return this.componentInvokerProvider;
-    }
-
-    public void setComponentInvokerProvider(HstComponentInvokerProvider componentInvokerProvider) {
-        this.componentInvokerProvider = componentInvokerProvider;
+    public HstComponentInvoker getComponentInvoker() {
+        return this.componentInvoker;
     }
     
-    public HstComponentInvoker getComponentInvoker(String contextName) {
-        HstComponentInvoker invoker = null;
-        
-        if (this.componentInvokerProvider != null) {
-            invoker = this.componentInvokerProvider.getComponentInvoker(contextName);
-        }
-        
-        return invoker;
+    public void setComponentInvoker(HstComponentInvoker componentInvoker) {
+        this.componentInvoker = componentInvoker;
     }
 
     public abstract void invoke(ValveContext context) throws ContainerException;

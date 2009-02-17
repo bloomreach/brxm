@@ -1,8 +1,13 @@
-package org.hippoecm.hst.core.component;
+package org.hippoecm.hst.core.container;
 
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.container.HstComponentFactory;
+import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.hippoecm.hst.core.container.HstComponentWindowFactory;
 
 public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory {
 
@@ -21,12 +26,6 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
             referenceNamespace = parentWindow.getReferenceNamespace() + "_" + referenceName;
         }
 
-        String contextName = compConfig.getComponentContextName();
-        
-        if (contextName == null) {
-            contextName = HstComponentContext.LOCAL_COMPONENT_CONTEXT_NAME;
-        }
-        
         String renderPath = compConfig.getRenderPath();
         
         if (renderPath != null && !renderPath.startsWith("/")) {
@@ -37,7 +36,6 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         
         HstComponentWindowImpl window = 
             new HstComponentWindowImpl(
-                contextName, 
                 referenceName, 
                 referenceNamespace, 
                 component, 

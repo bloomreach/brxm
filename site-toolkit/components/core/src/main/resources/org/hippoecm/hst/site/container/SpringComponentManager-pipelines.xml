@@ -33,9 +33,9 @@
     <property name="domainMappings" ref="org.hippoecm.hst.core.domain.DomainMappings" />
     <property name="siteMapMatcher" ref="org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher" />
     <property name="requestContextComponent" ref="org.hippoecm.hst.core.request.HstRequestContextComponent" />
-    <property name="componentFactory" ref="org.hippoecm.hst.core.component.HstComponentFactory" />
-    <property name="componentWindowFactory" ref="org.hippoecm.hst.core.component.HstComponentWindowFactory" />
-    <property name="componentInvokerProvider" ref="org.hippoecm.hst.core.container.HstComponentInvokerProvider" />
+    <property name="componentFactory" ref="org.hippoecm.hst.core.container.HstComponentFactory" />
+    <property name="componentWindowFactory" ref="org.hippoecm.hst.core.container.HstComponentWindowFactory" />
+    <property name="componentInvoker" ref="org.hippoecm.hst.core.container.HstComponentInvoker" />
   </bean>
 
   <!-- Pre-processing valves -->

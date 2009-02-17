@@ -17,16 +17,16 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-  <bean id="org.hippoecm.hst.core.component.HstComponentFactory"
-        class="org.hippoecm.hst.core.component.HstComponentFactoryImpl">
+  <bean id="org.hippoecm.hst.core.container.HstComponentFactory"
+        class="org.hippoecm.hst.core.container.HstComponentFactoryImpl">
   </bean>
   
-  <bean id="org.hippoecm.hst.core.component.HstComponentWindowFactory"
-        class="org.hippoecm.hst.core.component.HstComponentWindowFactoryImpl">
+  <bean id="org.hippoecm.hst.core.container.HstComponentWindowFactory"
+        class="org.hippoecm.hst.core.container.HstComponentWindowFactoryImpl">
   </bean>
   
-  <bean id="org.hippoecm.hst.core.container.HstComponentInvokerProvider"
-        class="org.hippoecm.hst.core.container.HstComponentInvokerProviderImpl">
+  <bean id="org.hippoecm.hst.core.container.HstComponentInvoker"
+        class="org.hippoecm.hst.core.container.HstComponentInvokerImpl">
   </bean>
 
 </beans>
