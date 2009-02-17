@@ -1,11 +1,13 @@
-package org.hippoecm.hst.core.linking.creating;
+package org.hippoecm.hst.core.linking;
+
+import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.linking.HstLinkImpl;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +15,10 @@ public class BasicHstLinkCreator implements HstLinkCreator{
 
     private static final Logger log = LoggerFactory.getLogger(HstLinkCreator.class);
   
+    public HstLink rewrite(Node node, HstSiteMapItem siteMapItem) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     public HstLink create(String toSiteMapItemId, HstSiteMapItem currentSiteMapItem) {
         HstSiteMap hstSiteMap = currentSiteMapItem.getHstSiteMap();

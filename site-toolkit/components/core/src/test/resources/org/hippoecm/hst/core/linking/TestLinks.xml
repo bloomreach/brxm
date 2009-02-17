@@ -20,9 +20,5 @@
                                                       
   </bean> 
   
-  <bean id="org.hippoecm.hst.core.linking.rewriting.HstLinkRewriter" 
-  		class="org.hippoecm.hst.core.linking.rewriting.BasicHstLinkRewriter">
-  </bean> 
-    
   
 </beans>
