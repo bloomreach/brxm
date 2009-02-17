@@ -66,6 +66,7 @@ public class SampleWorkflowTest {
         return new UserTransactionManager();
     }
 
+    @Test
     public void testWorkflow() throws RepositoryException, WorkflowException, IOException, Exception {
         SampleWorkflowSetup.commonStart(server);
         try {
@@ -114,6 +115,7 @@ public class SampleWorkflowTest {
         }
     }
 
+    @Test
     public void testWorkflowGui() throws RepositoryException, IOException, ClassNotFoundException,
             NoSuchMethodException, NoSuchMethodException, InstantiationException, IllegalAccessException,
             InvocationTargetException {

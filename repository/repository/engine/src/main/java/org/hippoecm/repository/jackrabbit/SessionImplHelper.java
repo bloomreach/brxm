@@ -97,6 +97,9 @@ abstract class SessionImplHelper {
         if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()) {
             Principal principal = subject.getPrincipals(SystemPrincipal.class).iterator().next();
             userId = principal.getName();
+        } else if (!subject.getPrincipals(org.apache.jackrabbit.core.security.principal.AdminPrincipal.class).isEmpty()) {
+            Principal principal = subject.getPrincipals(org.apache.jackrabbit.core.security.principal.AdminPrincipal.class).iterator().next();
+            userId = principal.getName();
         } else if (!subject.getPrincipals(AdminPrincipal.class).isEmpty()) {
             Principal principal = subject.getPrincipals(AdminPrincipal.class).iterator().next();
             userId = principal.getName();
