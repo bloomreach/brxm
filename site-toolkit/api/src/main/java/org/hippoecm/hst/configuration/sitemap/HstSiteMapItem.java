@@ -16,5 +16,6 @@ public interface HstSiteMapItem {
     Map<String, Object> getProperties();
     List<HstSiteMapItem> getChildren();
     HstSiteMapItem getChild(String value);
+    HstSiteMapItem getParentItem();
     HstSiteMap getHstSiteMap();
 }

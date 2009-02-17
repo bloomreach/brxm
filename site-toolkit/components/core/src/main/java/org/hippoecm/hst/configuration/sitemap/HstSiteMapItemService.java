@@ -48,8 +48,11 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     private HstSiteMap hstSiteMap;
     
-    public HstSiteMapItemService(Node jcrNode, String siteMapRootNodePath, HstSiteMap hstSiteMap) throws ServiceException{
+    private HstSiteMapItem parentItem;
+    
+    public HstSiteMapItemService(Node jcrNode, String siteMapRootNodePath, HstSiteMapItem parentItem, HstSiteMap hstSiteMap) throws ServiceException{
         super(jcrNode);
+        this.parentItem = parentItem;
         this.hstSiteMap = hstSiteMap; 
         String nodePath = getValueProvider().getPath();
         if(!getValueProvider().getPath().startsWith(siteMapRootNodePath)) {
@@ -84,7 +87,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
                 }
                 if(child.isNodeType(Configuration.NODETYPE_HST_SITEMAPITEM)) {
                     try {
-                        HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, this.hstSiteMap);
+                        HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, this, this.hstSiteMap);
                         childSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
                     } catch (ServiceException e) {
                         log.warn("Skipping root sitemap '{}'", child.getPath(), e);
@@ -145,6 +148,10 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
 
     public HstSiteMap getHstSiteMap() {
         return this.hstSiteMap;
+    }
+
+    public HstSiteMapItem getParentItem() {
+        return this.parentItem;
     }
 
 }
