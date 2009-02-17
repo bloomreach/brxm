@@ -1,6 +1,5 @@
 package org.hippoecm.hst.core.component;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -11,15 +10,15 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         return create(compConfig, compFactory, null);
     }
     
-    public HstComponentWindow create(HstComponentConfiguration compConfig, HstComponentFactory compFactory, String namespacePrefix) throws HstComponentException {
+    public HstComponentWindow create(HstComponentConfiguration compConfig, HstComponentFactory compFactory, HstComponentWindow parentWindow) throws HstComponentException {
         
         String referenceName = compConfig.getReferenceName();
         String referenceNamespace = null;
         
-        if (namespacePrefix == null) {
+        if (parentWindow == null) {
             referenceNamespace = "";
         } else {
-            referenceNamespace = ("".equals(namespacePrefix) ? referenceName : namespacePrefix + "_" + referenceName);
+            referenceNamespace = parentWindow.getReferenceNamespace() + "_" + referenceName;
         }
 
         String contextName = compConfig.getComponentContextName();
@@ -36,21 +35,6 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         
         HstComponent component = compFactory.getComponentInstance(compConfig);
         
-        Map<String, HstComponentWindow> childWindowMap = null;
-        
-        Map<String, HstComponentConfiguration> childCompConfigMap = compConfig.getChildren();
-        
-        if (childCompConfigMap != null && !childCompConfigMap.isEmpty()) {
-            childWindowMap = new HashMap<String, HstComponentWindow>();
-            
-            for (Map.Entry<String, HstComponentConfiguration> entry : childCompConfigMap.entrySet()) {
-                String childName = entry.getKey();
-                HstComponentConfiguration childCompConfig = entry.getValue();
-                HstComponentWindow childCompWindow = create(childCompConfig, compFactory, referenceNamespace);
-                childWindowMap.put(childName, childCompWindow);
-            }
-        }
-        
         HstComponentWindowImpl window = 
             new HstComponentWindowImpl(
                 contextName, 
@@ -58,7 +42,18 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
                 referenceNamespace, 
                 component, 
                 renderPath, 
-                childWindowMap);
+                parentWindow);
+        
+        Map<String, HstComponentConfiguration> childCompConfigMap = compConfig.getChildren();
+        
+        if (childCompConfigMap != null && !childCompConfigMap.isEmpty()) {
+            for (Map.Entry<String, HstComponentConfiguration> entry : childCompConfigMap.entrySet()) {
+                String childName = entry.getKey();
+                HstComponentConfiguration childCompConfig = entry.getValue();
+                HstComponentWindow childCompWindow = create(childCompConfig, compFactory, window);
+                window.addChildWindow(childName, childCompWindow);
+            }
+        }
         
         return window;
     }

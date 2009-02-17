@@ -6,6 +6,6 @@ public interface HstComponentWindowFactory {
 
     HstComponentWindow create(HstComponentConfiguration compConfig, HstComponentFactory compFactory) throws HstComponentException;
 
-    HstComponentWindow create(HstComponentConfiguration compConfig, HstComponentFactory compFactory, String namespacePrefix) throws HstComponentException;
+    HstComponentWindow create(HstComponentConfiguration compConfig, HstComponentFactory compFactory, HstComponentWindow parentWindow) throws HstComponentException;
     
 }

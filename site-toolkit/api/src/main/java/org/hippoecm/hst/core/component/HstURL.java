@@ -19,7 +19,7 @@ public interface HstURL {
     
     void setParameter(String name, String[] values);
     
-    void setParameters(java.util.Map<String, String[]> parameters);
+    void setParameters(Map<String, String[]> parameters);
     
     String toString();
     

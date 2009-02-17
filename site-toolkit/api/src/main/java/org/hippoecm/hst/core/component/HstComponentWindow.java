@@ -14,6 +14,8 @@ public interface HstComponentWindow {
     
     String getRenderPath(); 
     
+    HstComponentWindow getParentWindow();
+    
     Map<String, HstComponentWindow> getChildWindowMap();
     
 }
