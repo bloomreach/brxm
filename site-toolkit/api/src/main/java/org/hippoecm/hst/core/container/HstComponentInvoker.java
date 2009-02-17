@@ -4,8 +4,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * The component responsible for delegating a incoming servlet request to
- * a HstComponent and possibly its child HstComponents as well.
+ * HstComponent invoker component. This invoker's method should be called by the components of the portal.
  */
 public interface HstComponentInvoker {
     

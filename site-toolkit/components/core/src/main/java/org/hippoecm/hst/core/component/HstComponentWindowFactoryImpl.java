@@ -29,6 +29,11 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         }
         
         String renderPath = compConfig.getRenderPath();
+        
+        if (renderPath != null && !renderPath.startsWith("/")) {
+            renderPath = new StringBuilder(renderPath.length() + 1).append('/').append(renderPath).toString();
+        }
+        
         HstComponent component = compFactory.getComponentInstance(compConfig);
         
         Map<String, HstComponentWindow> childWindowMap = null;

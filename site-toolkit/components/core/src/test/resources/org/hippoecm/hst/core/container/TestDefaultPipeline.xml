@@ -45,12 +45,38 @@
   </bean>
   
   <bean id="javax.servlet.ServletContext"
-        class="org.springframework.mock.web.MockServletContext">
+        class="org.hippoecm.hst.test.mock.HstMockServletContext">
+    <property name="requestDispatchers">
+      <list>
+        <map>
+          <entry key="/hstdispatch">
+            <bean class="org.hippoecm.hst.test.mock.HstMockRequestDispatcher">
+              <constructor-arg value="/hstdispatch" />
+              <constructor-arg ref="hstDispatcherServlet" />
+            </bean>
+          </entry>
+        </map>
+        <map>
+          <entry key="/.*\.jsp">
+            <bean class="org.hippoecm.hst.test.mock.HstMockRequestDispatcher">
+              <constructor-arg value="/*.jsp" />
+              <constructor-arg ref="mockJspServlet" />
+            </bean>
+          </entry>
+        </map>
+      </list>
+    </property>
   </bean>
   
   <bean id="javax.servlet.ServletConfig"
         class="org.springframework.mock.web.MockServletConfig">
     <constructor-arg ref="javax.servlet.ServletContext" />
+  </bean>
+  
+  <bean id="hstDispatcherServlet" class="org.hippoecm.hst.servlet.HstDispatcherServlet">
+  </bean>
+
+  <bean id="mockJspServlet" class="org.hippoecm.hst.test.mock.MockJspServlet">
   </bean>
   
   <bean id="javax.servlet.http.HttpServletRequest" scope="prototype"

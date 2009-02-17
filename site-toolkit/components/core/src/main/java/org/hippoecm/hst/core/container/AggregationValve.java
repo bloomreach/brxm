@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.hippoecm.hst.container.ContainerConstants;
 import org.hippoecm.hst.core.component.HstComponentWindow;
 
 public class AggregationValve extends AbstractValve {
@@ -18,7 +19,8 @@ public class AggregationValve extends AbstractValve {
             
             if (rootWindow != null) {
                 ServletRequest servletRequest = context.getServletRequest();
-                servletRequest.setAttribute(HstComponentWindow.class.getName() + ".render.root", rootWindow);
+                servletRequest.setAttribute(ContainerConstants.HST_COMPONENT_METHOD_ID, ContainerConstants.METHOD_RENDER);
+                servletRequest.setAttribute(ContainerConstants.HST_COMPONENT_WINDOW, rootWindow);
                 
                 aggregateAndProcessBeforeRender(servletRequest, context.getServletResponse(), rootWindow);
                 aggregateAndProcessRender(context.getServletRequest(), context.getServletResponse(), rootWindow);
@@ -30,22 +32,31 @@ public class AggregationValve extends AbstractValve {
     }
 
     protected void aggregateAndProcessBeforeRender(ServletRequest servletRequest, ServletResponse servletResponse, HstComponentWindow window) throws ContainerException {
+        
         HstComponentInvoker invoker = getComponentInvoker(window.getContextName());
         invoker.invokeBeforeRender(servletRequest, servletResponse);
 
-        for (Map.Entry<String, HstComponentWindow> entry : window.getChildWindowMap().entrySet()) {
-            aggregateAndProcessBeforeRender(servletRequest, servletResponse, entry.getValue());
-        }
+        Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
         
+        if (childWindowMap != null) {
+            for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
+                aggregateAndProcessBeforeRender(servletRequest, servletResponse, entry.getValue());
+            }
+        }
     }
     
     protected void aggregateAndProcessRender(ServletRequest servletRequest, ServletResponse servletResponse, HstComponentWindow window) throws ContainerException {
         
-        for (Map.Entry<String, HstComponentWindow> entry : window.getChildWindowMap().entrySet()) {
-            aggregateAndProcessRender(servletRequest, servletResponse, entry.getValue());
+        Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
+        
+        if (childWindowMap != null) {
+            for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
+                aggregateAndProcessRender(servletRequest, servletResponse, entry.getValue());
+            }
         }
-    
+        
         HstComponentInvoker invoker = getComponentInvoker(window.getContextName());
         invoker.invokeRender(servletRequest, servletResponse);
+        
     }
 }

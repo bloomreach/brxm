@@ -2,6 +2,7 @@ package org.hippoecm.hst.core.container;
 
 import javax.servlet.ServletRequest;
 
+import org.hippoecm.hst.container.ContainerConstants;
 import org.hippoecm.hst.core.component.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -17,7 +18,7 @@ public class ActionValve extends AbstractValve
             
             if (actionWindow != null) {
                 ServletRequest servletRequest = context.getServletRequest();
-                servletRequest.setAttribute(HstComponentWindow.class.getName() + ".action", actionWindow);
+                servletRequest.setAttribute(ContainerConstants.HST_COMPONENT_WINDOW, actionWindow);
                 HstComponentInvoker invoker = getComponentInvoker(actionWindow.getContextName());
                 invoker.invokeAction(servletRequest, context.getServletResponse());
             } else {

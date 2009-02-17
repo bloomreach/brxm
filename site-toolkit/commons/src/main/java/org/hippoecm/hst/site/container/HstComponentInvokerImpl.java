@@ -14,11 +14,11 @@ import org.hippoecm.hst.core.container.HstComponentInvoker;
 public class HstComponentInvokerImpl implements HstComponentInvoker {
     
     protected ServletContext servletContext;
-    protected String dispatcherName;
+    protected String dispatcherPath;
     
-    public HstComponentInvokerImpl(ServletContext servletContext, String dispatcherName) {
+    public HstComponentInvokerImpl(ServletContext servletContext, String dispatcherPath) {
         this.servletContext = servletContext;
-        this.dispatcherName = dispatcherName;
+        this.dispatcherPath = dispatcherPath;
     }
 
     public void invokeAction(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
@@ -42,7 +42,13 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
     }
 
     protected void invokeDispatcher(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
-        RequestDispatcher disp = this.servletContext.getNamedDispatcher(this.dispatcherName);
+        RequestDispatcher disp = null;
+        
+        if (this.dispatcherPath.startsWith("/")) {
+            disp = this.servletContext.getRequestDispatcher(this.dispatcherPath);
+        } else {
+            disp = this.servletContext.getNamedDispatcher(this.dispatcherPath);
+        }
         
         try {
             disp.include(servletRequest, servletResponse);

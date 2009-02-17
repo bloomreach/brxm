@@ -1,6 +1,7 @@
 package org.hippoecm.hst.core.container;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,11 +36,14 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         this.servletResponse = (HttpServletResponse) getComponent(HttpServletResponse.class.getName());
         
         HstComponentInvokerProvider invokerProvider = HstServices.getComponentInvokerProvider();
-        HstComponentInvoker invoker = new HstComponentInvokerImpl(servletConfig.getServletContext(), "hstdispatch");
+        HstComponentInvoker invoker = new HstComponentInvokerImpl(servletConfig.getServletContext(), "/hstdispatch");
         invokerProvider.registerComponentInvoker(HstComponentContext.LOCAL_COMPONENT_CONTEXT_NAME, invoker);
         
         HstComponentFactory componentFactory = HstServices.getComponentFactory();
         componentFactory.registerComponentContext(HstComponentContext.LOCAL_COMPONENT_CONTEXT_NAME, servletConfig, Thread.currentThread().getContextClassLoader());
+        
+        HttpServlet hstDispatcherServlet = (HttpServlet) getComponent("hstDispatcherServlet");
+        hstDispatcherServlet.init(this.servletConfig);
     }
     
     @Test

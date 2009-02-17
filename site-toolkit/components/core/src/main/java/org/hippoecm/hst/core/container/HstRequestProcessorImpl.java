@@ -12,17 +12,15 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
     }
 
     public void processRequest(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
-        Pipeline pipeline = null;
+        Pipeline pipeline = this.pipelines.getDefaultPipeline();
 
         try {
-            pipeline = this.pipelines.getDefaultPipeline();
             pipeline.beforeInvoke(servletRequest, servletResponse);
             pipeline.invoke(servletRequest, servletResponse);
         } catch (Throwable th) {
             throw new ContainerException(th);
         } finally {
-            if (pipeline != null)
-                pipeline.afterInvoke(servletRequest, servletResponse);
+            pipeline.afterInvoke(servletRequest, servletResponse);
         }
     }
 
