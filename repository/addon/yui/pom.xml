@@ -60,6 +60,16 @@
       <version>4.4</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 
@@ -80,6 +90,15 @@
         </includes>
       </resource>
     </resources>
+    <testResources>
+      <testResource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/test/java</directory>
+        <includes>
+          <include>**/*.html</include>
+        </includes>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.hippoecm.maven.plugins</groupId>
