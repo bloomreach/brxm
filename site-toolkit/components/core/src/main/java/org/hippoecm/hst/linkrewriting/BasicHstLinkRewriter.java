@@ -6,6 +6,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 public class BasicHstLinkRewriter implements HstLinkRewriter{
 
+    
     public HstLink rewrite(Node node, HstSiteMapItem siteMapItem) {
         // TODO Auto-generated method stub
         return null;
