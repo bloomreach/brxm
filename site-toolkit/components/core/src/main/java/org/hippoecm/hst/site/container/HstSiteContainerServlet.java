@@ -13,8 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hippoecm.hst.core.component.HstComponentFactory;
+import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.HstRequestProcessor;
-import org.hippoecm.hst.core.container.HstSiteEngine;
+import org.hippoecm.hst.site.HstServices;
 
 /**
  * HST Site Servlet entry point.
@@ -22,7 +23,7 @@ import org.hippoecm.hst.core.container.HstSiteEngine;
  * @author <a href="mailto:w.ko@onehippo.com">Woonsan Ko</a>
  * @version $Id$
  */
-public class HstSiteServlet extends HttpServlet {
+public class HstSiteContainerServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,7 +34,7 @@ public class HstSiteServlet extends HttpServlet {
     private static Log log;
     private static Log console;
 
-    private HstSiteEngine engine;
+    protected ComponentManager componentManager;
 
     // -------------------------------------------------------------------
     // I N I T I A L I Z A T I O N
@@ -46,7 +47,7 @@ public class HstSiteServlet extends HttpServlet {
      */
     public final void init(ServletConfig config) throws ServletException {
         if (log == null) {
-            log = LogFactory.getLog(HstSiteServlet.class);
+            log = LogFactory.getLog(HstSiteContainerServlet.class);
             console = LogFactory.getLog(CONSOLE_LOGGER);
         }
 
@@ -67,11 +68,13 @@ public class HstSiteServlet extends HttpServlet {
 
         try {
             console.info("HSTSiteServlet attempting to create the  portlet engine...");
-            engine = new HstSiteEngineImpl(initProperties);
+            this.componentManager = new SpringComponentManager(initProperties);
             console.info("HSTSiteServlet attempting to start the Jetspeed Portal Engine...");
-            engine.start();
+            this.componentManager.initialize();
+            this.componentManager.start();
+            HstServices.setComponentManager(this.componentManager);
             
-            HstComponentFactory componentFactory = engine.getComponentManager().<HstComponentFactory>getComponent(HstComponentFactory.class.getName());
+            HstComponentFactory componentFactory = this.componentManager.<HstComponentFactory>getComponent(HstComponentFactory.class.getName());
             componentFactory.registerComponentContext(null, config, Thread.currentThread().getContextClassLoader());
             
             console.info("HSTSiteServlet has successfuly started the Jetspeed Portal Engine....");
@@ -104,7 +107,7 @@ public class HstSiteServlet extends HttpServlet {
      */
     public final void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         try {
-            HstRequestProcessor processor = this.engine.getComponentManager().<HstRequestProcessor>getComponent(HstRequestProcessor.class.getName());
+            HstRequestProcessor processor = this.componentManager.<HstRequestProcessor>getComponent(HstRequestProcessor.class.getName());
             processor.processRequest(req, res);
         } catch (Exception e) {
             final String msg = "Fatal error encountered while processing portal request: " + e.toString();
@@ -137,8 +140,11 @@ public class HstSiteServlet extends HttpServlet {
         log.info("Done shutting down!");
 
         try {
-            this.engine.shutdown();
+            this.componentManager.stop();
+            this.componentManager.close();
         } catch (Exception e) {
+        } finally {
+            HstServices.setComponentManager(null);
         }
     }
 

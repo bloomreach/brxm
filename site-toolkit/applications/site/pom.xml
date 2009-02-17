@@ -27,7 +27,7 @@
   <name>Hippo Site Toolkit Container Web Application</name>
   <description>Hippo Site Toolkit Container Web Application</description>
   <groupId>org.onehippo.ecm.hst.applications</groupId>
-  <artifactId>hst-container</artifactId>
+  <artifactId>site</artifactId>
   <packaging>war</packaging>
 
   <dependencies>
@@ -35,11 +35,6 @@
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.ecm.hst.components</groupId>
-      <artifactId>hst-core</artifactId>
-      <version>${pom.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -60,7 +55,19 @@
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-api</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-commons</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.components</groupId>
+      <artifactId>hst-core</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 

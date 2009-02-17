@@ -16,7 +16,7 @@
     <packaging>pom</packaging>
 
     <modules>
-      <module>hst-container</module>
+      <module>site</module>
     </modules>
 
 </project>
