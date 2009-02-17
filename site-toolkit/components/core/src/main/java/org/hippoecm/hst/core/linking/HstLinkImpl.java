@@ -1,4 +1,4 @@
-package org.hippoecm.hst.linkrewriting;
+package org.hippoecm.hst.core.linking;
 
 import org.hippoecm.hst.configuration.HstSite;
 

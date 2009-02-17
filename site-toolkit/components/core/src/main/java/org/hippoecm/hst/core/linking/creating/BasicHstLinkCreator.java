@@ -1,24 +1,21 @@
-package org.hippoecm.hst.linkrewriting;
-
-import javax.jcr.Node;
+package org.hippoecm.hst.core.linking.creating;
 
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.linking.HstLinkImpl;
+import org.hippoecm.hst.core.linking.rewriting.HstLinkRewriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BasicHstLinkRewriter implements HstLinkRewriter{
+public class BasicHstLinkCreator implements HstLinkCreator{
 
     private static final Logger log = LoggerFactory.getLogger(HstLinkRewriter.class);
-    
-    public HstLink rewrite(Node node, HstSiteMapItem siteMapItem) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  
 
-    public HstLink rewrite(String toSiteMapItemId, HstSiteMapItem currentSiteMapItem) {
+    public HstLink create(String toSiteMapItemId, HstSiteMapItem currentSiteMapItem) {
         HstSiteMap hstSiteMap = currentSiteMapItem.getHstSiteMap();
         HstSite hstSite;
         HstSiteMapItem toSiteMapItem = hstSiteMap.getSiteMapItemById(toSiteMapItemId);
@@ -47,7 +44,13 @@ public class BasicHstLinkRewriter implements HstLinkRewriter{
         return new HstLinkImpl(path.toString(), hstSiteMap.getSite());
     }
 
-    public HstLink rewrite(HstSiteMapItem toHstSiteMapItem) {
+
+    public HstLink create(HstSiteMapItem toHstSiteMapItem) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public HstLink create(HstSite hstSite, String toSiteMapItemId) {
         // TODO Auto-generated method stub
         return null;
     }
