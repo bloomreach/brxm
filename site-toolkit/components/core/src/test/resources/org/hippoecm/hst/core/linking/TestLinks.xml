@@ -15,8 +15,8 @@
     </property>
   </bean>
   
-  <bean id="org.hippoecm.hst.core.linking.creating.HstLinkCreator" 
-    class="org.hippoecm.hst.core.linking.creating.BasicHstLinkCreator">
+  <bean id="org.hippoecm.hst.core.linking.HstLinkCreator" 
+    class="org.hippoecm.hst.core.linking.BasicHstLinkCreator">
                                                       
   </bean> 
   
