@@ -6,18 +6,16 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkImpl;
-import org.hippoecm.hst.core.linking.rewriting.HstLinkRewriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BasicHstLinkCreator implements HstLinkCreator{
 
-    private static final Logger log = LoggerFactory.getLogger(HstLinkRewriter.class);
+    private static final Logger log = LoggerFactory.getLogger(HstLinkCreator.class);
   
 
     public HstLink create(String toSiteMapItemId, HstSiteMapItem currentSiteMapItem) {
         HstSiteMap hstSiteMap = currentSiteMapItem.getHstSiteMap();
-        HstSite hstSite;
         HstSiteMapItem toSiteMapItem = hstSiteMap.getSiteMapItemById(toSiteMapItemId);
         if(toSiteMapItem == null) {
             // search in different sites
@@ -25,34 +23,44 @@ public class BasicHstLinkCreator implements HstLinkCreator{
             for(HstSite site : hstSites.getSites().values()) {
                 toSiteMapItem = site.getSiteMap().getSiteMapItemById(toSiteMapItemId);
                 if(toSiteMapItem != null) {
-                    log.debug("SiteMapItemId found in different Site. Linking to different site");
+                    log.debug("SiteMapItemId found in different Site. Create link to different site");
                     break;
                 }
             }
         } 
         if(toSiteMapItem == null) {
-            log.warn("No site found with a siteMap containing id '{}'. Cannot rewrite link.", toSiteMapItemId );
+            log.warn("No site found with a siteMap containing id '{}'. Cannot create link.", toSiteMapItemId );
             return null;
         }
         
-        StringBuffer path = new StringBuffer(toSiteMapItem.getValue());
-        while(toSiteMapItem.getParentItem() != null) {
-            toSiteMapItem = toSiteMapItem.getParentItem();
-            path.insert(0, "/").insert(0, toSiteMapItem.getValue());
-        }
+        String path = getPath(toSiteMapItem);
         
-        return new HstLinkImpl(path.toString(), hstSiteMap.getSite());
+        return new HstLinkImpl(path, hstSiteMap.getSite());
     }
 
 
     public HstLink create(HstSiteMapItem toHstSiteMapItem) {
-        // TODO Auto-generated method stub
-        return null;
+        return new HstLinkImpl(getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite());
     }
 
     public HstLink create(HstSite hstSite, String toSiteMapItemId) {
-        // TODO Auto-generated method stub
-        return null;
+        HstSiteMapItem siteMapItem = hstSite.getSiteMap().getSiteMapItemById(toSiteMapItemId);
+       
+        if(siteMapItem == null) {
+            log.warn("No sitemap item found for id '{}' within Site '{}'. Cannot create link.", toSiteMapItemId, hstSite.getName() );
+            return null;
+        }
+        
+        return new HstLinkImpl(getPath(siteMapItem), hstSite);
+    }
+
+    private String getPath(HstSiteMapItem siteMapItem) {
+        StringBuffer path = new StringBuffer(siteMapItem.getValue());
+        while(siteMapItem.getParentItem() != null) {
+            siteMapItem = siteMapItem.getParentItem();
+            path.insert(0, "/").insert(0, siteMapItem.getValue());
+        }
+        return path.toString();
     }
 
 }

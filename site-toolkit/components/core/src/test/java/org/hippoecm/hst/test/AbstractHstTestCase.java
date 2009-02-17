@@ -13,7 +13,6 @@ import org.hippoecm.hst.core.jcr.pool.PoolingRepository;
 public class AbstractHstTestCase extends AbstractSpringTestCase {
 
     protected static final String TESTPREVIEW_NODEPATH = "testpreview";
-    protected static final String TESTPROJECT_NAME = "testproject";
     
     protected Node getHstSitesNode(String rootSitesPath) {
 

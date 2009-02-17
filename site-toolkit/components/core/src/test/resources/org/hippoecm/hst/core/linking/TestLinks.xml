@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    
+  <import resource="classpath:/org/hippoecm/hst/core/jcr/pool/GeneralMultiplePoolingRepository.xml" />
+       
+  <bean id="org.hippoecm.hst.configuration.HstSites" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetClass" value="org.hippoecm.hst.configuration.HstSitesFactory" />
+    <property name="targetMethod" value="create" />
+    <property name="arguments">
+      <list>
+        <ref bean="javax.jcr.Repository" />
+        <value>testpreview</value>
+      </list>
+    </property>
+  </bean>
+  
+  <bean id="org.hippoecm.hst.core.linking.creating.HstLinkCreator" 
+    class="org.hippoecm.hst.core.linking.creating.BasicHstLinkCreator">
+                                                      
+  </bean> 
+  
+  <bean id="org.hippoecm.hst.core.linking.rewriting.HstLinkRewriter" 
+  		class="org.hippoecm.hst.core.linking.rewriting.BasicHstLinkRewriter">
+  </bean> 
+    
+  
+</beans>
