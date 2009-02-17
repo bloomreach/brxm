@@ -65,8 +65,8 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
         if(componentConfiguration.getId() != null) {
             rootComponentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
         }
-        for(Iterator<HstComponentConfiguration> childsIt = componentConfiguration.getChildren().values().iterator(); childsIt.hasNext();){
-            populateRootComponentConfigurations(childsIt.next());
+        for(HstComponentConfiguration child : componentConfiguration.getChildren().values()){
+            populateRootComponentConfigurations(child);
         }
     }
     

@@ -22,8 +22,8 @@ public class ConfigurationViewUtilities {
         buf.append("\n\n***** HstSites ("+sites.hashCode()+") *******");
         buf.append("\n").append(indent).append("-Content path: ").append(sites.getSitesContentPath());
         buf.append("\n").append(indent).append("+Sites: ");
-        for(Iterator<HstSite> it = sites.getSites().values().iterator(); it.hasNext();) {
-            view(buf,indent+SMALL_INDENT, it.next());
+        for(HstSite site : sites.getSites().values()) {
+            view(buf,indent+SMALL_INDENT, site);
         }
         buf.append("\n\n***** End HstSites *******");
     }
@@ -58,8 +58,8 @@ public class ConfigurationViewUtilities {
             return;
         }
         buf.append("\n").append(indent).append("+HstSiteMap: (").append(hstSiteMap.hashCode()).append(")");
-        for(Iterator<HstSiteMapItem> it = hstSiteMap.getSiteMapItems().iterator(); it.hasNext();) {
-            view(buf, indent+SMALL_INDENT, it.next());
+        for(HstSiteMapItem siteMapItem : hstSiteMap.getSiteMapItems()) {
+            view(buf, indent+SMALL_INDENT, siteMapItem);
         }
     }
     
@@ -80,8 +80,8 @@ public class ConfigurationViewUtilities {
         buf.append(newLine).append("relativecontentpath = ").append(hstSiteMapItem.getRelativeContentPath());
         buf.append(newLine).append("componentconfigurationid = ").append(hstSiteMapItem.getComponentConfigurationId());
         buf.append(newLine).append("iswildcard = ").append(hstSiteMapItem.isWildCard());
-        for(Iterator<HstSiteMapItem> it = hstSiteMapItem.getChildren().iterator(); it.hasNext();) {
-            view(buf, indent+SMALL_INDENT, it.next());
+        for(HstSiteMapItem siteMapItem : hstSiteMapItem.getChildren()) {
+            view(buf, indent+SMALL_INDENT, siteMapItem);
         }
     }
     
@@ -96,8 +96,8 @@ public class ConfigurationViewUtilities {
         }
         buf.append("\n").append(indent).append("+HstComponentsConfiguration: (").append(hstComponentsConfiguration.hashCode()).append(")");
         
-        for(Iterator<HstComponentConfiguration> it = hstComponentsConfiguration.getComponentConfigurations().values().iterator(); it.hasNext();) {
-            view(buf, indent+SMALL_INDENT, it.next());
+        for(HstComponentConfiguration hstComponentConfiguration : hstComponentsConfiguration.getComponentConfigurations().values()) {
+            view(buf, indent+SMALL_INDENT, hstComponentConfiguration);
         }
         
     }
@@ -119,8 +119,8 @@ public class ConfigurationViewUtilities {
         buf.append(newLine).append("renderpath = ").append(hstComponentConfiguration.getRenderPath());
         buf.append(newLine).append("compontentcontentbasepath = ").append(hstComponentConfiguration.getComponentContentBasePath());
         buf.append(newLine).append("contextrelativepath = ").append(hstComponentConfiguration.getContextRelativePath());
-        for(Iterator<HstComponentConfiguration> it = hstComponentConfiguration.getChildren().values().iterator(); it.hasNext();) {
-            view(buf, indent+SMALL_INDENT, it.next());
+        for(HstComponentConfiguration childConfiguration : hstComponentConfiguration.getChildren().values()) {
+            view(buf, indent+SMALL_INDENT, childConfiguration);
         }
     }
     

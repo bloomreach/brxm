@@ -43,8 +43,8 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
         init(siteMapNode);
         
         // add lookups to any descendant sitemap item
-        for(Iterator<HstSiteMapItem> childsIt = this.rootSiteMapItems.values().iterator(); childsIt.hasNext();) {
-            populateDescendants(childsIt.next());
+        for(HstSiteMapItem child : this.rootSiteMapItems.values()) {
+            populateDescendants(child);
         }
         
     }
@@ -73,8 +73,8 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
     
     private void populateDescendants(HstSiteMapItem hstSiteMapItem) {
         siteMapDescendants.put(hstSiteMapItem.getId(), hstSiteMapItem);
-        for(Iterator<HstSiteMapItem> childsIt = hstSiteMapItem.getChildren().iterator(); childsIt.hasNext();) {
-            populateDescendants(childsIt.next());
+        for(HstSiteMapItem child : hstSiteMapItem.getChildren()) {
+            populateDescendants(child);
         }
     }
     
