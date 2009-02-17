@@ -35,6 +35,9 @@ public class HstSiteContainerServlet extends HttpServlet {
     private static Log console;
 
     protected ComponentManager componentManager;
+    
+    protected boolean initialized;
+    protected boolean repositoryAvailable;
 
     // -------------------------------------------------------------------
     // I N I T I A L I Z A T I O N
@@ -45,7 +48,34 @@ public class HstSiteContainerServlet extends HttpServlet {
     /**
      * Intialize Servlet.
      */
-    public final void init(ServletConfig config) throws ServletException {
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        
+        startCheckingRepository(config);
+        
+        if (isRepositoryAvailable()) {
+            doInit(config);
+        }
+    }
+    
+    protected void startCheckingRepository(ServletConfig config) {
+        String repositoryAddress = config.getInitParameter("properties.repository.address");
+        
+        if (repositoryAddress.startsWith("rmi:")) {
+            // do timer scheduled checking if the repository is up or not.
+            // this time, just set it to true.
+            this.repositoryAvailable = true;
+        } else {
+            this.repositoryAvailable = true;
+        }
+    }
+    
+    protected boolean isRepositoryAvailable() {
+        return this.repositoryAvailable;
+    }
+    
+    protected synchronized void doInit(ServletConfig config) {
+        
         if (log == null) {
             log = LogFactory.getLog(HstSiteContainerServlet.class);
             console = LogFactory.getLog(CONSOLE_LOGGER);
@@ -53,8 +83,6 @@ public class HstSiteContainerServlet extends HttpServlet {
 
         console.info(INIT_START_MSG);
 
-        super.init(config);
-        
         Properties initProperties = new Properties();
         
         for (Enumeration paramNamesEnum = config.getInitParameterNames(); paramNamesEnum.hasMoreElements(); ) {
@@ -85,8 +113,11 @@ public class HstSiteContainerServlet extends HttpServlet {
             console.fatal(msg, e);
         }
 
+        this.initialized = true;
+        
         console.info(INIT_DONE_MSG);
         log.info(INIT_DONE_MSG);
+        
     }
 
     // -------------------------------------------------------------------
@@ -105,7 +136,12 @@ public class HstSiteContainerServlet extends HttpServlet {
      * @exception ServletException
      *                a servlet exception.
      */
-    public final void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        
+        if (!this.initialized && isRepositoryAvailable()) {
+            doInit(getServletConfig());
+        }
+
         try {
             HstRequestProcessor processor = this.componentManager.<HstRequestProcessor>getComponent(HstRequestProcessor.class.getName());
             processor.processRequest(req, res);
@@ -128,7 +164,7 @@ public class HstSiteContainerServlet extends HttpServlet {
      * @exception ServletException
      *                a servlet exception.
      */
-    public final void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         doGet(req, res);
     }
 
@@ -136,7 +172,7 @@ public class HstSiteContainerServlet extends HttpServlet {
     // S E R V L E T S H U T D O W N
     // -------------------------------------------------------------------
 
-    public final void destroy() {
+    public void destroy() {
         log.info("Done shutting down!");
 
         try {

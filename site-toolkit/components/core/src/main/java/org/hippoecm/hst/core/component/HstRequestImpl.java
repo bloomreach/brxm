@@ -12,6 +12,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequest {
     
+    protected String type = RENDER_TYPE;
     protected HstRequestContext requestContext;
     protected Map<String, Map<String, Object>> namespaceParametersMap = new HashMap<String, Map<String, Object>>();
     protected Map<String, Map<String, Object>> namespaceAttributesMap = new HashMap<String, Map<String, Object>>();
@@ -25,6 +26,14 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     
     public void setRequest(HttpServletRequest servletRequest) {
         super.setRequest(servletRequest);
+    }
+
+    public String getType() {
+        return this.type;
+    }
+    
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Map<String, Object> getParameterMap() {
@@ -146,6 +155,10 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
 
     public HstComponentWindow getComponentWindow() {
         return this.componentWindow;
+    }
+    
+    public String getResourceID() {
+        return null;
     }
 
 }
