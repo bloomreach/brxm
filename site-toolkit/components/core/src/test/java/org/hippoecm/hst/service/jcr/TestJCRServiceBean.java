@@ -1,11 +1,15 @@
 package org.hippoecm.hst.service.jcr;
 
-import javax.jcr.LoginException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.Serializable;
+
 import javax.jcr.Node;
 import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.hippoecm.hst.service.ServiceFactory;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Test;
@@ -22,22 +26,24 @@ public class TestJCRServiceBean extends AbstractSpringTestCase{
     }
     
     @Test
-    public void testServiceBeanProxy() throws IllegalAccessException, NoSuchFieldException {
+    public void testServiceBeanProxy() throws Exception {
+        Session session = repository.login();
+        Node node = (Node)session.getItem(TESTPROJECT_EXISTING_VIRTUALNODE);
+        TextPage t = ServiceFactory.create(node, TextPage.class);
         
-        try {
-            Session session = repository.login();
-            Node node = (Node)session.getItem(TESTPROJECT_EXISTING_VIRTUALNODE);
-            TextPage t = ServiceFactory.create(node, TextPage.class);
-            
-            System.out.println(t.getTitle());
-            System.out.println(t.getSummary());
-            
-        } catch (LoginException e) {
-            e.printStackTrace();
-        } catch (RepositoryException e) {
-            e.printStackTrace();
-        }
+        assertNotNull("title property is null!", t.getTitle());
+        System.out.println(t.getTitle());
         
+        assertNotNull("summary property is null!", t.getSummary());
+        System.out.println(t.getSummary());
+        
+        byte [] bytes = SerializationUtils.serialize((Serializable) t);
+        TextPage t2 = (TextPage) SerializationUtils.deserialize(bytes);
+        
+        assertEquals("The title property of the deserialized one is different from the original.", 
+                t.getTitle(), t2.getTitle());
+        assertEquals("The summary property of the deserialized one is different from the original.", 
+                t.getSummary(), t2.getSummary());
     }
         
 }

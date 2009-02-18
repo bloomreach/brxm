@@ -1,11 +1,14 @@
 package org.hippoecm.hst.service;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 import org.hippoecm.hst.provider.ValueProvider;
 
-public class ServiceBeanAccessProviderImpl implements ServiceBeanAccessProvider {
+public class ServiceBeanAccessProviderImpl implements ServiceBeanAccessProvider, Serializable {
     
+    private static final long serialVersionUID = 1L;
+
     public static final String HST_SERVICE_NAMESPACE_SEPARATOR = ":";
     
     private static Class STRING_ARRAY_CLASS = new String[0].getClass();
@@ -17,11 +20,9 @@ public class ServiceBeanAccessProviderImpl implements ServiceBeanAccessProvider 
     private static Class LONG_ARRAY_CLASS = new Long[0].getClass();
     private static Class CALENDAR_ARRAY_CLASS = new Calendar[0].getClass();
 
-    protected Service service;
     protected ValueProvider valueProvider;
     
     public ServiceBeanAccessProviderImpl(Service service) throws IllegalAccessException, NoSuchFieldException {
-        this.service = service;
         this.valueProvider = service.getValueProvider();
     }
     

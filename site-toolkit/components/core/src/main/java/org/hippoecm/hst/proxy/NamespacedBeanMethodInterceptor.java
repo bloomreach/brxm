@@ -1,5 +1,6 @@
 package org.hippoecm.hst.proxy;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import org.aopalliance.intercept.MethodInterceptor;
@@ -7,7 +8,9 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.hippoecm.hst.service.ServiceBeanAccessProvider;
 import org.hippoecm.hst.service.ServiceNamespace;
 
-public class NamespacedBeanMethodInterceptor implements MethodInterceptor {
+public class NamespacedBeanMethodInterceptor implements MethodInterceptor, Serializable {
+    
+    private static final long serialVersionUID = 1L;
     
     private ServiceBeanAccessProvider provider;
     private String defaultNamespacePrefix;
