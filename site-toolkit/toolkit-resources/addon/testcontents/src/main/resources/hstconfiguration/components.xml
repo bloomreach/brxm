@@ -48,6 +48,132 @@
                 </sv:node>
             </sv:node>
         </sv:node>
+        <sv:node sv:name="productsview">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:component</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:renderpath" sv:type="String">
+                <sv:value>productsview.jsp</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentclassname" sv:type="String">
+                <sv:value>org.hippoecm.hst.hstconfiguration.components.pages.ProductsView</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencename" sv:type="String">
+                <sv:value>productsview</sv:value>
+            </sv:property>
+            <sv:node sv:name="header">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:component</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:renderpath" sv:type="String">
+                    <sv:value>header.jsp</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:componentclassname" sv:type="String">
+                    <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Header</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:referencename" sv:type="String">
+                    <sv:value>h</sv:value>
+                </sv:property>
+                <sv:node sv:name="title">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hst:component</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:renderpath" sv:type="String">
+                        <sv:value>title.jsp</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:componentclassname" sv:type="String">
+                        <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.DocumentTitle</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:referencename" sv:type="String">
+                        <sv:value>t</sv:value>
+                    </sv:property>
+                </sv:node>
+            </sv:node>
+        </sv:node>
+        <sv:node sv:name="productpage">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:component</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:renderpath" sv:type="String">
+                <sv:value>productpage.jsp</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentclassname" sv:type="String">
+                <sv:value>org.hippoecm.hst.hstconfiguration.components.pages.ProductPage</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencename" sv:type="String">
+                <sv:value>productpage</sv:value>
+            </sv:property>
+            <sv:node sv:name="header">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:component</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:renderpath" sv:type="String">
+                    <sv:value>header.jsp</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:componentclassname" sv:type="String">
+                    <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Header</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:referencename" sv:type="String">
+                    <sv:value>h</sv:value>
+                </sv:property>
+                <sv:node sv:name="title">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hst:component</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:renderpath" sv:type="String">
+                        <sv:value>title.jsp</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:componentclassname" sv:type="String">
+                        <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.DocumentTitle</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:referencename" sv:type="String">
+                        <sv:value>t</sv:value>
+                    </sv:property>
+                </sv:node>
+            </sv:node>
+        </sv:node>
+        <sv:node sv:name="solutionsview">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:component</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:renderpath" sv:type="String">
+                <sv:value>solutionsviewe.jsp</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentclassname" sv:type="String">
+                <sv:value>org.hippoecm.hst.hstconfiguration.components.pages.SolutionsView</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencename" sv:type="String">
+                <sv:value>solutionsview</sv:value>
+            </sv:property>
+            <sv:node sv:name="header">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:component</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:renderpath" sv:type="String">
+                    <sv:value>header.jsp</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:componentclassname" sv:type="String">
+                    <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Header</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:referencename" sv:type="String">
+                    <sv:value>h</sv:value>
+                </sv:property>
+                <sv:node sv:name="title">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hst:component</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:renderpath" sv:type="String">
+                        <sv:value>title.jsp</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:componentclassname" sv:type="String">
+                        <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.DocumentTitle</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:referencename" sv:type="String">
+                        <sv:value>t</sv:value>
+                    </sv:property>
+                </sv:node>
+            </sv:node>
+        </sv:node>
     </sv:node>
     <sv:node sv:name="fragments">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
