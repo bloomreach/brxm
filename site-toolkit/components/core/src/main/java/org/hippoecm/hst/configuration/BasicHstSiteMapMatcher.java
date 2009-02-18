@@ -2,19 +2,18 @@ package org.hippoecm.hst.configuration;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher;
 import org.hippoecm.hst.core.util.PathUtils;
 
 public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
 
-    public MatchResult match(String path, HstSite hstSite) {
-        path = PathUtils.normalizePath(path);
-        String[] elements = path.split("/"); 
+    public MatchResult match(String link, HstSite hstSite) {
+        link = PathUtils.normalizePath(link);
+        String[] elements = link.split("/"); 
         
         HstSiteMapItem hstSiteMapItem = hstSite.getSiteMap().getSiteMapItem(elements[0]);
         if(hstSiteMapItem == null) {
             // return a MatchResult with HstSiteMapItem = null
-            return new MatchResultImpl(path, null, null);
+            return new MatchResultImpl(link, null, null);
         }
         
         int i = 1;

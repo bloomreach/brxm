@@ -16,7 +16,7 @@ import org.junit.Test;
 
 public class TestJCRServiceBean extends AbstractSpringTestCase{
     
-    private static final String TESTPROJECT_EXISTING_VIRTUALNODE = "/testpreview/testproject/hst:content/Products/ProductsPage/ProductsPage";
+    private static final String TESTPROJECT_EXISTING_VIRTUALNODE = "/testpreview/testproject/hst:content/Products/SomeProduct/SomeProduct";
     private Repository repository;
     
     @Override 

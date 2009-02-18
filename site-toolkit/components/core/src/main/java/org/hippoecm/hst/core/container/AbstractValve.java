@@ -1,7 +1,7 @@
 package org.hippoecm.hst.core.container;
 
+import org.hippoecm.hst.configuration.HstSiteMapMatcher;
 import org.hippoecm.hst.configuration.HstSites;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher;
 import org.hippoecm.hst.core.domain.DomainMappings;
 import org.hippoecm.hst.core.request.HstRequestContextComponent;
 
