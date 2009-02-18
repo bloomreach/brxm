@@ -77,8 +77,9 @@ public class HstResponseState
         this.isRenderResponse = true;
         this.isActionResponse = false;
         this.isResourceResponse = false;
-        this.isMimeResponse = false;
-        this.isStateAwareResponse = false;
+        this.isStateAwareResponse = isActionResponse;
+        this.isMimeResponse = isRenderResponse || isResourceResponse;
+
         this.defaultLocale = null;
         
         this.response = response;

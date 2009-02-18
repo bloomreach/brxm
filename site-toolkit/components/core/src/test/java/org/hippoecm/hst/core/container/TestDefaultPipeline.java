@@ -1,5 +1,9 @@
 package org.hippoecm.hst.core.container;
 
+import static org.junit.Assert.assertTrue;
+
+import java.io.UnsupportedEncodingException;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +16,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 public class TestDefaultPipeline extends AbstractSpringTestCase {
 
@@ -45,7 +50,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
     }
     
     @Test
-    public void testDefaultPipeline() throws ContainerException {
+    public void testDefaultPipeline() throws ContainerException, UnsupportedEncodingException {
         
         this.defaultPipeline.beforeInvoke(this.servletRequest, this.servletResponse);
         
@@ -56,6 +61,10 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         } finally {
             this.defaultPipeline.afterInvoke(this.servletRequest, this.servletResponse);
         }
+        
+        String content = ((MockHttpServletResponse) this.servletResponse).getContentAsString();
+        assertTrue("The content of HTTP response is null or empty!", content != null && !"".equals(content.trim()));
+        System.out.println("[HTTP Response] >>> " + content + " <<<");
     }
     
     class HstComponentBase implements HstComponent {

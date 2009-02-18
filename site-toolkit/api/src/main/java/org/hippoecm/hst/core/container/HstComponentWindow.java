@@ -1,5 +1,6 @@
 package org.hippoecm.hst.core.container;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.hippoecm.hst.core.component.HstComponent;
@@ -17,5 +18,7 @@ public interface HstComponentWindow {
     HstComponentWindow getParentWindow();
     
     Map<String, HstComponentWindow> getChildWindowMap();
+    
+    void flushContent() throws IOException;
     
 }

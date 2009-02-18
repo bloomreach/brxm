@@ -1,10 +1,11 @@
 package org.hippoecm.hst.core.container;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.hippoecm.hst.core.component.HstComponent;
-import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.hippoecm.hst.core.component.HstResponseState;
 
 public class HstComponentWindowImpl implements HstComponentWindow {
     
@@ -14,6 +15,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected String renderPath;
     protected HstComponentWindow parentWindow;
     protected Map<String, HstComponentWindow> childWindowMap;
+    protected HstResponseState responseState;
     
     public HstComponentWindowImpl(String referenceName, String referenceNamespace, HstComponent component, String renderPath, HstComponentWindow parentWindow) {
         this.referenceName = referenceName;
@@ -45,6 +47,16 @@ public class HstComponentWindowImpl implements HstComponentWindow {
 
     public String getReferenceNamespace() {
         return this.referenceNamespace;
+    }
+    
+    public void setResponseState(HstResponseState responseState) {
+        this.responseState = responseState;
+    }
+    
+    public void flushContent() throws IOException {
+        if (this.responseState != null) {
+            this.responseState.flush();
+        }
     }
     
     protected void addChildWindow(String name, HstComponentWindow child) {

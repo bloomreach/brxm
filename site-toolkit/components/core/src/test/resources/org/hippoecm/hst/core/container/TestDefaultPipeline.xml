@@ -54,7 +54,7 @@
             <bean class="org.hippoecm.hst.test.mock.HstMockRequestDispatcher">
               <constructor-arg value="/*.jsp" />
               <constructor-arg>
-                <bean class="org.hippoecm.hst.test.mock.MockJspServlet" />
+                <bean class="org.hippoecm.hst.test.mock.HstMockJspServlet" />
               </constructor-arg>
             </bean>
           </entry>
