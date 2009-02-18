@@ -14,5 +14,7 @@ public interface HstSite {
     HstSiteMap getSiteMap();
 
     HstSites getHstSites();
+    
+    LocationMapTree getLocationMap();
 
 }

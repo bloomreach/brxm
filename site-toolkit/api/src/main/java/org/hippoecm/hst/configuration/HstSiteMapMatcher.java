@@ -1,12 +1,12 @@
-package org.hippoecm.hst.configuration.sitemap;
+package org.hippoecm.hst.configuration;
 
-import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 public interface HstSiteMapMatcher {
     
-     MatchResult match(String path,HstSite hstSite);
-    
+    MatchResult match(String link,HstSite hstSite);
+  
     public interface MatchResult {
         
         HstSiteMapItem getSiteMapItem();

@@ -8,11 +8,11 @@ import static org.junit.Assert.assertTrue;
 import org.hippoecm.hst.configuration.BasicHstSiteMapMatcher;
 import org.hippoecm.hst.configuration.ConfigurationViewUtilities;
 import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.HstSiteMapMatcher;
 import org.hippoecm.hst.configuration.HstSites;
+import org.hippoecm.hst.configuration.HstSiteMapMatcher.MatchResult;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher.MatchResult;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Test;
 
@@ -35,13 +35,14 @@ public class TestConfiguration extends AbstractSpringTestCase {
         HstSite s2 = hstSites.getSite("nonexistingproject");
         assertNull(s2);
 
-        HstSiteMapItem sItem = s.getSiteMap().getSiteMapItem("news");
+        HstSiteMapItem sItem = s.getSiteMap().getSiteMapItem("products");
         HstComponentConfiguration c = s.getComponentsConfiguration().getComponentConfiguration(
                 sItem.getComponentConfigurationId());
         assertNotNull(c);
 
     }
 
+    @Test
     public void testPathMatcher() {
 
         StringBuffer buf = new StringBuffer();
@@ -55,20 +56,22 @@ public class TestConfiguration extends AbstractSpringTestCase {
         assertNull(matchNoResult.getCompontentConfiguration());
         assertEquals(matchNoResult.getRemainder(), "non/exist/ing");
 
-        MatchResult matchResult = hstSiteMapMatcher.match("/news/foo/bar", hstSite);
+        MatchResult matchResult = hstSiteMapMatcher.match("/products/foo/bar", hstSite);
         assertEquals(matchResult.getRemainder(), "foo/bar");
-        assertEquals(matchResult.getSiteMapItem().getId(), "news");
+        assertEquals(matchResult.getSiteMapItem().getId(), "products");
 
         ConfigurationViewUtilities.view(buf, matchResult);
         assertTrue("Buffer should not be empty", buf.length() > 0);
 
-        assertEquals(matchResult.getSiteMapItem().getChild("inland").getId(), "news/inland");
-        assertEquals(matchResult.getCompontentConfiguration().getId(), "pages/newsoverview");
+        assertEquals(matchResult.getSiteMapItem().getChild("someproduct").getId(), "products/someproduct");
+        assertEquals(matchResult.getCompontentConfiguration().getId(), "pages/productsview");
 
-        matchResult = hstSiteMapMatcher.match("/news/foo/bar/", hstSite);
+        // Make sure that the remainder does not have the / after bar
+        matchResult = hstSiteMapMatcher.match("/products/foo/bar/", hstSite);
         assertEquals(matchResult.getRemainder(), "foo/bar");
 
-        matchResult = hstSiteMapMatcher.match("/news", hstSite);
+        // an exact match
+        matchResult = hstSiteMapMatcher.match("/products", hstSite);
         assertEquals(matchResult.getRemainder(), "");
 
     }
