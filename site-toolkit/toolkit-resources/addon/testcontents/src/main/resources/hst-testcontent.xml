@@ -100,14 +100,14 @@
                 <sv:value>New Folder</sv:value>
                 <sv:value>New Document</sv:value>
             </sv:property>
-            <sv:node sv:name="ProductsPage">
+            <sv:node sv:name="SomeProduct">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hippo:handle</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                     <sv:value>hippo:hardhandle</sv:value>
                 </sv:property>
-                <sv:node sv:name="ProductsPage">
+                <sv:node sv:name="SomeProduct">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>testproject:textpage</sv:value>
                     </sv:property>
@@ -163,14 +163,14 @@
                     </sv:node>
                 </sv:node>
             </sv:node>
-            <sv:node sv:name="Hippo CMS">
+            <sv:node sv:name="HippoCMS">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hippo:handle</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                     <sv:value>hippo:hardhandle</sv:value>
                 </sv:property>
-                <sv:node sv:name="Hippo CMS">
+                <sv:node sv:name="HippoCMS">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>testproject:textpage</sv:value>
                     </sv:property>
