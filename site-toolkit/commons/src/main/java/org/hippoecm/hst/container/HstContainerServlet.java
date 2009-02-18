@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hippoecm.hst.core.container.HstComponentInvoker;
 import org.hippoecm.hst.site.HstServices;
 
 /**
@@ -49,6 +50,12 @@ public class HstContainerServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 
         try {
+            HstComponentInvoker invoker = HstServices.getComponentInvoker();
+            
+            if (invoker.getServletContext() == null) {
+                invoker.setServletContext(getServletContext());
+            }
+            
             HstServices.getRequestProcessor().processRequest(req, res);
         } catch (Exception e) {
             final String msg = "Fatal error encountered while processing request: " + e.toString();

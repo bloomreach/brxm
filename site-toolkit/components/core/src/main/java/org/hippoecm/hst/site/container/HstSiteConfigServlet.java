@@ -55,9 +55,9 @@ public class HstSiteConfigServlet extends HttpServlet {
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
         
-        final String repositoryAddress = config.getInitParameter("properties.repository.address");
+        final String defaultRepositoryAddress = config.getInitParameter("properties.default.repository.address");
         
-        if (repositoryAddress.startsWith("rmi:")) {
+        if (true) {
             final Thread repositoryCheckerThread = new Thread("RepositoryChecker") {
                 public void run() {
                     while (!repositoryAvailable) {

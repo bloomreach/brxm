@@ -18,13 +18,13 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
   <bean id="javax.jcr.Credentials.default" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="${repository.user.name}" />
-    <constructor-arg value="${repository.password}" />
+    <constructor-arg value="${default.repository.user.name}" />
+    <constructor-arg value="${default.repository.password}" />
   </bean>
   
   <bean id="javax.jcr.Credentials.writable" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="${repository.user.name}" />
-    <constructor-arg value="${repository.password}" />
+    <constructor-arg value="${writable.repository.user.name}" />
+    <constructor-arg value="${writable.repository.password}" />
   </bean>
       
   <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.MultipleRepositoryImpl">
@@ -42,9 +42,9 @@
   <bean id="javax.jcr.Repository.default" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
         init-method="initialize" destroy-method="close">
     <!-- delegated JCR repository -->
-    <property name="repositoryAddress" value="${repository.address}" />
-    <property name="defaultCredentialsUserID" value="${repository.user.name}" />
-    <property name="defaultCredentialsPassword" value="${repository.password}" />
+    <property name="repositoryAddress" value="${default.repository.address}" />
+    <property name="defaultCredentialsUserID" value="${default.repository.user.name}" />
+    <property name="defaultCredentialsPassword" value="${default.repository.password}" />
     <property name="readOnly" value="false" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="250" />
@@ -63,9 +63,9 @@
   <bean id="javax.jcr.Repository.writable" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
         init-method="initialize" destroy-method="close">
     <!-- delegated JCR repository -->
-    <property name="repositoryAddress" value="${repository.address}" />
-    <property name="defaultCredentialsUserID" value="${repository.user.name}" />
-    <property name="defaultCredentialsPassword" value="${repository.password}" />
+    <property name="repositoryAddress" value="${writable.repository.address}" />
+    <property name="defaultCredentialsUserID" value="${writable.repository.user.name}" />
+    <property name="defaultCredentialsPassword" value="${writable.repository.password}" />
     <property name="readOnly" value="false" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="250" />

@@ -23,7 +23,7 @@
     <constructor-arg ref="javax.jcr.Credentials.default" />
   </bean>
   
-  <bean id="org.hippoecm.hst.core.request.HstRequestProcessor" class="org.hippoecm.hst.core.container.HstRequestProcessorImpl">
+  <bean id="org.hippoecm.hst.core.container.HstRequestProcessor" class="org.hippoecm.hst.core.container.HstRequestProcessorImpl">
     <constructor-arg ref="org.hippoecm.hst.core.container.Pipelines" />
   </bean>
    

@@ -5,9 +5,14 @@ import java.util.List;
 public class DomainMappingsImpl implements DomainMappings {
     
     protected List<DomainMapping> domainMappings;
+    protected String defaultSiteName;
 
     public DomainMappingsImpl(List<DomainMapping> domainMappings) {
         this.domainMappings = domainMappings;
+    }
+    
+    public void setDefaultSiteName(String defaultSiteName) {
+        this.defaultSiteName = defaultSiteName;
     }
     
     public List<DomainMapping> getDomainMappings() {
@@ -22,6 +27,10 @@ public class DomainMappingsImpl implements DomainMappings {
                 domainMapping = mapping;
                 break;
             }
+        }
+        
+        if (domainMapping == null && this.defaultSiteName != null) {
+            domainMapping = new DomainMappingImpl(domainName, this.defaultSiteName);
         }
         
         return domainMapping;

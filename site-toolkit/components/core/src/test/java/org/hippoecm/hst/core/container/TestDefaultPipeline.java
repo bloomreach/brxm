@@ -39,9 +39,9 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         invoker.setServletContext(this.servletConfig.getServletContext());
         
         HstComponentFactory componentFactory = HstServices.getComponentFactory();
-        ((HstComponentFactoryImpl) componentFactory).componentMap.put("pages/newsoverview", new NewsOverview("pages/newsoverview"));
-        ((HstComponentFactoryImpl) componentFactory).componentMap.put("pages/newsoverview/header", new Header("pages/newsoverview/header"));
-        ((HstComponentFactoryImpl) componentFactory).componentMap.put("pages/newsoverview/header/title", new DocumentTitle("pages/newsoverview/header/title"));
+        ((HstComponentFactoryImpl) componentFactory).componentMap.put("pages/newsoverview", new NewsOverview());
+        ((HstComponentFactoryImpl) componentFactory).componentMap.put("pages/newsoverview/header", new Header());
+        ((HstComponentFactoryImpl) componentFactory).componentMap.put("pages/newsoverview/header/title", new DocumentTitle());
     }
     
     @Test
@@ -62,47 +62,49 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         
         protected String name;
         
-        public HstComponentBase(String name) {
+        public HstComponentBase() {
+        }
+        
+        public String getName() {
+            if (this.name == null) {
+                this.name = getClass().getName();
+            }
+            
+            return this.name;
+        }
+        
+        public void setName(String name) {
             this.name = name;
         }
         
         public void init(ServletConfig servletConfig) throws HstComponentException {
-            System.out.println("[HstComponent: " + this.name + "] init()");
+            System.out.println("[HstComponent: " + getName() + "] init()");
         }
 
         public void destroy() throws HstComponentException {
-            System.out.println("[HstComponent: " + this.name + "] destroy()");
+            System.out.println("[HstComponent: " + getName() + "] destroy()");
         }
 
         public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-            System.out.println("[HstComponent: " + this.name + "] doAction()");
+            System.out.println("[HstComponent: " + getName() + "] doAction()");
         }
 
         public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-            System.out.println("[HstComponent: " + this.name + "] doBeforeRender()");
+            System.out.println("[HstComponent: " + getName() + "] doBeforeRender()");
         }
 
         public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
-            System.out.println("[HstComponent: " + this.name + "] doBeforeServeResource()");
+            System.out.println("[HstComponent: " + getName() + "] doBeforeServeResource()");
         }
     }
     
     class NewsOverview extends HstComponentBase {
-        public NewsOverview(String name) {
-            super(name);
-        }
     }
     
     class Header extends HstComponentBase {
-        public Header(String name) {
-            super(name);
-        }
     }
     
     class DocumentTitle extends HstComponentBase {
-        public DocumentTitle(String name) {
-            super(name);
-        }
     }
 
 }

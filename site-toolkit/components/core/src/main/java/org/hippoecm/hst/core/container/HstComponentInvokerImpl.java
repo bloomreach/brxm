@@ -19,6 +19,10 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         this.servletContext = servletContext;
     }
     
+    public ServletContext getServletContext() {
+        return this.servletContext;
+    }
+    
     public void invokeAction(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
@@ -57,10 +61,16 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
     protected void invokeDispatcher(ServletRequest servletRequest, ServletResponse servletResponse, String dispatchUrl) throws ContainerException {
         RequestDispatcher disp = null;
         
-        if (dispatchUrl.startsWith("/")) {
-            disp = this.servletContext.getRequestDispatcher(dispatchUrl);
-        } else {
-            disp = this.servletContext.getNamedDispatcher(dispatchUrl);
+        if (dispatchUrl != null) {
+            if (dispatchUrl.startsWith("/")) {
+                disp = this.servletContext.getRequestDispatcher(dispatchUrl);
+            } else {
+                disp = this.servletContext.getNamedDispatcher(dispatchUrl);
+            }
+        }
+        
+        if (disp == null) {
+            throw new ContainerException("Cannot create request dispatcher for " + dispatchUrl);
         }
         
         try {

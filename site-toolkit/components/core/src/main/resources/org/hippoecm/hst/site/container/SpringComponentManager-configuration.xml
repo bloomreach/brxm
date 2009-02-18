@@ -23,11 +23,22 @@
     <property name="arguments">
       <list>
         <ref bean="javax.jcr.Repository" />
-        <value>preview</value>
+        <value>${default.sites.config.node.path}</value>
       </list>
     </property>
   </bean>
   
+  <bean id="org.hippoecm.hst.configuration.HstSites.live" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetClass" value="org.hippoecm.hst.configuration.HstSitesFactory" />
+    <property name="targetMethod" value="create" />
+    <property name="arguments">
+      <list>
+        <ref bean="javax.jcr.Repository" />
+        <value>${live.sites.config.node.path}</value>
+      </list>
+    </property>
+  </bean>
+    
   <bean id="org.hippoecm.hst.core.domain.DomainMappings" class="org.hippoecm.hst.core.domain.DomainMappingsImpl">
     <constructor-arg>
       <list>
@@ -37,6 +48,7 @@
         </bean>
       </list>
     </constructor-arg>
+    <property name="defaultSiteName" value="${default.sites.default.site.name}" />
   </bean>
   
   <bean id="org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher" class="org.hippoecm.hst.configuration.BasicHstSiteMapMatcher">
