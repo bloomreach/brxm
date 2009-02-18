@@ -18,9 +18,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JCRValueProviderImpl implements JCRValueProvider{
+  
+    private static final long serialVersionUID = 1L;
     
     private static final Logger log = LoggerFactory.getLogger(JCRValueProviderImpl.class);
+    
+    // transient node because ValueProvider implements Serializable
     private transient Node jcrNode;
+    
     private String nodePath;
     private String nodeName;
     private boolean detached = false;

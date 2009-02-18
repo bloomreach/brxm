@@ -1,9 +1,10 @@
 package org.hippoecm.hst.provider;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Map;
 
-public interface ValueProvider {
+public interface ValueProvider extends Serializable{
     
     public String getPath();
     public String getName();
