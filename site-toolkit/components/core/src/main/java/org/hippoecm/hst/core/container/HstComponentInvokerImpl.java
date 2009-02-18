@@ -13,59 +13,49 @@ import org.hippoecm.hst.core.component.HstResponse;
 
 public class HstComponentInvokerImpl implements HstComponentInvoker {
     
-    protected ServletContext servletContext;
-    
-    public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
-    }
-    
-    public ServletContext getServletContext() {
-        return this.servletContext;
-    }
-    
-    public void invokeAction(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void invokeAction(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = hstRequest.getComponentWindow();
         window.getComponent().doAction(hstRequest, hstResponse);
     }
 
-    public void invokeBeforeRender(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void invokeBeforeRender(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = hstRequest.getComponentWindow();
         window.getComponent().doBeforeRender(hstRequest, hstResponse);
     }
 
-    public void invokeRender(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void invokeRender(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         String dispatchUrl = hstRequest.getComponentWindow().getRenderPath();
-        invokeDispatcher(servletRequest, servletResponse, dispatchUrl);
+        invokeDispatcher(servletContext, servletRequest, servletResponse, dispatchUrl);
     }
 
-    public void invokeBeforeServeResource(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void invokeBeforeServeResource(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = hstRequest.getComponentWindow();
         window.getComponent().doBeforeServeResource(hstRequest, hstResponse);
     }
 
-    public void invokeServeResource(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void invokeServeResource(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         String dispatchUrl = hstRequest.getComponentWindow().getRenderPath();
-        invokeDispatcher(servletRequest, servletResponse, dispatchUrl);
+        invokeDispatcher(servletContext, servletRequest, servletResponse, dispatchUrl);
     }
 
-    protected void invokeDispatcher(ServletRequest servletRequest, ServletResponse servletResponse, String dispatchUrl) throws ContainerException {
+    protected void invokeDispatcher(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse, String dispatchUrl) throws ContainerException {
         RequestDispatcher disp = null;
         
         if (dispatchUrl != null) {
             if (dispatchUrl.startsWith("/")) {
-                disp = this.servletContext.getRequestDispatcher(dispatchUrl);
+                disp = servletContext.getRequestDispatcher(dispatchUrl);
             } else {
-                disp = this.servletContext.getNamedDispatcher(dispatchUrl);
+                disp = servletContext.getNamedDispatcher(dispatchUrl);
             }
         }
         

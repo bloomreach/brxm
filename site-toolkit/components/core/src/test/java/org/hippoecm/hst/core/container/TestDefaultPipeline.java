@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.UnsupportedEncodingException;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,6 +25,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
     protected Pipelines pipelines;
     protected Pipeline defaultPipeline;
     protected ServletConfig servletConfig;
+    protected ServletContext servletContext;
     protected HttpServletRequest servletRequest;
     protected HttpServletResponse servletResponse;
 
@@ -37,11 +39,9 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         this.pipelines = (Pipelines) getComponent(Pipelines.class.getName());
         this.defaultPipeline = this.pipelines.getDefaultPipeline();
         this.servletConfig = (ServletConfig) getComponent(ServletConfig.class.getName());
+        this.servletContext = this.servletConfig.getServletContext();
         this.servletRequest = (HttpServletRequest) getComponent(HttpServletRequest.class.getName());
         this.servletResponse = (HttpServletResponse) getComponent(HttpServletResponse.class.getName());
-        
-        HstComponentInvoker invoker = HstServices.getComponentInvoker();
-        invoker.setServletContext(this.servletConfig.getServletContext());
         
         HstComponentFactory componentFactory = HstServices.getComponentFactory();
         ((HstComponentFactoryImpl) componentFactory).componentMap.put("pages/newsoverview", new NewsOverview());
@@ -52,14 +52,14 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
     @Test
     public void testDefaultPipeline() throws ContainerException, UnsupportedEncodingException {
         
-        this.defaultPipeline.beforeInvoke(this.servletRequest, this.servletResponse);
+        this.defaultPipeline.beforeInvoke(this.servletContext, this.servletRequest, this.servletResponse);
         
         try {
-            this.defaultPipeline.invoke(this.servletRequest, this.servletResponse);
+            this.defaultPipeline.invoke(this.servletContext, this.servletRequest, this.servletResponse);
         } catch (Exception e) {
             throw new ContainerException(e);
         } finally {
-            this.defaultPipeline.afterInvoke(this.servletRequest, this.servletResponse);
+            this.defaultPipeline.afterInvoke(this.servletContext, this.servletRequest, this.servletResponse);
         }
         
         String content = ((MockHttpServletResponse) this.servletResponse).getContentAsString();

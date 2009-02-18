@@ -19,7 +19,7 @@ public class ActionValve extends AbstractValve
                 ServletRequest servletRequest = context.getServletRequest();
                 servletRequest.setAttribute(ContainerConstants.HST_COMPONENT_WINDOW, actionWindow);
                 HstComponentInvoker invoker = getComponentInvoker();
-                invoker.invokeAction(servletRequest, context.getServletResponse());
+                invoker.invokeAction(context.getServletContext(), servletRequest, context.getServletResponse());
             } else {
                 throw new ContainerException("No action window.");
             }

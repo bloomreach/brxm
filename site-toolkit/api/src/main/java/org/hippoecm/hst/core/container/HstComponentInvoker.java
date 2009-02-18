@@ -9,18 +9,14 @@ import javax.servlet.ServletResponse;
  */
 public interface HstComponentInvoker {
     
-    void setServletContext(ServletContext servletContext);
-    
-    ServletContext getServletContext();
-    
-    void invokeAction(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+    void invokeAction(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
 
-    void invokeBeforeRender(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+    void invokeBeforeRender(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
     
-    void invokeRender(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+    void invokeRender(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
     
-    void invokeBeforeServeResource(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+    void invokeBeforeServeResource(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
     
-    void invokeServeResource(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+    void invokeServeResource(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
     
 }

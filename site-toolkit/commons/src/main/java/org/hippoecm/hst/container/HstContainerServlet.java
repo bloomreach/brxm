@@ -3,6 +3,7 @@ package org.hippoecm.hst.container;
 import java.io.IOException;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hippoecm.hst.core.container.HstComponentInvoker;
 import org.hippoecm.hst.site.HstServices;
 
 /**
@@ -29,9 +29,13 @@ public class HstContainerServlet extends HttpServlet {
     private static Log log;
     private static Log console;
     
+    protected ServletContext servletContext;
+    
     public void init(ServletConfig config) throws ServletException {
         
         super.init(config);
+        
+        this.servletContext = config.getServletContext();
 
         if (log == null) {
             log = LogFactory.getLog(HstContainerServlet.class);
@@ -50,13 +54,7 @@ public class HstContainerServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 
         try {
-            HstComponentInvoker invoker = HstServices.getComponentInvoker();
-            
-            if (invoker.getServletContext() == null) {
-                invoker.setServletContext(getServletContext());
-            }
-            
-            HstServices.getRequestProcessor().processRequest(req, res);
+            HstServices.getRequestProcessor().processRequest(this.servletContext, req, res);
         } catch (Exception e) {
             final String msg = "Fatal error encountered while processing request: " + e.toString();
             log.fatal(msg, e);
