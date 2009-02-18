@@ -1,4 +1,4 @@
-package org.hippoecm.hst.site.container;
+package org.hippoecm.hst.container;
 
 import java.io.IOException;
 
@@ -14,19 +14,19 @@ import javax.portlet.PortletResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
-public class HstSiteContainerPortlet implements Portlet {
+public class HstContainerPortlet implements Portlet {
     
     protected PortletContext portletContext;
-    protected String siteContainerPath = "/sitecontainer";
+    protected String hstContainerPath = "/hstcontainer";
 
     public void init(PortletConfig config) throws PortletException {
         
         this.portletContext = config.getPortletContext();
         
-        String param = config.getInitParameter("siteContainerPath");
+        String param = config.getInitParameter("hstContainerPath");
         
         if (param != null) {
-            this.siteContainerPath = param;
+            this.hstContainerPath = param;
         }
         
     }
@@ -43,9 +43,8 @@ public class HstSiteContainerPortlet implements Portlet {
     }
     
     protected void doDispatch(PortletRequest request, PortletResponse response) throws PortletException, IOException {
-        PortletRequestDispatcher dispatcher = this.portletContext.getRequestDispatcher(this.siteContainerPath);
+        PortletRequestDispatcher dispatcher = this.portletContext.getRequestDispatcher(this.hstContainerPath);
         dispatcher.include(request, response);
-        
     }
 
 }

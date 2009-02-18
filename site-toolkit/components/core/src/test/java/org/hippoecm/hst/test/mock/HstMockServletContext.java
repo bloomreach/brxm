@@ -33,6 +33,11 @@ public class HstMockServletContext extends MockServletContext {
             
             if (matcher.matches()) {
                 dispatcher = pard.dispatcher;
+                
+                if (dispatcher instanceof HstMockRequestDispatcher) {
+                    ((HstMockRequestDispatcher) dispatcher).setUrl(path);
+                }
+                
                 break;
             }
         }

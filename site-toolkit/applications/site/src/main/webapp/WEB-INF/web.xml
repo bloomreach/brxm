@@ -40,8 +40,8 @@
   </listener>
 
   <servlet>
-    <servlet-name>HstSiteContainerServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.site.container.HstSiteContainerServlet</servlet-class>
+    <servlet-name>HstSiteConfigServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
     <init-param>
         <param-name>properties.repository.address</param-name>
         <param-value>rmi://127.0.0.1:1099/hipporepository</param-value>
@@ -57,9 +57,15 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
 
+  <servlet>
+    <servlet-name>HstContainerServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.container.HstContainerServlet</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+  
   <servlet-mapping>
-    <servlet-name>HstSiteContainerServlet</servlet-name>
-    <url-pattern>/site/*</url-pattern>
+    <servlet-name>HstContainerServlet</servlet-name>
+    <url-pattern>/content/*</url-pattern>
   </servlet-mapping>
     
   <!-- The Usual Welcome File List -->

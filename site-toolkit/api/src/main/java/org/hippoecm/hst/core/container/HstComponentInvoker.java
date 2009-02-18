@@ -11,8 +11,6 @@ public interface HstComponentInvoker {
     
     void setServletContext(ServletContext servletContext);
     
-    void setDispatcherPath(String dispatcherPath);
-    
     void invokeAction(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
 
     void invokeBeforeRender(ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;

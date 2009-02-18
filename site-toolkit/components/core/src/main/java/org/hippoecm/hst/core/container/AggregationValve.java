@@ -4,8 +4,14 @@ import java.util.Map;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.container.ContainerConstants;
+import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstRequestImpl;
+import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.component.HstResponseImpl;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class AggregationValve extends AbstractValve {
     
@@ -18,11 +24,10 @@ public class AggregationValve extends AbstractValve {
             
             if (rootWindow != null) {
                 ServletRequest servletRequest = context.getServletRequest();
-                servletRequest.setAttribute(ContainerConstants.HST_COMPONENT_METHOD_ID, ContainerConstants.METHOD_RENDER);
-                servletRequest.setAttribute(ContainerConstants.HST_COMPONENT_WINDOW, rootWindow);
+                HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
                 
-                aggregateAndProcessBeforeRender(servletRequest, context.getServletResponse(), rootWindow);
-                aggregateAndProcessRender(context.getServletRequest(), context.getServletResponse(), rootWindow);
+                aggregateAndProcessBeforeRender(requestContext, servletRequest, context.getServletResponse(), rootWindow);
+                aggregateAndProcessRender(requestContext, context.getServletRequest(), context.getServletResponse(), rootWindow);
             }
         }
         
@@ -30,32 +35,37 @@ public class AggregationValve extends AbstractValve {
         context.invokeNext();
     }
 
-    protected void aggregateAndProcessBeforeRender(ServletRequest servletRequest, ServletResponse servletResponse, HstComponentWindow window) throws ContainerException {
+    protected void aggregateAndProcessBeforeRender(HstRequestContext requestContext, ServletRequest servletRequest, ServletResponse servletResponse, HstComponentWindow window) throws ContainerException {
         
-        HstComponentInvoker invoker = getComponentInvoker();
-        invoker.invokeBeforeRender(servletRequest, servletResponse);
+        HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
+        HstResponse response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window);
+        
+        getComponentInvoker().invokeBeforeRender(request, response);
 
         Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
         
         if (childWindowMap != null) {
             for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
-                aggregateAndProcessBeforeRender(servletRequest, servletResponse, entry.getValue());
+                aggregateAndProcessBeforeRender(requestContext, servletRequest, servletResponse, entry.getValue());
             }
         }
+        
     }
     
-    protected void aggregateAndProcessRender(ServletRequest servletRequest, ServletResponse servletResponse, HstComponentWindow window) throws ContainerException {
+    protected void aggregateAndProcessRender(HstRequestContext requestContext, ServletRequest servletRequest, ServletResponse servletResponse, HstComponentWindow window) throws ContainerException {
         
         Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
         
         if (childWindowMap != null) {
             for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
-                aggregateAndProcessRender(servletRequest, servletResponse, entry.getValue());
+                aggregateAndProcessRender(requestContext, servletRequest, servletResponse, entry.getValue());
             }
         }
         
-        HstComponentInvoker invoker = getComponentInvoker();
-        invoker.invokeRender(servletRequest, servletResponse);
+        HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
+        HstResponse response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window);
+        
+        getComponentInvoker().invokeRender(request, response);
         
     }
 }

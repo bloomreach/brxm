@@ -14,7 +14,8 @@ public class MockJspServlet extends HttpServlet {
     }
     
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        System.out.println("MockJspServlet::doGet");
+        String myPath = (String) req.getAttribute("javax.servlet.include_url");
+        System.out.println("[JSP] " + myPath);
     }
     
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {

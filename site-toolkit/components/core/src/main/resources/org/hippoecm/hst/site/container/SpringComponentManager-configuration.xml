@@ -39,7 +39,7 @@
     </constructor-arg>
   </bean>
   
-  <bean id="org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher" class="org.hippoecm.hst.configuration.SimpleHstSiteMapMatcher">
+  <bean id="org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher" class="org.hippoecm.hst.configuration.BasicHstSiteMapMatcher">
   </bean>
 
 </beans>

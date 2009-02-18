@@ -13,16 +13,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
-import org.hippoecm.hst.core.container.HstRequestProcessor;
 import org.hippoecm.hst.site.HstServices;
 
 /**
- * HST Site Servlet entry point.
+ * HST Site Container Servlet
+ * 
+ * This servlet should initialize all the components that can be accessed via HstServices
+ * from the each HST-based applications.
+ * Under portal environment, this servlet may not be used because the portal itself can 
+ * initialize all the necessary component for each HST-based portlet application.
  * 
  * @author <a href="mailto:w.ko@onehippo.com">Woonsan Ko</a>
  * @version $Id$
  */
-public class HstSiteContainerServlet extends HttpServlet {
+public class HstSiteConfigServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
@@ -47,36 +51,41 @@ public class HstSiteContainerServlet extends HttpServlet {
     /**
      * Intialize Servlet.
      */
-    public void init(ServletConfig config) throws ServletException {
+    @Override
+    public void init(final ServletConfig config) throws ServletException {
         super.init(config);
         
-        startCheckingRepository(config);
-        
-        if (isRepositoryAvailable()) {
-            doInit(config);
-        }
-    }
-    
-    protected void startCheckingRepository(ServletConfig config) {
-        String repositoryAddress = config.getInitParameter("properties.repository.address");
+        final String repositoryAddress = config.getInitParameter("properties.repository.address");
         
         if (repositoryAddress.startsWith("rmi:")) {
-            // do timer scheduled checking if the repository is up or not.
-            // this time, just set it to true.
-            this.repositoryAvailable = true;
-        } else {
-            this.repositoryAvailable = true;
+            final Thread repositoryCheckerThread = new Thread("RepositoryChecker") {
+                public void run() {
+                    while (!repositoryAvailable) {
+                       // check the repository is accessible
+                       repositoryAvailable = true;
+
+                       if (!repositoryAvailable) {
+                           try {
+                                Thread.sleep(3000);
+                           } catch (InterruptedException e) {
+                           }
+                       }
+                    }
+                    
+                    if (repositoryAvailable) {
+                        doInit(config);
+                    }
+                }
+            };
+            
+            repositoryCheckerThread.start();
         }
-    }
-    
-    protected boolean isRepositoryAvailable() {
-        return this.repositoryAvailable;
     }
     
     protected synchronized void doInit(ServletConfig config) {
         
         if (log == null) {
-            log = LogFactory.getLog(HstSiteContainerServlet.class);
+            log = LogFactory.getLog(HstSiteConfigServlet.class);
             console = LogFactory.getLog(CONSOLE_LOGGER);
         }
 
@@ -116,36 +125,10 @@ public class HstSiteContainerServlet extends HttpServlet {
         
     }
 
-    // -------------------------------------------------------------------
-    // R E Q U E S T P R O C E S S I N G
-    // -------------------------------------------------------------------
-
-    /**
-     * The primary method invoked when the Jetspeed servlet is executed.
-     * 
-     * @param req
-     *            Servlet request.
-     * @param res
-     *            Servlet response.
-     * @exception IOException
-     *                a servlet exception.
-     * @exception ServletException
-     *                a servlet exception.
-     */
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        
-        if (!this.initialized && isRepositoryAvailable()) {
-            doInit(getServletConfig());
-        }
 
-        try {
-            HstRequestProcessor processor = this.componentManager.getComponent(HstRequestProcessor.class.getName());
-            processor.processRequest(req, res);
-        } catch (Exception e) {
-            final String msg = "Fatal error encountered while processing portal request: " + e.toString();
-            log.fatal(msg, e);
-            throw new ServletException(msg, e);
-        }
+        // Some status message could be returned here.
+        
     }
 
     /**
