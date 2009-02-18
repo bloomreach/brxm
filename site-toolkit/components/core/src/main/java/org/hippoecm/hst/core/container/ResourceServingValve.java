@@ -2,8 +2,6 @@ package org.hippoecm.hst.core.container;
 
 import javax.servlet.ServletRequest;
 
-import org.hippoecm.hst.container.ContainerConstants;
-
 public class ResourceServingValve extends AbstractValve {
     
     @Override
@@ -15,7 +13,6 @@ public class ResourceServingValve extends AbstractValve {
             
             if (window != null) {
                 ServletRequest servletRequest = context.getServletRequest();
-                servletRequest.setAttribute(ContainerConstants.HST_COMPONENT_WINDOW, window);
                 HstComponentInvoker invoker = getComponentInvoker();
                 invoker.invokeBeforeServeResource(context.getServletContext(), servletRequest, context.getServletResponse());
                 invoker.invokeServeResource(context.getServletContext(), servletRequest, context.getServletResponse());

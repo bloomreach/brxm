@@ -19,6 +19,8 @@ public interface HstComponentWindow {
     
     Map<String, HstComponentWindow> getChildWindowMap();
     
+    HstComponentWindow getChildWindow(String path);
+    
     void flushContent() throws IOException;
     
 }

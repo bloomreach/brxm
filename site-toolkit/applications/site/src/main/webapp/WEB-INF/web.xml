@@ -31,7 +31,7 @@
 
   <context-param>
     <param-name>webAppRootKey</param-name>
-    <param-value>hst.container.root</param-value>
+    <param-value>site.root</param-value>
   </context-param>
 
   <!-- Spring Log4j Configuring Listener -->
@@ -91,7 +91,26 @@
     <servlet-name>HstContainerServlet</servlet-name>
     <url-pattern>/content/*</url-pattern>
   </servlet-mapping>
-    
+  
+  <!-- JSTL tag library TLDs -->
+
+  <taglib>
+    <taglib-uri>c.tld</taglib-uri>
+    <taglib-location>/WEB-INF/c.tld</taglib-location>
+  </taglib>
+
+  <taglib>
+    <taglib-uri>c-rt.tld</taglib-uri>
+    <taglib-location>/WEB-INF/c-rt.tld</taglib-location>
+  </taglib>
+
+  <!-- HST tag library TLDs -->
+  
+  <taglib>
+    <taglib-uri>hst-core.tld</taglib-uri>
+    <taglib-location>/WEB-INF/hst-core.tld</taglib-location>
+  </taglib>
+      
   <!-- The Usual Welcome File List -->
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>

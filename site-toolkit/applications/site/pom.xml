@@ -84,6 +84,11 @@
       <artifactId>hst-core</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-client</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -95,12 +100,15 @@
         <version>6.1.10</version>
         <configuration>
           <scanIntervalSeconds>5</scanIntervalSeconds>
+          <webAppConfig>
+            <contextPath>/site</contextPath>
+            <tempDirectory>${project.build.directory}/work</tempDirectory>
+          </webAppConfig>
           <connectors>
             <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
               <port>8085</port>
             </connector>
           </connectors>
-          <contextPath>/site</contextPath>
         </configuration>
         <dependencies>
           <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->

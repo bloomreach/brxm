@@ -22,7 +22,7 @@ import org.hippoecm.hst.core.component.HstURL;
  * Abstract supporting class for Hst URL tags (action, redner and resource)
  */
 
-public abstract class AbstractHstURLTag extends TagSupport {
+public abstract class BaseHstURLTag extends TagSupport {
     
     private static final long serialVersionUID = 1L;
 

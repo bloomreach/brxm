@@ -34,19 +34,17 @@ public class AggregationValve extends AbstractValve {
                 ServletResponse servletResponse = context.getServletResponse();
                 HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
                 
+                HstResponseState responseState = new HstResponseState((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
                 Map<HstComponentWindow, HstRequest> requestMap = new HashMap<HstComponentWindow, HstRequest>();
-                Map<HstComponentWindow, HstResponseState> responseStateMap = new HashMap<HstComponentWindow, HstResponseState>();
                 Map<HstComponentWindow, HstResponse> responseMap = new HashMap<HstComponentWindow, HstResponse>();
                 
-                createHstRequestResponseForWindows(rootWindow, requestContext, servletRequest, servletResponse, requestMap, responseStateMap, responseMap);
+                createHstRequestResponseForWindows(rootWindow, requestContext, servletRequest, servletResponse, requestMap, responseState, responseMap);
                 
                 aggregateAndProcessBeforeRender(rootWindow, requestMap, responseMap, context.getServletContext());
                 aggregateAndProcessRender(rootWindow, requestMap, responseMap, context.getServletContext());
                 
-                HstResponseState rootWindowResponseState = responseStateMap.get(rootWindow);
-                
                 try {
-                    rootWindowResponseState.flush();
+                    responseState.flush();
                 } catch (Exception e) {
                     log.error("Exception during flushing the response state.", e);
                 }
@@ -63,23 +61,20 @@ public class AggregationValve extends AbstractValve {
             final ServletRequest servletRequest, 
             final ServletResponse servletResponse, 
             final Map<HstComponentWindow, HstRequest> requestMap, 
-            final Map<HstComponentWindow, HstResponseState> responseStateMap, 
+            final HstResponseState responseState, 
             final Map<HstComponentWindow, HstResponse> responseMap) {
         
         HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
-        HstResponseState responseState = new HstResponseState((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
-        ((HstComponentWindowImpl) window).setResponseState(responseState);
         HstResponse response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window, responseState);
 
         requestMap.put(window, request);
-        responseStateMap.put(window, responseState);
         responseMap.put(window, response);
         
         Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
         
         if (childWindowMap != null) {
             for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
-                createHstRequestResponseForWindows(entry.getValue(), requestContext, servletRequest, response, requestMap, responseStateMap, responseMap);
+                createHstRequestResponseForWindows(entry.getValue(), requestContext, servletRequest, response, requestMap, responseState, responseMap);
             }
         }
     }

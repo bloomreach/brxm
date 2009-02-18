@@ -40,6 +40,16 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     public Map<String, HstComponentWindow> getChildWindowMap() {
         return this.childWindowMap;
     }
+    
+    public HstComponentWindow getChildWindow(String path) {
+        HstComponentWindow childWindow = null;
+        
+        if (this.childWindowMap != null) {
+            childWindow = this.childWindowMap.get(path);
+        }
+        
+        return childWindow;
+    }
 
     public String getReferenceName() {
         return this.referenceName;

@@ -132,17 +132,29 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
 
     @Override
     public Object getAttribute(String name) {
-        return getAttributeMap().get(name);
+        if (name.startsWith("javax.servlet.")) {
+            return super.getAttribute(name);
+        } else {
+            return getAttributeMap().get(name);
+        }
     }
 
     @Override
     public void setAttribute(String name, Object value) {
-        getAttributeMap().put(name, value);
+        if (name.startsWith("javax.servlet.")) {
+            super.setAttribute(name, value);
+        } else {
+            getAttributeMap().put(name, value);
+        }
     }
 
     @Override
     public void removeAttribute(String name) {
-        getAttributeMap().remove(name);
+        if (name.startsWith("javax.servlet.")) {
+            super.removeAttribute(name);
+        } else {
+            getAttributeMap().remove(name);
+        }
     }
     
     protected String getReferenceByNamespace(String namespace) {

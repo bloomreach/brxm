@@ -8,10 +8,14 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 
 public class HstComponentInvokerImpl implements HstComponentInvoker {
+    
+    static Log log = LogFactory.getLog(HstComponentInvokerImpl.class);
     
     public void invokeAction(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
@@ -52,6 +56,10 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         RequestDispatcher disp = null;
         
         if (dispatchUrl != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Invoking dispatcher of url: " + dispatchUrl);
+            }
+            
             if (dispatchUrl.startsWith("/")) {
                 disp = servletContext.getRequestDispatcher(dispatchUrl);
             } else {

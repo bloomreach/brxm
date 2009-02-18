@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE taglib PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+  "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+<taglib>
+    <tlibversion>1.0</tlibversion>
+    <jspversion>1.1</jspversion>
+    <shortname>Core Tags for HST Applications</shortname>
+    <tag>
+        <name>content</name>
+        <tagclass>org.hippoecm.hst.tags.HstContentTag</tagclass>
+        <teiclass>org.hippoecm.hst.tags.HstContentTag$TEI</teiclass>
+        <bodycontent>empty</bodycontent>
+        <attribute>
+            <name>path</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <tag>
+        <name>param</name>
+        <tagclass>org.hippoecm.hst.tags.ParamTag</tagclass>
+        <bodycontent>empty</bodycontent>
+        <attribute>
+            <name>name</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <tag>
+        <name>url</name>
+        <tagclass>org.hippoecm.hst.tags.HstURLTag</tagclass>
+        <teiclass>org.hippoecm.hst.tags.HstURLTag$TEI</teiclass>
+        <bodycontent>JSP</bodycontent>
+        <attribute>
+            <name>type</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <tag>
+        <name>namespace</name>
+        <tagclass>org.hippoecm.hst.tags.NamespaceTag</tagclass>
+        <bodycontent>empty</bodycontent>
+    </tag>
+</taglib>

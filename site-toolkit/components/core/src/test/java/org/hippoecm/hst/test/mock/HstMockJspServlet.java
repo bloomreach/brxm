@@ -15,7 +15,10 @@ import org.hippoecm.hst.core.container.HstComponentWindow;
 
 public class HstMockJspServlet extends HttpServlet {
     
+    private static final long serialVersionUID = 1L;
+
     public void init(ServletConfig config) throws ServletException {
+        super.init(config);
     }
     
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {

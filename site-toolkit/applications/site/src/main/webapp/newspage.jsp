@@ -1,4 +1,9 @@
 <%@ page language="java" %>
+<%@ taglib uri='/WEB-INF/hst-core.tld' prefix='hc'%>
+
+<%
+System.out.println("Console out from newspage.jsp");
+%>
 
 <html>
 <head>
@@ -6,9 +11,7 @@
 </head>
 <body>
 
-<!--
-<hst:content component="h" />
--->
+<hc:content path="h" />
 
 </body>
 </html>

@@ -1,8 +1,15 @@
 package org.hippoecm.hst.core.container;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.container.ContainerConstants;
+import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstRequestImpl;
+import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.component.HstResponseImpl;
+import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class ActionValve extends AbstractValve
@@ -13,15 +20,21 @@ public class ActionValve extends AbstractValve
     {
         if (isActionRequest()) {
             
-            HstComponentWindow actionWindow = findActionWindow(context.getRootComponentWindow());
+            HstComponentWindow window = findActionWindow(context.getRootComponentWindow());
             
-            if (actionWindow != null) {
+            if (window != null) {
                 ServletRequest servletRequest = context.getServletRequest();
-                servletRequest.setAttribute(ContainerConstants.HST_COMPONENT_WINDOW, actionWindow);
-                HstComponentInvoker invoker = getComponentInvoker();
-                invoker.invokeAction(context.getServletContext(), servletRequest, context.getServletResponse());
+                ServletResponse servletResponse = context.getServletResponse();
+                HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
+
+                HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
+                HstResponseState responseState = new HstResponseState((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
+                ((HstComponentWindowImpl) window).setResponseState(responseState);
+                HstResponse response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window, responseState);
+
+                getComponentInvoker().invokeAction(context.getServletContext(), request, response);
             } else {
-                throw new ContainerException("No action window.");
+                throw new ContainerException("No action window found.");
             }
         }
         
