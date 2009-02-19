@@ -3,7 +3,7 @@
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
-  Copyright 2007 Hippo
+  Copyright 2008 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@
   </properties>
   <body>
     <section name="Creating your own WAR package">
-      
+
       <span class="shortdesc">Package Hippo CMS with your own add-on.</span>
-      
+
       <p>
         In <a href="editing_template.html">Creating an Editing Template Add-on </a>
         we created an add-on containing a custom document type.
@@ -43,52 +43,59 @@
         <b>Note:</b> It is assumed that you have a project with a POM file
         similar to the one created in
         <a href="editing_template.html">Creating an Editing Template Add-on </a>.
-        Follow that guide first if you don't have such a project and POM file. 
+        Follow that guide first if you don't have such a project and POM file.
       </p>
-      
+
       <subsection name="Make your project a WAR project">
         <p>
           In <a href="editing_template.html">Creating an Editing Template Add-on </a>
           you created a JAR project. Change the packaging in pom.xml from "jar" to
           "war":
         </p>
-        <source><![CDATA[<packaging>war</packaging>]]></source>        
+        <source><![CDATA[<packaging>war</packaging>]]></source>
       </subsection>
-      
+
       <subsection name="Add the WAR dependency">
         <p>
-          Add a dependency to the Hippo CMS Quickstart WAR to our POM file.
+          Add a dependencies section in your POM file and in it add a dependency to the Hippo CMS Quickstart WAR:
         </p>
-        <source>
-&lt;dependency&gt;
-    &lt;groupId&gt;org.hippoecm&lt;/groupId&gt;
-    &lt;artifactId&gt;hippo-ecm-quickstart-war&lt;/artifactId&gt;
-    &lt;version&gt;2.01.00.14266&lt;/version&gt;
-    &lt;type&gt;war&lt;/type&gt;
-    &lt;scope&gt;runtime&lt;/scope&gt;
-&lt;/dependency&gt;
-</source>
+        <source><![CDATA[
+ <dependencies>
+  <dependency>
+   <groupId>org.hippoecm</groupId>
+   <artifactId>hippo-ecm-quickstart-war</artifactId>
+   <version>${dependency_version}</version>
+   <type>war</type>
+   <scope>runtime</scope>
+  </dependency>
+ </dependencies>
+]]></source>
       </subsection>
       <subsection name="Configure the WAR overlay">
         <p>
-          Add the following to the plugins section of pom.xml. It tells Maven to use the Quickstart WAR as an 
-          <a href='http://maven.apache.org/plugins/maven-war-plugin/overlays.html'>overlay</a>.
+         Add a build section in your POM file and in it a plugins section. In the plugins section
+         configure the maven war plugin to use the Quickstart WAR as an
+          <a href='http://maven.apache.org/plugins/maven-war-plugin/overlays.html'>overlay</a>:
         </p>
-        <source>
-&lt;plugin&gt;
-  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-  &lt;artifactId&gt;maven-war-plugin&lt;/artifactId&gt;
-  &lt;version&gt;2.1-alpha-1&lt;/version&gt;
-  &lt;configuration&gt;
-    &lt;overlays&gt;
-    &lt;overlay&gt;
-          &lt;groupId&gt;org.hippoecm&lt;/groupId&gt;
-          &lt;artifactId&gt;hippo-ecm-quickstart-war&lt;/artifactId&gt;
-        &lt;/overlay&gt;
-    &lt;/overlays&gt;
-  &lt;/configuration&gt;
-&lt;/plugin&gt;
-</source>
+        <source><![CDATA[
+ <build>
+  <plugins>
+   <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-war-plugin</artifactId>
+    <version>2.1-alpha-1</version>
+    <configuration>
+     <overlays>
+      <overlay>
+       <groupId>org.hippoecm</groupId>
+       <artifactId>hippo-ecm-quickstart-war</artifactId>
+      </overlay>
+     </overlays>
+    </configuration>
+   </plugin>
+  </plugins>
+ </build>
+]]></source>
       <p>
         That's it. Running <b>mvn install</b> will create a custom WAR of your own plugin project and store it in the Maven repository.
       </p>
@@ -126,51 +133,51 @@
         Add the following plugin section to your plugins section in your pom file.
         You will now be able to test drive your war with <b>mvn jetty:run-war</b>.
       </p>
-      <source>
-&lt;plugin&gt;
-  &lt;groupId&gt;org.mortbay.jetty&lt;/groupId&gt;
-  &lt;artifactId&gt;maven-jetty-plugin&lt;/artifactId&gt;
-  &lt;version&gt;6.1.10&lt;/version&gt;
-  &lt;configuration&gt;
-    &lt;scanIntervalSeconds&gt;5&lt;/scanIntervalSeconds&gt;
-    &lt;connectors&gt;
-      &lt;connector implementation="org.mortbay.jetty.nio.SelectChannelConnector"&gt;
-        &lt;port&gt;8080&lt;/port&gt;
-      &lt;/connector&gt;
-    &lt;/connectors&gt;
-    &lt;contextPath&gt;/cms&lt;/contextPath&gt;
-  &lt;/configuration&gt;
-  &lt;dependencies&gt;
-    &lt;!-- atomikos dependecies for running jetty:run[-war|-exploded] --&gt;
-    &lt;dependency&gt;
-      &lt;groupId&gt;com.atomikos&lt;/groupId&gt;
-      &lt;artifactId&gt;transactions-api&lt;/artifactId&gt;
-      &lt;version&gt;3.1.4&lt;/version&gt;
-      &lt;scope&gt;runtime&lt;/scope&gt;
-    &lt;/dependency&gt;
-    &lt;dependency&gt;
-      &lt;groupId&gt;com.atomikos&lt;/groupId&gt;
-      &lt;artifactId&gt;transactions-jta&lt;/artifactId&gt;
-      &lt;version&gt;3.1.4&lt;/version&gt;
-      &lt;scope&gt;runtime&lt;/scope&gt;
-    &lt;/dependency&gt;
-    &lt;dependency&gt;
-      &lt;groupId&gt;com.atomikos&lt;/groupId&gt;
-      &lt;artifactId&gt;transactions&lt;/artifactId&gt;
-      &lt;version&gt;3.1.4&lt;/version&gt;
-      &lt;scope&gt;runtime&lt;/scope&gt;
-    &lt;/dependency&gt;
-    &lt;dependency&gt;
-      &lt;groupId&gt;com.atomikos&lt;/groupId&gt;
-      &lt;artifactId&gt;atomikos-util&lt;/artifactId&gt;
-      &lt;version&gt;3.1.4&lt;/version&gt;
-      &lt;scope&gt;runtime&lt;/scope&gt;
-    &lt;/dependency&gt;
-  &lt;/dependencies&gt;
-&lt;/plugin&gt;
-      </source>
+      <source><![CDATA[
+   <plugin>
+    <groupId>org.mortbay.jetty</groupId>
+    <artifactId>maven-jetty-plugin</artifactId>
+    <version>6.1.10</version>
+    <configuration>
+     <scanIntervalSeconds>5</scanIntervalSeconds>
+     <connectors>
+      <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+       <port>8080</port>
+      </connector>
+     </connectors>
+     <contextPath>/cms</contextPath>
+    </configuration>
+    <dependencies>
+     <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
+     <dependency>
+      <groupId>com.atomikos</groupId>
+      <artifactId>transactions-api</artifactId>
+      <version>3.1.4</version>
+      <scope>runtime</scope>
+     </dependency>
+     <dependency>
+      <groupId>com.atomikos</groupId>
+      <artifactId>transactions-jta</artifactId>
+      <version>3.1.4</version>
+      <scope>runtime</scope>
+     </dependency>
+     <dependency>
+      <groupId>com.atomikos</groupId>
+      <artifactId>transactions</artifactId>
+      <version>3.1.4</version>
+      <scope>runtime</scope>
+     </dependency>
+     <dependency>
+      <groupId>com.atomikos</groupId>
+      <artifactId>atomikos-util</artifactId>
+      <version>3.1.4</version>
+      <scope>runtime</scope>
+     </dependency>
+    </dependencies>
+   </plugin>
+]]></source>
     </section>
-    
+
     <section name="Full pom.xml">
       <p>
         If you followed all the steps in this guide, your POM file should look
@@ -278,8 +285,8 @@
   </repositories>
 
 </project>
-]]></source>      
+]]></source>
     </section>
-    
+
   </body>
 </document>

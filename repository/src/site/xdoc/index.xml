@@ -30,13 +30,13 @@
 
       <span class='listrank'>1</span>
       <p>
-        Hippo CMS (Hippo Content Management System) is the web-based graphical user interface to the content in the 
-        repository of Hippo ECM. It provides an easy way to create and manage your content, i.e. to 
-        write or upload, share, print, search, refer to, edit and structure content, assign rights to do so, 
-        have content automatically validated against your business rules and restore previous versions of the content. 
+        Hippo CMS (Hippo Content Management System) is the web-based graphical user interface to the content in the
+        repository of Hippo ECM. It provides an easy way to create and manage your content, i.e. to
+        write or upload, share, print, search, refer to, edit and structure content, assign rights to do so,
+        have content automatically validated against your business rules and restore previous versions of the content.
       </p>
-      <p>Hippo CMS is open source and continually in agile development, providing new features monthly. 
-         See the <a href='./changes-report.html'>release notes</a> for available releases and the 
+      <p>Hippo CMS is open source and continually in agile development, providing new features monthly.
+         See the <a href='./changes-report.html'>release notes</a> for available releases and the
          <a href='./about/roadmap.html'>roadmap</a> for coming releases.
       </p>
 
@@ -56,7 +56,7 @@
    <tr>
     <td>
      Multi-user
-    </td>  
+    </td>
     <td>
      <span class='multiuser-48 icon-48'/>
     </td>

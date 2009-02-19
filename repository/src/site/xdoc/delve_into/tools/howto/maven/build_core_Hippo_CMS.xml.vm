@@ -26,8 +26,13 @@
    <section name="Building the core Hippo CMS">
     <span class='shortdesc'>How to build the core Hippo CMS package from the sources?</span>
 
-    <p>As a developer of addons on top of the Hippo CMS, you want to package your own project,
-       not just the Hippo CMS itself, but you may want to do that as a test.
+    <p>As a website developer you do not need to build the core Hippo CMS package, as
+       you can use it as a dependency. But you will have to build your own package and
+       you can read these pages as an example.
+    </p>
+    <p>As a developer of addons on top of the Hippo CMS, you have to build a package from
+       a project that has the core Hippo CMS package as a subproject. So just building
+       the Hippo CMS itself will not suffice, but it is good way to start learning about it.
     </p>
     <p>
      Assuming that you have
