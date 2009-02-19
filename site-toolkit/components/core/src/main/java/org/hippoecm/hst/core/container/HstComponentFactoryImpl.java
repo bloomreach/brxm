@@ -31,7 +31,7 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
             try {
                 Class compClass = loader.loadClass(componentClassName);
                 component = (HstComponent) compClass.newInstance();
-                component.init(this.servletConfig);
+                component.init(this.servletConfig, compConfig);
                 this.componentMap.put(compConfig.getId(), component);
             } catch (ClassNotFoundException e) {
                 throw new HstComponentException("Cannot find the class of " + compConfigId + ": " + componentClassName);

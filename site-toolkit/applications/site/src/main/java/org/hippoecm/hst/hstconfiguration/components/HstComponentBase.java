@@ -2,6 +2,7 @@ package org.hippoecm.hst.hstconfiguration.components;
 
 import javax.servlet.ServletConfig;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfigurationBean;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -26,7 +27,7 @@ public class HstComponentBase implements HstComponent {
         this.name = name;
     }
     
-    public void init(ServletConfig servletConfig) throws HstComponentException {
+    public void init(ServletConfig servletConfig, HstComponentConfigurationBean compConfig) throws HstComponentException {
         System.out.println("[HstComponent: " + getName() + "] init()");
     }
 
