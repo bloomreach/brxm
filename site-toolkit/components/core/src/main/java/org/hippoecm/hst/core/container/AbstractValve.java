@@ -2,6 +2,7 @@ package org.hippoecm.hst.core.container;
 
 import org.hippoecm.hst.configuration.HstSiteMapMatcher;
 import org.hippoecm.hst.configuration.HstSites;
+import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.domain.DomainMappings;
 import org.hippoecm.hst.core.request.HstRequestContextComponent;
 
@@ -14,6 +15,7 @@ public abstract class AbstractValve implements Valve
     protected HstComponentFactory componentFactory;
     protected HstComponentWindowFactory componentWindowFactory;
     protected HstComponentInvoker componentInvoker;
+    protected HstURLFactory urlFactory;
     
     public HstSites getHstSites() {
         return hstSites;
@@ -69,6 +71,14 @@ public abstract class AbstractValve implements Valve
     
     public void setComponentInvoker(HstComponentInvoker componentInvoker) {
         this.componentInvoker = componentInvoker;
+    }
+    
+    public HstURLFactory getUrlFactory() {
+        return this.urlFactory;
+    }
+    
+    public void setUrlFactory(HstURLFactory urlFactory) {
+        this.urlFactory = urlFactory;
     }
 
     public abstract void invoke(ValveContext context) throws ContainerException;

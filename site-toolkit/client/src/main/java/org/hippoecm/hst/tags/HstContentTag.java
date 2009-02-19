@@ -45,6 +45,7 @@ public class HstContentTag extends TagSupport {
             
             if (childWindow != null) {
                 try {
+                    this.pageContext.getOut().flush();
                     childWindow.flushContent();
                 } catch (IOException e) {
                 }

@@ -29,8 +29,8 @@ public class HstMockJspServlet extends HttpServlet {
         System.out.println(content);
         
         PrintWriter out = res.getWriter();
-        out.println(content);
-        out.flush();
+        
+        out.println("START:" + content);
 
         // add children here.
         if (req instanceof HstRequest) {
@@ -45,6 +45,8 @@ public class HstMockJspServlet extends HttpServlet {
             }
         }
 
+        out.println("END:" + content);
+        out.flush();
     }
     
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {

@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hippoecm.hst.container.ContainerConstants;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstResponseState;
+import org.springframework.util.StringUtils;
 
 public class HstComponentWindowImpl implements HstComponentWindow {
     
@@ -15,6 +17,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected String renderPath;
     protected HstComponentWindow parentWindow;
     protected Map<String, HstComponentWindow> childWindowMap;
+    
     protected HstResponseState responseState;
     
     public HstComponentWindowImpl(String referenceName, String referenceNamespace, HstComponent component, String renderPath, HstComponentWindow parentWindow) {
@@ -41,11 +44,11 @@ public class HstComponentWindowImpl implements HstComponentWindow {
         return this.childWindowMap;
     }
     
-    public HstComponentWindow getChildWindow(String path) {
+    public HstComponentWindow getChildWindow(String referenceName) {
         HstComponentWindow childWindow = null;
         
         if (this.childWindowMap != null) {
-            childWindow = this.childWindowMap.get(path);
+            childWindow = this.childWindowMap.get(referenceName);
         }
         
         return childWindow;
@@ -59,22 +62,26 @@ public class HstComponentWindowImpl implements HstComponentWindow {
         return this.referenceNamespace;
     }
     
-    public void setResponseState(HstResponseState responseState) {
-        this.responseState = responseState;
-    }
-    
     public void flushContent() throws IOException {
         if (this.responseState != null) {
+            if (this.parentWindow != null) {
+                ((HstComponentWindowImpl) this.parentWindow).responseState.flushBuffer();
+            }
+            
             this.responseState.flush();
         }
     }
     
-    protected void addChildWindow(String name, HstComponentWindow child) {
+    protected void addChildWindow(HstComponentWindow child) {
         if (this.childWindowMap == null) {
             this.childWindowMap = new HashMap<String, HstComponentWindow>();
         }
         
-        this.childWindowMap.put(name, child);
+        this.childWindowMap.put(child.getReferenceName(), child);
     }
 
+    protected void setResponseState(HstResponseState responseState) {
+        this.responseState = responseState;
+    }
+    
 }

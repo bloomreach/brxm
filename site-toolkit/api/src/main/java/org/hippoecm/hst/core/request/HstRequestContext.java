@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.component.HstURL;
 
 /**
  * HstRequestContext provides repository content context
@@ -42,5 +43,7 @@ public interface HstRequestContext {
     public Credentials getDefaultCredentials();
     
     public HstSiteMapItem getSiteMapItem();
+    
+    public HstURL createURL(String type, String parameterNamespace);
     
 }

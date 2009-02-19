@@ -11,6 +11,12 @@ import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstComponentWindowFactory;
 
 public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory {
+    
+    protected String namespaceSeparator = ContainerConstants.DEFAULT_COMPONENT_WINDOW_NAMESPACE_SEPARATOR;
+    
+    public void setNamespaceSeparator(String namespaceSeparator) {
+        this.namespaceSeparator = namespaceSeparator;
+    }
 
     public HstComponentWindow create(HstComponentConfiguration compConfig, HstComponentFactory compFactory) throws HstComponentException {
         return create(compConfig, compFactory, null);
@@ -24,13 +30,7 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         if (parentWindow == null) {
             referenceNamespace = "";
         } else {
-            String parentReferenceNamespace = parentWindow.getReferenceNamespace();
-            
-            if (!"".equals(parentReferenceNamespace)) {
-                referenceNamespace = parentReferenceNamespace + ContainerConstants.COMPONENT_WINDOW_NAMESPACE_SEPARATOR + referenceName;
-            } else {
-                referenceNamespace = referenceName;
-            }
+            referenceNamespace = parentWindow.getReferenceNamespace() + this.namespaceSeparator + referenceName;
         }
 
         String renderPath = compConfig.getRenderPath();
@@ -55,7 +55,7 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
             for (Map.Entry<String, HstComponentConfiguration> entry : childCompConfigMap.entrySet()) {
                 HstComponentConfiguration childCompConfig = entry.getValue();
                 HstComponentWindow childCompWindow = create(childCompConfig, compFactory, window);
-                window.addChildWindow(childCompWindow.getReferenceName(), childCompWindow);
+                window.addChildWindow(childCompWindow);
             }
         }
         

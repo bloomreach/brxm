@@ -23,6 +23,8 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstRequestContextImpl implements HstRequestContext {
@@ -31,6 +33,8 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected Session session;
     protected Credentials defaultCredentials;
     protected HstSiteMapItem siteMapItem;
+    protected HstURLFactory urlFactory;
+    protected HstURL baseURL;
 
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
@@ -62,5 +66,25 @@ public class HstRequestContextImpl implements HstRequestContext {
     public HstSiteMapItem getSiteMapItem() {
         return this.siteMapItem;
     }
+    
+    public void setBaseURL(HstURL baseURL) {
+        this.baseURL = baseURL;
+    }
+    
+    public HstURL getBaseURL() {
+        return this.baseURL;
+    }
+    
+    public void setURLFactory(HstURLFactory urlFactory) {
+        this.urlFactory = urlFactory;
+    }
+    
+    public HstURLFactory getURLFactory() {
+        return this.urlFactory;
+    }
 
+    public HstURL createURL(String type, String parameterNamespace) {
+        return this.urlFactory.createURL(type, parameterNamespace, this.baseURL);
+    }
+    
 }

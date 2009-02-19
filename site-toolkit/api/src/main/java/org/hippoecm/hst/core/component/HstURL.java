@@ -6,11 +6,10 @@ import java.util.Map;
 
 public interface HstURL {
     
-    /**
-     * URL type which can one of these: 'action', 'render', or 'resource'.
-     * 
-     * @param type
-     */
+    String TYPE_ACTION = "action";
+    String TYPE_RENDER = "render";
+    String TYPE_RESOURCE = "resource";
+    
     void setType(String type);
     
     String getType();

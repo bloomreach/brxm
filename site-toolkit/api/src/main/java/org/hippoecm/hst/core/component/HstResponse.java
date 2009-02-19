@@ -4,4 +4,6 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface HstResponse extends HttpServletResponse {
     
+    HstURL createURL(String type);
+    
 }

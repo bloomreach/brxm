@@ -23,11 +23,16 @@
   
   <bean id="org.hippoecm.hst.core.container.HstComponentWindowFactory"
         class="org.hippoecm.hst.core.container.HstComponentWindowFactoryImpl">
+    <property name="namespaceSeparator" value="_" />
   </bean>
   
   <bean id="org.hippoecm.hst.core.container.HstComponentInvoker"
         class="org.hippoecm.hst.core.container.HstComponentInvokerImpl">
   </bean>
 
+  <bean id="org.hippoecm.hst.core.component.HstURLFactory"
+        class="org.hippoecm.hst.core.component.HstURLFactoryImpl">
+  </bean>
+  
 </beans>
 

@@ -1,25 +1,35 @@
 package org.hippoecm.hst.tags;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
 
 public class HstURLTag extends BaseHstURLTag {
 
     private static final long serialVersionUID = 1L;
+    
+    protected HstURL url;
 
     @Override
     protected HstURL getUrl() {
-        // TODO Auto-generated method stub
-        return null;
+        if (this.url == null) {
+            HttpServletResponse servletResponse = (HttpServletResponse) this.pageContext.getResponse();
+            
+            if (servletResponse instanceof HstResponse) {
+                this.url = ((HstResponse) servletResponse).createURL(getType());
+            }
+        }
+        
+        return this.url;
     }
 
     @Override
     protected void setUrl(HstURL url) {
-        // TODO Auto-generated method stub
-
+        this.url = url;
     }
 
     /**
