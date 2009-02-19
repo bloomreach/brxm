@@ -44,6 +44,8 @@ public interface HstRequestContext {
     
     public HstSiteMapItem getSiteMapItem();
     
+    public String getContextNamespace();
+    
     public HstURL createURL(String type, String parameterNamespace);
     
 }

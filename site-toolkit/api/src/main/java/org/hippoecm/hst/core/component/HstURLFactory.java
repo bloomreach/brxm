@@ -5,6 +5,10 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 
 public interface HstURLFactory {
 
-    HstURL createURL(String type, String parameterNamespace, HstContainerURL base);
+    void setParameterNameComponentSeparator(String parameterNameComponentSeparator);
+    
+    String getParameterNameComponentSeparator();
+
+    HstURL createURL(String type, String contextNamespace, String parameterNamespace, HstContainerURL base);
     
 }

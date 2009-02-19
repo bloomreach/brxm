@@ -18,11 +18,13 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     protected Map<String, Map<String, Object>> namespaceParametersMap = new HashMap<String, Map<String, Object>>();
     protected Map<String, Map<String, Object>> namespaceAttributesMap = new HashMap<String, Map<String, Object>>();
     protected HstComponentWindow componentWindow;
+    protected String parameterNameComponentSeparator;
     
-    public HstRequestImpl(HttpServletRequest servletRequest, HstRequestContext requestContext, HstComponentWindow componentWindow) {
+    public HstRequestImpl(HttpServletRequest servletRequest, HstRequestContext requestContext, HstComponentWindow componentWindow, String parameterNameComponentSeparator) {
         super(servletRequest);
         this.requestContext = requestContext;
         this.componentWindow = componentWindow;
+        this.parameterNameComponentSeparator = (parameterNameComponentSeparator == null ? "" : parameterNameComponentSeparator);
     }
     
     public void setRequest(HttpServletRequest servletRequest) {
@@ -38,14 +40,15 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     }
 
     public Map<String, Object> getParameterMap() {
-        String referenceName = this.componentWindow.getReferenceName();
-        return getParameterMap(referenceName);
+        String referenceNamespace = this.componentWindow.getReferenceNamespace();
+        return getParameterMap(referenceNamespace);
     }
     
-    public Map<String, Object> getParameterMap(String namespace) {
-        String reference = getReferenceByNamespace(namespace);
-        int referenceLen = reference.length();
-        Map<String, Object> parameterMap = this.namespaceParametersMap.get(namespace);
+    public Map<String, Object> getParameterMap(String referencePath) {
+        String namespace = getReferenceNamespacePath(referencePath);
+        String prefix = getFullNamespacePrefix(namespace);
+        int paramPrefixLen = prefix.length();
+        Map<String, Object> parameterMap = this.namespaceParametersMap.get(prefix);
         
         if (parameterMap == null) {
             parameterMap = new HashMap<String, Object>();
@@ -53,28 +56,29 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
             for (Enumeration paramNames = super.getParameterNames(); paramNames.hasMoreElements(); ) {
                 String encodedParamName = (String) paramNames.nextElement();
                 
-                if (encodedParamName.startsWith(reference)) {
-                    String paramName = encodedParamName.substring(referenceLen);
+                if (encodedParamName.startsWith(prefix)) {
+                    String paramName = encodedParamName.substring(paramPrefixLen);
                     String [] paramValues = super.getParameterValues(encodedParamName);
                     parameterMap.put(paramName, paramValues.length > 1 ? paramValues : paramValues[0]);
                 }
             }
             
-            this.namespaceParametersMap.put(namespace, parameterMap);
+            this.namespaceParametersMap.put(prefix, parameterMap);
         }
         
         return parameterMap;
     }
     
     public Map<String, Object> getAttributeMap() {
-        String referenceName = this.componentWindow.getReferenceName();
-        return getAttributeMap(referenceName);
+        String referenceNamespace = this.componentWindow.getReferenceNamespace();
+        return getAttributeMap(referenceNamespace);
     }
     
-    public Map<String, Object> getAttributeMap(String namespace) {
-        String reference = getReferenceByNamespace(namespace);
-        int referenceLen = reference.length();
-        Map<String, Object> attributesMap = this.namespaceAttributesMap.get(namespace);
+    public Map<String, Object> getAttributeMap(String referencePath) {
+        String namespace = getReferenceNamespacePath(referencePath);
+        String prefix = getFullNamespacePrefix(namespace);
+        int prefixLen = prefix.length();
+        Map<String, Object> attributesMap = this.namespaceAttributesMap.get(prefix);
         
         if (attributesMap == null) {
             attributesMap = new HashMap<String, Object>();
@@ -82,14 +86,14 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
             for (Enumeration attributeNames = super.getAttributeNames(); attributeNames.hasMoreElements(); ) {
                 String encodedAttributeName = (String) attributeNames.nextElement();
                 
-                if (encodedAttributeName.startsWith(reference)) {
-                    String attributeName = encodedAttributeName.substring(referenceLen);
+                if (encodedAttributeName.startsWith(prefix)) {
+                    String attributeName = encodedAttributeName.substring(prefixLen);
                     Object attributeValue = super.getAttribute(encodedAttributeName);
                     attributesMap.put(attributeName, attributeValue);
                 }
             }
             
-            this.namespaceAttributesMap.put(namespace, attributesMap);
+            this.namespaceAttributesMap.put(prefix, attributesMap);
         }
         
         return attributesMap;
@@ -157,11 +161,6 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         }
     }
     
-    protected String getReferenceByNamespace(String namespace) {
-        // TODO: find the reference name of the current request context by both absolute namespace and relative namespace.
-        return namespace;
-    }
-    
     public HstRequestContext getRequestContext() {
         return (HstRequestContext) super.getAttribute(HstRequestContext.class.getName());
     }
@@ -174,4 +173,23 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         return null;
     }
 
+    protected String getReferenceNamespacePath(String referencePath) {
+        // TODO: find the reference name of the current request context by both absolute namespace and relative namespace.
+        return referencePath;
+    }
+    
+    protected String getFullNamespacePrefix(String referenceNamespace) {
+        String prefix = null;
+        
+        String contextNamespace = this.requestContext.getContextNamespace();
+        
+        if (contextNamespace != null && !"".equals(contextNamespace)) {
+            prefix = contextNamespace + this.parameterNameComponentSeparator + referenceNamespace + this.parameterNameComponentSeparator;
+        } else {
+            prefix = referenceNamespace + this.parameterNameComponentSeparator;
+        }
+        
+        return prefix;
+    }
+    
 }

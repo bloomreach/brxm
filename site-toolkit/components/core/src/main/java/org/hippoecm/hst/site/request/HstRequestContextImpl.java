@@ -30,12 +30,13 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstRequestContextImpl implements HstRequestContext {
 
-    private Repository repository;
+    protected Repository repository;
     protected Session session;
     protected Credentials defaultCredentials;
     protected HstSiteMapItem siteMapItem;
     protected HstURLFactory urlFactory;
     protected HstContainerURL baseURL;
+    protected String contextNamespace;
 
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
@@ -44,6 +45,14 @@ public class HstRequestContextImpl implements HstRequestContext {
     public HstRequestContextImpl(Repository repository, Credentials defaultCredentials) {
         this.repository = repository;
         this.defaultCredentials = defaultCredentials;
+    }
+    
+    public void setContextNamespace(String contextNamespace) {
+        this.contextNamespace = contextNamespace;
+    }
+    
+    public String getContextNamespace() {
+        return this.contextNamespace;
     }
     
     public Session getSession() throws LoginException, RepositoryException {
@@ -85,7 +94,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     }
 
     public HstURL createURL(String type, String parameterNamespace) {
-        return this.urlFactory.createURL(type, parameterNamespace, this.baseURL);
+        return this.urlFactory.createURL(type, this.contextNamespace, parameterNamespace, this.baseURL);
     }
     
 }

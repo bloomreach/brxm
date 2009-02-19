@@ -33,6 +33,10 @@ function <hc:namespace/>showPopup() {
     <a href="<%=prevUrl%>">Previous</a>
     <a href="<%=nextUrl%>">Next</a>
     
+    <div>
+        title parameters: <%=request.getParameterMap()%>
+    </div>
+    
 </div>
 
 </div>

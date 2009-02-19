@@ -3,7 +3,6 @@ package org.hippoecm.hst.core.container;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.container.ContainerConstants;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.container.HstComponentFactory;
@@ -30,7 +29,13 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         if (parentWindow == null) {
             referenceNamespace = "";
         } else {
-            referenceNamespace = parentWindow.getReferenceNamespace() + this.namespaceSeparator + referenceName;
+            String parentReferenceNamespace = parentWindow.getReferenceNamespace();
+            
+            if ("".equals(parentReferenceNamespace)) {
+                referenceNamespace = referenceName;
+            } else {
+                referenceNamespace = parentWindow.getReferenceNamespace() + this.namespaceSeparator + referenceName;
+            }
         }
 
         String renderPath = compConfig.getRenderPath();

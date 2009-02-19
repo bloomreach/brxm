@@ -64,7 +64,7 @@ public class AggregationValve extends AbstractValve {
             final Map<HstComponentWindow, HstResponseState> responseStateMap, 
             final Map<HstComponentWindow, HstResponse> responseMap) {
         
-        HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
+        HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, getUrlFactory().getParameterNameComponentSeparator());
         HstResponseState responseState = new HstResponseState((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
         HstResponse response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window, responseState);
 

@@ -32,6 +32,10 @@ function <hc:namespace/>showPopup() {
     <a href="<%=firstUrl%>">First</a>
     <a href="<%=lastUrl%>">Last</a>
     
+    <div>
+        header parameters: <%=request.getParameterMap()%>
+    </div>
+    
 </div>
 
 </div>
