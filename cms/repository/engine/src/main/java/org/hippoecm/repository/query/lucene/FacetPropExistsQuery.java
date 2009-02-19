@@ -40,20 +40,14 @@ public class FacetPropExistsQuery {
      */
     private BooleanQuery query;
 
-    public FacetPropExistsQuery(String facet, NamespaceMappings nsMappings, ServicingIndexingConfiguration indexingConfig) {
+    public FacetPropExistsQuery(String facet, String internalName, ServicingIndexingConfiguration indexingConfig) {
         this.query = new BooleanQuery(true);
 
         Name nodeName;
-        String internalName = "";
         nodeName = NameFactoryImpl.getInstance().create(facet);
         if (indexingConfig.isFacet(nodeName)) {
-            try {
-                internalName = nsMappings.translatePropertyName(nodeName);
-                Query q = new FixedScoreTermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalName));
-                this.query.add(q, Occur.MUST);
-            } catch (IllegalNameException ex) {
-                log.error(ex.getClass().getName() + ": " + ex.getMessage());
-            }
+            Query q = new FixedScoreTermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalName));
+            this.query.add(q, Occur.MUST);
         } else {
             log.warn("Property " + nodeName.getNamespaceURI() + ":" + nodeName.getLocalName() + " not allowed for facetted search. " +
                     "Add the property to the indexing configuration to be defined as FACET");

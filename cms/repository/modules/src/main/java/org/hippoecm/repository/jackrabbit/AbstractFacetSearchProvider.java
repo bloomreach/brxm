@@ -144,7 +144,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
             facetSearchResultMap = new TreeMap<String, Map<String, FacetedNavigationEngine.Count>>();
             Map<String, FacetedNavigationEngine.Count> facetSearchResult;
             facetSearchResult = new TreeMap<String, FacetedNavigationEngine.Count>();
-            facetSearchResultMap.put(resolveName(facets[0]).toString(), facetSearchResult);
+            facetSearchResultMap.put(resolvePath(facets[0]).toString(), facetSearchResult);
 
             Map<String, String> currentFacetQuery = new TreeMap<String, String>();
             for (int i = 0; search != null && i < search.length; i++) {

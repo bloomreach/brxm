@@ -17,10 +17,13 @@ package org.hippoecm.repository.query.lucene;
 
 import java.util.Map;
 
+import javax.jcr.NamespaceException;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.Path.Element;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
@@ -50,11 +53,17 @@ public class FacetsQuery {
         if (facetsQuery != null) {
             for (Map.Entry<String, String> entry : facetsQuery.entrySet()) {
                 Name nodeName;
-                String internalName = "";
                 try {
                     nodeName = NameFactoryImpl.getInstance().create(entry.getKey());
                     if (indexingConfig.isFacet(nodeName)) {
-                        internalName = ServicingNameFormat.getInternalFacetName(nodeName, nsMappings);
+                        StringBuffer propertyName = new StringBuffer();
+                        Element[] pathElements = PathFactoryImpl.getInstance().create(entry.getKey()).getElements();
+                        propertyName.append(nsMappings.translatePropertyName(pathElements[pathElements.length - 1].getName()));
+                        for (int i = 0; i < pathElements.length - 1; i++) {
+                            propertyName.append("/");
+                            propertyName.append(nsMappings.translatePropertyName(pathElements[i].getName()));
+                        }
+                        String internalName = ServicingNameFormat.getInternalFacetName(new String(propertyName), nsMappings);
                         /*
                          * TODO HREPTWO-652 : when lucene 2.3.x or higher is used, replace wildcardquery
                          * below with FixedScoreTermQuery without wildcard, and use payload to get the type
@@ -63,9 +72,11 @@ public class FacetsQuery {
                         //Query q = new FixedScoreTermQuery(new Term(internalName, entry.getValue() + "?"));
                         this.query.add(wq, Occur.MUST);
                     } else {
-                        log.warn("Property " + nodeName.getNamespaceURI() + ":" + nodeName.getLocalName() + " not allowed for facetted search. " + "Add the property to the indexing configuration to be defined as FACET");
+                        log.warn("Property " + entry.getKey() + " not allowed for facetted search. " + "Add the property to the indexing configuration to be defined as FACET");
                     }
                 } catch (IllegalNameException e) {
+                    log.error(e.toString());
+                } catch (NamespaceException e) {
                     log.error(e.toString());
                 }
             }

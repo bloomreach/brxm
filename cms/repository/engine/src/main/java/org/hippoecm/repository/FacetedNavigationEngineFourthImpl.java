@@ -31,8 +31,9 @@ import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.Path.Element;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
-import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
@@ -227,25 +228,33 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
                      * in the query without this facet. Therefor, first get the count query without
                      * FacetPropExistsQuery.
                      */
-
-                    long start1 = System.currentTimeMillis();
+                    long timestamp = 0;
+                    timestamp = System.currentTimeMillis();
                     int numHits = searcher.search(searchQuery, authorizationFilter).length();
                     if (log.isDebugEnabled()) {
-                        log.debug("lucene query no collector took: \t" + (System.currentTimeMillis() - start1)
+                        log.debug("lucene query no collector took: \t" + (System.currentTimeMillis() - timestamp)
                                 + " ms for #" + numHits + ". Query: " + searchQuery.toString());
                     }
-                    System.out.println("lucene query no collector took: \t" + (System.currentTimeMillis() - start1)
+                    System.out.println("lucene query no collector took: \t" + (System.currentTimeMillis() - timestamp)
                             + " ms for #" + numHits + ". Query: " + searchQuery.toString());
+                    StringBuffer propertyName = new StringBuffer();
+                    Element[] pathElements = PathFactoryImpl.getInstance().create(facet).getElements();
+                    propertyName.append(nsMappings.translatePropertyName(pathElements[pathElements.length-1].getName()));
+                    for(int i=0; i<pathElements.length-1; i++) {
+                        propertyName.append("/");
+                        propertyName.append(nsMappings.translatePropertyName(pathElements[i].getName()));
+                    }
                     /*
                      * facetPropExists: the node must have the property as facet
                      */
-                    FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, nsMappings,
+                    FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, new String(propertyName),
                             (ServicingIndexingConfiguration) getIndexingConfig());
                     searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
 
-                    long start = System.currentTimeMillis();
-                    collector = new FacetResultCollector(indexReader, nsMappings.translatePropertyName(NameFactoryImpl
-                            .getInstance().create(facet)), (facet != null ? resultset.get(facet) : null),
+                    if (log.isDebugEnabled()) {
+                        timestamp = System.currentTimeMillis();
+                    }
+                    collector = new FacetResultCollector(indexReader, new String(propertyName), (facet != null ? resultset.get(facet) : null),
                             hitsRequested, nsMappings);
                     searcher.search(searchQuery,authorizationFilter, collector);
 
@@ -253,26 +262,28 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
                     // set the numHits value
                     collector.setNumhits(numHits);
                     if (log.isDebugEnabled()) {
-                        log.debug("lucene query with collector1 took: \t" + (System.currentTimeMillis() - start)
+                        log.debug("lucene query with collector took: \t" + (System.currentTimeMillis() - timestamp)
                                 + " ms for #" + collector.getNumhits() + ". Query: " + searchQuery.toString());
                     }
 
-                    System.out.println("lucene query with collector1 took: \t" + (System.currentTimeMillis() - start)
+                    System.out.println("lucene query with collector1 took: \t" + (System.currentTimeMillis() - timestamp)
                             + " ms for #" + collector.getNumhits() + ". Query: " + searchQuery.toString());
 
                 }
             } else {
                 // resultset is null, so search for HippoNodeType.HIPPO_RESULTSET
-
-                long start = System.currentTimeMillis();
+                long timestamp = 0;
+                if (log.isDebugEnabled()) {
+                    timestamp = System.currentTimeMillis();
+                }
                 collector = new FacetResultCollector(indexReader, null, null, hitsRequested, nsMappings);
                 searcher.search(searchQuery, authorizationFilter, collector);
                 if (log.isDebugEnabled()) {
-                    log.debug("lucene query with collector2 took: \t" + (System.currentTimeMillis() - start)
+                    log.debug("lucene query with collector took: \t" + (System.currentTimeMillis() - timestamp)
                             + " ms for #" + collector.getNumhits() + ". Query: " + searchQuery.toString());
                 }
 
-                System.out.println("lucene query with collector2 took: \t" + (System.currentTimeMillis() - start)
+                System.out.println("lucene query with collector2 took: \t" + (System.currentTimeMillis() - timestamp)
                         + " ms for #" + collector.getNumhits() + ". Query: " + searchQuery.toString());
 
             }
