@@ -11,6 +11,8 @@ import javax.jcr.Session;
 import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository;
+import org.hippoecm.hst.service.ServiceFactory;
+import org.hippoecm.hst.service.ServiceNamespace;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Test;
 
@@ -32,7 +34,8 @@ public class TestLinks extends AbstractSpringTestCase{
             this.hstLinkCreator = (HstLinkCreator) getComponent(HstLinkCreator.class.getName());
            
         }
-    
+        
+        @Test 
         public void testLinkToSiteMapItemId() {
             
             HstSiteMapItem currentSiteMapItem = hstSites.getSite(TESTPROJECT_NAME).getSiteMap().getSiteMapItemById("products");
@@ -77,9 +80,34 @@ public class TestLinks extends AbstractSpringTestCase{
             
             
         }
-        
-        public void testLinkCreateOfService(){
+       
+       @Test 
+       public void testLinkCreateOfService(){
+           
+        Repository repository = (Repository) getComponent(Repository.class.getName());
+
+        try {
+            Session session = repository.login();
+            HstSiteMapItem currentSiteMapItem = hstSites.getSite(TESTPROJECT_NAME).getSiteMap().getSiteMapItemById("products");
+            Node someProductHandle = (Node) session.getItem(TESTPROJECT_EXISTING_VIRTUALHANDLE);
             
+            TestPage s = ServiceFactory.create(someProductHandle, TestPage.class);
+            
+            
+            HstLink hstLink = hstLinkCreator.create(s.getService(), currentSiteMapItem);
+            
+        } catch (LoginException e) {
+            e.printStackTrace();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
         }
+      }
+       
+       
+       @ServiceNamespace(prefix = "testproject")
+       public interface TestPage {
+           Node  getService();
+           String getTitle();
+       }
         
 }

@@ -5,7 +5,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.hstconfiguration.components.HstComponentBase;
 
-public class NewsOverview extends HstComponentBase {
+public class GeneralLayout extends HstComponentBase {
 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {

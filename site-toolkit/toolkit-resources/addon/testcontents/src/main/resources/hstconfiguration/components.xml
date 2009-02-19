@@ -11,20 +11,20 @@
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:renderpath" sv:type="String">
-                <sv:value>newspage.jsp</sv:value>
+                <sv:value>jsp/pages/general_layout.jsp</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentclassname" sv:type="String">
-                <sv:value>org.hippoecm.hst.hstconfiguration.components.pages.NewsOverview</sv:value>
+                <sv:value>org.hippoecm.hst.hstconfiguration.components.pages.GeneralLayout</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencename" sv:type="String">
-                <sv:value>news</sv:value>
+                <sv:value>newsoverview</sv:value>
             </sv:property>
             <sv:node sv:name="header">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:component</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:renderpath" sv:type="String">
-                    <sv:value>header.jsp</sv:value>
+                    <sv:value>jsp/fragments/header.jsp</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:componentclassname" sv:type="String">
                     <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Header</sv:value>
@@ -37,13 +37,27 @@
                         <sv:value>hst:component</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:renderpath" sv:type="String">
-                        <sv:value>title.jsp</sv:value>
+                        <sv:value>jsp/fragments/header/title.jsp</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:componentclassname" sv:type="String">
-                        <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.DocumentTitle</sv:value>
+                        <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.header.DocumentTitle</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:referencename" sv:type="String">
                         <sv:value>t</sv:value>
+                    </sv:property>
+                </sv:node>
+                <sv:node sv:name="style">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hst:component</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:renderpath" sv:type="String">
+                        <sv:value>jsp/fragments/header/style.jsp</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:componentclassname" sv:type="String">
+                        <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.header.PageStyle</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:referencename" sv:type="String">
+                        <sv:value>s</sv:value>
                     </sv:property>
                 </sv:node>
             </sv:node>
@@ -53,10 +67,10 @@
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:renderpath" sv:type="String">
-                <sv:value>productsview.jsp</sv:value>
+                <sv:value>jsp/pages/general_layout.jsp</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentclassname" sv:type="String">
-                <sv:value>org.hippoecm.hst.hstconfiguration.components.pages.ProductsView</sv:value>
+                <sv:value>org.hippoecm.hst.hstconfiguration.components.pages.GeneralLayout</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencename" sv:type="String">
                 <sv:value>productsview</sv:value>
@@ -66,7 +80,7 @@
                     <sv:value>hst:component</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:renderpath" sv:type="String">
-                    <sv:value>header.jsp</sv:value>
+                    <sv:value>jsp/fragments/header.jsp</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:componentclassname" sv:type="String">
                     <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Header</sv:value>
@@ -79,10 +93,10 @@
                         <sv:value>hst:component</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:renderpath" sv:type="String">
-                        <sv:value>title.jsp</sv:value>
+                        <sv:value>jsp/fragments/header/title.jsp</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:componentclassname" sv:type="String">
-                        <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.DocumentTitle</sv:value>
+                        <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.header.DocumentTitle</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:referencename" sv:type="String">
                         <sv:value>t</sv:value>
@@ -95,10 +109,10 @@
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:renderpath" sv:type="String">
-                <sv:value>productpage.jsp</sv:value>
+                <sv:value>jsp/pages/general_layout.jsp</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentclassname" sv:type="String">
-                <sv:value>org.hippoecm.hst.hstconfiguration.components.pages.ProductPage</sv:value>
+                <sv:value>org.hippoecm.hst.hstconfiguration.components.pages.GeneralLayout</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencename" sv:type="String">
                 <sv:value>productpage</sv:value>
@@ -108,7 +122,7 @@
                     <sv:value>hst:component</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:renderpath" sv:type="String">
-                    <sv:value>header.jsp</sv:value>
+                    <sv:value>jsp/fragments/header.jsp</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:componentclassname" sv:type="String">
                     <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Header</sv:value>
@@ -121,10 +135,10 @@
                         <sv:value>hst:component</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:renderpath" sv:type="String">
-                        <sv:value>title.jsp</sv:value>
+                        <sv:value>jsp/fragments/header/title.jsp</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:componentclassname" sv:type="String">
-                        <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.DocumentTitle</sv:value>
+                        <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.header.DocumentTitle</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:referencename" sv:type="String">
                         <sv:value>t</sv:value>
@@ -137,10 +151,10 @@
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:renderpath" sv:type="String">
-                <sv:value>solutionsviewe.jsp</sv:value>
+                <sv:value>jsp/pages/general_layout.jsp</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentclassname" sv:type="String">
-                <sv:value>org.hippoecm.hst.hstconfiguration.components.pages.SolutionsView</sv:value>
+                <sv:value>org.hippoecm.hst.hstconfiguration.components.pages.GeneralLayout</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencename" sv:type="String">
                 <sv:value>solutionsview</sv:value>
@@ -150,7 +164,7 @@
                     <sv:value>hst:component</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:renderpath" sv:type="String">
-                    <sv:value>header.jsp</sv:value>
+                    <sv:value>jsp/fragments/header.jsp</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:componentclassname" sv:type="String">
                     <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Header</sv:value>
@@ -163,10 +177,10 @@
                         <sv:value>hst:component</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:renderpath" sv:type="String">
-                        <sv:value>title.jsp</sv:value>
+                        <sv:value>jsp/fragments/header/title.jsp</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:componentclassname" sv:type="String">
-                        <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.DocumentTitle</sv:value>
+                        <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.header.DocumentTitle</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:referencename" sv:type="String">
                         <sv:value>t</sv:value>
@@ -184,7 +198,7 @@
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:renderpath" sv:type="String">
-                <sv:value>header.jsp</sv:value>
+                <sv:value>jsp/fragments/header.jsp</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentclassname" sv:type="String">
                 <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Header</sv:value>
@@ -197,10 +211,10 @@
                     <sv:value>hst:component</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:renderpath" sv:type="String">
-                    <sv:value>title.jsp</sv:value>
+                    <sv:value>jsp/fragments/header/title.jsp</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:componentclassname" sv:type="String">
-                    <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.DocumentTitle</sv:value>
+                    <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.header.DocumentTitle</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:referencename" sv:type="String">
                     <sv:value>t</sv:value>

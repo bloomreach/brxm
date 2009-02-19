@@ -9,6 +9,8 @@ System.out.println("Console out from newspage.jsp");
 <head>
 <title>News Page</title>
 <style>
+
+
 .page {
     BACKGROUND-COLOR: #DDDDDD; 
 }

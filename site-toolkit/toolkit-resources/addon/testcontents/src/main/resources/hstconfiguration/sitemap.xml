@@ -23,7 +23,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-            <sv:value>pagecontent/news</sv:value>
+            <sv:value>News</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>pages/newsoverview</sv:value>

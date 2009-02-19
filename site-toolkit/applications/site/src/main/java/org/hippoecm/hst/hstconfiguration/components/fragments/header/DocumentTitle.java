@@ -1,4 +1,4 @@
-package org.hippoecm.hst.hstconfiguration.components.fragments;
+package org.hippoecm.hst.hstconfiguration.components.fragments.header;
 
 import org.hippoecm.hst.hstconfiguration.components.HstComponentBase;
 
