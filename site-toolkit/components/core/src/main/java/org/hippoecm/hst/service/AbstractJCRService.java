@@ -1,12 +1,14 @@
 package org.hippoecm.hst.service;
 
+import java.io.Serializable;
+
 import javax.jcr.Node;
 
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.hst.service.jcr.JCRService;
 
-public abstract class AbstractJCRService implements JCRService{
+public abstract class AbstractJCRService implements JCRService, Serializable {
     
     private transient JCRValueProvider valueProvider;
     

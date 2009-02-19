@@ -30,15 +30,15 @@ public class NamespacedBeanMethodInterceptor implements MethodInterceptor, Seria
         
         if (methodName.startsWith("get") && paramTypes.length == 0) {
             String propName = getCamelString(methodName.substring(3));
-            return provider.getProperty(namespacePrefix, propName, returnType);
+            return provider.getProperty(namespacePrefix, propName, returnType, method);
         } else if (methodName.startsWith("is") && paramTypes.length == 0 && (returnType == boolean.class || returnType == Boolean.class)) {
             String propName = getCamelString(methodName.substring(2));
-            return provider.getProperty(namespacePrefix, propName, returnType);
+            return provider.getProperty(namespacePrefix, propName, returnType, method);
         } else if (methodName.startsWith("set") && paramTypes.length == 1) {
             String propName = getCamelString(methodName.substring(3));
-            return provider.setProperty(namespacePrefix, propName, args[0], returnType);
+            return provider.setProperty(namespacePrefix, propName, args[0], returnType, method);
         } else {
-            return provider.invoke(namespacePrefix, methodName, args, returnType);
+            return provider.invoke(namespacePrefix, methodName, args, returnType, method);
         }
     }
     

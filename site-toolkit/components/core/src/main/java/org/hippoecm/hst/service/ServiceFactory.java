@@ -6,21 +6,30 @@ import org.hippoecm.hst.proxy.ProxyUtils;
 
 public class ServiceFactory {
     
-    public static <T> T create(Node n, Class clazz) {
+    public static <T> T create(Node n, Class ... proxyInterfaces) {
         
-        Service s = new AbstractJCRService(n){
+        T proxy = null;
+        
+        Service s = new AbstractJCRService(n) {
             public Service[] getChildServices() {
                 return null;
             }
             
         };
+        
         try {
-            return (T) ProxyUtils.createBeanAccessProviderProxy(new ServiceBeanAccessProviderImpl(s), clazz);
+            proxy = (T) ProxyUtils.createBeanAccessProviderProxy(new ServiceBeanAccessProviderImpl(s), proxyInterfaces);
+
+            if (proxy instanceof UnderlyingServiceAware) {
+                ((UnderlyingServiceAware) proxy).setUnderlyingService(s);
+            }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
-        } 
-        return null;
+        }
+        
+        return proxy;
+        
     }
 }

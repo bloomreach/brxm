@@ -10,6 +10,7 @@ import javax.jcr.Repository;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceFactory;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Test;
@@ -44,6 +45,10 @@ public class TestJCRServiceBean extends AbstractSpringTestCase{
                 t.getTitle(), t2.getTitle());
         assertEquals("The summary property of the deserialized one is different from the original.", 
                 t.getSummary(), t2.getSummary());
+        
+        Service underlyingService = t.getUnderlyingService();
+        assertNotNull("The underlying service is null!", underlyingService);
+        System.out.println("The underlying service: " + underlyingService);
     }
         
 }
