@@ -89,7 +89,7 @@
   
   <servlet-mapping>
     <servlet-name>HstContainerServlet</servlet-name>
-    <url-pattern>/content/*</url-pattern>
+    <url-pattern>/*</url-pattern>
   </servlet-mapping>
   
   <!-- JSTL tag library TLDs -->
