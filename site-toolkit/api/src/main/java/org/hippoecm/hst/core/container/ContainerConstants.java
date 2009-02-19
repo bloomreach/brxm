@@ -6,6 +6,6 @@ public interface ContainerConstants {
     
     String DEFAULT_COMPONENT_WINDOW_NAMESPACE_SEPARATOR = "_";
     
-    String CONTEXT_NAMESPACE_ATTRIBUTE = "org.hippoecm.hst.core.container.context.namespace";
+    String CONTEXT_NAMESPACE_ATTRIBUTE = "org.hippoecm.hst.container.context.namespace";
     
 }

@@ -15,8 +15,8 @@ public class HstURLFactoryImpl implements HstURLFactory {
         return this.parameterNameComponentSeparator;
     }
     
-    public HstURL createURL(String type, String contextNamespace, String parameterNamespace, HstContainerURL baseContainerURL) {
-        HstURLProvider provider = new HstURLProviderImpl(baseContainerURL, contextNamespace, parameterNamespace, this.parameterNameComponentSeparator);
+    public HstURL createURL(String type, String parameterNamespace, HstContainerURL baseContainerURL) {
+        HstURLProvider provider = new HstURLProviderImpl(baseContainerURL, parameterNamespace, this.parameterNameComponentSeparator);
         HstURLImpl url = new HstURLImpl(provider);
         url.setType(type);
         return url;

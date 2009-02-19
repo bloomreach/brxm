@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.site.HstServices;
 
 /**
@@ -23,6 +24,8 @@ import org.hippoecm.hst.site.HstServices;
 public class HstContainerServlet extends HttpServlet {
     
     private static final long serialVersionUID = 1L;
+    
+    public static final String CONTEXT_NAMESPACE_INIT_PARAM = "hstContextNamespace";
 
     public static final String CONSOLE_LOGGER = "console";
 
@@ -30,12 +33,18 @@ public class HstContainerServlet extends HttpServlet {
     private static Log console;
     
     protected ServletContext servletContext;
+    protected String contextNamespace;
     
     public void init(ServletConfig config) throws ServletException {
         
         super.init(config);
         
         this.servletContext = config.getServletContext();
+        this.contextNamespace = config.getInitParameter(CONTEXT_NAMESPACE_INIT_PARAM);
+        
+        if (this.contextNamespace == null) {
+            this.contextNamespace = this.servletContext.getInitParameter(CONTEXT_NAMESPACE_INIT_PARAM);
+        }
 
         if (log == null) {
             log = LogFactory.getLog(HstContainerServlet.class);
@@ -54,6 +63,10 @@ public class HstContainerServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 
         try {
+            if (this.contextNamespace != null) {
+                req.setAttribute(ContainerConstants.CONTEXT_NAMESPACE_ATTRIBUTE, contextNamespace);
+            }
+            
             HstServices.getRequestProcessor().processRequest(this.servletContext, req, res);
         } catch (Exception e) {
             final String msg = "Fatal error encountered while processing request: " + e.toString();

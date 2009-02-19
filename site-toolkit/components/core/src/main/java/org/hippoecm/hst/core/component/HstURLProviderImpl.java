@@ -9,16 +9,14 @@ import org.hippoecm.hst.core.container.HstContainerURLImpl;
 public class HstURLProviderImpl implements HstURLProvider {
     
     protected HstContainerURL baseContainerURL;
-    protected String contextNamespace;
     protected String parameterNamespace;
     protected String parameterNameComponentSeparator;
     
     protected String type;
     protected Map<String, String[]> parameterMap;
     
-    public HstURLProviderImpl(HstContainerURL baseContainerURL, String contextNamespace, String parameterNamespace, String parameterNameComponentSeparator) {
+    public HstURLProviderImpl(HstContainerURL baseContainerURL, String parameterNamespace, String parameterNameComponentSeparator) {
         this.baseContainerURL = baseContainerURL;
-        this.contextNamespace = contextNamespace;
         this.parameterNamespace = parameterNamespace;
         this.parameterNameComponentSeparator = (parameterNameComponentSeparator == null ? "" : parameterNameComponentSeparator);
     }
@@ -78,14 +76,7 @@ public class HstURLProviderImpl implements HstURLProvider {
         }
         
         for (Map.Entry<String, String[]> entry : this.parameterMap.entrySet()) {
-            String name = null;
-            
-            if (this.contextNamespace != null && !"".equals(this.contextNamespace)) {
-                name = this.contextNamespace + this.parameterNameComponentSeparator + this.parameterNamespace + this.parameterNameComponentSeparator + entry.getKey();
-            } else {
-                name = this.parameterNamespace + this.parameterNameComponentSeparator + entry.getKey();
-            }
-            
+            String name = this.parameterNamespace + this.parameterNameComponentSeparator + entry.getKey();
             String [] values = entry.getValue();
             
             if (values == null || values.length == 0) {

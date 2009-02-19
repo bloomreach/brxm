@@ -84,6 +84,14 @@
   <servlet>
     <servlet-name>HstContainerServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.container.HstContainerServlet</servlet-class>
+    <!--
+    HST Application Context Namespace Prefix.
+    This should be unique among multiple HST-based application contexts.
+    -->
+    <init-param>
+      <param-name>hstContextNamespace</param-name>
+      <param-value>news</param-value>
+    </init-param>
     <load-on-startup>2</load-on-startup>
   </servlet>
   

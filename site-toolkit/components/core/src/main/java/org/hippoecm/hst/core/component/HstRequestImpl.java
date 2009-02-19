@@ -179,16 +179,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     }
     
     protected String getFullNamespacePrefix(String referenceNamespace) {
-        String prefix = null;
-        
-        String contextNamespace = this.requestContext.getContextNamespace();
-        
-        if (contextNamespace != null && !"".equals(contextNamespace)) {
-            prefix = contextNamespace + this.parameterNameComponentSeparator + referenceNamespace + this.parameterNameComponentSeparator;
-        } else {
-            prefix = referenceNamespace + this.parameterNameComponentSeparator;
-        }
-        
+        String prefix = referenceNamespace + this.parameterNameComponentSeparator;
         return prefix;
     }
     

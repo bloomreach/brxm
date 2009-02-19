@@ -94,7 +94,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     }
 
     public HstURL createURL(String type, String parameterNamespace) {
-        return this.urlFactory.createURL(type, this.contextNamespace, parameterNamespace, this.baseURL);
+        return this.urlFactory.createURL(type, parameterNamespace, this.baseURL);
     }
     
 }

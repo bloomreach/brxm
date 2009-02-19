@@ -5,9 +5,7 @@ import java.util.Map;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
-import org.hippoecm.hst.core.container.HstComponentFactory;
-import org.hippoecm.hst.core.container.HstComponentWindow;
-import org.hippoecm.hst.core.container.HstComponentWindowFactory;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory {
     
@@ -17,27 +15,33 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         this.namespaceSeparator = namespaceSeparator;
     }
 
-    public HstComponentWindow create(HstComponentConfiguration compConfig, HstComponentFactory compFactory) throws HstComponentException {
-        return create(compConfig, compFactory, null);
+    public HstComponentWindow create(HstRequestContext requestContext, HstComponentConfiguration compConfig, HstComponentFactory compFactory) throws HstComponentException {
+        return create(requestContext, compConfig, compFactory, null);
     }
     
-    public HstComponentWindow create(HstComponentConfiguration compConfig, HstComponentFactory compFactory, HstComponentWindow parentWindow) throws HstComponentException {
+    public HstComponentWindow create(HstRequestContext requestContext, HstComponentConfiguration compConfig, HstComponentFactory compFactory, HstComponentWindow parentWindow) throws HstComponentException {
         
         String referenceName = compConfig.getReferenceName();
-        String referenceNamespace = null;
-        
+        StringBuilder referenceNamespaceBuilder = new StringBuilder();
+
         if (parentWindow == null) {
-            referenceNamespace = "";
+            String contextNamespace = requestContext.getContextNamespace();
+            
+            if (contextNamespace != null) {
+                referenceNamespaceBuilder.append(contextNamespace);
+            }            
         } else {
             String parentReferenceNamespace = parentWindow.getReferenceNamespace();
             
             if ("".equals(parentReferenceNamespace)) {
-                referenceNamespace = referenceName;
+                referenceNamespaceBuilder.append(referenceName);
             } else {
-                referenceNamespace = parentWindow.getReferenceNamespace() + this.namespaceSeparator + referenceName;
+                referenceNamespaceBuilder.append(parentReferenceNamespace).append(this.namespaceSeparator).append(referenceName);
             }
         }
 
+        String referenceNamespace = referenceNamespaceBuilder.toString();
+        
         String renderPath = compConfig.getRenderPath();
         
         if (renderPath != null && !renderPath.startsWith("/")) {
@@ -59,7 +63,7 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         if (childCompConfigMap != null && !childCompConfigMap.isEmpty()) {
             for (Map.Entry<String, HstComponentConfiguration> entry : childCompConfigMap.entrySet()) {
                 HstComponentConfiguration childCompConfig = entry.getValue();
-                HstComponentWindow childCompWindow = create(childCompConfig, compFactory, window);
+                HstComponentWindow childCompWindow = create(requestContext, childCompConfig, compFactory, window);
                 window.addChildWindow(childCompWindow);
             }
         }

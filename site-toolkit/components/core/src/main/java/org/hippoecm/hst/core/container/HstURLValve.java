@@ -1,6 +1,5 @@
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -13,14 +12,11 @@ public class HstURLValve extends AbstractValve {
 
         ServletRequest servletRequest = context.getServletRequest();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
+
+        String contextNamespace = (String) servletRequest.getAttribute(ContainerConstants.CONTEXT_NAMESPACE_ATTRIBUTE);
         
-        if (isMultiHstAppsEnvironment()) {
-            ServletContext servletContext = context.getServletContext();
-            String contextNamespace = servletContext.getInitParameter(ContainerConstants.CONTEXT_NAMESPACE_ATTRIBUTE);
-            
-            if (contextNamespace != null) {
-                ((HstRequestContextImpl) requestContext).setContextNamespace(contextNamespace);
-            }
+        if (contextNamespace != null) {
+            ((HstRequestContextImpl) requestContext).setContextNamespace(contextNamespace);
         }
         
         HstContainerURL baseURL = getContainerURLParser().parseURL(context.getServletRequest());
@@ -30,11 +26,6 @@ public class HstURLValve extends AbstractValve {
         
         // continue
         context.invokeNext();
-    }
-    
-    protected boolean isMultiHstAppsEnvironment() {
-        // TODO: detect automatically!
-        return true;
     }
 
 }
