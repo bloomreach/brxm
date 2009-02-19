@@ -115,11 +115,37 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 // index the nodename to sort on
                 doc.add(new Field(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, nodename, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
 
+                for (Iterator childNodeIter = node.getChildNodeEntries().iterator(); childNodeIter.hasNext();) {
+                    ChildNodeEntry childNode = (ChildNodeEntry) childNodeIter.next();
+                    NodeState childState = (NodeState) stateProvider.getItemState(childNode.getId());
+                    if (servicingIndexingConfig.isChildAggregate(childState.getNodeTypeName())) {
+                        Set props = childState.getPropertyNames();
+                        for (Iterator it = props.iterator(); it.hasNext();) {
+                            Name propName = (Name) it.next();
+                            PropertyId id = new PropertyId(childNode.getId(), propName);
+                            try {
+                                PropertyState propState = (PropertyState) stateProvider.getItemState(id);
+                                InternalValue[] values = propState.getValues();
+                                if (!isHippoPath(propName) && isFacet(propName)) {
+                                    for (int i = 0; i < values.length; i++) {
+                                        String s = resolver.getJCRName(propState.getName()) + "/" + resolver.getJCRName(childNode.getName());
+                                        addFacetValue(doc, values[i], s, propState.getName());
+                                    }
+                                }
+                            } catch (NoSuchItemStateException e) {
+                                throwRepositoryException(e);
+                            } catch (ItemStateException e) {
+                                throwRepositoryException(e);
+                            }
+                        }
+                    }
+                }
+                
                 /**
                  * index the nodename to search on. We index this as hippo:_localname, a pseudo property which does not really exist but
                  * only meant to search on
                  */
-                indexNodeName(doc, prefix, child.getName().getLocalName());
+                indexNodeName(doc, child.getName().getLocalName());
             }
         } catch (ItemStateException e) {
             throwRepositoryException(e);
@@ -136,7 +162,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
                     indexPath(doc, values, propState.getName());
                 } else if (isFacet(propName)) {
                     for (int i = 0; i < values.length; i++) {
-                        addFacetValue(doc, values[i], propState.getName());
+                        addFacetValue(doc, values[i], resolver.getJCRName(propState.getName()), propState.getName());
                     }
                 }
             } catch (NoSuchItemStateException e) {
@@ -148,7 +174,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
         return doc;
     }
 
-    private void indexNodeName(Document doc, String prefix, String localName) {
+    private void indexNodeName(Document doc, String localName) {
         // simple String
         String hippo_ns_prefix = null;
         try {
@@ -176,13 +202,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
 
     // below: When the QName is configured to be a facet, also index like one
-    private void addFacetValue(Document doc, InternalValue value, Name name) {
-        String fieldName = name.getLocalName();
-        try {
-            fieldName = resolver.getJCRName(name);
-        } catch (NamespaceException e) {
-            // will never happen
-        }
+    private void addFacetValue(Document doc, InternalValue value, String fieldName, Name name) {
         switch (value.getType()) {
             case PropertyType.BINARY:
                 // never facet;

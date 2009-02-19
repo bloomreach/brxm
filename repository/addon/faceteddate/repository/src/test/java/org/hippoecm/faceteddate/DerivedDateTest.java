@@ -138,7 +138,7 @@ public class DerivedDateTest extends TestCase {
         assertFalse(root.hasNode("doc/hippo:d2fields"));
     }
 
-    @Ignore
+    @Test
     public void testSearch() throws Exception {
         root.addNode("docs","nt:unstructured").addMixin("mix:referenceable");
         Node doc = root.getNode("docs").addNode("doc", "hippo:datedocument1");
@@ -151,12 +151,12 @@ public class DerivedDateTest extends TestCase {
         Node search = root.addNode("search", "hippo:facetsearch");
         search.setProperty("hippo:queryname", "test");
         search.setProperty("hippo:docbase", root.getNode("docs").getUUID());
-        search.setProperty("hippo:facets", new String[] { "hippostd:dayofmonth" });
+        search.setProperty("hippo:facets", new String[] { "hippo:d/hippostd:dayofmonth" });
         session.save();
 
         search = root.getNode("search");
         Utilities.dump(System.err, search);
 
-        assertNotNull(traverse(session, "/test/search" + date.get(Calendar.DAY_OF_MONTH) + "/hippo:resultset/doc"));
+        assertNotNull(traverse(session, "/test/search/" + date.get(Calendar.DAY_OF_MONTH) + "/hippo:resultset/doc"));
     }
 }

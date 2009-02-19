@@ -31,6 +31,7 @@ import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
@@ -110,11 +111,14 @@ public class FacetResultSetProvider extends HippoVirtualProvider
             Matcher matcher = facetPropertyPattern.matcher(search[i]);
             if(matcher.matches() && matcher.groupCount() == 2) {
                 try {
-                    currentFacetQuery.put(resolveName(matcher.group(1)).toString(), matcher.group(2));
+                    currentFacetQuery.put(resolvePath(matcher.group(1)).toString(), matcher.group(2));
                 } catch(IllegalNameException ex) {
                     // FIXME: log a very serious error
                     return state;
                 } catch(NamespaceException ex) {
+                    // FIXME: log a very serious error
+                    return state;
+                } catch(MalformedPathException ex) {
                     // FIXME: log a very serious error
                     return state;
                 }

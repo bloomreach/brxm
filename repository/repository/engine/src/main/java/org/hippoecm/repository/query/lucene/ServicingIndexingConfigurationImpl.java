@@ -65,6 +65,13 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
     private Name[] hippoAggregates;
 
     /**
+     * The child node types which properties should be indexed within the parent lucene document,
+     * but which will not be actual part of the document (i.e they still get their relative path
+     * embedded in their name)
+     */
+    Set<Name> childAggregates = new HashSet<Name>();
+
+    /**
      * set of QName's that should not be nodescoped indexed and not tokenized (for example hippo:path)
      */
     private Set<Name> excludeNamesFromNodeScope = new HashSet<Name>();
@@ -106,6 +113,11 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                         Name nodeTypeName = resolver.getQName(getTextContent(nodeTypeNode));
                         idxHippoAggregates.add(nodeTypeName);
                         log.debug("Added nodetype '" + nodeTypeName.getNamespaceURI() + ":" + nodeTypeName.getLocalName() + "' to be indexed as a hippo aggregate.");
+                    } else if (nodeTypeNode.getNodeName().equals("childtype")) {
+                        // get property name
+                        Name nodeTypeName = resolver.getQName(getTextContent(nodeTypeNode));
+                        childAggregates.add(nodeTypeName);
+                        log.debug("Added childtype '" + nodeTypeName.getNamespaceURI() + ":" + nodeTypeName.getLocalName() + "' to be indexed as a hippo aggregate.");
                     }
                 }
             }
@@ -139,6 +151,10 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
 
         hippoAggregates = (Name[]) idxHippoAggregates.toArray(
                 new Name[idxHippoAggregates.size()]);
+    }
+
+    public boolean isChildAggregate(Name childType) {
+        return childAggregates.contains(childType);
     }
 
     public boolean isFacet(Name propertyName) {

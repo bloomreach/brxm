@@ -60,4 +60,14 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration {
      *
      */
     public Set<Name> getExcludePropertiesSingleIndexTerm();
+
+    /**
+     * Evaluate if the name argument type is of a nodetype which should be aggregates as a child aggregate.
+     * Unlike other aggregates, where the properties in searches appear as part of the parent node, the properties
+     * are properties are still only in the child node.
+     * 
+     * @param childType the node type of the child node
+     * @return true whether to index all properties in the parent node
+     */
+    public boolean isChildAggregate(Name childType);
 }
