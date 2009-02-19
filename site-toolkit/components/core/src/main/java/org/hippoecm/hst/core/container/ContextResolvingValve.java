@@ -6,6 +6,8 @@ import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSiteMapMatcher.MatchResult;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.domain.DomainMapping;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
 public class ContextResolvingValve extends AbstractValve
 {
@@ -14,6 +16,7 @@ public class ContextResolvingValve extends AbstractValve
     public void invoke(ValveContext context) throws ContainerException
     {
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
+        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
         
         String domainName = servletRequest.getServerName();
         DomainMapping domainMapping = this.domainMappings.findDomainMapping(domainName);
@@ -43,6 +46,7 @@ public class ContextResolvingValve extends AbstractValve
             throw new ContainerException("No match for " + pathInfo);
         }
         
+        ((HstRequestContextImpl) requestContext).setSiteMapItem(matchResult.getSiteMapItem());
         HstComponentConfiguration rootComponentConfig = matchResult.getCompontentConfiguration();
         
         try {
