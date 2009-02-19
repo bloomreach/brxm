@@ -245,4 +245,9 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         }
         return super.encodeURL(url);
     }
+
+    public void addHeaderProperty(String key, String headerElement) {
+        this.responseState.addHeader(key, headerElement);
+    }
+
 }
