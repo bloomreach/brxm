@@ -34,5 +34,9 @@
         class="org.hippoecm.hst.core.component.HstURLFactoryImpl">
   </bean>
   
+  <bean id="org.hippoecm.hst.core.container.HstContainerURLParser"
+        class="org.hippoecm.hst.core.container.HstContainerURLParserImpl">
+  </bean>
+  
 </beans>
 

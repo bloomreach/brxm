@@ -8,12 +8,12 @@ import java.util.Map;
 public class HstURLImpl implements HstURL {
     
     protected String type = TYPE_RENDER;
-    protected String parameterNamespace;
     protected Map<String, String[]> parameterMap = new HashMap<String, String[]>();
     protected String resourceID;
+    protected HstURLProvider urlProvider;
     
-    public HstURLImpl(String parameterNamespace) {
-        this.parameterNamespace = parameterNamespace;
+    public HstURLImpl(HstURLProvider urlProvider) {
+        this.urlProvider = urlProvider;
     }
 
     public Map<String, String[]> getParameterMap() {
@@ -53,23 +53,9 @@ public class HstURLImpl implements HstURL {
     }
     
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        
-        // TODO: The following should be moved to another class.
-        
-        for (Map.Entry<String, String[]> entry : this.parameterMap.entrySet()) {
-            String name = entry.getKey();
-            
-            for (String value : entry.getValue()) {
-                sb.append("&")
-                .append(this.parameterNamespace)
-                .append(name)
-                .append("=")
-                .append(value);
-            }
-        }
-        
-        return sb.toString();
+        this.urlProvider.setType(this.type);
+        this.urlProvider.setParameters(this.parameterMap);
+        return this.urlProvider.toString();
     }
 
 }

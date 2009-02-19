@@ -25,6 +25,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstRequestContextImpl implements HstRequestContext {
@@ -34,7 +35,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected Credentials defaultCredentials;
     protected HstSiteMapItem siteMapItem;
     protected HstURLFactory urlFactory;
-    protected HstURL baseURL;
+    protected HstContainerURL baseURL;
 
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
@@ -67,11 +68,11 @@ public class HstRequestContextImpl implements HstRequestContext {
         return this.siteMapItem;
     }
     
-    public void setBaseURL(HstURL baseURL) {
+    public void setBaseURL(HstContainerURL baseURL) {
         this.baseURL = baseURL;
     }
     
-    public HstURL getBaseURL() {
+    public HstContainerURL getBaseURL() {
         return this.baseURL;
     }
     

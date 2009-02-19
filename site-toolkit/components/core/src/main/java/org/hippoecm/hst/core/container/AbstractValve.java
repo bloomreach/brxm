@@ -16,6 +16,7 @@ public abstract class AbstractValve implements Valve
     protected HstComponentWindowFactory componentWindowFactory;
     protected HstComponentInvoker componentInvoker;
     protected HstURLFactory urlFactory;
+    protected HstContainerURLParser containerURLParser;
     
     public HstSites getHstSites() {
         return hstSites;
@@ -79,6 +80,14 @@ public abstract class AbstractValve implements Valve
     
     public void setUrlFactory(HstURLFactory urlFactory) {
         this.urlFactory = urlFactory;
+    }
+    
+    public HstContainerURLParser getContainerURLParser() {
+        return this.containerURLParser;
+    }
+    
+    public void setContainerURLParser(HstContainerURLParser containerURLParser) {
+        this.containerURLParser = containerURLParser;
     }
 
     public abstract void invoke(ValveContext context) throws ContainerException;

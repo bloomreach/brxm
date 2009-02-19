@@ -37,6 +37,7 @@
     <property name="componentWindowFactory" ref="org.hippoecm.hst.core.container.HstComponentWindowFactory" />
     <property name="componentInvoker" ref="org.hippoecm.hst.core.container.HstComponentInvoker" />
     <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />
+    <property name="containerURLParser" ref="org.hippoecm.hst.core.container.HstContainerURLParser" />
   </bean>
 
   <!-- Pre-processing valves -->
