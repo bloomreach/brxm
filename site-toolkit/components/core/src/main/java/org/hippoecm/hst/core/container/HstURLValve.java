@@ -38,6 +38,7 @@ public class HstURLValve extends AbstractValve {
         
         ((HstRequestContextImpl) requestContext).setBaseURL(baseURL);
         ((HstRequestContextImpl) requestContext).setURLFactory(getUrlFactory());
+        ((HstRequestContextImpl) requestContext).setLinkCreator(getLinkCreator());
         
         // continue
         context.invokeNext();

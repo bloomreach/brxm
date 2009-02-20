@@ -22,6 +22,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 
 /**
  * HstRequestContext provides repository content context
@@ -45,7 +46,9 @@ public interface HstRequestContext {
     public HstSiteMapItem getSiteMapItem();
     
     public String getContextNamespace();
-    
+
     public HstURL createURL(String type, String parameterNamespace);
+    
+    public HstLinkCreator getHstLinkCreator();
     
 }

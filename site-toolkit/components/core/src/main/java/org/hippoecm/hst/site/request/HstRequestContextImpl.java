@@ -26,6 +26,7 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstRequestContextImpl implements HstRequestContext {
@@ -37,6 +38,8 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected HstURLFactory urlFactory;
     protected HstContainerURL baseURL;
     protected String contextNamespace;
+    protected HstLinkCreator linkCreator;
+        
 
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
@@ -89,12 +92,21 @@ public class HstRequestContextImpl implements HstRequestContext {
         this.urlFactory = urlFactory;
     }
     
+    
     public HstURLFactory getURLFactory() {
         return this.urlFactory;
     }
 
     public HstURL createURL(String type, String parameterNamespace) {
         return this.urlFactory.createURL(type, parameterNamespace, this.baseURL);
+    }
+
+    public void setLinkCreator(HstLinkCreator linkCreator) {
+        this.linkCreator = linkCreator;
+    }
+    
+    public HstLinkCreator getHstLinkCreator() {
+        return this.linkCreator;
     }
     
 }
