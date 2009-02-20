@@ -17,9 +17,12 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstResponseState;
 
 public class HstComponentWindowImpl implements HstComponentWindow {
@@ -29,6 +32,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected HstComponent component;
     protected String renderPath;
     protected HstComponentWindow parentWindow;
+    protected List<HstComponentException> componentExceptions;
     protected Map<String, HstComponentWindow> childWindowMap;
     
     protected HstResponseState responseState;
@@ -43,6 +47,28 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     
     public HstComponent getComponent() {
         return this.component;
+    }
+    
+    public boolean hasComponentExceptions() {
+        return (this.componentExceptions != null && !this.componentExceptions.isEmpty());
+    }
+    
+    public List<HstComponentException> getComponentExceptions() {
+        return this.componentExceptions;
+    }
+    
+    public void addComponentExcpetion(HstComponentException e) {
+        if (this.componentExceptions == null) {
+            this.componentExceptions = new LinkedList<HstComponentException>();
+        }
+        
+        this.componentExceptions.add(e);
+    }
+    
+    public void clearComponentExceptions() {
+        if (this.componentExceptions != null) {
+            this.componentExceptions.clear();
+        }
     }
     
     public String getRenderPath() {

@@ -16,9 +16,11 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.component.HstComponentException;
 
 /**
  * HST Component Window.
@@ -48,6 +50,30 @@ public interface HstComponentWindow {
      * @return the actual HstComponent instance
      */
     HstComponent getComponent();
+    
+    /**
+     * Whether it has component exceptions or not
+     * 
+     * @return
+     */
+    boolean hasComponentExceptions();
+    
+    /**
+     * The component exceptions during initialization or runtime.
+     * 
+     * @return the possible component exception list
+     */
+    List<HstComponentException> getComponentExceptions();
+    
+    /**
+     * Adds a component exceptions during initialization or runtime.
+     */
+    void addComponentExcpetion(HstComponentException e);
+    
+    /**
+     * Adds a component exceptions during initialization or runtime.
+     */
+    void clearComponentExceptions();
     
     /**
      * The dispatching path path to render this component window.

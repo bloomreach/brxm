@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.container;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hippoecm.hst.configuration.HstSiteMapMatcher;
 import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -23,6 +25,8 @@ import org.hippoecm.hst.core.request.HstRequestContextComponent;
 
 public abstract class AbstractValve implements Valve
 {
+    protected static Log log = LogFactory.getLog(AbstractValve.class);
+    
     protected HstSites hstSites;
     protected DomainMappings domainMappings;
     protected HstSiteMapMatcher siteMapMatcher;

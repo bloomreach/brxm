@@ -65,7 +65,14 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
             renderPath = new StringBuilder(renderPath.length() + 1).append('/').append(renderPath).toString();
         }
         
-        HstComponent component = compFactory.getComponentInstance(servletConfig, compConfig);
+        HstComponent component = null;
+        HstComponentException componentFactoryException = null;
+        
+        try {
+            component = compFactory.getComponentInstance(servletConfig, compConfig);
+        } catch (Throwable th) {
+            componentFactoryException = new HstComponentException(th.getMessage());
+        }
         
         HstComponentWindowImpl window = 
             new HstComponentWindowImpl(
@@ -74,6 +81,10 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
                 component, 
                 renderPath, 
                 parentWindow);
+        
+        if (componentFactoryException != null) {
+            window.addComponentExcpetion(componentFactoryException);
+        }
         
         Map<String, HstComponentConfiguration> childCompConfigMap = compConfig.getChildren();
         

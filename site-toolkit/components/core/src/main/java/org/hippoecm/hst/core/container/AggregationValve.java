@@ -24,8 +24,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -34,8 +33,6 @@ import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class AggregationValve extends AbstractValve {
-    
-    static Log log = LogFactory.getLog(AggregationValve.class);
     
     @Override
     public void invoke(ValveContext context) throws ContainerException {
@@ -109,6 +106,12 @@ public class AggregationValve extends AbstractValve {
         
         getComponentInvoker().invokeBeforeRender(servletConfig, request, response);
 
+        if (window.hasComponentExceptions()) {
+            for (HstComponentException hce : window.getComponentExceptions()) {
+                log.error("Component exception found: " + hce.getMessage());
+            }
+        }
+
         Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
         
         if (childWindowMap != null) {
@@ -137,6 +140,12 @@ public class AggregationValve extends AbstractValve {
         final HstResponse response = responseMap.get(window);
         
         getComponentInvoker().invokeRender(servletConfig, request, response);
+        
+        if (window.hasComponentExceptions()) {
+            for (HstComponentException hce : window.getComponentExceptions()) {
+                log.error("Component exception found: " + hce.getMessage());
+            }
+        }
         
     }
 }

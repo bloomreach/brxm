@@ -25,6 +25,8 @@ import javax.servlet.ServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 
@@ -36,38 +38,76 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = hstRequest.getComponentWindow();
-        window.getComponent().doAction(hstRequest, hstResponse);
+        HstComponent component = window.getComponent();
+        
+        if (component != null) {
+            try {
+                component.doAction(hstRequest, hstResponse);
+            } catch (HstComponentException e) {
+                window.addComponentExcpetion(e);
+            } catch (Throwable th) {
+                window.addComponentExcpetion(new HstComponentException(th.getMessage(), th));
+            }
+        } else {
+            window.addComponentExcpetion(new HstComponentException("The component is not available."));
+        }
     }
 
     public void invokeBeforeRender(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = hstRequest.getComponentWindow();
-        window.getComponent().doBeforeRender(hstRequest, hstResponse);
+        HstComponent component = window.getComponent();
+        
+        if (component != null) {
+            try {
+                component.doBeforeRender(hstRequest, hstResponse);
+            } catch (HstComponentException e) {
+                window.addComponentExcpetion(e);
+            } catch (Throwable th) {
+                window.addComponentExcpetion(new HstComponentException(th.getMessage(), th));
+            }
+        } else {
+            window.addComponentExcpetion(new HstComponentException("The component is not available."));
+        }
     }
 
     public void invokeRender(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
+        HstComponentWindow window = hstRequest.getComponentWindow();
         String dispatchUrl = hstRequest.getComponentWindow().getRenderPath();
-        invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl);
+        invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl, window);
     }
 
     public void invokeBeforeServeResource(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = hstRequest.getComponentWindow();
-        window.getComponent().doBeforeServeResource(hstRequest, hstResponse);
+        HstComponent component = window.getComponent();
+        
+        if (component != null) {
+            try {
+                component.doBeforeServeResource(hstRequest, hstResponse);
+            } catch (HstComponentException e) {
+                window.addComponentExcpetion(e);
+            } catch (Throwable th) {
+                window.addComponentExcpetion(new HstComponentException(th.getMessage(), th));
+            }
+        } else {
+            window.addComponentExcpetion(new HstComponentException("The component is not available."));
+        }
     }
 
     public void invokeServeResource(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
+        HstComponentWindow window = hstRequest.getComponentWindow();
         String dispatchUrl = hstRequest.getComponentWindow().getRenderPath();
-        invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl);
+        invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl, window);
     }
 
-    protected void invokeDispatcher(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse, String dispatchUrl) throws ContainerException {
+    protected void invokeDispatcher(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse, String dispatchUrl, HstComponentWindow window) throws ContainerException {
         RequestDispatcher disp = null;
         
         if (dispatchUrl != null) {
@@ -83,15 +123,17 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         }
         
         if (disp == null) {
-            throw new ContainerException("Cannot create request dispatcher for " + dispatchUrl);
+            window.addComponentExcpetion(new HstComponentException("Cannot create request dispatcher for " + dispatchUrl));
         }
         
         try {
             disp.include(servletRequest, servletResponse);
         } catch (ServletException e) {
-            throw new ContainerException(e);
+            window.addComponentExcpetion(new HstComponentException(e.getMessage()));
         } catch (IOException e) {
-            throw new ContainerException(e);
+            window.addComponentExcpetion(new HstComponentException(e.getMessage()));
+        } catch (Throwable th) {
+            window.addComponentExcpetion(new HstComponentException(th.getMessage()));
         }
     }
 }

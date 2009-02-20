@@ -17,6 +17,8 @@ package org.hippoecm.hst.core.container;
 
 import javax.servlet.ServletRequest;
 
+import org.hippoecm.hst.core.component.HstComponentException;
+
 public class ResourceServingValve extends AbstractValve {
     
     @Override
@@ -31,6 +33,12 @@ public class ResourceServingValve extends AbstractValve {
                 HstComponentInvoker invoker = getComponentInvoker();
                 invoker.invokeBeforeServeResource(context.getServletConfig(), servletRequest, context.getServletResponse());
                 invoker.invokeServeResource(context.getServletConfig(), servletRequest, context.getServletResponse());
+
+                if (window.hasComponentExceptions()) {
+                    for (HstComponentException hce : window.getComponentExceptions()) {
+                        log.error("Component exceptions found: " + hce.getMessage());
+                    }
+                }
             }
         }
         

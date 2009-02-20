@@ -20,6 +20,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -48,6 +49,12 @@ public class ActionValve extends AbstractValve
                 ((HstComponentWindowImpl) window).setResponseState(responseState);
 
                 getComponentInvoker().invokeAction(context.getServletConfig(), request, response);
+                
+                if (window.hasComponentExceptions()) {
+                    for (HstComponentException hce : window.getComponentExceptions()) {
+                        log.error("Component exception found: " + hce.getMessage());
+                    }
+                }
             } else {
                 throw new ContainerException("No action window found.");
             }
