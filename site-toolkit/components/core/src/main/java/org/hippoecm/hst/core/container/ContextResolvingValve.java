@@ -18,10 +18,12 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.HstSite;
-import org.hippoecm.hst.configuration.HstSiteMapMatcher.MatchResult;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.domain.DomainMapping;
+import org.hippoecm.hst.core.request.HstMatchedSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher.MatchResult;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
 public class ContextResolvingValve extends AbstractValve
@@ -61,7 +63,22 @@ public class ContextResolvingValve extends AbstractValve
             throw new ContainerException("No match for " + pathInfo);
         }
         
-        ((HstRequestContextImpl) requestContext).setSiteMapItem(matchResult.getSiteMapItem());
+        final String remainder = matchResult.getRemainder();
+        final HstSiteMapItem hstSiteMapItem = matchResult.getSiteMapItem();
+        
+        ((HstRequestContextImpl) requestContext).setMatchedSiteMapItem(new HstMatchedSiteMapItem(){
+
+            public String getRemainder() {
+                return remainder;
+            }
+
+            public HstSiteMapItem getSiteMapItem() {
+                return hstSiteMapItem;
+            }
+            
+        }
+        );
+        
         HstComponentConfiguration rootComponentConfig = matchResult.getCompontentConfiguration();
         
         try {

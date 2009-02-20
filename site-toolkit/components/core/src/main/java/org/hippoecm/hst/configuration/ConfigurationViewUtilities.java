@@ -15,11 +15,11 @@
  */
 package org.hippoecm.hst.configuration;
 
-import org.hippoecm.hst.configuration.HstSiteMapMatcher.MatchResult;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher.MatchResult;
 
 public class ConfigurationViewUtilities {
 

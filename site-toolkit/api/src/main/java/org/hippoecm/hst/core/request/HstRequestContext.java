@@ -43,7 +43,7 @@ public interface HstRequestContext {
     
     public Credentials getDefaultCredentials();
     
-    public HstSiteMapItem getSiteMapItem();
+    public HstMatchedSiteMapItem getMatchedSiteMapItem();
     
     public String getContextNamespace();
 

@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.util.PathUtils;
 
 public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
