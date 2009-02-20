@@ -24,6 +24,6 @@ public interface HstURLFactory {
     
     String getParameterNameComponentSeparator();
 
-    HstURL createURL(String type, String parameterNamespace, HstContainerURL base);
+    HstURL createURL(String characterEncoding, String type, String parameterNamespace, HstContainerURL base);
     
 }

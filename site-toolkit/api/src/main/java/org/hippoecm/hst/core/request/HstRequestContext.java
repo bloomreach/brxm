@@ -20,8 +20,8 @@ import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 
 /**
@@ -39,16 +39,18 @@ public interface HstRequestContext {
      * @throws LoginException
      * @throws RepositoryException
      */
-    public Session getSession() throws LoginException, RepositoryException;
+    Session getSession() throws LoginException, RepositoryException;
     
-    public Credentials getDefaultCredentials();
+    Credentials getDefaultCredentials();
     
-    public HstMatchedSiteMapItem getMatchedSiteMapItem();
+    HstMatchedSiteMapItem getMatchedSiteMapItem();
     
-    public String getContextNamespace();
+    String getContextNamespace();
+    
+    HstContainerURL getBaseURL();
+    
+    HstURLFactory getURLFactory();
 
-    public HstURL createURL(String type, String parameterNamespace);
-    
-    public HstLinkCreator getHstLinkCreator();
+    HstLinkCreator getHstLinkCreator();
     
 }

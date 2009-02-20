@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.component;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import org.hippoecm.hst.core.container.HstContainerURLImpl;
 
 public class HstURLProviderImpl implements HstURLProvider {
     
+    protected String characterEncoding;
     protected HstContainerURL baseContainerURL;
     protected String parameterNamespace;
     protected String parameterNameComponentSeparator;
@@ -30,7 +32,8 @@ public class HstURLProviderImpl implements HstURLProvider {
     protected String type;
     protected Map<String, String[]> parameterMap;
     
-    public HstURLProviderImpl(HstContainerURL baseContainerURL, String parameterNamespace, String parameterNameComponentSeparator) {
+    public HstURLProviderImpl(String characterEncoding, HstContainerURL baseContainerURL, String parameterNamespace, String parameterNameComponentSeparator) {
+        this.characterEncoding = (characterEncoding != null ? characterEncoding : "UTF-8");
         this.baseContainerURL = baseContainerURL;
         this.parameterNamespace = parameterNamespace;
         this.parameterNameComponentSeparator = (parameterNameComponentSeparator == null ? "" : parameterNameComponentSeparator);
@@ -71,10 +74,16 @@ public class HstURLProviderImpl implements HstURLProvider {
             String name = entry.getKey();
             
             for (String value : entry.getValue()) {
+                String encodedValue = value;
+                try {
+                    encodedValue = URLEncoder.encode(value, this.characterEncoding);
+                } catch (Exception e) {
+                }
+                
                 sb.append(firstDone ? "&" : "?")
                 .append(name)
                 .append("=")
-                .append(value);
+                .append(encodedValue);
                 
                 firstDone = true;
             }
