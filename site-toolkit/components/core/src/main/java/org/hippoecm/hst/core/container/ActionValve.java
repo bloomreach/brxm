@@ -50,10 +50,11 @@ public class ActionValve extends AbstractValve
 
                 getComponentInvoker().invokeAction(context.getServletConfig(), request, response);
                 
-                if (window.hasComponentExceptions()) {
+                if (window.hasComponentExceptions() && log.isWarnEnabled()) {
                     for (HstComponentException hce : window.getComponentExceptions()) {
-                        log.error("Component exception found: " + hce.getMessage());
+                        log.warn("Component exception found: " + hce.getMessage(), hce);
                     }
+                    window.clearComponentExceptions();
                 }
             } else {
                 throw new ContainerException("No action window found.");

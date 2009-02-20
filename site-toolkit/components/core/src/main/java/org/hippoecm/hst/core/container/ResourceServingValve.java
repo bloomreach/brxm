@@ -34,10 +34,11 @@ public class ResourceServingValve extends AbstractValve {
                 invoker.invokeBeforeServeResource(context.getServletConfig(), servletRequest, context.getServletResponse());
                 invoker.invokeServeResource(context.getServletConfig(), servletRequest, context.getServletResponse());
 
-                if (window.hasComponentExceptions()) {
+                if (window.hasComponentExceptions() && log.isWarnEnabled()) {
                     for (HstComponentException hce : window.getComponentExceptions()) {
-                        log.error("Component exceptions found: " + hce.getMessage());
+                        log.warn("Component exceptions found: " + hce.getMessage(), hce);
                     }
+                    window.clearComponentExceptions();
                 }
             }
         }

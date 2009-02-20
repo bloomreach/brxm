@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -78,6 +79,10 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         HstComponentWindow window = hstRequest.getComponentWindow();
         String dispatchUrl = hstRequest.getComponentWindow().getRenderPath();
         invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl, window);
+        
+        if (window.hasComponentExceptions()) {
+            printErrors(window, hstResponse);
+        }
     }
 
     public void invokeBeforeServeResource(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
@@ -105,6 +110,10 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         HstComponentWindow window = hstRequest.getComponentWindow();
         String dispatchUrl = hstRequest.getComponentWindow().getRenderPath();
         invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl, window);
+
+        if (window.hasComponentExceptions()) {
+            printErrors(window, hstResponse);
+        }
     }
 
     protected void invokeDispatcher(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse, String dispatchUrl, HstComponentWindow window) throws ContainerException {
@@ -129,11 +138,32 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         try {
             disp.include(servletRequest, servletResponse);
         } catch (ServletException e) {
-            window.addComponentExcpetion(new HstComponentException(e.getMessage()));
+            window.addComponentExcpetion(new HstComponentException(e.getMessage(), e));
         } catch (IOException e) {
-            window.addComponentExcpetion(new HstComponentException(e.getMessage()));
+            window.addComponentExcpetion(new HstComponentException(e.getMessage(), e));
         } catch (Throwable th) {
-            window.addComponentExcpetion(new HstComponentException(th.getMessage()));
+            window.addComponentExcpetion(new HstComponentException(th.getMessage(), th));
         }
     }
+    
+    protected void printErrors(HstComponentWindow window, HstResponse hstResponse) {
+        PrintWriter out = null;
+        
+        try {
+            hstResponse.reset();
+            out = hstResponse.getWriter();
+            for (HstComponentException hce : window.getComponentExceptions()) {
+                out.println(hce.getMessage());
+            }
+            out.flush();
+        } catch (Exception e) {
+            log.warn("Invalid out.");
+        } finally {
+            try {
+                hstResponse.flushBuffer();
+            } catch (IOException e) {
+            }
+        }
+    }
+
 }

@@ -55,10 +55,16 @@ public class AggregationValve extends AbstractValve {
                 aggregateAndProcessBeforeRender(rootWindow, requestMap, responseMap, context.getServletConfig());
                 aggregateAndProcessRender(rootWindow, requestMap, responseMap, context.getServletConfig());
                 
+                if (log.isWarnEnabled()) {
+                    logWarningsForEachComponentWindow(rootWindow);
+                }
+                
                 try {
                     rootWindow.flushContent();
                 } catch (Exception e) {
-                    log.error("Exception during flushing the response state.", e);
+                    if (log.isWarnEnabled()) {
+                        log.warn("Exception during flushing the response state.", e);
+                    }
                 }
             }
         }
@@ -106,12 +112,6 @@ public class AggregationValve extends AbstractValve {
         
         getComponentInvoker().invokeBeforeRender(servletConfig, request, response);
 
-        if (window.hasComponentExceptions()) {
-            for (HstComponentException hce : window.getComponentExceptions()) {
-                log.error("Component exception found: " + hce.getMessage());
-            }
-        }
-
         Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
         
         if (childWindowMap != null) {
@@ -140,12 +140,26 @@ public class AggregationValve extends AbstractValve {
         final HstResponse response = responseMap.get(window);
         
         getComponentInvoker().invokeRender(servletConfig, request, response);
-        
+    }
+    
+    protected void logWarningsForEachComponentWindow(HstComponentWindow window) {
+
         if (window.hasComponentExceptions()) {
             for (HstComponentException hce : window.getComponentExceptions()) {
-                log.error("Component exception found: " + hce.getMessage());
+                log.warn("Component exception found: " + hce.getMessage(), hce);
+            }
+            
+            window.clearComponentExceptions();
+        }
+        
+        Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
+        
+        if (childWindowMap != null) {
+            for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
+                logWarningsForEachComponentWindow(entry.getValue());
             }
         }
         
     }
+
 }
