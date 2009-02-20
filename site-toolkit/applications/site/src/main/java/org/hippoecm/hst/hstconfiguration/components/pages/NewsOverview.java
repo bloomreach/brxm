@@ -9,7 +9,7 @@ public class NewsOverview extends HstComponentBase {
 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-      System.out.println("!!!!");
+      
     } 
    
 }

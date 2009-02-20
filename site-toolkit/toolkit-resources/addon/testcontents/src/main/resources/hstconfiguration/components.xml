@@ -59,6 +59,9 @@
                     <sv:property sv:name="hst:referencename" sv:type="String">
                         <sv:value>s</sv:value>
                     </sv:property>
+                    <sv:property sv:name="hst:componentcontentbasepath" sv:type="String">
+                        <sv:value>Styles/NewsPageStyle</sv:value>
+                    </sv:property>
                 </sv:node>
             </sv:node>
         </sv:node>

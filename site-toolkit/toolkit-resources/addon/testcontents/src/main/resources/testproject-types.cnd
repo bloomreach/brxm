@@ -9,3 +9,12 @@
 - testproject:title (string)
 - testproject:date (date)
 
+[testproject:newspage] > hippostd:publishable, hippostd:publishableSummary, hippo:document
++ testproject:body (hippostd:html)
+- testproject:summary (string)
+- testproject:title (string)
+- testproject:date (date)
+
+[testproject:pagestyle] > hippostd:publishable, hippostd:publishableSummary, hippo:document
+- testproject:text (string)
+

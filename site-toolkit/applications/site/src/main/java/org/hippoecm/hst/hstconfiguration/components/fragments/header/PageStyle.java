@@ -1,12 +1,17 @@
 package org.hippoecm.hst.hstconfiguration.components.fragments.header;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.jcr.LoginException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.hstconfiguration.components.HstComponentBase;
+import org.hippoecm.hst.pagetypes.PageStyleType;
+import org.hippoecm.hst.service.ServiceFactory;
 
 public class PageStyle extends HstComponentBase {
 
@@ -15,11 +20,26 @@ public class PageStyle extends HstComponentBase {
         
         super.doBeforeRender(request, response);
         
-        List<String> s = new ArrayList<String>();
-        s.add("foo");
-        s.add("bar");
+        HstRequestContext hrc = request.getRequestContext();
         
-        request.setAttribute("test", s);
+        String componentContentPath =  this.hstComponentConfigurationBean.getComponentContentBasePath();
+        if(componentContentPath != null) {
+            try {
+                Session session = hrc.getSession();
+                Node contentPath = (Node)session.getItem(hrc.getSiteMapItem().getHstSiteMap().getSite().getContentPath());
+                Node componentContent = contentPath.getNode(componentContentPath);
+                if(componentContent.hasNode(componentContent.getName())) {
+                    Node n = componentContent.getNode(componentContent.getName());
+                    PageStyleType stylePage = ServiceFactory.create(n, PageStyleType.class);
+                    request.setAttribute("style", stylePage); 
+                }
+                
+            } catch (LoginException e) {
+                e.printStackTrace();
+            } catch (RepositoryException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 

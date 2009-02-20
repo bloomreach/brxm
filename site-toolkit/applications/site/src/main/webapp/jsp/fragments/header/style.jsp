@@ -3,25 +3,5 @@
 <%@ taglib uri='/WEB-INF/hst-core.tld' prefix='hc'%>
 
 
-<%
-System.out.println("Console out from title.jsp");
-%>
+${style.text}
 
-<c:forEach var="name" items="${test}">
-
-${name}
-
-</c:forEach>
-
-<style>
-
-.page {
-    BACKGROUND-COLOR: #DDDDDD; 
-}
-.header {
-    BACKGROUND-COLOR: #AAAAAA; 
-}
-.title {
-    BACKGROUND-COLOR: #777777;
-}
-</style>

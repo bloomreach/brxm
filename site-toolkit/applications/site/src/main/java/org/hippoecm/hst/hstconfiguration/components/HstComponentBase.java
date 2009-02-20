@@ -11,6 +11,7 @@ import org.hippoecm.hst.core.component.HstResponse;
 public class HstComponentBase implements HstComponent {
     
     protected String name;
+    protected HstComponentConfigurationBean hstComponentConfigurationBean;
     
     public HstComponentBase() {
     }
@@ -27,7 +28,12 @@ public class HstComponentBase implements HstComponent {
         this.name = name;
     }
     
+    public HstComponentConfigurationBean getHstComponentConfigurationBean(){
+        return this.hstComponentConfigurationBean;
+    }
+    
     public void init(ServletConfig servletConfig, HstComponentConfigurationBean compConfig) throws HstComponentException {
+        this.hstComponentConfigurationBean = compConfig;
         System.out.println("[HstComponent: " + getName() + "] init()");
     }
 
