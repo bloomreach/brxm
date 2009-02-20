@@ -18,6 +18,7 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-base.xml" />
+  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-linking.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-container.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-pipelines.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-request.xml" />
