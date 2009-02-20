@@ -46,8 +46,10 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 component.doAction(hstRequest, hstResponse);
             } catch (HstComponentException e) {
                 window.addComponentExcpetion(e);
+                log.warn("Component exception caught: " + e.getMessage(), e);
             } catch (Throwable th) {
-                window.addComponentExcpetion(new HstComponentException(th.getMessage(), th));
+                window.addComponentExcpetion(new HstComponentException(th.getMessage()));
+                log.warn("Component exception caught: " + th.getMessage(), th);
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
@@ -65,8 +67,10 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 component.doBeforeRender(hstRequest, hstResponse);
             } catch (HstComponentException e) {
                 window.addComponentExcpetion(e);
+                log.warn("Component exception caught: " + e.getMessage(), e);
             } catch (Throwable th) {
-                window.addComponentExcpetion(new HstComponentException(th.getMessage(), th));
+                window.addComponentExcpetion(new HstComponentException(th.getMessage()));
+                log.warn("Component exception caught: " + th.getMessage(), th);
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
@@ -81,7 +85,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl, window);
         
         if (window.hasComponentExceptions()) {
-            printErrors(window, hstResponse);
+            renderErrorInformation(window, hstResponse);
         }
     }
 
@@ -96,8 +100,10 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 component.doBeforeServeResource(hstRequest, hstResponse);
             } catch (HstComponentException e) {
                 window.addComponentExcpetion(e);
+                log.warn("Component exception caught: " + e.getMessage(), e);
             } catch (Throwable th) {
-                window.addComponentExcpetion(new HstComponentException(th.getMessage(), th));
+                window.addComponentExcpetion(new HstComponentException(th.getMessage()));
+                log.warn("Component exception caught: " + th.getMessage(), th);
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
@@ -112,7 +118,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl, window);
 
         if (window.hasComponentExceptions()) {
-            printErrors(window, hstResponse);
+            renderErrorInformation(window, hstResponse);
         }
     }
 
@@ -138,15 +144,18 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         try {
             disp.include(servletRequest, servletResponse);
         } catch (ServletException e) {
-            window.addComponentExcpetion(new HstComponentException(e.getMessage(), e));
+            window.addComponentExcpetion(new HstComponentException(e.getMessage()));
+            log.warn("Component exception caught: " + e.getMessage(), e);
         } catch (IOException e) {
-            window.addComponentExcpetion(new HstComponentException(e.getMessage(), e));
+            window.addComponentExcpetion(new HstComponentException(e.getMessage()));
+            log.warn("Component exception caught: " + e.getMessage(), e);
         } catch (Throwable th) {
-            window.addComponentExcpetion(new HstComponentException(th.getMessage(), th));
+            window.addComponentExcpetion(new HstComponentException(th.getMessage()));
+            log.warn("Component exception caught: " + th.getMessage(), th);
         }
     }
     
-    protected void printErrors(HstComponentWindow window, HstResponse hstResponse) {
+    protected void renderErrorInformation(HstComponentWindow window, HstResponse hstResponse) {
         PrintWriter out = null;
         
         try {

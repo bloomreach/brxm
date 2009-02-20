@@ -16,6 +16,8 @@
 package org.hippoecm.hst.core.container;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
@@ -33,33 +35,47 @@ import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class AggregationValve extends AbstractValve {
-    
+
     @Override
     public void invoke(ValveContext context) throws ContainerException {
-        
+
         if (!context.getServletResponse().isCommitted() && !isResourceRequest()) {
 
             HstComponentWindow rootWindow = context.getRootComponentWindow();
-            
+
             if (rootWindow != null) {
                 ServletRequest servletRequest = context.getServletRequest();
                 ServletResponse servletResponse = context.getServletResponse();
-                HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
-                
+                HstRequestContext requestContext = (HstRequestContext) servletRequest
+                        .getAttribute(HstRequestContext.class.getName());
+
                 Map<HstComponentWindow, HstRequest> requestMap = new HashMap<HstComponentWindow, HstRequest>();
-                Map<HstComponentWindow, HstResponseState> responseStateMap = new HashMap<HstComponentWindow, HstResponseState>();
                 Map<HstComponentWindow, HstResponse> responseMap = new HashMap<HstComponentWindow, HstResponse>();
                 
-                createHstRequestResponseForWindows(rootWindow, requestContext, servletRequest, servletResponse, requestMap, responseStateMap, responseMap);
+                // make hstRequest and hstResponse for each component window.
+                // note that hstResponse is hierarchically created.
+                createHstRequestResponseForWindows(rootWindow, requestContext, servletRequest, servletResponse,
+                        requestMap, responseMap);
                 
-                aggregateAndProcessBeforeRender(rootWindow, requestMap, responseMap, context.getServletConfig());
-                aggregateAndProcessRender(rootWindow, requestMap, responseMap, context.getServletConfig());
-                
+                // to avoid recursive invocation from now, just make a list by hierarchical order.
+                List<HstComponentWindow> sortedComponentWindowList = new LinkedList<HstComponentWindow>();
+                sortComponentWindowsByHierarchy(rootWindow, sortedComponentWindowList);
+                HstComponentWindow [] sortedComponentWindows = sortedComponentWindowList.toArray(new HstComponentWindow[0]);
+
+                ServletConfig servletConfig = context.getServletConfig();
+                // process doBeforeRender() of each component as sorted order, parent first.
+                processWindowsBeforeRender(servletConfig, sortedComponentWindows, requestMap, responseMap);
+                // process doRender() of each component as reversed sort order, child first.
+                processWindowsRender(servletConfig, sortedComponentWindows, requestMap, responseMap);
+
                 if (log.isWarnEnabled()) {
-                    logWarningsForEachComponentWindow(rootWindow);
+                    // log warnings of each component execution as reversed sort order, child first.
+                    logWarningsForEachComponentWindow(sortedComponentWindows);
                 }
-                
+
                 try {
+                    // flush root component window content.
+                    // note that the child component's contents are already flushed into the root component's response state.
                     rootWindow.flushContent();
                 } catch (Exception e) {
                     if (log.isWarnEnabled()) {
@@ -68,98 +84,101 @@ public class AggregationValve extends AbstractValve {
                 }
             }
         }
-        
+
         // continue
         context.invokeNext();
     }
-    
+
     protected void createHstRequestResponseForWindows(
-            final HstComponentWindow window, 
+            final HstComponentWindow window,
             final HstRequestContext requestContext, 
-            final ServletRequest servletRequest, 
+            final ServletRequest servletRequest,
             final ServletResponse servletResponse, 
-            final Map<HstComponentWindow, HstRequest> requestMap, 
-            final Map<HstComponentWindow, HstResponseState> responseStateMap, 
+            final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap) {
-        
-        HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, getUrlFactory().getParameterNameComponentSeparator());
-        HstResponseState responseState = new HstResponseState((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
-        HstResponse response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window, responseState);
+
+        HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window,
+                getUrlFactory().getParameterNameComponentSeparator());
+        HstResponseState responseState = new HstResponseState((HttpServletRequest) servletRequest,
+                (HttpServletResponse) servletResponse);
+        HstResponse response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window,
+                responseState);
 
         requestMap.put(window, request);
-        responseStateMap.put(window, responseState);
         responseMap.put(window, response);
 
         ((HstComponentWindowImpl) window).setResponseState(responseState);
 
         Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
-        
+
         if (childWindowMap != null) {
             for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
-                createHstRequestResponseForWindows(entry.getValue(), requestContext, servletRequest, response, requestMap, responseStateMap, responseMap);
+                createHstRequestResponseForWindows(entry.getValue(), requestContext, servletRequest, response,
+                        requestMap, responseMap);
             }
         }
     }
 
-    protected void aggregateAndProcessBeforeRender(
+    protected void sortComponentWindowsByHierarchy(
             final HstComponentWindow window, 
-            final Map<HstComponentWindow, HstRequest> requestMap, 
-            final Map<HstComponentWindow, HstResponse> responseMap,
-            final ServletConfig servletConfig) throws ContainerException {
+            final List<HstComponentWindow> sortedWindowList) {
         
-        final HstRequest request = requestMap.get(window);
-        final HstResponse response = responseMap.get(window);
-        
-        getComponentInvoker().invokeBeforeRender(servletConfig, request, response);
+        sortedWindowList.add(window);
 
         Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
-        
-        if (childWindowMap != null) {
-            for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
-                aggregateAndProcessBeforeRender(entry.getValue(), requestMap, responseMap, servletConfig);
-            }
-        }
-        
-    }
-    
-    protected void aggregateAndProcessRender(
-            final HstComponentWindow window, 
-            final Map<HstComponentWindow, HstRequest> requestMap, 
-            final Map<HstComponentWindow, HstResponse> responseMap,
-            final ServletConfig servletConfig) throws ContainerException {
-        
-        Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
-        
-        if (childWindowMap != null) {
-            for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
-                aggregateAndProcessRender(entry.getValue(), requestMap, responseMap, servletConfig);
-            }
-        }
-        
-        final HstRequest request = requestMap.get(window);
-        final HstResponse response = responseMap.get(window);
-        
-        getComponentInvoker().invokeRender(servletConfig, request, response);
-    }
-    
-    protected void logWarningsForEachComponentWindow(HstComponentWindow window) {
 
-        if (window.hasComponentExceptions()) {
-            for (HstComponentException hce : window.getComponentExceptions()) {
-                log.warn("Component exception found: " + hce.getMessage(), hce);
+        if (childWindowMap != null) {
+            for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
+                sortComponentWindowsByHierarchy(entry.getValue(), sortedWindowList);
             }
+        }
+    }
+
+    protected void processWindowsBeforeRender(
+            final ServletConfig servletConfig, 
+            final HstComponentWindow [] sortedComponentWindows,
+            final Map<HstComponentWindow, HstRequest> requestMap, 
+            final Map<HstComponentWindow, HstResponse> responseMap)
+            throws ContainerException {
+
+        for (int i = 0; i < sortedComponentWindows.length; i++) {
+            HstComponentWindow window = sortedComponentWindows[i];
+            HstRequest request = requestMap.get(window);
+            HstResponse response = responseMap.get(window);
+            getComponentInvoker().invokeBeforeRender(servletConfig, request, response);
+        }
+
+    }
+
+    protected void processWindowsRender(
+            final ServletConfig servletConfig, 
+            final HstComponentWindow [] sortedComponentWindows,
+            final Map<HstComponentWindow, HstRequest> requestMap, 
+            final Map<HstComponentWindow, HstResponse> responseMap)
+            throws ContainerException {
+
+        for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
+            HstComponentWindow window = sortedComponentWindows[i];
+            HstRequest request = requestMap.get(window);
+            HstResponse response = responseMap.get(window);
+            getComponentInvoker().invokeRender(servletConfig, request, response);
+        }
+
+    }
+
+    protected void logWarningsForEachComponentWindow(HstComponentWindow [] sortedComponentWindows) {
+
+        for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
+            HstComponentWindow window = sortedComponentWindows[i];
             
-            window.clearComponentExceptions();
-        }
-        
-        Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
-        
-        if (childWindowMap != null) {
-            for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
-                logWarningsForEachComponentWindow(entry.getValue());
+            if (window.hasComponentExceptions()) {
+                for (HstComponentException hce : window.getComponentExceptions()) {
+                    log.warn("Component exception found: " + hce.getMessage(), hce);
+                }
+
+                window.clearComponentExceptions();
             }
         }
-        
     }
 
 }

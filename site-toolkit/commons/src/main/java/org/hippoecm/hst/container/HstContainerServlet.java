@@ -75,6 +75,16 @@ public class HstContainerServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 
         try {
+            if (!HstServices.isAvailable()) {
+                String msg = "The HST Container Services are not initialized yet.";
+                log.warn(msg);
+                console.warn(msg);
+                res.getWriter().println(msg);
+                res.flushBuffer();
+                
+                return;
+            }
+            
             if (this.contextNamespace != null) {
                 req.setAttribute(ContainerConstants.CONTEXT_NAMESPACE_ATTRIBUTE, contextNamespace);
             }

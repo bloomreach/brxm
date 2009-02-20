@@ -100,8 +100,6 @@
     <url-pattern>/content/*</url-pattern>
   </servlet-mapping>
   
-  <!-- JSTL tag library TLDs -->
-
   <!-- HST tag library TLDs -->
   
   <taglib>
