@@ -32,7 +32,7 @@ public class ActionValve extends AbstractValve
                 HstResponse response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window, responseState);
                 ((HstComponentWindowImpl) window).setResponseState(responseState);
 
-                getComponentInvoker().invokeAction(context.getServletContext(), request, response);
+                getComponentInvoker().invokeAction(context.getServletConfig(), request, response);
             } else {
                 throw new ContainerException("No action window found.");
             }

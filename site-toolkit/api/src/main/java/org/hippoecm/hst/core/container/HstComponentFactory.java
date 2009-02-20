@@ -8,8 +8,6 @@ import org.hippoecm.hst.core.component.HstComponentException;
 
 public interface HstComponentFactory {
     
-    void setServletConfig(ServletConfig servletConfig);
-    
-    HstComponent getComponentInstance(HstComponentConfiguration compConfig) throws HstComponentException;
+    HstComponent getComponentInstance(ServletConfig servletConfig, HstComponentConfiguration compConfig) throws HstComponentException;
     
 }

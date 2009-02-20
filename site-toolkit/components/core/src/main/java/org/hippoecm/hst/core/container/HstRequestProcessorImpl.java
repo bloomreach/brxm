@@ -1,6 +1,6 @@
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletContext;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -12,16 +12,16 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         this.pipelines = pipelines;
     }
 
-    public void processRequest(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void processRequest(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         Pipeline pipeline = this.pipelines.getDefaultPipeline();
 
         try {
-            pipeline.beforeInvoke(servletContext, servletRequest, servletResponse);
-            pipeline.invoke(servletContext, servletRequest, servletResponse);
+            pipeline.beforeInvoke(servletConfig, servletRequest, servletResponse);
+            pipeline.invoke(servletConfig, servletRequest, servletResponse);
         } catch (Throwable th) {
             throw new ContainerException(th);
         } finally {
-            pipeline.afterInvoke(servletContext, servletRequest, servletResponse);
+            pipeline.afterInvoke(servletConfig, servletRequest, servletResponse);
         }
     }
 

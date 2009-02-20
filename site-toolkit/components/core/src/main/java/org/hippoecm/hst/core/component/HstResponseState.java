@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -14,6 +15,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.w3c.dom.Element;
 
 /**
  * Temporarily holds the current state of a Wicket response when invoked from WicketPortlet: buffer,
@@ -48,8 +51,9 @@ public class HstResponseState
     private CharArrayWriterBuffer charOutputBuffer;
     private ServletOutputStream outputStream;
     private PrintWriter printWriter;
-    private HashMap<String, ArrayList<String>> headers;
-    private ArrayList<Cookie> cookies;
+    private Map<String, List<String>> headers;
+    private List<Cookie> cookies;
+    private Map<String, Element> properties;
     private boolean committed;
     private boolean hasStatus;
     private boolean hasError;
@@ -85,13 +89,13 @@ public class HstResponseState
         this.response = response;
     }
 
-    private ArrayList<String> getHeaderList(String name, boolean create)
+    private List<String> getHeaderList(String name, boolean create)
     {
         if (headers == null)
         {
-            headers = new HashMap<String, ArrayList<String>>();
+            headers = new HashMap<String, List<String>>();
         }
-        ArrayList<String> headerList = headers.get(name);
+        List<String> headerList = headers.get(name);
         if (headerList == null && create)
         {
             headerList = new ArrayList<String>();
@@ -99,7 +103,7 @@ public class HstResponseState
         }
         return headerList;
     }
-
+    
     private void failIfCommitted()
     {
         if (committed)
@@ -265,7 +269,7 @@ public class HstResponseState
     {
         if (isMimeResponse && !committed)
         {
-            ArrayList<String> headerList = getHeaderList(name, true);
+            List<String> headerList = getHeaderList(name, true);
             headerList.clear();
             headerList.add(value);
         }
@@ -565,6 +569,23 @@ public class HstResponseState
         }
     }
 
+    public void addProperty(String key, Element element)
+    {
+        if (isMimeResponse && !committed)
+        {
+            if (properties == null)
+            {
+                properties = new HashMap<String, Element>();
+            }
+            
+            properties.put(key, element);
+        }
+    }
+    
+    protected Map<String, Element> getProperties() {
+        return properties;
+    }
+
     public void clear()
     {
         printWriter = null;
@@ -649,7 +670,7 @@ public class HstResponseState
 
             if (headers != null)
             {
-                for (Map.Entry<String, ArrayList<String>> entry : headers.entrySet())
+                for (Map.Entry<String, List<String>> entry : headers.entrySet())
                 {
                     for (String value : entry.getValue())
                     {
@@ -675,6 +696,15 @@ public class HstResponseState
                     // TODO: temporary "fix" for JBoss Portal which doesn't yet support this
                     // (although required by the Portlet API 2.0!)
                 }
+            }
+
+            if (properties != null && response instanceof HstResponse)
+            {
+                for (Map.Entry<String, Element> entry : properties.entrySet())
+                {
+                    ((HstResponse) response).addProperty(entry.getKey(), entry.getValue());
+                }
+                properties = null;
             }
             
             if (!hasError && redirectLocation == null)
@@ -719,4 +749,5 @@ public class HstResponseState
             }
         }
     }
+
 }

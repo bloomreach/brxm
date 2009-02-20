@@ -3,7 +3,6 @@ package org.hippoecm.hst.container;
 import java.io.IOException;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -32,18 +31,16 @@ public class HstContainerServlet extends HttpServlet {
     private static Log log;
     private static Log console;
     
-    protected ServletContext servletContext;
     protected String contextNamespace;
     
     public void init(ServletConfig config) throws ServletException {
         
         super.init(config);
         
-        this.servletContext = config.getServletContext();
         this.contextNamespace = config.getInitParameter(CONTEXT_NAMESPACE_INIT_PARAM);
         
         if (this.contextNamespace == null) {
-            this.contextNamespace = this.servletContext.getInitParameter(CONTEXT_NAMESPACE_INIT_PARAM);
+            this.contextNamespace = config.getServletContext().getInitParameter(CONTEXT_NAMESPACE_INIT_PARAM);
         }
 
         if (log == null) {
@@ -67,7 +64,7 @@ public class HstContainerServlet extends HttpServlet {
                 req.setAttribute(ContainerConstants.CONTEXT_NAMESPACE_ATTRIBUTE, contextNamespace);
             }
             
-            HstServices.getRequestProcessor().processRequest(this.servletContext, req, res);
+            HstServices.getRequestProcessor().processRequest(getServletConfig(), req, res);
         } catch (Exception e) {
             final String msg = "Fatal error encountered while processing request: " + e.toString();
             log.fatal(msg, e);

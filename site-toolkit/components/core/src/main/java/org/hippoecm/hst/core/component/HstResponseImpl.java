@@ -2,15 +2,23 @@ package org.hippoecm.hst.core.component;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Factory implementation for creating HTTP Response Wrappers
@@ -246,8 +254,36 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         return super.encodeURL(url);
     }
 
-    public void addHeaderProperty(String key, String headerElement) {
-        this.responseState.addHeader(key, headerElement);
+    public Element createElement(String tagName) {
+        Element element = null;
+        
+        try {
+            DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+            docBuilder = docBuilderFactory.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            element = doc.createElement(tagName);
+        } catch (ParserConfigurationException e) {
+            throw new DOMException((short) 0, "Initialization fail");
+        }
+        
+        return element;
+    }
+    
+    public void addProperty(String key, Element element) {
+        this.responseState.addProperty(key, element);
+    }
+    
+    public Map<String, Element> getProperties() {
+        Map<String, Element> properties = this.responseState.getProperties();
+        
+        if (properties == null) {
+            properties = Collections.emptyMap();
+        } else {
+            properties = Collections.unmodifiableMap(properties);
+        }
+        
+        return properties;
     }
 
 }

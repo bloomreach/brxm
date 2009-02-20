@@ -3,7 +3,7 @@ package org.hippoecm.hst.core.container;
 import java.io.IOException;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -17,42 +17,42 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
     
     static Log log = LogFactory.getLog(HstComponentInvokerImpl.class);
     
-    public void invokeAction(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void invokeAction(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = hstRequest.getComponentWindow();
         window.getComponent().doAction(hstRequest, hstResponse);
     }
 
-    public void invokeBeforeRender(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void invokeBeforeRender(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = hstRequest.getComponentWindow();
         window.getComponent().doBeforeRender(hstRequest, hstResponse);
     }
 
-    public void invokeRender(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void invokeRender(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         String dispatchUrl = hstRequest.getComponentWindow().getRenderPath();
-        invokeDispatcher(servletContext, servletRequest, servletResponse, dispatchUrl);
+        invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl);
     }
 
-    public void invokeBeforeServeResource(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void invokeBeforeServeResource(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = hstRequest.getComponentWindow();
         window.getComponent().doBeforeServeResource(hstRequest, hstResponse);
     }
 
-    public void invokeServeResource(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void invokeServeResource(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         String dispatchUrl = hstRequest.getComponentWindow().getRenderPath();
-        invokeDispatcher(servletContext, servletRequest, servletResponse, dispatchUrl);
+        invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl);
     }
 
-    protected void invokeDispatcher(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse, String dispatchUrl) throws ContainerException {
+    protected void invokeDispatcher(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse, String dispatchUrl) throws ContainerException {
         RequestDispatcher disp = null;
         
         if (dispatchUrl != null) {
@@ -61,9 +61,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             }
             
             if (dispatchUrl.startsWith("/")) {
-                disp = servletContext.getRequestDispatcher(dispatchUrl);
+                disp = servletConfig.getServletContext().getRequestDispatcher(dispatchUrl);
             } else {
-                disp = servletContext.getNamedDispatcher(dispatchUrl);
+                disp = servletConfig.getServletContext().getNamedDispatcher(dispatchUrl);
             }
         }
         

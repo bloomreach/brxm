@@ -17,8 +17,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
+  <bean id="org.hippoecm.hst.core.container.HstComponentRegistry"
+        class="org.hippoecm.hst.core.container.HstComponentRegistryImpl">
+  </bean>
+  
   <bean id="org.hippoecm.hst.core.container.HstComponentFactory"
         class="org.hippoecm.hst.core.container.HstComponentFactoryImpl">
+    <constructor-arg ref="org.hippoecm.hst.core.container.HstComponentRegistry" />  
   </bean>
   
   <bean id="org.hippoecm.hst.core.container.HstComponentWindowFactory"

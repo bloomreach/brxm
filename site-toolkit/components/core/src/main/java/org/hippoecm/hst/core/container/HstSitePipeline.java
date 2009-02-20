@@ -1,6 +1,6 @@
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletContext;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -31,21 +31,21 @@ public class HstSitePipeline implements Pipeline
     public void initialize() throws ContainerException {
     }
     
-    public void beforeInvoke(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
-        invokeValves(servletContext, servletRequest, servletResponse, preInvokingValves);
+    public void beforeInvoke(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+        invokeValves(servletConfig, servletRequest, servletResponse, preInvokingValves);
     }
 
-    public void invoke(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
-        invokeValves(servletContext, servletRequest, servletResponse, invokingValves);
+    public void invoke(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+        invokeValves(servletConfig, servletRequest, servletResponse, invokingValves);
     }
     
-    public void afterInvoke(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
-        invokeValves(servletContext, servletRequest, servletResponse, postInvokingValves);
+    public void afterInvoke(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+        invokeValves(servletConfig, servletRequest, servletResponse, postInvokingValves);
     }
     
-    private void invokeValves(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse, Valve [] valves) throws ContainerException {
+    private void invokeValves(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse, Valve [] valves) throws ContainerException {
         if (valves != null && valves.length > 0) {
-            new Invocation(servletContext, servletRequest, servletResponse, valves).invokeNext();
+            new Invocation(servletConfig, servletRequest, servletResponse, valves).invokeNext();
         }
     }
 
@@ -57,15 +57,15 @@ public class HstSitePipeline implements Pipeline
 
         private final Valve[] valves;
 
-        private final ServletContext servletContext;
+        private final ServletConfig servletConfig;
         private final ServletRequest servletRequest;
         private final ServletResponse servletResponse;
         private HstComponentWindow rootComponentWindow;
 
         private int at = 0;
 
-        public Invocation(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse, Valve[] valves) {
-            this.servletContext = servletContext;
+        public Invocation(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse, Valve[] valves) {
+            this.servletConfig = servletConfig;
             this.servletRequest = servletRequest;
             this.servletResponse = servletResponse;
             this.valves = valves;
@@ -80,8 +80,8 @@ public class HstSitePipeline implements Pipeline
             }
         }
         
-        public ServletContext getServletContext() {
-            return this.servletContext;
+        public ServletConfig getServletConfig() {
+            return this.servletConfig;
         }
 
         public ServletRequest getServletRequest() {

@@ -3,7 +3,7 @@ package org.hippoecm.hst.core.container;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -40,8 +40,8 @@ public class AggregationValve extends AbstractValve {
                 
                 createHstRequestResponseForWindows(rootWindow, requestContext, servletRequest, servletResponse, requestMap, responseStateMap, responseMap);
                 
-                aggregateAndProcessBeforeRender(rootWindow, requestMap, responseMap, context.getServletContext());
-                aggregateAndProcessRender(rootWindow, requestMap, responseMap, context.getServletContext());
+                aggregateAndProcessBeforeRender(rootWindow, requestMap, responseMap, context.getServletConfig());
+                aggregateAndProcessRender(rootWindow, requestMap, responseMap, context.getServletConfig());
                 
                 try {
                     rootWindow.flushContent();
@@ -87,18 +87,18 @@ public class AggregationValve extends AbstractValve {
             final HstComponentWindow window, 
             final Map<HstComponentWindow, HstRequest> requestMap, 
             final Map<HstComponentWindow, HstResponse> responseMap,
-            final ServletContext servletContext) throws ContainerException {
+            final ServletConfig servletConfig) throws ContainerException {
         
         final HstRequest request = requestMap.get(window);
         final HstResponse response = responseMap.get(window);
         
-        getComponentInvoker().invokeBeforeRender(servletContext, request, response);
+        getComponentInvoker().invokeBeforeRender(servletConfig, request, response);
 
         Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
         
         if (childWindowMap != null) {
             for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
-                aggregateAndProcessBeforeRender(entry.getValue(), requestMap, responseMap, servletContext);
+                aggregateAndProcessBeforeRender(entry.getValue(), requestMap, responseMap, servletConfig);
             }
         }
         
@@ -108,20 +108,20 @@ public class AggregationValve extends AbstractValve {
             final HstComponentWindow window, 
             final Map<HstComponentWindow, HstRequest> requestMap, 
             final Map<HstComponentWindow, HstResponse> responseMap,
-            final ServletContext servletContext) throws ContainerException {
+            final ServletConfig servletConfig) throws ContainerException {
         
         Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
         
         if (childWindowMap != null) {
             for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
-                aggregateAndProcessRender(entry.getValue(), requestMap, responseMap, servletContext);
+                aggregateAndProcessRender(entry.getValue(), requestMap, responseMap, servletConfig);
             }
         }
         
         final HstRequest request = requestMap.get(window);
         final HstResponse response = responseMap.get(window);
         
-        getComponentInvoker().invokeRender(servletContext, request, response);
+        getComponentInvoker().invokeRender(servletConfig, request, response);
         
     }
 }

@@ -1,6 +1,6 @@
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletContext;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -9,14 +9,14 @@ import javax.servlet.ServletResponse;
  */
 public interface HstComponentInvoker {
     
-    void invokeAction(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+    void invokeAction(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
 
-    void invokeBeforeRender(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+    void invokeBeforeRender(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
     
-    void invokeRender(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+    void invokeRender(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
     
-    void invokeBeforeServeResource(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+    void invokeBeforeServeResource(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
     
-    void invokeServeResource(ServletContext servletContext, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+    void invokeServeResource(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
     
 }

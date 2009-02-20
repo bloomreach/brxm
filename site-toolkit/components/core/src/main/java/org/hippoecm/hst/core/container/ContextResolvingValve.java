@@ -50,7 +50,7 @@ public class ContextResolvingValve extends AbstractValve
         HstComponentConfiguration rootComponentConfig = matchResult.getCompontentConfiguration();
         
         try {
-            HstComponentWindow rootComponentWindow = getComponentWindowFactory().create(requestContext, rootComponentConfig, getComponentFactory());
+            HstComponentWindow rootComponentWindow = getComponentWindowFactory().create(context.getServletConfig(), requestContext, rootComponentConfig, getComponentFactory());
             context.setRootComponentWindow(rootComponentWindow);
         } catch (Exception e) {
             throw new ContainerException("Failed to create component window for the configuration, " + rootComponentConfig.getId(), e);
