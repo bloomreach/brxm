@@ -23,11 +23,11 @@ import static org.junit.Assert.assertTrue;
 import org.hippoecm.hst.configuration.BasicHstSiteMapMatcher;
 import org.hippoecm.hst.configuration.ConfigurationViewUtilities;
 import org.hippoecm.hst.configuration.HstSite;
-import org.hippoecm.hst.configuration.HstSiteMapMatcher;
 import org.hippoecm.hst.configuration.HstSites;
-import org.hippoecm.hst.configuration.HstSiteMapMatcher.MatchResult;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher.MatchResult;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Test;
 

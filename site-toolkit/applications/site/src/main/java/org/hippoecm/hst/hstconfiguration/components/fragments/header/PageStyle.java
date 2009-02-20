@@ -41,7 +41,7 @@ public class PageStyle extends HstComponentBase {
         if(componentContentPath != null) {
             try {
                 Session session = hrc.getSession();
-                Node contentPath = (Node)session.getItem(hrc.getSiteMapItem().getHstSiteMap().getSite().getContentPath());
+                Node contentPath = (Node)session.getItem(hrc.getMatchedSiteMapItem().getSiteMapItem().getHstSiteMap().getSite().getContentPath());
                 Node componentContent = contentPath.getNode(componentContentPath);
                 if(componentContent.hasNode(componentContent.getName())) {
                     Node n = componentContent.getNode(componentContent.getName());
