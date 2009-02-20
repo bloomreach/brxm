@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.jcr;
+package org.hippoecm.hst.provider.jcr;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;

@@ -24,6 +24,31 @@ public interface JCRValueProvider extends ValueProvider{
     public Node getJcrNode();
 
     /**
+     *  the canonical node of the node. If the node is virtual but does not have a physical equivalence, null is returned. If the node
+     *  is physical, then the canonical node is the same as returned by getJcrNode()  
+     * @return String canonical path
+     * 
+     */
+    public Node getCanonical();
+    
+    /**
+     * @return node path of the caononical or null 
+     */
+    public String getCanonicalPath();
+    
+
+    /**
+     * The handle node of the canonical node. This is a convenience node needed frequently for linkrewriting and such
+     * @return
+     */
+    public Node getHandle();
+    
+    /**
+     * @return node path of the handle or null 
+     */
+    public String getHandlePath();
+    
+    /**
      * Method for detaching the jcr node. After calling this method, the jcr node is not available anymore
      */
     public void detach();
@@ -39,4 +64,6 @@ public interface JCRValueProvider extends ValueProvider{
      * @return true when the underlying jcr node is of type nodeType
      */
     public boolean isNodeType(String nodeType);
+    
+   
 }

@@ -23,8 +23,10 @@ import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemUtitlites;
-import org.hippoecm.hst.core.jcr.JCRUtilities;
 import org.hippoecm.hst.core.linking.HstPathConvertor.ConversionResult;
+import org.hippoecm.hst.provider.jcr.JCRUtilities;
+import org.hippoecm.hst.provider.jcr.JCRValueProvider;
+import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.jcr.JCRService;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -34,18 +36,25 @@ public class BasicHstLinkCreator implements HstLinkCreator {
 
     private static final Logger log = LoggerFactory.getLogger(HstLinkCreator.class);
 
-    public HstLink create(JCRService jcrService, HstSiteMapItem siteMapItem) {
-        Node n = jcrService.getValueProvider().getJcrNode();
-        if (n != null) {
-            return this.create(n, siteMapItem);
-        } else {
-            log.warn("JCRValueProvider is detached. Trying to create link with detached node path");
-            // TODO create link with nodepath
-        }
-
-        return null;
+    public HstLink create(Service service, HstSiteMapItem siteMapItem) {
+        String path  = service.getValueProvider().getPath();
+        return this.create(path, siteMapItem, true);
     }
 
+    public HstLink create(JCRService jcrService, HstSiteMapItem siteMapItem) {
+        JCRValueProvider provider = jcrService.getValueProvider();
+        
+        if(provider.getHandlePath() != null) {
+            return this.create(provider.getHandlePath(), siteMapItem, true);
+        } else if(provider.getCanonicalPath() != null) {
+            return this.create(provider.getCanonicalPath(), siteMapItem, true);
+        } else {
+            return this.create(provider.getPath(), siteMapItem, true);
+        }
+        
+    }
+
+    
     /**
      * If the node is of type hippo:document and it is below a hippo:handle, we will
      * rewrite the link wrt hippo:handle, because a handle is the umbrella of a document
@@ -71,35 +80,44 @@ public class BasicHstLinkCreator implements HstLinkCreator {
                 log.debug("Node '{}' is a '{}' that belongs to a handle. Create the link with the handle", nodePath, HippoNodeType.NT_DOCUMENT);
                 nodePath = node.getParent().getPath();
             }
-                
-            // Try to see if we can create a link within the HstSite where this HstSiteMapItem belongs to
-            HstPathConvertor hstPathConvertor = new BasicHstPathConvertor();
-            HstSiteMap hstSiteMap = siteMapItem.getHstSiteMap();
-            HstSite hstSite = hstSiteMap.getSite();
             
-            if(nodePath.startsWith(hstSite.getLocationMap().getCanonicalSiteContentPath())) {
-                ConversionResult result = hstPathConvertor.convert(nodePath, hstSite);
-                if(result != null) {
-                    log.debug("Creating a link for node '{}' succeeded", nodePath);
-                    log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", nodePath, result.getPath());
-                    return new HstLinkImpl(result.getPath(), hstSite);
-                } else {
-                  // TODO should we try different HstSites?
-                  log.warn("Unable to create a link for '{}' for HstSite '{}'. Return null", nodePath, hstSite.getName());
-                      
-                }
-            } else {
-                log.debug("For HstSite '{}' we cannot a create a link for node '{}' because it is outside the site scope", hstSite.getName(), nodePath);
-                // TODO try to link to another HstSite that has a matching 'content base path'
-            }
+            return this.create(nodePath, siteMapItem, true);
             
         } catch (RepositoryException e) {
             log.error("Repository Exception during creating link", e);
         }
         
-        
         return null;
     }
+    
+    /*
+     * boolean signature is only needed to distinguish from create(String toSiteMapItemId, HstSiteMapItem currentSiteMapItem)
+     * and not used
+     */
+    private HstLink create(String path, HstSiteMapItem siteMapItem, boolean signature) {
+     // Try to see if we can create a link within the HstSite where this HstSiteMapItem belongs to
+        HstPathConvertor hstPathConvertor = new BasicHstPathConvertor();
+        HstSiteMap hstSiteMap = siteMapItem.getHstSiteMap();
+        HstSite hstSite = hstSiteMap.getSite();
+        
+        if(path.startsWith(hstSite.getLocationMap().getCanonicalSiteContentPath())) {
+            ConversionResult result = hstPathConvertor.convert(path, hstSite);
+            if(result != null) {
+                log.debug("Creating a link for node '{}' succeeded", path);
+                log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", path, result.getPath());
+                return new HstLinkImpl(result.getPath(), hstSite);
+            } else {
+              // TODO should we try different HstSites?
+              log.warn("Unable to create a link for '{}' for HstSite '{}'. Return null", path, hstSite.getName());
+                  
+            }
+        } else {
+            log.debug("For HstSite '{}' we cannot a create a link for node '{}' because it is outside the site scope", hstSite.getName(), path);
+            // TODO try to link to another HstSite that has a matching 'content base path'
+        }
+        return null;
+    }
+    
 
     public HstLink create(String toSiteMapItemId, HstSiteMapItem currentSiteMapItem) {
         HstSiteMap hstSiteMap = currentSiteMapItem.getHstSiteMap();
