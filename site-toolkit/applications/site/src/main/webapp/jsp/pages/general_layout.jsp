@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License. --%>
 <%@ page language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri='/WEB-INF/hst-core.tld' prefix='hc'%>
 
 <%
@@ -43,15 +44,19 @@ function <hc:namespace/>showPopup() {
     
     <a href="javascript:<hc:namespace/>showPopup();">Show</a>
     
+    <hc:url var="homeUrl" value="/news">
+      <hc:param name="page" />
+    </hc:url>
     <hc:url var="firstUrl" type="render">
       <hc:param name="page" value="1" />
     </hc:url>
-    <hc:url var="lastUrl" type="render">
+    <hc:url var="lastUrl">
       <hc:param name="page" value="9" />
     </hc:url>
-    
-    <a href="<%=firstUrl%>">First</a>
-    <a href="<%=lastUrl%>">Last</a>
+
+    <a href="${homeUrl}">Home</a>
+    <a href="${firstUrl}">First</a>
+    <a href="${lastUrl}">Last</a>
     
     <div>
         header parameters: <%=request.getParameterMap()%>

@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License. --%>
 <%@ page language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri='/WEB-INF/hst-core.tld' prefix='hc'%>
 
 <title>My Title.....</title>

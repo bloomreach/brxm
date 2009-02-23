@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
@@ -43,7 +42,13 @@ public abstract class BaseHstURLTag extends TagSupport {
 
     protected String var = null;
     
-    protected String type = null;
+    protected String type = HstURL.TYPE_RENDER;
+    
+    protected String value = null;
+    
+    protected String context = null;
+    
+    protected String scope;
     
     protected Boolean escapeXml = true;
         
@@ -88,10 +93,13 @@ public abstract class BaseHstURLTag extends TagSupport {
         
         url.setType(getType());
         
+        url.setBaseContext(getContext());
+        
+        url.setBasePath(getValue());
+        
         setUrlParameters(url);
         
-        HttpServletResponse response = 
-            (HttpServletResponse) pageContext.getResponse();
+        HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
         
         //  properly encoding urls to allow non-cookie enabled sessions - PLUTO-252 
         String urlString = response.encodeURL(url.toString());
@@ -111,8 +119,19 @@ public abstract class BaseHstURLTag extends TagSupport {
             }
         } 
         else {
-            pageContext.setAttribute(var, urlString,
-                                     PageContext.PAGE_SCOPE);
+            int varScope = PageContext.PAGE_SCOPE;
+            
+            if (this.scope != null) {
+                if ("request".equals(this.scope)) {
+                    varScope = PageContext.REQUEST_SCOPE; 
+                } else if ("session".equals(this.scope)) {
+                    varScope = PageContext.SESSION_SCOPE;
+                } else if ("application".equals(this.scope)) {
+                    varScope = PageContext.APPLICATION_SCOPE;
+                }
+            }
+            
+            pageContext.setAttribute(var, urlString, varScope);
         }
         
         /*cleanup*/
@@ -152,6 +171,33 @@ public abstract class BaseHstURLTag extends TagSupport {
     }
     
     /**
+     * Returns the value property.
+     * 
+     * @return String
+     */
+    public String getValue() {
+        return value;
+    }
+    
+    /**
+     * Returns the context property.
+     * 
+     * @return String
+     */
+    public String getContext() {
+        return context;
+    }
+    
+    /**
+     * Returns the scope property.
+     * 
+     * @return String
+     */
+    public String getScope() {
+        return scope;
+    }
+    
+    /**
      * Returns escapeXml property.
      * @return Boolean
      */
@@ -176,6 +222,33 @@ public abstract class BaseHstURLTag extends TagSupport {
      */
     public void setType(String type) {
         this.type = type;
+    }
+    
+    /**
+     * Sets the value property.
+     * @param type The value to set
+     * @return void
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
+    
+    /**
+     * Sets the context property.
+     * @param type The context to set
+     * @return void
+     */
+    public void setContext(String context) {
+        this.context = context;
+    }
+    
+    /**
+     * Sets the scope property.
+     * @param type The scope to set
+     * @return void
+     */
+    public void setScope(String scope) {
+        this.scope = scope;
     }
     
     /**
@@ -229,16 +302,17 @@ public abstract class BaseHstURLTag extends TagSupport {
      * @return void
      */
     protected void setUrlParameters(HstURL url) {
-        
-        Set<String> keySet = parametersMap.keySet();
-                
-        for(String key : keySet){
+        for(String key : parametersMap.keySet()) {
             
             List<String> valueList = parametersMap.get(key);
         
             String[] valueArray = valueList.toArray(new String[0]);
             
             url.setParameter(key, valueArray);
+        }
+        
+        for (String key : removedParametersList) {
+            url.setParameter(key, (String) null);
         }
     }
     

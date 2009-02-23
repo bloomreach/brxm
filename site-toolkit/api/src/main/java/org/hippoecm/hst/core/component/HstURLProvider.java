@@ -27,4 +27,8 @@ public interface HstURLProvider {
     
     String toString();
     
+    void setBasePath(String basePath);
+    
+    void setBaseContext(String baseContext);
+    
 }

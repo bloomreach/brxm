@@ -25,6 +25,8 @@ public class HstURLImpl implements HstURL {
     protected String type = TYPE_RENDER;
     protected Map<String, String[]> parameterMap = new HashMap<String, String[]>();
     protected String resourceID;
+    protected String basePath;
+    protected String baseContext;
     protected HstURLProvider urlProvider;
     
     public HstURLImpl(HstURLProvider urlProvider) {
@@ -40,7 +42,7 @@ public class HstURLImpl implements HstURL {
     }
 
     public void setParameter(String name, String value) {
-        this.parameterMap.put(name, new String [] { value });
+        setParameter(name, value != null ? new String [] { value } : (String []) null);
     }
 
     public void setParameter(String name, String[] values) {
@@ -48,7 +50,9 @@ public class HstURLImpl implements HstURL {
     }
 
     public void setParameters(Map<String, String[]> parameters) {
-        this.parameterMap.putAll(parameters);
+        for (Map.Entry<String, String []> entry : parameters.entrySet()) {
+            setParameter(entry.getKey(), entry.getValue());
+        }
     }
 
     public void setResourceID(String resourceID) {
@@ -57,6 +61,14 @@ public class HstURLImpl implements HstURL {
 
     public void setType(String type) {
         this.type = type;
+    }
+    
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
+    }
+    
+    public void setBaseContext(String baseContext) {
+        this.baseContext = baseContext;
     }
 
     public void write(Writer out) throws IOException {
@@ -70,6 +82,8 @@ public class HstURLImpl implements HstURL {
     public String toString() {
         this.urlProvider.setType(this.type);
         this.urlProvider.setParameters(this.parameterMap);
+        this.urlProvider.setBasePath(this.basePath);
+        this.urlProvider.setBaseContext(this.baseContext);
         return this.urlProvider.toString();
     }
 

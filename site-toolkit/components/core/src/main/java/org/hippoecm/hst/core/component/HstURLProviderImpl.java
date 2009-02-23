@@ -32,6 +32,9 @@ public class HstURLProviderImpl implements HstURLProvider {
     protected String type;
     protected Map<String, String[]> parameterMap;
     
+    protected String basePath;
+    protected String baseContext;
+    
     public HstURLProviderImpl(String characterEncoding, HstContainerURL baseContainerURL, String parameterNamespace, String parameterNameComponentSeparator) {
         this.characterEncoding = (characterEncoding != null ? characterEncoding : "UTF-8");
         this.baseContainerURL = baseContainerURL;
@@ -60,15 +63,21 @@ public class HstURLProviderImpl implements HstURLProvider {
     public String toString() {
         Map<String, String[]> mergedParams = mergeParameters();
         
-        String basePath = "";
+        String baseUrlPath = "";
+        HstContainerURLImpl containerURL = (HstContainerURLImpl) this.baseContainerURL;
         
-        if (this.baseContainerURL != null) {
-            HstContainerURLImpl containerURL = (HstContainerURLImpl) this.baseContainerURL;
-            basePath = containerURL.getContextPath() + containerURL.getServletPath() + containerURL.getRenderPath();
-        }
+        if (this.basePath != null) {
+            if (this.baseContext != null) {
+                baseUrlPath = this.baseContext + containerURL.getServletPath() + this.basePath;
+            } else {
+                baseUrlPath = containerURL.getContextPath() + containerURL.getServletPath() + this.basePath;
+            }
+        } else if (this.baseContainerURL != null) {
+            baseUrlPath = containerURL.getContextPath() + containerURL.getServletPath() + containerURL.getRenderPath();
+        } 
         
-        StringBuilder sb = new StringBuilder(basePath);
-        boolean firstDone = false;
+        StringBuilder sb = new StringBuilder(baseUrlPath);
+        boolean firstParamDone = (sb.indexOf("?") >= 0);
         
         for (Map.Entry<String, String[]> entry : mergedParams.entrySet()) {
             String name = entry.getKey();
@@ -80,18 +89,26 @@ public class HstURLProviderImpl implements HstURLProvider {
                 } catch (Exception e) {
                 }
                 
-                sb.append(firstDone ? "&" : "?")
+                sb.append(firstParamDone ? "&" : "?")
                 .append(name)
                 .append("=")
                 .append(encodedValue);
                 
-                firstDone = true;
+                firstParamDone = true;
             }
         }
         
         return sb.toString();
     }
 
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
+    }
+    
+    public void setBaseContext(String baseContext) {
+        this.baseContext = baseContext;
+    }
+    
     protected Map<String, String []> mergeParameters() {
         Map<String, String[]> mergedParams = new HashMap<String, String[]>();
         
