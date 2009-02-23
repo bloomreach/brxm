@@ -24,55 +24,38 @@ import org.hippoecm.hst.core.container.HstContainerURLImpl;
 
 public class HstURLProviderImpl implements HstURLProvider {
     
-    protected String characterEncoding;
-    protected HstContainerURL baseContainerURL;
-    protected String parameterNamespace;
-    protected String parameterNameComponentSeparator;
+    protected String parameterNameComponentSeparator = "_";
     
-    protected String type;
-    protected Map<String, String[]> parameterMap;
+    public HstURLProviderImpl() {
+    }
     
-    protected String basePath;
-    protected String baseContext;
+    public void setParameterNameComponentSeparator(String parameterNameComponentSeparator) {
+        this.parameterNameComponentSeparator = parameterNameComponentSeparator;
+    }
     
-    public HstURLProviderImpl(String characterEncoding, HstContainerURL baseContainerURL, String parameterNamespace, String parameterNameComponentSeparator) {
-        this.characterEncoding = (characterEncoding != null ? characterEncoding : "UTF-8");
-        this.baseContainerURL = baseContainerURL;
-        this.parameterNamespace = parameterNamespace;
-        this.parameterNameComponentSeparator = (parameterNameComponentSeparator == null ? "" : parameterNameComponentSeparator);
+    public String getParameterNameComponentSeparator() {
+        return this.parameterNameComponentSeparator;
     }
 
-    public void clearParameters() {
-        if (this.parameterMap != null) {
-            this.parameterMap.clear();
-        }
-    }
-
-    public void setParameters(Map<String, String[]> parameters) {
-        if (this.parameterMap == null) {
-            this.parameterMap = new HashMap<String, String[]>();
-        }
+    public String createURLString(HstContainerURL baseContainerURL, HstURL hstUrl) {
+        String characterEncoding = hstUrl.getCharacterEncoding();
+        String parameterNamespace = hstUrl.getParameterNamespace();
+        Map<String, String []> parameters = hstUrl.getParameterMap();
+        String baseContextPath = hstUrl.getBaseContext();
+        String basePath = hstUrl.getBasePath();
         
-        this.parameterMap.putAll(parameters);
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-    
-    public String toString() {
-        Map<String, String[]> mergedParams = mergeParameters();
+        Map<String, String[]> mergedParams = mergeParameters(baseContainerURL, parameterNamespace, parameters);
         
         String baseUrlPath = "";
-        HstContainerURLImpl containerURL = (HstContainerURLImpl) this.baseContainerURL;
+        HstContainerURLImpl containerURL = (HstContainerURLImpl) baseContainerURL;
         
-        if (this.basePath != null) {
-            if (this.baseContext != null) {
-                baseUrlPath = this.baseContext + containerURL.getServletPath() + this.basePath;
+        if (basePath != null) {
+            if (baseContextPath != null) {
+                baseUrlPath = baseContextPath + containerURL.getServletPath() + basePath;
             } else {
-                baseUrlPath = containerURL.getContextPath() + containerURL.getServletPath() + this.basePath;
+                baseUrlPath = containerURL.getContextPath() + containerURL.getServletPath() + basePath;
             }
-        } else if (this.baseContainerURL != null) {
+        } else if (baseContainerURL != null) {
             baseUrlPath = containerURL.getContextPath() + containerURL.getServletPath() + containerURL.getRenderPath();
         } 
         
@@ -85,7 +68,7 @@ public class HstURLProviderImpl implements HstURLProvider {
             for (String value : entry.getValue()) {
                 String encodedValue = value;
                 try {
-                    encodedValue = URLEncoder.encode(value, this.characterEncoding);
+                    encodedValue = URLEncoder.encode(value, characterEncoding);
                 } catch (Exception e) {
                 }
                 
@@ -98,26 +81,18 @@ public class HstURLProviderImpl implements HstURLProvider {
             }
         }
         
-        return sb.toString();
-    }
-
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
+        return sb.toString();        
     }
     
-    public void setBaseContext(String baseContext) {
-        this.baseContext = baseContext;
-    }
-    
-    protected Map<String, String []> mergeParameters() {
+    protected Map<String, String []> mergeParameters(HstContainerURL baseContainerURL, String parameterNamespace, Map<String, String []> parameterMap) {
         Map<String, String[]> mergedParams = new HashMap<String, String[]>();
         
-        if (this.baseContainerURL != null) {
-            mergedParams.putAll(this.baseContainerURL.getParameterMap());
+        if (baseContainerURL != null) {
+            mergedParams.putAll(baseContainerURL.getParameterMap());
         }
         
-        for (Map.Entry<String, String[]> entry : this.parameterMap.entrySet()) {
-            String name = this.parameterNamespace + this.parameterNameComponentSeparator + entry.getKey();
+        for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+            String name = parameterNamespace + this.parameterNameComponentSeparator + entry.getKey();
             String [] values = entry.getValue();
             
             if (values == null || values.length == 0) {

@@ -15,25 +15,26 @@
  */
 package org.hippoecm.hst.core.component;
 
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerURL;
 
 public class HstURLFactoryImpl implements HstURLFactory {
     
-    protected String parameterNameComponentSeparator = ContainerConstants.DEFAULT_PARAMETER_NAME_COMPONENTS_SEPARATOR;
+    protected HstURLProvider urlProvider;
 
-    public void setParameterNameComponentSeparator(String parameterNameComponentSeparator) {
-        this.parameterNameComponentSeparator = parameterNameComponentSeparator;
+    public void setUrlProvider(HstURLProvider urlProvider) {
+        this.urlProvider = urlProvider;
     }
     
-    public String getParameterNameComponentSeparator() {
-        return this.parameterNameComponentSeparator;
+    public HstURLProvider getUrlProvider() {
+        return this.urlProvider;
     }
     
     public HstURL createURL(String characterEncoding, String type, String parameterNamespace, HstContainerURL baseContainerURL) {
-        HstURLProvider provider = new HstURLProviderImpl(characterEncoding, baseContainerURL, parameterNamespace, this.parameterNameComponentSeparator);
-        HstURLImpl url = new HstURLImpl(provider);
+        HstURLImpl url = new HstURLImpl(this.urlProvider);
+        url.setCharacterEncoding(characterEncoding);
         url.setType(type);
+        url.setParameterNamespace(parameterNamespace);
+        url.setBaseContainerURL(baseContainerURL);
         return url;
     }
 

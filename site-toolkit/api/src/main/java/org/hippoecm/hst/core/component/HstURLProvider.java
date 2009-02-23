@@ -15,20 +15,14 @@
  */
 package org.hippoecm.hst.core.component;
 
-import java.util.Map;
+import org.hippoecm.hst.core.container.HstContainerURL;
 
 public interface HstURLProvider {
+    
+    void setParameterNameComponentSeparator(String parameterNameComponentSeparator);
 
-    void setType(String type);
-    
-    void setParameters(Map<String, String[]> parameters);
-    
-    void clearParameters();
-    
-    String toString();
-    
-    void setBasePath(String basePath);
-    
-    void setBaseContext(String baseContext);
+    String getParameterNameComponentSeparator();
+
+    String createURLString(HstContainerURL baseContainerURL, HstURL hstUrl);
     
 }

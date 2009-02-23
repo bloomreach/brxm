@@ -38,6 +38,18 @@ public interface HstURL {
     String getType();
     
     /**
+     * Returns the parameter namespace
+     * @return String
+     */
+    String getParameterNamespace();
+    
+    /**
+     * Returns the character encoding
+     * @return String
+     */
+    String getCharacterEncoding();
+    
+    /**
      * Sets a parameter of this url.
      * @param name
      * @param value
@@ -93,6 +105,12 @@ public interface HstURL {
     void setResourceID(String resourceID);
     
     /**
+     * Returns the resource ID
+     * @return String
+     */
+    String getResourceID();
+    
+    /**
      * Sets the base path of this url.
      * In normal case, this method does not need to be invoked because the container's
      * base url will be automatically detected.
@@ -102,16 +120,31 @@ public interface HstURL {
      * @param basePath
      */
     void setBasePath(String basePath);
+    
+    /**
+     * Returns the base path of this url.
+     * In normal case, this method does not need to be invoked because the container's
+     * base url will be automatically detected.
+     * @return String
+     */
+    String getBasePath();
 
     /**
      * Sets the context path of this url.
      * In normal case, this method does not need to be invoked because the container's
      * base context path will be automatically detected.
      * However, if the base context path should be set manullay, then this method can be used.
-     * If the {@link #setBasePath(String)} was not invoked, this method should be invoked to
-     * set the base context path.
      * @param baseContext
      */
     void setBaseContext(String baseContext);
+    
+    /**
+     * Returns the context path of this url.
+     * In normal case, this method does not need to be invoked because the container's
+     * base context path will be automatically detected.
+     * However, if the base context path should be set manullay, then this method can be used.
+     * @return String
+     */
+    String getBaseContext();
     
 }

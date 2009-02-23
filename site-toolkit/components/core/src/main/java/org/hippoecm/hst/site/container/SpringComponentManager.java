@@ -18,11 +18,15 @@ package org.hippoecm.hst.site.container;
 import java.util.Properties;
 
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ComponentManagerAware;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringComponentManager implements ComponentManager {
+public class SpringComponentManager implements ComponentManager, BeanPostProcessor {
     
     protected AbstractApplicationContext applicationContext;
     protected Properties initProps;
@@ -44,7 +48,13 @@ public class SpringComponentManager implements ComponentManager {
             configurations = new String[] { classXmlFileName };            
         }
 
-        this.applicationContext = new ClassPathXmlApplicationContext(configurations, false);
+        this.applicationContext = new ClassPathXmlApplicationContext(configurations, false) {
+            // According to the javadoc of org/springframework/context/support/AbstractApplicationContext.html#postProcessBeanFactory,
+            // this allows for registering special BeanPostProcessors.
+            protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+                beanFactory.addBeanPostProcessor(SpringComponentManager.this);
+            }
+        };
         
         if (this.initProps != null) {
             PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
@@ -80,4 +90,17 @@ public class SpringComponentManager implements ComponentManager {
     public void setConfigurations(String [] configurations) {
         this.configurations = configurations;
     }
+
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        if (bean instanceof ComponentManagerAware) {
+            ((ComponentManagerAware) bean).setComponentManager(this);
+        }
+        
+        return bean;
+    }
+
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        return bean; 
+    }
+
 }

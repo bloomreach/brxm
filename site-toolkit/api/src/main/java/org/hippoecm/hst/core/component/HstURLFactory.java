@@ -19,10 +19,8 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 
 
 public interface HstURLFactory {
-
-    void setParameterNameComponentSeparator(String parameterNameComponentSeparator);
     
-    String getParameterNameComponentSeparator();
+    HstURLProvider getUrlProvider();
 
     HstURL createURL(String characterEncoding, String type, String parameterNamespace, HstContainerURL base);
     

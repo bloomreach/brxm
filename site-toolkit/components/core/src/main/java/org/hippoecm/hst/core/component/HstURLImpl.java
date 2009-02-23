@@ -20,9 +20,14 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hippoecm.hst.core.container.HstContainerURL;
+
 public class HstURLImpl implements HstURL {
     
+    protected String characterEncoding;
     protected String type = TYPE_RENDER;
+    protected String parameterNamespace;
+    protected HstContainerURL baseContainerURL;
     protected Map<String, String[]> parameterMap = new HashMap<String, String[]>();
     protected String resourceID;
     protected String basePath;
@@ -41,6 +46,26 @@ public class HstURLImpl implements HstURL {
         return this.type;
     }
 
+    public String getCharacterEncoding() {
+        return this.characterEncoding;
+    }
+    
+    public String getParameterNamespace() {
+        return this.parameterNamespace;
+    }
+    
+    public HstContainerURL getBaseContainerURL() {
+        return this.baseContainerURL;
+    }
+
+    public String getBasePath() {
+        return this.basePath;
+    }
+    
+    public String getBaseContext() {
+        return this.baseContext;
+    }
+    
     public void setParameter(String name, String value) {
         setParameter(name, value != null ? new String [] { value } : (String []) null);
     }
@@ -58,9 +83,25 @@ public class HstURLImpl implements HstURL {
     public void setResourceID(String resourceID) {
         this.resourceID = resourceID;
     }
+    
+    public String getResourceID() {
+        return this.resourceID;
+    }
 
+    public void setCharacterEncoding(String characterEncoding) {
+        this.characterEncoding = characterEncoding;
+    }
+    
     public void setType(String type) {
         this.type = type;
+    }
+    
+    public void setParameterNamespace(String parameterNamespace) {
+        this.parameterNamespace = parameterNamespace;
+    }
+    
+    public void setBaseContainerURL(HstContainerURL baseContainerURL) {
+        this.baseContainerURL = baseContainerURL;
     }
     
     public void setBasePath(String basePath) {
@@ -80,11 +121,7 @@ public class HstURLImpl implements HstURL {
     }
     
     public String toString() {
-        this.urlProvider.setType(this.type);
-        this.urlProvider.setParameters(this.parameterMap);
-        this.urlProvider.setBasePath(this.basePath);
-        this.urlProvider.setBaseContext(this.baseContext);
-        return this.urlProvider.toString();
+        return this.urlProvider.createURLString(this.baseContainerURL, this);
     }
 
 }
