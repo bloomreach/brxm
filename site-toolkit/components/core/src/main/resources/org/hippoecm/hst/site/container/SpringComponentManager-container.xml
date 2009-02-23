@@ -37,7 +37,7 @@
   
   <bean id="org.hippoecm.hst.core.component.HstURLProvider"
         class="org.hippoecm.hst.core.component.HstURLProviderImpl">
-    <property name="parameterNameComponentSeparator" value="_" />
+    <property name="parameterNameComponentSeparator" value=":" />
   </bean>
 
   <bean id="org.hippoecm.hst.core.component.HstURLFactory"
