@@ -38,7 +38,6 @@
     <property name="componentInvoker" ref="org.hippoecm.hst.core.container.HstComponentInvoker" />
     <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />
     <property name="linkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator" />
-    <property name="containerURLParser" ref="org.hippoecm.hst.core.container.HstContainerURLParser" />
   </bean>
 
   <!-- Pre-processing valves -->

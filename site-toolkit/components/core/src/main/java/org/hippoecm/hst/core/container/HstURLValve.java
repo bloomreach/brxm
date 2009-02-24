@@ -34,7 +34,7 @@ public class HstURLValve extends AbstractValve {
             ((HstRequestContextImpl) requestContext).setContextNamespace(contextNamespace);
         }
         
-        HstContainerURL baseURL = getContainerURLParser().parseURL(context.getServletRequest());
+        HstContainerURL baseURL = getUrlFactory().getUrlProvider().parseURL(context.getServletRequest(), context.getServletResponse());
         
         ((HstRequestContextImpl) requestContext).setBaseURL(baseURL);
         ((HstRequestContextImpl) requestContext).setURLFactory(getUrlFactory());

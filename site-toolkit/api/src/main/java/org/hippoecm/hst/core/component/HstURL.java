@@ -44,12 +44,6 @@ public interface HstURL {
     String getParameterNamespace();
     
     /**
-     * Returns the character encoding
-     * @return String
-     */
-    String getCharacterEncoding();
-    
-    /**
      * Sets a parameter of this url.
      * @param name
      * @param value

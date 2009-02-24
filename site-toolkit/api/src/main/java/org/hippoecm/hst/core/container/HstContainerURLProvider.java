@@ -13,16 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.component;
+package org.hippoecm.hst.core.container;
 
-import org.hippoecm.hst.core.container.HstContainerURL;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
-public interface HstURLProvider {
+import org.hippoecm.hst.core.component.HstURL;
+
+public interface HstContainerURLProvider {
     
     void setParameterNameComponentSeparator(String parameterNameComponentSeparator);
 
     String getParameterNameComponentSeparator();
 
-    String createURLString(HstContainerURL baseContainerURL, HstURL hstUrl);
+    HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse);
+    
+    HstContainerURL createURL(HstContainerURL baseContainerURL, HstURL hstUrl);
+    
+    String toURLString(HstContainerURL containerURL);
     
 }

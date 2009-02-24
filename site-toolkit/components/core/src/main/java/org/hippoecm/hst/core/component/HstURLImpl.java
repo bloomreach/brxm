@@ -21,20 +21,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.container.HstContainerURLProvider;
 
 public class HstURLImpl implements HstURL {
     
-    protected String characterEncoding;
     protected String type = TYPE_RENDER;
     protected String parameterNamespace;
     protected HstContainerURL baseContainerURL;
     protected Map<String, String[]> parameterMap = new HashMap<String, String[]>();
     protected String resourceID;
-    protected String basePath;
-    protected String baseContext;
-    protected HstURLProvider urlProvider;
+    protected HstContainerURLProvider urlProvider;
     
-    public HstURLImpl(HstURLProvider urlProvider) {
+    public HstURLImpl(HstContainerURLProvider urlProvider) {
         this.urlProvider = urlProvider;
     }
 
@@ -46,10 +44,6 @@ public class HstURLImpl implements HstURL {
         return this.type;
     }
 
-    public String getCharacterEncoding() {
-        return this.characterEncoding;
-    }
-    
     public String getParameterNamespace() {
         return this.parameterNamespace;
     }
@@ -58,14 +52,6 @@ public class HstURLImpl implements HstURL {
         return this.baseContainerURL;
     }
 
-    public String getBasePath() {
-        return this.basePath;
-    }
-    
-    public String getBaseContext() {
-        return this.baseContext;
-    }
-    
     public void setParameter(String name, String value) {
         setParameter(name, value != null ? new String [] { value } : (String []) null);
     }
@@ -88,10 +74,6 @@ public class HstURLImpl implements HstURL {
         return this.resourceID;
     }
 
-    public void setCharacterEncoding(String characterEncoding) {
-        this.characterEncoding = characterEncoding;
-    }
-    
     public void setType(String type) {
         this.type = type;
     }
@@ -104,14 +86,6 @@ public class HstURLImpl implements HstURL {
         this.baseContainerURL = baseContainerURL;
     }
     
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
-    }
-    
-    public void setBaseContext(String baseContext) {
-        this.baseContext = baseContext;
-    }
-
     public void write(Writer out) throws IOException {
         out.write(toString());
     }
@@ -121,7 +95,8 @@ public class HstURLImpl implements HstURL {
     }
     
     public String toString() {
-        return this.urlProvider.createURLString(this.baseContainerURL, this);
+        HstContainerURL containerURL = this.urlProvider.createURL(this.baseContainerURL, this);
+        return this.urlProvider.toURLString(containerURL);
     }
 
 }

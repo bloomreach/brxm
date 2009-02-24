@@ -18,17 +18,15 @@ package org.hippoecm.hst.core.container;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hippoecm.hst.core.component.HstURL;
-
 public class HstContainerURLImpl implements HstContainerURL {
 
+    protected String characterEncoding;
     protected String contextPath;
     protected String servletPath;
-    protected String renderPath;
-    protected String type = HstURL.TYPE_RENDER;
+    protected String pathInfo;
     protected String actionWindow;
     protected String resourceWindow;
-    protected Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+    protected Map<String, String[]> parameterMap;
     
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
@@ -46,20 +44,12 @@ public class HstContainerURLImpl implements HstContainerURL {
         return this.servletPath;
     }
     
-    public void setRenderPath(String renderPath) {
-        this.renderPath = renderPath;
+    public void setPathInfo(String pathInfo) {
+        this.pathInfo = pathInfo;
     }
     
-    public String getRenderPath() {
-        return this.renderPath;
-    }
-    
-    public void setType(String type) {
-        this.type = type;
-    }
-    
-    public String getType() {
-        return this.type;
+    public String getPathInfo() {
+        return this.pathInfo;
     }
     
     public void setActionWindow(String actionWindow) {
@@ -83,15 +73,52 @@ public class HstContainerURLImpl implements HstContainerURL {
     }
 
     public void setParameter(String name, String value) {
-        this.parameterMap.put(name, new String [] { value });
+        setParameter(name, value != null ? new String [] { value } : (String []) null);
     }
 
     public void setParameter(String name, String[] values) {
-        this.parameterMap.put(name, values);
+        if (this.parameterMap == null) {
+            this.parameterMap = new HashMap<String, String[]>();
+        }
+
+        if (values == null) {
+            this.parameterMap.remove(name);
+        } else {
+            this.parameterMap.put(name, values);
+        }
     }
 
     public void setParameters(Map<String, String[]> parameters) {
-        this.parameterMap.putAll(parameters);
+        for (Map.Entry<String, String []> entry : parameters.entrySet()) {
+            setParameter(entry.getKey(), entry.getValue());
+        }
+    }
+    
+    public void setCharacterEncoding(String characterEncoding) {
+        this.characterEncoding = characterEncoding;
+    }
+    
+    public String getCharacterEncoding() {
+        return this.characterEncoding;
+    }
+    
+    @Override
+    public Object clone() {
+        HstContainerURLImpl cloned = new HstContainerURLImpl();
+        
+        cloned.contextPath = this.contextPath;
+        cloned.servletPath = this.servletPath;
+        cloned.pathInfo = this.pathInfo;
+        cloned.actionWindow = this.actionWindow;
+        cloned.resourceWindow = this.resourceWindow;
+        
+        if (this.parameterMap != null) {
+            cloned.setParameters(this.parameterMap);
+        }
+        
+        cloned.characterEncoding = this.characterEncoding;
+        
+        return cloned;
     }
 
 }

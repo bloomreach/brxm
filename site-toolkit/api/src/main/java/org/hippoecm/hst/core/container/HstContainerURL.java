@@ -19,7 +19,13 @@ import java.util.Map;
 
 public interface HstContainerURL {
     
-    String getType();
+    String getCharacterEncoding();
+    
+    String getContextPath();
+    
+    String getServletPath();
+    
+    String getPathInfo();
     
     String getActionWindow();
     
@@ -30,8 +36,6 @@ public interface HstContainerURL {
     void setParameter(String name, String[] values);
     
     void setParameters(Map<String, String[]> parameters);
-    
-    String toString();
     
     Map<String, String[]> getParameterMap();
     

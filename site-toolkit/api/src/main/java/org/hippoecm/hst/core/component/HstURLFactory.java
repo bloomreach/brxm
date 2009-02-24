@@ -16,12 +16,13 @@
 package org.hippoecm.hst.core.component;
 
 import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.container.HstContainerURLProvider;
 
 
 public interface HstURLFactory {
     
-    HstURLProvider getUrlProvider();
+    HstContainerURLProvider getUrlProvider();
 
-    HstURL createURL(String characterEncoding, String type, String parameterNamespace, HstContainerURL base);
+    HstURL createURL(String type, String parameterNamespace, HstContainerURL base);
     
 }

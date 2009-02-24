@@ -35,18 +35,14 @@
         class="org.hippoecm.hst.core.container.HstComponentInvokerImpl">
   </bean>
   
-  <bean id="org.hippoecm.hst.core.component.HstURLProvider"
-        class="org.hippoecm.hst.core.component.HstURLProviderImpl">
+  <bean id="org.hippoecm.hst.core.container.HstContainerURLProvider"
+        class="org.hippoecm.hst.core.container.HstContainerURLProviderImpl">
     <property name="parameterNameComponentSeparator" value=":" />
   </bean>
 
   <bean id="org.hippoecm.hst.core.component.HstURLFactory"
         class="org.hippoecm.hst.core.component.HstURLFactoryImpl">
-    <property name="urlProvider" ref="org.hippoecm.hst.core.component.HstURLProvider" />
-  </bean>
-  
-  <bean id="org.hippoecm.hst.core.container.HstContainerURLParser"
-        class="org.hippoecm.hst.core.container.HstContainerURLParserImpl">
+    <property name="urlProvider" ref="org.hippoecm.hst.core.container.HstContainerURLProvider" />
   </bean>
   
 </beans>
