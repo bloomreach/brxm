@@ -37,6 +37,9 @@ public class BasicHstLinkCreator implements HstLinkCreator {
     private static final Logger log = LoggerFactory.getLogger(HstLinkCreator.class);
 
     public HstLink create(Service service, HstSiteMapItem siteMapItem) {
+        if(service instanceof JCRService){
+            return this.create((JCRService)service, siteMapItem);
+        }
         String path  = service.getValueProvider().getPath();
         return this.create(path, siteMapItem, true);
     }
