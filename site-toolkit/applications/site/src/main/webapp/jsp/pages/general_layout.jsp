@@ -24,7 +24,7 @@ System.out.println("Console out from general_layout.jsp");
 <head>
 
 <!-- include header -->
-<hc:content path="h" />
+<hc:content name="h" />
 
 </head>
 <body>
@@ -44,10 +44,10 @@ function <hc:namespace/>showPopup() {
     
     <a href="javascript:<hc:namespace/>showPopup();">Show</a>
     
-    <hc:url var="homeUrl" value="/news">
+    <hc:url var="homeUrl">
       <hc:param name="page" />
     </hc:url>
-    <hc:url var="firstUrl" type="render">
+    <hc:url var="firstUrl">
       <hc:param name="page" value="1" />
     </hc:url>
     <hc:url var="lastUrl">
@@ -64,7 +64,7 @@ function <hc:namespace/>showPopup() {
     
     </div>
     
-    <hc:content path="b" />
+    <hc:content name="b" />
     
 </div>
 

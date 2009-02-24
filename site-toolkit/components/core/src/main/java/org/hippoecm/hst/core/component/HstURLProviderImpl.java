@@ -41,23 +41,11 @@ public class HstURLProviderImpl implements HstURLProvider {
         String characterEncoding = hstUrl.getCharacterEncoding();
         String parameterNamespace = hstUrl.getParameterNamespace();
         Map<String, String []> parameters = hstUrl.getParameterMap();
-        String baseContextPath = hstUrl.getBaseContext();
-        String basePath = hstUrl.getBasePath();
         
         Map<String, String[]> mergedParams = mergeParameters(baseContainerURL, parameterNamespace, parameters);
         
-        String baseUrlPath = "";
         HstContainerURLImpl containerURL = (HstContainerURLImpl) baseContainerURL;
-        
-        if (basePath != null) {
-            if (baseContextPath != null) {
-                baseUrlPath = baseContextPath + containerURL.getServletPath() + basePath;
-            } else {
-                baseUrlPath = containerURL.getContextPath() + containerURL.getServletPath() + basePath;
-            }
-        } else if (baseContainerURL != null) {
-            baseUrlPath = containerURL.getContextPath() + containerURL.getServletPath() + containerURL.getRenderPath();
-        } 
+        String baseUrlPath = containerURL.getContextPath() + containerURL.getServletPath() + containerURL.getRenderPath();
         
         StringBuilder sb = new StringBuilder(baseUrlPath);
         boolean firstParamDone = (sb.indexOf("?") >= 0);

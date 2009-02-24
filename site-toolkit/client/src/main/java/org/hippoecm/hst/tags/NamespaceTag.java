@@ -17,13 +17,12 @@ package org.hippoecm.hst.tags;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.hippoecm.hst.core.component.HstResponse;
 
 /**
  * This tag produces a unique value for the current HST component.
@@ -43,14 +42,10 @@ public class NamespaceTag extends TagSupport {
         
         String namespace = "";
         
-        HttpServletRequest servletRequest = (HttpServletRequest) this.pageContext.getRequest();
+        HttpServletResponse servletResponse = (HttpServletResponse) this.pageContext.getResponse();
         
-        if (servletRequest instanceof HstRequest) {
-            HstComponentWindow myWindow = ((HstRequest) servletRequest).getComponentWindow();
-            
-            if (myWindow != null) {
-                namespace = myWindow.getReferenceNamespace();
-            }
+        if (servletResponse instanceof HstResponse) {
+            namespace = ((HstResponse) servletResponse).getNamespace();
         }
         
         JspWriter writer = pageContext.getOut();

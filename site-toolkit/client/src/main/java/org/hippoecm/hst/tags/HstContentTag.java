@@ -35,7 +35,7 @@ public class HstContentTag extends TagSupport {
     
     private static final long serialVersionUID = 1L;
 
-    protected String path = null;
+    protected String name = null;
     
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
@@ -56,7 +56,7 @@ public class HstContentTag extends TagSupport {
         
         if (request instanceof HstRequest) {
             HstComponentWindow myWindow = ((HstRequest) request).getComponentWindow();
-            HstComponentWindow childWindow = myWindow.getChildWindow(this.path);
+            HstComponentWindow childWindow = myWindow.getChildWindow(this.name);
             
             if (childWindow != null) {
                 try {
@@ -71,20 +71,20 @@ public class HstContentTag extends TagSupport {
     }
     
     /**
-     * Returns the path property.
+     * Returns the name of the child window content to include
      * @return String
      */
-    public String getPath() {
-        return this.path;
+    public String getName() {
+        return this.name;
     }
     
     /**
-     * Sets the path property.
-     * @param path The path to set
+     * Sets the name property.
+     * @param name The name of the child window content to include
      * @return void
      */
-    public void setPath(String path) {
-        this.path = path;
+    public void setName(String name) {
+        this.name = name;
     }
     
     /* -------------------------------------------------------------------*/
@@ -96,7 +96,7 @@ public class HstContentTag extends TagSupport {
         
         public VariableInfo[] getVariableInfo(TagData tagData) {
             VariableInfo vi[] = null;
-            String var = tagData.getAttributeString("path");
+            String var = tagData.getAttributeString("name");
             if (var != null) {
                 vi = new VariableInfo[1];
                 vi[0] =

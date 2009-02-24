@@ -109,42 +109,5 @@ public interface HstURL {
      * @return String
      */
     String getResourceID();
-    
-    /**
-     * Sets the base path of this url.
-     * In normal case, this method does not need to be invoked because the container's
-     * base url will be automatically detected.
-     * However, if the base path should be set manually, then this method can be used.
-     * If the basePath contains the context path, then the {@link #setBaseContext(String)}
-     * should not be invoked. Otherwise, the {@link #setBaseContext(String)} should be invoked.
-     * @param basePath
-     */
-    void setBasePath(String basePath);
-    
-    /**
-     * Returns the base path of this url.
-     * In normal case, this method does not need to be invoked because the container's
-     * base url will be automatically detected.
-     * @return String
-     */
-    String getBasePath();
-
-    /**
-     * Sets the context path of this url.
-     * In normal case, this method does not need to be invoked because the container's
-     * base context path will be automatically detected.
-     * However, if the base context path should be set manullay, then this method can be used.
-     * @param baseContext
-     */
-    void setBaseContext(String baseContext);
-    
-    /**
-     * Returns the context path of this url.
-     * In normal case, this method does not need to be invoked because the container's
-     * base context path will be automatically detected.
-     * However, if the base context path should be set manullay, then this method can be used.
-     * @return String
-     */
-    String getBaseContext();
-    
+        
 }

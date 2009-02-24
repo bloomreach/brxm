@@ -32,6 +32,15 @@ public interface HstResponse extends HttpServletResponse {
     HstURL createURL(String type);
     
     /**
+     * The value returned by this method should be prefixed or appended to elements, 
+     * such as JavaScript variables or function names, to ensure they are unique 
+     * in the context of the HST-managed page.
+     * The namespace value must be constant for the lifetime of the HstComponentWindow. 
+     * @return
+     */
+    String getNamespace();
+    
+    /**
      * Creates an element of the type specified to be used in the {@link #addProperty(String, Element)} method. 
      * 
      * @param tagName the tag name of the element

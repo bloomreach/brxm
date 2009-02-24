@@ -56,6 +56,10 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     public HstURL createURL(String type) {
         return this.requestContext.getURLFactory().createURL(getCharacterEncoding(), type, this.componentWindow.getReferenceNamespace(), this.requestContext.getBaseURL());
     }
+    
+    public String getNamespace() {
+        return this.componentWindow.getReferenceNamespace();
+    }
 
     public void setResponse(HttpServletResponse response) {
         super.setResponse(response);

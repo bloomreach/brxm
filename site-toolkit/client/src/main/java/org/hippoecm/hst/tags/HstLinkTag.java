@@ -16,43 +16,43 @@
 package org.hippoecm.hst.tags;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
-import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.hippoecm.hst.core.component.HstURL;
 
 /**
- * Abstract supporting class for Hst URL tags (action, redner and resource)
+ * Abstract supporting class for Hst Link tags
  */
 
-public abstract class BaseHstURLTag extends TagSupport {
+public class HstLinkTag extends BaseHstURLTag {
     
     private static final long serialVersionUID = 1L;
 
-    protected String var = null;
+    protected String value;
     
-    protected String type = HstURL.TYPE_RENDER;
+    protected String var;
     
+    protected String context;
+    
+    protected String scope;
+
     protected Boolean escapeXml = true;
         
-    protected Map<String, List<String>> parametersMap = 
-        new HashMap<String, List<String>>();
-
-    protected List<String> removedParametersList = 
-        new ArrayList<String>();
+    protected Map<String, List<String>> parametersMap = new HashMap<String, List<String>>();
     
-
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
      */
@@ -79,22 +79,52 @@ public abstract class BaseHstURLTag extends TagSupport {
     @Override
     public int doEndTag() throws JspException{
         
-        HstURL url = getUrl();
+        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+        HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
+        String characterEncoding = response.getCharacterEncoding();
         
-        if(url == null){
-            throw new IllegalStateException("internal error: url not set");
+        if (characterEncoding == null) {
+            characterEncoding = "UTF-8";
         }
         
-        url.setType(getType());
+        StringBuilder url = new StringBuilder();
+
+        if (this.context != null) {
+            url.append(this.context);
+        } else {
+            url.append(request.getContextPath());
+            url.append(request.getServletPath());
+        }
         
-        setUrlParameters(url);
+        if (!this.value.startsWith("/")) {
+            url.append("/");
+        }
         
-        HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
+        url.append(this.value);
         
-        //  properly encoding urls to allow non-cookie enabled sessions - PLUTO-252 
+        boolean firstParamDone = (url.indexOf("?") >= 0);
+        
+        for (Map.Entry<String, List<String>> entry : this.parametersMap.entrySet()) {
+            String name = entry.getKey();
+            
+            for (String value : entry.getValue()) {
+                String encodedValue = value;
+                try {
+                    encodedValue = URLEncoder.encode(value, characterEncoding);
+                } catch (Exception e) {
+                }
+                
+                url.append(firstParamDone ? "&" : ":");
+                url.append(name).append("=");
+                url.append(encodedValue);
+                
+                firstParamDone = true;
+            }
+        }
+        
         String urlString = response.encodeURL(url.toString());
 
-        if(escapeXml)
+        if (escapeXml)
         {
              urlString = doEscapeXml(urlString);
         }
@@ -109,14 +139,26 @@ public abstract class BaseHstURLTag extends TagSupport {
             }
         } 
         else {
-            pageContext.setAttribute(var, urlString, PageContext.PAGE_SCOPE);
+            int varScope = PageContext.PAGE_SCOPE;
+            
+            if (this.scope != null) {
+                if ("request".equals(this.scope)) {
+                    varScope = PageContext.REQUEST_SCOPE;
+                } else if ("session".equals(this.scope)) {
+                    varScope = PageContext.SESSION_SCOPE;
+                } else if ("application".equals(this.scope)) {
+                    varScope = PageContext.APPLICATION_SCOPE;
+                }
+            }
+            
+            pageContext.setAttribute(var, urlString, varScope);
         }
         
         /*cleanup*/
         parametersMap.clear();
-        removedParametersList.clear();
-        
-        setUrl(null);
+        var = null;
+        scope = null;
+        context = null;
         
         return EVAL_PAGE;
     }
@@ -140,12 +182,16 @@ public abstract class BaseHstURLTag extends TagSupport {
         return var;
     }
     
-    /**
-     * Returns the type property.
-     * @return String
-     */
-    public String getType() {
-        return type;
+    public String getContext() {
+        return context;
+    }
+    
+    public String getScope() {
+        return scope;
+    }
+    
+    public String getValue() {
+        return value;
     }
     
     /**
@@ -156,6 +202,9 @@ public abstract class BaseHstURLTag extends TagSupport {
         return escapeXml;
     }
     
+    public void setValue(String value) {
+        this.value = value;
+    }
     
     /**
      * Sets the var property.
@@ -166,13 +215,12 @@ public abstract class BaseHstURLTag extends TagSupport {
         this.var = var;
     }
     
-    /**
-     * Sets the type property.
-     * @param type The type to set
-     * @return void
-     */
-    public void setType(String type) {
-        this.type = type;
+    public void setContext(String context) {
+        this.context = context;
+    }
+    
+    public void setScope(String scope) {
+        this.scope = scope;
     }
     
     /**
@@ -240,17 +288,13 @@ public abstract class BaseHstURLTag extends TagSupport {
         }
     }
     
-    
-    /**
-     * @return the url
-     */
-    protected abstract HstURL getUrl();
+    protected HstURL getUrl() {
+        return null;
+    }
 
-
-    /**
-     * @param url the url to set
-     */
-    protected abstract void setUrl(HstURL url);
+    protected void setUrl(HstURL url) {
+        
+    }
     
     
     /**

@@ -19,9 +19,9 @@
 
 <!-- include title -->
 
-<hc:content path="t" />
+<hc:content name="t" />
 
 <!-- include style -->
 
-<hc:content path="s" />
+<hc:content name="s" />
 
