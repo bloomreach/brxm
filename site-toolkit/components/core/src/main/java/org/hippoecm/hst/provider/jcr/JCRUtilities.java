@@ -32,7 +32,7 @@ public class JCRUtilities {
             try {
                 Node canonical = hnode.getCanonicalNode();
                 if(canonical == null) {
-                    log.warn("Cannot get canonical node for '{}'. This means there is no phyiscal equivalence of the " +
+                    log.debug("Cannot get canonical node for '{}'. This means there is no phyiscal equivalence of the " +
                     		"virtual node. Return null", n.getPath());
                 }
                 return canonical;
