@@ -17,7 +17,7 @@ package org.hippoecm.hst.configuration.sitemap;
 
 import java.util.List;
 import java.util.Map;
-
+ 
 
 public interface HstSiteMapItem {
 
