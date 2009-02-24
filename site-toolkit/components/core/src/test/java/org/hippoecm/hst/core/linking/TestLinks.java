@@ -27,6 +27,7 @@ import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.service.ServiceFactory;
 import org.hippoecm.hst.service.ServiceNamespace;
+import org.hippoecm.hst.service.UnderlyingServiceAware;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Test;
 
@@ -108,7 +109,7 @@ public class TestLinks extends AbstractSpringTestCase{
             TestPage s = ServiceFactory.create(someProductHandle, TestPage.class);
             
             
-            HstLink hstLink = hstLinkCreator.create(s.getService(), currentSiteMapItem);
+            HstLink hstLink = hstLinkCreator.create(s.getUnderlyingService(), currentSiteMapItem);
             
         } catch (LoginException e) {
             e.printStackTrace();
@@ -119,8 +120,7 @@ public class TestLinks extends AbstractSpringTestCase{
        
        
        @ServiceNamespace(prefix = "testproject")
-       public interface TestPage {
-           Node  getService();
+       public interface TestPage extends UnderlyingServiceAware{
            String getTitle();
        }
         
