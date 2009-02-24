@@ -52,6 +52,8 @@ public abstract class BaseHstURLTag extends TagSupport {
     protected List<String> removedParametersList = 
         new ArrayList<String>();
     
+    protected String resourceId;
+    
 
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
@@ -86,6 +88,7 @@ public abstract class BaseHstURLTag extends TagSupport {
         }
         
         url.setType(getType());
+        url.setResourceID(getResourceId());
         
         setUrlParameters(url);
         
@@ -156,6 +159,13 @@ public abstract class BaseHstURLTag extends TagSupport {
         return escapeXml;
     }
     
+    /**
+     * Returns resource ID property
+     * @return
+     */
+    public String getResourceId() {
+        return this.resourceId;
+    }
     
     /**
      * Sets the var property.
@@ -182,6 +192,14 @@ public abstract class BaseHstURLTag extends TagSupport {
      */
     public void setEscapeXml(Boolean escapeXml) {
         this.escapeXml = escapeXml;
+    }
+    
+    /**
+     * Sets the resource ID property.
+     * @param resourceId
+     */
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
     }
     
     

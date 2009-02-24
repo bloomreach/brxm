@@ -27,9 +27,17 @@ public interface HstContainerURL {
     
     String getPathInfo();
     
-    String getActionWindow();
+    String getActionWindowReferenceNamespace();
     
-    String getResourceWindow();
+    void setActionWindowReferenceNamespace(String actionWindowReferenceNamespace);
+    
+    String getResourceWindowReferenceNamespace();
+    
+    void setResourceWindowReferenceNamespace(String resourceWindowReferenceNamespace);
+    
+    String getResourceId();
+    
+    void setResourceId(String resourceId);
     
     void setParameter(String name, String value);
     
@@ -38,5 +46,13 @@ public interface HstContainerURL {
     void setParameters(Map<String, String[]> parameters);
     
     Map<String, String[]> getParameterMap();
+    
+    void setActionParameter(String name, String value);
+    
+    void setActionParameter(String name, String[] values);
+    
+    void setActionParameters(Map<String, String []> parameters);
+    
+    Map<String, String []> getActionParameterMap();
     
 }

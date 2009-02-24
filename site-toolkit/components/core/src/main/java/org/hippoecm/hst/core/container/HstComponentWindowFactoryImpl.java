@@ -26,10 +26,14 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory {
     
-    protected String namespaceSeparator = ContainerConstants.DEFAULT_COMPONENT_WINDOW_NAMESPACE_SEPARATOR;
+    protected String referenceNameSeparator = "_";
     
-    public void setNamespaceSeparator(String namespaceSeparator) {
-        this.namespaceSeparator = namespaceSeparator;
+    public void setReferenceNameSeparator(String referenceNameSeparator) {
+        this.referenceNameSeparator = referenceNameSeparator;
+    }
+    
+    public String getReferenceNameSeparator() {
+        return this.referenceNameSeparator;
     }
 
     public HstComponentWindow create(ServletConfig servletConfig, HstRequestContext requestContext, HstComponentConfiguration compConfig, HstComponentFactory compFactory) throws HstComponentException {
@@ -53,7 +57,7 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
             if ("".equals(parentReferenceNamespace)) {
                 referenceNamespaceBuilder.append(referenceName);
             } else {
-                referenceNamespaceBuilder.append(parentReferenceNamespace).append(this.namespaceSeparator).append(referenceName);
+                referenceNamespaceBuilder.append(parentReferenceNamespace).append(this.referenceNameSeparator).append(referenceName);
             }
         }
 
@@ -63,6 +67,12 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         
         if (renderPath != null && !renderPath.startsWith("/")) {
             renderPath = new StringBuilder(renderPath.length() + 1).append('/').append(renderPath).toString();
+        }
+        
+        String serveResourcePath = compConfig.getServeResourcePath();
+        
+        if (serveResourcePath != null && !serveResourcePath.startsWith("/")) {
+            serveResourcePath = new StringBuilder(serveResourcePath.length() + 1).append('/').append(serveResourcePath).toString();
         }
         
         HstComponent component = null;
@@ -80,6 +90,7 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
                 referenceNamespace, 
                 component, 
                 renderPath, 
+                serveResourcePath,
                 parentWindow);
         
         if (componentFactoryException != null) {

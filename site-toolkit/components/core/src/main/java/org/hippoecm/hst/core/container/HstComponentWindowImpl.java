@@ -31,17 +31,19 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected String referenceNamespace;
     protected HstComponent component;
     protected String renderPath;
+    protected String serveResourcePath;
     protected HstComponentWindow parentWindow;
     protected List<HstComponentException> componentExceptions;
     protected Map<String, HstComponentWindow> childWindowMap;
     
     protected HstResponseState responseState;
     
-    public HstComponentWindowImpl(String referenceName, String referenceNamespace, HstComponent component, String renderPath, HstComponentWindow parentWindow) {
+    public HstComponentWindowImpl(String referenceName, String referenceNamespace, HstComponent component, String renderPath, String serveResourcePath, HstComponentWindow parentWindow) {
         this.referenceName = referenceName;
         this.referenceNamespace = referenceNamespace;
         this.component = component;
         this.renderPath = renderPath;
+        this.serveResourcePath = serveResourcePath;
         this.parentWindow = parentWindow;
     }
     
@@ -73,6 +75,10 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     
     public String getRenderPath() {
         return this.renderPath;
+    }
+    
+    public String getServeResourcePath() {
+        return this.serveResourcePath;
     }
     
     public HstComponentWindow getParentWindow() {

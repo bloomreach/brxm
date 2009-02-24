@@ -34,6 +34,7 @@ public class ContextResolvingValve extends AbstractValve
     {
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
+        HstContainerURL baseURL = requestContext.getBaseURL();
         
         String domainName = servletRequest.getServerName();
         DomainMapping domainMapping = this.domainMappings.findDomainMapping(domainName);
@@ -49,7 +50,7 @@ public class ContextResolvingValve extends AbstractValve
             throw new ContainerException("No site found for " + siteName);
         }
         
-        String pathInfo = servletRequest.getPathInfo();
+        String pathInfo = baseURL.getPathInfo();
         
         MatchResult matchResult = null;
         
@@ -81,6 +82,10 @@ public class ContextResolvingValve extends AbstractValve
         
         HstComponentConfiguration rootComponentConfig = matchResult.getCompontentConfiguration();
         
+        if (log.isDebugEnabled()) {
+            log.debug("Matched root component config for " + pathInfo + ": " + rootComponentConfig);
+        }
+        
         try {
             HstComponentWindow rootComponentWindow = getComponentWindowFactory().create(context.getServletConfig(), requestContext, rootComponentConfig, getComponentFactory());
             context.setRootComponentWindow(rootComponentWindow);
@@ -89,7 +94,8 @@ public class ContextResolvingValve extends AbstractValve
                 log.warn("Failed to create component windows.", e);
             }
             
-            throw new ContainerException("Failed to create component window for the configuration, " + rootComponentConfig.getId(), e);
+            throw new ContainerException("Failed to create component window for the configuration: " + 
+                    (rootComponentConfig != null ? rootComponentConfig.getId() : "rootComponentConfig is null."), e);
         }
         
         // continue

@@ -24,9 +24,11 @@ public class HstContainerURLImpl implements HstContainerURL {
     protected String contextPath;
     protected String servletPath;
     protected String pathInfo;
-    protected String actionWindow;
-    protected String resourceWindow;
+    protected String actionWindowReferenceNamespace;
+    protected String resourceWindowReferenceNamespace;
+    protected String resourceId;
     protected Map<String, String[]> parameterMap;
+    protected Map<String, String[]> actionParameterMap;
     
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
@@ -52,20 +54,28 @@ public class HstContainerURLImpl implements HstContainerURL {
         return this.pathInfo;
     }
     
-    public void setActionWindow(String actionWindow) {
-        this.actionWindow = actionWindow;
+    public void setActionWindowReferenceNamespace(String actionWindowReferenceNamespace) {
+        this.actionWindowReferenceNamespace = actionWindowReferenceNamespace;
     }
     
-    public String getActionWindow() {
-        return this.actionWindow;
+    public String getActionWindowReferenceNamespace() {
+        return this.actionWindowReferenceNamespace;
     }
     
-    public void setResourceWindow(String resourceWindow) {
-        this.resourceWindow = resourceWindow;
+    public void setResourceWindowReferenceNamespace(String resourceWindowReferenceNamespace) {
+        this.resourceWindowReferenceNamespace = resourceWindowReferenceNamespace;
     }
     
-    public String getResourceWindow() {
-        return this.resourceWindow;
+    public String getResourceWindowReferenceNamespace() {
+        return this.resourceWindowReferenceNamespace;
+    }
+    
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
+    }
+    
+    public String getResourceId() {
+        return this.resourceId;
     }
     
     public Map<String, String[]> getParameterMap() {
@@ -87,10 +97,36 @@ public class HstContainerURLImpl implements HstContainerURL {
             this.parameterMap.put(name, values);
         }
     }
-
+    
     public void setParameters(Map<String, String[]> parameters) {
         for (Map.Entry<String, String []> entry : parameters.entrySet()) {
             setParameter(entry.getKey(), entry.getValue());
+        }
+    }
+    
+    public Map<String, String []> getActionParameterMap() {
+        return this.actionParameterMap;
+    }
+    
+    public void setActionParameter(String name, String value) {
+        setActionParameter(name, value != null ? new String [] { value } : (String []) null);
+    }
+
+    public void setActionParameter(String name, String[] values) {
+        if (this.actionParameterMap == null) {
+            this.actionParameterMap = new HashMap<String, String[]>();
+        }
+
+        if (values == null) {
+            this.actionParameterMap.remove(name);
+        } else {
+            this.actionParameterMap.put(name, values);
+        }
+    }
+
+    public void setActionParameters(Map<String, String[]> parameters) {
+        for (Map.Entry<String, String []> entry : parameters.entrySet()) {
+            setActionParameter(entry.getKey(), entry.getValue());
         }
     }
     
@@ -106,19 +142,19 @@ public class HstContainerURLImpl implements HstContainerURL {
     public Object clone() {
         HstContainerURLImpl cloned = new HstContainerURLImpl();
         
+        cloned.characterEncoding = this.characterEncoding;
         cloned.contextPath = this.contextPath;
         cloned.servletPath = this.servletPath;
         cloned.pathInfo = this.pathInfo;
-        cloned.actionWindow = this.actionWindow;
-        cloned.resourceWindow = this.resourceWindow;
+        cloned.actionWindowReferenceNamespace = this.actionWindowReferenceNamespace;
+        cloned.resourceWindowReferenceNamespace = this.resourceWindowReferenceNamespace;
+        cloned.resourceId = this.resourceId;
         
         if (this.parameterMap != null) {
             cloned.setParameters(this.parameterMap);
         }
         
-        cloned.characterEncoding = this.characterEncoding;
-        
         return cloned;
     }
-
+ 
 }

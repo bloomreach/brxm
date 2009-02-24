@@ -29,6 +29,7 @@ public class Configuration {
     public final static String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
     public final static String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";
     public final static String COMPONENT_PROPERTY_RENDER_PATH = "hst:renderpath";
+    public final static String COMPONENT_PROPERTY_SERVE_RESOURCE_PATH = "hst:serveresourcepath";
     public final static String COMPONENT_PROPERTY_REFERECENCENAME = "hst:referencename";
     public final static String COMPONENT_PROPERTY_REFERECENCECOMPONENT =  "hst:referencecomponent";
     public final static String COMPONENT_PROPERTY_CONTENTBASEPATH =  "hst:componentcontentbasepath";

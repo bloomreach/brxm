@@ -38,10 +38,10 @@ public interface HstURL {
     String getType();
     
     /**
-     * Returns the parameter namespace
+     * Returns the reference namespace
      * @return String
      */
-    String getParameterNamespace();
+    String getReferenceNamespace();
     
     /**
      * Sets a parameter of this url.

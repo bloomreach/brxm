@@ -28,7 +28,7 @@
   
   <bean id="org.hippoecm.hst.core.container.HstComponentWindowFactory"
         class="org.hippoecm.hst.core.container.HstComponentWindowFactoryImpl">
-    <property name="namespaceSeparator" value="_" />
+    <property name="referenceNameSeparator" value="_" />
   </bean>
   
   <bean id="org.hippoecm.hst.core.container.HstComponentInvoker"

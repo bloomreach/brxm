@@ -28,20 +28,56 @@ public interface HstRequest extends HttpServletRequest {
     String ACTION_TYPE = "action";
     String RESOURCE_TYPE = "resource";
     
+    /**
+     * Returns the current request context
+     * @return
+     */
     HstRequestContext getRequestContext();
     
+    /**
+     * Returns the current HstComponentWindow
+     * @return
+     */
     HstComponentWindow getComponentWindow();
     
+    /**
+     * Returns the current request type
+     * @return
+     */
     String getType();
     
+    /**
+     * Returns the parameter map of this component window.
+     * If the request type is {@link #ACTION_TYPE}, then only action parameters can be accessible.
+     * Otherwise, then only render parameters can be accessible.
+     */
     Map<String, Object> getParameterMap();
     
-    Map<String, Object> getParameterMap(String namespace);
+    /**
+     * Returns the parameter map of the specified reference path component window.
+     * If the request type is {@link #ACTION_TYPE}, the referencePath parameter will be just ignored
+     * and the operation will be equivalent to {@link #getParameterMap()}.
+     * @param referencePath
+     * @return
+     */
+    Map<String, Object> getParameterMap(String referencePath);
     
+    /**
+     * Returns the attribute map of this component window.
+     * @return
+     */
     Map<String, Object> getAttributeMap();
     
-    Map<String, Object> getAttributeMap(String namespace);
+    /**
+     * Returns the attribute map of the specified reference path component window.
+     * @return
+     */
+    Map<String, Object> getAttributeMap(String referencePath);
     
+    /**
+     * Returns the resource ID which was set by the resource HST URL.
+     * @return
+     */
     String getResourceID();
     
 }

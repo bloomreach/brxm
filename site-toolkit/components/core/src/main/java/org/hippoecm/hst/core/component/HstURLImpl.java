@@ -26,7 +26,7 @@ import org.hippoecm.hst.core.container.HstContainerURLProvider;
 public class HstURLImpl implements HstURL {
     
     protected String type = TYPE_RENDER;
-    protected String parameterNamespace;
+    protected String referenceNamespace;
     protected HstContainerURL baseContainerURL;
     protected Map<String, String[]> parameterMap = new HashMap<String, String[]>();
     protected String resourceID;
@@ -44,8 +44,8 @@ public class HstURLImpl implements HstURL {
         return this.type;
     }
 
-    public String getParameterNamespace() {
-        return this.parameterNamespace;
+    public String getReferenceNamespace() {
+        return this.referenceNamespace;
     }
     
     public HstContainerURL getBaseContainerURL() {
@@ -78,8 +78,8 @@ public class HstURLImpl implements HstURL {
         this.type = type;
     }
     
-    public void setParameterNamespace(String parameterNamespace) {
-        this.parameterNamespace = parameterNamespace;
+    public void setReferenceNamespace(String referenceNamespace) {
+        this.referenceNamespace = referenceNamespace;
     }
     
     public void setBaseContainerURL(HstContainerURL baseContainerURL) {

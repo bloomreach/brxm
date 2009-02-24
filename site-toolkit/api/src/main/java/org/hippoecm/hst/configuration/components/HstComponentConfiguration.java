@@ -26,6 +26,8 @@ public interface HstComponentConfiguration extends HstComponentConfigurationBean
     String getComponentClassName();
 
     String getRenderPath();
+    
+    String getServeResourcePath();
 
     SortedMap<String, HstComponentConfiguration> getChildren();
 

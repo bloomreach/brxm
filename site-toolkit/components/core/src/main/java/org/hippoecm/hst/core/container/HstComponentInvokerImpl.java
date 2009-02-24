@@ -114,7 +114,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = hstRequest.getComponentWindow();
-        String dispatchUrl = hstRequest.getComponentWindow().getRenderPath();
+        String dispatchUrl = hstRequest.getComponentWindow().getServeResourcePath();
         invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl, window);
 
         if (window.hasComponentExceptions()) {
@@ -138,20 +138,23 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         }
         
         if (disp == null) {
-            window.addComponentExcpetion(new HstComponentException("Cannot create request dispatcher for " + dispatchUrl));
-        }
-        
-        try {
-            disp.include(servletRequest, servletResponse);
-        } catch (ServletException e) {
-            window.addComponentExcpetion(new HstComponentException(e.getMessage()));
-            log.warn("Component exception caught: " + e.getMessage(), e);
-        } catch (IOException e) {
-            window.addComponentExcpetion(new HstComponentException(e.getMessage()));
-            log.warn("Component exception caught: " + e.getMessage(), e);
-        } catch (Throwable th) {
-            window.addComponentExcpetion(new HstComponentException(th.getMessage()));
-            log.warn("Component exception caught: " + th.getMessage(), th);
+            if (log.isWarnEnabled()) {
+                log.warn("The dispatch url is null. window reference namespace: " + window.getReferenceNamespace());
+            }
+            window.addComponentExcpetion(new HstComponentException("The dispatch url is null."));
+        } else {
+            try {
+                disp.include(servletRequest, servletResponse);
+            } catch (ServletException e) {
+                window.addComponentExcpetion(new HstComponentException(e.getMessage()));
+                log.warn("Component exception caught: " + e.getMessage(), e);
+            } catch (IOException e) {
+                window.addComponentExcpetion(new HstComponentException(e.getMessage()));
+                log.warn("Component exception caught: " + e.getMessage(), e);
+            } catch (Throwable th) {
+                window.addComponentExcpetion(new HstComponentException(th.getMessage()));
+                log.warn("Component exception caught: " + th.getMessage(), th);
+            }
         }
     }
     

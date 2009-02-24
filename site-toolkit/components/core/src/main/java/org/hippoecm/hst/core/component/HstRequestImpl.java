@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequest {
@@ -35,11 +36,19 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     protected HstComponentWindow componentWindow;
     protected String parameterNameComponentSeparator;
     
-    public HstRequestImpl(HttpServletRequest servletRequest, HstRequestContext requestContext, HstComponentWindow componentWindow, String parameterNameComponentSeparator) {
+    public HstRequestImpl(HttpServletRequest servletRequest, HstRequestContext requestContext, HstComponentWindow componentWindow) {
         super(servletRequest);
         this.requestContext = requestContext;
         this.componentWindow = componentWindow;
-        this.parameterNameComponentSeparator = (parameterNameComponentSeparator == null ? "" : parameterNameComponentSeparator);
+        this.parameterNameComponentSeparator = requestContext.getURLFactory().getUrlProvider().getParameterNameComponentSeparator();
+        
+        HstContainerURL baseURL = this.requestContext.getBaseURL();
+        
+        if (baseURL.getActionWindowReferenceNamespace() != null) {
+            this.type = ACTION_TYPE;
+        } else if (baseURL.getResourceWindowReferenceNamespace() != null) {
+            this.type = RESOURCE_TYPE;
+        }
     }
     
     public void setRequest(HttpServletRequest servletRequest) {
@@ -50,31 +59,47 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         return this.type;
     }
     
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public Map<String, Object> getParameterMap() {
         String referenceNamespace = this.componentWindow.getReferenceNamespace();
         return getParameterMap(referenceNamespace);
     }
     
     public Map<String, Object> getParameterMap(String referencePath) {
+        Map<String, Object> parameterMap = null;
+        
         String namespace = getReferenceNamespacePath(referencePath);
         String prefix = getFullNamespacePrefix(namespace);
         int paramPrefixLen = prefix.length();
-        Map<String, Object> parameterMap = this.namespaceParametersMap.get(prefix);
+        parameterMap = this.namespaceParametersMap.get(prefix);
         
         if (parameterMap == null) {
             parameterMap = new HashMap<String, Object>();
-            
-            for (Enumeration paramNames = super.getParameterNames(); paramNames.hasMoreElements(); ) {
-                String encodedParamName = (String) paramNames.nextElement();
+
+            if (ACTION_TYPE.equals(getType())) {
+                Map<String, String []> actionParams = this.requestContext.getBaseURL().getActionParameterMap();
                 
-                if (encodedParamName.startsWith(prefix)) {
-                    String paramName = encodedParamName.substring(paramPrefixLen);
-                    String [] paramValues = super.getParameterValues(encodedParamName);
+                if (actionParams != null) {
+                    for (Map.Entry<String, String []> entry : actionParams.entrySet()) {
+                        String paramName = entry.getKey();
+                        String [] paramValues = entry.getValue();
+                        parameterMap.put(paramName, paramValues.length > 1 ? paramValues : paramValues[0]);
+                    }
+                }
+                
+                for (Enumeration paramNames = super.getParameterNames(); paramNames.hasMoreElements(); ) {
+                    String paramName = (String) paramNames.nextElement();
+                    String [] paramValues = super.getParameterValues(paramName);
                     parameterMap.put(paramName, paramValues.length > 1 ? paramValues : paramValues[0]);
+                }
+            } else {
+                for (Enumeration paramNames = super.getParameterNames(); paramNames.hasMoreElements(); ) {
+                    String encodedParamName = (String) paramNames.nextElement();
+                    
+                    if (encodedParamName.startsWith(prefix)) {
+                        String paramName = encodedParamName.substring(paramPrefixLen);
+                        String [] paramValues = super.getParameterValues(encodedParamName);
+                        parameterMap.put(paramName, paramValues.length > 1 ? paramValues : paramValues[0]);
+                    }
                 }
             }
             
@@ -185,7 +210,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     }
     
     public String getResourceID() {
-        return null;
+        return this.requestContext.getBaseURL().getResourceId();
     }
 
     protected String getReferenceNamespacePath(String referencePath) {

@@ -22,6 +22,10 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public interface HstComponentWindowFactory {
+    
+    void setReferenceNameSeparator(String referenceNameSeparator);
+    
+    String getReferenceNameSeparator();
 
     HstComponentWindow create(ServletConfig servletConfig, HstRequestContext requestContext, HstComponentConfiguration compConfig, HstComponentFactory compFactory) throws HstComponentException;
 

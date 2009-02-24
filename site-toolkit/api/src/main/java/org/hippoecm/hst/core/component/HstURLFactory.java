@@ -23,6 +23,6 @@ public interface HstURLFactory {
     
     HstContainerURLProvider getUrlProvider();
 
-    HstURL createURL(String type, String parameterNamespace, HstContainerURL base);
+    HstURL createURL(String type, String referenceNamespace, HstContainerURL base);
     
 }

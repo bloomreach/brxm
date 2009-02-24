@@ -101,12 +101,4 @@ public abstract class AbstractValve implements Valve
     public void initialize() throws ContainerException {
     }
     
-    protected boolean isActionRequest() {
-        return false;
-    }
-    
-    protected boolean isResourceRequest() {
-        return false;
-    }
-    
 }

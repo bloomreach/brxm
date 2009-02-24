@@ -53,13 +53,20 @@ function <hc:namespace/>showPopup() {
     <hc:url var="lastUrl">
       <hc:param name="page" value="9" />
     </hc:url>
+    <hc:url var="actionUrl" type="action">
+      <hc:param name="sort" value="descending" />
+    </hc:url>
+    <hc:url var="resourceUrl" type="resource" resourceId="/images/onehippo.gif">
+    </hc:url>
 
     <a href="${homeUrl}">Home</a>
     <a href="${firstUrl}">First</a>
     <a href="${lastUrl}">Last</a>
+    <a href="${actionUrl}">Sort by descending order</a>
     
     <div>
         header parameters: <%=request.getParameterMap()%>
+        <img src="${resourceUrl}" />
     </div>
     
     </div>

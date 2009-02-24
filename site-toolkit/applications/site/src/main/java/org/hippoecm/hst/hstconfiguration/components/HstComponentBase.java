@@ -57,7 +57,7 @@ public class HstComponentBase implements HstComponent {
     }
 
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        System.out.println("[HstComponent: " + getName() + "] doAction()");
+        System.out.println("[HstComponent: " + getName() + "] doAction() with params: " + request.getParameterMap());
     }
 
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
@@ -65,6 +65,6 @@ public class HstComponentBase implements HstComponent {
     }
 
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
-        System.out.println("[HstComponent: " + getName() + "] doBeforeServeResource()");
+        System.out.println("[HstComponent: " + getName() + "] doBeforeServeResource() with resourceId: " + request.getResourceID());
     }
 }

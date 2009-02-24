@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-base.xml" />
+  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-container.xml" />
+
+  <bean id="javax.servlet.ServletContext"
+        class="org.springframework.mock.web.MockServletContext">
+  </bean>
+  
+  <bean id="javax.servlet.ServletConfig"
+        class="org.springframework.mock.web.MockServletConfig">
+    <constructor-arg ref="javax.servlet.ServletContext" />
+  </bean>
+  
+  <bean id="javax.servlet.http.HttpServletRequest.action" scope="prototype"
+        class="org.springframework.mock.web.MockHttpServletRequest">
+     <constructor-arg ref="javax.servlet.ServletContext" />
+     <property name="protocol" value="http" />
+     <property name="serverName" value="preview.myproject.hippoecm.org" />
+     <property name="serverPort" value="8080" />
+     <property name="method" value="GET" />
+     <property name="contextPath" value="/site" />
+     <property name="servletPath" value="/content" />
+     <property name="pathInfo" value="/_hstact_:news_p_h_t/2/ap1/one/ap2/two/news/2008/08" />
+  </bean>
+  
+  <bean id="javax.servlet.http.HttpServletResponse.action" scope="prototype"
+        class="org.springframework.mock.web.MockHttpServletResponse">
+    <property name="characterEncoding" value="UTF-8" />
+  </bean>
+  
+  <bean id="javax.servlet.http.HttpServletRequest.resource" scope="prototype"
+        class="org.springframework.mock.web.MockHttpServletRequest">
+     <constructor-arg ref="javax.servlet.ServletContext" />
+     <property name="protocol" value="http" />
+     <property name="serverName" value="preview.myproject.hippoecm.org" />
+     <property name="serverPort" value="8080" />
+     <property name="method" value="GET" />
+     <property name="contextPath" value="/site" />
+     <property name="servletPath" value="/content" />
+     <property name="pathInfo" value="/_hstres_:news_p_h_t:myresource001/news/2008/08" />
+  </bean>
+  
+  <bean id="javax.servlet.http.HttpServletResponse.resource" scope="prototype"
+        class="org.springframework.mock.web.MockHttpServletResponse">
+    <property name="characterEncoding" value="UTF-8" />
+  </bean>
+  
+</beans>

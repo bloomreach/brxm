@@ -83,6 +83,13 @@ public interface HstComponentWindow {
     String getRenderPath(); 
     
     /**
+     * The dispatching path path to serve resource in this component window.
+     * 
+     * @return the dispatching path to serve resource in this component window
+     */
+    String getServeResourcePath();
+    
+    /**
      * The parent component window containing this component window.
      * 
      * @return the component window containing this component window

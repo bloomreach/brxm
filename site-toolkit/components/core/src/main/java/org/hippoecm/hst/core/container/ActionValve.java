@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,16 +34,19 @@ public class ActionValve extends AbstractValve
     @Override
     public void invoke(ValveContext context) throws ContainerException
     {
-        if (isActionRequest()) {
+        HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
+        HttpServletResponse servletResponse = (HttpServletResponse) context.getServletResponse();
+        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
+        
+        if (requestContext.getBaseURL().getActionWindowReferenceNamespace() != null) {
+            HstContainerURL baseURL = requestContext.getBaseURL();
             
-            HstComponentWindow window = findActionWindow(context.getRootComponentWindow());
+            HstComponentWindow window = findActionWindow(context.getRootComponentWindow(), baseURL.getActionWindowReferenceNamespace());
             
-            if (window != null) {
-                ServletRequest servletRequest = context.getServletRequest();
-                ServletResponse servletResponse = context.getServletResponse();
-                HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
-
-                HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, getUrlFactory().getUrlProvider().getParameterNameComponentSeparator());
+            if (window == null) {
+                log.warn("Cannot find the action window: " + requestContext.getBaseURL().getActionWindowReferenceNamespace());
+            } else {
+                HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
                 HstResponseState responseState = new HstResponseState((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
                 HstResponse response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window, responseState);
                 ((HstComponentWindowImpl) window).setResponseState(responseState);
@@ -54,23 +57,54 @@ public class ActionValve extends AbstractValve
                     for (HstComponentException hce : window.getComponentExceptions()) {
                         log.warn("Component exception found: " + hce.getMessage(), hce);
                     }
+                    
                     window.clearComponentExceptions();
                 }
-            } else {
-                throw new ContainerException("No action window found.");
+            }
+            
+            if (baseURL.getActionParameterMap() != null) {
+                baseURL.getActionParameterMap().clear();
+            }
+            
+            baseURL.setActionWindowReferenceNamespace(null);
+            String redirectUrl = getUrlFactory().getUrlProvider().toURLString(baseURL);
+            
+            try {
+                servletResponse.sendRedirect(redirectUrl);
+            } catch (IOException e) {
+                log.warn("Unexpected exception during redirect to " + redirectUrl, e);
+            }
+        } else {
+            // continue
+            context.invokeNext();
+        }
+    }
+    
+    protected HstComponentWindow findActionWindow(HstComponentWindow rootWindow, String actionWindowReferenceNamespace) {
+        HstComponentWindow actionWindow = null;
+        
+        String rootReferenceNamespace = rootWindow.getReferenceNamespace();
+        
+        if (rootReferenceNamespace.equals(actionWindowReferenceNamespace)) {
+            actionWindow = rootWindow;
+        } else {
+            String [] referenceNamespaces = actionWindowReferenceNamespace.split(getComponentWindowFactory().getReferenceNameSeparator());
+            int start = ((referenceNamespaces.length > 0 && rootReferenceNamespace.equals(referenceNamespaces[0])) ? 1 : 0);
+            
+            HstComponentWindow tempWindow = rootWindow;
+            int index = start;
+            for ( ; index < referenceNamespaces.length; index++) {
+                if (tempWindow != null) {
+                    tempWindow = tempWindow.getChildWindow(referenceNamespaces[index]);
+                } else {
+                    break;
+                }
+            }
+            
+            if (index == referenceNamespaces.length) {
+                actionWindow = tempWindow;
             }
         }
-        
-        // continue
-        context.invokeNext();
-    }
-    
-    protected void sendRedirectNavigation(HstRequestContext request) {
-        
-    }
-    
-    protected HstComponentWindow findActionWindow(HstComponentWindow rootWindow) {
-        HstComponentWindow actionWindow = null;
         
         return actionWindow;
     }

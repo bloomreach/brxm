@@ -39,16 +39,14 @@ public class AggregationValve extends AbstractValve {
     @Override
     public void invoke(ValveContext context) throws ContainerException {
 
-        if (!context.getServletResponse().isCommitted() && !isResourceRequest()) {
-
+        ServletRequest servletRequest = context.getServletRequest();
+        ServletResponse servletResponse = context.getServletResponse();
+        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
+        
+        if (!context.getServletResponse().isCommitted() && requestContext.getBaseURL().getResourceWindowReferenceNamespace() == null) {
             HstComponentWindow rootWindow = context.getRootComponentWindow();
 
             if (rootWindow != null) {
-                ServletRequest servletRequest = context.getServletRequest();
-                ServletResponse servletResponse = context.getServletResponse();
-                HstRequestContext requestContext = (HstRequestContext) servletRequest
-                        .getAttribute(HstRequestContext.class.getName());
-
                 Map<HstComponentWindow, HstRequest> requestMap = new HashMap<HstComponentWindow, HstRequest>();
                 Map<HstComponentWindow, HstResponse> responseMap = new HashMap<HstComponentWindow, HstResponse>();
                 
@@ -97,8 +95,7 @@ public class AggregationValve extends AbstractValve {
             final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap) {
 
-        HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window,
-                getUrlFactory().getUrlProvider().getParameterNameComponentSeparator());
+        HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
         HstResponseState responseState = new HstResponseState((HttpServletRequest) servletRequest,
                 (HttpServletResponse) servletResponse);
         HstResponse response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window,
