@@ -41,11 +41,12 @@ public class PageStyle extends HstComponentBase {
         if(componentContentPath != null) {
             try {
                 Session session = hrc.getSession();
-                Node contentPath = (Node)session.getItem(hrc.getMatchedSiteMapItem().getSiteMapItem().getHstSiteMap().getSite().getContentPath());
-                Node componentContent = contentPath.getNode(componentContentPath);
+                Node contentNode = (Node)session.getItem(hrc.getMatchedSiteMapItem().getSiteMapItem().getHstSiteMap().getSite().getContentPath());
+                Node componentContent = contentNode.getNode(componentContentPath);
                 if(componentContent.hasNode(componentContent.getName())) {
                     Node n = componentContent.getNode(componentContent.getName());
                     PageStyleType stylePage = ServiceFactory.create(n, PageStyleType.class);
+                    
                     request.setAttribute("style", stylePage); 
                 }
                 

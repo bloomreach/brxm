@@ -19,7 +19,7 @@ import org.hippoecm.hst.service.ServiceNamespace;
 
 @ServiceNamespace(prefix = "testproject")
 
-public interface TextPageType {
+public interface TextPageType extends StdType{
     
     public String getTitle();
     public String getSummary();

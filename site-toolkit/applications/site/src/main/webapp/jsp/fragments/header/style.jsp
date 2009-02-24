@@ -17,5 +17,13 @@
 <%@ taglib uri='/WEB-INF/hst-core.tld' prefix='hc'%>
 
 
+<script language="javascript">
+<!--
+function <hc:namespace/>showPopup() {
+    alert("Hello from general_layout  component!");
+}
+//-->
+</script>
+
 ${style.text}
 

@@ -13,18 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.hstconfiguration.components.pages;
+package org.hippoecm.hst.pagetypes;
 
-import org.hippoecm.hst.core.component.HstComponentException;
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.hstconfiguration.components.HstComponentBase;
+import java.util.Calendar;
 
-public class GeneralLayout extends HstComponentBase {
+import org.hippoecm.hst.service.ServiceNamespace;
 
-    @Override
-    public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-      
-    } 
-   
+@ServiceNamespace(prefix = "testproject")
+
+public interface NewsPage extends StdType{
+    
+    public String getTitle();
+    public String getSummary();
+    public Calendar getDate();
 }

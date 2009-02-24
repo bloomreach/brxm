@@ -12,6 +12,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License. --%>
+
 <%@ page language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri='/WEB-INF/hst-core.tld' prefix='hc'%>
@@ -24,9 +25,52 @@ function <hc:namespace/>showPopup() {
 //-->
 </script>
 
+
+<div>
+    <h1>${document.page.title}</h1>
+    <h3>${document.page.summary}</h3>
+    <h3>${document.page.date.time}</h3>
+</div>
+
 <div>
 
-    <a href="javascript:<hc:namespace/>showPopup();">Show</a>
+Up: 
+<c:url var="parentUrl" value="${parent.link}" /> 
+<a href="${parentUrl}">
+${parent.name}  
+</a>    
+
+
+</div>
+
+<div>
+Folders:
+<ol>
+    <c:forEach var="folder" items="${folders}">
+        <li style="background-color:white">  
+            <c:url var="folderUrl" value="${folder.link}" /> 
+            <a href="${folderUrl}">
+            ${folder.name}  
+            </a>
+        </li>
+    </c:forEach>
+</ol>
+
+</div>
+
+<div>
+Documents:
+<ul>
+    <c:forEach var="doc" items="${documents}">
+        <li>    
+            <a href="/site/content/${doc.link}">
+            ${doc.page.title}  
+            </a>
+        </li>
+    </c:forEach>
+</ul>
+
+ <a href="javascript:<hc:namespace/>showPopup();">Show</a>
 
     <hc:url var="firstUrl" type="render">
       <hc:param name="page" value="1" />
@@ -41,7 +85,5 @@ function <hc:namespace/>showPopup() {
     <div>
         header parameters: <%=request.getParameterMap()%>
     </div>
-    
-</div>
 
 </div>
