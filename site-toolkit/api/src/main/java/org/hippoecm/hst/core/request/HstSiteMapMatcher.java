@@ -16,21 +16,12 @@
 package org.hippoecm.hst.core.request;
 
 import org.hippoecm.hst.configuration.HstSite;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 public interface HstSiteMapMatcher {
     
-    MatchResult match(String pathInfo,HstSite hstSite);
+    ResolvedSiteMapItem match(String pathInfo,HstSite hstSite);
   
-    public interface MatchResult {
-        
-        HstSiteMapItem getSiteMapItem();
-        
-        HstComponentConfiguration getCompontentConfiguration();
-        
-        String[] getParams();
-    }
+   
 }
 
 

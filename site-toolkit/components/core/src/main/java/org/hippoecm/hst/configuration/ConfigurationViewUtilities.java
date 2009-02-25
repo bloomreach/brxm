@@ -19,7 +19,7 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.core.request.HstSiteMapMatcher.MatchResult;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 public class ConfigurationViewUtilities {
 
@@ -135,19 +135,10 @@ public class ConfigurationViewUtilities {
         }
     }
     
-    public static final void view(StringBuffer buf, MatchResult matchResult) {
-       view(buf, "", matchResult);
-    }
-    
-    public static final void view(StringBuffer buf,String indent, MatchResult matchResult) {
-        buf.append("\n\n***** SiteMapMatcher ("+matchResult.hashCode()+") *******");
-        indent = indent + SMALL_INDENT;
-        
-        buf.append("\n").append(indent).append("-Remainder = ").append(matchResult);
-        view(buf,indent,matchResult.getSiteMapItem());
-        view(buf,indent,matchResult.getCompontentConfiguration());
-        
-        buf.append("\n\n***** End SiteMapMatcher *******");
+
+
+    private static void view(StringBuffer buf, String indent, ResolvedSiteMapItem resolvedSiteMapItem) {
+        buf.append("\n\n **** TODO *** : String presentation of ResolvedSiteMapItem \n\n");
     }
 
 }

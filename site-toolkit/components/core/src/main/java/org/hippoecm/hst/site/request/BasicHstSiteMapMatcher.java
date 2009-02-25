@@ -16,21 +16,21 @@
 package org.hippoecm.hst.site.request;
 
 import org.hippoecm.hst.configuration.HstSite;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.util.PathUtils;
 
 public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
 
-    public MatchResult match(String pathInfo, HstSite hstSite) {
+    public ResolvedSiteMapItem match(String pathInfo, HstSite hstSite) {
         pathInfo = PathUtils.normalizePath(pathInfo);
         String[] elements = pathInfo.split("/"); 
         
         HstSiteMapItem hstSiteMapItem = hstSite.getSiteMap().getSiteMapItem(elements[0]);
         if(hstSiteMapItem == null) {
             // return a 404 MatchResult 
-            return new MatchResultImpl(null, null);
+            return new ResolvedSiteMapItemImpl(null, null);
         }
         
         int i = 1;
@@ -48,31 +48,11 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             i++;
         }
         
+        String[] params = {"value1", "value2"};
+        ResolvedSiteMapItem resolvedSiteMapItem = new ResolvedSiteMapItemImpl(hstSiteMapItem, params);
         
-        return new MatchResultImpl(hstSiteMapItem, hstSite.getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId()));
+        return resolvedSiteMapItem;
     }
     
-    public class MatchResultImpl implements MatchResult {
-
-        private HstSiteMapItem hstSiteMapItem;
-        private HstComponentConfiguration hstComponentConfiguration;
-        
-        public MatchResultImpl(HstSiteMapItem hstSiteMapItem, HstComponentConfiguration hstComponentConfiguration){
-            this.hstSiteMapItem = hstSiteMapItem;
-            this.hstComponentConfiguration = hstComponentConfiguration;
-        }
-        
-        public HstSiteMapItem getSiteMapItem() {
-            return this.hstSiteMapItem;
-        }
-        
-        public HstComponentConfiguration getCompontentConfiguration() {
-            return hstComponentConfiguration;
-        }
-        public String[] getParams() {
-            return null;
-        }
-        
-    }
 
 }

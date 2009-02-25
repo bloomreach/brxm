@@ -18,6 +18,9 @@ package org.hippoecm.hst.core.container;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +32,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,11 +59,31 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         this.servletConfig = (ServletConfig) getComponent(ServletConfig.class.getName());
         this.servletRequest = (HttpServletRequest) getComponent(HttpServletRequest.class.getName());
         this.servletResponse = (HttpServletResponse) getComponent(HttpServletResponse.class.getName());
+     
         
+        Map<String, Object> newsprops = new HashMap<String, Object>();
+        newsprops.put("year" , "${year}");
+        newsprops.put("repositoryLocation" , "news/${year}-may");
+        ComponentConfiguration newsCompConfig = new ComponentConfigurationImpl(newsprops); 
         HstComponentFactory componentFactory = HstServices.getComponentFactory();
-        ((HstComponentFactoryImpl) componentFactory).componentRegistry.registerComponent(this.servletConfig, "pages/newsoverview", new NewsOverview());
-        ((HstComponentFactoryImpl) componentFactory).componentRegistry.registerComponent(this.servletConfig, "pages/newsoverview/header", new Header());
-        ((HstComponentFactoryImpl) componentFactory).componentRegistry.registerComponent(this.servletConfig, "pages/newsoverview/header/title", new DocumentTitle());
+        
+        HstComponent component = new NewsOverview();
+        component.init(this.servletConfig, newsCompConfig);
+        
+        Map<String, Object> emptyProps = new HashMap<String, Object>();
+        ComponentConfiguration compConfig = new ComponentConfigurationImpl(emptyProps); 
+       
+        ((HstComponentFactoryImpl) componentFactory).componentRegistry.registerComponent(this.servletConfig, "pages/newsoverview", component);
+
+        component = new Header();
+        component.init(this.servletConfig, compConfig);
+        
+        ((HstComponentFactoryImpl) componentFactory).componentRegistry.registerComponent(this.servletConfig, "pages/newsoverview/header", component);
+
+        component = new DocumentTitle();
+        component.init(this.servletConfig, compConfig);
+        
+        ((HstComponentFactoryImpl) componentFactory).componentRegistry.registerComponent(this.servletConfig, "pages/newsoverview/header/title", component);
     }
     
     @Test
@@ -84,6 +108,8 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         
         protected String name;
         
+        protected ComponentConfiguration compConfig;
+        
         public HstComponentBase() {
         }
         
@@ -99,7 +125,10 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
             this.name = name;
         }
         
+        
+        
         public void init(ServletConfig servletConfig, ComponentConfiguration compConfig) throws HstComponentException {
+            this.compConfig = compConfig;
             System.out.println("[HstComponent: " + getName() + "] init()");
         }
 
@@ -108,6 +137,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         }
 
         public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
+            
             System.out.println("[HstComponent: " + getName() + "] doAction()");
         }
 
@@ -121,6 +151,17 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
     }
     
     class NewsOverview extends HstComponentBase {
+
+        @Override
+        public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
+            super.doBeforeRender(request, response);
+            
+            Object o = compConfig.getResolvedProperty("year", request.getRequestContext().getResolvedSiteMapItem());
+            System.out.println(":-)))");
+            assertTrue("The year property should be of type 'String'", o instanceof String);
+            assertTrue("The year property should be '2009'", "2009".equals((String)o) );
+        }
+        
     }
     
     class Header extends HstComponentBase {

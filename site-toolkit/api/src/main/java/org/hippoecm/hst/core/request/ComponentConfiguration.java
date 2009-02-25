@@ -21,6 +21,6 @@ public interface ComponentConfiguration {
     /**
      * Returns the property and if an expession exists it is resolved with the help of the ResolvedSiteMapItem
      */
-    Object getProperty(String name, ResolvedSiteMapItem hstResolvedSiteMapItem);
+    Object getResolvedProperty(String name, ResolvedSiteMapItem hstResolvedSiteMapItem);
 
 }

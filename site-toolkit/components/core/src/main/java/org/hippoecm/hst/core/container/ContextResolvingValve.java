@@ -21,9 +21,8 @@ import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.domain.DomainMapping;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.HstSiteMapMatcher.MatchResult;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
-import org.hippoecm.hst.site.request.ResolvedSiteMapItemImpl;
 
 public class ContextResolvingValve extends AbstractValve
 {
@@ -51,21 +50,21 @@ public class ContextResolvingValve extends AbstractValve
         
         String pathInfo = baseURL.getPathInfo();
         
-        MatchResult matchResult = null;
+        ResolvedSiteMapItem resolvedSiteMapItem = null;
         
         try {
-            matchResult = this.siteMapMatcher.match(pathInfo, hstSite);
+            resolvedSiteMapItem = this.siteMapMatcher.match(pathInfo, hstSite);
         } catch (Exception e) {
             throw new ContainerException("No match for " + pathInfo, e);
         }
         
-        if (matchResult == null) {
+        if (resolvedSiteMapItem == null) {
             throw new ContainerException("No match for " + pathInfo);
         }
         
-        ((HstRequestContextImpl) requestContext).setResolvedSiteMapItem(new ResolvedSiteMapItemImpl(matchResult.getSiteMapItem(), matchResult.getParams()));
+        ((HstRequestContextImpl) requestContext).setResolvedSiteMapItem(resolvedSiteMapItem);
         
-        HstComponentConfiguration rootComponentConfig = matchResult.getCompontentConfiguration();
+        HstComponentConfiguration rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
         
         if (log.isDebugEnabled()) {
             log.debug("Matched root component config for " + pathInfo + ": " + rootComponentConfig);

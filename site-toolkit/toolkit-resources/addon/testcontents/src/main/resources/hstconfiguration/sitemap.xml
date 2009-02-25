@@ -28,6 +28,9 @@
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>pages/newsoverview</sv:value>
         </sv:property>
+        <sv:property sv:name="year" sv:type="String">
+            <sv:value>2009</sv:value>
+        </sv:property>
         <sv:node sv:name="_default_">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemapitem</sv:value>
@@ -40,9 +43,6 @@
             </sv:property>
             <sv:property sv:name="year" sv:type="String">
                 <sv:value>$1</sv:value>
-            </sv:property>
-            <sv:property sv:name="style" sv:type="String">
-                <sv:value>Styles/NewsPageStyle</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                 <sv:value>pages/newsoverview</sv:value>

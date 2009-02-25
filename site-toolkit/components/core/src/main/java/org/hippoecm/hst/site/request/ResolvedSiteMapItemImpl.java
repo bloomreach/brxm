@@ -15,9 +15,10 @@
  */
 package org.hippoecm.hst.site.request;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -25,32 +26,41 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
     
     private HstSiteMap hstSiteMap;
-    private Map<String, Object> resolvedProperties;
-    private String[] params;
+    private Properties properties;
+    private HstComponentConfiguration hstComponentConfiguration;
     
     public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , String[] params) {
        this.hstSiteMap = hstSiteMapItem.getHstSiteMap();
-       this.resolvedProperties = new HashMap<String, Object>();
-       this.params = params;
+       this.hstComponentConfiguration = hstSiteMap.getSite().getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
        
+      
        /*
         * We take the properties form the hstSiteMapItem getProperties and replace params (like $1) with the params[] array 
         */
        
-       this.resolvedProperties = hstSiteMapItem.getProperties();
+       this.properties = new Properties();
+       Map<String, Object> tmpProperties = hstSiteMapItem.getProperties();
        
+       // TODO resolve properties expressions like $1  / $ 2
        
-       
+       properties.putAll(tmpProperties);
     }
     
-    public Object getProperty(String name) {
-        return resolvedProperties.get(name);
-    }
-
+    
     public HstSiteMap getHstSiteMap() {
         return this.hstSiteMap;
     }
-
     
+    public HstComponentConfiguration getHstComponentConfiguration() {
+        return this.hstComponentConfiguration;
+    }
+
+    public Object getProperty(String name) {
+        return properties.get(name);
+    }
+    
+    public Properties getProperties(){
+        return this.properties;
+    }
   
 }
