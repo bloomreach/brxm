@@ -23,10 +23,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.site.HstServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HST Container Servlet
@@ -43,8 +43,7 @@ public class HstContainerServlet extends HttpServlet {
 
     public static final String CONSOLE_LOGGER = "console";
 
-    private static Log log;
-    private static Log console;
+    private final static Logger log = LoggerFactory.getLogger(HstContainerServlet.class);
     
     protected String contextNamespace;
     
@@ -58,11 +57,6 @@ public class HstContainerServlet extends HttpServlet {
             this.contextNamespace = config.getServletContext().getInitParameter(CONTEXT_NAMESPACE_INIT_PARAM);
         }
 
-        if (log == null) {
-            log = LogFactory.getLog(HstContainerServlet.class);
-            console = LogFactory.getLog(CONSOLE_LOGGER);
-        }
-        
     }
     
     // -------------------------------------------------------------------
@@ -78,7 +72,6 @@ public class HstContainerServlet extends HttpServlet {
             if (!HstServices.isAvailable()) {
                 String msg = "The HST Container Services are not initialized yet.";
                 log.warn(msg);
-                console.warn(msg);
                 res.getWriter().println(msg);
                 res.flushBuffer();
                 
@@ -92,7 +85,7 @@ public class HstContainerServlet extends HttpServlet {
             HstServices.getRequestProcessor().processRequest(getServletConfig(), req, res);
         } catch (Exception e) {
             final String msg = "Fatal error encountered while processing request: " + e.toString();
-            log.fatal(msg, e);
+            log.error(msg, e);
             throw new ServletException(msg, e);
         }
     
