@@ -41,15 +41,41 @@ public class DynaBeanMethodInterceptor implements MethodInterceptor, Serializabl
         Class returnType = method.getReturnType();
         Object [] args = invocation.getArguments();
         
-        if (methodName.startsWith("get") && paramTypes.length == 0) {
+        if (methodName.startsWith("get")) {
             String propName = getCamelString(methodName.substring(3));
-            return this.dynaBean.get(propName);
+
+            if (paramTypes.length == 0) {
+                return this.dynaBean.get(propName);
+            } else if (paramTypes.length == 1) {
+                if (paramTypes[0] == int.class || paramTypes[0] == Integer.class) {
+                    return this.dynaBean.get(propName, ((Integer) args[0]).intValue());
+                } else if (paramTypes[0] == String.class) {
+                    return this.dynaBean.get(propName, (String) args[0]);
+                } else {
+                    throw new UnsupportedOperationException("No getter for " + propName + " with " + paramTypes[0] + " type.");
+                }
+            } else {
+                throw new UnsupportedOperationException("No getter for " + propName + " with " + paramTypes.length + " parameters.");
+            }
         } else if (methodName.startsWith("is") && paramTypes.length == 0 && (returnType == boolean.class || returnType == Boolean.class)) {
             String propName = getCamelString(methodName.substring(2));
             return this.dynaBean.get(propName);
-        } else if (methodName.startsWith("set") && paramTypes.length == 1) {
+        } else if (methodName.startsWith("set")) {
             String propName = getCamelString(methodName.substring(3));
-            this.dynaBean.set(propName, args[0]);
+            if (paramTypes.length == 1) {
+                this.dynaBean.set(propName, args[0]);
+            } else if (paramTypes.length == 2) {
+                if (paramTypes[0] == int.class || paramTypes[0] == Integer.class) {
+                    this.dynaBean.set(propName, ((Integer) args[0]).intValue(), args[1]);
+                } else if (paramTypes[0] == String.class) {
+                    this.dynaBean.set(propName, (String) args[0], args[1]);
+                } else {
+                    throw new UnsupportedOperationException("No setter for " + propName + " with " + paramTypes[1] + " type.");
+                }
+                
+            } else {
+                throw new UnsupportedOperationException("No setter for " + propName + " with " + paramTypes.length + " parameters.");
+            }
             return null;
         } else {
             return MethodUtils.invokeMethod(this.dynaBean, methodName, args);

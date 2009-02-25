@@ -37,7 +37,10 @@ public class TestProxyUtils {
         DynaProperty[] props = new DynaProperty[] { 
                 new DynaProperty("firstName", String.class), 
                 new DynaProperty("lastName", String.class), 
-                new DynaProperty("addresses", Map.class)
+                new DynaProperty("addresses", Map.class),
+                new DynaProperty("address", Map.class),
+                new DynaProperty("favorites", String[].class),
+                new DynaProperty("favorite", String[].class),
                 };
         
         DynaClass dynaClass = new BasicDynaClass("employee", null, props);
@@ -57,9 +60,23 @@ public class TestProxyUtils {
         addresses.put("home", "111 B.Stamplein Hoofddorp");
         addresses.put("work", "222 Oosteinde Amterdam");
         personInfo.setAddresses(addresses);
+        dynaBean.set("address", addresses);
         assertEquals(addresses, personInfo.getAddresses());
         assertEquals(addresses, dynaBean.get("addresses"));
+        
+        personInfo.setAddress("work", "101 Petaluma");
+        assertEquals("101 Petaluma", personInfo.getAddress("work"));
+        assertEquals("101 Petaluma", ((Map) dynaBean.get("addresses")).get("work"));
 
+        String [] favorites = { "Football", "Horse Riding", "Hockey" };
+        personInfo.setFavorites(favorites);
+        dynaBean.set("favorite", favorites);
+        assertTrue(favorites == personInfo.getFavorites());
+        assertTrue(favorites == dynaBean.get("favorites"));
+        
+        personInfo.setFavorite(1, "Handball");
+        assertEquals("Handball", personInfo.getFavorite(1));
+        assertEquals("Handball", ((String []) dynaBean.get("favorites"))[1]);
     }
 
     @Test
@@ -81,9 +98,23 @@ public class TestProxyUtils {
         addresses.put("home", "111 B.Stamplein Hoofddorp");
         addresses.put("work", "222 Oosteinde Amterdam");
         personInfo.setAddresses(addresses);
+        dynaBean.set("address", addresses);
         assertEquals(addresses, personInfo.getAddresses());
         assertEquals(addresses, dynaBean.get("addresses"));
+        
+        personInfo.setAddress("work", "101 Petaluma");
+        assertEquals("101 Petaluma", personInfo.getAddress("work"));
+        assertEquals("101 Petaluma", ((Map) dynaBean.get("addresses")).get("work"));
 
+        String [] favorites = { "Football", "Horse Riding", "Hockey" };
+        personInfo.setFavorites(favorites);
+        dynaBean.set("favorite", favorites);
+        assertTrue(favorites == personInfo.getFavorites());
+        assertTrue(favorites == dynaBean.get("favorites"));
+        
+        personInfo.setFavorite(1, "Handball");
+        assertEquals("Handball", personInfo.getFavorite(1));
+        assertEquals("Handball", ((String []) dynaBean.get("favorites"))[1]);
     }
     
     @Test
@@ -119,8 +150,23 @@ public class TestProxyUtils {
         addresses.put("home", "111 B.Stamplein Hoofddorp");
         addresses.put("work", "222 Oosteinde Amterdam");
         personInfo.setAddresses(addresses);
+        dynaBean.set("address", addresses);
         assertEquals(addresses, personInfo.getAddresses());
         assertEquals(addresses, dynaBean.get("addresses"));
+        
+        personInfo.setAddress("work", "101 Petaluma");
+        assertEquals("101 Petaluma", personInfo.getAddress("work"));
+        assertEquals("101 Petaluma", ((Map) dynaBean.get("addresses")).get("work"));
+
+        String [] favorites = { "Football", "Horse Riding", "Hockey" };
+        personInfo.setFavorites(favorites);
+        dynaBean.set("favorite", favorites);
+        assertTrue(favorites == personInfo.getFavorites());
+        assertTrue(favorites == dynaBean.get("favorites"));
+        
+        personInfo.setFavorite(1, "Handball");
+        assertEquals("Handball", personInfo.getFavorite(1));
+        assertEquals("Handball", ((String []) dynaBean.get("favorites"))[1]);
         
         String xml = personInfo.toXMLString();
         assertNotNull(xml);

@@ -31,6 +31,18 @@ public interface IPersonInfo {
     
     public Map<String, String> getAddresses();
     
+    public void setAddress(String name, String value);
+    
+    public String getAddress(String name);
+    
+    public void setFavorites(String [] favorites);
+    
+    public String [] getFavorites();
+    
+    public void setFavorite(int index, String favorite);
+    
+    public String getFavorite(int index);
+    
     public String toXMLString();
     
 }
