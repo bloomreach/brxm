@@ -458,6 +458,14 @@
  <afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
  </afterlist>
 </info>
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/tools/howto/create_pom.xml'
+   relpath='delve_into/tools/howto'
+  >create_pom</file>
+     <file ext='xml~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/tools/howto/create_pom.xml~'
+   relpath='delve_into/tools/howto'
+  >create_pom</file>
      <folder>eclipse
       <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/tools/howto/eclipse/configure_workspace.xml.vm'
@@ -1139,6 +1147,10 @@
    relpath='.'
   >index</file>
   <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='integration_testing.xml'
+   relpath='.'
+  >integration_testing</file>
+  <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='releasing.xml'
    relpath='.'
   >releasing</file>
@@ -1147,16 +1159,8 @@
    fullname='support/community.xml.vm'
    relpath='support'
   >community</file>
-   <file ext='xml.vm~' mimetype='text/html charset=us-ascii' note='todo'
-   fullname='support/community.xml.vm~'
-   relpath='support'
-  >community</file>
    <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='support/contributing.xml.vm'
-   relpath='support'
-  >contributing</file>
-   <file ext='xml.vm~' mimetype='text/html charset=us-ascii' note='todo'
-   fullname='support/contributing.xml.vm~'
    relpath='support'
   >contributing</file>
    <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
