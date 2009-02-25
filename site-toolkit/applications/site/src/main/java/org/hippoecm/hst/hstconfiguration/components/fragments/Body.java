@@ -45,83 +45,83 @@ public class Body extends HstComponentBase {
         HstRequestContext hrc = request.getRequestContext();
         
         
-        String siteMapPath = hrc.getMatchedSiteMapItem().getSiteMapItem().getRelativeContentPath();
-        String remainder = hrc.getMatchedSiteMapItem().getRemainder();
-        
-        try {
-            Session s = hrc.getSession();
-            Node contentNode = (Node)s.getItem(hrc.getMatchedSiteMapItem().getSiteMapItem().getHstSiteMap().getSite().getContentPath());
-            
-            Node siteMapEntryNode = contentNode.getNode(siteMapPath);
-            Node target = siteMapEntryNode;
-            
-            if(remainder != null && !"".equals(remainder) ) {
-                if(!siteMapEntryNode.hasNode(remainder)) {
-                    // the path does not result in any node. Return
-                    return;
-                }
-                target = siteMapEntryNode.getNode(remainder);
-                
-            }
-                
-            Node parentNode = target.getParent();
-            StdType pstdType =  ServiceFactory.create(parentNode, StdType.class);
-            HstLink parentLink = hrc.getHstLinkCreator().create(pstdType.getUnderlyingService(), hrc.getMatchedSiteMapItem().getSiteMapItem());
-            
-            Parent p  = new Parent(pstdType, parentLink == null ? "" :  parentLink.getPath());
-            request.setAttribute("parent", p); 
-            
-            if(target.isNodeType(HippoNodeType.NT_HANDLE)) {
-                if(target.hasNode(target.getName())) {
-                    NewsPage newsPage = ServiceFactory.create(target.getNode(target.getName()), NewsPage.class);
-                    
-                    HstLink link = hrc.getHstLinkCreator().create(newsPage.getUnderlyingService(), hrc.getMatchedSiteMapItem().getSiteMapItem());
-                    Document d = new Document(newsPage, link == null ? "" :  link.getPath());
-                    request.setAttribute("document", d); 
-                }
-            }
-            else {
-                NodeIterator it = target.getNodes();
-                List<Document> docs = new ArrayList<Document>();
-                List<Folder> folders = new ArrayList<Folder>();
-                
-                while(it.hasNext()) {
-                    Node n = it.nextNode();
-                    if(n!= null){
-                        if(n.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            if(n.hasNode(n.getName())) {
-                                NewsPage newsPage = ServiceFactory.create(n.getNode(n.getName()), NewsPage.class);
-                                
-                                HstLink link = hrc.getHstLinkCreator().create(newsPage.getUnderlyingService(), hrc.getMatchedSiteMapItem().getSiteMapItem());
-                                docs.add(new Document(newsPage, link == null ? "" :  link.getPath()));
-                            }
-                        } else if(n.isNodeType(HippoNodeType.NT_DOCUMENT) && !n.getParent().isNodeType(HippoNodeType.NT_HANDLE)){
-                           StdType stdType =  ServiceFactory.create(n, StdType.class);
-                           HstLink link = hrc.getHstLinkCreator().create(stdType.getUnderlyingService(), hrc.getMatchedSiteMapItem().getSiteMapItem());
-                           
-                           folders.add(new Folder(stdType, link == null ? "" :  link.getPath()));
-                        }
-                    }
-                }
-
-                request.setAttribute("documents", docs); 
-                request.setAttribute("folders", folders); 
-            }   
-            
-            
-            
-        } catch (PathNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (LoginException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        String siteMapPath = hrc.getMatchedSiteMapItem().getSiteMapItem().getRelativeContentPath();
+//        String remainder = hrc.getMatchedSiteMapItem().getRemainder();
+//        
+//        try {
+//            Session s = hrc.getSession();
+//            Node contentNode = (Node)s.getItem(hrc.getMatchedSiteMapItem().getSiteMapItem().getHstSiteMap().getSite().getContentPath());
+//            
+//            Node siteMapEntryNode = contentNode.getNode(siteMapPath);
+//            Node target = siteMapEntryNode;
+//            
+//            if(remainder != null && !"".equals(remainder) ) {
+//                if(!siteMapEntryNode.hasNode(remainder)) {
+//                    // the path does not result in any node. Return
+//                    return;
+//                }
+//                target = siteMapEntryNode.getNode(remainder);
+//                
+//            }
+//                
+//            Node parentNode = target.getParent();
+//            StdType pstdType =  ServiceFactory.create(parentNode, StdType.class);
+//            HstLink parentLink = hrc.getHstLinkCreator().create(pstdType.getUnderlyingService(), hrc.getMatchedSiteMapItem().getSiteMapItem());
+//            
+//            Parent p  = new Parent(pstdType, parentLink == null ? "" :  parentLink.getPath());
+//            request.setAttribute("parent", p); 
+//            
+//            if(target.isNodeType(HippoNodeType.NT_HANDLE)) {
+//                if(target.hasNode(target.getName())) {
+//                    NewsPage newsPage = ServiceFactory.create(target.getNode(target.getName()), NewsPage.class);
+//                    
+//                    HstLink link = hrc.getHstLinkCreator().create(newsPage.getUnderlyingService(), hrc.getMatchedSiteMapItem().getSiteMapItem());
+//                    Document d = new Document(newsPage, link == null ? "" :  link.getPath());
+//                    request.setAttribute("document", d); 
+//                }
+//            }
+//            else {
+//                NodeIterator it = target.getNodes();
+//                List<Document> docs = new ArrayList<Document>();
+//                List<Folder> folders = new ArrayList<Folder>();
+//                
+//                while(it.hasNext()) {
+//                    Node n = it.nextNode();
+//                    if(n!= null){
+//                        if(n.isNodeType(HippoNodeType.NT_HANDLE)) {
+//                            if(n.hasNode(n.getName())) {
+//                                NewsPage newsPage = ServiceFactory.create(n.getNode(n.getName()), NewsPage.class);
+//                                
+//                                HstLink link = hrc.getHstLinkCreator().create(newsPage.getUnderlyingService(), hrc.getMatchedSiteMapItem().getSiteMapItem());
+//                                docs.add(new Document(newsPage, link == null ? "" :  link.getPath()));
+//                            }
+//                        } else if(n.isNodeType(HippoNodeType.NT_DOCUMENT) && !n.getParent().isNodeType(HippoNodeType.NT_HANDLE)){
+//                           StdType stdType =  ServiceFactory.create(n, StdType.class);
+//                           HstLink link = hrc.getHstLinkCreator().create(stdType.getUnderlyingService(), hrc.getMatchedSiteMapItem().getSiteMapItem());
+//                           
+//                           folders.add(new Folder(stdType, link == null ? "" :  link.getPath()));
+//                        }
+//                    }
+//                }
+//
+//                request.setAttribute("documents", docs); 
+//                request.setAttribute("folders", folders); 
+//            }   
+//            
+//            
+//            
+//        } catch (PathNotFoundException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (LoginException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (RepositoryException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         
     }
 

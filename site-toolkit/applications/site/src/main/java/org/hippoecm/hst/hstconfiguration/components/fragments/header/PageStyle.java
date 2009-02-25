@@ -37,25 +37,25 @@ public class PageStyle extends HstComponentBase {
         
         HstRequestContext hrc = request.getRequestContext();
         
-        String componentContentPath =  this.hstComponentConfigurationBean.getComponentContentBasePath();
-        if(componentContentPath != null) {
-            try {
-                Session session = hrc.getSession();
-                Node contentNode = (Node)session.getItem(hrc.getMatchedSiteMapItem().getSiteMapItem().getHstSiteMap().getSite().getContentPath());
-                Node componentContent = contentNode.getNode(componentContentPath);
-                if(componentContent.hasNode(componentContent.getName())) {
-                    Node n = componentContent.getNode(componentContent.getName());
-                    PageStyleType stylePage = ServiceFactory.create(n, PageStyleType.class);
-                    
-                    request.setAttribute("style", stylePage); 
-                }
-                
-            } catch (LoginException e) {
-                e.printStackTrace();
-            } catch (RepositoryException e) {
-                e.printStackTrace();
-            }
-        }
+//        String componentContentPath =  this.hstComponentConfigurationBean.getComponentContentBasePath();
+//        if(componentContentPath != null) {
+//            try {
+//                Session session = hrc.getSession();
+//                Node contentNode = (Node)session.getItem(hrc.getMatchedSiteMapItem().getSiteMapItem().getHstSiteMap().getSite().getContentPath());
+//                Node componentContent = contentNode.getNode(componentContentPath);
+//                if(componentContent.hasNode(componentContent.getName())) {
+//                    Node n = componentContent.getNode(componentContent.getName());
+//                    PageStyleType stylePage = ServiceFactory.create(n, PageStyleType.class);
+//                    
+//                    request.setAttribute("style", stylePage); 
+//                }
+//                
+//            } catch (LoginException e) {
+//                e.printStackTrace();
+//            } catch (RepositoryException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
 
