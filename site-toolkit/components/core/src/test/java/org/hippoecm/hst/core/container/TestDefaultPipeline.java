@@ -156,8 +156,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
             super.doBeforeRender(request, response);
             
-            Object o = compConfig.getResolvedProperty("year", request.getRequestContext().getResolvedSiteMapItem());
-            System.out.println(":-)))");
+            Object o = compConfig.getResolvedProperty("year", request.getRequestContext().getResolvedSiteMapItem()); 
             assertTrue("The year property should be of type 'String'", o instanceof String);
             assertTrue("The year property should be '2009'", "2009".equals((String)o) );
         }
