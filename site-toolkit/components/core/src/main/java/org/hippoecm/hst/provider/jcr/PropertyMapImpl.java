@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.provider.jcr;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,8 +25,10 @@ import java.util.Map.Entry;
 
 import org.hippoecm.hst.provider.PropertyMap;
 
-public class PropertyMapImpl implements PropertyMap {
+public class PropertyMapImpl implements PropertyMap, Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     private Map<String, Boolean> booleans = new HashMap<String, Boolean>();
     private Map<String, Boolean[]> booleanArrays = new HashMap<String, Boolean[]>();
 

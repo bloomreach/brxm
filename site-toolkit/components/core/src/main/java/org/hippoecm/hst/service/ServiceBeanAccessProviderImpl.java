@@ -27,15 +27,6 @@ public class ServiceBeanAccessProviderImpl implements ServiceBeanAccessProvider,
 
     public static final String HST_SERVICE_NAMESPACE_SEPARATOR = ":";
     
-    private static Class STRING_ARRAY_CLASS = new String[0].getClass();
-    private static Class PRIMITIVE_BOOLEAN_ARRAY_CLASS = new boolean[0].getClass();
-    private static Class BOOLEAN_ARRAY_CLASS = new Boolean[0].getClass();
-    private static Class PRIMITIVE_DOUBLE_ARRAY_CLASS = new double[0].getClass();
-    private static Class DOUBLE_ARRAY_CLASS = new Double[0].getClass();
-    private static Class PRIMITIVE_LONG_ARRAY_CLASS = new long[0].getClass();
-    private static Class LONG_ARRAY_CLASS = new Long[0].getClass();
-    private static Class CALENDAR_ARRAY_CLASS = new Calendar[0].getClass();
-
     protected Service service;
     protected ValueProvider valueProvider;
     
@@ -64,15 +55,15 @@ public class ServiceBeanAccessProviderImpl implements ServiceBeanAccessProvider,
                 return this.valueProvider.getDate(nodePropName);
             }
         } else {
-            if (returnType == STRING_ARRAY_CLASS) {
+            if (returnType == String[].class) {
                 return this.valueProvider.getStrings(nodePropName);
-            } else if (returnType == PRIMITIVE_BOOLEAN_ARRAY_CLASS || returnType == BOOLEAN_ARRAY_CLASS) {
+            } else if (returnType == boolean[].class || returnType == Boolean[].class) {
                 return this.valueProvider.getBooleans(nodePropName);
-            } else if (returnType == PRIMITIVE_LONG_ARRAY_CLASS || returnType == LONG_ARRAY_CLASS) {
+            } else if (returnType == long[].class || returnType == Long[].class) {
                 return this.valueProvider.getLongs(nodePropName);
-            } else if (returnType == PRIMITIVE_DOUBLE_ARRAY_CLASS || returnType == DOUBLE_ARRAY_CLASS) {
+            } else if (returnType == double[].class || returnType == Double[].class) {
                 return this.valueProvider.getDoubles(nodePropName);
-            } else if (returnType == CALENDAR_ARRAY_CLASS) {
+            } else if (returnType == Calendar[].class) {
                 return this.valueProvider.getDates(nodePropName);
             }
         }
