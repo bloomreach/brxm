@@ -240,7 +240,30 @@
   <bean id="testprojectSiteMapItemMap" class="org.springframework.beans.factory.config.MapFactoryBean">
     <property name="sourceMap">
       <map>
+        <entry key="news" value-ref="testprojectNewsSiteMapItem" />
       </map>
+    </property>
+  </bean>
+  
+  <bean id="testprojectNewsSiteMapItem" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetClass" value="org.hippoecm.hst.proxy.ProxyUtils" />
+    <property name="targetMethod" value="createDynaBeanProxy" />
+    <property name="arguments">
+      <list>
+        <bean class="org.apache.commons.beanutils.LazyDynaMap">
+          <constructor-arg>
+            <map>
+              <entry key="id" value="news" />
+              <entry key="value" value="news" />
+              <entry key="path" value="news" />
+              <entry key="wildcard" value="false" />
+              <entry key="relativeContentPath" value="News" />
+              <entry key="componentConfigurationId" value="pages/newsoverview" />
+            </map>
+          </constructor-arg>
+        </bean>
+        <value>org.hippoecm.hst.configuration.sitemap.HstSiteMapItem</value>
+      </list>
     </property>
   </bean>
   
