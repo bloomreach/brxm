@@ -27,6 +27,7 @@ import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.beanutils.DynaClass;
 import org.apache.commons.beanutils.DynaProperty;
 import org.apache.commons.beanutils.LazyDynaBean;
+import org.apache.commons.beanutils.LazyDynaMap;
 import org.junit.Test;
 
 public class TestProxyUtils {
@@ -174,6 +175,48 @@ public class TestProxyUtils {
         assertTrue(xml.endsWith("</bean>"));
         System.out.println("xml: " + xml);
 
+    }
+    
+    @Test
+    public void testLazyDynaMapProxyWithMethods() throws IllegalAccessException, InstantiationException {
+        
+        Map<String, Object> values = new HashMap<String, Object>();
+        
+        values.put("firstName", "Fanny");
+        values.put("lastName", "Blankers-Koen");
+        Map<String, String> addresses = new HashMap<String, String>();
+        addresses.put("home", "111 B.Stamplein Hoofddorp");
+        addresses.put("work", "222 Oosteinde Amterdam");
+        values.put("addresses", addresses);
+        values.put("address", addresses);
+        String [] favorites = { "Football", "Horse Riding", "Hockey" };
+        values.put("favorites", favorites);
+        values.put("favorite", favorites);
+        
+        LazyDynaMap dynaBean = new LazyDynaMap(values);
+
+        IPersonInfo personInfo = (IPersonInfo) ProxyUtils.createDynaBeanProxy(dynaBean, IPersonInfo.class);
+        
+        assertEquals("Fanny", personInfo.getFirstName());
+        assertEquals("Fanny", dynaBean.get("firstName"));
+        
+        assertEquals("Blankers-Koen", personInfo.getLastName());
+        assertEquals("Blankers-Koen", dynaBean.get("lastName"));
+        
+        assertEquals(addresses, personInfo.getAddresses());
+        assertEquals(addresses, dynaBean.get("addresses"));
+        
+        personInfo.setAddress("work", "101 Petaluma");
+        assertEquals("101 Petaluma", personInfo.getAddress("work"));
+        assertEquals("101 Petaluma", ((Map) dynaBean.get("addresses")).get("work"));
+
+        dynaBean.set("favorite", favorites);
+        assertTrue(favorites == personInfo.getFavorites());
+        assertTrue(favorites == dynaBean.get("favorites"));
+        
+        personInfo.setFavorite(1, "Handball");
+        assertEquals("Handball", personInfo.getFavorite(1));
+        assertEquals("Handball", ((String []) dynaBean.get("favorites"))[1]);
     }
     
 }
