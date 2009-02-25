@@ -1,0 +1,133 @@
+/*
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.hippoecm.hst.proxy;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.beanutils.BasicDynaClass;
+import org.apache.commons.beanutils.DynaBean;
+import org.apache.commons.beanutils.DynaClass;
+import org.apache.commons.beanutils.DynaProperty;
+import org.apache.commons.beanutils.LazyDynaBean;
+import org.junit.Test;
+
+public class TestProxyUtils {
+
+    @Test
+    public void testDynaBeanProxy() throws IllegalAccessException, InstantiationException {
+        
+        DynaProperty[] props = new DynaProperty[] { 
+                new DynaProperty("firstName", String.class), 
+                new DynaProperty("lastName", String.class), 
+                new DynaProperty("addresses", Map.class)
+                };
+        
+        DynaClass dynaClass = new BasicDynaClass("employee", null, props);
+        DynaBean dynaBean = dynaClass.newInstance();
+
+        IPersonInfo personInfo = (IPersonInfo) ProxyUtils.createDynaBeanProxy(dynaBean, IPersonInfo.class);
+        
+        personInfo.setFirstName("Fanny");
+        assertEquals("Fanny", personInfo.getFirstName());
+        assertEquals("Fanny", dynaBean.get("firstName"));
+        
+        personInfo.setLastName("Blankers-Koen");
+        assertEquals("Blankers-Koen", personInfo.getLastName());
+        assertEquals("Blankers-Koen", dynaBean.get("lastName"));
+        
+        Map<String, String> addresses = new HashMap<String, String>();
+        addresses.put("home", "111 B.Stamplein Hoofddorp");
+        addresses.put("work", "222 Oosteinde Amterdam");
+        personInfo.setAddresses(addresses);
+        assertEquals(addresses, personInfo.getAddresses());
+        assertEquals(addresses, dynaBean.get("addresses"));
+
+    }
+
+    @Test
+    public void testLazyDynaBeanProxy() throws IllegalAccessException, InstantiationException {
+        
+        DynaBean dynaBean = new LazyDynaBean();
+
+        IPersonInfo personInfo = (IPersonInfo) ProxyUtils.createDynaBeanProxy(dynaBean, IPersonInfo.class);
+        
+        personInfo.setFirstName("Fanny");
+        assertEquals("Fanny", personInfo.getFirstName());
+        assertEquals("Fanny", dynaBean.get("firstName"));
+        
+        personInfo.setLastName("Blankers-Koen");
+        assertEquals("Blankers-Koen", personInfo.getLastName());
+        assertEquals("Blankers-Koen", dynaBean.get("lastName"));
+        
+        Map<String, String> addresses = new HashMap<String, String>();
+        addresses.put("home", "111 B.Stamplein Hoofddorp");
+        addresses.put("work", "222 Oosteinde Amterdam");
+        personInfo.setAddresses(addresses);
+        assertEquals(addresses, personInfo.getAddresses());
+        assertEquals(addresses, dynaBean.get("addresses"));
+
+    }
+    
+    @Test
+    public void testLazyDynaBeanProxyWithMethods() throws IllegalAccessException, InstantiationException {
+        
+        DynaBean dynaBean = new LazyDynaBean() {
+            // Just example method implementation
+            public String toXMLString() {
+                StringBuilder sb = new StringBuilder();
+                sb.append("<bean>");
+                for (Object entryItem : getMap().entrySet()) {
+                    Map.Entry entry = (Map.Entry) entryItem;
+                    sb.append("<" + entry.getKey() + ">");
+                    sb.append(entry.getValue());
+                    sb.append("</" + entry.getKey() + ">");
+                }
+                sb.append("</bean>");
+                return sb.toString();
+            }
+        };
+
+        IPersonInfo personInfo = (IPersonInfo) ProxyUtils.createDynaBeanProxy(dynaBean, IPersonInfo.class);
+        
+        personInfo.setFirstName("Fanny");
+        assertEquals("Fanny", personInfo.getFirstName());
+        assertEquals("Fanny", dynaBean.get("firstName"));
+        
+        personInfo.setLastName("Blankers-Koen");
+        assertEquals("Blankers-Koen", personInfo.getLastName());
+        assertEquals("Blankers-Koen", dynaBean.get("lastName"));
+        
+        Map<String, String> addresses = new HashMap<String, String>();
+        addresses.put("home", "111 B.Stamplein Hoofddorp");
+        addresses.put("work", "222 Oosteinde Amterdam");
+        personInfo.setAddresses(addresses);
+        assertEquals(addresses, personInfo.getAddresses());
+        assertEquals(addresses, dynaBean.get("addresses"));
+        
+        String xml = personInfo.toXMLString();
+        assertNotNull(xml);
+        assertTrue(xml.startsWith("<bean>"));
+        assertTrue(xml.endsWith("</bean>"));
+        System.out.println("xml: " + xml);
+
+    }
+    
+}

@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.commons.beanutils.DynaBean;
 import org.hippoecm.hst.service.ServiceBeanAccessProvider;
 import org.hippoecm.hst.service.ServiceNamespace;
 import org.springframework.aop.framework.ProxyFactory;
@@ -27,6 +28,12 @@ public class ProxyUtils
 {
     private ProxyUtils()
     {
+    }
+    
+    public static Object createDynaBeanProxy(final DynaBean dynaBean, Class ... proxyInterfaces) {
+        ProxyFactory factory = new ProxyFactory(proxyInterfaces);
+        factory.addAdvice(new DynaBeanMethodInterceptor(dynaBean));
+        return factory.getProxy();
     }
     
     public static Object createdUnsupportableProxyObject(Object target, final Set<String> unsupportedMethodNames)
@@ -50,7 +57,7 @@ public class ProxyUtils
     }
     
     public static Object createBeanAccessProviderProxy(final ServiceBeanAccessProvider provider, Class ... proxyInterfaces) {
-        ProxyFactory factory = new ProxyFactory(proxyInterfaces);        
+        ProxyFactory factory = new ProxyFactory(proxyInterfaces);
         String defaultNamespacePrefix = findServiceNamespacePrefix(proxyInterfaces);
         factory.addAdvice(new NamespacedBeanMethodInterceptor(provider, defaultNamespacePrefix));
         return factory.getProxy();
