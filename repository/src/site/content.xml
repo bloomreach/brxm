@@ -550,7 +550,10 @@
   will link to the tools section where needed and thereby become cleaner.
  </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
  </afterlist>
-   <folder>eclipse
+   <document ext="xml" filename="create_pom" relpath="delve_into/tools/howto">Create a pom.xml
+   <section>Create a pom.xml</section>
+   <shortdesc>Learn how to create a project object model file for maven.</shortdesc>
+  </document><folder>eclipse
    
    <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/howto/eclipse">Configure Workspace
    <section>Configure Workspace</section>
@@ -1300,6 +1303,12 @@
   </document><document ext="xml" filename="index" relpath=".">What is Hippo CMS?
    <section>What is Hippo CMS?</section>
    <shortdesc>What part of Hippo ECM is it, what are its tasks?</shortdesc>
+  </document><document ext="xml" filename="integration_testing" relpath=".">Setting up and using Selenium tests
+   <section>Setting up and using Selenium tests</section>
+   <subsection>Building wicket and Hippo ECM for running integration tests</subsection>
+   <subsection>Get your application server</subsection>
+   <subsection>Running a simple Selenium test</subsection>
+   <subsection>Recording a Selenium test</subsection>
   </document><document ext="xml" filename="releasing" relpath=".">Performing a release of the Hippo ECM suite
    <section>Performing a release of the Hippo ECM suite</section>
    <subsection>Preparing a release</subsection>

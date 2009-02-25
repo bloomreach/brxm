@@ -262,7 +262,7 @@ repository is;
   will link to the tools section where needed and thereby become cleaner.
  </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
  </afterlist>
-   <folder>eclipse
+   <document ext="xml" filename="create_pom" relpath="delve_into/tools/howto">Create a pom.xml<linkto_unchecked/></document><folder>eclipse
    
    <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/howto/eclipse">Configure Workspace<linkto_unchecked/>
     <add>Explanation about installing JPOX eclipse plugin</add>
@@ -417,7 +417,12 @@ repository is;
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="index" relpath=".">What is Hippo CMS?<linkto_unchecked/>
     <add>Enlightning diagram?</add>
-    <review>all text: move short features list to feature document?</review></document><document ext="xml" filename="releasing" relpath=".">Performing a release of the Hippo ECM suite<linkto_unchecked/>
+    <review>all text: move short features list to feature document?</review></document><document ext="xml" filename="integration_testing" relpath=".">Setting up and using Selenium tests<linkto_unchecked/>
+    <badtext>The<span class="bad"> current </span>trunk of Hippo ECM already contains the proper infrastructure for Selenium-based integration testing. This description will first outline how to run this integration test. Having done that, it outline</badtext>
+    <badtext>, which is<span class="bad"> current </span>ly set to the glassfish instance of the deployment api:</badtext>
+    <badtext>untu 8.04 (and higher) in combination with Firefox 3 this requires some extra setup (or at least with<span class="bad"> current </span>Selenium version in use) as Selenium expects the firefox binary to be called firefox-bin, which is not the case on Ubuntu 8.04. Thus we create a symlink in /usr/lib/firefox to the Firefox binary as fo</badtext>
+    <typo>entries in the maven surefire plugin configuration. In addition to this you need to modify<span class="bad"> the the </span>class name in the source file</typo>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="releasing" relpath=".">Performing a release of the Hippo ECM suite<linkto_unchecked/>
     <badtext>The first formally released version must be 2.01.01 because of the<span class="bad"> current </span>numbering scheme</badtext>
     <badtext>followed by the SVN revision number of the then<span class="bad"> current </span>trunk. For example a version might be</badtext>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>

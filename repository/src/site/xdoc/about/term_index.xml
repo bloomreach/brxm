@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 877 terms</span>
+      <span class="shortdesc">Term index, 884 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -880,6 +880,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../integration_testing.html#Building_wicket_and_Hippo_ECM_for_running_integration_tests">Building wicket and Hippo ECM for running integration tests</a>
+            </td>
+            <td>Setting up and using Selenium tests</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/core/building/netbeans.html#Building_with_Netbeans">Building with Netbeans</a>
             </td>
             <td>Building with Netbeans</td>
@@ -1232,6 +1238,12 @@
               <a href="../delve_into/custom/howto/editing_template_plugin.html#Create_a_plugin">Create a plugin</a>
             </td>
             <td>Howto: Create an Editing Template Plugin</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/create_pom.html#Create_a_pom_xml">Create a pom.xml</a>
+            </td>
+            <td>Howto: Create a pom.xml</td>
           </tr>
           <tr>
             <td>
@@ -2205,6 +2217,12 @@
               <a href="../delve_into/overview.html#Get_to_know_all_the_details_of_Hippo_CMS_">Get to know all the details of Hippo CMS.</a>
             </td>
             <td>Delve into Hippo CMS</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../integration_testing.html#Get_your_application_server">Get your application server</a>
+            </td>
+            <td>Setting up and using Selenium tests</td>
           </tr>
           <tr>
             <td>
@@ -3327,6 +3345,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/tools/howto/create_pom.html#Learn_how_to_create_a_project_object_model_file_for_maven_">Learn how to create a project object model file for maven.</a>
+            </td>
+            <td>Howto: Create a pom.xml</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/howto/customize_editing_template.html#Learn_how_to_create_a_template_with_a_custom_layout_">Learn how to create a template with a custom layout.</a>
             </td>
             <td>Howto: Customize an Editing Template</td>
@@ -4173,6 +4197,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../integration_testing.html#Recording_a_Selenium_test">Recording a Selenium test</a>
+            </td>
+            <td>Setting up and using Selenium tests</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/sysadmin/requirements.html#Redhat_logo">Redhat logo</a>
             </td>
             <td>Requirements</td>
@@ -4320,6 +4350,12 @@
               <a href="../delve_into/tools/howto/maven/run_development_package.html#Run_a_development_package">Run a development package</a>
             </td>
             <td>Run a development package</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../integration_testing.html#Running_a_simple_Selenium_test">Running a simple Selenium test</a>
+            </td>
+            <td>Setting up and using Selenium tests</td>
           </tr>
           <tr>
             <td>
@@ -4548,6 +4584,12 @@
               <a href="../delve_into/user/contributors/howto/set_edit_mode.html#set_edit_mode">set edit mode</a>
             </td>
             <td>Howto: set edit mode</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../integration_testing.html#Setting_up_and_using_Selenium_tests">Setting up and using Selenium tests</a>
+            </td>
+            <td>Setting up and using Selenium tests</td>
           </tr>
           <tr>
             <td>

@@ -25,12 +25,13 @@
       <section name="Create a pom.xml">
         <span class="shortdesc">Learn how to create a project object model file for maven.</span>
 
-            <dt>pom.xml</dt>
-            <dd>
-              <p>
-                For now, the project needs no dependencies as it's just making available
-                a set of resources.  Those will be used by the repository as it boots up.
-              </p>
+        <p>
+         The tiny pom.xml below is for a project named 'Editing Template Add-on'.
+         The package created by the project will be a jar (it could also be a war or an ear).
+         The version of the project is 0.01.00 (that is, just starting).
+         The project has no dependencies.
+        </p>
+
 <source><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <project
@@ -40,12 +41,16 @@
 
   <modelVersion>4.0.0</modelVersion>
   <name>Editing Template Add-on</name>
-  <description>Editing Template Add-on</description>
+  <description>A package for adding predefined document types to a repository.</description>
   <groupId>org.example</groupId>
   <artifactId>editing-template-addon</artifactId>
-  <version>1.01.00</version>
+  <version>0.01.00</version>
   <packaging>jar</packaging>
 
 </project>
 ]]></source>
+
+  </section>
+ </body>
+</document>
 
