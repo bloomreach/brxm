@@ -49,7 +49,7 @@ public class ContextResolvingValve extends AbstractValve
             throw new ContainerException("No site found for " + siteName);
         }
         
-        String pathInfo = servletRequest.getPathInfo();
+        String pathInfo = baseURL.getPathInfo();
         
         MatchResult matchResult = null;
         

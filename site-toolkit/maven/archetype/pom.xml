@@ -59,7 +59,10 @@
             <phase>install</phase>
             <configuration>
               <tasks>
-                
+
+                <echo message="$$$$$$$$$$ Deleting the existing example HST application if it exists. $$$$$$$$$$" />
+                <delete dir="${basedir}/target/${gettingstarted.app.artifactId}" />
+                                
                 <echo message="$$$$$$$$$$ Generating an example HST application from the archetype $$$$$$$$$$" />
                 <java classname="org.codehaus.classworlds.Launcher" dir="${basedir}/target" fork="true" failonerror="true">
                   <permissions>
