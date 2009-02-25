@@ -19,6 +19,8 @@ import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -34,6 +36,8 @@ import org.junit.Before;
  */
 public abstract class AbstractSpringTestCase
 {
+
+    protected final static Logger log = LoggerFactory.getLogger(AbstractSpringTestCase.class);
     protected ComponentManager componentManager;
 
     @Before

@@ -24,10 +24,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.util.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The default implementation providing HstContainerURL.
@@ -42,7 +42,8 @@ import org.hippoecm.hst.core.util.Path;
  */
 public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     
-    static Log log = LogFactory.getLog(HstContainerURLProviderImpl.class);
+    private final static Logger log = LoggerFactory.getLogger(HstContainerURLProvider.class);
+    
     
     private static final String ACTION_URL_PATH_PREFIX = "/_hstact_:";
     private static final String RESOURCE_URL_PATH_PREFIX = "/_hstres_:";

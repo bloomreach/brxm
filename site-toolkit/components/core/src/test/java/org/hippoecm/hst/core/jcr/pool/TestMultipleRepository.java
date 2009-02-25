@@ -28,8 +28,6 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
@@ -38,8 +36,7 @@ import org.junit.Test;
 
 public class TestMultipleRepository extends AbstractSpringTestCase {
     
-    static Log log = LogFactory.getLog(TestMultipleRepository.class);
-
+   
     protected MultipleRepository multipleRepository;
     protected Repository repository;
     protected Credentials defaultCredentials;

@@ -29,8 +29,6 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -38,8 +36,8 @@ import org.junit.Test;
 
 public class TestBasicPoolingRepository extends AbstractSpringTestCase {
     
-    static Log log = LogFactory.getLog(TestBasicPoolingRepository.class);
-
+    
+    
     protected BasicPoolingRepository poolingRepository;
     
     @Before
