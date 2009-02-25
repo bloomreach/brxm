@@ -26,6 +26,7 @@
 - hst:referencecomponent
 - hst:componentcontentbasepath
 - hst:contextrelativepath
+- * (string)
 + * (hst:component)
 
 [hst:componentgroup]
@@ -40,6 +41,7 @@
 - hst:value
 - hst:relativecontentpath (string)
 - hst:componentconfigurationid (string)
+- * (string)
 + * (hst:sitemapitem)
 
 [hst:sitemap] 

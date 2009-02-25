@@ -21,9 +21,10 @@ import java.util.Map;
 import javax.servlet.ServletConfig;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.components.HstComponentConfigurationBean;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.request.ComponentConfiguration;
+import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
 
 public class HstComponentFactoryImpl implements HstComponentFactory {
     
@@ -49,24 +50,12 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
                 component = (HstComponent) compClass.newInstance();
                 
                 final String componentContentBasePath = compConfig.getComponentContentBasePath();
-                final String contextRelativePath = compConfig.getContextRelativePath();
+                
                 Map<String, Object> tempProperties = compConfig.getProperties();
                 final Map<String, Object> properties = (Map<String, Object>) (tempProperties == null ? Collections.emptyMap() : Collections.unmodifiableMap(tempProperties));
                 tempProperties = null;
                 
-                HstComponentConfigurationBean compConfigBean = new HstComponentConfigurationBean() {
-                    public String getComponentContentBasePath() {
-                        return componentContentBasePath;
-                    }
-
-                    public String getContextRelativePath() {
-                        return contextRelativePath;
-                    }
-
-                    public Map<String, Object> getProperties() {
-                        return properties;
-                    }
-                };
+                ComponentConfiguration compConfigBean = new ComponentConfigurationImpl(properties); 
                 
                 component.init(servletConfig, compConfigBean);
                 

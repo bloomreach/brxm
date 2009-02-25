@@ -130,7 +130,6 @@ public class ConfigurationViewUtilities {
         buf.append(newLine).append("componentclassname = ").append(hstComponentConfiguration.getComponentClassName());
         buf.append(newLine).append("renderpath = ").append(hstComponentConfiguration.getRenderPath());
         buf.append(newLine).append("compontentcontentbasepath = ").append(hstComponentConfiguration.getComponentContentBasePath());
-        buf.append(newLine).append("contextrelativepath = ").append(hstComponentConfiguration.getContextRelativePath());
         for(HstComponentConfiguration childConfiguration : hstComponentConfiguration.getChildren().values()) {
             view(buf, indent+SMALL_INDENT, childConfiguration);
         }
@@ -144,7 +143,7 @@ public class ConfigurationViewUtilities {
         buf.append("\n\n***** SiteMapMatcher ("+matchResult.hashCode()+") *******");
         indent = indent + SMALL_INDENT;
         
-        buf.append("\n").append(indent).append("-Remainder = ").append(matchResult.getRemainder());
+        buf.append("\n").append(indent).append("-Remainder = ").append(matchResult);
         view(buf,indent,matchResult.getSiteMapItem());
         view(buf,indent,matchResult.getCompontentConfiguration());
         

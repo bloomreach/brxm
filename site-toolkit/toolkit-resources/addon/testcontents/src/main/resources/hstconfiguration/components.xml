@@ -75,10 +75,24 @@
                     <sv:property sv:name="hst:referencename" sv:type="String">
                         <sv:value>s</sv:value>
                     </sv:property>
-                    <sv:property sv:name="hst:componentcontentbasepath" sv:type="String">
-                        <sv:value>Styles/NewsPageStyle</sv:value>
-                    </sv:property>
                 </sv:node>
+            </sv:node>
+            <sv:node sv:name="body">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:component</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:renderpath" sv:type="String">
+                    <sv:value>jsp/fragments/body.jsp</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:componentclassname" sv:type="String">
+                    <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Body</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:referencename" sv:type="String">
+                    <sv:value>b</sv:value>
+                </sv:property>
+                <sv:property sv:name="year" sv:type="String">
+                    <sv:value>{year}</sv:value>
+                </sv:property>
             </sv:node>
         </sv:node>
         <sv:node sv:name="productsview">

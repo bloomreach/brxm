@@ -27,6 +27,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.provider.PropertyMap;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -57,7 +58,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     private boolean isWildCard;
     
-    private Map<String, Object> properties;
+    private PropertyMap propertyMap;
     
     private HstSiteMap hstSiteMap;
     
@@ -85,7 +86,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         if(rolesProp!=null) {
             this.roles = Arrays.asList(rolesProp);
         }
-        this.properties = getValueProvider().getProperties();
+        
+        this.propertyMap = getValueProvider().getPropertyMap();
         
         init(jcrNode);
     }
@@ -140,7 +142,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     }
 
     public Map<String, Object> getProperties() {
-        return this.properties;
+        return this.propertyMap.getAllMapsCombined();
     }
 
     public String getRelativeContentPath() {

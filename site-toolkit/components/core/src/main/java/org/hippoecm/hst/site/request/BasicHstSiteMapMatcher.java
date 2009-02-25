@@ -13,8 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration;
+package org.hippoecm.hst.site.request;
 
+import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -22,14 +23,14 @@ import org.hippoecm.hst.core.util.PathUtils;
 
 public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
 
-    public MatchResult match(String link, HstSite hstSite) {
-        link = PathUtils.normalizePath(link);
-        String[] elements = link.split("/"); 
+    public MatchResult match(String pathInfo, HstSite hstSite) {
+        pathInfo = PathUtils.normalizePath(pathInfo);
+        String[] elements = pathInfo.split("/"); 
         
         HstSiteMapItem hstSiteMapItem = hstSite.getSiteMap().getSiteMapItem(elements[0]);
         if(hstSiteMapItem == null) {
-            // return a MatchResult with HstSiteMapItem = null
-            return new MatchResultImpl(link, null, null);
+            // return a 404 MatchResult 
+            return new MatchResultImpl(null, null);
         }
         
         int i = 1;
@@ -48,30 +49,28 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         }
         
         
-        return new MatchResultImpl(remainder.toString(), hstSiteMapItem, hstSite.getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId()));
+        return new MatchResultImpl(hstSiteMapItem, hstSite.getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId()));
     }
     
     public class MatchResultImpl implements MatchResult {
 
-        private String remainder;
         private HstSiteMapItem hstSiteMapItem;
         private HstComponentConfiguration hstComponentConfiguration;
         
-        public MatchResultImpl(String remainder, HstSiteMapItem hstSiteMapItem, HstComponentConfiguration hstComponentConfiguration){
-            this.remainder = remainder;
+        public MatchResultImpl(HstSiteMapItem hstSiteMapItem, HstComponentConfiguration hstComponentConfiguration){
             this.hstSiteMapItem = hstSiteMapItem;
             this.hstComponentConfiguration = hstComponentConfiguration;
         }
-        public String getRemainder() {
-            return this.remainder;
-        }
-
+        
         public HstSiteMapItem getSiteMapItem() {
             return this.hstSiteMapItem;
         }
         
         public HstComponentConfiguration getCompontentConfiguration() {
             return hstComponentConfiguration;
+        }
+        public String[] getParams() {
+            return null;
         }
         
     }

@@ -21,7 +21,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 public interface HstSiteMapMatcher {
     
-    MatchResult match(String link,HstSite hstSite);
+    MatchResult match(String pathInfo,HstSite hstSite);
   
     public interface MatchResult {
         
@@ -29,8 +29,7 @@ public interface HstSiteMapMatcher {
         
         HstComponentConfiguration getCompontentConfiguration();
         
-        String getRemainder();
-        
+        String[] getParams();
     }
 }
 

@@ -28,7 +28,15 @@ public interface HstSiteMapItem {
     String getRelativeContentPath();
     String getComponentConfigurationId();
     List<String> getRoles();  
+    
+    /**
+     * This method returns a copied Map of the configured properties, such that if you would change an Object or
+     * set a new Object with a different key, does not result in a different Map when you call this method again.
+     * 
+     * @return Map of all properties as they are configured
+     */
     Map<String, Object> getProperties();
+    
     List<HstSiteMapItem> getChildren();
     HstSiteMapItem getChild(String value);
     HstSiteMapItem getParentItem();

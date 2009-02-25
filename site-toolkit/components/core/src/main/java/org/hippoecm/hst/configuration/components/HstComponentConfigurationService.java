@@ -24,6 +24,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.provider.PropertyMap;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -39,7 +40,6 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
 
     private String componentContentBasePath;
     
-    private String contextRelativePath;
     
     private String componentClassName;
     
@@ -51,7 +51,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     
     private String referencedComponent;
 
-    private Map<String, Object> allProperties;
+    private PropertyMap propertyMap;
     
     private String componentsRootNodePath;
     
@@ -67,12 +67,11 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         if (getValueProvider().isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
             this.referenceName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCENAME);
             this.componentContentBasePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_CONTENTBASEPATH);
-            this.contextRelativePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_CONTEXTRELATIVEPATH);
             this.componentClassName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
             this.renderPath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_RENDER_PATH);
             this.serveResourcePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH);
             this.referencedComponent = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
-            this.allProperties = getValueProvider().getProperties();
+            this.propertyMap = getValueProvider().getPropertyMap();
         } 
         
         init(jcrNode);
@@ -126,15 +125,11 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     }
 
     public Map<String, Object> getProperties() {
-        return allProperties;
+        return propertyMap.getAllMapsCombined();
     }
     
     public String getComponentContentBasePath() {
         return this.componentContentBasePath;
-    }
-
-    public String getContextRelativePath() {
-        return this.contextRelativePath;
     }
 
     public String getId() {
@@ -149,4 +144,5 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
        return this.componentConfigurations;
     }
 
+   
 }

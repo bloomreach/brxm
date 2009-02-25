@@ -25,6 +25,8 @@ import org.hippoecm.hst.service.jcr.JCRService;
 
 public abstract class AbstractJCRService implements JCRService, Serializable {
     
+    private static final long serialVersionUID = 1L;
+    
     private transient JCRValueProvider valueProvider;
     
     public AbstractJCRService(Node jcrNode) {

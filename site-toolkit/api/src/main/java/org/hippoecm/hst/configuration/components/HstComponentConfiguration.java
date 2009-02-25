@@ -15,9 +15,10 @@
  */
 package org.hippoecm.hst.configuration.components;
 
+import java.util.Map;
 import java.util.SortedMap;
 
-public interface HstComponentConfiguration extends HstComponentConfigurationBean {
+public interface HstComponentConfiguration {
 
     String getId();
 
@@ -25,10 +26,14 @@ public interface HstComponentConfiguration extends HstComponentConfigurationBean
 
     String getComponentClassName();
 
+    String getComponentContentBasePath();
+    
     String getRenderPath();
     
     String getServeResourcePath();
 
+    Map<String, Object> getProperties();
+    
     SortedMap<String, HstComponentConfiguration> getChildren();
 
 }

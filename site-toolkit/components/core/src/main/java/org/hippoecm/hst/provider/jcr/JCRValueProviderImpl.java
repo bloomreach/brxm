@@ -17,7 +17,6 @@ package org.hippoecm.hst.provider.jcr;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +27,9 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
+import javax.jcr.nodetype.PropertyDefinition;
 
+import org.hippoecm.hst.provider.PropertyMap;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,10 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     private boolean detached = false;
     private boolean isLoaded = false;
     private List<Integer> supportedPropertyTypes = new ArrayList<Integer>();
-    private Map<String, Object> properties = new HashMap<String, Object>();
+   
+    //private Map<String, Object> properties = new HashMap<String, Object>();
+    
+    private PropertyMapImpl propertyMap = new PropertyMapImpl();
     
     {
         supportedPropertyTypes.add(PropertyType.STRING);
@@ -155,16 +159,26 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     }
     
     public boolean hasProperty(String propertyName){
-        Object o = this.properties.get(propertyName);
-        if(o != null) {
+        boolean b = this.propertyMap.hasProperty(propertyName);
+        if(b) {
             return true;
+        }
+        b = this.propertyMap.isUnAvailableProperty(propertyName);
+        if(b) {
+            return false;
         }
         if(isDetached()){
             log.warn("Jcr Node is detatched. Cannot execute method");
             return false;
         }
         try {
-            return jcrNode.hasProperty(propertyName);
+            boolean bool =  jcrNode.hasProperty(propertyName);
+            if(bool) {
+                this.propertyMap.addAvailableProperty(propertyName);
+            } else {
+                this.propertyMap.addUnAvailableProperty(propertyName);
+            }
+            return b;
         } catch (RepositoryException e) {
             log.warn("Repository Exception during check if property exists: ", e);
         }
@@ -172,215 +186,240 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     }
     
     public String getString(String propertyName){
-        Object o = this.properties.get(propertyName);
-        if(o != null && o instanceof String) {
-            return (String)o;
+        String o = this.propertyMap.getStrings().get(propertyName);
+        if(o != null) {
+            return o;
         }
-        WrappedProp prop = this.getWrappedProp(propertyName,PropertyType.STRING, false);
-        if(prop!= null) {
-            this.properties.put(propertyName, prop.getObject());
-            return (String)prop.getObject();
+        if(this.propertyMap.isUnAvailableProperty(propertyName)) {
+            return null;
         }
-        return null;
+        loadProperty(propertyName,PropertyType.STRING, false);
+        return this.propertyMap.getStrings().get(propertyName);
     }
     
     public String[] getStrings(String propertyName){
-        Object o = this.properties.get(propertyName);
-        if(o != null && o instanceof String[]) {
-            return (String[])o;
+        String[] o = this.propertyMap.getStringArrays().get(propertyName);
+        if(o != null ) {
+            return o;
         }
-        WrappedProp prop = this.getWrappedProp(propertyName,PropertyType.STRING, true);
-        if(prop!= null) {
-            this.properties.put(propertyName, prop.getObject());
-            return (String[])prop.getObject();
+        if(this.propertyMap.isUnAvailableProperty(propertyName)) {
+            return null;
         }
-        return null;
+        
+        loadProperty(propertyName,PropertyType.STRING, true);
+        
+        return this.propertyMap.getStringArrays().get(propertyName);
     }
 
     public Double getDouble(String propertyName) {
-        Object o = this.properties.get(propertyName);
-        if(o != null && o instanceof Double) {
-            return (Double)o;
+        Double o = this.propertyMap.getDoubles().get(propertyName);
+        if(o != null) {
+            return o;
         }
-        WrappedProp prop = this.getWrappedProp(propertyName,PropertyType.DOUBLE, false);
-        if(prop!= null) {
-            this.properties.put(propertyName, prop.getObject());
-            return (Double)prop.getObject();
+        if(this.propertyMap.isUnAvailableProperty(propertyName)) {
+            return null;
         }
-        return null;
+        
+        loadProperty(propertyName,PropertyType.DOUBLE, false);
+        return this.propertyMap.getDoubles().get(propertyName);
     }
 
     public Double[] getDoubles(String propertyName) {
-        Object o = this.properties.get(propertyName);
-        if(o != null && o instanceof Double[]) {
-            return (Double[])o;
+        Double[] o = this.propertyMap.getDoubleArrays().get(propertyName);
+        if(o != null) {
+            return o;
         }
-        WrappedProp prop = this.getWrappedProp(propertyName,PropertyType.DOUBLE, true);
-        if(prop!= null) {
-            this.properties.put(propertyName, prop.getObject());
-            return (Double[])prop.getObject();
+        if(this.propertyMap.isUnAvailableProperty(propertyName)) {
+            return null;
         }
-        return null;
+        
+        loadProperty(propertyName,PropertyType.DOUBLE, true);
+       
+        return this.propertyMap.getDoubleArrays().get(propertyName);
     }
 
     public Long getLong(String propertyName) {
-        Object o = this.properties.get(propertyName);
-        if(o != null && o instanceof Long) {
+        Long o = this.propertyMap.getLongs().get(propertyName);
+        if(o != null) {
             return (Long)o;
         }
-        WrappedProp prop = this.getWrappedProp(propertyName,PropertyType.LONG, false);
-        if(prop!= null) {
-            this.properties.put(propertyName, prop.getObject());
-            return (Long)prop.getObject();
+        
+        if(this.propertyMap.isUnAvailableProperty(propertyName)) {
+            return null;
         }
-        return null;
+        
+        loadProperty(propertyName,PropertyType.LONG, false);
+        
+        return this.propertyMap.getLongs().get(propertyName);
     }
 
     public Long[] getLongs(String propertyName) {
-        Object o = this.properties.get(propertyName);
-        if(o != null && o instanceof Long[]) {
-            return (Long[])o;
+        Long[] o = this.propertyMap.getLongArrays().get(propertyName);
+        if(o != null) {
+            return o;
         }
-        WrappedProp prop = this.getWrappedProp(propertyName,PropertyType.LONG, true);
-        if(prop!= null) {
-            this.properties.put(propertyName, prop.getObject());
-            return (Long[])prop.getObject();
+        if(this.propertyMap.isUnAvailableProperty(propertyName)) {
+            return null;
         }
-        return null;
+        
+        loadProperty(propertyName,PropertyType.LONG, true);
+       
+        return this.propertyMap.getLongArrays().get(propertyName);
     }
-
+  
+    // As a Calendar object is modifiable, return a cloned instance such that the underlying Calendar object cannot be changed
     public Calendar getDate(String propertyName) {
-        Object o = this.properties.get(propertyName);
-        if(o != null && o instanceof Calendar) {
-            return (Calendar)o;
+        Calendar o = this.propertyMap.getCalendars().get(propertyName);
+        if(o != null) {
+            return (Calendar)o.clone();
         }
-        WrappedProp prop = this.getWrappedProp(propertyName,PropertyType.DATE, false);
-        if(prop!= null) {
-            this.properties.put(propertyName, prop.getObject());
-            return (Calendar)prop.getObject();
+        
+        if(this.propertyMap.isUnAvailableProperty(propertyName)) {
+            return null;
         }
-        return null;
+        
+        loadProperty(propertyName,PropertyType.DATE, false);
+        return this.propertyMap.getCalendars().get(propertyName);
     }
 
+    // As a Calendar object is modifiable, return a new instance such that the underlying Calendar object cannot be changed
     public Calendar[] getDates(String propertyName) {
-        Object o = this.properties.get(propertyName);
-        if(o != null && o instanceof Calendar[]) {
-            return (Calendar[])o;
+        Calendar[] o = this.propertyMap.getCalendarArrays().get(propertyName);
+        if(o != null) {
+            return (Calendar[])o.clone();
         }
-        WrappedProp prop = this.getWrappedProp(propertyName,PropertyType.DATE, true);
-        if(prop!= null) {
-            this.properties.put(propertyName, prop.getObject());
-            return (Calendar[])prop.getObject();
+        if(this.propertyMap.isUnAvailableProperty(propertyName)) {
+            return null;
         }
-        return null;
+        
+        loadProperty(propertyName,PropertyType.DATE, true);
+      
+        return this.propertyMap.getCalendarArrays().get(propertyName);
     }
 
     public Boolean getBoolean(String propertyName) {
-        Object o = this.properties.get(propertyName);
-        if(o != null && o instanceof Boolean) {
-            return (Boolean)o;
+        Boolean o = this.propertyMap.getBooleans().get(propertyName);
+        if(o != null ) {
+            return o;
         }
-        WrappedProp prop = this.getWrappedProp(propertyName,PropertyType.BOOLEAN, false);
-        if(prop!= null) {
-            this.properties.put(propertyName, prop.getObject());
-            return (Boolean)prop.getObject();
+        if(this.propertyMap.isUnAvailableProperty(propertyName)) {
+            return null;
         }
-        return null;
+        
+        loadProperty(propertyName,PropertyType.BOOLEAN, false);
+        
+        return this.propertyMap.getBooleans().get(propertyName);
     }
 
     public Boolean[] getBooleans(String propertyName) {
-        Object o = this.properties.get(propertyName);
-        if(o != null && o instanceof Boolean[]) {
-            return (Boolean[])o;
+        Boolean[] o = this.propertyMap.getBooleanArrays().get(propertyName);
+        if(o != null ) {
+            return o;
         }
-        WrappedProp prop = this.getWrappedProp(propertyName,PropertyType.BOOLEAN, true);
-        if(prop!= null) {
-            this.properties.put(propertyName, prop.getObject());
-            return (Boolean[])prop.getObject();
+        if(this.propertyMap.isUnAvailableProperty(propertyName)) {
+            return null;
         }
-        return null;
+        loadProperty(propertyName,PropertyType.BOOLEAN, true);
+        return this.propertyMap.getBooleanArrays().get(propertyName);
     }
 
     public Map<String, Object> getProperties() {
+        PropertyMap p = getPropertyMap();
+        return p.getAllMapsCombined();
+    }
+    
+    public PropertyMap getPropertyMap() {
         if(this.isLoaded) {
-            return this.properties;
+           return propertyMap;
         }
         
+        
+        
         if(isDetached()){
-            log.warn("Jcr Node is detatched. Cannot execute method");
-            return this.properties;
+            log.warn("Jcr Node is detatched. Return already loaded properties ");
+            return propertyMap;
         }
         try {
             for(PropertyIterator allProps = jcrNode.getProperties(); allProps.hasNext();) {
                 Property p = allProps.nextProperty();
-                if(properties.containsKey(p.getName())) {
+                if(this.propertyMap.hasProperty(p.getName())) {
+                    // already loaded
                     continue;
                 }
                 if(supportedPropertyTypes.contains(p.getType())) {
-                    WrappedProp prop = getWrappedProp(p);
-                    if(prop!= null) {
-                        properties.put(p.getName(), prop.getObject());
-                    }
+                   loadProperty(p, p.getDefinition(), p.getName());
                 }
             }
         } catch (RepositoryException e) {
             log.error("Repository Exception: {}", e.getMessage());
         }
         this.isLoaded = true;
-        return properties;
-        
+        return propertyMap;
     }
+    
+    
 
 
-    private WrappedProp getWrappedProp(String propertyName, int propertyType, boolean isMultiple){
+    private void loadProperty(String propertyName, int propertyType, boolean isMultiple){
         if(isDetached()){
             log.warn("Jcr Node is detatched. Cannot execute method");
-            return null;
         }
         try {
             if(jcrNode.hasProperty(propertyName)) {
+                
                 Property prop = jcrNode.getProperty(propertyName);
                 if(prop.getType() != propertyType) {
                     log.warn("Cannot return property '{}' for node '{}' because it is of the wrong type. Return null", propertyName, this.nodePath);
-                    return null;
+                    return;
                 }
-                if( (prop.getDefinition().isMultiple() && isMultiple) ||  (!prop.getDefinition().isMultiple() && !isMultiple)) {
-                    return getWrappedProp(jcrNode.getProperty(propertyName));
+                PropertyDefinition propDef = prop.getDefinition();
+                if( (propDef.isMultiple() && isMultiple) ||  (!propDef.isMultiple() && !isMultiple)) {
+                    loadProperty(jcrNode.getProperty(propertyName), propDef, propertyName);
+                    return;
                 }
+                
                 else {
                     log.warn("Cannot return property '{}' for node '{}'. Return null", propertyName, this.nodePath);
-                    return null;
+                    return;
                 }
             }
             else {
+                this.propertyMap.addUnAvailableProperty(propertyName);
                 log.debug("Property '{}' not found at '{}'.Return null", propertyName, nodePath);
+                return;
             }
         } catch (RepositoryException e) {
             log.warn("RepositoryException: Exception for fetching property '{}' from '{}'", propertyName, this.nodePath);
         }
-        return null;
+        return;
     }
     
-    private WrappedProp getWrappedProp(Property p){
+    private void loadProperty(Property p, PropertyDefinition propDef, String propertyName){
        
         try {
             switch (p.getType()) {
             case PropertyType.BOOLEAN : 
-                if(p.getDefinition().isMultiple()) {
+                if(propDef.isMultiple()) {
+                   
                     Value[] values = p.getValues();
-                    boolean[] bools = new boolean[values.length];
+                    Boolean[] bools = new Boolean[values.length];
                     int i = 0;
                     for(Value val : values) {
                         bools[i] = val.getBoolean();
                         i++;
                     }
-                    return new WrappedProp(bools, true, PropertyType.BOOLEAN); 
+
+                    this.propertyMap.getBooleanArrays().put(propertyName, bools);
+                    this.propertyMap.addAvailableProperty(propertyName);
+                    return;
                 }
                 else {
-                    return new WrappedProp(p.getBoolean(), true, PropertyType.BOOLEAN);  
+                    this.propertyMap.getBooleans().put(propertyName, p.getBoolean());
+                    this.propertyMap.addAvailableProperty(propertyName);
+                    return;
                 }
             case PropertyType.STRING :
-                if(p.getDefinition().isMultiple()) {
+                if(propDef.isMultiple()) {
                     Value[] values = p.getValues();
                     String[] strings = new String[values.length];
                     int i = 0;
@@ -388,12 +427,16 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                         strings[i] = val.getString();
                         i++;
                     }
-                    return new WrappedProp(strings, true, PropertyType.STRING); 
+                    this.propertyMap.getStringArrays().put(propertyName, strings);
+                    this.propertyMap.addAvailableProperty(propertyName);
+                    return;
                 } else {
-                    return new WrappedProp(p.getString(), true, PropertyType.STRING); 
+                    this.propertyMap.getStrings().put(propertyName, p.getString());
+                    this.propertyMap.addAvailableProperty(propertyName);
+                    return;
                 }
             case PropertyType.LONG :
-                if(p.getDefinition().isMultiple()) {
+                if(propDef.isMultiple()) {
                     Value[] values = p.getValues();
                     Long[] longs = new Long[values.length];
                     int i = 0;
@@ -401,12 +444,16 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                         longs[i] = val.getLong();
                         i++;
                     }
-                    return new WrappedProp(longs, true, PropertyType.LONG); 
+                    this.propertyMap.getLongArrays().put(propertyName, longs);
+                    this.propertyMap.addAvailableProperty(propertyName);
+                    return;
                 } else {
-                    return new WrappedProp(p.getLong(), true, PropertyType.LONG); 
+                    this.propertyMap.getLongs().put(propertyName, p.getLong());
+                    this.propertyMap.addAvailableProperty(propertyName);
+                    return;
                 }
             case PropertyType.DOUBLE :
-                if(p.getDefinition().isMultiple()) {
+                if(propDef.isMultiple()) {
                     Value[] values = p.getValues();
                     Double[] doubles = new Double[values.length];
                     int i = 0;
@@ -414,12 +461,16 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                         doubles[i] = val.getDouble();
                         i++;
                     }
-                    return new WrappedProp(doubles, true, PropertyType.DOUBLE); 
+                    this.propertyMap.getDoubleArrays().put(propertyName, doubles);
+                    this.propertyMap.addAvailableProperty(propertyName);
+                    return;
                 } else {
-                    return new WrappedProp(p.getDouble(), true, PropertyType.DOUBLE); 
+                    this.propertyMap.getDoubles().put(propertyName, p.getDouble());
+                    this.propertyMap.addAvailableProperty(propertyName);
+                    return;
                 }    
             case PropertyType.DATE :
-                if(p.getDefinition().isMultiple()) {
+                if(propDef.isMultiple()) {
                     Value[] values = p.getValues();
                     Calendar[] dates = new Calendar[values.length];
                     int i = 0;
@@ -427,14 +478,18 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                         dates[i] = val.getDate();
                         i++;
                     }
-                    return new WrappedProp(dates, true, PropertyType.DATE); 
+                    this.propertyMap.getCalendarArrays().put(propertyName, dates);
+                    this.propertyMap.addAvailableProperty(propertyName);
+                    return;
                 } else {
-                    return new WrappedProp(p.getDate(), true, PropertyType.DATE); 
+                    this.propertyMap.getCalendars().put(propertyName, p.getDate());
+                    this.propertyMap.addAvailableProperty(propertyName);
+                    return;
                 }    
                 
             default: 
                 log.warn("getPropObject is only support for boolean, long, double, date and strings. Return null");
-                return null;
+                return ;
             }
         } catch (ValueFormatException e) {
             log.warn("ValueFormatException: Exception for fetching property from '{}'", this.nodePath);
@@ -443,32 +498,8 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         } catch (RepositoryException e) {
             log.warn("RepositoryException: Exception for fetching property from '{}'", this.nodePath);
         }
-        return null;
+        return ;
     }
 
-    
-    public class WrappedProp {
-        private Object object;
-        private boolean isMultiple;
-        private int type;
-        
-        private WrappedProp(Object o, boolean isMultiple, int type){
-            this.object = o;
-            this.isMultiple = isMultiple;
-            this.type = type;
-        }
-        
-        public Object getObject() {
-            return object;
-        }
-        
-        public int getType() {
-            return type;
-        }
-        
-        public boolean isMultiple() {
-            return isMultiple;
-        }
-        
-    }
+
 }

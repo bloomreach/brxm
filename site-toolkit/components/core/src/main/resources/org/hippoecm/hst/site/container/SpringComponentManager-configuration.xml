@@ -51,7 +51,7 @@
     <property name="defaultSiteName" value="${default.sites.default.site.name}" />
   </bean>
   
-  <bean id="org.hippoecm.hst.configuration.sitemap.HstSiteMapMatcher" class="org.hippoecm.hst.configuration.BasicHstSiteMapMatcher">
+  <bean id="org.hippoecm.hst.core.request.HstSiteMapMatcher" class="org.hippoecm.hst.site.request.BasicHstSiteMapMatcher">
   </bean>
 
 </beans>

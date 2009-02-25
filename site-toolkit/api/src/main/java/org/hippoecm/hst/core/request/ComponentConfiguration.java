@@ -13,16 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration.components;
+package org.hippoecm.hst.core.request;
 
-import java.util.Map;
 
-public interface HstComponentConfigurationBean {
+public interface ComponentConfiguration {
 
-    String getContextRelativePath();
-
-    String getComponentContentBasePath();
-
-    Map<String, Object> getProperties();
+    /**
+     * Returns the property and if an expession exists it is resolved with the help of the ResolvedSiteMapItem
+     */
+    Object getProperty(String name, ResolvedSiteMapItem hstResolvedSiteMapItem);
 
 }

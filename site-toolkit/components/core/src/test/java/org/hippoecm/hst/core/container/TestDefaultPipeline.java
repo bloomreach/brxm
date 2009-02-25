@@ -23,11 +23,11 @@ import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.configuration.components.HstComponentConfigurationBean;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
@@ -99,7 +99,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
             this.name = name;
         }
         
-        public void init(ServletConfig servletConfig, HstComponentConfigurationBean compConfig) throws HstComponentException {
+        public void init(ServletConfig servletConfig, ComponentConfiguration compConfig) throws HstComponentException {
             System.out.println("[HstComponent: " + getName() + "] init()");
         }
 

@@ -17,7 +17,7 @@ package org.hippoecm.hst.core.component;
 
 import javax.servlet.ServletConfig;
 
-import org.hippoecm.hst.configuration.components.HstComponentConfigurationBean;
+import org.hippoecm.hst.core.request.ComponentConfiguration;
 
 /**
  * A HstComponent can be invoked by a HstComponent container
@@ -36,7 +36,7 @@ public interface HstComponent {
      * @param componentConfigBean the componentConfigBean configuration
      * @throws HstComponentException
      */
-    void init(ServletConfig servletConfig, HstComponentConfigurationBean componentConfigBean) throws HstComponentException;
+    void init(ServletConfig servletConfig, ComponentConfiguration componentConfigBean) throws HstComponentException;
     
     /**
      * Allows the component to do some business logic processing before rendering

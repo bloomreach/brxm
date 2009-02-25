@@ -101,6 +101,11 @@ public interface ValueProvider extends Serializable{
     public Calendar[] getDates(String propertyName);
     
     /**
+     * Returns all combined properties that are of type String, boolean, int, long, double or Calendar in a PropertyMap. 
+     */
+    public PropertyMap getPropertyMap();
+    
+    /**
      * Returns all combined properties that are of type String, boolean, int, long, double or Calendar in a Map. 
      */
     public Map<String, Object> getProperties();

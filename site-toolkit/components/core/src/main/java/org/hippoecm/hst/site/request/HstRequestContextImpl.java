@@ -25,7 +25,7 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
-import org.hippoecm.hst.core.request.HstMatchedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstRequestContextImpl implements HstRequestContext {
@@ -33,7 +33,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected Repository repository;
     protected Session session;
     protected Credentials defaultCredentials;
-    protected HstMatchedSiteMapItem matchedSiteMapItem;
+    protected ResolvedSiteMapItem resolvedSiteMapItem;
     protected HstURLFactory urlFactory;
     protected HstContainerURL baseURL;
     protected String contextNamespace;
@@ -71,12 +71,12 @@ public class HstRequestContextImpl implements HstRequestContext {
         return this.defaultCredentials;
     }
     
-    public void setMatchedSiteMapItem(HstMatchedSiteMapItem matchedSiteMapItem) {
-        this.matchedSiteMapItem = matchedSiteMapItem;
+    public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem) {
+        this.resolvedSiteMapItem = resolvedSiteMapItem;
     }
 
-    public HstMatchedSiteMapItem getMatchedSiteMapItem() {
-        return this.matchedSiteMapItem;
+    public ResolvedSiteMapItem getResolvedSiteMapItem() {
+        return this.resolvedSiteMapItem;
     }
     
     public void setBaseURL(HstContainerURL baseURL) {
