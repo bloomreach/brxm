@@ -33,10 +33,6 @@
     <module>site</module>
   </modules>
 
-  <build>
-    <defaultGoal>package</defaultGoal>
-  </build>
-
   <properties>
     <hippoecm.version>2.03.00</hippoecm.version>
     <hst.version>2.02.05-SNAPSHOT</hst.version>
@@ -81,8 +77,8 @@
   
   <repositories>
     <repository>
-      <id>hippoecm</id>
-      <name>Hippo ECM maven 2 repository.</name>
+      <id>hippo</id>
+      <name>Hippo maven 2 repository.</name>
       <url>http://repository.hippocms.org/maven2/</url>
       <snapshots />
       <releases>
@@ -91,8 +87,8 @@
       <layout>default</layout>
     </repository>
     <repository>
-      <id>hippoecm.legacy</id>
-      <name>Hippo ECM Maven 1 repository.</name>
+      <id>hippo.legacy</id>
+      <name>Hippo Maven 1 repository.</name>
       <url>http://repository.hippocms.org/maven/</url>
       <snapshots />
       <releases>
@@ -101,5 +97,37 @@
       <layout>legacy</layout>
     </repository>
   </repositories>
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>hippo</id>
+      <name>Hippo Maven 2 Repository</name>
+      <url>http://repository.hippocms.org/maven2</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>codehaus</id>
+      <url>http://repository.codehaus.org/</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+    
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-archetype-plugin</artifactId>
+          <version>2.0-alpha-4</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 
 </project>

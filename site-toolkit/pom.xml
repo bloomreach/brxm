@@ -191,6 +191,11 @@
 
   <pluginRepositories>
     <pluginRepository>
+      <id>hippo</id>
+      <name>Hippo Maven 2 Repository</name>
+      <url>http://repository.hippocms.org/maven2</url>
+    </pluginRepository>
+    <pluginRepository>
       <id>codehaus</id>
       <url>http://repository.codehaus.org/</url>
       <layout>default</layout>
@@ -201,12 +206,8 @@
         <updatePolicy>never</updatePolicy>
       </releases>
     </pluginRepository>
-    <pluginRepository>
-      <id>hippo</id>
-      <name>Hippo Maven 2 Repository</name>
-      <url>http://repository.hippocms.org/maven2</url>
-    </pluginRepository>
-   </pluginRepositories>
+  </pluginRepositories>
+  
   <organization>
     <name>Hippo</name>
     <url>http://www.onehippo.com</url>
