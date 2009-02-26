@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.site.request;
 
-import java.util.Map;
 import java.util.Properties;
+import java.util.Map.Entry;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
@@ -26,24 +26,27 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
     
     private HstSiteMap hstSiteMap;
-    private Properties properties;
+    private Properties resolvedProperties;
     private HstComponentConfiguration hstComponentConfiguration;
     
-    public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , String[] params) {
+    public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params) {
        this.hstSiteMap = hstSiteMapItem.getHstSiteMap();
        this.hstComponentConfiguration = hstSiteMap.getSite().getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
        
       
        /*
-        * We take the properties form the hstSiteMapItem getProperties and replace params (like $1) with the params[] array 
+        * We take the properties form the hstSiteMapItem getProperties and replace params (like ${1}) with the params[] array 
         */
        
-       this.properties = new Properties();
-       Map<String, Object> tmpProperties = hstSiteMapItem.getProperties();
+       this.resolvedProperties = new Properties();
        
-       // TODO resolve properties expressions like $1  / $ 2
+       PropertyParser pp = new PropertyParser(params);
        
-       properties.putAll(tmpProperties);
+       for(Entry<String, Object> entry : hstSiteMapItem.getProperties().entrySet()) {
+           Object o = pp.resolveProperty(entry.getKey(), entry.getValue());
+           resolvedProperties.put(entry.getKey(), o);
+       }
+       
     }
     
     
@@ -55,12 +58,12 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
         return this.hstComponentConfiguration;
     }
 
-    public Object getProperty(String name) {
-        return properties.get(name);
+    public Object getResolvedProperty(String name) {
+        return resolvedProperties.get(name);
     }
     
-    public Properties getProperties(){
-        return this.properties;
+    public Properties getResolvedProperties(){
+        return this.resolvedProperties;
     }
   
 }

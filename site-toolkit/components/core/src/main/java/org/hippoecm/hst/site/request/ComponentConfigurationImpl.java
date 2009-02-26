@@ -15,16 +15,17 @@
  */
 package org.hippoecm.hst.site.request;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Properties;
 
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ComponentConfigurationImpl implements ComponentConfiguration{
 
+    private final static Logger log = LoggerFactory.getLogger(ComponentConfiguration.class);
+    
     public Map<String, Object> unmodifiablePropertiesMap;
     
     public ComponentConfigurationImpl(Map<String, Object> properties) {
@@ -32,46 +33,11 @@ public class ComponentConfigurationImpl implements ComponentConfiguration{
     }
 
     public Object getResolvedProperty(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
-        // TODO IF an expression exists, like ${year}, try to fetch hstMatchedSiteMapItem.getProperty("year") as this should 
-        // have been substituted during creation of the MatchingSiteMapItem
-        
-        //hstResolvedSiteMapItem.getProperties()
         
         Object o = unmodifiablePropertiesMap.get(name);
-        PropertyParser pp = new PropertyParser(hstResolvedSiteMapItem.getProperties());
-        
-        return pp.getResolvedProperty(o);
-    }
-
-    protected class PropertyParser extends PropertyPlaceholderConfigurer {
-        
-        private Properties properties;
-        
-        protected PropertyParser(Properties properties){
-            super();
-            this.properties = properties;
-        }
-        
-        protected Object getResolvedProperty(Object o) {
-            if(o == null || properties == null) {
-                return o;
-            }
-            
-            if(o instanceof String) {
-                // replace possible expressions
-                return this.parseStringValue((String)o, properties, new HashSet());
-            }
-            if(o instanceof String[]) {
-                // replace possible expressions in every String
-                String[] unparsed = (String[])o;
-                String[] parsed = new String[unparsed.length];
-                for(int i = 0 ; i < unparsed.length ; i++) {
-                    parsed[i] = this.parseStringValue(unparsed[i], properties, new HashSet());
-                }
-                return parsed;
-            }
-            return o;
-        }
-        
+        PropertyParser pp = new PropertyParser(hstResolvedSiteMapItem.getResolvedProperties());
+        Object oparsed = pp.resolveProperty(name, o);
+        log.debug("Return value '{}' for property '{}'", oparsed, name);
+        return oparsed;
     }
 }

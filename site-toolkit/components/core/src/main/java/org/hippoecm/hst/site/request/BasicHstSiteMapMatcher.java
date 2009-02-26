@@ -15,44 +15,109 @@
  */
 package org.hippoecm.hst.site.request;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.util.PathUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
-
+    
+    private final static Logger log = LoggerFactory.getLogger(HstSiteMapMatcher.class);
+    
+    // the equivalence for *
+    public final static String WILDCARD = "_default_";
+    
+    // the equivalence for **
+    public final static String ANY = "_any_";
+    
     public ResolvedSiteMapItem match(String pathInfo, HstSite hstSite) {
+        
+        Properties params = new Properties();
+        
         pathInfo = PathUtils.normalizePath(pathInfo);
         String[] elements = pathInfo.split("/"); 
         
+        /*
+         * The catch all sitemap item in case none matches (might be the sitemap item that delivers a 404)
+         */
+        HstSiteMapItem hstSiteMapItemAny = hstSite.getSiteMap().getSiteMapItem("_any_");
+        
+        
         HstSiteMapItem hstSiteMapItem = hstSite.getSiteMap().getSiteMapItem(elements[0]);
+        
         if(hstSiteMapItem == null) {
-            // return a 404 MatchResult 
-            return new ResolvedSiteMapItemImpl(null, null);
-        }
-        
-        int i = 1;
-        while(i < elements.length && hstSiteMapItem.getChild(elements[i]) != null){
-            hstSiteMapItem = hstSiteMapItem.getChild(elements[i]);
-            i++;
-        }
-        
-        StringBuffer remainder = new StringBuffer();
-        while(i < elements.length) {
-            if(remainder.length() > 0) {
-                remainder.append("/");
+            // check for a wildcard matcher first:
+            log.debug("Did not find a 'root sitemap item' for '{}'. Try to find a wildcard matching sitemap", elements[0]);
+            hstSiteMapItem = hstSite.getSiteMap().getSiteMapItem(WILDCARD);
+            if(hstSiteMapItem == null) {
+                if(hstSiteMapItemAny == null) {
+                    log.warn("Did not find a matching sitemap item and there is no catch all sitemap item configured (the ** matcher directly under the sitemap node). Return null");
+                    return null;
+                } else {
+                    log.warn("Did not find a matching sitemap item at all. Return the catch all sitemap item (the ** matcher) ");
+                    // The ** has the value of the entire pathInfo
+                    params.put("1", pathInfo);
+                    return new ResolvedSiteMapItemImpl(hstSiteMapItemAny, params);
+                }
+            } else {
+                params.put(String.valueOf(params.size()+1), elements[0]);
             }
-            remainder.append(elements[i]);
-            i++;
         }
         
-        String[] params = {"value1", "value2"};
-        ResolvedSiteMapItem resolvedSiteMapItem = new ResolvedSiteMapItemImpl(hstSiteMapItem, params);
+       
+        HstSiteMapItem matchedSiteMapItem =  resolveMatchingSiteMap(hstSiteMapItem, params, 1, elements);
+      
+        if(matchedSiteMapItem == null) {
+            log.warn("No matching sitemap item found. Cannot return ResolvedSiteMapItem. Return null");
+            return null;
+        }
         
-        return resolvedSiteMapItem;
-    }
+        return new ResolvedSiteMapItemImpl(matchedSiteMapItem, params);
     
+    }
 
+    private HstSiteMapItem resolveMatchingSiteMap(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements) {
+       return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, new ArrayList<String>());
+    }
+
+    private HstSiteMapItem traverseInToSiteMapItem(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements, List<String> checkedSiteMapItemsIds) {
+        checkedSiteMapItemsIds.add(hstSiteMapItem.getId());
+        if(position == elements.length) {
+           // we are ready
+           return hstSiteMapItem;
+       }
+       if(hstSiteMapItem.getChild(elements[position]) != null && !checkedSiteMapItemsIds.contains(hstSiteMapItem.getChild(elements[position]).getId())) {
+           return traverseInToSiteMapItem(hstSiteMapItem.getChild(elements[position]), params, position++, elements, checkedSiteMapItemsIds);
+       } else if(hstSiteMapItem.getChild(WILDCARD) != null && !checkedSiteMapItemsIds.contains(hstSiteMapItem.getChild(WILDCARD).getId())) {
+           params.put(String.valueOf(params.size()+1), elements[position]);
+           return traverseInToSiteMapItem(hstSiteMapItem.getChild(WILDCARD), params, position++, elements, checkedSiteMapItemsIds);
+       } else {
+           // We did not find a match for traversing this sitemap item tree. Traverse up, and try another tree
+           return traverseUp(hstSiteMapItem, params, position, elements, checkedSiteMapItemsIds);
+       }
+       
+    }
+
+    private HstSiteMapItem traverseUp(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements, List<String> checkedSiteMapItemsIds) {
+       if(hstSiteMapItem == null) {
+           return null;
+       }
+       if(hstSiteMapItem.isWildCard()) {
+           // as this tree path did not result in a match, remove some params again
+           params.remove(String.valueOf(params.size()));
+           return traverseUp(hstSiteMapItem.getParentItem(),params, position--, elements, checkedSiteMapItemsIds );
+       } else if(hstSiteMapItem.getChild(WILDCARD) != null && !checkedSiteMapItemsIds.contains(hstSiteMapItem.getChild(WILDCARD).getId())){
+           return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItemsIds);
+       } else {    
+           return traverseUp(hstSiteMapItem.getParentItem(),params, position--, elements, checkedSiteMapItemsIds );
+       }
+       
+    }
 }
