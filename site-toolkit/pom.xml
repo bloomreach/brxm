@@ -371,6 +371,12 @@
         <version>${hippoecm.version}</version>
       </dependency>
       
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-ocm</artifactId>
+        <version>1.5.0</version>
+      </dependency>
+          
       <!-- Test dependencies -->
     
       <dependency>
