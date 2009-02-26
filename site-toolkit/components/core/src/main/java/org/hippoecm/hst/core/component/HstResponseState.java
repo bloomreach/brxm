@@ -31,6 +31,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.w3c.dom.Element;
 
 /**
@@ -93,9 +94,12 @@ public class HstResponseState
 
     public HstResponseState(HttpServletRequest request, HttpServletResponse response)
     {
-        this.isRenderResponse = true;
-        this.isActionResponse = false;
-        this.isResourceResponse = false;
+        HstRequestContext requestContext = (HstRequestContext) request.getAttribute(HstRequestContext.class.getName());
+        
+        this.isActionResponse = (requestContext.getBaseURL().getActionWindowReferenceNamespace() != null);
+        this.isResourceResponse = (requestContext.getBaseURL().getResourceWindowReferenceNamespace() != null);
+        this.isRenderResponse = (!this.isActionResponse && !this.isResourceResponse);
+        
         this.isStateAwareResponse = isActionResponse;
         this.isMimeResponse = isRenderResponse || isResourceResponse;
 

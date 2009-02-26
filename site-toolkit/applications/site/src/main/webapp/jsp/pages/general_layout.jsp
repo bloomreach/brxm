@@ -42,37 +42,30 @@ function <hc:namespace/>showPopup() {
 <div class="page">
     <div>
     
-    <a href="javascript:<hc:namespace/>showPopup();">Show</a>
+	    <a href="javascript:<hc:namespace/>showPopup();">Show</a>
+	    
+	    <hc:url var="homeUrl">
+	      <hc:param name="page" />
+	    </hc:url>
+	    <hc:url var="firstUrl">
+	      <hc:param name="page" value="1" />
+	    </hc:url>
+	    <hc:url var="lastUrl">
+	      <hc:param name="page" value="9" />
+	    </hc:url>
+	
+	    <a href="${homeUrl}">Home</a>
+	    <a href="${firstUrl}">First</a>
+	    <a href="${lastUrl}">Last</a>
     
-    <hc:url var="homeUrl">
-      <hc:param name="page" />
-    </hc:url>
-    <hc:url var="firstUrl">
-      <hc:param name="page" value="1" />
-    </hc:url>
-    <hc:url var="lastUrl">
-      <hc:param name="page" value="9" />
-    </hc:url>
-    <hc:url var="actionUrl" type="action">
-      <hc:param name="sort" value="descending" />
-    </hc:url>
-    <hc:url var="resourceUrl" type="resource" resourceId="/images/onehippo.gif">
-    </hc:url>
-
-    <a href="${homeUrl}">Home</a>
-    <a href="${firstUrl}">First</a>
-    <a href="${lastUrl}">Last</a>
-    <a href="${actionUrl}">Sort by descending order</a>
+    </div>
+    
+    <hc:content name="body" />
     
     <div>
-        header parameters: <%=request.getParameterMap()%>
-        <img src="${resourceUrl}" />
+        news parameters: <%=request.getParameterMap()%>
     </div>
-    
-    </div>
-    
-    <hc:content name="b" />
-    
+
 </div>
 
 </body>

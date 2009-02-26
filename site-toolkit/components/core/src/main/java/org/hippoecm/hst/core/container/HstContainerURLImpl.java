@@ -91,7 +91,7 @@ public class HstContainerURLImpl implements HstContainerURL {
             this.parameterMap = new HashMap<String, String[]>();
         }
 
-        if (values == null) {
+        if (values == null || values.length == 0) {
             this.parameterMap.remove(name);
         } else {
             this.parameterMap.put(name, values);

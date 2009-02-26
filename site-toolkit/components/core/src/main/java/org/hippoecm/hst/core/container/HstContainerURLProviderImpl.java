@@ -139,7 +139,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             containerURL.setResourceWindowReferenceNamespace(hstUrl.getReferenceNamespace());
             containerURL.setResourceId(hstUrl.getResourceID());
         } else {
-            mergeParameters(containerURL, hstUrl);
+            mergeParameters(containerURL, hstUrl.getReferenceNamespace(), hstUrl.getParameterMap());
         }
         
         return containerURL;
@@ -195,10 +195,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         return url.toString();
     }
     
-    protected void mergeParameters(HstContainerURL containerURL, HstURL hstUrl) {
-        String referenceNamespace = hstUrl.getReferenceNamespace();
-        Map<String, String []> parameterMap = hstUrl.getParameterMap();
-        
+    public void mergeParameters(HstContainerURL containerURL, String referenceNamespace, Map<String, String []> parameterMap) {
         for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
             String name = referenceNamespace + this.parameterNameComponentSeparator + entry.getKey();
             String [] values = entry.getValue();

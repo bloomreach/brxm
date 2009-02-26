@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.jcr.pool;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +54,20 @@ public class TestOCM extends AbstractSpringTestCase {
         
         ObjectContentManager ocm = new ObjectContentManagerImpl(session, mapper);
         
+        // Normal JCR Node path
         ComponentConfiguration compConfig = (ComponentConfiguration) ocm.getObject("/hst:testconfiguration/hst:configuration/hst:components/pages/newsoverview");
+        assertNotNull(compConfig);
+        
+        System.out.println("path: " + compConfig.getPath());
+        System.out.println("reference name: " + compConfig.getReferenceName());
+        System.out.println("content base path: " + compConfig.getComponentContentBasePath());
+        System.out.println("class name: " + compConfig.getComponentClassName());
+        System.out.println("render path: " + compConfig.getRenderPath());
+
+        // hippo:facetselect JCR Node path
+        compConfig = (ComponentConfiguration) ocm.getObject("/testpreview/testproject/hst:configuration/hst:configuration/hst:components/pages/newsoverview");
+        assertNotNull(compConfig);
+        
         System.out.println("path: " + compConfig.getPath());
         System.out.println("reference name: " + compConfig.getReferenceName());
         System.out.println("content base path: " + compConfig.getComponentContentBasePath());

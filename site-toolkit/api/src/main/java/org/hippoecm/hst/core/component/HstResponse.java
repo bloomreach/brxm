@@ -41,6 +41,42 @@ public interface HstResponse extends HttpServletResponse {
     String getNamespace();
     
     /**
+     * Sets a String parameter for the rendering phase.
+     * These parameters will be accessible in all sub-sequent render calls
+     * via the HstRequest.getParameter call until a request is targeted to the Hst component.
+     * This method replaces all parameters with the given key.
+     * The given parameter do not need to be encoded prior to calling this method. 
+     * 
+     * @param key key of the render parameter
+     * @param value value of the render parameter 
+     */
+    void setRenderParameter(String key, String value); 
+    
+    /**
+     * Sets a String parameter for the rendering phase.
+     * These parameters will be accessible in all sub-sequent render calls
+     * via the HstRequest.getParameter call until a request is targeted to the Hst component.
+     * This method replaces all parameters with the given key.
+     * The given parameter do not need to be encoded prior to calling this method. 
+     * 
+     * @param key key of the render parameter
+     * @param values values of the render parameters
+     */
+    void setRenderParameter(String key, String[] values);
+    
+    /**
+     * Sets a parameter map for the render request.
+     * All previously set render parameters are cleared.
+     * These parameters will be accessible in all sub-sequent renderinrg phase
+     * via the HstRequest.getParameter call until a new request is targeted to the Hst component.
+     * The given parameters do not need to be encoded prior to calling this method.
+     * The Hst component should not modify the map any further after calling this method.
+     * 
+     * @param parameters
+     */
+    void setRenderParameters(Map<String, String[]> parameters);
+    
+    /**
      * Creates an element of the type specified to be used in the {@link #addProperty(String, Element)} method. 
      * 
      * @param tagName the tag name of the element

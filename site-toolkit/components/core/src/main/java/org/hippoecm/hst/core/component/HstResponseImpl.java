@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.component;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -45,6 +46,7 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     protected HstComponentWindow componentWindow;
     protected HstResponseState responseState;
     protected String redirectLocation;
+    protected Map<String, String []> renderParameters;
     
     public HstResponseImpl(HttpServletResponse response, HstRequestContext requestContext, HstComponentWindow componentWindow, HstResponseState responseState) {
         super(response);
@@ -303,6 +305,46 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         }
         
         return properties;
+    }
+
+    public void setRenderParameter(String key, String value) {
+        if (value == null) {
+            setRenderParameter(key, (String []) null);
+        } else {
+            setRenderParameter(key, new String [] { value });
+        }
+    }
+
+    public void setRenderParameter(String key, String[] values) {
+        if (this.renderParameters == null) {
+            this.renderParameters = new HashMap<String, String []>();
+        }
+        
+        if (values == null) {
+            this.renderParameters.remove(key);
+        } else {
+            this.renderParameters.put(key, values);
+        }
+    }
+
+    public void setRenderParameters(Map<String, String[]> parameters) {
+        if (parameters == null) {
+            this.renderParameters = null;
+        } else {
+            if (this.renderParameters == null) {
+                this.renderParameters = new HashMap<String, String []>();
+            } else {
+                this.renderParameters.clear();
+            }
+        
+            for (Map.Entry<String, String []> entry : parameters.entrySet()) {
+                setRenderParameter(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+    
+    public Map<String, String []> getRenderParamerters() {
+        return this.renderParameters;
     }
 
 }

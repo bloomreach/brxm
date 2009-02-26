@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.util.Map;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -29,6 +31,8 @@ public interface HstContainerURLProvider {
     HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse);
     
     HstContainerURL createURL(HstContainerURL baseContainerURL, HstURL hstUrl);
+    
+    void mergeParameters(HstContainerURL containerURL, String referenceNamespace, Map<String, String []> parameters);
     
     String toURLString(HstContainerURL containerURL);
     

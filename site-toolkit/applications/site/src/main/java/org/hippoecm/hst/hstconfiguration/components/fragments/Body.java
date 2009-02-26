@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.hstconfiguration.components.fragments;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,29 @@ import org.hippoecm.hst.service.ServiceFactory;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class Body extends HstComponentBase {
+    
+    @Override
+    public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
+        System.out.println("[HstComponent: " + getClass().getName() + "] doAction() with params: " + request.getParameterMap());
+        
+        String sort = request.getParameter("sort");
+        String redirect = request.getParameter("redirect");
+        
+        if (redirect != null && !"".equals(redirect)) {
+            try {
+                response.sendRedirect(redirect);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        
+        if ("descending".equals(sort)) {
+            response.setRenderParameter("sortpage", "descending-10");
+        } else {
+            response.setRenderParameter("sortpage", "" + sort + "-00");
+        }
+    }
 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {

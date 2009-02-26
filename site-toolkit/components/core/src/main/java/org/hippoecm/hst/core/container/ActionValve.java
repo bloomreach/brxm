@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
-import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -40,7 +40,7 @@ public class ActionValve extends AbstractValve
         
         if (requestContext.getBaseURL().getActionWindowReferenceNamespace() != null) {
             HstContainerURL baseURL = requestContext.getBaseURL();
-            
+            String redirectLocation = null;
             HstComponentWindow window = findActionWindow(context.getRootComponentWindow(), baseURL.getActionWindowReferenceNamespace());
             
             if (window == null) {
@@ -48,10 +48,19 @@ public class ActionValve extends AbstractValve
             } else {
                 HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
                 HstResponseState responseState = new HstResponseState((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
-                HstResponse response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window, responseState);
+                HstResponseImpl response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window, responseState);
                 ((HstComponentWindowImpl) window).setResponseState(responseState);
 
                 getComponentInvoker().invokeAction(context.getServletConfig(), request, response);
+                
+                redirectLocation = responseState.getRedirectLocation();
+                
+                Map<String, String []> renderParameters = response.getRenderParamerters();
+                
+                if (renderParameters != null) {
+                    getUrlFactory().getUrlProvider().mergeParameters(baseURL, window.getReferenceNamespace(), renderParameters);
+                    response.setRenderParameters(null);
+                }
                 
                 if (window.hasComponentExceptions() && log.isWarnEnabled()) {
                     for (HstComponentException hce : window.getComponentExceptions()) {
@@ -67,12 +76,15 @@ public class ActionValve extends AbstractValve
             }
             
             baseURL.setActionWindowReferenceNamespace(null);
-            String redirectUrl = getUrlFactory().getUrlProvider().toURLString(baseURL);
+            
+            if (redirectLocation == null) {
+                redirectLocation = getUrlFactory().getUrlProvider().toURLString(baseURL);
+            }
             
             try {
-                servletResponse.sendRedirect(redirectUrl);
+                servletResponse.sendRedirect(redirectLocation);
             } catch (IOException e) {
-                log.warn("Unexpected exception during redirect to " + redirectUrl, e);
+                log.warn("Unexpected exception during redirect to " + redirectLocation, e);
             }
         } else {
             // continue
