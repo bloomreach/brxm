@@ -25,10 +25,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HST Site Container Servlet
@@ -43,14 +43,11 @@ import org.hippoecm.hst.site.HstServices;
  */
 public class HstSiteConfigServlet extends HttpServlet {
 
+    private final static Logger log = LoggerFactory.getLogger(HstSiteConfigServlet.class);
+    
     private static final long serialVersionUID = 1L;
 
-    public static final String CONSOLE_LOGGER = "console";
-    
     private static final String INIT_PROPS_PARAM_PREFIX = "properties.";
-
-    private static Log log;
-    private static Log console;
 
     protected ComponentManager componentManager;
     
@@ -99,13 +96,6 @@ public class HstSiteConfigServlet extends HttpServlet {
     
     protected synchronized void doInit(ServletConfig config) {
         
-        if (log == null) {
-            log = LogFactory.getLog(HstSiteConfigServlet.class);
-            console = LogFactory.getLog(CONSOLE_LOGGER);
-        }
-
-        console.info(INIT_START_MSG);
-
         Properties initProperties = new Properties();
         
         for (Enumeration paramNamesEnum = config.getInitParameterNames(); paramNamesEnum.hasMoreElements(); ) {
@@ -118,24 +108,22 @@ public class HstSiteConfigServlet extends HttpServlet {
         }
 
         try {
-            console.info("HSTSiteServlet attempting to create the  portlet engine...");
+            log.info("HSTSiteServlet attempting to create the  portlet engine...");
             this.componentManager = new SpringComponentManager(initProperties);
-            console.info("HSTSiteServlet attempting to start the Jetspeed Portal Engine...");
+            log.info("HSTSiteServlet attempting to start the Jetspeed Portal Engine...");
             this.componentManager.initialize();
             this.componentManager.start();
             HstServices.setComponentManager(this.componentManager);
             
-            console.info("HSTSiteServlet has successfuly started the Jetspeed Portal Engine....");
+            log.info("HSTSiteServlet has successfuly started the Jetspeed Portal Engine....");
         } catch (Throwable e) {
             // save the exception to complain loudly later :-)
             final String msg = "HSTSite: init() failed.";
-            log.fatal(msg, e);
-            console.fatal(msg, e);
+            log.error(msg, e);
         }
 
         this.initialized = true;
         
-        console.info(INIT_DONE_MSG);
         log.info(INIT_DONE_MSG);
         
     }
