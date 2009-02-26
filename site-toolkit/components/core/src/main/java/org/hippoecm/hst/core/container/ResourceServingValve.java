@@ -78,7 +78,7 @@ public class ResourceServingValve extends AbstractValve {
             int index = start;
             for ( ; index < referenceNamespaces.length; index++) {
                 if (tempWindow != null) {
-                    tempWindow = tempWindow.getChildWindow(referenceNamespaces[index]);
+                    tempWindow = tempWindow.getChildWindowByReferenceName(referenceNamespaces[index]);
                 } else {
                     break;
                 }

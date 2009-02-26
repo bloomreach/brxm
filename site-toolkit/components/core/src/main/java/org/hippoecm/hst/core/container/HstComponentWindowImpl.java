@@ -27,6 +27,7 @@ import org.hippoecm.hst.core.component.HstResponseState;
 
 public class HstComponentWindowImpl implements HstComponentWindow {
     
+    protected String name;
     protected String referenceName;
     protected String referenceNamespace;
     protected HstComponent component;
@@ -35,10 +36,12 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected HstComponentWindow parentWindow;
     protected List<HstComponentException> componentExceptions;
     protected Map<String, HstComponentWindow> childWindowMap;
+    protected Map<String, HstComponentWindow> childWindowMapByReferenceName;
     
     protected HstResponseState responseState;
     
-    public HstComponentWindowImpl(String referenceName, String referenceNamespace, HstComponent component, String renderPath, String serveResourcePath, HstComponentWindow parentWindow) {
+    public HstComponentWindowImpl(String name, String referenceName, String referenceNamespace, HstComponent component, String renderPath, String serveResourcePath, HstComponentWindow parentWindow) {
+        this.name = name;
         this.referenceName = referenceName;
         this.referenceNamespace = referenceNamespace;
         this.component = component;
@@ -89,14 +92,28 @@ public class HstComponentWindowImpl implements HstComponentWindow {
         return this.childWindowMap;
     }
     
-    public HstComponentWindow getChildWindow(String referenceName) {
+    public HstComponentWindow getChildWindow(String name) {
         HstComponentWindow childWindow = null;
         
         if (this.childWindowMap != null) {
-            childWindow = this.childWindowMap.get(referenceName);
+            childWindow = this.childWindowMap.get(name);
         }
         
         return childWindow;
+    }
+    
+    public HstComponentWindow getChildWindowByReferenceName(String referenceName) {
+        HstComponentWindow childWindow = null;
+        
+        if (this.childWindowMapByReferenceName != null) {
+            childWindow = this.childWindowMapByReferenceName.get(referenceName);
+        }
+        
+        return childWindow;
+    }
+    
+    public String getName() {
+        return this.name;
     }
 
     public String getReferenceName() {
@@ -122,7 +139,13 @@ public class HstComponentWindowImpl implements HstComponentWindow {
             this.childWindowMap = new HashMap<String, HstComponentWindow>();
         }
         
-        this.childWindowMap.put(child.getReferenceName(), child);
+        this.childWindowMap.put(child.getName(), child);
+        
+        if (this.childWindowMapByReferenceName == null) {
+            this.childWindowMapByReferenceName = new HashMap<String, HstComponentWindow>();
+        }
+        
+        this.childWindowMapByReferenceName.put(child.getReferenceName(), child);
     }
 
     protected void setResponseState(HstResponseState responseState) {

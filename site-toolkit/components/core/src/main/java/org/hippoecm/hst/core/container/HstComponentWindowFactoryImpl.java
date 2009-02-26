@@ -42,6 +42,7 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
     
     public HstComponentWindow create(ServletConfig servletConfig, HstRequestContext requestContext, HstComponentConfiguration compConfig, HstComponentFactory compFactory, HstComponentWindow parentWindow) throws HstComponentException {
         
+        String name = compConfig.getName();
         String referenceName = compConfig.getReferenceName();
         StringBuilder referenceNamespaceBuilder = new StringBuilder();
 
@@ -86,6 +87,7 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         
         HstComponentWindowImpl window = 
             new HstComponentWindowImpl(
+                name,
                 referenceName, 
                 referenceNamespace, 
                 component, 

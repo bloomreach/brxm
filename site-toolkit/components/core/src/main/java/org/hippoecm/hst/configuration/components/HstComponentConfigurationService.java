@@ -37,9 +37,10 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     private SortedMap<String, HstComponentConfiguration> componentConfigurations = new TreeMap<String, HstComponentConfiguration>();
     
     private String id;
+    
+    private String name;
 
     private String componentContentBasePath;
-    
     
     private String componentClassName;
     
@@ -65,6 +66,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         this.id = getValueProvider().getPath().substring(componentsRootNodePath.length()+1);
        
         if (getValueProvider().isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
+            this.name = getValueProvider().getName();
             this.referenceName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCENAME);
             this.componentContentBasePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_CONTENTBASEPATH);
             this.componentClassName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
@@ -134,6 +136,10 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
 
     public String getId() {
         return this.id;
+    }
+    
+    public String getName() {
+        return this.name;
     }
 
     public String getReferenceName() {

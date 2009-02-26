@@ -21,6 +21,9 @@ import java.util.SortedMap;
 public interface HstComponentConfiguration {
 
     String getId();
+    
+    // unique in sibblings
+    String getName();
 
     String getReferenceName();
 

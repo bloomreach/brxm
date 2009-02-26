@@ -31,6 +31,13 @@ import org.hippoecm.hst.core.component.HstComponentException;
 public interface HstComponentWindow {
 
     /**
+     * The name of the component window.
+     * 
+     * @return the name of the component window
+     */
+    String getName();
+    
+    /**
      * The reference name of the component window.
      * 
      * @return the reference name of the component window
@@ -104,12 +111,20 @@ public interface HstComponentWindow {
     Map<String, HstComponentWindow> getChildWindowMap();
     
     /**
-     * The child component window which can be accessed by the path.
+     * The child component window which can be accessed by the name.
+     * 
+     * @param name the name of the child component window
+     * @return the child component window which has the referenceName
+     */
+    HstComponentWindow getChildWindow(String name);
+    
+    /**
+     * The child component window which can be accessed by the reference name.
      * 
      * @param referenceName the referenceName of the child component window
      * @return the child component window which has the referenceName
      */
-    HstComponentWindow getChildWindow(String referenceName);
+    HstComponentWindow getChildWindowByReferenceName(String referenceName);
     
     /**
      * Flushes the output content of this component window

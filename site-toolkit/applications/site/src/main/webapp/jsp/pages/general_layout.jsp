@@ -24,7 +24,7 @@ System.out.println("Console out from general_layout.jsp");
 <head>
 
 <!-- include header -->
-<hc:content name="h" />
+<hc:content name="header" />
 
 </head>
 <body>

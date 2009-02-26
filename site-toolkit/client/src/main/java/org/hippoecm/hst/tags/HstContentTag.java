@@ -58,6 +58,10 @@ public class HstContentTag extends TagSupport {
             HstComponentWindow myWindow = ((HstRequest) request).getComponentWindow();
             HstComponentWindow childWindow = myWindow.getChildWindow(this.name);
             
+            if (childWindow == null) {
+                childWindow = myWindow.getChildWindowByReferenceName(this.name);
+            }
+            
             if (childWindow != null) {
                 try {
                     this.pageContext.getOut().flush();
