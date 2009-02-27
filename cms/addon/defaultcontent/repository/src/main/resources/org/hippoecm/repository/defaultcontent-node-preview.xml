@@ -20,7 +20,6 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
   xmlns:hippo="http://www.hippoecm.org/nt/1.2"
-  xmlns:hst="http://www.hippoecm.org/hst/nt/1.0"
   xmlns:fn="http://www.w3.org/2005/xpath-functions"
   sv:name="preview">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
