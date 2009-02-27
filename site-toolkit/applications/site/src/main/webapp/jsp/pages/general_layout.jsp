@@ -27,12 +27,9 @@ System.out.println("Console out from general_layout.jsp");
 <!-- include header -->
 <hc:content name="header" />
 
-<%
-org.hippoecm.hst.core.component.HstResponse hstResponse = (org.hippoecm.hst.core.component.HstResponse) response;
-pageContext.setAttribute("responseProperties", hstResponse.getProperties().values());
-%>
-
-<c:forEach var="responseProperty" items="${responseProperties}">
+<hc:response-properties var="responseProperties" />
+<c:forEach var="propertyEntry" items="${responseProperties}">
+  <c:set var="responseProperty" value="${propertyEntry.value}" />
   <script language="<x:out select="$responseProperty/@language" />" src="<x:out select="$responseProperty/@src" />">
     <x:out select="$responseProperty" escapeXml="false"/>
   </script>

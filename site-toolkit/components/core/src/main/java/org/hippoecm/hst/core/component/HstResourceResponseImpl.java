@@ -68,4 +68,9 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
     public void setRenderParameters(Map<String, String[]> parameters) {
         throw new UnsupportedOperationException("Resource response is not allowed to invoke setRenderParameters().");
     }
+    
+    public boolean containsProperty(String key) {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke containsProperty().");
+    }
+    
 }

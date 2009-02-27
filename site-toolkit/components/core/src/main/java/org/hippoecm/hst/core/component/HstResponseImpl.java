@@ -47,12 +47,14 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     protected HstResponseState responseState;
     protected String redirectLocation;
     protected Map<String, String []> renderParameters;
+    protected HstResponse topComponentHstResponse;
     
-    public HstResponseImpl(HttpServletResponse response, HstRequestContext requestContext, HstComponentWindow componentWindow, HstResponseState responseState) {
+    public HstResponseImpl(HttpServletResponse response, HstRequestContext requestContext, HstComponentWindow componentWindow, HstResponseState responseState, HstResponse topComponentHstResponse) {
         super(response);
         this.requestContext = requestContext;
         this.componentWindow = componentWindow;
         this.responseState = responseState;
+        this.topComponentHstResponse = topComponentHstResponse;
     }
     
     public HstURL createURL(String type) {
@@ -348,4 +350,16 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         return this.renderParameters;
     }
 
+    public boolean containsProperty(String key) {
+        boolean contained = false;
+        
+        if (this.topComponentHstResponse == null) {
+            Map<String, Element> props = this.responseState.getProperties();
+            contained = (props != null && props.containsKey(key));
+        } else if (this != this.topComponentHstResponse) {
+            contained = this.topComponentHstResponse.containsProperty(key);
+        }
+        
+        return contained;
+    }
 }

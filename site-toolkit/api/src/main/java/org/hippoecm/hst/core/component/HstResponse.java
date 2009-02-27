@@ -113,5 +113,14 @@ public interface HstResponse extends HttpServletResponse {
      * @param element
      */
     Map<String, Element> getProperties();
+
+    /**
+     * Asks if a property exists already or not.
+     * This method checks all the parent component reponses have the property.
+     * 
+     * @param key
+     * @return
+     */
+    boolean containsProperty(String key);
     
 }

@@ -53,7 +53,7 @@ public class AggregationValve extends AbstractValve {
                 // make hstRequest and hstResponse for each component window.
                 // note that hstResponse is hierarchically created.
                 createHstRequestResponseForWindows(rootWindow, requestContext, servletRequest, servletResponse,
-                        requestMap, responseMap);
+                        requestMap, responseMap, null);
                 
                 // to avoid recursive invocation from now, just make a list by hierarchical order.
                 List<HstComponentWindow> sortedComponentWindowList = new LinkedList<HstComponentWindow>();
@@ -95,13 +95,18 @@ public class AggregationValve extends AbstractValve {
             final ServletRequest servletRequest,
             final ServletResponse servletResponse, 
             final Map<HstComponentWindow, HstRequest> requestMap,
-            final Map<HstComponentWindow, HstResponse> responseMap) {
+            final Map<HstComponentWindow, HstResponse> responseMap,
+            HstResponse topComponentHstResponse) {
 
         HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
         HstResponseState responseState = new HstResponseState((HttpServletRequest) servletRequest,
                 (HttpServletResponse) servletResponse);
         HstResponse response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window,
-                responseState);
+                responseState, topComponentHstResponse);
+        
+        if (topComponentHstResponse == null) {
+            topComponentHstResponse = response;
+        }
 
         requestMap.put(window, request);
         responseMap.put(window, response);
@@ -113,7 +118,7 @@ public class AggregationValve extends AbstractValve {
         if (childWindowMap != null) {
             for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
                 createHstRequestResponseForWindows(entry.getValue(), requestContext, servletRequest, response,
-                        requestMap, responseMap);
+                        requestMap, responseMap, topComponentHstResponse);
             }
         }
     }

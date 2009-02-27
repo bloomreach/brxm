@@ -85,6 +85,26 @@
         </attribute>
     </tag>
     <tag>
+        <name>response-property</name>
+        <tagclass>org.hippoecm.hst.tags.ResponsePropertyTag</tagclass>
+        <bodycontent>JSP</bodycontent>
+        <attribute>
+            <name>name</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+    </tag>
+    <tag>
+        <name>response-properties</name>
+        <tagclass>org.hippoecm.hst.tags.ResponsePropertiesTag</tagclass>
+        <bodycontent>JSP</bodycontent>
+        <attribute>
+            <name>var</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+    </tag>
+    <tag>
         <name>namespace</name>
         <tagclass>org.hippoecm.hst.tags.NamespaceTag</tagclass>
         <bodycontent>empty</bodycontent>
