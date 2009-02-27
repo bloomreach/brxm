@@ -68,7 +68,7 @@
      <span class='wiki-48 icon-48'/> 
    </td>
    <td> 
-        <a href="http://${public_project_wiki}">${product_name} wiki</a>:
+        <a href="${public_project_wiki}">${product_name} wiki</a>:
         We appreciate contributions of documenation on the public Wiki.
    </td>
   </tr>

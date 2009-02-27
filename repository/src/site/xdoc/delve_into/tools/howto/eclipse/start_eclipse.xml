@@ -24,32 +24,26 @@
  <body>
 
    <section name="Start Eclipse">
-    <span class='shortdesc'>Start Eclipse to work on Hippo CMS addon projects.</span>
+    <span class='shortdesc'>Start Eclipse to work on Hippo projects.</span>
 
-    <p>You need to have installed <a href="http://www.eclipse.org/">Eclipse</a> version >= 3.3.2</p>
+    <p>You need to have installed <a href="http://www.eclipse.org/">Eclipse</a> version >= 3.3.2
+    </p>
+    <p>
+       Start eclipse. E.g. on the commandline:
+    </p>
 
-   <ol>
-    <li>Start eclipse with some memory flags to the Eclipse -vmargs startup argument:
-     <ul>
-      <li>Set the heap size to at least 512M by adding something like -Xms512M -Xmx512M</li>
-      <li>Set the permSpace size to at least 128M by adding something like -XX:MaxPermSize=128M</li>
-     </ul>
-     <source>eclipse -vmargs -Xms512M -Xmx512M -XX:MaxPermSize=128M</source>
-     <p>In order not to type this every time, you can do one of the following:
-     </p>
-     <ul>
-      <li>configure your file browser to use these
-       flags every time you (double)click on eclipse to start it.
-      </li>
-      <li>add the flags to your inititialisation file of eclipse.</li>
-      <li>For a Unix shell, you can define an alias or write a one-liner script.</li>
-     </ul>
-    </li>
-    <li>Eclipse askes for a workspace. This is a foldertree that contains information eclipse
-     keeps of some of your projects. The workspace used for Hippo CMS addon projects
-     has to be <a href='.configure_workspace.html'>configured for them</a>.
-    </li>
-   </ol>
+    <source>eclipse</source>
+
+    <p>On the commandline you may add some flags to configure eclipse, such as using extra
+       large memory.
+       This is for example necessary for the Hippo CMS itself. How this is done, you can find
+       <a href='/delve_into/custom/howto/eclipse/start_eclipse.html'>here</a>.
+    </p>
+
+    <p>Eclipse askes for a workspace. This is a foldertree that contains information eclipse
+     keeps of some of your projects.
+     You may need to <a href='./configure_workspace.html'>configure the workspace</a>.
+    </p>
   </section>
  </body>
 </document>

@@ -100,6 +100,33 @@
    fullname='delve_into/custom/howto/customize_versioning.xml'
    relpath='delve_into/custom/howto'
   >customize_versioning</file>
+     <folder>eclipse
+<info>
+ <title>Eclipse</title><!-- string -->
+ <shortdesc>Using eclipse for Hippo CMS addon projects</shortdesc>  <!-- string -->
+ <introduction>              <!-- tree -->
+  This section is to describe how to configure eclipse to use with Hippo CMS addon projects.
+ </introduction>
+ <afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
+ </afterlist>
+</info>
+      <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+   fullname='delve_into/custom/howto/eclipse/configure_workspace.xml.vm'
+   relpath='delve_into/custom/howto/eclipse'
+  >configure_workspace</file>
+      <file ext='xml.vm~' mimetype='text/html charset=us-ascii' note='todo'
+   fullname='delve_into/custom/howto/eclipse/configure_workspace.xml.vm~'
+   relpath='delve_into/custom/howto/eclipse'
+  >configure_workspace</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/custom/howto/eclipse/index.xml'
+   relpath='delve_into/custom/howto/eclipse'
+  >index</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/custom/howto/eclipse/start_eclipse.xml'
+   relpath='delve_into/custom/howto/eclipse'
+  >start_eclipse</file>
+     </folder>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/custom/howto/editing_template_plugin.xml'
    relpath='delve_into/custom/howto'
@@ -462,15 +489,27 @@
    fullname='delve_into/tools/howto/create_pom.xml'
    relpath='delve_into/tools/howto'
   >create_pom</file>
-     <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/tools/howto/create_pom.xml~'
-   relpath='delve_into/tools/howto'
-  >create_pom</file>
      <folder>eclipse
-      <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+<info>
+ <title>Eclipse</title><!-- string -->
+ <shortdesc>How to use eclipse for Hippo projects.</shortdesc>  <!-- string -->
+ <introduction>              <!-- tree -->
+ </introduction>
+ <afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
+ </afterlist>
+</info>
+      <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/tools/howto/eclipse/configure_workspace.xml.vm'
    relpath='delve_into/tools/howto/eclipse'
   >configure_workspace</file>
+      <file ext='xml.vm~' mimetype='text/html charset=us-ascii' note='todo'
+   fullname='delve_into/tools/howto/eclipse/configure_workspace.xml.vm~'
+   relpath='delve_into/tools/howto/eclipse'
+  >configure_workspace</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/tools/howto/eclipse/index.xml'
+   relpath='delve_into/tools/howto/eclipse'
+  >index</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/tools/howto/eclipse/start_eclipse.xml'
    relpath='delve_into/tools/howto/eclipse'
@@ -493,10 +532,22 @@
    relpath='delve_into/tools/howto'
   >index</file>
      <folder>maven
+<info>
+ <title>Maven</title><!-- string -->
+ <shortdesc>How to use maven for Hippo projects.</shortdesc>  <!-- string -->
+ <introduction>              <!-- tree -->
+ </introduction>
+ <afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
+ </afterlist>
+</info>
       <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/tools/howto/maven/build_core_Hippo_CMS.xml.vm'
    relpath='delve_into/tools/howto/maven'
   >build_core_Hippo_CMS</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+   fullname='delve_into/tools/howto/maven/index.xml'
+   relpath='delve_into/tools/howto/maven'
+  >index</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/tools/howto/maven/install_maven.xml'
    relpath='delve_into/tools/howto/maven'

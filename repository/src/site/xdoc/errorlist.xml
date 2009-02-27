@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">405 errors and/or todos in 223 out of 223 documents (100%).</span>
+      <span class="shortdesc">416 errors and/or todos in 228 out of 228 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -39,7 +39,7 @@
      </li>
         <li>2 documents to review.
      </li>
-        <li>46 documents missing required info.
+        <li>49 documents missing required info.
      </li>
         <li>3 empty documents.
      </li>
@@ -76,7 +76,7 @@
       <subsection name="Documents with standard typos: 2">
         <ol>
           <li>
-            <a href="./delve_into/tools/howto/eclipse/configure_workspace.html">configure_workspace: Configure Workspace</a>
+            <a href="./delve_into/custom/howto/eclipse/configure_workspace.html">configure_workspace: Configure Workspace</a>
             <ul>
               <li>Select JPOX -&gt; Enhancer and enter 'BCEL' in<span xmlns="" class="bad"> the the </span>'Class Enhancer' field.</li>
             </ul>
@@ -215,7 +215,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents lacking some information: 46">
+      <subsection name="Documents lacking some information: 49">
         <ol>
           <li>
             <a href="./about/architecture.html">architecture: Architecture</a>
@@ -264,6 +264,13 @@ repository is;
             <a href="./delve_into/custom/concepts/versioning.html">versioning: Versioning</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/custom/howto/eclipse/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
             </ul>
           </li>
           <li>
@@ -397,7 +404,21 @@ repository is;
             </ul>
           </li>
           <li>
+            <a href="./delve_into/tools/howto/eclipse/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
             <a href="./delve_into/tools/howto/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/tools/howto/maven/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
               <li>Missing section. Add &lt;section name='...'&gt;.</li>
@@ -614,6 +635,12 @@ repository is;
       <subsection name="Add something to documents: 11">
         <ol>
           <li>
+            <a href="./delve_into/custom/howto/eclipse/configure_workspace.html">configure_workspace: Configure Workspace</a>
+            <ul>
+              <li>Explanation about installing JPOX eclipse plugin</li>
+            </ul>
+          </li>
+          <li>
             <a href="./delve_into/overview.html">overview: Delve into Hippo CMS</a>
             <ul>
               <li>Enlighting and attractive diagram.</li>
@@ -626,12 +653,6 @@ repository is;
           Also see
            href="http://jackrabbit.apache.org/doc/arch/operate/index-readers.html" JackRabbit lucene implementation.
           </li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/tools/howto/eclipse/configure_workspace.html">configure_workspace: Configure Workspace</a>
-            <ul>
-              <li>Explanation about installing JPOX eclipse plugin</li>
             </ul>
           </li>
           <li>
