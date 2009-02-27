@@ -1,0 +1,67 @@
+<?xml version="1.0"?><project>
+  <parent>
+    <artifactId>hst-addon-configuration-editor</artifactId>
+    <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
+    <version>2.02.05-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
+  <artifactId>hst-addon-configuration-editor-frontend</artifactId>
+  <name>HST Configuration Editor Frontend</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-frontend-engine</artifactId>
+      <version>${hippoecm.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
+      <version>${hippoecm.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-repository-connector</artifactId>
+      <version>${hippoecm.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>always</forkMode>
+          <workingDirectory>${project.build.directory}</workingDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+   </plugins>
+  </build>
+
+</project>

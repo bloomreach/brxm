@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <parent>
+    <artifactId>addon</artifactId>
+    <groupId>org.onehippo.ecm.hst.toolkit-resources</groupId>
+    <version>2.02.05-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
+  <artifactId>hst-addon-configuration-editor</artifactId>
+  <name>HST Configuration Editor</name>
+  
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>frontend</module>
+    <module>repository</module>
+  </modules>
+
+</project>

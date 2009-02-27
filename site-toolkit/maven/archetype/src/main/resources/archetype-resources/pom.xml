@@ -34,7 +34,7 @@
   </modules>
 
   <properties>
-    <hippoecm.version>2.03.00</hippoecm.version>
+    <hippoecm.version>2.04.00</hippoecm.version>
     <hst.version>2.02.05-SNAPSHOT</hst.version>
   </properties>
 
@@ -69,6 +69,18 @@
       <dependency>
         <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
         <artifactId>hst-addon-repository</artifactId>
+        <version>${dollar}{hst.version}</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
+        <artifactId>hst-addon-configuration-editor-frontend</artifactId>
+        <version>${dollar}{hst.version}</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
+        <artifactId>hst-addon-configuration-editor-repository</artifactId>
         <version>${dollar}{hst.version}</version>
         <type>jar</type>
       </dependency>

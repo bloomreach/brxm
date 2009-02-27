@@ -51,7 +51,7 @@
     
     <portlet-api.version>2.0</portlet-api.version>
     <javax.jcr.version>1.0</javax.jcr.version>
-    <hippoecm.version>2.03.00</hippoecm.version>
+    <hippoecm.version>2.04.00</hippoecm.version>
     <spring.version>2.5.6</spring.version>
     <spring-mock.version>2.0.8</spring-mock.version>
         

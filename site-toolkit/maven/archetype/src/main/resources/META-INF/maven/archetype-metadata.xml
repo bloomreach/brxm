@@ -16,7 +16,7 @@
 -->
 <archetype-descriptor name="gettingstarted">
   <modules>
-    <module id="${rootArtifactId}-sample-content" dir="content" name="${rootArtifactId}-sample-content">
+    <module id="${rootArtifactId}-content" dir="content" name="${rootArtifactId}-content">
       <fileSets>
         <fileSet filtered="true" encoding="UTF-8">
           <directory>src/main/resources</directory>
