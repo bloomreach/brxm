@@ -53,6 +53,9 @@ public class ModelReference<T extends IModel> implements IModelReference<T> {
         if (newModel != this.model && (newModel == null || !newModel.equals(this.model))) {
             final T oldModel = this.model;
             this.model = newModel;
+            if (observationContext == null) {
+                return;
+            }
             observationContext.notifyObservers(new IModelChangeEvent<T>() {
 
                 public T getNewModel() {
