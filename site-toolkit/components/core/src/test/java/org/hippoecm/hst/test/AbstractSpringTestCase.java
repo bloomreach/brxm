@@ -60,8 +60,9 @@ public abstract class AbstractSpringTestCase
      * the derived class can override this.
      */
     protected String[] getConfigurations() {
-        String classXmlFileName = getClass().getName().replace(".", "/") + "*.xml";
-        return new String[] { classXmlFileName };
+        String classXmlFileName = getClass().getName().replace(".", "/") + ".xml";
+        String classXmlFileName2 = getClass().getName().replace(".", "/") + "-*.xml";
+        return new String[] { classXmlFileName, classXmlFileName2 };
     }
     
     protected ComponentManager getComponentManager() {
