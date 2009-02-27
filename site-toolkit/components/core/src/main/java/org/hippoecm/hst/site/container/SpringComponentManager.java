@@ -44,8 +44,9 @@ public class SpringComponentManager implements ComponentManager, BeanPostProcess
         String [] configurations = getConfigurations();
         
         if (null == configurations) {
-            String classXmlFileName = getClass().getName().replace(".", "/") + "*.xml";
-            configurations = new String[] { classXmlFileName };            
+            String classXmlFileName = getClass().getName().replace(".", "/") + ".xml";
+            String classXmlFileName2 = getClass().getName().replace(".", "/") + "-*.xml";
+            configurations = new String[] { classXmlFileName, classXmlFileName2 };            
         }
 
         this.applicationContext = new ClassPathXmlApplicationContext(configurations, false) {
