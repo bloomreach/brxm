@@ -47,7 +47,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         /*
          * The catch all sitemap item in case none matches (might be the sitemap item that delivers a 404)
          */
-        HstSiteMapItem hstSiteMapItemAny = hstSite.getSiteMap().getSiteMapItem("_any_");
+        HstSiteMapItem hstSiteMapItemAny = hstSite.getSiteMap().getSiteMapItem(ANY);
         
         
         HstSiteMapItem hstSiteMapItem = hstSite.getSiteMap().getSiteMapItem(elements[0]);
@@ -75,8 +75,16 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         HstSiteMapItem matchedSiteMapItem =  resolveMatchingSiteMap(hstSiteMapItem, params, 1, elements);
       
         if(matchedSiteMapItem == null) {
-            log.warn("No matching sitemap item found. Cannot return ResolvedSiteMapItem. Return null");
+            log.warn("No matching sitemap item found for path '{}'. Cannot return ResolvedSiteMapItem. Return null", pathInfo);
             return null;
+        }
+        
+        if(log.isInfoEnabled()){
+            String path = matchedSiteMapItem.getPath();
+            path = path.replace("_default_", "*");
+            path = path.replace("_any_", "**");
+            log.info("For path '{}' we found SiteMapItem with path '{}'", pathInfo, path);
+            log.debug("Params for resolved sitemap item: '{}'", params);
         }
         
         return new ResolvedSiteMapItemImpl(matchedSiteMapItem, params);
@@ -84,39 +92,43 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
     }
 
     private HstSiteMapItem resolveMatchingSiteMap(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements) {
-       return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, new ArrayList<String>());
+       return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, new ArrayList<HstSiteMapItem>());
     }
 
-    private HstSiteMapItem traverseInToSiteMapItem(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements, List<String> checkedSiteMapItemsIds) {
-        checkedSiteMapItemsIds.add(hstSiteMapItem.getId());
+    private HstSiteMapItem traverseInToSiteMapItem(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements, List<HstSiteMapItem> checkedSiteMapItems) {
+        
+        checkedSiteMapItems.add(hstSiteMapItem);
         if(position == elements.length) {
            // we are ready
            return hstSiteMapItem;
        }
-       if(hstSiteMapItem.getChild(elements[position]) != null && !checkedSiteMapItemsIds.contains(hstSiteMapItem.getChild(elements[position]).getId())) {
-           return traverseInToSiteMapItem(hstSiteMapItem.getChild(elements[position]), params, position++, elements, checkedSiteMapItemsIds);
-       } else if(hstSiteMapItem.getChild(WILDCARD) != null && !checkedSiteMapItemsIds.contains(hstSiteMapItem.getChild(WILDCARD).getId())) {
+       if(hstSiteMapItem.getChild(elements[position]) != null && !checkedSiteMapItems.contains(hstSiteMapItem.getChild(elements[position]))) {
+           return traverseInToSiteMapItem(hstSiteMapItem.getChild(elements[position]), params, ++position, elements, checkedSiteMapItems);
+       } else if(hstSiteMapItem.getChild(WILDCARD) != null && !checkedSiteMapItems.contains(hstSiteMapItem.getChild(WILDCARD))) {
            params.put(String.valueOf(params.size()+1), elements[position]);
-           return traverseInToSiteMapItem(hstSiteMapItem.getChild(WILDCARD), params, position++, elements, checkedSiteMapItemsIds);
+           return traverseInToSiteMapItem(hstSiteMapItem.getChild(WILDCARD), params, ++position, elements, checkedSiteMapItems);
        } else {
            // We did not find a match for traversing this sitemap item tree. Traverse up, and try another tree
-           return traverseUp(hstSiteMapItem, params, position, elements, checkedSiteMapItemsIds);
+           return traverseUp(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
        }
        
     }
 
-    private HstSiteMapItem traverseUp(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements, List<String> checkedSiteMapItemsIds) {
+    private HstSiteMapItem traverseUp(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements, List<HstSiteMapItem> checkedSiteMapItems) {
        if(hstSiteMapItem == null) {
            return null;
        }
        if(hstSiteMapItem.isWildCard()) {
            // as this tree path did not result in a match, remove some params again
+           if(hstSiteMapItem.getChild(WILDCARD) != null && !checkedSiteMapItems.contains(hstSiteMapItem.getChild(WILDCARD))){
+               return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
+           }
            params.remove(String.valueOf(params.size()));
-           return traverseUp(hstSiteMapItem.getParentItem(),params, position--, elements, checkedSiteMapItemsIds );
-       } else if(hstSiteMapItem.getChild(WILDCARD) != null && !checkedSiteMapItemsIds.contains(hstSiteMapItem.getChild(WILDCARD).getId())){
-           return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItemsIds);
+           return traverseUp(hstSiteMapItem.getParentItem(),params, --position, elements, checkedSiteMapItems );
+       } else if(hstSiteMapItem.getChild(WILDCARD) != null && !checkedSiteMapItems.contains(hstSiteMapItem.getChild(WILDCARD))){
+           return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
        } else {    
-           return traverseUp(hstSiteMapItem.getParentItem(),params, position--, elements, checkedSiteMapItemsIds );
+           return traverseUp(hstSiteMapItem.getParentItem(),params, --position, elements, checkedSiteMapItems );
        }
        
     }

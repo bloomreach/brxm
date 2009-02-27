@@ -34,59 +34,67 @@ public class TestConfiguration extends AbstractSpringTestCase {
     protected static final String TESTPROJECT_NAME = "testproject";
 
     private HstSites hstSites;
+    private HstSiteMapMatcher hstSiteMapMatcher;
+    private HstSite hstSite;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
         this.hstSites = (HstSites) getComponent(HstSites.class.getName());
+        hstSiteMapMatcher = new BasicHstSiteMapMatcher();
+        hstSite = hstSites.getSite(TESTPROJECT_NAME);
     }
 
+    /**
+     * The hst:sitemap structure we expect the unit test to look like is as follows:
+     * 
+     * news
+     *    `-*
+     *      |- january  
+     *      `- *
+     *         |- *
+     *         `- *.html
+     */
+    
     @Test
-    public void testConfiguration() {
-        HstSite s = hstSites.getSite(TESTPROJECT_NAME);
-
-        HstSite s2 = hstSites.getSite("nonexistingproject");
-        assertNull(s2);
-
-        HstSiteMapItem sItem = s.getSiteMap().getSiteMapItem("products");
-        HstComponentConfiguration c = s.getComponentsConfiguration().getComponentConfiguration(
-                sItem.getComponentConfigurationId());
-        assertNotNull(c);
-
+    public void testUrl1(){
+        
+        ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2007", hstSite);
+        assertTrue("Relative content path for 'news/2007' must be to be 'News/2007'", "News/2007".equals(res.getRelativeContentPath()));
+        assertTrue("Param1 must resolve to '2007'", "2007".equals(res.getResolvedProperty("param1")));
+        assertNull("Param2 must be null ",res.getResolvedProperty("param2"));
+        
     }
-
+    
     @Test
-    public void testPathMatcher() {
-
-        StringBuffer buf = new StringBuffer();
-
-        HstSite hstSite = hstSites.getSite(TESTPROJECT_NAME);
-
-        HstSiteMapMatcher hstSiteMapMatcher = new BasicHstSiteMapMatcher();
-
-        ResolvedSiteMapItem noResolvedSiteMapItem = hstSiteMapMatcher.match("/non/exist/ing", hstSite);
-       // assertNull(noResolvedSiteMapItem);
-       // assertNull(noResolvedSiteMapItem.getCompontentConfiguration());
-       // assertEquals(matchNoResult.getRemainder(), "non/exist/ing");
-
-        ResolvedSiteMapItem resolvedSiteMapItem = hstSiteMapMatcher.match("/products/foo/bar", hstSite);
-      //  assertEquals(matchResult.getRemainder(), "foo/bar");
-      //  assertEquals(resolvedSiteMapItem.getSiteMapItem().getId(), "products");
-
-       // ConfigurationViewUtilities.view(buf, resolvedSiteMapItem);
-        assertTrue("Buffer should not be empty", buf.length() > 0);
-
-       // assertEquals(resolvedSiteMapItem.getSiteMapItem().getChild("someproduct").getId(), "products/someproduct");
-       // assertEquals(resolvedSiteMapItem.getCompontentConfiguration().getId(), "pages/productsview");
-
-        // Make sure that the remainder does not have the / after bar
-        resolvedSiteMapItem = hstSiteMapMatcher.match("/products/foo/bar/", hstSite);
-       // assertEquals(matchResult.getRemainder(), "foo/bar");
-
-        // an exact match
-        resolvedSiteMapItem = hstSiteMapMatcher.match("/products", hstSite);
-      //  assertEquals(matchResult.getRemainder(), "");
-
+    public void testUrl2(){
+        
+        ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2007/january", hstSite);
+        assertTrue("Relative content path for 'news/2007/january' must be to be 'News/2007/january'", "News/2007/january".equals(res.getRelativeContentPath()));
+        assertTrue("Param1 must resolve to '2007'", "2007".equals(res.getResolvedProperty("param1")));
+        assertNull("Param2 must be null ",res.getResolvedProperty("param2"));
+        
     }
+    
+    @Test
+    public void testUrl3(){
+        
+        ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2007/january/myArticle", hstSite);
+        assertTrue("Relative content path for 'news/2007/january/myArticle' must be to be 'News/2007/january/myArticle'", "News/2007/january/myArticle".equals(res.getRelativeContentPath()));
+        assertTrue("Param1 must resolve to  '2007'", "2007".equals(res.getResolvedProperty("param1")));
+        assertTrue("Param2 must resolve to  'myArticle'", "myArticle".equals(res.getResolvedProperty("param2")));
+    }
+    
+    @Test
+    public void testUrl4(){
+        
+        ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2007/february/myArticle", hstSite);
+        assertTrue("Relative content path for 'news/2007/february/myArticle' must be to be 'News/2007/february/myArticle'", "News/2007/february/myArticle".equals(res.getRelativeContentPath()));
+        assertTrue("Param1 must resolve to  '2007'", "2007".equals(res.getResolvedProperty("param1")));
+        assertTrue("Param2 must resolve to  'february'", "february".equals(res.getResolvedProperty("param2")));
+        assertTrue("Param2 must resolve to  'myArticle'", "myArticle".equals(res.getResolvedProperty("param3")));
+    }
+    
+   
 
 }

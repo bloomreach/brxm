@@ -65,5 +65,10 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
     public Properties getResolvedProperties(){
         return this.resolvedProperties;
     }
+
+
+    public String getRelativeContentPath() {
+        return (String)this.getResolvedProperty("hst:relativecontentpath");
+    }
   
 }

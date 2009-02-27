@@ -38,7 +38,7 @@ public class BasicLocationMapTreeItem implements LocationMapTreeItem{
             // when the pathFragments are empty, the entire relative content path is processed.
             if(!hstSiteMapItems.isEmpty()) {
                 log.warn("Adding a second HstSiteMapItem '{}' to the same LocationMapTreeItem. This potentially returns the wrong HstSiteMapItem because" +
-                        "we cannot differentiate between the 'relative content paths'.", hstSiteMapItem.getPath());
+                        "we cannot differentiate between the 'relative content paths'. \n Reason: duplicate relative content path  = '{}'", hstSiteMapItem.getPath(), hstSiteMapItem.getRelativeContentPath());
             } 
             this.hstSiteMapItems.add(hstSiteMapItem);
             return;

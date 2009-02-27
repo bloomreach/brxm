@@ -23,11 +23,15 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.service.ServiceFactory;
 import org.hippoecm.hst.service.ServiceNamespace;
 import org.hippoecm.hst.service.UnderlyingServiceAware;
+import org.hippoecm.hst.site.request.BasicHstSiteMapMatcher;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Test;
 
@@ -50,7 +54,6 @@ public class TestLinks extends AbstractSpringTestCase{
            
         }
         
-        @Test 
         public void testLinkToSiteMapItemId() {
             
             HstSiteMapItem currentSiteMapItem = hstSites.getSite(TESTPROJECT_NAME).getSiteMap().getSiteMapItemById("products");
@@ -61,7 +64,7 @@ public class TestLinks extends AbstractSpringTestCase{
 
         }
         
-        @Test 
+      
         public void testLinkCreateOfNode(){
             
             Repository repository = (Repository) getComponent(Repository.class.getName());
@@ -96,7 +99,7 @@ public class TestLinks extends AbstractSpringTestCase{
             
         }
        
-       @Test 
+   
        public void testLinkCreateOfService(){
            
         Repository repository = (Repository) getComponent(Repository.class.getName());

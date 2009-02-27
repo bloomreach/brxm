@@ -23,6 +23,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 
 public interface ResolvedSiteMapItem {
     
+    String getRelativeContentPath();
     /**
      * Returns a property from the siteMapItem configuration but possible variables ( ${1} or ${2} etc ) replaced with the current value
      * 

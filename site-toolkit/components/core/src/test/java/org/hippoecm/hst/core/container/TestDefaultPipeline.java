@@ -61,8 +61,8 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         this.servletResponse = (HttpServletResponse) getComponent(HttpServletResponse.class.getName());
      
         Map<String, Object> newsprops = new HashMap<String, Object>();
-        newsprops.put("year" , "${year}");
-        newsprops.put("repositoryLocation" , "news/${year}-may");
+        newsprops.put("param1" , "${param1}");
+        newsprops.put("param2" , "${param2}");
         ComponentConfiguration newsCompConfig = new ComponentConfigurationImpl(newsprops); 
         HstComponentFactory componentFactory = HstServices.getComponentFactory();
         
@@ -109,7 +109,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
     @Test
     public void testDefaultPipeline2() throws ContainerException, UnsupportedEncodingException {
         
-        ((MockHttpServletRequest)servletRequest).setPathInfo("/news/2009");
+        ((MockHttpServletRequest)servletRequest).setPathInfo("/news/2009/februari");
         
         this.defaultPipeline.beforeInvoke(this.servletConfig, this.servletRequest, this.servletResponse);
         
@@ -179,11 +179,14 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
             super.doBeforeRender(request, response);
             
-            Object o = compConfig.getResolvedProperty("year", request.getRequestContext().getResolvedSiteMapItem()); 
-            if (! (o instanceof String)) { 
-                log.warn("The year property should be of type 'String'", o instanceof String);
-            }
-            System.out.println("Value of the resolved property 'year' = " + o);
+            Object o = compConfig.getResolvedProperty("param1", request.getRequestContext().getResolvedSiteMapItem()); 
+
+            System.out.println("param1 = :::--> "+ o);
+            
+            o = compConfig.getResolvedProperty("param2", request.getRequestContext().getResolvedSiteMapItem()); 
+            
+            System.out.println("param2 = :::--> "+ o);
+            System.out.println("relative content path = :::--> "+request.getRequestContext().getResolvedSiteMapItem().getRelativeContentPath());
         }
         
     }
