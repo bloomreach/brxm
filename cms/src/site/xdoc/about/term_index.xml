@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 884 terms</span>
+      <span class="shortdesc">Term index, 888 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -1096,7 +1096,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/eclipse/configure_workspace.html#Configure_Eclipse_Workspace_for_Hippo_CMS_addon_projects_">Configure Eclipse Workspace for Hippo CMS addon projects.</a>
+              <a href="../delve_into/custom/howto/eclipse/configure_workspace.html#Configure_Eclipse_Workspace_for_Hippo_CMS_addon_projects_">Configure Eclipse Workspace for Hippo CMS addon projects.</a>
+            </td>
+            <td>Configure Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/eclipse/configure_workspace.html#Configure_Eclipse_Workspace_for_Hippo_projects_">Configure Eclipse Workspace for Hippo projects.</a>
             </td>
             <td>Configure Workspace</td>
           </tr>
@@ -1114,7 +1120,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/eclipse/configure_workspace.html#Configure_update_sites">Configure update sites</a>
+              <a href="../delve_into/custom/howto/eclipse/configure_workspace.html#Configure_update_sites">Configure update sites</a>
+            </td>
+            <td>Configure Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/howto/eclipse/configure_workspace.html#Configure_Workspace">Configure Workspace</a>
             </td>
             <td>Configure Workspace</td>
           </tr>
@@ -3189,7 +3201,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/eclipse/configure_workspace.html#Install_plugins">Install plugins</a>
+              <a href="../delve_into/custom/howto/eclipse/configure_workspace.html#Install_plugins">Install plugins</a>
             </td>
             <td>Configure Workspace</td>
           </tr>
@@ -4647,13 +4659,25 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/custom/howto/eclipse/start_eclipse.html#Start_Eclipse">Start Eclipse</a>
+            </td>
+            <td>Start Eclipse</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/tools/howto/eclipse/start_eclipse.html#Start_Eclipse">Start Eclipse</a>
             </td>
             <td>Start Eclipse</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/eclipse/start_eclipse.html#Start_Eclipse_to_work_on_Hippo_CMS_addon_projects_">Start Eclipse to work on Hippo CMS addon projects.</a>
+              <a href="../delve_into/custom/howto/eclipse/start_eclipse.html#Start_Eclipse_to_work_on_Hippo_CMS_addon_projects_">Start Eclipse to work on Hippo CMS addon projects.</a>
+            </td>
+            <td>Start Eclipse</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/eclipse/start_eclipse.html#Start_Eclipse_to_work_on_Hippo_projects_">Start Eclipse to work on Hippo projects.</a>
             </td>
             <td>Start Eclipse</td>
           </tr>
@@ -4978,7 +5002,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/eclipse/configure_workspace.html#War_overlays">War overlays</a>
+              <a href="../delve_into/custom/howto/eclipse/configure_workspace.html#War_overlays">War overlays</a>
             </td>
             <td>Configure Workspace</td>
           </tr>

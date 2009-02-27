@@ -126,7 +126,22 @@
    <subsection>About the user perspective</subsection>
    <subsection>Versioning invocation as part of a workflow step</subsection>
    <subsection>Expert information</subsection>
-  </document><document ext="xml" filename="editing_template_plugin" relpath="delve_into/custom/howto">Create an Editing Template Plugin
+  </document><folder>eclipse
+   <title>Eclipse</title><shortdesc>Using eclipse for Hippo CMS addon projects</shortdesc><introduction>              <!-- tree -->
+  This section is to describe how to configure eclipse to use with Hippo CMS addon projects.
+ </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
+ </afterlist>
+   <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/custom/howto/eclipse">Configure Workspace
+   <section>Configure Workspace</section>
+   <shortdesc>Configure Eclipse Workspace for Hippo CMS addon projects.</shortdesc>
+   <subsection>Configure update sites</subsection>
+   <subsection>Install plugins</subsection>
+   <subsection>War overlays</subsection>
+  </document><document ext="xml" filename="index" relpath="delve_into/custom/howto/eclipse">
+  </document><document ext="xml" filename="start_eclipse" relpath="delve_into/custom/howto/eclipse">Start Eclipse
+   <section>Start Eclipse</section>
+   <shortdesc>Start Eclipse to work on Hippo CMS addon projects.</shortdesc>
+  </document></folder><document ext="xml" filename="editing_template_plugin" relpath="delve_into/custom/howto">Create an Editing Template Plugin
    <section>Create an Editing Template Plugin</section>
    <shortdesc>Create a template plugin that edits a custom type</shortdesc>
    <subsection>Create a plugin</subsection>
@@ -554,17 +569,17 @@
    <section>Create a pom.xml</section>
    <shortdesc>Learn how to create a project object model file for maven.</shortdesc>
   </document><folder>eclipse
-   
+   <title>Eclipse</title><shortdesc>How to use eclipse for Hippo projects.</shortdesc><introduction>              <!-- tree -->
+ </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
+ </afterlist>
    <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/howto/eclipse">Configure Workspace
    <section>Configure Workspace</section>
-   <shortdesc>Configure Eclipse Workspace for Hippo CMS addon projects.</shortdesc>
+   <shortdesc>Configure Eclipse Workspace for Hippo projects.</shortdesc>
    <subsection>Identify Maven local repository</subsection>
-   <subsection>Configure update sites</subsection>
-   <subsection>Install plugins</subsection>
-   <subsection>War overlays</subsection>
+  </document><document ext="xml" filename="index" relpath="delve_into/tools/howto/eclipse">
   </document><document ext="xml" filename="start_eclipse" relpath="delve_into/tools/howto/eclipse">Start Eclipse
    <section>Start Eclipse</section>
-   <shortdesc>Start Eclipse to work on Hippo CMS addon projects.</shortdesc>
+   <shortdesc>Start Eclipse to work on Hippo projects.</shortdesc>
   </document><document ext="xml.vm" filename="war_overlays_in_eclipse" relpath="delve_into/tools/howto/eclipse">War overlays in eclipse
    <section>War overlays in eclipse</section>
    <shortdesc>How to use War overlays in eclipse</shortdesc>
@@ -576,10 +591,13 @@
    <shortdesc>Get the Hippo CMS source from the Hippo subversion repository.</shortdesc>
   </document><document ext="xml" filename="index" relpath="delve_into/tools/howto">
   </document><folder>maven
-   
+   <title>Maven</title><shortdesc>How to use maven for Hippo projects.</shortdesc><introduction>              <!-- tree -->
+ </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
+ </afterlist>
    <document ext="xml.vm" filename="build_core_Hippo_CMS" relpath="delve_into/tools/howto/maven">Building the core Hippo CMS
    <section>Building the core Hippo CMS</section>
    <shortdesc>How to build the core Hippo CMS package from the sources?</shortdesc>
+  </document><document ext="xml" filename="index" relpath="delve_into/tools/howto/maven">
   </document><document ext="xml" filename="install_maven" relpath="delve_into/tools/howto/maven">Install Maven
    <section>Install Maven</section>
    <shortdesc>Howto install Maven.</shortdesc>

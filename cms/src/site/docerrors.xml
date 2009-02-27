@@ -63,7 +63,16 @@
     <badtext>Certain events may trigger a copy of the then<span class="bad"> current </span>document to be made. This copy is read-only and stored in a different section. Additional information, such as the date the copy was made helps keeping a time-line of the document over time. These cop</badtext>
     <badtext> This happens for the reviewed-actions workflow. Upon publication of a document a version of the then<span class="bad"> current </span>published document is created. However, if the document is depublished, there is no longer a published version of the document. The ability of the Hippo ECM suite is to be able to deal with this and i</badtext>
     <badtext>sionWorkflow) getWorkflowContext().getWorkflow("versioning"); workflow.version(); // this commits the<span class="bad"> current </span>document as a version } }</badtext>
-    <badtext>voking the workflow step directly, it schedules the called workflow to be executed directly after the<span class="bad"> current </span>workflow and within the same transaction. This means that it is not possible to use the return values.</badtext></document><document ext="xml" filename="editing_template_plugin" relpath="delve_into/custom/howto">Create an Editing Template Plugin<linkto_unchecked/></document><document ext="xml" filename="extend_dashboard" relpath="delve_into/custom/howto">Giving our plugin a place on the dashboard<linkto_unchecked/>
+    <badtext>voking the workflow step directly, it schedules the called workflow to be executed directly after the<span class="bad"> current </span>workflow and within the same transaction. This means that it is not possible to use the return values.</badtext></document><folder>eclipse
+   <title>Eclipse</title><shortdesc>Using eclipse for Hippo CMS addon projects</shortdesc><introduction>              <!-- tree -->
+  This section is to describe how to configure eclipse to use with Hippo CMS addon projects.
+ </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
+ </afterlist>
+   <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/custom/howto/eclipse">Configure Workspace<linkto_unchecked/>
+    <add>Explanation about installing JPOX eclipse plugin</add>
+    <typo>Select JPOX -&gt; Enhancer and enter 'BCEL' in<span class="bad"> the the </span>'Class Enhancer' field.</typo></document><document ext="xml" filename="index" relpath="delve_into/custom/howto/eclipse"><linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="start_eclipse" relpath="delve_into/custom/howto/eclipse">Start Eclipse<linkto_unchecked/></document></folder><document ext="xml" filename="editing_template_plugin" relpath="delve_into/custom/howto">Create an Editing Template Plugin<linkto_unchecked/></document><document ext="xml" filename="extend_dashboard" relpath="delve_into/custom/howto">Giving our plugin a place on the dashboard<linkto_unchecked/>
     <badtext>. Under wicket.extensions you will see the<span class="bad"> current </span>plugins shown on the dashboard. Add an entry "extension.helloworld". Next add a property called "extension.helloworld" and give it the value "service.helloworld". Now the dashboard knows where to find</badtext></document><document ext="xml" filename="gui_plugin" relpath="delve_into/custom/howto">Hello World<linkto_unchecked/></document><document ext="xml" filename="hello_model" relpath="delve_into/custom/howto">Making the Hello World plugin context sensitive<linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="index" relpath="delve_into/custom/howto">Howto<linkto_unchecked/></document><document ext="xml" filename="packaging" relpath="delve_into/custom/howto">Testing the Hello World plugin<linkto_unchecked/></document><document ext="xml" filename="workflow" relpath="delve_into/custom/howto">Developing workflows<linkto_unchecked/>
     <rewrite>http://www.hippoecm.org/nt/1.2 is out of date. There are also instances of this adres in other files.</rewrite>
@@ -263,15 +272,21 @@ repository is;
  </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
  </afterlist>
    <document ext="xml" filename="create_pom" relpath="delve_into/tools/howto">Create a pom.xml<linkto_unchecked/></document><folder>eclipse
-   
-   <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/howto/eclipse">Configure Workspace<linkto_unchecked/>
-    <add>Explanation about installing JPOX eclipse plugin</add>
-    <typo>Select JPOX -&gt; Enhancer and enter 'BCEL' in<span class="bad"> the the </span>'Class Enhancer' field.</typo></document><document ext="xml" filename="start_eclipse" relpath="delve_into/tools/howto/eclipse">Start Eclipse<linkto_unchecked/></document><document ext="xml.vm" filename="war_overlays_in_eclipse" relpath="delve_into/tools/howto/eclipse">War overlays in eclipse<linkto_unchecked/></document></folder><document ext="xml" filename="export_node" relpath="delve_into/tools/howto">Export node<linkto_unchecked/>
+   <title>Eclipse</title><shortdesc>How to use eclipse for Hippo projects.</shortdesc><introduction>              <!-- tree -->
+ </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
+ </afterlist>
+   <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/howto/eclipse">Configure Workspace<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/tools/howto/eclipse"><linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="start_eclipse" relpath="delve_into/tools/howto/eclipse">Start Eclipse<linkto_unchecked/></document><document ext="xml.vm" filename="war_overlays_in_eclipse" relpath="delve_into/tools/howto/eclipse">War overlays in eclipse<linkto_unchecked/></document></folder><document ext="xml" filename="export_node" relpath="delve_into/tools/howto">Export node<linkto_unchecked/>
     <dummyref>Export node from Hippo repository<span class="bad"> in X </span>ML format</dummyref></document><document ext="xml.vm" filename="get_Hippo_CMS_source" relpath="delve_into/tools/howto">Get the Hippo CMS source<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/tools/howto"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><folder>maven
-   
-   <document ext="xml.vm" filename="build_core_Hippo_CMS" relpath="delve_into/tools/howto/maven">Building the core Hippo CMS<linkto_unchecked/></document><document ext="xml" filename="install_maven" relpath="delve_into/tools/howto/maven">Install Maven<linkto_unchecked/></document><document ext="xml" filename="learning_maven" relpath="delve_into/tools/howto/maven">Learning Maven<linkto_unchecked/>
+   <title>Maven</title><shortdesc>How to use maven for Hippo projects.</shortdesc><introduction>              <!-- tree -->
+ </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
+ </afterlist>
+   <document ext="xml.vm" filename="build_core_Hippo_CMS" relpath="delve_into/tools/howto/maven">Building the core Hippo CMS<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/tools/howto/maven"><linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="install_maven" relpath="delve_into/tools/howto/maven">Install Maven<linkto_unchecked/></document><document ext="xml" filename="learning_maven" relpath="delve_into/tools/howto/maven">Learning Maven<linkto_unchecked/>
     <add>References to Maven pages</add>
     <badtext>Maven commands always works on the<span class="bad"> current </span>directory, so you have to cd to the directory you want Maven to work on.</badtext>
     <todo>References to good Maven pages (<span class="bad"> TODO </span>) and some handy notes.</todo></document><document ext="xml" filename="run_development_package" relpath="delve_into/tools/howto/maven">Run a development package<linkto_unchecked/></document></folder></folder><document ext="xml" filename="index" relpath="delve_into/tools"><linkto_unchecked/>
