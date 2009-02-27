@@ -14,9 +14,9 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BinaryServlet extends HttpServlet {
+public class StaticResourceServlet extends HttpServlet {
     
-    static Logger log = LoggerFactory.getLogger(BinaryServlet.class);
+    static Logger log = LoggerFactory.getLogger(StaticResourceServlet.class);
     
     private static final int BUF_SIZE = 4096;
     

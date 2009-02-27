@@ -139,6 +139,11 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = hstRequest.getComponentWindow();
         String dispatchUrl = hstRequest.getComponentWindow().getServeResourcePath();
+        
+        if (dispatchUrl == null) {
+            dispatchUrl = hstRequest.getComponentWindow().getRenderPath();
+        }
+        
         invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl, window);
 
         if (window.hasComponentExceptions()) {

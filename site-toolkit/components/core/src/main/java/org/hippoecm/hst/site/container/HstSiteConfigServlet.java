@@ -110,12 +110,12 @@ public class HstSiteConfigServlet extends HttpServlet {
         try {
             log.info("HSTSiteServlet attempting to create the  portlet engine...");
             this.componentManager = new SpringComponentManager(initProperties);
-            log.info("HSTSiteServlet attempting to start the Jetspeed Portal Engine...");
+            log.info("HSTSiteServlet attempting to start the Component Manager...");
             this.componentManager.initialize();
             this.componentManager.start();
             HstServices.setComponentManager(this.componentManager);
             
-            log.info("HSTSiteServlet has successfuly started the Jetspeed Portal Engine....");
+            log.info("HSTSiteServlet has successfuly started the Component Manager....");
         } catch (Throwable e) {
             // save the exception to complain loudly later :-)
             final String msg = "HSTSite: init() failed.";

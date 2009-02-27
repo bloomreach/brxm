@@ -85,7 +85,7 @@
                     <sv:value>jsp/fragments/body.jsp</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:serveresourcepath" sv:type="String">
-                    <sv:value>/binaryservlet</sv:value>
+                    <sv:value>/staticresource</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:componentclassname" sv:type="String">
                     <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Body</sv:value>
