@@ -19,9 +19,9 @@
 <%@ taglib uri='/WEB-INF/hst-core.tld' prefix='hc'%>
 
 <x:parse varDom="hippo-widget-collection-dom">
-<script language="javascript"><![CDATA[
+<script language="javascript" src="http://www.onehippo.org/ajax/widget-collection.js"><![CDATA[
 <!--
-alert("test");
+//alert("test");
 //-->
 ]]></script>
 </x:parse>

@@ -33,9 +33,9 @@ pageContext.setAttribute("responseProperties", hstResponse.getProperties().value
 %>
 
 <c:forEach var="responseProperty" items="${responseProperties}">
-	<script language="<x:out select="$responseProperty/@language" />">
+  <script language="<x:out select="$responseProperty/@language" />" src="<x:out select="$responseProperty/@src" />">
     <x:out select="$responseProperty" escapeXml="false"/>
-	</script>
+  </script>
 </c:forEach>
 
 </head>
