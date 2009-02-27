@@ -135,7 +135,7 @@ public class BrowseService implements IBrowseService<IModel>, IDetachable {
     }
 
     private JcrNodeModel findDocument(JcrNodeModel document) {
-        if (isFolder(document)) {
+        if (document.getNode() == null || isFolder(document)) {
             folder = document;
             document = null;
         } else {
