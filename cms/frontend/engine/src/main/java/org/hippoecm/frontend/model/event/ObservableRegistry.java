@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.model.event;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.wicket.Page;
@@ -75,12 +74,12 @@ public class ObservableRegistry implements IPlugin {
     }
 
     private IPluginContext pluginContext;
-    private HashMap<IObservable, ObservationContext> contexts;
+    private List<ObservationContext> contexts;
 
     public ObservableRegistry(IPluginContext context, IPluginConfig config) {
         this.pluginContext = context;
 
-        contexts = new HashMap<IObservable, ObservationContext>();
+        contexts = new ArrayList<ObservationContext>();
 
         context.registerTracker(new ServiceTracker<IObserver>(IObserver.class) {
             private static final long serialVersionUID = 1L;
@@ -88,11 +87,11 @@ public class ObservableRegistry implements IPlugin {
             @Override
             protected void onServiceAdded(IObserver service, String name) {
                 IObservable observable = service.getObservable();
-                ObservationContext obContext = contexts.get(observable);
+                ObservationContext obContext = getContext(observable);
                 if (obContext == null) {
                     obContext = new ObservationContext(observable);
                     obContext.observable.startObservation();
-                    contexts.put(observable, obContext);
+                    addContext(obContext);
                 }
                 obContext.addObserver(service);
             }
@@ -100,25 +99,42 @@ public class ObservableRegistry implements IPlugin {
             @Override
             protected void onRemoveService(IObserver service, String name) {
                 IObservable observable = service.getObservable();
-                ObservationContext obContext = contexts.get(observable);
+                ObservationContext obContext = getContext(observable);
                 obContext.removeObserver(service);
                 if (!obContext.hasObservers()) {
                     obContext.observable.stopObservation();
-                    contexts.remove(observable);
+                    removeContext(obContext);
                 }
             }
 
         }, IObserver.class.getName());
     }
 
+    ObservationContext getContext(IObservable observable) {
+        for (ObservationContext context : contexts) {
+            if (context.observable.equals(observable)) {
+                return context;
+            }
+        }
+        return null;
+    }
+
+    void addContext(ObservationContext context) {
+        contexts.add(context);
+    }
+
+    void removeContext(ObservationContext context) {
+        contexts.remove(context);
+    }
+
     public void startObservation() {
-        for (ObservationContext context : contexts.values()) {
+        for (ObservationContext context : contexts) {
             context.observable.startObservation();
         }
     }
 
     public void stopObservation() {
-        for (ObservationContext context : contexts.values()) {
+        for (ObservationContext context : contexts) {
             context.observable.stopObservation();
         }
     }
