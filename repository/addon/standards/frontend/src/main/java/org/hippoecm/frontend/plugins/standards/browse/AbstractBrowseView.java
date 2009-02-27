@@ -92,11 +92,7 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
         for (String type : viewers) {
             if (node.isNodeType(type)) {
                 if (!type.equals(viewerName)) {
-                    if (viewer != null) {
-                        viewer.stop();
-                        viewer = null;
-                        viewerName = null;
-                    }
+                    resetViewer();
 
                     IPluginConfigService pluginConfig = context.getService(IPluginConfigService.class.getName(),
                             IPluginConfigService.class);
@@ -136,12 +132,19 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
-        } else {
-            if (viewer != null) {
-                viewer.stop();
-                viewer = null;
-                viewerName = null;
+            if (!shown) {
+                resetViewer();
             }
+        } else {
+            resetViewer();
+        }
+    }
+
+    private void resetViewer() {
+        if (viewer != null) {
+            viewer.stop();
+            viewer = null;
+            viewerName = null;
         }
     }
 
