@@ -143,7 +143,7 @@ public class DereferencedImportHandler extends ImportHandler {
                 nsReg.registerNamespace(prefix, uri);
             }
             if(existingURI != null && !existingURI.equals(uri))
-                throw new NamespaceException("prefix already mapped to different URI");
+                throw new NamespaceException("prefix[" + prefix + "] already mapped to URI " + existingURI);
         } catch (RepositoryException re) {
             throw new SAXException(re);
         }
