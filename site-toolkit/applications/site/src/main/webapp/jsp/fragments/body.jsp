@@ -15,7 +15,23 @@
 
 <%@ page language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri='/WEB-INF/hst-core.tld' prefix='hc'%>
+
+<x:parse varDom="hippo-widget-collection-dom">
+<script language="javascript"><![CDATA[
+<!--
+alert("test");
+//-->
+]]></script>
+</x:parse>
+         
+<%
+org.hippoecm.hst.core.component.HstResponse hstResponse = (org.hippoecm.hst.core.component.HstResponse) response;
+org.w3c.dom.Document scriptDoc = (org.w3c.dom.Document) pageContext.getAttribute("hippo-widget-collection-dom");
+org.w3c.dom.Element script = scriptDoc.getDocumentElement();
+hstResponse.addProperty("hippo-widget-collection", script);
+%>
 
 <script language="javascript">
 <!--

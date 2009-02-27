@@ -592,12 +592,20 @@ public class HstResponseState
     {
         if (isMimeResponse && !committed)
         {
-            if (properties == null)
-            {
-                properties = new HashMap<String, Element>();
-            }
+            // If the component is child of other component, then
+            // the property should be passed into the parent component.
+            // Otherwise, the property should be kept in the response state.
             
-            properties.put(key, element);
+            if (response instanceof HstResponse) {
+                ((HstResponse) response).addProperty(key, element);
+            } else {
+                if (properties == null)
+                {
+                    properties = new HashMap<String, Element>();
+                }
+                
+                properties.put(key, element);
+            }
         }
     }
     

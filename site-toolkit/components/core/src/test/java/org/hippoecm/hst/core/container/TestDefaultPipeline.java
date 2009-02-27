@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.container;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 

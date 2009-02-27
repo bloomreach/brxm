@@ -14,6 +14,7 @@
   limitations under the License. --%>
 <%@ page language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri='/WEB-INF/hst-core.tld' prefix='hc'%>
 
 <%
@@ -25,6 +26,17 @@ System.out.println("Console out from general_layout.jsp");
 
 <!-- include header -->
 <hc:content name="header" />
+
+<%
+org.hippoecm.hst.core.component.HstResponse hstResponse = (org.hippoecm.hst.core.component.HstResponse) response;
+pageContext.setAttribute("responseProperties", hstResponse.getProperties().values());
+%>
+
+<c:forEach var="responseProperty" items="${responseProperties}">
+	<script language="<x:out select="$responseProperty/@language" />">
+    <x:out select="$responseProperty" escapeXml="false"/>
+	</script>
+</c:forEach>
 
 </head>
 <body>
