@@ -51,6 +51,7 @@ public class ObservationTest extends TestCase {
         private static final long serialVersionUID = 1L;
 
         private IObservationContext context;
+        int identity = 12345;
 
         public void setObservationContext(IObservationContext context) {
             this.context = context;
@@ -74,12 +75,12 @@ public class ObservationTest extends TestCase {
 
         @Override
         public int hashCode() {
-            return 12345;
+            return identity;
         }
 
         @Override
         public boolean equals(Object obj) {
-            return obj instanceof TestObservable;
+            return (obj instanceof TestObservable) && (((TestObservable) obj).identity == identity);
         }
     }
 
@@ -151,6 +152,16 @@ public class ObservationTest extends TestCase {
         observableB.fire();
         assertTrue(eventsB.size() == 2);
         assertTrue(eventsA.size() == 2);
+    }
+
+    @Test
+    public void testObservableIdentityChange() throws Exception {
+        TestObservable observable = new TestObservable();
+        List<IEvent> events = new LinkedList<IEvent>();
+        IObserver observer = new TestObserver(observable, events);
+        context.registerService(observer, IObserver.class.getName());
+        observable.identity = 23456;
+        context.unregisterService(observer, IObserver.class.getName());
     }
 
     @Test
