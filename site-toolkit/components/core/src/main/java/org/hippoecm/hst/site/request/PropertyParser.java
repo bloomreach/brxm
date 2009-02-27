@@ -47,14 +47,14 @@ public class PropertyParser extends PropertyPlaceholderConfigurer {
             } catch (BeanDefinitionStoreException e) {
               if(log.isDebugEnabled()) {
                   log.debug("Unable to replace property expression for property '{}'. Return original value '"+s+"'.",name, e); 
-              } else {
+              } else if (log.isWarnEnabled()) {
                   log.warn("Unable to replace property expression for property '{}'. Return original value '{}'.",name, s);
               }
               
             }
             
             if(!exprSet.isEmpty()) {
-              log.debug("Translated property value from '{}' --> '{}' for property '" +name + "'", o, s);   
+              if (log.isDebugEnabled()) log.debug("Translated property value from '{}' --> '{}' for property '" +name + "'", o, s);   
             }
             return s;
         }
@@ -70,17 +70,21 @@ public class PropertyParser extends PropertyPlaceholderConfigurer {
                 } catch (BeanDefinitionStoreException e ) {
                     if(log.isDebugEnabled()) {
                         log.debug("Unable to replace property expression for property '{}'. Return original value '"+s+"'.",name, e); 
-                    } else {
+                    } else if (log.isWarnEnabled()) {
                         log.warn("Unable to replace property expression for property '{}'. Return original value '{}'.",name, s);
                     }    
                 }
                 parsed[i] = s;
             }
-            if(!exprSet.isEmpty()) {
-                for(int i = 0; i < parsed.length; i++) {
-                    log.debug("Translated property value from '{}' --> '{}' for property '"+name+"'", unparsed[i], parsed[i]);
+            
+            if (log.isDebugEnabled()) {
+                if(!exprSet.isEmpty()) {
+                    for(int i = 0; i < parsed.length; i++) {
+                        log.debug("Translated property value from '{}' --> '{}' for property '"+name+"'", unparsed[i], parsed[i]);
+                    }
                 }
-              }
+            }
+            
             return parsed;
         }
         return o;

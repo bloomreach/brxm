@@ -106,16 +106,19 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         if(path.startsWith(hstSite.getLocationMap().getCanonicalSiteContentPath())) {
             ConversionResult result = hstPathConvertor.convert(path, hstSite);
             if(result != null) {
-                log.debug("Creating a link for node '{}' succeeded", path);
-                log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", path, result.getPath());
+                if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", path);
+                if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", path, result.getPath());
                 return new HstLinkImpl(result.getPath(), hstSite);
             } else {
               // TODO should we try different HstSites?
-              log.warn("Unable to create a link for '{}' for HstSite '{}'. Return null", path, hstSite.getName());
-                  
+                if (log.isWarnEnabled()) {
+                    log.warn("Unable to create a link for '{}' for HstSite '{}'. Return null", path, hstSite.getName());
+                }
             }
         } else {
-            log.debug("For HstSite '{}' we cannot a create a link for node '{}' because it is outside the site scope", hstSite.getName(), path);
+            if (log.isDebugEnabled()) {
+                log.debug("For HstSite '{}' we cannot a create a link for node '{}' because it is outside the site scope", hstSite.getName(), path);
+            }
             // TODO try to link to another HstSite that has a matching 'content base path'
         }
         return null;
@@ -137,7 +140,9 @@ public class BasicHstLinkCreator implements HstLinkCreator {
             }
         }
         if (toSiteMapItem == null) {
-            log.warn("No site found with a siteMap containing id '{}'. Cannot create link.", toSiteMapItemId);
+            if (log.isWarnEnabled()) {
+                log.warn("No site found with a siteMap containing id '{}'. Cannot create link.", toSiteMapItemId);
+            }
             return null;
         }
 
@@ -154,8 +159,10 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         HstSiteMapItem siteMapItem = hstSite.getSiteMap().getSiteMapItemById(toSiteMapItemId);
 
         if (siteMapItem == null) {
-            log.warn("No sitemap item found for id '{}' within Site '{}'. Cannot create link.", toSiteMapItemId,
-                    hstSite.getName());
+            if (log.isWarnEnabled()) {
+                log.warn("No sitemap item found for id '{}' within Site '{}'. Cannot create link.", toSiteMapItemId,
+                        hstSite.getName());
+            }
             return null;
         }
 

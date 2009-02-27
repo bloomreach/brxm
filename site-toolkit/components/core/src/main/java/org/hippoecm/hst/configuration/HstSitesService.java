@@ -79,7 +79,9 @@ public class HstSitesService extends AbstractJCRService implements HstSites, Ser
     public HstSite getSite(String name) {
         HstSite site = getSites().get(name);
         if(site == null) {
-            log.warn("Cannot load site with name '{}' because not present at '{}'", name, this.sitesContentPath);
+            if (log.isWarnEnabled()) {
+                log.warn("Cannot load site with name '{}' because not present at '{}'", name, this.sitesContentPath);
+            }
         }
         return site;
     }

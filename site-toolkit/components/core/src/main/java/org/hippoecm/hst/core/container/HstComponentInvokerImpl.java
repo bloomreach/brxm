@@ -46,10 +46,18 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 component.doAction(hstRequest, hstResponse);
             } catch (HstComponentException e) {
                 window.addComponentExcpetion(e);
-                log.warn("Component exception caught: " + e.getMessage(), e);
+                if (log.isDebugEnabled()) {
+                    log.warn("Component exception caught: {}", e.getMessage(), e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Component exception caught: {}", e.getMessage());
+                }
             } catch (Throwable th) {
                 window.addComponentExcpetion(new HstComponentException(th.getMessage()));
-                log.warn("Component exception caught: " + th.getMessage(), th);
+                if (log.isDebugEnabled()) {
+                    log.warn("Component exception caught: {}", th.getMessage(), th);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Component exception caught: {}", th.getMessage());
+                }
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
@@ -67,10 +75,18 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 component.doBeforeRender(hstRequest, hstResponse);
             } catch (HstComponentException e) {
                 window.addComponentExcpetion(e);
-                log.warn("Component exception caught: " + e.getMessage(), e);
+                if (log.isDebugEnabled()) {
+                    log.warn("Component exception caught: {}", e.getMessage(), e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Component exception caught: {}", e.getMessage());
+                }
             } catch (Throwable th) {
                 window.addComponentExcpetion(new HstComponentException(th.getMessage()));
-                log.warn("Component exception caught: " + th.getMessage(), th);
+                if (log.isDebugEnabled()) {
+                    log.warn("Component exception caught: {}", th.getMessage(), th);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Component exception caught: {}", th.getMessage());
+                }
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
@@ -100,10 +116,18 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 component.doBeforeServeResource(hstRequest, hstResponse);
             } catch (HstComponentException e) {
                 window.addComponentExcpetion(e);
-                log.warn("Component exception caught: " + e.getMessage(), e);
+                if (log.isDebugEnabled()) {
+                    log.warn("Component exception caught: {}", e.getMessage(), e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Component exception caught: {}", e.getMessage());
+                }
             } catch (Throwable th) {
                 window.addComponentExcpetion(new HstComponentException(th.getMessage()));
-                log.warn("Component exception caught: " + th.getMessage(), th);
+                if (log.isDebugEnabled()) {
+                    log.warn("Component exception caught: {}", th.getMessage(), th);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Component exception caught: {}", th.getMessage());
+                }
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
@@ -127,7 +151,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         
         if (dispatchUrl != null) {
             if (log.isDebugEnabled()) {
-                log.debug("Invoking dispatcher of url: " + dispatchUrl);
+                log.debug("Invoking dispatcher of url: {}", dispatchUrl);
             }
             
             if (dispatchUrl.startsWith("/")) {
@@ -147,13 +171,25 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 disp.include(servletRequest, servletResponse);
             } catch (ServletException e) {
                 window.addComponentExcpetion(new HstComponentException(e.getMessage()));
-                log.warn("Component exception caught: " + e.getMessage(), e);
+                if (log.isDebugEnabled()) {
+                    log.warn("Component exception caught: {}", e.getMessage(), e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Component exception caught: {}", e.getMessage());
+                }
             } catch (IOException e) {
                 window.addComponentExcpetion(new HstComponentException(e.getMessage()));
-                log.warn("Component exception caught: " + e.getMessage(), e);
+                if (log.isDebugEnabled()) {
+                    log.warn("Component exception caught: {}", e.getMessage(), e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Component exception caught: {}", e.getMessage());
+                }
             } catch (Throwable th) {
                 window.addComponentExcpetion(new HstComponentException(th.getMessage()));
-                log.warn("Component exception caught: " + th.getMessage(), th);
+                if (log.isDebugEnabled()) {
+                    log.warn("Component exception caught: {}", th.getMessage(), th);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Component exception caught: {}", th.getMessage());
+                }
             }
         }
     }

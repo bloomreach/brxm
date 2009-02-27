@@ -105,11 +105,16 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
                         HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, this, this.hstSiteMap);
                         childSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
                     } catch (ServiceException e) {
-                        log.warn("Skipping root sitemap '{}'", child.getPath(), e);
+                        if (log.isDebugEnabled()) {
+                            log.warn("Skipping root sitemap '{}'", child.getPath(), e);
+                        } else if (log.isWarnEnabled()) {
+                            log.warn("Skipping root sitemap '{}'", child.getPath());
+                        }
                     }
-                }
-                else {
-                    log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(), Configuration.NODETYPE_HST_SITEMAPITEM);
+                } else {
+                    if (log.isWarnEnabled()) {
+                        log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(), Configuration.NODETYPE_HST_SITEMAPITEM);
+                    }
                 }
             } 
         } catch (RepositoryException e) {

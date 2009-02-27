@@ -23,9 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
+import org.hippoecm.hst.core.component.HstResourceResponseImpl;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.component.HstResponseImpl;
-import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class ResourceServingValve extends AbstractValve {
@@ -42,9 +41,7 @@ public class ResourceServingValve extends AbstractValve {
             
             if (window != null) {
                 HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
-                HstResponseState responseState = new HstResponseState((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
-                HstResponse response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window, responseState);
-                ((HstComponentWindowImpl) window).setResponseState(responseState);
+                HstResponse response = new HstResourceResponseImpl((HttpServletResponse) servletResponse, window);
                 
                 HstComponentInvoker invoker = getComponentInvoker();
                 invoker.invokeBeforeServeResource(context.getServletConfig(), request, response);
@@ -52,7 +49,11 @@ public class ResourceServingValve extends AbstractValve {
 
                 if (window.hasComponentExceptions() && log.isWarnEnabled()) {
                     for (HstComponentException hce : window.getComponentExceptions()) {
-                        log.warn("Component exceptions found: " + hce.getMessage(), hce);
+                        if (log.isDebugEnabled()) {
+                            log.warn("Component exceptions found: {}", hce.getMessage(), hce);
+                        } else if (log.isWarnEnabled()) {
+                            log.warn("Component exceptions found: {}", hce.getMessage());
+                        }
                     }
                     window.clearComponentExceptions();
                 }

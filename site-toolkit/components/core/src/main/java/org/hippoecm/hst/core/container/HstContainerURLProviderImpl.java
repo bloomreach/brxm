@@ -100,7 +100,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 url.setActionWindowReferenceNamespace(actionWindowReferenceNamespace);
                 
                 if (log.isDebugEnabled()) {
-                    log.debug("action window chosen for " + url.getPathInfo() + ": " + actionWindowReferenceNamespace);
+                    log.debug("action window chosen for {}: {}", url.getPathInfo(), actionWindowReferenceNamespace);
                 }
             } else if (pathInfo.startsWith(RESOURCE_URL_PATH_PREFIX)) {
                 Path path = new Path(pathInfo);
@@ -112,11 +112,15 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 url.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
                 
                 if (log.isDebugEnabled()) {
-                    log.debug("resource window chosen for " + url.getPathInfo() + ": " + resourceWindowReferenceNamespace + ", " + resourceId);
+                    log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + resourceId);
                 }
             }
         } catch (Exception e) {
-            log.warn("Invalid container URL path: " + pathInfo, e);
+            if (log.isDebugEnabled()) {
+                log.warn("Invalid container URL path: {}", pathInfo, e);
+            } else if (log.isWarnEnabled()) {
+                log.warn("Invalid container URL path: {}", pathInfo);
+            }
         }
         
         Map<String, String []> paramMap = (Map<String, String []>) request.getParameterMap();

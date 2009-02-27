@@ -95,13 +95,21 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                             componentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
                             log.debug("Added component service with key '{}'",componentConfiguration.getId());
                         } catch (ServiceException e) {
-                            log.warn("Skipping component '{}'", child.getPath(), e);
+                            if (log.isDebugEnabled()) {
+                                log.warn("Skipping component '{}'", child.getPath(), e);
+                            } else if (log.isWarnEnabled()) {
+                                log.warn("Skipping component '{}'", child.getPath());
+                            }
                         }
                     } else {
-                        log.debug("Skipping '{}' hst:component + child components because it does not contain the mandatory property '{}'",Configuration.COMPONENT_PROPERTY_REFERECENCENAME, child.getPath());
+                        if (log.isDebugEnabled()) {
+                            log.debug("Skipping '{}' hst:component + child components because it does not contain the mandatory property '{}'",Configuration.COMPONENT_PROPERTY_REFERECENCENAME, child.getPath());
+                        }
                     }
                 } else {
-                    log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(), (Configuration.NODETYPE_HST_COMPONENT + " | " + Configuration.NODETYPE_HST_COMPONENTGROUP));
+                    if (log.isWarnEnabled()) {
+                        log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(), (Configuration.NODETYPE_HST_COMPONENT + " | " + Configuration.NODETYPE_HST_COMPONENTGROUP));
+                    }
                 }
             }
         } catch (RepositoryException e) {

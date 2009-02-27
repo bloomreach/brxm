@@ -44,7 +44,9 @@ public class ActionValve extends AbstractValve
             HstComponentWindow window = findActionWindow(context.getRootComponentWindow(), baseURL.getActionWindowReferenceNamespace());
             
             if (window == null) {
-                log.warn("Cannot find the action window: " + requestContext.getBaseURL().getActionWindowReferenceNamespace());
+                if (log.isWarnEnabled()) {
+                    log.warn("Cannot find the action window: {0}", requestContext.getBaseURL().getActionWindowReferenceNamespace());
+                }
             } else {
                 HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
                 HstResponseState responseState = new HstResponseState((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
@@ -64,7 +66,11 @@ public class ActionValve extends AbstractValve
                 
                 if (window.hasComponentExceptions() && log.isWarnEnabled()) {
                     for (HstComponentException hce : window.getComponentExceptions()) {
-                        log.warn("Component exception found: " + hce.getMessage(), hce);
+                        if (log.isDebugEnabled()) {
+                            log.warn("Component exception found: {}", hce.getMessage(), hce);
+                        } else if (log.isWarnEnabled()) {
+                            log.warn("Component exception found: {}", hce.getMessage());
+                        }
                     }
                     
                     window.clearComponentExceptions();

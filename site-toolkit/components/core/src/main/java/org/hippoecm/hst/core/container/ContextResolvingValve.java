@@ -67,15 +67,17 @@ public class ContextResolvingValve extends AbstractValve
         HstComponentConfiguration rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
         
         if (log.isDebugEnabled()) {
-            log.debug("Matched root component config for " + pathInfo + ": " + rootComponentConfig);
+            log.debug("Matched root component config for {}: {}", pathInfo, rootComponentConfig);
         }
         
         try {
             HstComponentWindow rootComponentWindow = getComponentWindowFactory().create(context.getServletConfig(), requestContext, rootComponentConfig, getComponentFactory());
             context.setRootComponentWindow(rootComponentWindow);
         } catch (Exception e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Failed to create component windows.", e);
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to create component windows: {}", e.getMessage(), e);
+            } else if (log.isWarnEnabled()) {
+                log.warn("Failed to create component windows: {}", e.getMessage());
             }
             
             throw new ContainerException("Failed to create component window for the configuration: " + 

@@ -68,7 +68,9 @@ public class BasicHstPathConvertor implements HstPathConvertor{
         log.debug("Best matching HstSiteMapItem '{}' found for path '{}'. Return ConversionResult", matchingSiteMapItem.getId() ,path);
         
         if(!path.startsWith(matchingSiteMapItem.getRelativeContentPath())) {
-            log.warn("The path must start with the relativeContentPath of he matching HstSiteMapItem. This is not the case for '{}' <--> '{}'. Return null.", path , matchingSiteMapItem.getRelativeContentPath());
+            if (log.isWarnEnabled()) {
+                log.warn("The path must start with the relativeContentPath of he matching HstSiteMapItem. This is not the case for '{}' <--> '{}'. Return null.", path , matchingSiteMapItem.getRelativeContentPath());
+            }
             return null;
         }
         String relativeToSiteMapItem = PathUtils.normalizePath(path.substring(matchingSiteMapItem.getRelativeContentPath().length()));

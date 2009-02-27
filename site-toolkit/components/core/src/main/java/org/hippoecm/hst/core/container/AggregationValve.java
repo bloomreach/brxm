@@ -76,8 +76,10 @@ public class AggregationValve extends AbstractValve {
                     // note that the child component's contents are already flushed into the root component's response state.
                     rootWindow.flushContent();
                 } catch (Exception e) {
-                    if (log.isWarnEnabled()) {
+                    if (log.isDebugEnabled()) {
                         log.warn("Exception during flushing the response state.", e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Exception during flushing the response state.");
                     }
                 }
             }
@@ -170,7 +172,11 @@ public class AggregationValve extends AbstractValve {
             
             if (window.hasComponentExceptions()) {
                 for (HstComponentException hce : window.getComponentExceptions()) {
-                    log.warn("Component exception found: " + hce.getMessage(), hce);
+                    if (log.isDebugEnabled()) {
+                        log.warn("Component exception found: {}", hce.getMessage(), hce);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Component exception found: {}", hce.getMessage());
+                    }
                 }
 
                 window.clearComponentExceptions();

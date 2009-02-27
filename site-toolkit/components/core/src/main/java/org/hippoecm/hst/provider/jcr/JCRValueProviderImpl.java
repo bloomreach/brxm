@@ -369,7 +369,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 
                 Property prop = jcrNode.getProperty(propertyName);
                 if(prop.getType() != propertyType) {
-                    log.warn("Cannot return property '{}' for node '{}' because it is of the wrong type. Return null", propertyName, this.nodePath);
+                    if (log.isWarnEnabled()) log.warn("Cannot return property '{}' for node '{}' because it is of the wrong type. Return null", propertyName, this.nodePath);
                     return;
                 }
                 PropertyDefinition propDef = prop.getDefinition();
@@ -379,7 +379,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 }
                 
                 else {
-                    log.warn("Cannot return property '{}' for node '{}'. Return null", propertyName, this.nodePath);
+                    if (log.isWarnEnabled()) log.warn("Cannot return property '{}' for node '{}'. Return null", propertyName, this.nodePath);
                     return;
                 }
             }
@@ -389,7 +389,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 return;
             }
         } catch (RepositoryException e) {
-            log.warn("RepositoryException: Exception for fetching property '{}' from '{}'", propertyName, this.nodePath);
+            if (log.isWarnEnabled()) log.warn("RepositoryException: Exception for fetching property '{}' from '{}'", propertyName, this.nodePath);
         }
         return;
     }
@@ -488,15 +488,15 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 }    
                 
             default: 
-                log.warn("getPropObject is only support for boolean, long, double, date and strings. Return null");
+                if (log.isWarnEnabled()) log.warn("getPropObject is only support for boolean, long, double, date and strings. Return null");
                 return ;
             }
         } catch (ValueFormatException e) {
-            log.warn("ValueFormatException: Exception for fetching property from '{}'", this.nodePath);
+            if (log.isWarnEnabled()) log.warn("ValueFormatException: Exception for fetching property from '{}'", this.nodePath);
         } catch (IllegalStateException e) {
-            log.warn("IllegalStateException: Exception for fetching property from '{}'", this.nodePath);
+            if (log.isWarnEnabled()) log.warn("IllegalStateException: Exception for fetching property from '{}'", this.nodePath);
         } catch (RepositoryException e) {
-            log.warn("RepositoryException: Exception for fetching property from '{}'", this.nodePath);
+            if (log.isWarnEnabled()) log.warn("RepositoryException: Exception for fetching property from '{}'", this.nodePath);
         }
         return ;
     }

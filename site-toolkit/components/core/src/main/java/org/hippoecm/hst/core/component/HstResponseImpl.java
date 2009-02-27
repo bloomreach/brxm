@@ -118,6 +118,7 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         return responseState.getCharacterEncoding();
     }
 
+    @Override
     public String getContentType()
     {
         return responseState.getContentType();

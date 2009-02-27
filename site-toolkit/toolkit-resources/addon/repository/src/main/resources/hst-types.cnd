@@ -22,6 +22,7 @@
 [hst:component]
 - hst:componentclassname
 - hst:renderpath
+- hst:serveresourcepath
 - hst:referencename mandatory
 - hst:referencecomponent
 - hst:componentcontentbasepath

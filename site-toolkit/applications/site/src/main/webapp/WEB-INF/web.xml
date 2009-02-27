@@ -95,9 +95,19 @@
     <load-on-startup>2</load-on-startup>
   </servlet>
   
+  <servlet>
+    <servlet-name>BinaryServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.servlet.BinaryServlet</servlet-class>
+  </servlet>
+  
   <servlet-mapping>
     <servlet-name>HstContainerServlet</servlet-name>
     <url-pattern>/content/*</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>BinaryServlet</servlet-name>
+    <url-pattern>/binaryservlet</url-pattern>
   </servlet-mapping>
   
   <!-- HST tag library TLDs -->
