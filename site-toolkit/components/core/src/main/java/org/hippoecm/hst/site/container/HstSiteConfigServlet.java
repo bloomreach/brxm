@@ -17,6 +17,8 @@ package org.hippoecm.hst.site.container;
 
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
@@ -27,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,13 +56,15 @@ public class HstSiteConfigServlet extends HttpServlet {
     protected ComponentManager componentManager;
     
     protected boolean initialized;
-    protected boolean repositoryAvailable;
+    protected boolean allRepositoriesAvailable;
 
     // -------------------------------------------------------------------
     // I N I T I A L I Z A T I O N
     // -------------------------------------------------------------------
     private static final String INIT_START_MSG = "HST Site Starting Initialization...";
     private static final String INIT_DONE_MSG = "HST Site Initialization complete, Ready to service requests.";
+    
+    protected Map<String, Boolean> repositoryCheckingStatus = new HashMap<String, Boolean>();
 
     /**
      * Intialize Servlet.
@@ -67,16 +73,31 @@ public class HstSiteConfigServlet extends HttpServlet {
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
         
-        final String defaultRepositoryAddress = config.getInitParameter("properties.default.repository.address");
+        this.allRepositoriesAvailable = false;
+        this.repositoryCheckingStatus.clear();
         
-        if (true) {
+        Enumeration enumParams = config.getInitParameterNames();
+        
+        while (enumParams.hasMoreElements()) {
+            String paramName = (String) enumParams.nextElement();
+            
+            if (paramName.endsWith(".repository.address")) {
+                String repositoryAddress = config.getInitParameter(paramName);
+
+                if (repositoryAddress != null && !"".equals(repositoryAddress.trim())) {
+                    this.repositoryCheckingStatus.put(repositoryAddress.trim(), Boolean.FALSE);
+                }
+            }
+        }
+        
+        if (!this.allRepositoriesAvailable) {
             final Thread repositoryCheckerThread = new Thread("RepositoryChecker") {
                 public void run() {
-                    while (!repositoryAvailable) {
+                    while (!allRepositoriesAvailable) {
                        // check the repository is accessible
-                       repositoryAvailable = true;
+                       allRepositoriesAvailable = checkAllRepositoriesRunning();
 
-                       if (!repositoryAvailable) {
+                       if (!allRepositoriesAvailable) {
                            try {
                                 Thread.sleep(3000);
                            } catch (InterruptedException e) {
@@ -84,7 +105,7 @@ public class HstSiteConfigServlet extends HttpServlet {
                        }
                     }
                     
-                    if (repositoryAvailable) {
+                    if (allRepositoriesAvailable) {
                         doInit(config);
                     }
                 }
@@ -164,6 +185,29 @@ public class HstSiteConfigServlet extends HttpServlet {
         } finally {
             HstServices.setComponentManager(null);
         }
+    }
+    
+    protected boolean checkAllRepositoriesRunning() {
+        boolean allRunning = true;
+        
+        for (Map.Entry<String, Boolean> entry : this.repositoryCheckingStatus.entrySet()) {
+            if (!entry.getValue().booleanValue()) {
+                HippoRepository hippoRepository = null;
+                
+                try {
+                    hippoRepository = HippoRepositoryFactory.getHippoRepository(entry.getKey());
+                    entry.setValue(Boolean.TRUE);
+                } catch (Exception e) {
+                    allRunning = false;
+                } finally {
+                    if (hippoRepository != null) {
+                        hippoRepository.close();
+                    }
+                }
+            }
+        }
+        
+        return allRunning;
     }
 
 }

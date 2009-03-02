@@ -7,26 +7,43 @@
 
 3. Testing
 
-$ mvn clean install
-$ mvn org.apache.portals.jetspeed-2:jetspeed-mvn-maven-plugin:mvn -Dtarget=test
+(1) Start a repository server with test contents.
 
-You can simplify the above command by adding the following in your settings.xml:
+(2) Build and Run Tests
 
-<?xml version="1.0" encoding="UTF-8"?>
-<settings xmlns="http://maven.apache.org/POM/4.0.0">
-  <pluginGroups>
-    <pluginGroup>org.apache.portals.jetspeed-2</pluginGroup>
-  </pluginGroups>
-</settings>
-
-Now, your command can be like this:
-
-mvn jetspeed:mvn -Dtarget=test
+    $ mvn clean install -DskipTests
+    $ mvn test
 
 4. Build
 
-mvn clean install
+mvn clean install -DskipTests
 
 5. Website Generation
 
 mvn -P website site
+
+6. Running an example site
+
+(1) With Embedded Jetty
+
+  - Run the example cms repository first.
+  - After Building, run the following command under /applications/site/ folder.
+
+    $ mvn jetty:run-war
+  
+  - Visit the page: http://localhost:8085/site/content/news
+  
+    
+(2) With Tomcat
+
+  - Copy build.properties-sample to build.properties in the project root folder.
+  - Edit the tomcat directory paths
+  - Run the following to deploy the site.
+  
+    $ mvn -P tomcat clean install -DskipTests
+  
+  - Visit the page: http://localhost:8080/site/content/news
+  - You can visit cms by http://localhost:8080/cms/
+    and console by http://localhost:8080/cms/console.
+
+

@@ -30,9 +30,6 @@ System.out.println("Console out from general_layout.jsp");
 <hc:response-properties var="responseProperties" />
 <c:forEach var="propertyEntry" items="${responseProperties}">
   <c:set var="responseProperty" value="${propertyEntry.value}" />
-  <script language="<x:out select="$responseProperty/@language" />" src="<x:out select="$responseProperty/@src" />">
-    <x:out select="$responseProperty" escapeXml="false"/>
-  </script>
 </c:forEach>
 
 </head>

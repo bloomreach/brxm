@@ -54,6 +54,9 @@
     <hippoecm.version>2.04.00</hippoecm.version>
     <spring.version>2.5.6</spring.version>
     <spring-mock.version>2.0.8</spring-mock.version>
+    <xalan.version>2.4.1</xalan.version>
+    <xerces.version>2.3.0</xerces.version>
+    <xml-apis.version>2.0.2</xml-apis.version>
         
   </properties>
   
@@ -260,6 +263,32 @@
         <groupId>taglibs</groupId>
         <artifactId>standard</artifactId>
         <version>1.1.2</version>
+      </dependency>
+      
+      <!-- XML Parser and XSLT Processor. JSTL XML Tag requires all the followings. -->
+      
+      <dependency>
+        <groupId>xml-apis</groupId>
+        <artifactId>xml-apis</artifactId>
+        <version>${xml-apis.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>xerces</groupId>
+        <artifactId>xercesImpl</artifactId>
+        <version>${xerces.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>xerces</groupId>
+        <artifactId>xerces</artifactId>
+        <version>${xerces.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>xalan</groupId>
+        <artifactId>xalan</artifactId>
+        <version>${xalan.version}</version>
       </dependency>
       
       <!-- JTA Dependency -->
