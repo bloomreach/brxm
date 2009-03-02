@@ -29,9 +29,9 @@
   <packaging>war</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/layout</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/layout</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/layout</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/layout</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/layout</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/layout</url>
   </scm>
 
   <build>

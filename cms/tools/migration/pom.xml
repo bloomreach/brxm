@@ -29,9 +29,9 @@
   <artifactId>hippo-ecm-tools-migration</artifactId>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/migration</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/migration</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/migration</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/migration</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/migration</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/migration</url>
   </scm>
 
   <build>

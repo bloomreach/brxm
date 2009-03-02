@@ -28,9 +28,9 @@
   <artifactId>hippo-ecm-addon-versioning</artifactId>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/versioning</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/versioning</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/versioning</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/versioning</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/versioning</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/versioning</url>
   </scm>
 
   <dependencies>

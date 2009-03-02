@@ -83,7 +83,7 @@ Next subsections describe:
 check out a recent copy of Hippo ECM:
 </p>
 <source>
-  svn checkout 'http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk' hippo-ecm
+  svn checkout 'http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk' hippo-ecm
 </source>
 <p>
 and the wicket 1.3.5 release:

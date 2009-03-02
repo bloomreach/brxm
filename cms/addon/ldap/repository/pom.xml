@@ -49,9 +49,9 @@
   </dependencies>
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/ldap/repository</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/ldap/repository</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/ldap/repository</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/ldap/repository</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/ldap/repository</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/ldap/repository</url>
   </scm>
   
   <build>

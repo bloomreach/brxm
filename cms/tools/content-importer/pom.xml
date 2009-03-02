@@ -29,9 +29,9 @@
   <artifactId>hippo-ecm-tools-content-importer</artifactId>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/content-importer</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/content-importer</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/content-importer</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/content-importer</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/content-importer</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/content-importer</url>
   </scm>
 
   <build>

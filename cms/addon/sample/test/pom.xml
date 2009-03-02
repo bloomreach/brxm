@@ -29,9 +29,9 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/sample/test</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/sample/test</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/sample/test</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/sample/test</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/sample/test</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/sample/test</url>
   </scm>
 
   <dependencies>

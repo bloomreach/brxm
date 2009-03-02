@@ -29,9 +29,9 @@
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/builtin</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/builtin</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/builtin</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/builtin</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/builtin</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/builtin</url>
   </scm>
 
   <modules>

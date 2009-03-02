@@ -29,9 +29,9 @@
   <packaging>war</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/quickstart/war</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/quickstart/war</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/quickstart/war</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/quickstart/war</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/quickstart/war</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/quickstart/war</url>
   </scm>
 
   <dependencies>
