@@ -28,9 +28,9 @@
   <artifactId>hippo-ecm-api</artifactId>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/api</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/api</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/api</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/api</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/api</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/api</url>
   </scm>
 
   <dependencies>

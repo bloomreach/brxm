@@ -29,9 +29,9 @@
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/archetypes</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/archetypes</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/archetypes</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/archetypes</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/archetypes</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/archetypes</url>
   </scm>
 
   <modules>
