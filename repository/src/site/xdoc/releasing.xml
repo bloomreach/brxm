@@ -50,7 +50,7 @@ Then do a full build installing everything and including unit tests
 (this is a must):
 </p>
 <source>
-svn checkout 'http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk' hippo-ecm
+svn checkout 'http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk' hippo-ecm
 cd hippo-ecm
 rm -rf ~/.m2/repository/org/hippoecm
 mvn install
@@ -73,7 +73,7 @@ is used with M0 replaced by a M followed by the milestone number where
 dots are replaced by underscores.  This means that if you want to
 release from a branch, then you should have your sources available at
 the following URL, and checkout those in stead of the trunk:<br/>
-<code>http://svn.hippocms.org/repos/hippo/hippo-ecm/branches/Release-HREPTWO-v2_01_00_M0</code>
+<code>http://svn.onehippo.org/repos/hippo/hippo-ecm/branches/Release-HREPTWO-v2_01_00_M0</code>
 </div><br/><br/>
 
 <p>
@@ -159,7 +159,7 @@ First checkout the tagged version of hippo-ecm:
 </p>
 
 <source>
-svn checkout 'http://svn.hippocms.org/repos/hippo/hippo-ecm/tags/Release-HREPTWO-v2_01_00_M0' hippo-ecm-M0
+svn checkout 'http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Release-HREPTWO-v2_01_00_M0' hippo-ecm-M0
 cd hippo-ecm-M0
 </source>
 
