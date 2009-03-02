@@ -66,16 +66,6 @@
     </dependency>
     
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-    
-    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
     </dependency>
@@ -175,5 +165,60 @@
       </testResource>
     </testResources>
   </build>
+  
+  <profiles>
+    <profile>
+      <id>tomcat</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>1.0-alpha-1</version>
+            <executions>
+              <execution>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>read-project-properties</goal>
+                </goals>
+                <configuration>
+                  <quiet>true</quiet>
+                  <files>
+                    <file>../../build.properties</file>
+                  </files>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.2</version>
+            <executions>
+              <execution>
+                <id>deploy-to-tomcat</id>
+                <phase>install</phase>
+                <configuration>
+                  <tasks>
+                    <echo>Replacing core components jar into the core web application directory.</echo>
+                    <copy todir="${tomcat.hst.components.core.webapp}/WEB-INF/lib">
+                      <fileset dir="${project.build.directory}">
+                        <include name="*.jar" />
+                        <exclude name="*-sources.jar" />
+                      </fileset>
+                    </copy>
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
 
 </project>

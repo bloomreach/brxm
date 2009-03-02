@@ -302,13 +302,13 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>1.4.2</version>
+        <version>1.4.3</version>
       </dependency>
     
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
-        <version>1.4.2</version>
+        <version>1.4.3</version>
       </dependency>
     
       <dependency>
@@ -399,21 +399,21 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-ftp</artifactId>
-        <version>${wagon.ftp.version}</version>
-      </extension>
-    </extensions>
+	<pluginManagement>
+	  <plugins>
+	    <plugin>
+	      <groupId>org.apache.maven.plugins</groupId>
+	      <artifactId>maven-jar-plugin</artifactId>
+	    </plugin>
+	  </plugins>
+	</pluginManagement>
+	<extensions>
+	  <extension>
+	    <groupId>org.apache.maven.wagon</groupId>
+	    <artifactId>wagon-ftp</artifactId>
+	    <version>${wagon.ftp.version}</version>
+	  </extension>
+	</extensions>
     <plugins>
       <plugin>
         <inherited>true</inherited>
@@ -469,7 +469,7 @@
       </plugin>
     </plugins>
   </build>
-
+  
   <reporting>
     <plugins>
       <plugin>
@@ -483,6 +483,7 @@
   </reporting>
 
   <profiles>
+
     <profile>
       <id>all</id>
       <activation>
@@ -498,11 +499,13 @@
         <module>applications</module>
       </modules>
     </profile>
+    
     <profile>
       <id>website</id>
       <!-- For building website documentation, there's no need to include modules. -->
       <modules/>
     </profile>
+    
   </profiles>
 
 </project>

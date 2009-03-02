@@ -62,10 +62,10 @@
               <tasks>
 
                 <echo message="$$$$$$$$$$ Deleting the existing example HST application if it exists. $$$$$$$$$$" />
-                <delete dir="${basedir}/target/${gettingstarted.app.artifactId}" />
+                <delete dir="${project.build.directory}/${gettingstarted.app.artifactId}" />
                                 
                 <echo message="$$$$$$$$$$ Generating an example HST application from the archetype $$$$$$$$$$" />
-                <java classname="org.codehaus.classworlds.Launcher" dir="${basedir}/target" fork="true" failonerror="true">
+                <java classname="org.codehaus.classworlds.Launcher" dir="${project.build.directory}" fork="true" failonerror="true">
                   <permissions>
                     <grant class="java.security.AllPermission"/>
                     <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
@@ -88,7 +88,7 @@
                 </java>
                 
                 <echo message="$$$$$$$$$$ Installing gettingstarted example $$$$$$$$$$" />
-                <java classname="org.codehaus.classworlds.Launcher" dir="${basedir}/target/${gettingstarted.app.artifactId}" fork="true" failonerror="true">
+                <java classname="org.codehaus.classworlds.Launcher" dir="${project.build.directory}/${gettingstarted.app.artifactId}" fork="true" failonerror="true">
                   <permissions>
                     <grant class="java.security.AllPermission"/>
                     <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
@@ -155,5 +155,61 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>tomcat</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>1.0-alpha-1</version>
+            <executions>
+              <execution>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>read-project-properties</goal>
+                </goals>
+                <configuration>
+                  <quiet>true</quiet>
+                  <files>
+                    <file>../../build.properties</file>
+                  </files>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.2</version>
+            <executions>
+              <execution>
+                <id>deploy-to-tomcat</id>
+                <phase>install</phase>
+                <configuration>
+                  <tasks>
+                    <echo>Replacing gettingstarted cms web application into tomcat.</echo>
+                    <delete file="${tomcat.hst.cms.webapp}.war" />
+                    <delete dir="${tomcat.hst.cms.webapp}" />
+                    <copy
+                      file="${project.build.directory}/${gettingstarted.app.artifactId}/cms/target/${gettingstarted.app.artifactId}-cms-${gettingstarted.app.version}.war" 
+                      tofile="${tomcat.hst.cms.webapp}.war" />
+                    <mkdir dir="${tomcat.hst.cms.webapp}" />
+                    <unwar src="${tomcat.hst.cms.webapp}.war" dest="${tomcat.hst.cms.webapp}"/>
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
 
 </project>

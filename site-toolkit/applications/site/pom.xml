@@ -44,16 +44,28 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>taglibs</groupId>
+      <artifactId>standard</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -92,7 +104,7 @@
   </dependencies>
 
   <build>
-    <defaultGoal>jetty:run</defaultGoal>
+    <defaultGoal>package</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
@@ -148,5 +160,64 @@
       </plugin>      
     </plugins>
   </build>
+  
+  <profiles>
+
+    <profile>
+      <id>tomcat</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>1.0-alpha-1</version>
+            <executions>
+              <execution>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>read-project-properties</goal>
+                </goals>
+                <configuration>
+                  <quiet>true</quiet>
+                  <files>
+                    <file>../../build.properties</file>
+                  </files>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.2</version>
+            <executions>
+              <execution>
+                <id>deploy-to-tomcat</id>
+                <phase>install</phase>
+                <configuration>
+                  <tasks>
+                    <echo>Replacing site web application into tomcat.</echo>
+                    <delete file="${tomcat.server.home}/webapps/${project.artifactId}.war" />
+                    <delete dir="${tomcat.server.home}/webapps/${project.artifactId}" />
+                    <copy
+                      file="${project.build.directory}/${project.artifactId}-${project.version}.war"
+                      tofile="${tomcat.server.home}/webapps/${project.artifactId}.war" />
+                    <mkdir dir="${tomcat.server.home}/webapps/${project.artifactId}" />
+                    <unwar src="${tomcat.server.home}/webapps/${project.artifactId}.war" 
+                           dest="${tomcat.server.home}/webapps/${project.artifactId}"/>
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    
+  </profiles>
+
 
 </project>

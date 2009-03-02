@@ -35,16 +35,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class BinariesServlet extends HttpServlet {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    public static final Logger log = LoggerFactory.getLogger(BinariesServlet.class);
 
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -67,12 +63,12 @@ public class BinariesServlet extends HttpServlet {
             Item item = session.getItem(path);
 
             if (item == null) {
-                log.warn("item at path " + path + " not found, response status = 404)");
+                log("item at path " + path + " not found, response status = 404)");
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
             if (!item.isNode()) {
-                log.warn("item at path " + path + " is not a node, response status = 415)");
+                log("item at path " + path + " is not a node, response status = 415)");
                 res.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
                 return;
             }
@@ -85,16 +81,16 @@ public class BinariesServlet extends HttpServlet {
                     if (resource.isNode() && ((Node) resource).isNodeType(HippoNodeType.NT_RESOURCE)) {
                         node = (Node) resource;
                     } else {
-                        log.warn("expected a hippo:resoource node as primary item.");
+                        log("expected a hippo:resoource node as primary item.");
                     }
                 } catch (ItemNotFoundException e) {
-                    log.warn("No primary item found for binary");
+                    log("No primary item found for binary");
                 }
 
             }
 
             if (!node.hasProperty("jcr:mimeType")) {
-                log.warn("item at path " + path + " has no property jcr:mimeType, response status = 415)");
+                log("item at path " + path + " has no property jcr:mimeType, response status = 415)");
                 res.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
                 return;
             }
@@ -102,7 +98,7 @@ public class BinariesServlet extends HttpServlet {
             String mimeType = node.getProperty("jcr:mimeType").getString();
 
             if (!node.hasProperty("jcr:data")) {
-                log.warn("item at path " + path + " has no property jcr:data, response status = 404)");
+                log("item at path " + path + " has no property jcr:data, response status = 404)");
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
@@ -120,7 +116,7 @@ public class BinariesServlet extends HttpServlet {
                 try {
                     lastModified = node.getProperty("jcr:lastModified").getDate().getTimeInMillis();
                 } catch (ValueFormatException e) {
-                    log.warn("jcr:lastModified not of type Date");
+                    log("jcr:lastModified not of type Date");
                 }
                 
                 long expires = 0;
@@ -143,12 +139,11 @@ public class BinariesServlet extends HttpServlet {
                 ostream.write(buffer, 0, len);
             }
         } catch (PathNotFoundException ex) {
-            log.debug("PathNotFoundException with message " + ex.getMessage() + " while getting binary data stream item "
+            log("PathNotFoundException with message " + ex.getMessage() + " while getting binary data stream item "
                     + "at path " + path + ", response status = 404)");
             res.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } catch (RepositoryException ex) {
-            log.warn("Repository exception while resolving binaries request '" + req.getRequestURI() + "' : " + ex.getMessage());
-            log.debug("RepositoryException : ", ex );
+            log("Repository exception while resolving binaries request '" + req.getRequestURI() + "' : " + ex.getMessage());
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }

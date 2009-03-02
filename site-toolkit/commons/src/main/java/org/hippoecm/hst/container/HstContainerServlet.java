@@ -25,8 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.site.HstServices;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * HST Container Servlet
@@ -43,8 +41,6 @@ public class HstContainerServlet extends HttpServlet {
 
     public static final String CONSOLE_LOGGER = "console";
 
-    private final static Logger log = LoggerFactory.getLogger(HstContainerServlet.class);
-    
     protected String contextNamespace;
     
     public void init(ServletConfig config) throws ServletException {
@@ -71,7 +67,7 @@ public class HstContainerServlet extends HttpServlet {
         try {
             if (!HstServices.isAvailable()) {
                 String msg = "The HST Container Services are not initialized yet.";
-                log.warn(msg);
+                log(msg);
                 res.getWriter().println(msg);
                 res.flushBuffer();
                 
@@ -85,7 +81,7 @@ public class HstContainerServlet extends HttpServlet {
             HstServices.getRequestProcessor().processRequest(getServletConfig(), req, res);
         } catch (Exception e) {
             final String msg = "Fatal error encountered while processing request: " + e.toString();
-            log.error(msg, e);
+            log(msg, e);
             throw new ServletException(msg, e);
         }
     
