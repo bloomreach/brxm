@@ -107,12 +107,16 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
        } else if(hstSiteMapItem.getChild(WILDCARD) != null && !checkedSiteMapItems.contains(hstSiteMapItem.getChild(WILDCARD))) {
            params.put(String.valueOf(params.size()+1), elements[position]);
            return traverseInToSiteMapItem(hstSiteMapItem.getChild(WILDCARD), params, ++position, elements, checkedSiteMapItems);
-       } else {
+       } else if(hstSiteMapItem.getChild(ANY) != null ) {
+           return getANYMatchingSiteMap(hstSiteMapItem, params,position, elements);
+       }  
+       else {
            // We did not find a match for traversing this sitemap item tree. Traverse up, and try another tree
            return traverseUp(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
        }
        
     }
+
 
     private HstSiteMapItem traverseUp(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements, List<HstSiteMapItem> checkedSiteMapItems) {
        if(hstSiteMapItem == null) {
@@ -122,14 +126,29 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
            // as this tree path did not result in a match, remove some params again
            if(hstSiteMapItem.getChild(WILDCARD) != null && !checkedSiteMapItems.contains(hstSiteMapItem.getChild(WILDCARD))){
                return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
+           } else if(hstSiteMapItem.getChild(ANY) != null) {
+               return traverseInToSiteMapItem(hstSiteMapItem, params,position, elements, checkedSiteMapItems);
            }
            params.remove(String.valueOf(params.size()));
            return traverseUp(hstSiteMapItem.getParentItem(),params, --position, elements, checkedSiteMapItems );
        } else if(hstSiteMapItem.getChild(WILDCARD) != null && !checkedSiteMapItems.contains(hstSiteMapItem.getChild(WILDCARD))){
            return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
+       } else if(hstSiteMapItem.getChild(ANY) != null ){
+           return traverseInToSiteMapItem(hstSiteMapItem, params,position, elements, checkedSiteMapItems);
        } else {    
            return traverseUp(hstSiteMapItem.getParentItem(),params, --position, elements, checkedSiteMapItems );
        }
        
+    }
+    
+    
+    private HstSiteMapItem getANYMatchingSiteMap(HstSiteMapItem hstSiteMapItem, Properties params, int position,
+            String[] elements) {
+            StringBuffer remainder = new StringBuffer(elements[position]);
+            while(++position < elements.length) {
+                remainder.append("/").append(elements[position]);
+            }
+            params.put(String.valueOf(params.size()+1), remainder.toString());
+            return hstSiteMapItem.getChild(ANY);
     }
 }

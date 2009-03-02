@@ -19,6 +19,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.hippoecm.hst.configuration.ConfigurationViewUtilities;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -27,6 +28,7 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.BasicHstSiteMapMatcher;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.jpox.util.ViewUtils;
 import org.junit.Test;
 
 public class TestConfiguration extends AbstractSpringTestCase {
@@ -53,10 +55,9 @@ public class TestConfiguration extends AbstractSpringTestCase {
      *      |- january  
      *      `- *
      *         |- *
-     *         `- *.html
+     *         `- **
      */
     
-    @Test
     public void testUrl1(){
         
         ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2007", hstSite);
@@ -66,7 +67,6 @@ public class TestConfiguration extends AbstractSpringTestCase {
         
     }
     
-    @Test
     public void testUrl2(){
         
         ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2007/january", hstSite);
@@ -76,7 +76,6 @@ public class TestConfiguration extends AbstractSpringTestCase {
         
     }
     
-    @Test
     public void testUrl3(){
         
         ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2007/january/myArticle", hstSite);
@@ -85,14 +84,29 @@ public class TestConfiguration extends AbstractSpringTestCase {
         assertTrue("Param2 must resolve to  'myArticle'", "myArticle".equals(res.getResolvedProperty("param2")));
     }
     
-    @Test
     public void testUrl4(){
         
         ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2007/february/myArticle", hstSite);
         assertTrue("Relative content path for 'news/2007/february/myArticle' must be to be 'News/2007/february/myArticle'", "News/2007/february/myArticle".equals(res.getRelativeContentPath()));
         assertTrue("Param1 must resolve to  '2007'", "2007".equals(res.getResolvedProperty("param1")));
         assertTrue("Param2 must resolve to  'february'", "february".equals(res.getResolvedProperty("param2")));
-        assertTrue("Param2 must resolve to  'myArticle'", "myArticle".equals(res.getResolvedProperty("param3")));
+        assertTrue("Param3 must resolve to  'myArticle'", "myArticle".equals(res.getResolvedProperty("param3")));
+    }
+    
+    @Test
+    public void testUrl5_matchANY(){
+        
+        StringBuffer buffer = new StringBuffer();
+        
+        ConfigurationViewUtilities.view(buffer, hstSite.getSiteMap());
+        System.out.println(buffer.toString());
+        
+        ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2007/february/day2/8oclock/16min/4sec/MyArticle", hstSite);
+        System.out.println(res.getRelativeContentPath());
+        assertTrue("Relative content path for 'news/2007/february/day2/8oclock/16min/4sec/MyArticle' must be to be 'News/2007/february/day2/8oclock/16min/4sec/MyArticle'", "News/2007/february/day2/8oclock/16min/4sec/MyArticle".equals(res.getRelativeContentPath()));
+        assertTrue("Param1 must resolve to  '2007'", "2007".equals(res.getResolvedProperty("param1")));
+        assertTrue("Param2 must resolve to  'february'", "february".equals(res.getResolvedProperty("param2")));
+        assertTrue("Param3 must resolve to  'day2/8oclock/16min/4sec/MyArticle'", "day2/8oclock/16min/4sec/MyArticle".equals(res.getResolvedProperty("param3")));
     }
     
    
