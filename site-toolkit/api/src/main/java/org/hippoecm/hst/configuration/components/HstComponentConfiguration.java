@@ -29,8 +29,6 @@ public interface HstComponentConfiguration {
 
     String getComponentClassName();
 
-    String getComponentContentBasePath();
-    
     String getRenderPath();
     
     String getServeResourcePath();

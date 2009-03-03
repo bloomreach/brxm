@@ -18,7 +18,7 @@ package org.hippoecm.hst.core.request;
 import java.util.Properties;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 
 public interface ResolvedSiteMapItem {
@@ -34,7 +34,7 @@ public interface ResolvedSiteMapItem {
     
     Properties getResolvedProperties();
     
-    HstSiteMap getHstSiteMap();
+    HstSiteMapItem getHstSiteMapItem();
     
     HstComponentConfiguration getHstComponentConfiguration();
 }

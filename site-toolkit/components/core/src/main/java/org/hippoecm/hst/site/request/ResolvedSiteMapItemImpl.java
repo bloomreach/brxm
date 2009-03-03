@@ -25,15 +25,14 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
     
-    private HstSiteMap hstSiteMap;
+    private HstSiteMapItem hstSiteMapItem;
     private Properties resolvedProperties;
     private HstComponentConfiguration hstComponentConfiguration;
     
     public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params) {
-       this.hstSiteMap = hstSiteMapItem.getHstSiteMap();
-       this.hstComponentConfiguration = hstSiteMap.getSite().getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
-       
-      
+       this.hstSiteMapItem = hstSiteMapItem;
+       this.hstComponentConfiguration = hstSiteMapItem.getHstSiteMap().getSite().getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
+
        /*
         * We take the properties form the hstSiteMapItem getProperties and replace params (like ${1}) with the params[] array 
         */
@@ -50,8 +49,8 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
     }
     
     
-    public HstSiteMap getHstSiteMap() {
-        return this.hstSiteMap;
+    public HstSiteMapItem getHstSiteMapItem() {
+        return this.hstSiteMapItem;
     }
     
     public HstComponentConfiguration getHstComponentConfiguration() {

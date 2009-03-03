@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 
 public class HstComponentConfigurationService extends AbstractJCRService implements HstComponentConfiguration, Service{
     
+    private static final long serialVersionUID = 1L;
+
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentConfiguration.class);
     
     private SortedMap<String, HstComponentConfiguration> componentConfigurations = new TreeMap<String, HstComponentConfiguration>();
@@ -40,8 +42,6 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     
     private String name;
 
-    private String componentContentBasePath;
-    
     private String componentClassName;
     
     private String renderPath;
@@ -50,8 +50,6 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     
     private String referenceName;
     
-    private String referencedComponent;
-
     private PropertyMap propertyMap;
     
     private String componentsRootNodePath;
@@ -68,11 +66,9 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         if (getValueProvider().isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
             this.name = getValueProvider().getName();
             this.referenceName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCENAME);
-            this.componentContentBasePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_CONTENTBASEPATH);
             this.componentClassName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
             this.renderPath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_RENDER_PATH);
             this.serveResourcePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH);
-            this.referencedComponent = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
             this.propertyMap = getValueProvider().getPropertyMap();
         } 
         
@@ -138,10 +134,6 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         return propertyMap.getAllMapsCombined();
     }
     
-    public String getComponentContentBasePath() {
-        return this.componentContentBasePath;
-    }
-
     public String getId() {
         return this.id;
     }
