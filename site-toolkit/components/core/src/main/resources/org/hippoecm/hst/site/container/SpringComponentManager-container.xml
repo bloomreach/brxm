@@ -35,9 +35,14 @@
         class="org.hippoecm.hst.core.container.HstComponentInvokerImpl">
   </bean>
   
+  <bean id="org.hippoecm.hst.core.container.HstNavigationalStateCodec"
+        class="org.hippoecm.hst.core.container.HstNavigationalStateCodecImpl" />
+  
   <bean id="org.hippoecm.hst.core.container.HstContainerURLProvider"
         class="org.hippoecm.hst.core.container.HstContainerURLProviderImpl">
+    <property name="urlNamespacePrefix" value="_hn:" />
     <property name="parameterNameComponentSeparator" value=":" />
+    <property name="navigationalStateCodec" ref="org.hippoecm.hst.core.container.HstNavigationalStateCodec" />
   </bean>
 
   <bean id="org.hippoecm.hst.core.component.HstURLFactory"

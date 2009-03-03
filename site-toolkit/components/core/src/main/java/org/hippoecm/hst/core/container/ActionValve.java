@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -84,7 +85,11 @@ public class ActionValve extends AbstractValve
             baseURL.setActionWindowReferenceNamespace(null);
             
             if (redirectLocation == null) {
-                redirectLocation = getUrlFactory().getUrlProvider().toURLString(baseURL);
+                try {
+                    redirectLocation = getUrlFactory().getUrlProvider().toURLString(baseURL);
+                } catch (UnsupportedEncodingException e) {
+                    throw new ContainerException(e);
+                }
             }
             
             try {

@@ -21,7 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +44,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
     }
     
     @Test
-    public void testActionContainerURL() {
+    public void testActionContainerURL() throws UnsupportedEncodingException {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName() + ".action");
         
         ((MockHttpServletRequest) request).addParameter("param1", "value1");
@@ -80,7 +80,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
     }
     
     @Test
-    public void testResourceContainerURL() {
+    public void testResourceContainerURL() throws UnsupportedEncodingException {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName() + ".resource");
         
         ((MockHttpServletRequest) request).addParameter("param1", "value1");

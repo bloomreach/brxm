@@ -49,14 +49,35 @@
     
     <wagon.ftp.version>1.0-alpha-6</wagon.ftp.version>
     
+    <servlet-api.version>2.4</servlet-api.version>
+    <jsp-api.version>2.0</jsp-api.version>
+    <jstl.version>1.1.2</jstl.version>
+    <taglibs.version>1.1.2</taglibs.version>
     <portlet-api.version>2.0</portlet-api.version>
     <javax.jcr.version>1.0</javax.jcr.version>
-    <hippoecm.version>2.04.00</hippoecm.version>
-    <spring.version>2.5.6</spring.version>
-    <xalan.version>2.4.1</xalan.version>
-    <xerces.version>2.3.0</xerces.version>
+    <jta.version>1.1</jta.version>
+    
+    <slf4j.version>1.4.3</slf4j.version>
+    <log4j.version>1.2.13</log4j.version>
+    
+    <junit.version>4.5</junit.version>
+
     <xml-apis.version>2.0.2</xml-apis.version>
+    <xerces.version>2.3.0</xerces.version>
+    <xalan.version>2.4.1</xalan.version>
+    
+    <commons-lang.version>2.4</commons-lang.version>
+    <commons-collections.version>3.2.1</commons-collections.version>
+    <commons-codec.version>1.3</commons-codec.version>
+    <commons-pool.version>1.4</commons-pool.version>
+    <commons-beanutils.version>1.8.0</commons-beanutils.version>
+    
+    <spring.version>2.5.6</spring.version>
         
+    <jackrabbit.version>1.5.0</jackrabbit.version>
+    
+    <hippoecm.version>2.04.00</hippoecm.version>
+    
   </properties>
   
   <!-- 
@@ -232,7 +253,7 @@
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
-        <version>2.4</version>
+        <version>${servlet-api.version}</version>
         <scope>provided</scope>
       </dependency>
       
@@ -241,7 +262,7 @@
       <dependency>
         <groupId>javax.servlet.jsp</groupId>
         <artifactId>jsp-api</artifactId>
-        <version>2.0</version>
+        <version>${jsp-api.version}</version>
         <scope>provided</scope>
       </dependency>
       
@@ -255,13 +276,13 @@
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>jstl</artifactId>
-        <version>1.1.2</version>
+        <version>${jstl.version}</version>
       </dependency>
 
       <dependency>
         <groupId>taglibs</groupId>
         <artifactId>standard</artifactId>
-        <version>1.1.2</version>
+        <version>${taglibs.version}</version>
       </dependency>
       
       <!-- XML Parser and XSLT Processor. JSTL XML Tag requires all the followings. -->
@@ -295,8 +316,8 @@
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jta_1.1_spec</artifactId>
+        <version>${jta.version}</version>
         <scope>provided</scope>
-        <version>1.1</version>
       </dependency>
       
       <!-- Apache Commons -->
@@ -304,25 +325,31 @@
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
-        <version>2.4</version>
+        <version>${commons-lang.version}</version>
       </dependency>
       
       <dependency>
         <groupId>commons-collections</groupId>
         <artifactId>commons-collections</artifactId>
-        <version>3.2.1</version>
+        <version>${commons-collections.version}</version>
       </dependency>
     
       <dependency>
         <groupId>commons-pool</groupId>
         <artifactId>commons-pool</artifactId>
-        <version>1.4</version>
+        <version>${commons-pool.version}</version>
       </dependency>
       
       <dependency>
         <groupId>commons-beanutils</groupId>
         <artifactId>commons-beanutils</artifactId>
-        <version>1.8.0</version>
+        <version>${commons-beanutils.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>${commons-codec.version}</version>
       </dependency>
       
       <!-- Logging -->
@@ -330,19 +357,19 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>1.4.3</version>
+        <version>${slf4j.version}</version>
       </dependency>
     
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
-        <version>1.4.3</version>
+        <version>${slf4j.version}</version>
       </dependency>
     
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
-        <version>1.2.13</version>
+        <version>${log4j.version}</version>
       </dependency>
       
       <!-- Spring Framework -->
@@ -402,7 +429,7 @@
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-ocm</artifactId>
-        <version>1.5.0</version>
+        <version>${jackrabbit.version}</version>
       </dependency>
           
       <!-- Test dependencies -->
@@ -410,7 +437,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>[4.0,]</version>
+        <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
     

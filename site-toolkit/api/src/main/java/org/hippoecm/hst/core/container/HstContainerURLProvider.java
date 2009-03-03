@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import javax.servlet.ServletRequest;
@@ -34,6 +35,6 @@ public interface HstContainerURLProvider {
     
     void mergeParameters(HstContainerURL containerURL, String referenceNamespace, Map<String, String []> parameters);
     
-    String toURLString(HstContainerURL containerURL);
+    String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException;
     
 }

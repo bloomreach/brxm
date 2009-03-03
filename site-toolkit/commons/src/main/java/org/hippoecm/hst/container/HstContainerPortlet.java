@@ -28,37 +28,43 @@ import javax.portlet.PortletRequestDispatcher;
 import javax.portlet.PortletResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
+import javax.portlet.ResourceServingPortlet;
 
-public class HstContainerPortlet implements Portlet {
+public class HstContainerPortlet implements Portlet, ResourceServingPortlet {
     
     protected PortletContext portletContext;
-    protected String hstContainerPath = "/hstcontainer";
+    protected String containerServletPath = "/content";
 
     public void init(PortletConfig config) throws PortletException {
         
         this.portletContext = config.getPortletContext();
         
-        String param = config.getInitParameter("hstContainerPath");
+        String param = config.getInitParameter("containerServletPath");
         
         if (param != null) {
-            this.hstContainerPath = param;
+            this.containerServletPath = param;
         }
-        
     }
 
     public void destroy() {
     }
 
     public void processAction(ActionRequest request, ActionResponse response) throws PortletException, IOException {
-        doDispatch(request, response);
+        processRequest(request, response);
     }
 
     public void render(RenderRequest request, RenderResponse response) throws PortletException, IOException {
-        doDispatch(request, response);
+        processRequest(request, response);
     }
     
-    protected void doDispatch(PortletRequest request, PortletResponse response) throws PortletException, IOException {
-        PortletRequestDispatcher dispatcher = this.portletContext.getRequestDispatcher(this.hstContainerPath);
+    public void serveResource(ResourceRequest request, ResourceResponse response) throws PortletException, IOException {
+        processRequest(request, response);
+    }
+    
+    protected void processRequest(PortletRequest request, PortletResponse response) throws PortletException, IOException {
+        PortletRequestDispatcher dispatcher = this.portletContext.getRequestDispatcher(this.containerServletPath);
         dispatcher.include(request, response);
     }
 

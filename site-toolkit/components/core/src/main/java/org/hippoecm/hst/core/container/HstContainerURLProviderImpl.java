@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Map;
@@ -24,6 +25,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.util.Path;
 import org.slf4j.Logger;
@@ -32,11 +35,13 @@ import org.slf4j.LoggerFactory;
 /**
  * The default implementation providing HstContainerURL.
  * This implementation assume the urls are like the following examples:
- * <pre><code>
- * 1) render url   : http://localhost/site/content/news/2008/08
- * 2) action url   : http://localhost/site/content/_hstact_:<action ref>/<param count>/<action param name>/<action param value>/news/2008/08
- * 3) resource url : http://localhsot/site/content/_hstres_:<resource ref>:<resource ID>/news/2008/08
- * </code></pre> 
+ * <code><xmp>
+ * 1) render url will not be encoded : http://localhost/site/content/news/2008/08
+ * 2) action url will be encoded     : http://localhost/site/content/_hn:<encoded_params1>/<encoded_param_name>/<encoded_param_value>/news/2008/08
+ *          the <encoded_params1>     : <request_type>|<action reference namespace>|<param count>
+ * 3) resource url will be encoded   : http://localhsot/site/content/_hn:<encoded_params1>/news/2008/08
+ *          the <encoded_params1>     : <request_type>|<resource reference namespace>|<resource ID>
+ * </xmp></code> 
  * 
  * @version $Id$
  */
@@ -44,13 +49,23 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     
     private final static Logger log = LoggerFactory.getLogger(HstContainerURLProvider.class);
     
-    
-    private static final String ACTION_URL_PATH_PREFIX = "/_hstact_:";
-    private static final String RESOURCE_URL_PATH_PREFIX = "/_hstres_:";
-    
+    private static final String REQUEST_INFO_SEPARATOR = "|";
+
+    private static final String DEFAULT_HST_URL_NAMESPACE_PREFIX = "_hn:";
+
+    protected String urlNamespacePrefix = DEFAULT_HST_URL_NAMESPACE_PREFIX;
+    private String urlNamespacePrefixedPath = "/" + urlNamespacePrefix;
     protected String parameterNameComponentSeparator = ":";
     
-    public HstContainerURLProviderImpl() {
+    protected HstNavigationalStateCodec navigationalStateCodec;
+    
+    public void setUrlNamespacePrefix(String urlNamespacePrefix) {
+        this.urlNamespacePrefix = urlNamespacePrefix;
+        this.urlNamespacePrefixedPath = "/" + urlNamespacePrefix;
+    }
+    
+    public String getUrlNamespacePrefix() {
+        return this.urlNamespacePrefix;
     }
     
     public void setParameterNameComponentSeparator(String parameterNameComponentSeparator) {
@@ -59,6 +74,14 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     
     public String getParameterNameComponentSeparator() {
         return this.parameterNameComponentSeparator;
+    }
+    
+    public void setNavigationalStateCodec(HstNavigationalStateCodec navigationalStateCodec) {
+        this.navigationalStateCodec = navigationalStateCodec;
+    }
+    
+    public HstNavigationalStateCodec getNavigationalStateCodec() {
+        return this.navigationalStateCodec;
     }
 
     public HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse) {
@@ -81,38 +104,45 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         url.setPathInfo(pathInfo);
         
         try {
-            if (pathInfo.startsWith(ACTION_URL_PATH_PREFIX)) {
+            if (pathInfo.startsWith(this.urlNamespacePrefixedPath)) {
                 Path path = new Path(pathInfo);
-                String [] actionInfo = path.getSegment(0).split(":");
-                String actionWindowReferenceNamespace = (actionInfo.length > 1 ? actionInfo[1] : null);
+                String urlInfo = path.getSegment(0);
+                String encodedInfo = urlInfo.substring(urlInfo.indexOf(':'));
+                String decodedInfo = this.navigationalStateCodec.decodeParameters(encodedInfo, characterEncoding);
+                String [] infos = StringUtils.split(decodedInfo, '|');
                 
-                int paramCount = Integer.parseInt(path.getSegment(1));
-                int pathPartIndex = 2;
+                String requestType = infos[0];
                 
-                for (int i = 0; i < paramCount; i++) {
-                    String paramName = path.getSegment(pathPartIndex);
-                    String paramValue = urlDecode(path.getSegment(pathPartIndex + 1), characterEncoding);
-                    url.setActionParameter(paramName, paramValue);
-                    pathPartIndex += 2;
-                }
-                
-                url.setPathInfo(path.getSubPath(pathPartIndex).toString());
-                url.setActionWindowReferenceNamespace(actionWindowReferenceNamespace);
-                
-                if (log.isDebugEnabled()) {
-                    log.debug("action window chosen for {}: {}", url.getPathInfo(), actionWindowReferenceNamespace);
-                }
-            } else if (pathInfo.startsWith(RESOURCE_URL_PATH_PREFIX)) {
-                Path path = new Path(pathInfo);
-                String [] resourceInfo = path.getSegment(0).split(":");
-                String resourceWindowReferenceNamespace = (resourceInfo.length > 1 ? resourceInfo[1] : null);
-                String resourceId = (resourceInfo.length > 2 ? urlDecode(resourceInfo[2], characterEncoding) : null);
-                url.setResourceId(resourceId);
-                url.setPathInfo(path.getSubPath(1).toString());
-                url.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
-                
-                if (log.isDebugEnabled()) {
-                    log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + resourceId);
+                if (HstRequest.ACTION_TYPE.equals(requestType)) {
+                    String actionWindowReferenceNamespace = infos[1];
+                    int paramCount = Integer.parseInt(infos[2]);
+                    
+                    int pathPartIndex = 1;
+                    
+                    for (int i = 0; i < paramCount; i++) {
+                        String paramName = this.navigationalStateCodec.decodeParameters(path.getSegment(pathPartIndex), characterEncoding);
+                        String paramValue = this.navigationalStateCodec.decodeParameters(path.getSegment(pathPartIndex + 1), characterEncoding);
+                        url.setActionParameter(paramName, paramValue);
+                        pathPartIndex += 2;
+                    }
+                    
+                    url.setPathInfo(path.getSubPath(pathPartIndex).toString());
+                    url.setActionWindowReferenceNamespace(actionWindowReferenceNamespace);
+                    
+                    if (log.isDebugEnabled()) {
+                        log.debug("action window chosen for {}: {}", url.getPathInfo(), actionWindowReferenceNamespace);
+                    }
+                } else if (HstRequest.RESOURCE_TYPE.equals(requestType)) {
+                    String resourceWindowReferenceNamespace = infos[1];
+                    String resourceId = infos[2];
+                    
+                    url.setResourceId(resourceId);
+                    url.setPathInfo(path.getSubPath(1).toString());
+                    url.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
+                    
+                    if (log.isDebugEnabled()) {
+                        log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + resourceId);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -149,30 +179,38 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         return containerURL;
     }
     
-    public String toURLString(HstContainerURL containerURL) {
+    public String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException {
         String characterEncoding = containerURL.getCharacterEncoding();
         StringBuilder url = new StringBuilder(containerURL.getContextPath());
         url.append(containerURL.getServletPath());
         
         if (containerURL.getActionWindowReferenceNamespace() != null) {
-            url.append(ACTION_URL_PATH_PREFIX).append(containerURL.getActionWindowReferenceNamespace());
+            url.append(this.urlNamespacePrefixedPath);
             
             Map<String, String []> actionParams = containerURL.getActionParameterMap();
-            url.append("/").append(actionParams == null ? 0 : actionParams.size());
+            String requestInfo = 
+                HstRequest.ACTION_TYPE + REQUEST_INFO_SEPARATOR + 
+                containerURL.getActionWindowReferenceNamespace() + REQUEST_INFO_SEPARATOR + 
+                (actionParams == null ? 0 : actionParams.size());
+            url.append(this.navigationalStateCodec.encodeParameters(requestInfo, characterEncoding));
             
             if (actionParams != null) {
                 for (Map.Entry<String, String []> entry : actionParams.entrySet()) {
                     for (String value : entry.getValue()) {
-                        url.append("/").append(entry.getKey());
-                        url.append("/").append(urlEncode(urlEncode(value, characterEncoding), characterEncoding));
+                        url.append("/").append(this.navigationalStateCodec.encodeParameters(entry.getKey(), characterEncoding));
+                        url.append("/").append(this.navigationalStateCodec.encodeParameters(value, characterEncoding));
                     }
                 }
             }
         } else if (containerURL.getResourceWindowReferenceNamespace() != null) {
-            url.append(RESOURCE_URL_PATH_PREFIX)
-            .append(containerURL.getResourceWindowReferenceNamespace())
-            .append(":")
-            .append(containerURL.getResourceId() == null ? "" : urlEncode(urlEncode(containerURL.getResourceId(), characterEncoding), characterEncoding));
+            url.append(this.urlNamespacePrefixedPath);
+            
+            String requestInfo = 
+                HstRequest.RESOURCE_TYPE + REQUEST_INFO_SEPARATOR + 
+                containerURL.getResourceWindowReferenceNamespace() + REQUEST_INFO_SEPARATOR + 
+                (containerURL.getResourceId() != null ? containerURL.getResourceId() : "");
+            
+            url.append(this.navigationalStateCodec.encodeParameters(requestInfo, characterEncoding));
         }
         
         url.append(containerURL.getPathInfo());
@@ -233,4 +271,5 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         
         return decodedValue;
     }
+
 }
