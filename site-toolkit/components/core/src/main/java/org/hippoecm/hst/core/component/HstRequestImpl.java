@@ -15,14 +15,19 @@
  */
 package org.hippoecm.hst.core.component;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import org.apache.commons.collections.EnumerationUtils;
+import org.apache.commons.collections.collection.CompositeCollection;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -175,29 +180,54 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     }
 
     @Override
+    public Enumeration getAttributeNames() {
+        List servletRequestAttrs = EnumerationUtils.toList(super.getAttributeNames());
+        Set localRequestAttrs = this.getAttributeMap().keySet();
+        Collection composite = new CompositeCollection(new Collection [] { servletRequestAttrs, localRequestAttrs });
+        return Collections.enumeration(composite);
+    }
+    
+    @Override
     public Object getAttribute(String name) {
-        if (name.startsWith("javax.servlet.")) {
-            return super.getAttribute(name);
+        Object value = null;
+        
+        if (name.startsWith("javax.")) {
+            value = super.getAttribute(name);
         } else {
-            return getAttributeMap().get(name);
+            value = getAttributeMap().get(name);
+            
+            if (value == null) {
+                value = super.getAttribute(name);
+            }
         }
+        
+        return value;
     }
 
     @Override
     public void setAttribute(String name, Object value) {
-        if (name.startsWith("javax.servlet.")) {
+        if (name.startsWith("javax.")) {
             super.setAttribute(name, value);
         } else {
             getAttributeMap().put(name, value);
+            // Set attribute into the servlet request as well
+            // because some containers set their specific attributes for later use.
+            super.setAttribute(name, value);
         }
     }
 
     @Override
     public void removeAttribute(String name) {
-        if (name.startsWith("javax.servlet.")) {
+        if (name.startsWith("javax.")) {
             super.removeAttribute(name);
         } else {
-            getAttributeMap().remove(name);
+            Object value = getAttributeMap().remove(name);
+            
+            // Remove attribute from the servlet request
+            // if no attribute was removed from the this local request attributes.
+            if (value == null) {
+                super.removeAttribute(name);
+            }
         }
     }
     
@@ -222,5 +252,5 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         String prefix = referenceNamespace + this.parameterNameComponentSeparator;
         return prefix;
     }
-    
+
 }

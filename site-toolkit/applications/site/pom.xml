@@ -212,15 +212,36 @@
                 <phase>install</phase>
                 <configuration>
                   <tasks>
+
+                    <echo>Replacing HST Shared Libraries.</echo>
+                    <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" 
+                          tofile="${tomcat.hst.shared.lib}/jcr-1.0.jar" />
+                    <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" 
+                          tofile="${tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
+                    <copy file="../../api/target/hst-api-${project.version}.jar"
+                          tofile="${tomcat.hst.shared.lib}/hst-api-${project.version}.jar" />
+                    <copy file="../../commons/target/hst-commons-${project.version}.jar"
+                          tofile="${tomcat.hst.shared.lib}/hst-commons-${project.version}.jar" />
+                    
+                    <echo>Replacing cms web application into tomcat.</echo>
+                    <delete dir="${tomcat.hst.cms.webapp}" />
+                    <mkdir dir="${tomcat.hst.cms.webapp}" />
+                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.00.01.war" 
+                           dest="${tomcat.hst.cms.webapp}"/>
+                                      
                     <echo>Replacing site web application into tomcat.</echo>
-                    <delete file="${tomcat.server.home}/webapps/${project.artifactId}.war" />
                     <delete dir="${tomcat.server.home}/webapps/${project.artifactId}" />
-                    <copy
-                      file="${project.build.directory}/${project.artifactId}-${project.version}.war"
-                      tofile="${tomcat.server.home}/webapps/${project.artifactId}.war" />
                     <mkdir dir="${tomcat.server.home}/webapps/${project.artifactId}" />
-                    <unwar src="${tomcat.server.home}/webapps/${project.artifactId}.war" 
+                    <unwar src="${project.build.directory}/${project.artifactId}-${project.version}.war" 
                            dest="${tomcat.server.home}/webapps/${project.artifactId}"/>
+                    <delete>
+                      <fileset dir="${tomcat.server.home}/webapps/${project.artifactId}/WEB-INF/lib">
+                        <include name="jcr-*.jar" />
+                        <include name="hst-api-*.jar" />
+                        <include name="hst-commons-*.jar" />
+                      </fileset>
+                    </delete>
+                    
                   </tasks>
                 </configuration>
                 <goals>
@@ -228,6 +249,18 @@
                 </goals>
               </execution>
             </executions>
+            <dependencies>
+              <dependency>
+                <groupId>javax.jcr</groupId>
+                <artifactId>jcr</artifactId>
+                <version>1.0</version>
+              </dependency>
+              <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jta_1.1_spec</artifactId>
+                <version>1.1</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>

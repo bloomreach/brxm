@@ -21,6 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.jcr.LoginException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -47,6 +50,8 @@ import org.slf4j.LoggerFactory;
  */
 public class HstSiteConfigServlet extends HttpServlet {
 
+    private static final String REPOSITORY_ADDRESS_PARAM_SUFFIX = ".repository.address";
+
     private final static Logger log = LoggerFactory.getLogger(HstSiteConfigServlet.class);
     
     private static final long serialVersionUID = 1L;
@@ -64,7 +69,7 @@ public class HstSiteConfigServlet extends HttpServlet {
     private static final String INIT_START_MSG = "HST Site Starting Initialization...";
     private static final String INIT_DONE_MSG = "HST Site Initialization complete, Ready to service requests.";
     
-    protected Map<String, Boolean> repositoryCheckingStatus = new HashMap<String, Boolean>();
+    protected Map<String [], Boolean> repositoryCheckingStatus = new HashMap<String [], Boolean>();
 
     /**
      * Intialize Servlet.
@@ -81,11 +86,14 @@ public class HstSiteConfigServlet extends HttpServlet {
         while (enumParams.hasMoreElements()) {
             String paramName = (String) enumParams.nextElement();
             
-            if (paramName.endsWith(".repository.address")) {
+            if (paramName.endsWith(REPOSITORY_ADDRESS_PARAM_SUFFIX)) {
                 String repositoryAddress = config.getInitParameter(paramName);
+                String repositoryParamPrefix = paramName.substring(0, paramName.length() - REPOSITORY_ADDRESS_PARAM_SUFFIX.length());
+                String repositoryUsername = config.getInitParameter(repositoryParamPrefix + ".repository.user.name");
+                String repositoryPassword = config.getInitParameter(repositoryParamPrefix + ".repository.password");
 
                 if (repositoryAddress != null && !"".equals(repositoryAddress.trim())) {
-                    this.repositoryCheckingStatus.put(repositoryAddress.trim(), Boolean.FALSE);
+                    this.repositoryCheckingStatus.put(new String [] { repositoryAddress.trim(), repositoryUsername, repositoryPassword }, Boolean.FALSE);
                 }
             }
         }
@@ -129,7 +137,7 @@ public class HstSiteConfigServlet extends HttpServlet {
         }
 
         try {
-            log.info("HSTSiteServlet attempting to create the  portlet engine...");
+            log.info("HSTSiteServlet attempting to create the Component manager...");
             this.componentManager = new SpringComponentManager(initProperties);
             log.info("HSTSiteServlet attempting to start the Component Manager...");
             this.componentManager.initialize();
@@ -137,21 +145,27 @@ public class HstSiteConfigServlet extends HttpServlet {
             HstServices.setComponentManager(this.componentManager);
             
             log.info("HSTSiteServlet has successfuly started the Component Manager....");
+            this.initialized = true;
+            log.info(INIT_DONE_MSG);
         } catch (Throwable e) {
+            if (this.componentManager != null) {
+                try { 
+                    this.componentManager.stop();
+                    this.componentManager.close();
+                } catch (Exception ce) {
+                }
+            }
             // save the exception to complain loudly later :-)
             final String msg = "HSTSite: init() failed.";
             log.error(msg, e);
         }
-
-        this.initialized = true;
-        
-        log.info(INIT_DONE_MSG);
-        
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 
-        // Some status message could be returned here.
+        if (!this.initialized) {
+            doInit(getServletConfig());
+        }
         
     }
 
@@ -190,20 +204,45 @@ public class HstSiteConfigServlet extends HttpServlet {
     protected boolean checkAllRepositoriesRunning() {
         boolean allRunning = true;
         
-        for (Map.Entry<String, Boolean> entry : this.repositoryCheckingStatus.entrySet()) {
+        for (Map.Entry<String [], Boolean> entry : this.repositoryCheckingStatus.entrySet()) {
+            String [] repositoryInfo = entry.getKey();
+            String repositoryAddress = repositoryInfo[0];
+            String repositoryUsername = (repositoryInfo[1] != null ? repositoryInfo[1] : "");
+            String repositoryPassword = (repositoryInfo[2] != null ? repositoryInfo[2] : "");
+            
             if (!entry.getValue().booleanValue()) {
                 HippoRepository hippoRepository = null;
+                Session session = null;
                 
                 try {
-                    hippoRepository = HippoRepositoryFactory.getHippoRepository(entry.getKey());
-                    entry.setValue(Boolean.TRUE);
+                    hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryAddress);
+                    
+                    if (!"".equals(repositoryUsername)) {
+                        try {
+                            session = hippoRepository.login(new SimpleCredentials(repositoryUsername, repositoryPassword.toCharArray()));
+                            
+                            if (session != null) {
+                                entry.setValue(Boolean.TRUE);
+                            }
+                        } catch (LoginException le) {
+                            log("Failed to try to log on to " + repositoryAddress + " with userID=" + repositoryUsername + ". Skip this repository.");
+                            entry.setValue(Boolean.TRUE);
+                        }
+                    } else {
+                        entry.setValue(Boolean.TRUE);
+                    }
                 } catch (Exception e) {
                     allRunning = false;
                 } finally {
+                    if (session != null) {
+                        try { session.logout(); } catch (Exception ce) { }
+                    }
                     if (hippoRepository != null) {
-                        hippoRepository.close();
+                        try { hippoRepository.close(); } catch (Exception ce) { }
                     }
                 }
+                
+                log("checked repository: " + repositoryAddress + " --> " + (entry.getValue().booleanValue() ? "Running" : "Not running"));
             }
         }
         

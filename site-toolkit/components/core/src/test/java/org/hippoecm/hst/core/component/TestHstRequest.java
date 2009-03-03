@@ -1,0 +1,101 @@
+package org.hippoecm.hst.core.component;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.Enumeration;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.hippoecm.hst.core.container.HstComponentWindowImpl;
+import org.hippoecm.hst.core.container.HstContainerURLImpl;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.site.request.HstRequestContextImpl;
+import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.junit.Before;
+import org.junit.Test;
+
+public class TestHstRequest extends AbstractSpringTestCase {
+    
+    protected HttpServletRequest servletRequest;
+    protected HstRequestContextImpl requestContext;
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        
+        this.servletRequest = getComponent(HttpServletRequest.class.getName());
+        this.requestContext = new HstRequestContextImpl(null);
+        HstURLFactory urlFactory = getComponent(HstURLFactory.class.getName());
+        this.requestContext.setURLFactory(urlFactory);
+        HstContainerURLImpl baseURL = new HstContainerURLImpl();
+        this.requestContext.setBaseURL(baseURL);
+    }
+    
+    @Test
+    public void testRequestAttributes() {
+
+        // Sets java servlet attributes
+        this.servletRequest.setAttribute("javax.servlet.include.request_uri", "/jsp/included.jsp");
+        // Sets attributes for portlet environment
+        this.servletRequest.setAttribute("javax.portlet.request", "something");
+        // Sets request context
+        this.servletRequest.setAttribute(HstRequestContext.class.getName(), this.requestContext);
+        
+        HstComponentWindow rootWindow = new HstComponentWindowImpl("news", "news", "", null, null, null, null);
+        HstComponentWindow headWindow = new HstComponentWindowImpl("head", "h", "h", null, null, null, rootWindow);
+        HstComponentWindow bodyWindow = new HstComponentWindowImpl("body", "b", "b", null, null, null, rootWindow);
+        
+        HstRequest hstRequestForRootWindow = new HstRequestImpl(this.servletRequest, this.requestContext, rootWindow);
+        HstRequest hstRequestForHeadWindow = new HstRequestImpl(this.servletRequest, this.requestContext, headWindow);
+        HstRequest hstRequestForBodyWindow = new HstRequestImpl(this.servletRequest, this.requestContext, bodyWindow);
+        
+        assertNotNull(this.servletRequest.getAttribute(HstRequestContext.class.getName()));
+        assertNotNull(hstRequestForRootWindow.getAttribute(HstRequestContext.class.getName()));
+        assertNotNull(hstRequestForHeadWindow.getAttribute(HstRequestContext.class.getName()));
+        assertNotNull(hstRequestForBodyWindow.getAttribute(HstRequestContext.class.getName()));
+        
+        hstRequestForRootWindow.setAttribute("name", "root");
+        hstRequestForHeadWindow.setAttribute("name", "head");
+        hstRequestForBodyWindow.setAttribute("name", "body");
+        
+        assertEquals("root", hstRequestForRootWindow.getAttribute("name"));
+        assertEquals("head", hstRequestForHeadWindow.getAttribute("name"));
+        assertEquals("body", hstRequestForBodyWindow.getAttribute("name"));
+        
+        assertEquals("/jsp/included.jsp", hstRequestForRootWindow.getAttribute("javax.servlet.include.request_uri"));
+        assertEquals("/jsp/included.jsp", hstRequestForHeadWindow.getAttribute("javax.servlet.include.request_uri"));
+        assertEquals("/jsp/included.jsp", hstRequestForBodyWindow.getAttribute("javax.servlet.include.request_uri"));
+        
+        assertEquals("something", hstRequestForRootWindow.getAttribute("javax.portlet.request"));
+        assertEquals("something", hstRequestForHeadWindow.getAttribute("javax.portlet.request"));
+        assertEquals("something", hstRequestForBodyWindow.getAttribute("javax.portlet.request"));
+        
+        SortedSet servletRequestAttrs = getSortedAttributeNames(this.servletRequest);
+        assertEquals("servletRequest attributes size is not 4: " + servletRequestAttrs, 4, servletRequestAttrs.size());
+        
+        SortedSet rootRequestAttrs = getSortedAttributeNames(hstRequestForRootWindow);
+        assertEquals("rootRequestAttrs attributes size is not 4: " + rootRequestAttrs, 4, rootRequestAttrs.size());
+        
+        SortedSet headRequestAttrs = getSortedAttributeNames(hstRequestForHeadWindow);
+        assertEquals("headRequestAttrs attributes size is not 4: " + headRequestAttrs, 4, headRequestAttrs.size());
+
+        SortedSet bodyRequestAttrs = getSortedAttributeNames(hstRequestForBodyWindow);
+        assertEquals("bodyRequestAttrs attributes size is not 4: " + bodyRequestAttrs, 4, bodyRequestAttrs.size());
+        
+    }
+    
+    private SortedSet getSortedAttributeNames(HttpServletRequest request) {
+        SortedSet attrNames = new TreeSet();
+        
+        for (Enumeration enumParams = request.getAttributeNames(); enumParams.hasMoreElements(); ) {
+            attrNames.add(enumParams.nextElement());
+        }
+        
+        return attrNames;
+    }
+    
+}
