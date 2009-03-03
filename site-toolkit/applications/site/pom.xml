@@ -21,7 +21,7 @@
     <groupId>org.onehippo.ecm.hst</groupId>
     <artifactId>applications</artifactId>
     <version>2.03.00-SNAPSHOT</version>
-    <relativePath>..</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <name>Hippo Site Toolkit Container Web Application</name>

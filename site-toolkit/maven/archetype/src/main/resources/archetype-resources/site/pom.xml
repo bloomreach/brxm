@@ -21,7 +21,7 @@
     <groupId>${groupId}</groupId>
     <artifactId>${rootArtifactId}</artifactId>
     <version>${version}</version>
-    <relativePath>..</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <name>My Hippo Site Toolkit Project website</name>

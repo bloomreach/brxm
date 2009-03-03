@@ -20,7 +20,7 @@
     <groupId>org.onehippo.ecm.hst</groupId>
     <artifactId>components</artifactId>
     <version>2.03.00-SNAPSHOT</version>
-    <relativePath>..</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <name>Hippo Site Toolkit Core Component</name>
@@ -135,7 +135,7 @@
     
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring-mock</artifactId>
+      <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
     

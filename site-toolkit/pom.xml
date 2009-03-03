@@ -53,7 +53,6 @@
     <javax.jcr.version>1.0</javax.jcr.version>
     <hippoecm.version>2.04.00</hippoecm.version>
     <spring.version>2.5.6</spring.version>
-    <spring-mock.version>2.0.8</spring-mock.version>
     <xalan.version>2.4.1</xalan.version>
     <xerces.version>2.3.0</xerces.version>
     <xml-apis.version>2.0.2</xml-apis.version>
@@ -380,8 +379,8 @@
       
       <dependency>
         <groupId>org.springframework</groupId>
-        <artifactId>spring-mock</artifactId>
-        <version>${spring-mock.version}</version>
+        <artifactId>spring-test</artifactId>
+        <version>${spring.version}</version>
         <scope>test</scope>
       </dependency>
 

@@ -20,7 +20,7 @@
     <artifactId>maven</artifactId>
     <groupId>org.onehippo.ecm.hst</groupId>
     <version>2.03.00-SNAPSHOT</version>
-    <relativePath>..</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <name>Hippo Site Toolkit Archetype</name>
