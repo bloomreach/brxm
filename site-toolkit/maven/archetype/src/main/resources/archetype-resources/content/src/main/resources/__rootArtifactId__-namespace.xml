@@ -64,7 +64,7 @@
           <sv:value>${rootArtifactId.replace($hyphen,$empty)}:textpage</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$empty)}/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/hst2/nt/${rootArtifactId.replace($hyphen,$empty)}/1.0</sv:value>
         </sv:property>
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
