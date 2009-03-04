@@ -20,12 +20,14 @@ import java.util.Date;
 
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
 public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {
     @SuppressWarnings("unused")
@@ -53,6 +55,48 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
 
     public void doDelete() throws WorkflowException {
         unpublished = draft = null;
+    }
+
+    public void copy(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
+        ReviewedActionsWorkflowImpl.log.info("copy document");
+        if(current != null)
+            throw new WorkflowException("cannot copy document with pending publication request");
+        if(current2 != null)
+            throw new WorkflowException("cannot copy document with pending depublication request");
+        if(current3 != null)
+            throw new WorkflowException("cannot copy document with pending delete request");
+        if(published != null)
+            throw new WorkflowException("cannot copy published document");
+        if(draft != null)
+            throw new WorkflowException("cannot copy document being edited");
+
+        Document folder = getWorkflowContext().getDocument("embedded", unpublished.getIdentity());
+        Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
+        if(workflow instanceof FolderWorkflow)
+            ((FolderWorkflow)workflow).copy(unpublished, destination, newName);
+        else
+            throw new WorkflowException("cannot copy document which is not contained in a folder");
+    }
+
+    public void move(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
+        ReviewedActionsWorkflowImpl.log.info("move document");
+        if(current != null)
+            throw new WorkflowException("cannot move document with pending publication request");
+        if(current2 != null)
+            throw new WorkflowException("cannot move document with pending depublication request");
+        if(current3 != null)
+            throw new WorkflowException("cannot move document with pending delete request");
+        if(published != null)
+            throw new WorkflowException("cannot move published document");
+        if(draft != null)
+            throw new WorkflowException("cannot move document being edited");
+
+        Document folder = getWorkflowContext().getDocument("embedded", unpublished.getIdentity());
+        Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
+        if(workflow instanceof FolderWorkflow)
+            ((FolderWorkflow)workflow).move(unpublished, destination, newName);
+        else
+            throw new WorkflowException("cannot move document which is not contained in a folder");
     }
 
     public void rename(String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
