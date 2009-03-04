@@ -67,7 +67,7 @@ public class ContextResolvingValve extends AbstractValve
         HstComponentConfiguration rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
         
         if (log.isDebugEnabled()) {
-            log.debug("Matched root component config for {}: {}", pathInfo, rootComponentConfig);
+            log.debug("Matched root component config for {}: {}", pathInfo, rootComponentConfig.getId());
         }
         
         try {

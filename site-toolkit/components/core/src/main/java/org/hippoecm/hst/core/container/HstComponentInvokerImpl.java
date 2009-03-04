@@ -177,21 +177,22 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             } catch (ServletException e) {
                 window.addComponentExcpetion(new HstComponentException(e.getMessage()));
                 if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: {}", e.getMessage(), e);
+                    log.warn("Component exception caught: {} \n{}", e.getMessage(), e);
                 } else if (log.isWarnEnabled()) {
                     log.warn("Component exception caught: {}", e.getMessage());
                 }
             } catch (IOException e) {
                 window.addComponentExcpetion(new HstComponentException(e.getMessage()));
                 if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: {}", e.getMessage(), e);
+                    System.out.println(e);
+                    log.warn("Component exception caught: {} \n{}", e.getMessage(), e);
                 } else if (log.isWarnEnabled()) {
                     log.warn("Component exception caught: {}", e.getMessage());
                 }
             } catch (Throwable th) {
                 window.addComponentExcpetion(new HstComponentException(th.getMessage()));
                 if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: {}", th.getMessage(), th);
+                    log.warn("Component exception caught: {} \n{}", th.getMessage(), th);
                 } else if (log.isWarnEnabled()) {
                     log.warn("Component exception caught: {}", th.getMessage());
                 }
