@@ -55,6 +55,12 @@ public class RepositoryMapImpl extends AbstractMap implements RepositoryMap {
     private List<String> arguments = null;
     private QueryManager queryManager;
 
+    public RepositoryMapImpl() {
+        this.item = null;
+        this.path = null;
+        this.session = null;
+    }
+
     public RepositoryMapImpl(Session session, String path) throws RepositoryException {
         this(session.getRootNode().getNode(path.startsWith("/") ? path.substring(1) : path));
     }

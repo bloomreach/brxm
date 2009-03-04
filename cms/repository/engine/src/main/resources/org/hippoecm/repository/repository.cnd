@@ -103,6 +103,7 @@
 - hippo:workflow (string)
 - hippo:roles (string) multiple
 + hippo:types (hippo:types) = hippo:types mandatory autocreated
++ hippo:config (nt:unstructured) = nt:unstructured
 
 [hippo:workflowcategory] > nt:base orderable
 + * (hippo:workflow) = hippo:workflow

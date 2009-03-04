@@ -53,10 +53,12 @@ import javax.jcr.version.VersionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.hippoecm.repository.RepositoryMapImpl;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -155,6 +157,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
                                     log.debug("item matches but no permission on "+item.getPath()+" for role "+privileges[i].getString());
                                     hasPermission = false;
                                     break;
+                                } catch(AccessDeniedException ex) {
+                                    log.debug("item matches but no permission on "+item.getPath()+" for role "+privileges[i].getString());
+                                    hasPermission = false;
+                                    break;
                                 }
                             }
                         }
@@ -190,6 +196,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
             log.error("cannot retrieve workflow for non-existing document");
             return null;
         }
+        if (log.isDebugEnabled()) {
+            log.debug("looking for workflow in category "+category+" for document "+document.getIdentity());
+        }
         try {
             Node node = session.getNodeByUUID(configuration);
             if (node.hasNode(category)) {
@@ -214,7 +223,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
                                 for(int i=0; i<privileges.length; i++) {
                                     try {
                                         session.checkPermission(documentNode.getPath(), privileges[i].getString());
+                                    } catch(AccessControlException ex) {
+                                        log.debug("item matches but no permission on "+documentNode.getPath()+" for role "+privileges[i].getString());
+                                        hasPermission = false;
+                                        break;
                                     } catch(AccessDeniedException ex) {
+                                        log.debug("item matches but no permission on "+documentNode.getPath()+" for role "+privileges[i].getString());
                                         hasPermission = false;
                                         break;
                                     }
@@ -289,16 +303,34 @@ public class WorkflowManagerImpl implements WorkflowManager {
                  */
                 synchronized (SessionDecorator.unwrap(rootSession)) {
                     documentManager.reset();
-                    Workflow workflow;
+                    Workflow workflow = null; // compiler does not detect properly there is no path where this not set
                     Class clazz = Class.forName(classname);
                     if (InternalWorkflow.class.isAssignableFrom(clazz)) {
                         try {
-                            Constructor constructor = clazz.getConstructor(new Class[] {Session.class, Session.class, Node.class});
-                            workflow = (Workflow)constructor.newInstance(getSession(), rootSession, item);
+                            Constructor[] constructors = clazz.getConstructors();
+                            int constructorIndex;
+                            for (constructorIndex=0; constructorIndex<constructors.length; constructorIndex++) {
+                                Class[] params = constructors[constructorIndex].getParameterTypes();
+                                if(params.length == 4 && WorkflowContext.class.isAssignableFrom(params[0])
+                                                      && Session.class.isAssignableFrom(params[1])
+                                                      && Session.class.isAssignableFrom(params[2])
+                                                      && Node.class.isAssignableFrom(params[3])) {
+                                    workflow = (Workflow)constructors[constructorIndex].newInstance(new Object[] {
+                                            new WorkflowContextImpl(workflowNode, item), getSession(), rootSession, item });
+                                    break;
+                                } else if(params.length == 3 && Session.class.isAssignableFrom(params[0])
+                                                             && Session.class.isAssignableFrom(params[1])
+                                                             && Node.class.isAssignableFrom(params[2])) {
+                                    workflow = (Workflow)constructors[constructorIndex].newInstance(new Object[] {
+                                            getSession(), rootSession, item });
+                                    break;
+                                }
+                            }
+                            if(constructorIndex == constructors.length) {
+                                throw new RepositoryException("no valid constructor found in standards plugin");
+                            }
                         } catch (IllegalAccessException ex) {
                             throw new RepositoryException("no access to standards plugin", ex);
-                        } catch (NoSuchMethodException ex) {
-                            throw new RepositoryException("standards plugin invalid", ex);
                         } catch (InstantiationException ex) {
                             throw new RepositoryException("standards plugin invalid", ex);
                         } catch (InvocationTargetException ex) {
@@ -309,7 +341,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         Object object = documentManager.getObject(uuid, classname, types);
                         workflow = (Workflow)object;
                         if (workflow instanceof WorkflowImpl) {
-                            ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContextImpl(item));
+                            ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContextImpl(workflowNode, item));
                         }
                     }
 
@@ -668,7 +700,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
         Object invoke(WorkflowManagerImpl manager) throws RepositoryException {
             try {
-                Workflow workflow;
+                Workflow workflow = null; // compiler does not detect properly there is no path where this not set
                 String classname;
                 if (workflowNode.hasProperty(HippoNodeType.HIPPO_WORKFLOW))
                     classname = workflowNode.getProperty(HippoNodeType.HIPPO_WORKFLOW).getString();
@@ -681,29 +713,44 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 if (item==null) {
                     item = manager.rootSession.getNodeByUUID(workflowSubject.getIdentity());
                 }
-                if (classname.startsWith("org.hippoecm.repository.standardworkflow.")) {
-                    try {
-                        Class clazz = Class.forName(classname);
-                        Constructor constructor = clazz.getConstructor(new Class[] { Session.class, Session.class, Node.class });
-                        workflow = (Workflow)constructor.newInstance(new Object[] { manager.getSession(), manager.rootSession, item });
-                    } catch (IllegalAccessException ex) {
-                        throw new RepositoryException("no access to standards plugin", ex);
-                    } catch (ClassNotFoundException ex) {
-                        throw new RepositoryException("standards plugin missing", ex);
-                    } catch (NoSuchMethodException ex) {
-                        throw new RepositoryException("standards plugin invalid", ex);
-                    } catch (InstantiationException ex) {
-                        throw new RepositoryException("standards plugin invalid", ex);
-                    } catch (InvocationTargetException ex) {
-                        throw new RepositoryException("standards plugin invalid", ex);
+                try {
+                    Class clazz = Class.forName(classname);
+                    if (InternalWorkflow.class.isAssignableFrom(clazz)) {
+                        Constructor[] constructors = clazz.getConstructors();
+                        int constructorIndex;
+                        for (constructorIndex = 0; constructorIndex < constructors.length; constructorIndex++) {
+                            Class[] params = constructors[constructorIndex].getParameterTypes();
+                            if (params.length == 4 && WorkflowContext.class.isAssignableFrom(params[0]) && Session.class.isAssignableFrom(params[1]) && Session.class.isAssignableFrom(params[2]) && Node.class.isAssignableFrom(params[3])) {
+                                workflow = (Workflow)constructors[constructorIndex].newInstance(new Object[] {
+                                            manager.new WorkflowContextImpl(workflowNode, item), manager.getSession(), manager.rootSession, item
+                                        });
+                                break;
+                            } else if (params.length == 3 && Session.class.isAssignableFrom(params[0]) && Session.class.isAssignableFrom(params[1]) && Node.class.isAssignableFrom(params[2])) {
+                                workflow = (Workflow)constructors[constructorIndex].newInstance(new Object[] {
+                                            manager.getSession(), manager.rootSession, item
+                                        });
+                                break;
+                            }
+                        }
+                        if (constructorIndex == constructors.length) {
+                            throw new RepositoryException("no valid constructor found in standards plugin");
+                        }
+                    } else {
+                        uuid = item.getUUID();
+                        Object object = manager.documentManager.getObject(uuid, classname, types);
+                        workflow = (Workflow)object;
+                        if (workflow instanceof WorkflowImpl) {
+                            ((WorkflowImpl)workflow).setWorkflowContext(manager.new WorkflowContextImpl(workflowNode, item));
+                        }
                     }
-                } else {
-                    uuid = item.getUUID();
-                    Object object = manager.documentManager.getObject(uuid, classname, types);
-                    workflow = (Workflow)object;
-                    if (workflow instanceof WorkflowImpl) {
-                        ((WorkflowImpl)workflow).setWorkflowContext(manager . new WorkflowContextImpl(item));
-                    }
+                } catch (IllegalAccessException ex) {
+                    throw new RepositoryException("no access to standards plugin", ex);
+                } catch (ClassNotFoundException ex) {
+                    throw new RepositoryException("standards plugin missing", ex);
+                } catch (InstantiationException ex) {
+                    throw new RepositoryException("standards plugin invalid", ex);
+                } catch (InvocationTargetException ex) {
+                    throw new RepositoryException("standards plugin invalid", ex);
                 }
 
                 Method targetMethod = workflow.getClass().getMethod(method.getName(), method.getParameterTypes());
@@ -751,9 +798,11 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
     private class WorkflowContextImpl implements WorkflowContext {
         Node subject;
+        Node workflowDefinition;
         WorkflowModule module;
 
-        WorkflowContextImpl(Node subject) {
+        WorkflowContextImpl(Node workflowNode, Node subject) {
+            this.workflowDefinition = workflowNode;
             this.subject = subject;
             this.module = new WorkflowModule() {
                     public void submit(WorkflowManager manager, WorkflowInvocation invocation) {
@@ -762,18 +811,19 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 };
         }
 
-        WorkflowContextImpl(Node subject, WorkflowModule module) {
+        WorkflowContextImpl(Node workflowNode, Node subject, WorkflowModule module) {
+            this.workflowDefinition = workflowNode;
             this.subject = subject;
             this.module = module;
         }
 
         public WorkflowContext getWorkflowContext(Object specification) throws MappingException, RepositoryException {
             if(specification instanceof java.util.Date) {
-                return new WorkflowContextImpl(subject, new SchedulerWorkflowModule((java.util.Date)specification));
+                return new WorkflowContextImpl(workflowDefinition, subject, new SchedulerWorkflowModule((java.util.Date)specification));
             } else if(specification instanceof Document) {
                 String uuid = ((Document)specification).getIdentity();
                 Node node = subject.getSession().getNodeByUUID(uuid);
-                return new WorkflowContextImpl(node);
+                return new WorkflowContextImpl(workflowDefinition, node);
             }
             throw new MappingException("No context defined for class "+(specification!=null?specification.getClass().getName():"none"));
         }
@@ -814,6 +864,21 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
         public String getUserIdentity() {
             return session.getUserID();
+        }
+
+        public RepositoryMap getWorkflowConfiguration() {
+            try {
+                if(workflowDefinition.hasNode("hippo:config")) {
+                    return new RepositoryMapImpl(workflowDefinition.getNode("hippo:config"));
+                }
+            } catch(RepositoryException ex) {
+                try {
+                    log.error("Cannot access configuration of workflow defined in "+workflowDefinition.getPath());
+                } catch(RepositoryException e) {
+                    log.error("Double access error accessing configuration of workflow");
+                }
+            }
+            return new RepositoryMapImpl();
         }
     }
 }

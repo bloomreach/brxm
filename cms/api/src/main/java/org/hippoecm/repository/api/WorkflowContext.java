@@ -27,4 +27,6 @@ public interface WorkflowContext {
     public Workflow getWorkflow(String category, Document document) throws MappingException, WorkflowException,
                                                                            RepositoryException;
     public String getUserIdentity();
+
+    public RepositoryMap getWorkflowConfiguration();
 }
