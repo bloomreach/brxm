@@ -81,24 +81,24 @@ Folders:
 	
 	 <a href="javascript:<hc:namespace/>showPopup();">Show</a>
 
-    <hc:url var="defaultUrl">
+    <hc:renderURL var="defaultUrl">
       <hc:param name="page" />
       <hc:param name="sortpage" />
-    </hc:url>
-    <hc:url var="firstUrl" type="render">
+    </hc:renderURL>
+    <hc:renderURL var="firstUrl">
       <hc:param name="page" value="1" />
-    </hc:url>
-    <hc:url var="lastUrl" type="render">
+    </hc:renderURL>
+    <hc:renderURL var="lastUrl">
       <hc:param name="page" value="9" />
-    </hc:url>
-    <hc:url var="actionUrl" type="action">
+    </hc:renderURL>
+    <hc:actionURL var="actionUrl">
       <hc:param name="sort" value="descending" />
-    </hc:url>
-    <hc:url var="redirectActionUrl" type="action">
+    </hc:actionURL>
+    <hc:actionURL var="redirectActionUrl">
       <hc:param name="redirect" value="http://www.google.com" />
-    </hc:url>
-    <hc:url var="resourceUrl" type="resource" resourceId="/images/onehippo.gif">
-    </hc:url>
+    </hc:actionURL>
+    <hc:resourceURL var="resourceUrl" resourceId="/images/onehippo.gif">
+    </hc:resourceURL>
         
     <a href="${defaultUrl}">Default</a>
     <a href="${firstUrl}">First</a>

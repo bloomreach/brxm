@@ -53,15 +53,15 @@ function <hc:namespace/>showPopup() {
     
 	    <a href="javascript:<hc:namespace/>showPopup();">Show</a>
 	    
-	    <hc:url var="homeUrl">
+	    <hc:renderURL var="homeUrl">
 	      <hc:param name="page" />
-	    </hc:url>
-	    <hc:url var="firstUrl">
+	    </hc:renderURL>
+	    <hc:renderURL var="firstUrl">
 	      <hc:param name="page" value="1" />
-	    </hc:url>
-	    <hc:url var="lastUrl">
+	    </hc:renderURL>
+	    <hc:renderURL var="lastUrl">
 	      <hc:param name="page" value="9" />
-	    </hc:url>
+	    </hc:renderURL>
 	
 	    <a href="${homeUrl}">Home</a>
 	    <a href="${firstUrl}">First</a>
