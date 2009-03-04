@@ -69,7 +69,6 @@ public class HREPTWO2182Test extends TestCase {
 
         WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
         Workflow workflow = workflowManager.getWorkflow("default", typeNode);
-        System.err.println("BERRY "+workflow.getClass().getName());
         assertTrue(workflow instanceof EditmodelWorkflow);
 
         ((EditmodelWorkflow) workflow).edit();
