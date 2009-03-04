@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -56,6 +57,9 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
             return new WorkflowContext() {
                 public WorkflowContext getWorkflowContext(Object jobSpecification) throws MappingException, RepositoryException {
                     throw new MappingException("No workflow context defined for class "+jobSpecification.getClass().getName());
+                }
+                public RepositoryMap getWorkflowConfiguration() {
+                    return null;
                 }
                 public Document getDocument(String category, String identifier) throws RepositoryException {
                     return documentManager.getDocument(category, identifier);
