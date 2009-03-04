@@ -17,6 +17,7 @@ package org.hippoecm.frontend.model;
 
 import java.rmi.RemoteException;
 
+import javax.jcr.AccessDeniedException;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -126,10 +127,8 @@ public class JcrSessionModel extends LoadableDetachableModel {
         try {
             Main main = (Main) Application.get();
             HippoRepository repository = main.getRepository();
-
             String username = credentials.getString("username");
             String password = credentials.getString("password");
-
             if (repository != null && username != null && password != null) {
                 result = repository.login(username, password.toCharArray());
                 try {
@@ -139,6 +138,8 @@ public class JcrSessionModel extends LoadableDetachableModel {
                             ((EventLoggerWorkflow)workflow).logEvent(result.getUserID(), "Repository", "login");
                         }
                     }
+                } catch (AccessDeniedException ex) {
+                    log.debug("Unable to log login event (maybe trying as Anonymous?): " +  ex.getMessage());
                 } catch (RepositoryException ex) {
                     log.error(ex.getClass().getName()+": "+ex.getMessage());
                 } catch (RemoteException ex) {
