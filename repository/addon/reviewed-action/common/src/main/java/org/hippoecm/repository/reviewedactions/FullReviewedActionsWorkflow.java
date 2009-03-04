@@ -20,8 +20,9 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.WorkflowException;
 
 public interface FullReviewedActionsWorkflow extends BasicReviewedActionsWorkflow {
     final static String SVN_ID = "$Id$";
@@ -38,6 +39,20 @@ public interface FullReviewedActionsWorkflow extends BasicReviewedActionsWorkflo
      * The current user must have authorization for this.
      */
     public void rename(String newName)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Immediate unpublication and rename document.
+     * The current user must have authorization for this.
+     */
+    public void copy(Document target, String newName)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Immediate unpublication and rename document.
+     * The current user must have authorization for this.
+     */
+    public void move(Document target, String newName)
         throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
