@@ -143,4 +143,32 @@ public interface FolderWorkflow extends Workflow {
      */
     public void reorder(List<String> newOrder)
         throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    public Document duplicate(String relPath)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public Document duplicate(Document offspring)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public Document duplicate(String relPath, Map<String,String> arguments)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public Document duplicate(Document offspring, Map<String,String> arguments)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    public Document copy(String relPath, String absPath)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public Document copy(Document offspring, Document target, String name)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public Document copy(String relPath, String absPath, Map<String,String> arguments)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public Document copy(Document offspring, Document target, String name, Map<String,String> arguments)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    public Document move(String relPath, String absPath)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public Document move(Document offspring, Document target, String name)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public Document move(String relPath, String absPath, Map<String,String> arguments)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public Document move(Document offspring, Document target, String name, Map<String,String> arguments)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
 }

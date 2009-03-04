@@ -41,16 +41,19 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.RepositoryMap;
+import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
+public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -60,11 +63,12 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
 
     private final Session userSession;
     private final Session rootSession;
+    private final WorkflowContext workflowContext;
     private final Node subject;
 
-    private final String ATTIC_PATH = "/content/attic"; // FIXME
-
-    public FolderWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
+    public FolderWorkflowImpl(WorkflowContext context, Session userSession, Session rootSession, Node subject)
+      throws RemoteException {
+        this.workflowContext = context;
         this.subject = subject;
         this.userSession = userSession;
         this.rootSession = rootSession;
@@ -211,18 +215,31 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
     }
 
     public void archive(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        String atticPath = null;
+        RepositoryMap config = workflowContext.getWorkflowConfiguration();
+        if(config.exists() && config.containsKey("attic") && config.get("attic") instanceof String) {
+            atticPath = (String) config.get("attic");
+        }
         if(name.startsWith("/"))
             name  = name.substring(1);
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
         if (folder.hasNode(name)) {
             Node offspring = folder.getNode(name);
-            if (subject.getPath().equals(ATTIC_PATH)) {
-                offspring.remove();
-                folder.save();
+            if (atticPath != null) {
+                if (subject.getPath().equals(atticPath)) {
+                    offspring.remove();
+                    folder.save();
+                } else {
+                    if (rootSession.getRootNode().hasNode(atticPath.substring(1))) {
+                        rootSession.getWorkspace().move(folder.getPath() + "/" + offspring.getName(),
+                                                        atticPath + "/" + offspring.getName());
+                    } else {
+                        throw new WorkflowException("Attic " + atticPath + " for archivation does not exist");
+                    }
+                }
             } else {
-                rootSession.getWorkspace().move(folder.getPath() + "/" + offspring.getName(),
-                                                ATTIC_PATH + "/" + offspring.getName());
+                throw new WorkflowException("No attic for archivation defined");
             }
         }
     }
@@ -459,5 +476,144 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
             }
         }
         return newValues.toArray(new Value[newValues.size()]);
+    }
+
+    public Document duplicate(String relPath)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        return null;
+    }
+    public Document duplicate(Document offspring)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        return null;
+    }
+    public Document duplicate(String relPath, Map<String,String> arguments)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        return null;
+    }
+    public Document duplicate(Document offspring, Map<String,String> arguments)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        return null;
+    }
+
+    public Document copy(String relPath, String absPath)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        return copy(relPath, absPath, null);
+    }
+    public Document copy(Document offspring, Document targetFolder, String targetName)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        return copy(offspring, targetFolder, targetName, null);
+    }
+    public Document copy(String relPath, String absPath, Map<String,String> arguments)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Node source = subject.getNode(relPath);
+        if(!source.isNodeType(HippoNodeType.NT_DOCUMENT) && !source.isNodeType(HippoNodeType.NT_HANDLE)) {
+            throw new MappingException("copied item is not a document");
+        }
+        Node target = subject.getSession().getRootNode().getNode(absPath.substring(1, absPath.lastIndexOf("/")));
+        if(!target.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            throw new MappingException("copied destination is not a document");
+        }
+        return copyFrom(new Document(source.getUUID()), new Document(target.getUUID()), absPath.substring(absPath.lastIndexOf("/"+1)), arguments);
+    }
+    public Document copy(Document offspring, Document targetFolder, String targetName, Map<String,String> arguments)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        return copyFrom(offspring, targetFolder, targetName, arguments);
+    }
+
+    public Document move(String relPath, String absPath)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        return move(relPath, absPath, null);
+    }
+    public Document move(Document offspring, Document targetFolder, String targetName)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        return move(offspring, targetFolder, targetName, null);
+    }
+    public Document move(String relPath, String absPath, Map<String,String> arguments)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Node source = subject.getNode(relPath);
+        if(!source.isNodeType(HippoNodeType.NT_DOCUMENT) && !source.isNodeType(HippoNodeType.NT_HANDLE)) {
+            throw new MappingException("copied item is not a document");
+        }
+        Node target = subject.getSession().getRootNode().getNode(absPath.substring(1, absPath.lastIndexOf("/")));
+        if(!target.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            throw new MappingException("copied destination is not a document");
+        }
+        return moveFrom(new Document(source.getUUID()), new Document(target.getUUID()), absPath.substring(absPath.lastIndexOf("/"+1)), arguments);
+    }
+    public Document move(Document offspring, Document targetFolder, String targetName, Map<String,String> arguments)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        return moveFrom(offspring, targetFolder, targetName, arguments);
+    }
+
+    public Document copyFrom(Document offspring, Document targetFolder, String targetName, Map<String,String> arguments)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        String path = subject.getPath().substring(1);
+        Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
+        Node destination = rootSession.getNodeByUUID(targetFolder.getIdentity());
+        if (folder.isSame(destination)) {
+            throw new WorkflowException("Cannot copy document to same folder, use duplicate instead");
+        }
+        Node source = rootSession.getNodeByUUID(offspring.getIdentity());
+        if (source.getAncestor(folder.getDepth()).isSame(folder)) {
+            ((EmbedWorkflow)workflowContext.getWorkflow("embedded", new Document(destination.getUUID()))).copyTo(new Document(subject.getUUID()), offspring, targetName, arguments);
+        }
+        return null;
+    }
+
+    public Document copyTo(Document sourceFolder, Document offspring, String targetName, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        String path = subject.getPath().substring(1);
+        Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
+        if (folder.hasNode(targetName)) {
+            throw new WorkflowException("Cannot copy document when document with same name exists");
+        }
+        Node source = rootSession.getNodeByUUID(offspring.getIdentity());
+        if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+            source = source.getParent();
+        }
+        folder.getSession().getWorkspace().copy(source.getPath(), folder.getPath() + "/" + targetName);
+        renameChildDocument(folder, targetName);
+        folder.save();
+        ((EmbedWorkflow)workflowContext.getWorkflow("embedded", sourceFolder)).copyOver(folder, offspring, new Document(folder.getNode(targetName).getUUID()), arguments);
+        return new Document(folder.getNode(targetName).getUUID());
+    }
+
+    public Document copyOver(Node destination, Document offspring, Document result, Map<String,String> arguments) {
+        return result;
+    }
+
+    public Document moveFrom(Document offspring, Document targetFolder, String targetName, Map<String,String> arguments)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        String path = subject.getPath().substring(1);
+        Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
+        Node destination = rootSession.getNodeByUUID(targetFolder.getIdentity());
+        if (folder.isSame(destination)) {
+            throw new WorkflowException("Cannot move document to same folder, use duplicate instead");
+        }
+        Node source = rootSession.getNodeByUUID(offspring.getIdentity());
+        if (source.getAncestor(folder.getDepth()).isSame(folder)) {
+            ((EmbedWorkflow)workflowContext.getWorkflow("embedded", new Document(destination.getUUID()))).moveTo(new Document(subject.getUUID()), offspring, targetName, arguments);
+        }
+        return null;
+    }
+
+    public Document moveTo(Document sourceFolder, Document offspring, String targetName, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        String path = subject.getPath().substring(1);
+        Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
+        if (folder.hasNode(targetName)) {
+            throw new WorkflowException("Cannot move document when document with same name exists");
+        }
+        Node source = rootSession.getNodeByUUID(offspring.getIdentity());
+        if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+            source = source.getParent();
+        }
+        folder.getSession().getWorkspace().move(source.getPath(), folder.getPath() + "/" + targetName);
+        renameChildDocument(folder, targetName);
+        folder.save();
+        ((EmbedWorkflow)workflowContext.getWorkflow("embedded", sourceFolder)).moveOver(folder, offspring, new Document(folder.getNode(targetName).getUUID()), arguments);
+        return new Document(folder.getNode(targetName).getUUID());
+    }
+
+    public Document moveOver(Node destination, Document offspring, Document result, Map<String,String> arguments) {
+        return result;
     }
 }
