@@ -20,10 +20,11 @@ import static org.junit.Assert.assertNotNull;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TestConfigurationWithoutRepository extends AbstractSpringTestCase {
 
     protected static final String TESTPROJECT_NAME = "testproject";

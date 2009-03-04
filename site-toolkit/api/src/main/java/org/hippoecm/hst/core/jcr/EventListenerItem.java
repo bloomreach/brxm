@@ -13,20 +13,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.container;
+package org.hippoecm.hst.core.jcr;
 
-import javax.servlet.ServletConfig;
+import javax.jcr.observation.EventListener;
 
-import org.hippoecm.hst.core.component.HstComponent;
+public interface EventListenerItem {
 
-public interface HstComponentRegistry {
-
-    void registerComponent(ServletConfig servletConfig, String componentId, HstComponent component);
+    EventListener getEventListener();
     
-    void unregisterComponent(ServletConfig servletConfig, String componentId);
+    int getEventTypes();
     
-    HstComponent getComponent(ServletConfig servletConfig, String componentId);
+    String getAbsolutePath();
     
-    void unregisterAllComponents();
+    boolean isDeep();
+    
+    String [] getUuids();
+    
+    String [] getNodeTypeNames();
+    
+    boolean isNoLocal();
     
 }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+  <bean id="org.hippoecm.hst.core.jcr.EventListenersContainer" 
+        class="org.hippoecm.hst.core.jcr.EventListenersContainerImpl"
+        init-method="start" destroy-method="stop">
+    <property name="repository" ref="javax.jcr.Repository" />
+    <property name="sessionLiveCheck" value="true" />
+    <property name="sessionLiveCheckInterval" value="60000" />
+    <property name="eventListenerItems">
+      <list>
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true" />
+          <property name="nodeRemovedEnabled" value="true" />
+          <property name="propertyAddedEnabled" value="true" />
+          <property name="propertyChangedEnabled" value="true" />
+          <property name="propertyRemovedEnabled" value="true" />
+          <property name="absolutePath" value="${observation.sites.config.node.path}" />
+          <property name="deep" value="true" />
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="nodeTypeNames">
+            <null/>
+          </property>
+          <property name="noLocal" value="false" />
+          <property name="eventListener">
+            <bean class="org.hippoecm.hst.configuration.HstSitesConfigurationEventListener">
+              <property name="sitesManager" ref="org.hippoecm.hst.configuration.HstSitesManager" />
+              <property name="componentRegistry" ref="org.hippoecm.hst.core.container.HstComponentRegistry" />
+            </bean>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+</beans>
+

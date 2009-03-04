@@ -17,7 +17,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-base.xml" />
+  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-container.xml" />
 
   <bean id="javax.servlet.ServletContext"
@@ -29,7 +29,7 @@
     <constructor-arg ref="javax.servlet.ServletContext" />
   </bean>
   
-  <bean id="javax.servlet.http.HttpServletRequest.action" scope="prototype"
+  <bean id="javax.servlet.http.HttpServletRequest" scope="prototype"
         class="org.springframework.mock.web.MockHttpServletRequest">
      <constructor-arg ref="javax.servlet.ServletContext" />
      <property name="protocol" value="http" />
@@ -38,27 +38,10 @@
      <property name="method" value="GET" />
      <property name="contextPath" value="/site" />
      <property name="servletPath" value="/content" />
-     <property name="pathInfo" value="/_hstact_:news_p_h_t/2/ap1/one/ap2/two/news/2008/08" />
+     <property name="pathInfo" value="/news/2008/08" />
   </bean>
   
-  <bean id="javax.servlet.http.HttpServletResponse.action" scope="prototype"
-        class="org.springframework.mock.web.MockHttpServletResponse">
-    <property name="characterEncoding" value="UTF-8" />
-  </bean>
-  
-  <bean id="javax.servlet.http.HttpServletRequest.resource" scope="prototype"
-        class="org.springframework.mock.web.MockHttpServletRequest">
-     <constructor-arg ref="javax.servlet.ServletContext" />
-     <property name="protocol" value="http" />
-     <property name="serverName" value="preview.myproject.hippoecm.org" />
-     <property name="serverPort" value="8080" />
-     <property name="method" value="GET" />
-     <property name="contextPath" value="/site" />
-     <property name="servletPath" value="/content" />
-     <property name="pathInfo" value="/_hstres_:news_p_h_t:myresource001/news/2008/08" />
-  </bean>
-  
-  <bean id="javax.servlet.http.HttpServletResponse.resource" scope="prototype"
+  <bean id="javax.servlet.http.HttpServletResponse" scope="prototype"
         class="org.springframework.mock.web.MockHttpServletResponse">
     <property name="characterEncoding" value="UTF-8" />
   </bean>

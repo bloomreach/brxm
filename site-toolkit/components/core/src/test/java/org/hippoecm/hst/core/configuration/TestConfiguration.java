@@ -15,36 +15,32 @@
  */
 package org.hippoecm.hst.core.configuration;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.hippoecm.hst.configuration.ConfigurationViewUtilities;
 import org.hippoecm.hst.configuration.HstSite;
-import org.hippoecm.hst.configuration.HstSites;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.BasicHstSiteMapMatcher;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
-import org.jpox.util.ViewUtils;
 import org.junit.Test;
 
 public class TestConfiguration extends AbstractSpringTestCase {
 
     protected static final String TESTPROJECT_NAME = "testproject";
 
-    private HstSites hstSites;
+    private HstSitesManager hstSitesManager;
     private HstSiteMapMatcher hstSiteMapMatcher;
     private HstSite hstSite;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        this.hstSites = (HstSites) getComponent(HstSites.class.getName());
+        this.hstSitesManager = getComponent(HstSitesManager.class.getName());
         hstSiteMapMatcher = new BasicHstSiteMapMatcher();
-        hstSite = hstSites.getSite(TESTPROJECT_NAME);
+        hstSite = this.hstSitesManager.getSites().getSite(TESTPROJECT_NAME);
     }
 
     /**

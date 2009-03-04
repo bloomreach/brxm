@@ -43,6 +43,10 @@
     <servlet-name>HstSiteConfigServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
     <init-param>
+      <param-name>check-repositories-running</param-name>
+      <param-value>false</param-value>
+    </init-param>
+    <init-param>
       <param-name>properties.default.repository.address</param-name>
       <param-value>rmi://127.0.0.1:1099/hipporepository</param-value>
     </init-param>
@@ -77,6 +81,10 @@
     <init-param>
       <param-name>properties.default.sites.default.site.name</param-name>
       <param-value>testproject</param-value>
+    </init-param>
+    <init-param>
+      <param-name>properties.observation.sites.config.node.path</param-name>
+      <param-value>/hst:testconfiguration/hst:configuration</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>

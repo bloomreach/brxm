@@ -13,25 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration;
+package org.hippoecm.hst.core.jcr;
 
-import javax.jcr.Repository;
-import javax.jcr.Session;
+import java.util.List;
 
-public class HstSitesFactory {
+public interface EventListenersContainer {
 
-    public static HstSites create(Repository repository, String nodePath) throws Exception {
-        HstSites sites = null;
-        Session session = null;
-        
-        try {
-            session = repository.login();
-            sites = new HstSitesService(session.getRootNode().getNode(nodePath));
-        } finally {
-            if (session != null)
-                session.logout();
-        }
-        
-        return sites;
-    }
+    void setEventListenerItems(List<EventListenerItem> eventListenerItems);
+    
+    List<EventListenerItem> getEventListenerItems();
+    
+    void start();
+    
+    void stop();
+    
 }

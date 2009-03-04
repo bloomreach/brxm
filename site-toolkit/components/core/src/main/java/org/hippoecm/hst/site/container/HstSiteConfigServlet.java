@@ -50,6 +50,8 @@ import org.slf4j.LoggerFactory;
  */
 public class HstSiteConfigServlet extends HttpServlet {
 
+    private static final String CHECK_REPOSITORIES_RUNNING_INIT_PARAM = "check-repositories-running"; 
+    
     private static final String REPOSITORY_ADDRESS_PARAM_SUFFIX = ".repository.address";
 
     private final static Logger log = LoggerFactory.getLogger(HstSiteConfigServlet.class);
@@ -78,48 +80,54 @@ public class HstSiteConfigServlet extends HttpServlet {
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
         
-        this.allRepositoriesAvailable = false;
-        this.repositoryCheckingStatus.clear();
+        boolean checkRepositoriesRunning = Boolean.parseBoolean(config.getInitParameter(CHECK_REPOSITORIES_RUNNING_INIT_PARAM)); 
         
-        Enumeration enumParams = config.getInitParameterNames();
-        
-        while (enumParams.hasMoreElements()) {
-            String paramName = (String) enumParams.nextElement();
+        if (!checkRepositoriesRunning) {
+            doInit(config);
+        } else {
+            this.allRepositoriesAvailable = false;
+            this.repositoryCheckingStatus.clear();
             
-            if (paramName.endsWith(REPOSITORY_ADDRESS_PARAM_SUFFIX)) {
-                String repositoryAddress = config.getInitParameter(paramName);
-                String repositoryParamPrefix = paramName.substring(0, paramName.length() - REPOSITORY_ADDRESS_PARAM_SUFFIX.length());
-                String repositoryUsername = config.getInitParameter(repositoryParamPrefix + ".repository.user.name");
-                String repositoryPassword = config.getInitParameter(repositoryParamPrefix + ".repository.password");
-
-                if (repositoryAddress != null && !"".equals(repositoryAddress.trim())) {
-                    this.repositoryCheckingStatus.put(new String [] { repositoryAddress.trim(), repositoryUsername, repositoryPassword }, Boolean.FALSE);
+            Enumeration enumParams = config.getInitParameterNames();
+            
+            while (enumParams.hasMoreElements()) {
+                String paramName = (String) enumParams.nextElement();
+                
+                if (paramName.endsWith(REPOSITORY_ADDRESS_PARAM_SUFFIX)) {
+                    String repositoryAddress = config.getInitParameter(paramName);
+                    String repositoryParamPrefix = paramName.substring(0, paramName.length() - REPOSITORY_ADDRESS_PARAM_SUFFIX.length());
+                    String repositoryUsername = config.getInitParameter(repositoryParamPrefix + ".repository.user.name");
+                    String repositoryPassword = config.getInitParameter(repositoryParamPrefix + ".repository.password");
+    
+                    if (repositoryAddress != null && !"".equals(repositoryAddress.trim())) {
+                        this.repositoryCheckingStatus.put(new String [] { repositoryAddress.trim(), repositoryUsername, repositoryPassword }, Boolean.FALSE);
+                    }
                 }
             }
-        }
-        
-        if (!this.allRepositoriesAvailable) {
-            final Thread repositoryCheckerThread = new Thread("RepositoryChecker") {
-                public void run() {
-                    while (!allRepositoriesAvailable) {
-                       // check the repository is accessible
-                       allRepositoriesAvailable = checkAllRepositoriesRunning();
-
-                       if (!allRepositoriesAvailable) {
-                           try {
-                                Thread.sleep(3000);
-                           } catch (InterruptedException e) {
-                           }
-                       }
-                    }
-                    
-                    if (allRepositoriesAvailable) {
-                        doInit(config);
-                    }
-                }
-            };
             
-            repositoryCheckerThread.start();
+            if (!this.allRepositoriesAvailable) {
+                final Thread repositoryCheckerThread = new Thread("RepositoryChecker") {
+                    public void run() {
+                        while (!allRepositoriesAvailable) {
+                           // check the repository is accessible
+                           allRepositoriesAvailable = checkAllRepositoriesRunning();
+    
+                           if (!allRepositoriesAvailable) {
+                               try {
+                                    Thread.sleep(3000);
+                               } catch (InterruptedException e) {
+                               }
+                           }
+                        }
+                        
+                        if (allRepositoriesAvailable) {
+                            doInit(config);
+                        }
+                    }
+                };
+                
+                repositoryCheckerThread.start();
+            }
         }
     }
     

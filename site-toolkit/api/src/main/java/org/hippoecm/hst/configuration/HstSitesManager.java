@@ -13,20 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.container;
+package org.hippoecm.hst.configuration;
 
-import javax.servlet.ServletConfig;
+public interface HstSitesManager {
 
-import org.hippoecm.hst.core.component.HstComponent;
-
-public interface HstComponentRegistry {
-
-    void registerComponent(ServletConfig servletConfig, String componentId, HstComponent component);
+    void setSitesContentPath(String sitesContentPath);
     
-    void unregisterComponent(ServletConfig servletConfig, String componentId);
+    String getSitesContentPath();
     
-    HstComponent getComponent(ServletConfig servletConfig, String componentId);
+    HstSites getSites();
     
-    void unregisterAllComponents();
+    void invalidate();
     
 }

@@ -29,7 +29,7 @@
   </bean>
 
   <bean id="abstractValve" abstract="true">
-    <property name="hstSites" ref="org.hippoecm.hst.configuration.HstSites" />
+    <property name="sitesManager" ref="org.hippoecm.hst.configuration.HstSitesManager" />
     <property name="domainMappings" ref="org.hippoecm.hst.core.domain.DomainMappings" />
     <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
     <property name="requestContextComponent" ref="org.hippoecm.hst.core.request.HstRequestContextComponent" />
