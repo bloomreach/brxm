@@ -14,12 +14,14 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
       <version>${hippoecm.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
       <version>${hippoecm.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
