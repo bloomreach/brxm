@@ -16,28 +16,16 @@
 package org.hippoecm.hst.hstconfiguration.components.fragments;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.jcr.LoginException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
+import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.hstconfiguration.components.HstComponentBase;
 import org.hippoecm.hst.pagetypes.NewsPage;
 import org.hippoecm.hst.pagetypes.StdType;
-import org.hippoecm.hst.service.ServiceFactory;
-import org.hippoecm.repository.api.HippoNodeType;
 
-public class Body extends HstComponentBase {
+public class Body extends GenericHstComponent {
     
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {

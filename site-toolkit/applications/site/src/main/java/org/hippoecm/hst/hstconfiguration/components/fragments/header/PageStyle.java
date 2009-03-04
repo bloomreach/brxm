@@ -15,20 +15,13 @@
  */
 package org.hippoecm.hst.hstconfiguration.components.fragments.header;
 
-import javax.jcr.LoginException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
+import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.hstconfiguration.components.HstComponentBase;
-import org.hippoecm.hst.pagetypes.PageStyleType;
-import org.hippoecm.hst.service.ServiceFactory;
 
-public class PageStyle extends HstComponentBase {
+public class PageStyle extends GenericHstComponent {
 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {

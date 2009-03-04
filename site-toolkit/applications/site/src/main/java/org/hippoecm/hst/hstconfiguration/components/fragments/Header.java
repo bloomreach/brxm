@@ -15,16 +15,8 @@
  */
 package org.hippoecm.hst.hstconfiguration.components.fragments;
 
-import org.hippoecm.hst.core.component.HstComponentException;
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.hstconfiguration.components.HstComponentBase;
+import org.hippoecm.hst.core.component.GenericHstComponent;
 
-public class Header extends HstComponentBase {
-    
-    @Override
-    public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-        super.doBeforeRender(request, response);
-    }
+public class Header extends GenericHstComponent {
     
 }

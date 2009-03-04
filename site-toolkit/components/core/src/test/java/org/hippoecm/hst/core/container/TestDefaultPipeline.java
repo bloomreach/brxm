@@ -25,6 +25,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -126,64 +127,17 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         System.out.println("[HTTP Response] >>> " + content + " <<<");
     }
     
-  
-     class HstComponentBase implements HstComponent {
-        
-        protected String name;
-        
-        protected ComponentConfiguration compConfig;
-        
-        public HstComponentBase() {
-        }
-        
-        public String getName() {
-            if (this.name == null) {
-                this.name = getClass().getName();
-            }
-            
-            return this.name;
-        }
-        
-        public void setName(String name) {
-            this.name = name;
-        }
-        
-        
-        
-        public void init(ServletConfig servletConfig, ComponentConfiguration compConfig) throws HstComponentException {
-            this.compConfig = compConfig;
-            System.out.println("[HstComponent: " + getName() + "] init()");
-        }
-
-        public void destroy() throws HstComponentException {
-            System.out.println("[HstComponent: " + getName() + "] destroy()");
-        }
-
-        public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-            
-            System.out.println("[HstComponent: " + getName() + "] doAction()");
-        }
-
-        public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-            System.out.println("[HstComponent: " + getName() + "] doBeforeRender()");
-        }
-
-        public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
-            System.out.println("[HstComponent: " + getName() + "] doBeforeServeResource()");
-        }
-    }
-    
-    class NewsOverview extends HstComponentBase {
+    class NewsOverview extends GenericHstComponent {
 
         @Override
         public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
             super.doBeforeRender(request, response);
             
-            Object o = compConfig.getResolvedProperty("param1", request.getRequestContext().getResolvedSiteMapItem()); 
+            Object o = getComponentConfiguration().getResolvedProperty("param1", request.getRequestContext().getResolvedSiteMapItem()); 
 
             System.out.println("param1 = :::--> "+ o);
             
-            o = compConfig.getResolvedProperty("param2", request.getRequestContext().getResolvedSiteMapItem()); 
+            o = getComponentConfiguration().getResolvedProperty("param2", request.getRequestContext().getResolvedSiteMapItem()); 
             
             System.out.println("param2 = :::--> "+ o);
             System.out.println("relative content path = :::--> "+request.getRequestContext().getResolvedSiteMapItem().getRelativeContentPath());
@@ -191,10 +145,10 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         
     }
     
-    class Header extends HstComponentBase {
+    class Header extends GenericHstComponent {
     }
     
-    class DocumentTitle extends HstComponentBase {
+    class DocumentTitle extends GenericHstComponent {
     }
 
 }
