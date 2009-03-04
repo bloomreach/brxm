@@ -25,6 +25,8 @@ public interface HstSiteMapItem {
     String getValue();
     String getPath(); // returns the full path from the item
     boolean isWildCard();
+    boolean isVisible();
+    boolean isRepositoryBased();
     String getRelativeContentPath();
     String getComponentConfigurationId();
     List<String> getRoles();  

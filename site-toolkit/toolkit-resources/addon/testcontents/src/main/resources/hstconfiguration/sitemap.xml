@@ -22,6 +22,9 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hst:partofmenu</sv:value>
+        </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>News</sv:value>
         </sv:property>
@@ -35,6 +38,9 @@
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+                <sv:value>hst:repositorybased</sv:value>
+            </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>News/${1}</sv:value>
             </sv:property>
@@ -44,40 +50,12 @@
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                 <sv:value>pages/newsoverview</sv:value>
             </sv:property>
-            <sv:node sv:name="january">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hst:sitemapitem</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                    <sv:value>News/${1}/january</sv:value>
-                </sv:property>
-                <sv:property sv:name="param1" sv:type="String">
-                    <sv:value>${1}</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                    <sv:value>pages/newsoverview</sv:value>
-                </sv:property>
-                <sv:node sv:name="_default_">
-                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>hst:sitemapitem</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                        <sv:value>News/${1}/january/${2}</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="param1" sv:type="String">
-                        <sv:value>${1}</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="param2" sv:type="String">
-                        <sv:value>${2}</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                        <sv:value>pages/newsoverview</sv:value>
-                    </sv:property>
-                </sv:node>
-            </sv:node>
             <sv:node sv:name="_default_">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hst:sitemapitem</sv:value>
+                </sv:property>
+                <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+                    <sv:value>hst:repositorybased</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                     <sv:value>News/${1}/${2}</sv:value>
@@ -92,6 +70,29 @@
                     <sv:value>pages/newsoverview</sv:value>
                 </sv:property>
                 <sv:node sv:name="_default_">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hst:sitemapitem</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+                        <sv:value>hst:repositorybased</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+                        <sv:value>News/${1}/${2}/${3}</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="param1" sv:type="String">
+                        <sv:value>${1}</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="param2" sv:type="String">
+                        <sv:value>${2}</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="param3" sv:type="String">
+                        <sv:value>${3}</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                        <sv:value>pages/newsoverview</sv:value>
+                    </sv:property>
+                </sv:node>
+                <sv:node sv:name="_any_">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>hst:sitemapitem</sv:value>
                     </sv:property>
@@ -111,27 +112,6 @@
                         <sv:value>pages/newsoverview</sv:value>
                     </sv:property>
                 </sv:node>
-                <sv:node sv:name="_default_.html">
-                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                        <sv:value>hst:sitemapitem</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                        <sv:value>News/${1}/${2}/{3}.html</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="param1" sv:type="String">
-                        <sv:value>${1}</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="param2" sv:type="String">
-                        <sv:value>${2}</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="param3" sv:type="String">
-                        <sv:value>${3}</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                        <sv:value>pages/newsoverview</sv:value>
-                    </sv:property>
-                    
-                </sv:node>
             </sv:node>
         </sv:node>
     </sv:node>
@@ -139,6 +119,9 @@
     <sv:node sv:name="products">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hst:partofmenu</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>Products</sv:value>
@@ -149,6 +132,9 @@
         <sv:node sv:name="someproduct">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemapitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+                <sv:value>hst:partofmenu</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>Products/SomeProduct</sv:value>
@@ -161,6 +147,9 @@
     <sv:node sv:name="solutions">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hst:partofmenu</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>Solutions</sv:value>

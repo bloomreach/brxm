@@ -36,6 +36,10 @@ public class Configuration {
     public final static String COMPONENT_PROPERTY_CONTEXTRELATIVEPATH =  "hst:contextrelativepath";
     
 
+    public final static String SITEMAPITEM_MIXIN_PARTOFMENU =  "hst:partofmenu";
+    public final static String SITEMAPITEM_MIXIN_REPOSITORYBASED =  "hst:repositorybased";
+    
+
     public final static String SITEMAPITEM_PROPERTY_VALUE =  "hst:value";
     public final static String SITEMAPITEM_PROPERTY_ROLES =  "hst:roles";
     public final static String SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH =  "hst:relativecontentpath";

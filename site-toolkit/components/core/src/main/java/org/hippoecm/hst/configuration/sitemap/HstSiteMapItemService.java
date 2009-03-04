@@ -64,6 +64,10 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     private HstSiteMapItem parentItem;
     
+    private boolean isRepositoryBased;
+    
+    private boolean isVisible;
+    
     public HstSiteMapItemService(Node jcrNode, String siteMapRootNodePath, HstSiteMapItem parentItem, HstSiteMap hstSiteMap) throws ServiceException{
         super(jcrNode);
         this.parentItem = parentItem;
@@ -72,6 +76,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         if(!getValueProvider().getPath().startsWith(siteMapRootNodePath)) {
             throw new ServiceException("Node path of the sitemap cannot start without the global sitemap root path. Skip SiteMapItem");
         }
+
         this.siteMapRootNodePath = siteMapRootNodePath;
         // path & id are the same
         this.id = this.path = nodePath.substring(siteMapRootNodePath.length()+1);
@@ -80,6 +85,37 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         if(WILDCARD.equals(value)) {
             this.isWildCard = true;
         }
+        
+        try {
+            Node n = this.getValueProvider().getJcrNode();
+            if(n.isNodeType(Configuration.SITEMAPITEM_MIXIN_PARTOFMENU)) {
+                if(this.isWildCard()) {
+                    log.warn("Setting isvisible mixin on a wildcard (*) sitemap item has no meaning. Skipping");
+                } else if(this.getParentItem()!= null) {
+                    if(this.getParentItem().isVisible()) {
+                        this.isVisible = true;
+                    } else {
+                        log.warn("SiteMapItem '{}' cannot be visible if parent item is not visible. Ignore visible", nodePath);
+                    }
+                } else {
+                    this.isVisible = true;
+                }
+            } 
+            if(n.isNodeType(Configuration.SITEMAPITEM_MIXIN_REPOSITORYBASED)) {
+                if(this.isWildCard()) {
+                    if(this.getParentItem() != null && this.getParentItem().isVisible()) {
+                        // set repository based and visible on true
+                        this.isRepositoryBased = true;
+                        this.isVisible = true;
+                    }
+                } else {
+                    log.warn("A repositorybased mixin does only have meaning on a SiteMapItem '*'. Skipping repository based for '{}'", nodePath);
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("RepositoryException : ", e);
+        }
+        
         this.relativeContentPath = getValueProvider().getString(Configuration.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
         this.componentConfigurationId = getValueProvider().getString(Configuration.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
         String[] rolesProp = getValueProvider().getStrings(Configuration.SITEMAPITEM_PROPERTY_ROLES);
@@ -166,6 +202,14 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         return this.isWildCard;
     }
 
+    public boolean isRepositoryBased() {
+        return isRepositoryBased;
+    }
+
+    public boolean isVisible() {
+        return isVisible;
+    }
+    
     public HstSiteMap getHstSiteMap() {
         return this.hstSiteMap;
     }
