@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.core.jcr.pool;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedList;
@@ -36,7 +35,6 @@ import org.junit.Test;
 
 public class TestMultipleRepository extends AbstractSpringTestCase {
     
-   
     protected MultipleRepository multipleRepository;
     protected Repository repository;
     protected Credentials defaultCredentials;
@@ -57,14 +55,7 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
         Repository defaultRepository = this.multipleRepository.getRepositoryByCredentials(this.defaultCredentials);
         Repository writableRepository = this.multipleRepository.getRepositoryByCredentials(this.writableCredentials);
         
-        assertFalse("The default repository must be different one from the writable repository.", defaultRepository == writableRepository);
-        
         Map<Credentials, Repository> repoMap = this.multipleRepository.getRepositoryMap();
-        
-        assertTrue("The repository retrieved by credentials is different from the entry of the map.", 
-                defaultRepository == repoMap.get(this.defaultCredentials));
-        assertTrue("The repository retrieved by credentials is different from the entry of the map.", 
-                writableRepository == repoMap.get(this.writableCredentials));
         
         Session sessionFromDefaultRepository = this.repository.login(this.defaultCredentials);
         assertTrue("Current session's repository is not the expected repository", 
@@ -89,7 +80,7 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
         LinkedList<Runnable> jobQueue = new LinkedList<Runnable>();
         
         for (int i = 0; i < 1000 * maxActive; i++) {
-            jobQueue.add(new UncautiousJob(repository, defaultRepository, writableRepository));
+            jobQueue.add(new UncautiousJob(repository, (i % 2 == 0 ? this.defaultCredentials : this.writableCredentials)));
         }
         
         assertTrue("Active session count is not zero.", 0 == defaultRepository.getNumActive());
@@ -159,46 +150,21 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
     private class UncautiousJob implements Runnable {
 
         private Repository repository;
-        private BasicPoolingRepository defaultRepository;
-        private BasicPoolingRepository writableRepository;
-        private long maxWaitOfDefaultRepository;
-        private long maxWaitOfWritableRepository;
+        private Credentials credentials;
 
-        public UncautiousJob(Repository repository, BasicPoolingRepository defaultRepository, BasicPoolingRepository writableRepository) {
+        public UncautiousJob(Repository repository, Credentials credentials) {
             this.repository = repository;
-            this.defaultRepository = defaultRepository;
-            this.writableRepository = writableRepository;
-            this.maxWaitOfDefaultRepository = defaultRepository.getMaxWait();
-            this.maxWaitOfWritableRepository = writableRepository.getMaxWait();
+            this.credentials = credentials;
         }
 
         public void run() {
-            long start = System.currentTimeMillis();
-            
             try {
-                Session defaultSession = this.repository.login(defaultCredentials);
+                Session session = this.repository.login(this.credentials);
                 // forgot to invoke logout() to return the session to the pool by invoking the following:
-                //defaultSession.logout();
+                //session.logout();
             } catch (NoAvailableSessionException e) {
                 long end = System.currentTimeMillis();
-                assertTrue("No waiting occurred.", (end - start) >= this.maxWaitOfDefaultRepository);
                 log.warn("NoAvailableSessionException occurred.");
-                log.warn("Current active sessions: " + defaultRepository.getNumActive() + " / " + defaultRepository.getMaxActive() + ", waiting time: " + (end - start));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            
-            start = System.currentTimeMillis();
-            
-            try {
-                Session writableSession = this.repository.login(writableCredentials);
-                // forgot to invoke logout() to return the session to the pool by invoking the following:
-                //writableSession.logout();
-            } catch (NoAvailableSessionException e) {
-                long end = System.currentTimeMillis();
-                assertTrue("No waiting occurred.", (end - start) >= this.maxWaitOfWritableRepository);
-                log.warn("NoAvailableSessionException occurred.");
-                log.warn("Current active sessions: " + writableRepository.getNumActive() + " / " + writableRepository.getMaxActive() + ", waiting time: " + (end - start));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

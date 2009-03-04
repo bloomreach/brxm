@@ -41,7 +41,6 @@ public class MultipleRepositoryImpl implements MultipleRepository {
     
     public MultipleRepositoryImpl(Map<Credentials, Repository> repoMap, Credentials defaultCredentials) {
         this.repositoryMap = new HashMap<CredentialsWrapper, Repository>();
-        Set<ResourceLifecycleManagement> resourceLifecycleManagementSet = new HashSet<ResourceLifecycleManagement>();
         
         for (Map.Entry<Credentials, Repository> entry : repoMap.entrySet()) {
             Repository repo = entry.getValue();
@@ -51,16 +50,17 @@ public class MultipleRepositoryImpl implements MultipleRepository {
             }
             
             this.repositoryMap.put(new CredentialsWrapper(entry.getKey()), repo);
-
-            if (repo instanceof PoolingRepository) {
-                ResourceLifecycleManagement rlm = ((PoolingRepository) repo).getResourceLifecycleManagement();
-                
-                if (rlm != null) {
-                    resourceLifecycleManagementSet.add(rlm);
-                }
-            }
         }
 
+        Set<ResourceLifecycleManagement> resourceLifecycleManagementSet = new HashSet<ResourceLifecycleManagement>();
+        
+        for (Repository repo : this.repositoryMap.values()) {
+            if (repo instanceof PoolingRepository) {
+                ResourceLifecycleManagement rlm = ((PoolingRepository) repo).getResourceLifecycleManagement();
+                resourceLifecycleManagementSet.add(rlm);
+            }
+        }
+        
         this.resourceLifecycleManagements = new ResourceLifecycleManagement[resourceLifecycleManagementSet.size()];
         int index = 0;
         
