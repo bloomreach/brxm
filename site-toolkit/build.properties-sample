@@ -33,4 +33,3 @@ test.writable.repository.password = editor
 tomcat.server.home = /home/hstdev/tomcat-6.0.18
 tomcat.hst.shared.lib = ${tomcat.server.home}/lib
 tomcat.hst.cms.webapp = ${tomcat.server.home}/webapps/cms
-tomcat.hst.components.core.webapp = ${tomcat.server.home}/webapps/jetspeed

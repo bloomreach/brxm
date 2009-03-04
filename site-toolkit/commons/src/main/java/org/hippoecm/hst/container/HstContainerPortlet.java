@@ -36,6 +36,7 @@ public class HstContainerPortlet implements Portlet, ResourceServingPortlet {
     
     protected PortletContext portletContext;
     protected String containerServletPath = "/content";
+    protected String containerPathInfo;
 
     public void init(PortletConfig config) throws PortletException {
         
@@ -45,6 +46,12 @@ public class HstContainerPortlet implements Portlet, ResourceServingPortlet {
         
         if (param != null) {
             this.containerServletPath = param;
+        }
+        
+        param = config.getInitParameter("containerPathInfo");
+        
+        if (param != null) {
+            this.containerPathInfo = param;
         }
     }
 
@@ -64,7 +71,14 @@ public class HstContainerPortlet implements Portlet, ResourceServingPortlet {
     }
     
     protected void processRequest(PortletRequest request, PortletResponse response) throws PortletException, IOException {
-        PortletRequestDispatcher dispatcher = this.portletContext.getRequestDispatcher(this.containerServletPath);
+        StringBuilder sbPath = new StringBuilder(this.containerServletPath);
+        
+        if (this.containerPathInfo != null) {
+            sbPath.append(this.containerPathInfo);
+        }
+        
+        PortletRequestDispatcher dispatcher = this.portletContext.getRequestDispatcher(sbPath.toString());
+        
         dispatcher.include(request, response);
     }
 
