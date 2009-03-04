@@ -37,12 +37,13 @@ public class EventListenersContainerImpl implements EventListenersContainer {
     protected Credentials credentials;
     protected Session session;
     protected boolean sessionLiveCheck;
+    protected long sessionLiveCheckIntervalOnStartup = 3000L;
     protected long sessionLiveCheckInterval = 60000L;
     protected Workspace workspace;
     protected ObservationManager observationManager;
     protected List<EventListenerItem> eventListenerItems;
     
-    protected boolean initialized;
+    protected boolean firstInitializationDone;
     
     public void setRepository(Repository repository) {
         this.repository = repository;
@@ -64,6 +65,10 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         this.sessionLiveCheck = sessionLiveCheck;
     }
     
+    public void setSessionLiveCheckIntervalOnStartup(long sessionLiveCheckIntervalOnStartup) {
+        this.sessionLiveCheckIntervalOnStartup = sessionLiveCheckIntervalOnStartup;
+    }
+    
     public void setSessionLiveCheckInterval(long sessionLiveCheckInterval) {
         this.sessionLiveCheckInterval = sessionLiveCheckInterval;
     }
@@ -81,7 +86,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                         
                         synchronized (this) {
                             try {
-                                wait(sessionLiveCheckInterval);
+                                wait(firstInitializationDone ? sessionLiveCheckInterval : sessionLiveCheckIntervalOnStartup);
                             } catch (InterruptedException e) {
                             }
                         }
@@ -132,7 +137,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                 }
             }
             
-            this.initialized = true;
+            this.firstInitializationDone = true;
 
             if (log.isDebugEnabled()) log.debug("EventListenersContainer's initialization done.");
         } catch (LoginException e) {
