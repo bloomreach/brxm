@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.impl;
 
+import javax.jcr.AccessDeniedException;
+import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -91,9 +93,12 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
                 if(repository instanceof RepositoryImpl) {
                     rootSession = (SessionDecorator) factory.getSessionDecorator(session.getRepository(), session.impersonate(new SimpleCredentials("workflowuser", new char[] { }))); // FIXME: hardcoded workflowuser
                 }
+            } catch (LoginException ex) {
+                logger.debug("User " + session.getUserID() + " is not allowed to impersonate to workflow session", ex);
+                throw new AccessDeniedException("User " + session.getUserID() + " is not allowed to obtain the workflow manager", ex);
             } catch(RepositoryException ex) {
-                logger.error("No root session available "+ex.getClass().getName()+": "+ex.getMessage());
-                throw new RepositoryException("no root session available", ex);
+                logger.error("Error while trying to obtain workflow session "+ex.getClass().getName()+": "+ex.getMessage(), ex);
+                throw new RepositoryException("Error while trying to obtain workflow session", ex);
             }
         }
 
