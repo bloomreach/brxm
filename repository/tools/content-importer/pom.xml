@@ -34,45 +34,6 @@
     <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/content-importer</url>
   </scm>
 
-  <build>
-    <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.0.2</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>java</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <mainClass>org.hippoecm.tools.importer.ExternalContentImportMain</mainClass>
-          <cleanupDeamonThreads>false</cleanupDeamonThreads>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>appassembler-maven-plugin</artifactId>
-        <configuration>
-          <extraJvmArguments>-Xms128m -Xmx128m</extraJvmArguments>
-          <platforms>
-            <platform>windows</platform>
-            <platform>unix</platform>
-          </platforms>
-          <programs>
-            <program>
-              <mainClass>org.hippoecm.tools.importer.ExternalContentImportMain</mainClass>
-              <name>import</name>
-            </program>
-          </programs>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -148,5 +109,57 @@
      </dependency>
   </dependencies>
 
-</project>
+  <build>
+    <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>appassembler-maven-plugin</artifactId>
+        <configuration>
+          <extraJvmArguments>-Xms128m -Xmx128m</extraJvmArguments>
+          <platforms>
+            <platform>windows</platform>
+            <platform>unix</platform>
+          </platforms>
+          <programs>
+            <program>
+              <mainClass>org.hippoecm.tools.importer.ExternalContentImportMain</mainClass>
+              <name>import</name>
+            </program>
+          </programs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
+  <profiles>
+    <profile>
+      <id>exec</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.0.2</version>
+            <executions>
+              <execution>
+                <phase>exec</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <mainClass>org.hippoecm.tools.importer.ExternalContentImportMain</mainClass>
+              <cleanupDeamonThreads>false</cleanupDeamonThreads>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
