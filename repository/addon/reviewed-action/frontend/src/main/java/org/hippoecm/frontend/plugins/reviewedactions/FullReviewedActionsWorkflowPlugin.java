@@ -28,6 +28,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractNameDialog;
+import org.hippoecm.frontend.dialog.AbstractDestinationDialog;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
@@ -187,6 +188,56 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                     protected void execute() throws Exception {
                         FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
                         workflow.rename(NodeNameCodec.encode(name, true));
+                    }
+                };
+            }
+        });
+
+        IModel copyLabel = new StringResourceModel("copy-label", this, null);
+        final StringResourceModel copyTitle = new StringResourceModel("copy-title", this, null);
+        final StringResourceModel copyText = new StringResourceModel("copy-text", this, null);
+        addWorkflowDialog("copy-dialog", copyLabel, new Visibility() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean isVisible() {
+                return true;
+            }}, new IDialogFactory() {
+                    private static final long serialVersionUID = 1L;
+
+            public AbstractDialog createDialog() {
+
+                return new AbstractDestinationDialog(FullReviewedActionsWorkflowPlugin.this, copyTitle, copyText) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected void execute() throws Exception {
+                        FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
+                        workflow.copy(new Document(destination.getNode().getUUID()), name);
+                    }
+                };
+            }
+        });
+
+        IModel moveLabel = new StringResourceModel("move-label", this, null);
+        final StringResourceModel moveTitle = new StringResourceModel("move-title", this, null);
+        final StringResourceModel moveText = new StringResourceModel("move-text", this, null);
+        addWorkflowDialog("move-dialog", moveLabel, new Visibility() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean isVisible() {
+                return true;
+            }}, new IDialogFactory() {
+                    private static final long serialVersionUID = 1L;
+
+            public AbstractDialog createDialog() {
+
+                return new AbstractDestinationDialog(FullReviewedActionsWorkflowPlugin.this, moveTitle, moveText) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected void execute() throws Exception {
+                        FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
+                        workflow.move(new Document(destination.getNode().getUUID()), name);
                     }
                 };
             }
