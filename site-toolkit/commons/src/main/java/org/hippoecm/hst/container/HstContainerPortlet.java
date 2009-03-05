@@ -20,6 +20,7 @@ import java.io.IOException;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.GenericPortlet;
+import javax.portlet.MimeResponse;
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletContext;
 import javax.portlet.PortletException;
@@ -122,11 +123,43 @@ public class HstContainerPortlet extends GenericPortlet {
         HstResponseState portletResponseState = new HstPortletResponseState(request, response);
         request.setAttribute(HstResponseState.class.getName(), portletResponseState);
 
-        PortletRequestDispatcher dispatcher = this.portletContext.getRequestDispatcher(hstUrl);
+        if (portletResponseState.isActionResponse()) {
+            // create the request dispatcher, to delegate the request to the hst url
+            PortletRequestDispatcher rd = getPortletContext().getRequestDispatcher(hstUrl);
+            
+            if (rd != null) {
+                // delegate to HST Container servlet
+                rd.include(request, response);
+                processActionResponseState((ActionRequest) request, (ActionResponse) response, hstUrl, portletResponseState);
+            } else {
+                throw new PortletException("HST URL Dispatcher is not found: " + hstUrl);
+            }
+        } else if (portletResponseState.isMimeResponse()) {
+            processMimeResponseRequest(request, (MimeResponse) response, hstUrl, portletResponseState);
+        } else {
+            throw new PortletException("Unsupported Portlet lifecycle: " + request.getAttribute(PortletRequest.LIFECYCLE_PHASE));
+        }
+    }
 
+    private void processMimeResponseRequest(PortletRequest request, MimeResponse response, String hstUrl, HstResponseState portletResponseState) throws PortletException, IOException {
+        PortletRequestDispatcher dispatcher = this.portletContext.getRequestDispatcher(hstUrl);
         dispatcher.include(request, response);
-        
         portletResponseState.flush();
+    }
+    
+    private void processActionResponseState(ActionRequest request, ActionResponse response, String hstUrl, HstResponseState portletResponseState) throws PortletException, IOException {
+        // write out Cookies to ActionResponse
+        portletResponseState.flush();
+        
+        String redirectLocationUrl = portletResponseState.getRedirectLocation();
+
+        if (redirectLocationUrl != null) {
+            if (redirectLocationUrl.startsWith(hstUrl)) {
+                // TODO: 
+            } else {
+                response.sendRedirect(redirectLocationUrl);
+            }
+        }
     }
 
 }
