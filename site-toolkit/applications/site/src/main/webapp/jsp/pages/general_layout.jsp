@@ -15,7 +15,7 @@
 <%@ page language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
-<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hc'%>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
 <%
 System.out.println("Console out from general_layout.jsp");
@@ -25,9 +25,9 @@ System.out.println("Console out from general_layout.jsp");
 <head>
 
 <!-- include header -->
-<hc:container name="header" />
+<hst:container name="header" />
 
-<hc:response-properties var="responseProperties" />
+<hst:response-properties var="responseProperties" />
 <c:forEach var="propertyEntry" items="${responseProperties}">
   <c:set var="responseProperty" value="${propertyEntry.value}" />
   <script language="<x:out select="$responseProperty/@language" />" src="<x:out select="$responseProperty/@src" />">
@@ -40,7 +40,7 @@ System.out.println("Console out from general_layout.jsp");
 
 <script language="javascript">
 <!--
-function <hc:namespace/>showPopup() {
+function <hst:namespace/>showPopup() {
     alert("Hello from general_layout  component!");
 }
 //-->
@@ -51,17 +51,17 @@ function <hc:namespace/>showPopup() {
 <div class="page">
     <div>
     
-	    <a href="javascript:<hc:namespace/>showPopup();">Show</a>
+	    <a href="javascript:<hst:namespace/>showPopup();">Show</a>
 	    
-	    <hc:renderURL var="homeUrl">
-	      <hc:param name="page" />
-	    </hc:renderURL>
-	    <hc:renderURL var="firstUrl">
-	      <hc:param name="page" value="1" />
-	    </hc:renderURL>
-	    <hc:renderURL var="lastUrl">
-	      <hc:param name="page" value="9" />
-	    </hc:renderURL>
+	    <hst:renderURL var="homeUrl">
+	      <hst:param name="page" />
+	    </hst:renderURL>
+	    <hst:renderURL var="firstUrl">
+	      <hst:param name="page" value="1" />
+	    </hst:renderURL>
+	    <hst:renderURL var="lastUrl">
+	      <hst:param name="page" value="9" />
+	    </hst:renderURL>
 	
 	    <a href="${homeUrl}">Home</a>
 	    <a href="${firstUrl}">First</a>
@@ -69,7 +69,7 @@ function <hc:namespace/>showPopup() {
     
     </div>
     
-    <hc:container name="body" />
+    <hst:container name="body" />
     
     <div>
         news parameters: <%=request.getParameterMap()%>

@@ -14,12 +14,12 @@
   limitations under the License. --%>
 <%@ page language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hc'%>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
 
 <script language="javascript">
 <!--
-function <hc:namespace/>showPopup() {
+function <hst:namespace/>showPopup() {
     alert("Hello from general_layout  component!");
 }
 //-->

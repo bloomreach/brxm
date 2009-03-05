@@ -16,19 +16,19 @@
 <%@ page language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
-<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hc'%>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
-<hc:response-property name="hippo-widget-collection-dom">
+<hst:response-property name="hippo-widget-collection-dom">
 <script language="javascript" src="http://www.onehippo.org/ajax/widget-collection.js"><![CDATA[
 <!--
 //alert("test");
 //-->
 ]]></script>
-</hc:response-property>
+</hst:response-property>
          
 <script language="javascript">
 <!--
-function <hc:namespace/>showPopup() {
+function <hst:namespace/>showPopup() {
     alert("Hello from body component!");
 }
 //-->
@@ -79,26 +79,26 @@ Folders:
 	    </c:forEach>
 	</ul>
 	
-	 <a href="javascript:<hc:namespace/>showPopup();">Show</a>
+	 <a href="javascript:<hst:namespace/>showPopup();">Show</a>
 
-    <hc:renderURL var="defaultUrl">
-      <hc:param name="page" />
-      <hc:param name="sortpage" />
-    </hc:renderURL>
-    <hc:renderURL var="firstUrl">
-      <hc:param name="page" value="1" />
-    </hc:renderURL>
-    <hc:renderURL var="lastUrl">
-      <hc:param name="page" value="9" />
-    </hc:renderURL>
-    <hc:actionURL var="actionUrl">
-      <hc:param name="sort" value="descending" />
-    </hc:actionURL>
-    <hc:actionURL var="redirectActionUrl">
-      <hc:param name="redirect" value="http://www.google.com" />
-    </hc:actionURL>
-    <hc:resourceURL var="resourceUrl" resourceId="/images/onehippo.gif">
-    </hc:resourceURL>
+    <hst:renderURL var="defaultUrl">
+      <hst:param name="page" />
+      <hst:param name="sortpage" />
+    </hst:renderURL>
+    <hst:renderURL var="firstUrl">
+      <hst:param name="page" value="1" />
+    </hst:renderURL>
+    <hst:renderURL var="lastUrl">
+      <hst:param name="page" value="9" />
+    </hst:renderURL>
+    <hst:actionURL var="actionUrl">
+      <hst:param name="sort" value="descending" />
+    </hst:actionURL>
+    <hst:actionURL var="redirectActionUrl">
+      <hst:param name="redirect" value="http://www.google.com" />
+    </hst:actionURL>
+    <hst:resourceURL var="resourceUrl" resourceId="/images/onehippo.gif">
+    </hst:resourceURL>
         
     <a href="${defaultUrl}">Default</a>
     <a href="${firstUrl}">First</a>

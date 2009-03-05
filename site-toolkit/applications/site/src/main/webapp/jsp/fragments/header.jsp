@@ -14,14 +14,14 @@
   limitations under the License. --%>
 <%@ page language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hc'%>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
 
 <!-- include title -->
 
-<hc:container name="title" />
+<hst:container name="title" />
 
 <!-- include style -->
 
-<hc:container name="style" />
+<hst:container name="style" />
 
