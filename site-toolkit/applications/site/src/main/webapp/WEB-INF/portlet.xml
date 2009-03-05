@@ -25,12 +25,8 @@
         <display-name>NewsPortlet</display-name>
         <portlet-class>org.hippoecm.hst.container.HstContainerPortlet</portlet-class>
         <init-param>
-            <name>containerServletPath</name>
-            <value>/content</value>
-        </init-param>
-        <init-param>
-            <name>containerPathInfo</name>
-            <value>/news</value>
+            <name>hstUrl</name>
+            <value>/content/news</value>
         </init-param>
         <expiration-cache>0</expiration-cache>
         <supports>

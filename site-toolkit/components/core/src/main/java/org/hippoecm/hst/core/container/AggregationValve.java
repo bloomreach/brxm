@@ -32,6 +32,7 @@ import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
+import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class AggregationValve extends AbstractValve {
@@ -50,9 +51,19 @@ public class AggregationValve extends AbstractValve {
                 Map<HstComponentWindow, HstRequest> requestMap = new HashMap<HstComponentWindow, HstRequest>();
                 Map<HstComponentWindow, HstResponse> responseMap = new HashMap<HstComponentWindow, HstResponse>();
                 
+                ServletRequest parentRequest = servletRequest;
+                ServletResponse parentResponse = servletResponse;
+                
+                // Check if it is invoked from portlet.
+                HstResponseState portletHstResponseState = (HstResponseState) servletRequest.getAttribute(HstResponseState.class.getName());
+                
+                if (portletHstResponseState != null) {
+                    parentResponse = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, null, portletHstResponseState, null);
+                }
+                
                 // make hstRequest and hstResponse for each component window.
                 // note that hstResponse is hierarchically created.
-                createHstRequestResponseForWindows(rootWindow, requestContext, servletRequest, servletResponse,
+                createHstRequestResponseForWindows(rootWindow, requestContext, parentRequest, parentResponse,
                         requestMap, responseMap, null);
                 
                 // to avoid recursive invocation from now, just make a list by hierarchical order.
@@ -99,7 +110,7 @@ public class AggregationValve extends AbstractValve {
             HstResponse topComponentHstResponse) {
 
         HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
-        HstResponseState responseState = new HstResponseState((HttpServletRequest) servletRequest,
+        HstResponseState responseState = new HstServletResponseState((HttpServletRequest) servletRequest,
                 (HttpServletResponse) servletResponse);
         HstResponse response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window,
                 responseState, topComponentHstResponse);
