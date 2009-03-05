@@ -53,6 +53,7 @@
     <module>ldap</module>
     <module>eavesdrop</module>
     <module>faceteddate</module>
+    <module>workflow</module>
   </modules>
 
   <build>
