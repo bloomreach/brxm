@@ -204,39 +204,34 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin implements IAc
     }
 
     private void execute(WorkflowAction action) {
+        // before saving (which possibly means deleting), find the handle
+        final WorkflowsModel workflowModel = (WorkflowsModel) getModel();
+        JcrNodeModel handle = workflowModel.getNodeModel();
         try {
-            // before saving (which possibly means deleting), find the handle
-            final WorkflowsModel workflowModel = (WorkflowsModel) getModel();
-            JcrNodeModel handle = workflowModel.getNodeModel();
             while (handle.getParentModel() != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
                 handle = handle.getParentModel();
             }
-
             action.prepareSession(handle);
-
-            Workflow workflow = null;
-            try {
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                workflow = manager.getWorkflow(workflowModel.getWorkflowDescriptor());
-            } catch (MappingException e) {
-                log.error(e.getMessage());
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
-            } catch (Exception e) {
-                log.error(e.getMessage());
-            }
-
+            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+            Workflow workflow = manager.getWorkflow(workflowModel.getWorkflowDescriptor());
             action.execute(workflow);
-
-            ((UserSession) Session.get()).getJcrSession().refresh(true);
-        } catch (RepositoryException ex) {
-            log.error("Invalid data to save", ex);
-            showException(ex);
-        } catch (Exception ex) {
-            log.error(ex.getMessage());
-            showException(ex);
-            ex.printStackTrace();
+        } catch (MappingException e) {
+            log.error("MappingException while getting workflow: " + e.getMessage(), e);
+            showException(e);
+        } catch (RepositoryException e) {
+            log.error("RepositoryException while getting workflow: " + e.getMessage(), e);
+            showException(e);
+        } catch (Exception e) {
+            log.error("Exception while getting workflow: " + e.getMessage(), e);
+            showException(e);
+        } finally {
+            try {
+                ((UserSession) Session.get()).getJcrSession().refresh(true);
+            } catch (RepositoryException e) {
+                log.error("Failed to refresh session: " + e.getMessage(), e);
+            }
         }
+
     }
 
 }
