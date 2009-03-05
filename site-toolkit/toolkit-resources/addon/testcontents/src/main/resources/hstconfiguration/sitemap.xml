@@ -31,9 +31,6 @@
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>pages/newsoverview</sv:value>
         </sv:property>
-        <sv:property sv:name="path" sv:type="String">
-            <sv:value>News</sv:value>
-        </sv:property>
         <sv:node sv:name="_default_">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemapitem</sv:value>
@@ -43,9 +40,6 @@
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>News/${1}</sv:value>
-            </sv:property>
-            <sv:property sv:name="param1" sv:type="String">
-                <sv:value>${1}</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                 <sv:value>pages/newsoverview</sv:value>
@@ -60,12 +54,6 @@
                 <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                     <sv:value>News/${1}/${2}</sv:value>
                 </sv:property>
-                <sv:property sv:name="param1" sv:type="String">
-                    <sv:value>${1}</sv:value>
-                </sv:property>
-                <sv:property sv:name="param2" sv:type="String">
-                    <sv:value>${2}</sv:value>
-                </sv:property>
                 <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                     <sv:value>pages/newsoverview</sv:value>
                 </sv:property>
@@ -79,15 +67,6 @@
                     <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                         <sv:value>News/${1}/${2}/${3}</sv:value>
                     </sv:property>
-                    <sv:property sv:name="param1" sv:type="String">
-                        <sv:value>${1}</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="param2" sv:type="String">
-                        <sv:value>${2}</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="param3" sv:type="String">
-                        <sv:value>${3}</sv:value>
-                    </sv:property>
                     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                         <sv:value>pages/newsoverview</sv:value>
                     </sv:property>
@@ -98,15 +77,6 @@
                     </sv:property>
                     <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                         <sv:value>News/${1}/${2}/${3}</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="param1" sv:type="String">
-                        <sv:value>${1}</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="param2" sv:type="String">
-                        <sv:value>${2}</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="param3" sv:type="String">
-                        <sv:value>${3}</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                         <sv:value>pages/newsoverview</sv:value>
