@@ -59,8 +59,6 @@ public class TestConfiguration extends AbstractSpringTestCase {
         
         ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2009", hstSite);
         assertTrue("Relative content path for 'news/2009' must be to be 'News/2009'", "News/2009".equals(res.getRelativeContentPath()));
-        assertTrue("Param1 must resolve to '2009'", "2009".equals(res.getResolvedProperty("param1")));
-        assertNull("Param2 must be null ",res.getResolvedProperty("param2"));
         
     }
     
@@ -69,9 +67,7 @@ public class TestConfiguration extends AbstractSpringTestCase {
         
         ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2009/february/myArticle", hstSite);
         assertTrue("Relative content path for 'news/2009/february/myArticle' must be to be 'News/2009/february/myArticle'", "News/2009/february/myArticle".equals(res.getRelativeContentPath()));
-        assertTrue("Param1 must resolve to  '2009'", "2009".equals(res.getResolvedProperty("param1")));
-        assertTrue("Param2 must resolve to  'february'", "february".equals(res.getResolvedProperty("param2")));
-        assertTrue("Param3 must resolve to  'myArticle'", "myArticle".equals(res.getResolvedProperty("param3")));
+       
     }
     
     @Test
@@ -85,9 +81,7 @@ public class TestConfiguration extends AbstractSpringTestCase {
         ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2009/february/day2/8oclock/16min/4sec/MyArticle", hstSite);
         System.out.println(res.getRelativeContentPath());
         assertTrue("Relative content path for 'news/2009/february/day2/8oclock/16min/4sec/MyArticle' must be to be 'News/2009/february/day2/8oclock/16min/4sec/MyArticle'", "News/2009/february/day2/8oclock/16min/4sec/MyArticle".equals(res.getRelativeContentPath()));
-        assertTrue("Param1 must resolve to  '2009'", "2009".equals(res.getResolvedProperty("param1")));
-        assertTrue("Param2 must resolve to  'february'", "february".equals(res.getResolvedProperty("param2")));
-        assertTrue("Param3 must resolve to  'day2/8oclock/16min/4sec/MyArticle'", "day2/8oclock/16min/4sec/MyArticle".equals(res.getResolvedProperty("param3")));
+      
     }
     
    
