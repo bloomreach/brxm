@@ -16,7 +16,7 @@
 <%@ page language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
-<%@ taglib uri='/WEB-INF/hst-core.tld' prefix='hc'%>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hc'%>
 
 <hc:response-property name="hippo-widget-collection-dom">
 <script language="javascript" src="http://www.onehippo.org/ajax/widget-collection.js"><![CDATA[

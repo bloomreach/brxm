@@ -15,7 +15,7 @@
 <%@ page language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
-<%@ taglib uri='/WEB-INF/hst-core.tld' prefix='hc'%>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hc'%>
 
 <%
 System.out.println("Console out from general_layout.jsp");
@@ -25,7 +25,7 @@ System.out.println("Console out from general_layout.jsp");
 <head>
 
 <!-- include header -->
-<hc:content name="header" />
+<hc:container name="header" />
 
 <hc:response-properties var="responseProperties" />
 <c:forEach var="propertyEntry" items="${responseProperties}">
@@ -69,7 +69,7 @@ function <hc:namespace/>showPopup() {
     
     </div>
     
-    <hc:content name="body" />
+    <hc:container name="body" />
     
     <div>
         news parameters: <%=request.getParameterMap()%>

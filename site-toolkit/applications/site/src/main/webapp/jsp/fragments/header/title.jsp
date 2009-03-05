@@ -14,6 +14,6 @@
   limitations under the License. --%>
 <%@ page language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri='/WEB-INF/hst-core.tld' prefix='hc'%>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hc'%>
 
 <title>My Title.....</title>
