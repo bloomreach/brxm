@@ -19,9 +19,9 @@
 
 <!-- include title -->
 
-<hc:content name="title" />
+<hc:containter name="title" />
 
 <!-- include style -->
 
-<hc:content name="style" />
+<hc:containter name="style" />
 

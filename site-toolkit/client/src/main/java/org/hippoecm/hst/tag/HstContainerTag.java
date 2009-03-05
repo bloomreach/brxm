@@ -31,7 +31,7 @@ import org.hippoecm.hst.core.container.HstComponentWindow;
  * Abstract supporting class for Hst URL tags (action, redner and resource)
  */
 
-public class HstContentTag extends TagSupport {
+public class HstContainerTag extends TagSupport {
     
     private static final long serialVersionUID = 1L;
 

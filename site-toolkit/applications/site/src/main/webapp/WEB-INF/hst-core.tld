@@ -22,9 +22,9 @@
     <jspversion>1.1</jspversion>
     <shortname>Core Tags for HST Applications</shortname>
     <tag>
-        <name>content</name>
-        <tagclass>org.hippoecm.hst.tag.HstContentTag</tagclass>
-        <teiclass>org.hippoecm.hst.tag.HstContentTag$TEI</teiclass>
+        <name>container</name>
+        <tagclass>org.hippoecm.hst.tag.HstContainerTag</tagclass>
+        <teiclass>org.hippoecm.hst.tag.HstContainerTag$TEI</teiclass>
         <bodycontent>empty</bodycontent>
         <attribute>
             <name>name</name>
