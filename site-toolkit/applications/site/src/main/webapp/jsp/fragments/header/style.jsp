@@ -17,7 +17,7 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
 <hst:response-property name="hippo-application-site-style">
-<link type='text/css' rel='StyleSheet' media='all' href='<hst:resourceURL resourceId="/css/site.css"/>' />
+<link type='text/css' rel='StyleSheet' media='all' href='<hst:resourceURL resourceId="static:/css/site.css"/>' />
 </hst:response-property>
 
 <script language="javascript">

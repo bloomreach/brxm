@@ -26,6 +26,7 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 public class GenericResourceServingHstComponent extends GenericHstComponent {
     
     protected String staticResourceServePath = "/staticresource";
+    protected String repositoryResourceServePath = "/binaries";
     
     public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
         super.init(servletConfig, componentConfig);
@@ -34,6 +35,12 @@ public class GenericResourceServingHstComponent extends GenericHstComponent {
         
         if (param != null) {
             this.staticResourceServePath = param;
+        }
+        
+        param = servletConfig.getInitParameter("repositoryResourceServePath");
+        
+        if (param != null) {
+            this.repositoryResourceServePath = param;
         }
     }
     
@@ -46,8 +53,12 @@ public class GenericResourceServingHstComponent extends GenericHstComponent {
         // then the container will dispatch the "serveResourcePath" configured in the configuration.
         // If "serverResourcePath" is not configured, then "renderPath" will be used instead.
         
-        if (resourceId != null && resourceId.startsWith("/")) {
-            response.setServeResourcePath(this.staticResourceServePath);
+        if (resourceId != null) {
+            if (resourceId.startsWith("static:")) {
+                response.setServeResourcePath(this.staticResourceServePath);
+            } else if (resourceId.startsWith("repository:")) {
+                response.setServeResourcePath(this.repositoryResourceServePath);
+            }
         }
     }
 

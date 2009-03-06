@@ -53,6 +53,10 @@ public class BinariesServlet extends HttpServlet {
         if (req instanceof HstRequest) {
             hstRequest = (HstRequest) req;
             path = hstRequest.getResourceID();
+            
+            if (path.indexOf(':') > 0) {
+                path = path.substring(path.indexOf(':') + 1);
+            }
         } else {
             return;
         }

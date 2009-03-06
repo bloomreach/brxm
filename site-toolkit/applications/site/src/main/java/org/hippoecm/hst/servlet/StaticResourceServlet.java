@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 public class StaticResourceServlet extends HttpServlet {
     
     static Logger log = LoggerFactory.getLogger(StaticResourceServlet.class);
-    
+
     private static final int BUF_SIZE = 4096;
     
     @Override
@@ -34,6 +34,12 @@ public class StaticResourceServlet extends HttpServlet {
         }
         
         if (resourceId != null) {
+            String resourcePath = resourceId;
+            
+            if (resourcePath.indexOf(':') > 0) {
+                resourcePath = resourcePath.substring(resourcePath.indexOf(':') + 1);
+            }
+            
             ServletContext context = getServletConfig().getServletContext();
             
             InputStream is = null;
@@ -44,7 +50,7 @@ public class StaticResourceServlet extends HttpServlet {
             try {
                 long lastModified = 0L;
                 
-                File file = new File(context.getRealPath(resourceId));
+                File file = new File(context.getRealPath(resourcePath));
                 
                 if (file.isFile()) {
                     lastModified = file.lastModified();
@@ -57,7 +63,7 @@ public class StaticResourceServlet extends HttpServlet {
                     response.setHeader("Cache-Control", "max-age=" + (expires / 1000));
                 }
                 
-                String mimeType = context.getMimeType(resourceId);
+                String mimeType = context.getMimeType(resourcePath);
                 
                 if (mimeType == null) {
                     mimeType = "application/octet-stream";
@@ -65,7 +71,7 @@ public class StaticResourceServlet extends HttpServlet {
                 
                 response.setContentType(mimeType);
                 
-                is = context.getResourceAsStream(resourceId);
+                is = context.getResourceAsStream(resourcePath);
                 bis = new BufferedInputStream(is);
                 sos = response.getOutputStream();
                 bos = new BufferedOutputStream(sos);
