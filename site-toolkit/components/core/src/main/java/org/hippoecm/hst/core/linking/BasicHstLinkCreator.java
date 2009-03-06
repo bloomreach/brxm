@@ -24,6 +24,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemUtitlites;
 import org.hippoecm.hst.core.linking.HstPathConvertor.ConversionResult;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.provider.jcr.JCRUtilities;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.service.Service;
@@ -36,23 +37,23 @@ public class BasicHstLinkCreator implements HstLinkCreator {
 
     private static final Logger log = LoggerFactory.getLogger(HstLinkCreator.class);
 
-    public HstLink create(Service service, HstSiteMapItem siteMapItem) {
+    public HstLink create(Service service, ResolvedSiteMapItem resolvedSiteMapItem) {
         if(service instanceof JCRService){
-            return this.create((JCRService)service, siteMapItem);
+            return this.create((JCRService)service, resolvedSiteMapItem);
         }
         String path  = service.getValueProvider().getPath();
-        return this.create(path, siteMapItem, true);
+        return this.create(path, resolvedSiteMapItem, true);
     }
 
-    public HstLink create(JCRService jcrService, HstSiteMapItem siteMapItem) {
+    public HstLink create(JCRService jcrService, ResolvedSiteMapItem resolvedSiteMapItem) {
         JCRValueProvider provider = jcrService.getValueProvider();
         
         if(provider.getHandlePath() != null) {
-            return this.create(provider.getHandlePath(), siteMapItem, true);
+            return this.create(provider.getHandlePath(), resolvedSiteMapItem, true);
         } else if(provider.getCanonicalPath() != null) {
-            return this.create(provider.getCanonicalPath(), siteMapItem, true);
+            return this.create(provider.getCanonicalPath(), resolvedSiteMapItem, true);
         } else {
-            return this.create(provider.getPath(), siteMapItem, true);
+            return this.create(provider.getPath(), resolvedSiteMapItem, true);
         }
         
     }
@@ -62,7 +63,7 @@ public class BasicHstLinkCreator implements HstLinkCreator {
      * If the node is of type hippo:document and it is below a hippo:handle, we will
      * rewrite the link wrt hippo:handle, because a handle is the umbrella of a document
      */
-    public HstLink create(Node node, HstSiteMapItem siteMapItem) {
+    public HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem) {
         // TODO link creation involves many jcr calls. Cache result possibly with as key hippo:uuid in case of virtual node, and 
         // with jcr:uuid in case of normal referenceable node. This has a lightweight lookup.
         
@@ -84,7 +85,7 @@ public class BasicHstLinkCreator implements HstLinkCreator {
                 nodePath = node.getParent().getPath();
             }
             
-            return this.create(nodePath, siteMapItem, true);
+            return this.create(nodePath, resolvedSiteMapItem, true);
             
         } catch (RepositoryException e) {
             log.error("Repository Exception during creating link", e);
@@ -97,10 +98,10 @@ public class BasicHstLinkCreator implements HstLinkCreator {
      * boolean signature is only needed to distinguish from create(String toSiteMapItemId, HstSiteMapItem currentSiteMapItem)
      * and not used
      */
-    private HstLink create(String path, HstSiteMapItem siteMapItem, boolean signature) {
+    private HstLink create(String path, ResolvedSiteMapItem resolvedSiteMapItem, boolean signature) {
      // Try to see if we can create a link within the HstSite where this HstSiteMapItem belongs to
         HstPathConvertor hstPathConvertor = new BasicHstPathConvertor();
-        HstSiteMap hstSiteMap = siteMapItem.getHstSiteMap();
+        HstSiteMap hstSiteMap = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap();
         HstSite hstSite = hstSiteMap.getSite();
         
         if(path.startsWith(hstSite.getLocationMap().getCanonicalSiteContentPath())) {
@@ -125,8 +126,8 @@ public class BasicHstLinkCreator implements HstLinkCreator {
     }
     
 
-    public HstLink create(String toSiteMapItemId, HstSiteMapItem currentSiteMapItem) {
-        HstSiteMap hstSiteMap = currentSiteMapItem.getHstSiteMap();
+    public HstLink create(String toSiteMapItemId, ResolvedSiteMapItem currentSiteMapItem) {
+        HstSiteMap hstSiteMap = currentSiteMapItem.getHstSiteMapItem().getHstSiteMap();
         HstSiteMapItem toSiteMapItem = hstSiteMap.getSiteMapItemById(toSiteMapItemId);
         if (toSiteMapItem == null) {
             // search in different sites

@@ -19,12 +19,13 @@ import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.service.Service;
 
 public interface HstLinkCreator {
    
    
-    HstLink create(Service service, HstSiteMapItem siteMapItem);
+    HstLink create(Service service, ResolvedSiteMapItem resolvedSiteMapItem);
     
     /**
      * Rewrite a jcr Node to a HstLink wrt its current HstSiteMapItem
@@ -32,7 +33,7 @@ public interface HstLinkCreator {
      * @param siteMapItem
      * @return HstLink 
      */
-    HstLink create(Node node, HstSiteMapItem siteMapItem);
+    HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem);
     
     /**
      * For creating a link from a HstSiteMapItem to a HstSiteMapItem with toSiteMapItemId within the same Site
@@ -40,10 +41,11 @@ public interface HstLinkCreator {
      * @param currentSiteMapItem
      * @return HstLink
      */
-    HstLink create(String toSiteMapItemId, HstSiteMapItem currentSiteMapItem);
+    HstLink create(String toSiteMapItemId, ResolvedSiteMapItem resolvedSiteMapItem);
     
     /**
-     * Regardless the current context, create a HstLink to the HstSiteMapItem that you use as argument
+     * Regardless the current context, create a HstLink to the HstSiteMapItem that you use as argument. This is only possible if the sitemap item does not
+     * contain any ancestor with a wildcard
      * @param toHstSiteMapItem
      * @return HstLink
      */
@@ -51,7 +53,8 @@ public interface HstLinkCreator {
     
     
     /**
-     * create a link to siteMapItem of hstSite 
+     * create a link to siteMapItem of hstSite. This is only possible if the sitemap item does not
+     * contain any ancestor with a wildcard
      * @param hstSite
      * @param toSiteMapItemId
      * @return HstLink
