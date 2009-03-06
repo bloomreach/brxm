@@ -52,16 +52,16 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     
     private PropertyMap propertyMap;
     
-    private String componentsRootNodePath;
+    private String configurationRootNodePath;
     
-    public HstComponentConfigurationService(Node jcrNode, String componentsRootNodePath) throws ServiceException {
+    public HstComponentConfigurationService(Node jcrNode, String configurationRootNodePath) throws ServiceException {
         super(jcrNode);
-        if(!getValueProvider().getPath().startsWith(componentsRootNodePath)) {
+        if(!getValueProvider().getPath().startsWith(configurationRootNodePath)) {
             throw new ServiceException("Node path of the component cannot start without the global components path. Skip Component");
         }
-        this.componentsRootNodePath = componentsRootNodePath;
+        this.configurationRootNodePath = configurationRootNodePath;
         // id is the relative path wrt configuration components path
-        this.id = getValueProvider().getPath().substring(componentsRootNodePath.length()+1);
+        this.id = getValueProvider().getPath().substring(configurationRootNodePath.length()+1);
        
         if (getValueProvider().isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
             this.name = getValueProvider().getName();
@@ -87,7 +87,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                 if(child.isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
                     if(child.hasProperty(Configuration.COMPONENT_PROPERTY_REFERECENCENAME)) {
                         try {
-                            HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child, componentsRootNodePath);
+                            HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child, configurationRootNodePath);
                             componentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
                             log.debug("Added component service with key '{}'",componentConfiguration.getId());
                         } catch (ServiceException e) {
