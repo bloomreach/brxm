@@ -22,8 +22,6 @@ public class Configuration {
     public final static String NODETYPE_HST_CONFIGURATION = "hst:configuration";
     public final static String NODETYPE_HST_SITEMAP = "hst:sitemap";
     public final static String NODETYPE_HST_SITEMAPITEM = "hst:sitemapitem";
-    public final static String NODETYPE_HST_COMPONENTS = "hst:components";
-    public final static String NODETYPE_HST_COMPONENTGROUP = "hst:componentgroup";
     public final static String NODETYPE_HST_COMPONENT = "hst:component";
 
     public final static String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
@@ -49,5 +47,6 @@ public class Configuration {
     public final static String NODEPATH_HST_CONFIGURATION = "hst:configuration/hst:configuration";
     public final static String NODENAME_HST_CONTENTNODE = "hst:content";
     public final static String NODENAME_HST_SITEMAP = "hst:sitemap";
-    public final static String NODENAME_HST_COMPONENTS = "hst:components";
+    public final static String NODENAME_HST_FRAGMENTS = "hst:fragments";
+    public final static String NODENAME_HST_PAGES = "hst:pages";
 }

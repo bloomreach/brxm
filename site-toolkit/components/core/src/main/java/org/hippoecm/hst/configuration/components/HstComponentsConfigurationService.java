@@ -47,14 +47,23 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
      */
     private List<HstComponentConfiguration> childComponents;
     
-    private String componentsNodePath;
     
-    public HstComponentsConfigurationService(Node componentsNode) throws RepositoryException {
-        super(componentsNode);
-        this.componentsNodePath = componentsNode.getPath();
+    public HstComponentsConfigurationService(Node configurationNode) throws RepositoryException {
+        super(null);
         this.rootComponentConfigurations = new HashMap<String, HstComponentConfiguration>();
         this.childComponents = new ArrayList<HstComponentConfiguration>();
-        init(componentsNode);
+        
+        if(configurationNode.hasNode(Configuration.NODENAME_HST_FRAGMENTS)) {
+            log.debug("Initializing the components for '{}'", Configuration.NODENAME_HST_FRAGMENTS);
+            Node fragments = configurationNode.getNode(Configuration.NODENAME_HST_FRAGMENTS);
+            init(fragments, fragments.getPath());
+        }
+        
+        if(configurationNode.hasNode(Configuration.NODENAME_HST_PAGES)) {
+            log.debug("Initializing the components for '{}'", Configuration.NODENAME_HST_PAGES);
+            Node pages = configurationNode.getNode(Configuration.NODENAME_HST_PAGES);
+            init(pages, pages.getPath());
+        }
         
         for(HstComponentConfiguration child: childComponents) {
             populateRootComponentConfigurations(child);
@@ -84,7 +93,7 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
         }
     }
     
-    private void init(Node node) throws RepositoryException {
+    private void init(Node node, String componentsNodePath) throws RepositoryException {
         
         for(NodeIterator nodeIt = node.getNodes(); nodeIt.hasNext();) {
             Node child = nodeIt.nextNode();
@@ -110,11 +119,9 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
                         log.warn("Skipping '{}' hst:component + child components because it does not contain the mandatory property '{}'",Configuration.COMPONENT_PROPERTY_REFERECENCENAME, child.getPath());
                     }
                 }
-            } else if(child.isNodeType(Configuration.NODETYPE_HST_COMPONENTGROUP)) {
-                init(child);
             } else {
                 if (log.isWarnEnabled()) {
-                    log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(), (Configuration.NODETYPE_HST_COMPONENT + " | " + Configuration.NODETYPE_HST_COMPONENTGROUP));
+                    log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(), (Configuration.NODETYPE_HST_COMPONENT));
                 }
             }
         }

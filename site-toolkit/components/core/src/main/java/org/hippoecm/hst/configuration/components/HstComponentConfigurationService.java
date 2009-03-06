@@ -104,7 +104,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                     }
                 } else {
                     if (log.isWarnEnabled()) {
-                        log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(), (Configuration.NODETYPE_HST_COMPONENT + " | " + Configuration.NODETYPE_HST_COMPONENTGROUP));
+                        log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(), (Configuration.NODETYPE_HST_COMPONENT));
                     }
                 }
             }

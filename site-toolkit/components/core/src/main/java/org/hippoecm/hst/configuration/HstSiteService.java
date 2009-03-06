@@ -112,8 +112,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     }
     
     private void init(Node configurationNode) throws  RepositoryException, ServiceException {
-       Node componentsNode = configurationNode.getNode(Configuration.NODENAME_HST_COMPONENTS); 
-       this.componentsConfigurationService = new HstComponentsConfigurationService(componentsNode); 
+       this.componentsConfigurationService = new HstComponentsConfigurationService(configurationNode); 
       
        Node siteMapNode = configurationNode.getNode(Configuration.NODENAME_HST_SITEMAP);
        this.siteMapService = new HstSiteMapService(this, siteMapNode);
