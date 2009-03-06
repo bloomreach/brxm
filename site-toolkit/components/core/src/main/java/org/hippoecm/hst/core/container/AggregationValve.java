@@ -50,21 +50,24 @@ public class AggregationValve extends AbstractValve {
             if (rootWindow != null) {
                 Map<HstComponentWindow, HstRequest> requestMap = new HashMap<HstComponentWindow, HstRequest>();
                 Map<HstComponentWindow, HstResponse> responseMap = new HashMap<HstComponentWindow, HstResponse>();
-                
+
                 ServletRequest parentRequest = servletRequest;
                 ServletResponse parentResponse = servletResponse;
+                
+                HstResponse topParentResponse = null;
                 
                 // Check if it is invoked from portlet.
                 HstResponseState portletHstResponseState = (HstResponseState) servletRequest.getAttribute(HstResponseState.class.getName());
                 
                 if (portletHstResponseState != null) {
                     parentResponse = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, null, portletHstResponseState, null);
+                    topParentResponse = (HstResponse) parentResponse;
                 }
                 
                 // make hstRequest and hstResponse for each component window.
                 // note that hstResponse is hierarchically created.
                 createHstRequestResponseForWindows(rootWindow, requestContext, parentRequest, parentResponse,
-                        requestMap, responseMap, null);
+                        requestMap, responseMap, topParentResponse);
                 
                 // to avoid recursive invocation from now, just make a list by hierarchical order.
                 List<HstComponentWindow> sortedComponentWindowList = new LinkedList<HstComponentWindow>();

@@ -29,6 +29,7 @@ public class HstContainerURLImpl implements HstContainerURL {
     protected String resourceId;
     protected Map<String, String[]> parameterMap;
     protected Map<String, String[]> actionParameterMap;
+    protected boolean viaPortlet;
     
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
@@ -136,6 +137,14 @@ public class HstContainerURLImpl implements HstContainerURL {
     
     public String getCharacterEncoding() {
         return this.characterEncoding;
+    }
+    
+    public void setViaPortlet(boolean viaPortlet) {
+        this.viaPortlet = viaPortlet;
+    }
+    
+    public boolean isViaPortlet() {
+        return this.viaPortlet;
     }
     
     @Override

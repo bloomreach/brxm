@@ -15,19 +15,36 @@
  */
 package org.hippoecm.hst.tag;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.component.HstURL;
 
-public class HstActionURLTag extends HstURLTag {
+public class HstActionURLTag extends BaseHstURLTag {
 
     private static final long serialVersionUID = 1L;
     
+    protected HstURL url;
+    
     @Override
-    public String getType() {
-        return HstRequest.ACTION_TYPE;
+    protected HstURL getUrl() {
+        if (this.url == null) {
+            HttpServletResponse servletResponse = (HttpServletResponse) this.pageContext.getResponse();
+            
+            if (servletResponse instanceof HstResponse) {
+                this.url = ((HstResponse) servletResponse).createActionURL();
+            }
+        }
+        
+        return this.url;
+    }
+
+    @Override
+    protected void setUrl(HstURL url) {
+        this.url = url;
     }
     
     /**

@@ -26,14 +26,15 @@ import org.hippoecm.hst.core.container.HstContainerURLProvider;
 
 public class HstURLImpl implements HstURL {
     
-    protected String type = TYPE_RENDER;
+    protected String type = RENDER_TYPE;
     protected String referenceNamespace;
     protected HstContainerURL baseContainerURL;
     protected Map<String, String[]> parameterMap = new HashMap<String, String[]>();
     protected String resourceID;
     protected HstContainerURLProvider urlProvider;
     
-    public HstURLImpl(HstContainerURLProvider urlProvider) {
+    public HstURLImpl(String type, HstContainerURLProvider urlProvider) {
+        this.type = type;
         this.urlProvider = urlProvider;
     }
 
@@ -75,10 +76,6 @@ public class HstURLImpl implements HstURL {
         return this.resourceID;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-    
     public void setReferenceNamespace(String referenceNamespace) {
         this.referenceNamespace = referenceNamespace;
     }

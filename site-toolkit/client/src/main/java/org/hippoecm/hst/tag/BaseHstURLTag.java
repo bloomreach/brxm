@@ -42,8 +42,6 @@ public abstract class BaseHstURLTag extends TagSupport {
 
     protected String var = null;
     
-    protected String type = HstURL.TYPE_RENDER;
-    
     protected Boolean escapeXml = true;
         
     protected Map<String, List<String>> parametersMap = 
@@ -87,7 +85,6 @@ public abstract class BaseHstURLTag extends TagSupport {
             throw new IllegalStateException("internal error: url not set");
         }
         
-        url.setType(getType());
         url.setResourceID(getResourceId());
         
         setUrlParameters(url);
@@ -144,14 +141,6 @@ public abstract class BaseHstURLTag extends TagSupport {
     }
     
     /**
-     * Returns the type property.
-     * @return String
-     */
-    public String getType() {
-        return type;
-    }
-    
-    /**
      * Returns escapeXml property.
      * @return Boolean
      */
@@ -174,15 +163,6 @@ public abstract class BaseHstURLTag extends TagSupport {
      */
     public void setVar(String var) {
         this.var = var;
-    }
-    
-    /**
-     * Sets the type property.
-     * @param type The type to set
-     * @return void
-     */
-    public void setType(String type) {
-        this.type = type;
     }
     
     /**

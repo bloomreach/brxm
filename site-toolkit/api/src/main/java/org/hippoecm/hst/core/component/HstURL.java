@@ -21,16 +21,12 @@ import java.util.Map;
 
 public interface HstURL {
     
-    String TYPE_ACTION = "action";
-    String TYPE_RENDER = "render";
-    String TYPE_RESOURCE = "resource";
+    String ACTION_TYPE = "action";
     
-    /**
-     * Sets the url type: render, action or resource
-     * @param type
-     */
-    void setType(String type);
-
+    String RENDER_TYPE = "render";
+    
+    String RESOURCE_TYPE = "resource";
+    
     /**
      * Returns the url type: render, action or resource
      * @return

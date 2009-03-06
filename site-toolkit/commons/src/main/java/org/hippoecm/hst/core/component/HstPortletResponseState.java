@@ -26,6 +26,8 @@ import javax.portlet.PortletResponse;
 import javax.portlet.ResourceResponse;
 import javax.servlet.http.Cookie;
 
+import org.w3c.dom.Element;
+
 /**
  * Temporarily holds the current state of a HST response
  */
@@ -71,6 +73,10 @@ public class HstPortletResponseState extends AbstractHstResponseState {
 
     protected void addResponseHeader(String name, String value) {
         this.response.addProperty(name, value);
+    }
+    
+    protected void addResponseProperty(String name, Element element) {
+        this.response.addProperty(name, element);
     }
 
     protected void setResponseStatus(int status) {

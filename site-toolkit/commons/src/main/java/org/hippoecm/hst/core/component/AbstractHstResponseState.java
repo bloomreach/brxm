@@ -598,10 +598,11 @@ public abstract class AbstractHstResponseState implements HstResponseState {
                 }
             }
 
-            if (properties != null && response instanceof HstResponse) {
+            if (properties != null) {
                 for (Map.Entry<String, Element> entry : properties.entrySet()) {
-                    ((HstResponse) response).addProperty(entry.getKey(), entry.getValue());
+                    addResponseProperty(entry.getKey(), entry.getValue());
                 }
+                
                 properties = null;
             }
 
@@ -647,6 +648,8 @@ public abstract class AbstractHstResponseState implements HstResponseState {
     protected abstract void setResponseContentType(String contentType);
     
     protected abstract void addResponseHeader(String name, String value);
+    
+    protected abstract void addResponseProperty(String name, Element element);
     
     protected abstract void setResponseStatus(int status);
     

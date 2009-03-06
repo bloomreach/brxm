@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.w3c.dom.Element;
 
 /**
  * Temporarily holds the current state of a HST response
@@ -65,6 +66,12 @@ public class HstServletResponseState extends AbstractHstResponseState
     
     protected void addResponseHeader(String name, String value) {
         this.response.addHeader(name, value);
+    }
+    
+    protected void addResponseProperty(String name, Element element) {
+        if (this.response instanceof HstResponse) {
+            ((HstResponse) this.response).addProperty(name, element);
+        }
     }
     
     protected void setResponseStatus(int status) {

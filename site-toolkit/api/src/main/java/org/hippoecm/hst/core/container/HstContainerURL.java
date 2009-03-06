@@ -55,4 +55,6 @@ public interface HstContainerURL {
     
     Map<String, String []> getActionParameterMap();
     
+    boolean isViaPortlet();
+    
 }

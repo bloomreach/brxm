@@ -15,24 +15,38 @@
  */
 package org.hippoecm.hst.core.component;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 
 public class HstURLFactoryImpl implements HstURLFactory {
     
-    protected HstContainerURLProvider urlProvider;
+    protected HstContainerURLProvider servletUrlProvider;
+    protected HstContainerURLProvider portletUrlProvider;
 
-    public void setUrlProvider(HstContainerURLProvider urlProvider) {
-        this.urlProvider = urlProvider;
+    public void setServletUrlProvider(HstContainerURLProvider servletUrlProvider) {
+        this.servletUrlProvider = servletUrlProvider;
     }
     
-    public HstContainerURLProvider getUrlProvider() {
-        return this.urlProvider;
+    public void setPortletUrlProvider(HstContainerURLProvider portletUrlProvider) {
+        this.portletUrlProvider = portletUrlProvider;
+    }
+    
+    public HstContainerURLProvider getUrlProvider(HttpServletRequest request) {
+        HstContainerURLProvider urlProvider = null;
+        
+        if (request.getAttribute("javax.portlet.request") != null) {
+            urlProvider = this.portletUrlProvider;
+        } else {
+            urlProvider = this.servletUrlProvider;
+        }
+        
+        return urlProvider;
     }
     
     public HstURL createURL(String type, String referenceNamespace, HstContainerURL baseContainerURL) {
-        HstURLImpl url = new HstURLImpl(this.urlProvider);
-        url.setType(type);
+        HstURLImpl url = new HstURLImpl(type, baseContainerURL.isViaPortlet() ? this.portletUrlProvider : this.servletUrlProvider);
         url.setReferenceNamespace(referenceNamespace);
         url.setBaseContainerURL(baseContainerURL);
         return url;

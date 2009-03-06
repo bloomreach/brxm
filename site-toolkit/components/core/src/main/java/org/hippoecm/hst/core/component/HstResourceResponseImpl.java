@@ -46,8 +46,16 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
         throw new UnsupportedOperationException("Resource response is not allowed to invoke createElement().");
     }
 
-    public HstURL createURL(String type) {
-        throw new UnsupportedOperationException("Resource response is not allowed to invoke createURL().");
+    public HstURL createRenderURL() {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke createRenderURL().");
+    }
+    
+    public HstURL createActionURL() {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke createActionURL().");
+    }
+
+    public HstURL createResourceURL() {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke createResourceURL().");
     }
 
     public String getNamespace() {

@@ -47,19 +47,27 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     protected HstResponseState responseState;
     protected String redirectLocation;
     protected Map<String, String []> renderParameters;
-    protected HstResponse topComponentHstResponse;
+    protected HstResponse topParentHstResponse;
     protected String renderPath;
     
-    public HstResponseImpl(HttpServletResponse response, HstRequestContext requestContext, HstComponentWindow componentWindow, HstResponseState responseState, HstResponse topComponentHstResponse) {
+    public HstResponseImpl(HttpServletResponse response, HstRequestContext requestContext, HstComponentWindow componentWindow, HstResponseState responseState, HstResponse topParentHstResponse) {
         super(response);
         this.requestContext = requestContext;
         this.componentWindow = componentWindow;
         this.responseState = responseState;
-        this.topComponentHstResponse = topComponentHstResponse;
+        this.topParentHstResponse = topParentHstResponse;
     }
     
-    public HstURL createURL(String type) {
-        return this.requestContext.getURLFactory().createURL(type, this.componentWindow.getReferenceNamespace(), this.requestContext.getBaseURL());
+    public HstURL createRenderURL() {
+        return this.requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, this.componentWindow.getReferenceNamespace(), this.requestContext.getBaseURL());
+    }
+    
+    public HstURL createActionURL() {
+        return this.requestContext.getURLFactory().createURL(HstURL.ACTION_TYPE, this.componentWindow.getReferenceNamespace(), this.requestContext.getBaseURL());
+    }
+
+    public HstURL createResourceURL() {
+        return this.requestContext.getURLFactory().createURL(HstURL.RESOURCE_TYPE, this.componentWindow.getReferenceNamespace(), this.requestContext.getBaseURL());
     }
     
     public String getNamespace() {
@@ -354,11 +362,11 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     public boolean containsProperty(String key) {
         boolean contained = false;
         
-        if (this.topComponentHstResponse == null) {
+        if (this.topParentHstResponse == null) {
             Map<String, Element> props = this.responseState.getProperties();
             contained = (props != null && props.containsKey(key));
-        } else if (this != this.topComponentHstResponse) {
-            contained = this.topComponentHstResponse.containsProperty(key);
+        } else if (this != this.topParentHstResponse) {
+            contained = this.topParentHstResponse.containsProperty(key);
         }
         
         return contained;

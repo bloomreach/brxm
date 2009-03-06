@@ -38,16 +38,24 @@
   <bean id="org.hippoecm.hst.core.container.HstNavigationalStateCodec"
         class="org.hippoecm.hst.core.container.HstNavigationalStateCodecImpl" />
   
-  <bean id="org.hippoecm.hst.core.container.HstContainerURLProvider"
-        class="org.hippoecm.hst.core.container.HstContainerURLProviderImpl">
+  <bean id="abstractUrlProvider" abstract="true">
     <property name="urlNamespacePrefix" value="_hn:" />
     <property name="parameterNameComponentSeparator" value=":" />
     <property name="navigationalStateCodec" ref="org.hippoecm.hst.core.container.HstNavigationalStateCodec" />
   </bean>
+  
+  <bean id="servletUrlProvider" parent="abstractUrlProvider"
+        class="org.hippoecm.hst.core.container.HstContainerURLProviderImpl">
+  </bean>
+
+  <bean id="portletUrlProvider" parent="abstractUrlProvider"
+        class="org.hippoecm.hst.core.container.HstContainerURLProviderPortletImpl">
+  </bean>
 
   <bean id="org.hippoecm.hst.core.component.HstURLFactory"
         class="org.hippoecm.hst.core.component.HstURLFactoryImpl">
-    <property name="urlProvider" ref="org.hippoecm.hst.core.container.HstContainerURLProvider" />
+    <property name="servletUrlProvider" ref="servletUrlProvider" />
+    <property name="portletUrlProvider" ref="portletUrlProvider" />
   </bean>
   
 </beans>

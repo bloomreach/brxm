@@ -24,10 +24,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 public interface HstRequest extends HttpServletRequest {
     
-    String RENDER_TYPE = "render";
-    String ACTION_TYPE = "action";
-    String RESOURCE_TYPE = "resource";
-    
     /**
      * Returns the current request context
      * @return
@@ -41,21 +37,15 @@ public interface HstRequest extends HttpServletRequest {
     HstComponentWindow getComponentWindow();
     
     /**
-     * Returns the current request type
-     * @return
-     */
-    String getType();
-    
-    /**
      * Returns the parameter map of this component window.
-     * If the request type is {@link #ACTION_TYPE}, then only action parameters can be accessible.
+     * If the request is in the action lifecycle, then only action parameters can be accessible.
      * Otherwise, then only render parameters can be accessible.
      */
     Map<String, Object> getParameterMap();
     
     /**
      * Returns the parameter map of the specified reference path component window.
-     * If the request type is {@link #ACTION_TYPE}, the referencePath parameter will be just ignored
+     * If the request type is in the action lifecycle, the referencePath parameter will be just ignored
      * and the operation will be equivalent to {@link #getParameterMap()}.
      * @param referencePath
      * @return

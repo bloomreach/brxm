@@ -40,6 +40,8 @@ public class HstContainerPortlet extends GenericPortlet {
 
     public static final String HST_URL_PARAM = "hstUrl";
     
+    public static final String HST_URL_PARAM_NAME = "_hu";
+    
     /**
      * Name of portlet init parameter for Action page
      */
@@ -112,33 +114,51 @@ public class HstContainerPortlet extends GenericPortlet {
     }
 
     protected void processRequest(PortletRequest request, PortletResponse response, String pageType) throws PortletException, IOException {
-        String hstUrl = this.defaultHstUrl;
-
-        PortletPreferences prefs = request.getPreferences();
-
-        if (prefs != null) {
-            hstUrl = prefs.getValue(HST_URL_PARAM, hstUrl);
+        new HstContainerPortletContext(request, response);
+        
+        try {
+            String hstUrl = this.defaultHstUrl;
+    
+            PortletPreferences prefs = request.getPreferences();
+    
+            if (prefs != null) {
+                hstUrl = prefs.getValue(HST_URL_PARAM, hstUrl);
+            }
+            
+            String hstDispUrl = getHstDispatchUrl(request, response, hstUrl);
+            
+            HstResponseState portletResponseState = new HstPortletResponseState(request, response);
+            request.setAttribute(HstResponseState.class.getName(), portletResponseState);
+    
+            if (portletResponseState.isActionResponse()) {
+                // create the request dispatcher, to delegate the request to the hst url
+                PortletRequestDispatcher rd = getPortletContext().getRequestDispatcher(hstDispUrl);
+                
+                if (rd != null) {
+                    // delegate to HST Container servlet
+                    rd.include(request, response);
+                    processActionResponseState((ActionRequest) request, (ActionResponse) response, hstDispUrl, portletResponseState);
+                } else {
+                    throw new PortletException("HST URL Dispatcher is not found: " + hstDispUrl);
+                }
+            } else if (portletResponseState.isMimeResponse()) {
+                processMimeResponseRequest(request, (MimeResponse) response, hstDispUrl, portletResponseState);
+            } else {
+                throw new PortletException("Unsupported Portlet lifecycle: " + request.getAttribute(PortletRequest.LIFECYCLE_PHASE));
+            }
+        } finally {
+            HstContainerPortletContext.reset();
+        }
+    }
+    
+    protected String getHstDispatchUrl(PortletRequest request, PortletResponse response, String hstUrl) {
+        String hstDispUrl = request.getParameter(HST_URL_PARAM_NAME);
+        
+        if (hstDispUrl == null) {
+            hstDispUrl = hstUrl;
         }
         
-        HstResponseState portletResponseState = new HstPortletResponseState(request, response);
-        request.setAttribute(HstResponseState.class.getName(), portletResponseState);
-
-        if (portletResponseState.isActionResponse()) {
-            // create the request dispatcher, to delegate the request to the hst url
-            PortletRequestDispatcher rd = getPortletContext().getRequestDispatcher(hstUrl);
-            
-            if (rd != null) {
-                // delegate to HST Container servlet
-                rd.include(request, response);
-                processActionResponseState((ActionRequest) request, (ActionResponse) response, hstUrl, portletResponseState);
-            } else {
-                throw new PortletException("HST URL Dispatcher is not found: " + hstUrl);
-            }
-        } else if (portletResponseState.isMimeResponse()) {
-            processMimeResponseRequest(request, (MimeResponse) response, hstUrl, portletResponseState);
-        } else {
-            throw new PortletException("Unsupported Portlet lifecycle: " + request.getAttribute(PortletRequest.LIFECYCLE_PHASE));
-        }
+        return hstDispUrl;
     }
 
     private void processMimeResponseRequest(PortletRequest request, MimeResponse response, String hstUrl, HstResponseState portletResponseState) throws PortletException, IOException {

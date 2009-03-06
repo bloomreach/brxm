@@ -29,12 +29,10 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.collections.collection.CompositeCollection;
 import org.hippoecm.hst.core.container.HstComponentWindow;
-import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequest {
-    
-    protected String type = RENDER_TYPE;
+
     protected HstRequestContext requestContext;
     protected Map<String, Map<String, Object>> namespaceParametersMap = new HashMap<String, Map<String, Object>>();
     protected Map<String, Map<String, Object>> namespaceAttributesMap = new HashMap<String, Map<String, Object>>();
@@ -45,25 +43,13 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         super(servletRequest);
         this.requestContext = requestContext;
         this.componentWindow = componentWindow;
-        this.parameterNameComponentSeparator = requestContext.getURLFactory().getUrlProvider().getParameterNameComponentSeparator();
-        
-        HstContainerURL baseURL = this.requestContext.getBaseURL();
-        
-        if (baseURL.getActionWindowReferenceNamespace() != null) {
-            this.type = ACTION_TYPE;
-        } else if (baseURL.getResourceWindowReferenceNamespace() != null) {
-            this.type = RESOURCE_TYPE;
-        }
+        this.parameterNameComponentSeparator = requestContext.getURLFactory().getUrlProvider(servletRequest).getParameterNameComponentSeparator();
     }
     
     public void setRequest(HttpServletRequest servletRequest) {
         super.setRequest(servletRequest);
     }
 
-    public String getType() {
-        return this.type;
-    }
-    
     public Map<String, Object> getParameterMap() {
         String referenceNamespace = this.componentWindow.getReferenceNamespace();
         return getParameterMap(referenceNamespace);
@@ -80,7 +66,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         if (parameterMap == null) {
             parameterMap = new HashMap<String, Object>();
 
-            if (ACTION_TYPE.equals(getType())) {
+            if (this.requestContext.getBaseURL().getActionWindowReferenceNamespace() != null) {
                 Map<String, String []> actionParams = this.requestContext.getBaseURL().getActionParameterMap();
                 
                 if (actionParams != null) {

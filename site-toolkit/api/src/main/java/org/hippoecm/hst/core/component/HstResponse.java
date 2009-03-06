@@ -24,13 +24,26 @@ import org.w3c.dom.Element;
 public interface HstResponse extends HttpServletResponse {
     
     /**
-     * Creates a HST URL targeting the HstComponent.
-     * The created URL will per default not contain any parameters of the current request.
+     * Creates a HST Render URL targeting the HstComponent.
      *  
      * @return
      */
-    HstURL createURL(String type);
+    HstURL createRenderURL();
     
+    /**
+     * Creates a HST Action URL targeting the HstComponent.
+     *  
+     * @return
+     */
+    HstURL createActionURL();
+
+    /**
+     * Creates a HST Resource URL targeting the HstComponent.
+     *  
+     * @return
+     */
+    HstURL createResourceURL();
+
     /**
      * The value returned by this method should be prefixed or appended to elements, 
      * such as JavaScript variables or function names, to ensure they are unique 
