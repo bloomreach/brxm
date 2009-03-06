@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -223,13 +223,15 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
             session.save();
             session.refresh(true);
         }
+    }
 
+    @Test
+    public void testHREPTWO2318() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        testReviewedAction();
 
-        // "Save" document; commit/edit combo on same workflow instance
-        // HREPTWO-2318
-        /* {
+        {
             // preparation: create draft
-            node = getNode("test/myarticle/myarticle");
+            Node node = getNode("test/myarticle/myarticle");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
             Document document = workflow.obtainEditableInstance();
@@ -248,6 +250,9 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
             node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.disposeEditableInstance();
+            session.refresh(false);
+            node = getNode("test/myarticle/myarticle");
+            workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.obtainEditableInstance();
             session.save();
             session.refresh(true);
@@ -256,7 +261,6 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
             node = getNode("test/myarticle/myarticle");
             workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.disposeEditableInstance();
-        } */
-
+        }
     }
 }
