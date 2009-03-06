@@ -116,5 +116,13 @@ Folders:
         body parameters: <%=request.getParameterMap()%>
         <img src="${resourceUrl}" />
     </div>
+    
+    <div>
+        <form method="POST" enctype="multipart/form-data" action="<hst:actionURL/>">
+          Caption: <input type="text" name="caption" value="caption" />
+          File: <input type="file" name="file" />
+          <input type="submit" />
+        </form>
+    </div>
 
 </div>
