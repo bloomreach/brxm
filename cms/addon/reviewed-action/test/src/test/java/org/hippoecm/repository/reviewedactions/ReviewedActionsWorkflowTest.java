@@ -223,5 +223,40 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
             session.save();
             session.refresh(true);
         }
+
+
+        // "Save" document; commit/edit combo on same workflow instance
+        // HREPTWO-2318
+        /* {
+            // preparation: create draft
+            node = getNode("test/myarticle/myarticle");
+            BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
+            assertNotNull("No applicable workflow where there should be one", workflow);
+            Document document = workflow.obtainEditableInstance();
+            session.save();
+            session.refresh(true);
+
+            // "save" as commit/edit combo
+            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
+            workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
+            workflow.commitEditableInstance();
+            document = workflow.obtainEditableInstance();
+            session.save();
+            session.refresh(true);
+
+            // "revert" as dispose/edit combo
+            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
+            workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
+            workflow.disposeEditableInstance();
+            workflow.obtainEditableInstance();
+            session.save();
+            session.refresh(true);
+
+            // cleanup
+            node = getNode("test/myarticle/myarticle");
+            workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
+            workflow.disposeEditableInstance();
+        } */
+
     }
 }
