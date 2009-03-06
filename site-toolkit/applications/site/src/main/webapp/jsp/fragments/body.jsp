@@ -97,8 +97,6 @@ Folders:
     <hst:actionURL var="redirectActionUrl">
       <hst:param name="redirect" value="http://www.google.com" />
     </hst:actionURL>
-    <hst:resourceURL var="resourceUrl" resourceId="/images/onehippo.gif">
-    </hst:resourceURL>
         
     <a href="${defaultUrl}">Default</a>
     <a href="${firstUrl}">First</a>
@@ -114,7 +112,7 @@ Folders:
     
     <div>
         body parameters: <%=request.getParameterMap()%>
-        <img src="${resourceUrl}" />
+        <img src="<hst:resourceURL resourceId='static:/images/onehippo.gif'/>" />
     </div>
     
     <div>
