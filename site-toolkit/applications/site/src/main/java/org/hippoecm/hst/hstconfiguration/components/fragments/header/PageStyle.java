@@ -15,13 +15,13 @@
  */
 package org.hippoecm.hst.hstconfiguration.components.fragments.header;
 
-import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.hstconfiguration.components.GenericResourceServingHstComponent;
 
-public class PageStyle extends GenericHstComponent {
+public class PageStyle extends GenericResourceServingHstComponent {
 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {

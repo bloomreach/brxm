@@ -17,15 +17,15 @@ package org.hippoecm.hst.hstconfiguration.components.fragments;
 
 import java.io.IOException;
 
-import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.hstconfiguration.components.GenericResourceServingHstComponent;
 import org.hippoecm.hst.pagetypes.NewsPage;
 import org.hippoecm.hst.pagetypes.StdType;
 
-public class Body extends GenericHstComponent {
+public class Body extends GenericResourceServingHstComponent {
     
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {

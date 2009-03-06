@@ -28,11 +28,10 @@ System.out.println("Console out from general_layout.jsp");
 <hst:container name="header" />
 
 <hst:response-properties var="responseProperties" />
+<c:import url="/WEB-INF/copy.xsl" var="xsltCopy"/>
 <c:forEach var="propertyEntry" items="${responseProperties}">
   <c:set var="responseProperty" value="${propertyEntry.value}" />
-  <script language="<x:out select="$responseProperty/@language" />" src="<x:out select="$responseProperty/@src" />">
-    <x:out select="$responseProperty" escapeXml="false"/>
-  </script>
+  <x:transform xml="${responseProperty}" xslt="${xsltCopy}" />
 </c:forEach>
 
 </head>

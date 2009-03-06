@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.hstconfiguration.components.fragments;
 
-import org.hippoecm.hst.core.component.GenericHstComponent;
+import org.hippoecm.hst.hstconfiguration.components.GenericResourceServingHstComponent;
 
-public class Header extends GenericHstComponent {
+public class Header extends GenericResourceServingHstComponent {
     
 }

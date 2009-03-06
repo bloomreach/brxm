@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.hstconfiguration.components.pages;
 
-import org.hippoecm.hst.core.component.GenericHstComponent;
+import org.hippoecm.hst.hstconfiguration.components.GenericResourceServingHstComponent;
 
-public class GeneralLayout extends GenericHstComponent {
+public class GeneralLayout extends GenericResourceServingHstComponent {
 
 }

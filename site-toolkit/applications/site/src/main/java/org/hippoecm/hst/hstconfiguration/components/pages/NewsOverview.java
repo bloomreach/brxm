@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.hstconfiguration.components.pages;
 
-import org.hippoecm.hst.core.component.GenericHstComponent;
+import org.hippoecm.hst.hstconfiguration.components.GenericResourceServingHstComponent;
 
-public class NewsOverview extends GenericHstComponent {
+public class NewsOverview extends GenericResourceServingHstComponent {
 
 }

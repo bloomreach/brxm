@@ -2,6 +2,7 @@ package org.hippoecm.hst.servlet;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.InputStream;
 
 import javax.servlet.ServletContext;
@@ -41,6 +42,21 @@ public class StaticResourceServlet extends HttpServlet {
             BufferedOutputStream bos = null;
             
             try {
+                long lastModified = 0L;
+                
+                File file = new File(context.getRealPath(resourceId));
+                
+                if (file.isFile()) {
+                    lastModified = file.lastModified();
+                }
+                
+                if (lastModified > 0L) {
+                    response.setDateHeader("Last-Modified", lastModified);
+                    long expires = (System.currentTimeMillis() - lastModified);
+                    response.setDateHeader("Expires", expires + System.currentTimeMillis());
+                    response.setHeader("Cache-Control", "max-age=" + (expires / 1000));
+                }
+                
                 String mimeType = context.getMimeType(resourceId);
                 
                 if (mimeType == null) {

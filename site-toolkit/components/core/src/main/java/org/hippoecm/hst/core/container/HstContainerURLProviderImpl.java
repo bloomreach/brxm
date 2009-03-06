@@ -111,7 +111,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 String urlInfo = path.getSegment(0);
                 String encodedInfo = urlInfo.substring(this.urlNamespacePrefix.length());
                 String decodedInfo = this.navigationalStateCodec.decodeParameters(encodedInfo, characterEncoding);
-                String [] requestInfos = StringUtils.split(decodedInfo, REQUEST_INFO_SEPARATOR_CHAR);
+                String [] requestInfos = StringUtils.splitPreserveAllTokens(decodedInfo, REQUEST_INFO_SEPARATOR_CHAR);
                 
                 String requestType = requestInfos[0];
                 
@@ -121,7 +121,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                     
                     if (requestInfos.length > 3) {
                         queryParams = StringUtils.join(requestInfos, REQUEST_INFO_SEPARATOR_CHAR, 2, requestInfos.length);
-                    } else if (requestInfos.length > 2) {
+                    } else {
                         queryParams = requestInfos[2];
                     }
                     
