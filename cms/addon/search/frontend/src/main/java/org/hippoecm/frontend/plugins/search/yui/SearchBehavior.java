@@ -64,6 +64,10 @@ public class SearchBehavior extends AutoCompleteBehavior {
 
     static final Logger log = LoggerFactory.getLogger(SearchBehavior.class);
 
+    private static final String CALLBACK_PARAM = "callback";
+    private static final String SEARCH_QUERY_PARAM = "query";
+    private static final String BROWSE_PARAM = "browse";
+
     private final IBrowseService<IModel> browseService;
     private final SearchBuilder searchBuilder;
 
@@ -88,7 +92,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
     protected void respond(AjaxRequestTarget ajaxTarget) {
         final RequestCycle requestCycle = RequestCycle.get();
 
-        String browse = requestCycle.getRequest().getParameter("browse");
+        String browse = requestCycle.getRequest().getParameter(BROWSE_PARAM);
         if (browse != null && browse.length() > 0) {
             if (browseService != null) {
                 browseService.browse(new JcrNodeModel(browse));
@@ -98,8 +102,8 @@ public class SearchBehavior extends AutoCompleteBehavior {
             return;
         }
 
-        final String callbackMethod = requestCycle.getRequest().getParameter("callback");
-        final String searchParam = requestCycle.getRequest().getParameter("query");
+        final String callbackMethod = requestCycle.getRequest().getParameter(CALLBACK_PARAM);
+        final String searchParam = requestCycle.getRequest().getParameter(SEARCH_QUERY_PARAM);
 
         SearchResult sr;
         try {
@@ -143,45 +147,42 @@ public class SearchBehavior extends AutoCompleteBehavior {
     private static class SearchBuilder implements IClusterable {
         private static final long serialVersionUID = 1L;
 
-        private static final String HARDDOCUMENT_QUERY = "//element(*, hippo:harddocument)[";
-        private static final String EXCERPT = "/rep:excerpt(.)";
-        private static final char SINGLE_QUOTE = '\'';
-        
-        private static ResultItem[] EMPTY_RESULTS = new ResultItem[0];
-        private final String defaultWhere;
-        
-        private boolean wildcardSearch = false;
-        private String ignoreChars = "";
-         
-        public SearchBuilder(IPluginConfig config) {
-            if (config.containsKey("wildcard.search")) {
-                wildcardSearch = config.getBoolean("wildcard.search");
-            }
-            ignoreChars = config.getString("ignore.chars", ignoreChars);
+        private static final String SEARCH_PATHS = "search.paths";
+        private static final String EXCLUDE_PRIMARY_TYPES = "exclude.primary.types";
+        private static final String IGNORE_CHARS = "ignore.chars";
+        private static final String WILDCARD_SEARCH = "wildcard.search";
 
-            StringBuilder sb = new StringBuilder(HARDDOCUMENT_QUERY);
-            if (config.containsKey("exclude.primary.types")) {
-                String[] excludePrimaryTypes = config.getStringArray("exclude.primary.types");
-                if (excludePrimaryTypes.length > 0) {
-                    sb.append("not(");
-                    boolean addOr = false;
-                    for (String exclude : excludePrimaryTypes) {
-                        if (addOr) {
-                            sb.append(" or ");
-                        } else
-                            addOr = true;
-                        sb.append("@jcr:primaryType='").append(exclude).append('\'');
-                    }
-                    sb.append(") and ");
-                }
-            }
-            String[] searchPaths = config.getStringArray("search.paths");
+        private static ResultItem[] EMPTY_RESULTS = new ResultItem[0];
+
+        private final String defaultWhere;
+        private final boolean wildcardSearch;
+        private final String ignoreChars;
+
+        public SearchBuilder(IPluginConfig config) {
+            String[] searchPaths = config.getStringArray(SEARCH_PATHS);
             if (searchPaths == null || searchPaths.length == 0) {
-                log.error("No search paths configured.");
-                throw new IllegalArgumentException("No search paths configured.");
+                throw new IllegalArgumentException("Property " + SEARCH_PATHS + " is required.");
             }
-            
+            String[] excludePrimaryTypes = config.getStringArray(EXCLUDE_PRIMARY_TYPES);
+
+            wildcardSearch = config.getBoolean(WILDCARD_SEARCH);
+            ignoreChars = config.getString(IGNORE_CHARS, "");
+
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+
+            StringBuilder sb = new StringBuilder("//element(*, hippo:harddocument)[");
+            if (excludePrimaryTypes.length > 0) {
+                sb.append("not(");
+                boolean addOr = false;
+                for (String exclude : excludePrimaryTypes) {
+                    if (addOr) {
+                        sb.append(" or ");
+                    } else
+                        addOr = true;
+                    sb.append("@jcr:primaryType='").append(exclude).append('\'');
+                }
+                sb.append(") and ");
+            }
             sb.append("(");
 
             boolean addOr = false;
@@ -223,15 +224,14 @@ public class SearchBehavior extends AutoCompleteBehavior {
             }
             StringBuilder query = new StringBuilder(defaultWhere);
 
-            StringTokenizer st = new StringTokenizer(value, " ");
-            while (st.hasMoreTokens()) {
+            for (StringTokenizer st = new StringTokenizer(value, " "); st.hasMoreTokens();) {
                 query.append(" and jcr:contains(., '");
                 String token = st.nextToken();
                 for (int i = 0; i < token.length(); i++) {
                     char c = token.charAt(i);
                     if (ignoreChars.indexOf(c) == -1) {
-                        if (c == SINGLE_QUOTE) {
-                            query.append(SINGLE_QUOTE);
+                        if (c == '\'') {
+                            query.append('\'');
                         }
                         query.append(c);
                     }
@@ -241,7 +241,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
                 }
                 query.append("')");
             }
-            query.append(']').append(EXCERPT);
+            query.append(']').append("/rep:excerpt(.)");
             final String queryString = query.toString();
             final String queryType = "xpath";
             QueryResult result = null;
@@ -252,7 +252,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
                 HippoQuery hippoQuery = (HippoQuery) queryManager.createQuery(queryString, queryType);
                 session.refresh(true);
                 hippoQuery.setLimit(15);
-                
+
                 long start = System.currentTimeMillis();
                 result = hippoQuery.execute();
                 long end = System.currentTimeMillis();
@@ -261,10 +261,9 @@ public class SearchBehavior extends AutoCompleteBehavior {
                 log.error("Error executing query[" + queryString + "]", e);
             }
 
-            if (result != null) {
-                ResultItem[] results;
-                try {
-                    results = new ResultItem[(int) result.getRows().getSize()];
+            try {
+                if(result != null && result.getRows().getSize() > 0) {
+                    ResultItem[] results = new ResultItem[(int) result.getRows().getSize()];
                     int count = 0;
 
                     for (RowIterator it = result.getRows(); it.hasNext();) {
@@ -277,9 +276,9 @@ public class SearchBehavior extends AutoCompleteBehavior {
                             if (node.hasProperty("hippostd:state")) {
                                 state = node.getProperty("hippostd:state").getString();
                                 TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel(
-                                        "hippostd:publishable"));
+                                "hippostd:publishable"));
                                 state = (String) translator.getValueName("hippostd:state", new Model(state))
-                                        .getObject();
+                                .getObject();
                             } else {
                                 state = "null";
                             }
@@ -296,11 +295,10 @@ public class SearchBehavior extends AutoCompleteBehavior {
                         }
                     }
                     return results;
-                } catch (RepositoryException e) {
-                    log.error("Error parsing query results[" + queryString + "]", e);
                 }
+            } catch (RepositoryException e) {
+                log.error("Error parsing query results[" + queryString + "]", e);
             }
-
             return EMPTY_RESULTS;
         }
 
