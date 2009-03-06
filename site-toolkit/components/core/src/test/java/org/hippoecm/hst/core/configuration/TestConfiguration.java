@@ -15,10 +15,8 @@
  */
 package org.hippoecm.hst.core.configuration;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import org.hippoecm.hst.configuration.ConfigurationViewUtilities;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -73,13 +71,7 @@ public class TestConfiguration extends AbstractSpringTestCase {
     @Test
     public void testUrl3_matchANY(){
         
-        StringBuffer buffer = new StringBuffer();
-        
-        ConfigurationViewUtilities.view(buffer, hstSite.getSiteMap());
-        System.out.println(buffer.toString());
-        
         ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2009/february/day2/8oclock/16min/4sec/MyArticle", hstSite);
-        System.out.println(res.getRelativeContentPath());
         assertTrue("Relative content path for 'news/2009/february/day2/8oclock/16min/4sec/MyArticle' must be to be 'News/2009/february/day2/8oclock/16min/4sec/MyArticle'", "News/2009/february/day2/8oclock/16min/4sec/MyArticle".equals(res.getRelativeContentPath()));
       
     }
