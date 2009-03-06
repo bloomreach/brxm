@@ -30,9 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EventListenersContainerImpl implements EventListenersContainer {
-    
+
     static Logger log = LoggerFactory.getLogger(EventListenersContainerImpl.class);
-    
+
     protected Repository repository;
     protected Credentials credentials;
     protected Session session;
@@ -42,17 +42,19 @@ public class EventListenersContainerImpl implements EventListenersContainer {
     protected Workspace workspace;
     protected ObservationManager observationManager;
     protected List<EventListenerItem> eventListenerItems;
-    
+
     protected boolean firstInitializationDone;
-    
+    protected EventListenersContainerSessionChecker eventListenersContainerSessionChecker;
+    protected boolean stopped;
+
     public void setRepository(Repository repository) {
         this.repository = repository;
     }
-    
+
     public void setCredentials(Credentials credentials) {
         this.credentials = credentials;
     }
-    
+
     public List<EventListenerItem> getEventListenerItems() {
         return this.eventListenerItems;
     }
@@ -60,95 +62,89 @@ public class EventListenersContainerImpl implements EventListenersContainer {
     public void setEventListenerItems(List<EventListenerItem> eventListenerItems) {
         this.eventListenerItems = eventListenerItems;
     }
-    
+
     public void setSessionLiveCheck(boolean sessionLiveCheck) {
         this.sessionLiveCheck = sessionLiveCheck;
     }
-    
+
     public void setSessionLiveCheckIntervalOnStartup(long sessionLiveCheckIntervalOnStartup) {
         this.sessionLiveCheckIntervalOnStartup = sessionLiveCheckIntervalOnStartup;
     }
-    
+
     public void setSessionLiveCheckInterval(long sessionLiveCheckInterval) {
         this.sessionLiveCheckInterval = sessionLiveCheckInterval;
     }
 
     public void start() {
+        this.stopped = false;
+        
         if (!this.sessionLiveCheck) {
             doInit();
         } else {
-            final Thread sessionCheckerThread = new Thread("EventListenersContainerSessionChecker") {
-                public void run() {
-                    while (true) {
-                        if (session == null || !session.isLive()) {
-                            doInit();
-                        }
-                        
-                        synchronized (this) {
-                            try {
-                                wait(firstInitializationDone ? sessionLiveCheckInterval : sessionLiveCheckIntervalOnStartup);
-                            } catch (InterruptedException e) {
-                            }
-                        }
-                    }
-                }
-            };
-            
-            sessionCheckerThread.start();
+            this.eventListenersContainerSessionChecker = new EventListenersContainerSessionChecker();
+            this.eventListenersContainerSessionChecker.start();
         }
     }
-    
+
     protected void doInit() {
-        if (log.isDebugEnabled()) log.debug("EventListenersContainer will initialize itself.");
-        
-        stop();
-        
+        if (log.isDebugEnabled())
+            log.debug("EventListenersContainer will initialize itself.");
+
+        doDeinit();
+
         try {
             this.session = this.repository.login();
             this.workspace = this.session.getWorkspace();
             this.observationManager = this.workspace.getObservationManager();
-            
+
             for (EventListenerItem item : this.eventListenerItems) {
-                
+
                 EventListener eventListener = item.getEventListener();
                 int eventTypes = item.getEventTypes();
                 String absolutePath = item.getAbsolutePath();
                 boolean isDeep = item.isDeep();
-                String [] uuids = item.getUuids();
-                String [] nodeTypeNames = item.getNodeTypeNames();
+                String[] uuids = item.getUuids();
+                String[] nodeTypeNames = item.getNodeTypeNames();
                 boolean noLocal = item.isNoLocal();
-                
+
                 if (eventListener == null) {
-                    if (log.isWarnEnabled()) log.warn("event listener object is null. Just ignored.");
+                    if (log.isWarnEnabled())
+                        log.warn("event listener object is null. Just ignored.");
                     continue;
                 }
-                
+
                 if (eventTypes <= 0) {
-                    if (log.isWarnEnabled()) log.warn("event listener's event types is invalid: {}. Just ignored.", eventTypes);
+                    if (log.isWarnEnabled())
+                        log.warn("event listener's event types is invalid: {}. Just ignored.", eventTypes);
                     continue;
                 }
-                
-                this.observationManager.addEventListener(eventListener, eventTypes, absolutePath, isDeep, uuids, nodeTypeNames, noLocal);
-                
+
+                this.observationManager.addEventListener(eventListener, eventTypes, absolutePath, isDeep, uuids,
+                        nodeTypeNames, noLocal);
+
                 if (log.isDebugEnabled()) {
-                    log.debug("event listener registered: listener=" + eventListener + ", eventTypes=" + eventTypes + 
-                            ", absolutePath=" + absolutePath + ", isDeep=" + isDeep + ", uuids=" + uuids + 
-                            ", nodeTypeNames=" + nodeTypeNames + ", noLocal=" + noLocal);
+                    log.debug("event listener registered: listener=" + eventListener + ", eventTypes=" + eventTypes
+                            + ", absolutePath=" + absolutePath + ", isDeep=" + isDeep + ", uuids=" + uuids
+                            + ", nodeTypeNames=" + nodeTypeNames + ", noLocal=" + noLocal);
                 }
             }
-            
+
             this.firstInitializationDone = true;
 
-            if (log.isDebugEnabled()) log.debug("EventListenersContainer's initialization done.");
+            if (log.isDebugEnabled())
+                log.debug("EventListenersContainer's initialization done.");
         } catch (LoginException e) {
             if (log.isDebugEnabled()) {
-                log.warn("Cannot register event listeners because of failure to log on to the repository: {}", e.getMessage(), e);
+                log.warn("Cannot register event listeners because of failure to log on to the repository: {}", e
+                        .getMessage(), e);
             } else if (log.isWarnEnabled()) {
-                log.warn("Cannot register event listeners because of failure to log on to the repository: {}", e.getMessage());
+                log.warn("Cannot register event listeners because of failure to log on to the repository: {}", e
+                        .getMessage());
             }
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
-                log.warn("Cannot register event listeners because the repository is not available: {}", e.getMessage(), e);
+                log.warn("Cannot register event listeners because the repository is not available: {}", e.getMessage(),
+                        e);
             } else if (log.isWarnEnabled()) {
                 log.warn("Cannot register event listeners because the repository is not available: {}", e.getMessage());
             }
@@ -156,6 +152,12 @@ public class EventListenersContainerImpl implements EventListenersContainer {
     }
 
     public void stop() {
+        this.stopped = true;
+        
+        doDeinit();
+    }
+    
+    protected void doDeinit() {
         if (this.observationManager != null && this.eventListenerItems != null) {
             for (EventListenerItem item : this.eventListenerItems) {
                 try {
@@ -167,17 +169,49 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                 }
             }
         }
-        
+
         if (this.session != null) {
             try {
                 this.session.logout();
             } catch (Exception ce) {
             }
         }
-        
+
         this.observationManager = null;
         this.workspace = null;
         this.session = null;
+        
+        if (this.eventListenersContainerSessionChecker != null) {
+            try {
+                this.eventListenersContainerSessionChecker.interrupt();
+            } catch (Throwable th) {
+            }
+            this.eventListenersContainerSessionChecker = null;
+        }
+    }
+
+    private class EventListenersContainerSessionChecker extends Thread {
+
+        private EventListenersContainerSessionChecker() {
+            super("EventListenersContainerSessionChecker");
+        }
+
+        public void run() {
+            while (!EventListenersContainerImpl.this.stopped) {
+                if (EventListenersContainerImpl.this.session == null
+                        || !EventListenersContainerImpl.this.session.isLive()) {
+                    doInit();
+                }
+
+                synchronized (this) {
+                    try {
+                        wait(firstInitializationDone ? EventListenersContainerImpl.this.sessionLiveCheckInterval
+                                : EventListenersContainerImpl.this.sessionLiveCheckIntervalOnStartup);
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+        }
     }
 
 }
