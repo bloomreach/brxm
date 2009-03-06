@@ -25,7 +25,7 @@ System.out.println("Console out from general_layout.jsp");
 <head>
 
 <!-- include header -->
-<hst:container name="header" />
+<hst:include ref="header" />
 
 <hst:response-properties var="responseProperties" />
 <c:import url="/WEB-INF/copy.xsl" var="xsltCopy"/>
@@ -68,7 +68,7 @@ function <hst:namespace/>showPopup() {
     
     </div>
     
-    <hst:container name="body" />
+    <hst:include ref="body" />
     
     <div>
         news parameters: <%=request.getParameterMap()%>

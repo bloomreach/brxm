@@ -19,9 +19,9 @@
 
 <!-- include title -->
 
-<hst:container name="title" />
+<hst:include ref="title" />
 
 <!-- include style -->
 
-<hst:container name="style" />
+<hst:include ref="style" />
 

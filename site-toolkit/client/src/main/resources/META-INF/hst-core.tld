@@ -27,12 +27,11 @@
     <info>HST Corre Tag Library</info>
 
     <tag>
-        <name>container</name>
-        <tagclass>org.hippoecm.hst.tag.HstContainerTag</tagclass>
-        <teiclass>org.hippoecm.hst.tag.HstContainerTag$TEI</teiclass>
+        <name>include</name>
+        <tagclass>org.hippoecm.hst.tag.HstIncludeTag</tagclass>
         <bodycontent>empty</bodycontent>
         <attribute>
-            <name>name</name>
+            <name>ref</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
