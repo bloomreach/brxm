@@ -79,7 +79,7 @@ Folders:
 	    </c:forEach>
 	</ul>
 	
-	 <a href="javascript:<hst:namespace/>showPopup();">Show</a>
+	<a href="javascript:<hst:namespace/>showPopup();">Show</a>
 
     <hst:renderURL var="defaultUrl">
       <hst:param name="page" />
@@ -103,8 +103,14 @@ Folders:
     <a href="${defaultUrl}">Default</a>
     <a href="${firstUrl}">First</a>
     <a href="${lastUrl}">Last</a>
-    <a href="${actionUrl}">Sort by descending order</a>
     <a href="${redirectActionUrl}">Redirect page</a>
+    <a href="${actionUrl}">Sort by descending order</a>
+    
+    <form method="POST" action="<hst:actionURL/>">
+      <input type="radio" name="sort" value="ascending" checked="true" />Ascending
+      <input type="radio" name="sort" value="descending" />Descending
+      <input type="submit" />
+    </form>
     
     <div>
         body parameters: <%=request.getParameterMap()%>

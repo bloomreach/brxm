@@ -27,7 +27,9 @@ import javax.servlet.ServletResponse;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstResourceResponseImpl;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +99,12 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = hstRequest.getComponentWindow();
-        String dispatchUrl = hstRequest.getComponentWindow().getRenderPath();
+        String dispatchUrl = ((HstResponseImpl) hstResponse).getRenderPath(); 
+        
+        if (dispatchUrl == null) {
+            dispatchUrl = hstRequest.getComponentWindow().getRenderPath();
+        }
+        
         invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl, window);
         
         if (window.hasComponentExceptions()) {
@@ -138,8 +145,13 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = hstRequest.getComponentWindow();
-        String dispatchUrl = hstRequest.getComponentWindow().getServeResourcePath();
         
+        String dispatchUrl = ((HstResourceResponseImpl) hstResponse).getServeResourcePath();
+        
+        if (dispatchUrl == null) {
+            dispatchUrl = hstRequest.getComponentWindow().getServeResourcePath();
+        }
+
         if (dispatchUrl == null) {
             dispatchUrl = hstRequest.getComponentWindow().getRenderPath();
         }

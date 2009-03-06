@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.core.util.HttpUtils;
 import org.hippoecm.hst.core.util.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,7 +109,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             if (pathInfo.startsWith(this.urlNamespacePrefixedPath)) {
                 Path path = new Path(pathInfo);
                 String urlInfo = path.getSegment(0);
-                String encodedInfo = urlInfo.substring(urlInfo.indexOf(':'));
+                String encodedInfo = urlInfo.substring(this.urlNamespacePrefix.length());
                 String decodedInfo = this.navigationalStateCodec.decodeParameters(encodedInfo, characterEncoding);
                 String [] requestInfos = StringUtils.split(decodedInfo, REQUEST_INFO_SEPARATOR_CHAR);
                 
@@ -120,7 +121,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                     
                     if (requestInfos.length > 3) {
                         queryParams = StringUtils.join(requestInfos, REQUEST_INFO_SEPARATOR_CHAR, 2, requestInfos.length);
-                    } else {
+                    } else if (requestInfos.length > 2) {
                         queryParams = requestInfos[2];
                     }
                     
@@ -161,7 +162,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             }
         }
         
-        Map<String, String []> paramMap = (Map<String, String []>) request.getParameterMap();
+        Map<String, String []> paramMap = HttpUtils.parseQueryString(request);
         url.setParameters(paramMap);
         
         return url;

@@ -31,6 +31,7 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
 {
     
     protected HstComponentWindow componentWindow;
+    protected String serveResourcePath;
     
     public HstResourceResponseImpl(HttpServletResponse response, HstComponentWindow componentWindow) {
         super(response);
@@ -71,6 +72,18 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
     
     public boolean containsProperty(String key) {
         throw new UnsupportedOperationException("Resource response is not allowed to invoke containsProperty().");
+    }
+    
+    public void setRenderPath(String renderPath) {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke setRenderPath().");
+    }
+
+    public void setServeResourcePath(String serveResourcePath) {
+        this.serveResourcePath = serveResourcePath;
+    }
+    
+    public String getServeResourcePath() {
+        return this.serveResourcePath;
     }
     
 }

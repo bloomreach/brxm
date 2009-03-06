@@ -48,6 +48,7 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     protected String redirectLocation;
     protected Map<String, String []> renderParameters;
     protected HstResponse topComponentHstResponse;
+    protected String renderPath;
     
     public HstResponseImpl(HttpServletResponse response, HstRequestContext requestContext, HstComponentWindow componentWindow, HstResponseState responseState, HstResponse topComponentHstResponse) {
         super(response);
@@ -362,4 +363,17 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         
         return contained;
     }
+
+    public void setRenderPath(String renderPath) {
+        this.renderPath = renderPath;
+    }
+    
+    public String getRenderPath() {
+        return this.renderPath;
+    }
+
+    public void setServeResourcePath(String serveResourcePath) {
+        throw new UnsupportedOperationException("hst response is not allowed to invoke setServeResourcePath().");
+    }
+    
 }

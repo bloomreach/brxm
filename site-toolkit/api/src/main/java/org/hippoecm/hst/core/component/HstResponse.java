@@ -123,4 +123,22 @@ public interface HstResponse extends HttpServletResponse {
      */
     boolean containsProperty(String key);
     
+    /**
+     * Sets the renderPath dynamically.
+     * Normally, the renderPath is set in the configuration, but it can be
+     * set dynamically in the {@link HstComponent#doBeforeRender(HstRequest, HstResponse)} method.
+     * 
+     * @param renderPath
+     */
+    void setRenderPath(String renderPath);
+    
+    /**
+     * Sets the serveResourcePath dynamically.
+     * Normally, the serveResourcePath is set in the configuration, but it can be
+     * set dynamically in the {@link HstComponent#doBeforeServeResource(HstRequest, HstResponse)} method.
+     * 
+     * @param serveResourcePath
+     */
+    void setServeResourcePath(String serveResourcePath);
+    
 }
