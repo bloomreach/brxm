@@ -15,19 +15,25 @@
  */
 package org.hippoecm.frontend.plugins.console;
 
+import org.apache.wicket.ajax.AjaxEventBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.ContextMenu;
+import org.hippoecm.frontend.plugin.ContextMenuManager;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.widgets.Pinger;
 
-public class RootPlugin extends RenderPlugin {
+public class RootPlugin extends RenderPlugin implements ContextMenuManager {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
+    private ContextMenu activeContextMenu;
 
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -41,6 +47,15 @@ public class RootPlugin extends RenderPlugin {
             // unregister: don't repaint root plugin when model changes.
             context.unregisterService(this, modelId);
         }
+
+        add(new AjaxEventBehavior("onclick") {
+            public void onEvent(AjaxRequestTarget target) {
+                activeContextMenu.collapse(target);
+            }
+        });
     }
 
+    public void addContextMenu(ContextMenu activeMenu) {
+        activeContextMenu = activeMenu;
+    }
 }
