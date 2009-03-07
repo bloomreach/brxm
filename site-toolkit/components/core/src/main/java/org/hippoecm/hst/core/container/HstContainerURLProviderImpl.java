@@ -22,7 +22,12 @@ public class HstContainerURLProviderImpl extends AbstractHstContainerURLProvider
     @Override
     public String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException, ContainerException {
         String path = buildHstURLPath(containerURL);
-        StringBuilder url = new StringBuilder(containerURL.getContextPath()).append(path);
+        
+        StringBuilder url = new StringBuilder(100);
+        url.append(containerURL.getContextPath());
+        url.append(containerURL.getServletPath());
+        url.append(path);
+        
         return url.toString();
     }
     

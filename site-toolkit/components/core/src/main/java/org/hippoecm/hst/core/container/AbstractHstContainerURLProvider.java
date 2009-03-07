@@ -202,11 +202,19 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         }
     }
     
+    public String toContextRelativeURLString(HstContainerURL containerURL) throws UnsupportedEncodingException, ContainerException {
+        StringBuilder url = new StringBuilder(100);
+        url.append(containerURL.getServletPath());
+        String pathInfo = buildHstURLPath(containerURL);
+        url.append(pathInfo);
+        return url.toString();
+    }
+    
     public abstract String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException, ContainerException;
     
     protected String buildHstURLPath(HstContainerURL containerURL) throws UnsupportedEncodingException {
         String characterEncoding = containerURL.getCharacterEncoding();
-        StringBuilder url = new StringBuilder(containerURL.getServletPath());
+        StringBuilder url = new StringBuilder(100);
         
         if (containerURL.getActionWindowReferenceNamespace() != null) {
             url.append(this.urlNamespacePrefixedPath);

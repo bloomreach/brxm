@@ -24,9 +24,23 @@ import org.hippoecm.hst.container.HstContainerPortletContext;
 
 public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLProvider {
     
+    protected boolean portletResourceURLEnabled;
+    
+    public void setPortletResourceURLEnabled(boolean portletResourceURLEnabled) {
+        this.portletResourceURLEnabled = portletResourceURLEnabled;
+    }
+    
     @Override
     public String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException, ContainerException {
-        String path = buildHstURLPath(containerURL);
+        StringBuilder path = new StringBuilder(100);
+        String pathInfo = buildHstURLPath(containerURL);
+        path.append(containerURL.getServletPath());
+        path.append(pathInfo);
+        
+        if (!this.portletResourceURLEnabled && containerURL.getResourceWindowReferenceNamespace() != null) {
+            path.insert(0, containerURL.getContextPath());
+            return path.toString();
+        }
         
         Object portletURL = null;
         Object response = HstContainerPortletContext.getCurrentResponse();
@@ -40,7 +54,7 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
                 portletURL = MethodUtils.invokeMethod(response, "createRenderURL", null);
             }
         
-            MethodUtils.invokeMethod(portletURL, "setParameter", new Object [] { HstContainerPortlet.HST_URL_PARAM_NAME, path });
+            MethodUtils.invokeMethod(portletURL, "setParameter", new Object [] { HstContainerPortlet.HST_PATH_PARAM_NAME, path.toString() });
         } catch (NoSuchMethodException e) {
             throw new ContainerException("Portlet support is not available.", e);
         } catch (IllegalAccessException e) {

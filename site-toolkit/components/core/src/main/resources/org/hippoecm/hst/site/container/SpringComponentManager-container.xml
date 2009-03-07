@@ -50,6 +50,7 @@
 
   <bean id="portletUrlProvider" parent="abstractUrlProvider"
         class="org.hippoecm.hst.core.container.HstContainerURLProviderPortletImpl">
+    <property name="portletResourceURLEnabled" value="false" />
   </bean>
 
   <bean id="org.hippoecm.hst.core.component.HstURLFactory"

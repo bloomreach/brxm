@@ -28,6 +28,7 @@ import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
+import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class ActionValve extends AbstractValve
@@ -42,22 +43,26 @@ public class ActionValve extends AbstractValve
         
         if (requestContext.getBaseURL().getActionWindowReferenceNamespace() != null) {
             HstContainerURL baseURL = requestContext.getBaseURL();
-            String redirectLocation = null;
             HstComponentWindow window = findActionWindow(context.getRootComponentWindow(), baseURL.getActionWindowReferenceNamespace());
+            HstResponseState responseState = null;
             
             if (window == null) {
                 if (log.isWarnEnabled()) {
                     log.warn("Cannot find the action window: {0}", requestContext.getBaseURL().getActionWindowReferenceNamespace());
                 }
             } else {
+                // Check if it is invoked from portlet.
+                responseState = (HstResponseState) servletRequest.getAttribute(HstResponseState.class.getName());
+                
+                if (responseState == null) {
+                    responseState = new HstServletResponseState((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
+                }
+                
                 HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
-                HstResponseState responseState = new HstServletResponseState((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
                 HstResponseImpl response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window, responseState, null);
                 ((HstComponentWindowImpl) window).setResponseState(responseState);
 
                 getComponentInvoker().invokeAction(context.getServletConfig(), request, response);
-                
-                redirectLocation = responseState.getRedirectLocation();
                 
                 Map<String, String []> renderParameters = response.getRenderParamerters();
                 
@@ -79,24 +84,35 @@ public class ActionValve extends AbstractValve
                 }
             }
             
-            if (baseURL.getActionParameterMap() != null) {
-                baseURL.getActionParameterMap().clear();
-            }
-            
-            baseURL.setActionWindowReferenceNamespace(null);
-            
-            if (redirectLocation == null) {
+            if (responseState.getRedirectLocation() == null) {
                 try {
-                    redirectLocation = getUrlFactory().getServletUrlProvider().toURLString(baseURL);
+                    // Clear action state first
+                    if (baseURL.getActionParameterMap() != null) {
+                        baseURL.getActionParameterMap().clear();
+                    }
+                    baseURL.setActionWindowReferenceNamespace(null);
+                    
+                    if (baseURL.isViaPortlet()) {
+                        HstContainerURLProvider urlProvider = getUrlFactory().getPortletUrlProvider();
+                        responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL));
+                    } else {
+                        HstContainerURLProvider urlProvider = getUrlFactory().getServletUrlProvider();
+                        responseState.sendRedirect(urlProvider.toURLString(baseURL));
+                    }
                 } catch (UnsupportedEncodingException e) {
+                    throw new ContainerException(e);
+                } catch (IOException e) {
                     throw new ContainerException(e);
                 }
             }
             
             try {
-                servletResponse.sendRedirect(redirectLocation);
+                if (!baseURL.isViaPortlet()) {
+                    responseState.flush();
+                    servletResponse.sendRedirect(responseState.getRedirectLocation());
+                }
             } catch (IOException e) {
-                log.warn("Unexpected exception during redirect to " + redirectLocation, e);
+                log.warn("Unexpected exception during redirect to " + responseState.getRedirectLocation(), e);
             }
         } else {
             // continue
