@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractHstContainerURLProvider implements HstContainerURLProvider {
     
-    protected final static Logger log = LoggerFactory.getLogger(HstContainerURLProvider.class);
+    protected final static Logger log = LoggerFactory.getLogger(AbstractHstContainerURLProvider.class);
     
     protected static final String REQUEST_INFO_SEPARATOR = "|";
     protected static final char REQUEST_INFO_SEPARATOR_CHAR = '|';
@@ -202,7 +202,7 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         }
     }
     
-    public abstract String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException;
+    public abstract String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException, ContainerException;
     
     protected String buildHstURLPath(HstContainerURL containerURL) throws UnsupportedEncodingException {
         String characterEncoding = containerURL.getCharacterEncoding();

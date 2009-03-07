@@ -1,49 +1,69 @@
---- How to test and build Hippo Site Toolkit ---
+========================================
+How to test and build Hippo Site Toolkit
+========================================
 
--- Requirements --
+1. Introduction
 
-* Java 1.5
-* Maven 2.0.9 
+  Very brief introduction to how to build, test and run HST!
+
+2. Requirements --
+
+  (1) Java 1.5
+  (2) Maven 2.0.9
+  (3) [Optional] Tomcat 5.5 or 6.0 (if you want to deploy and run on Tomcat.)
+      -- Note shared lib folder path, depending on your Tomcat version, in your build.properties.
+  (4) [Optional] Apache Jetspeed 2.2 (if you want to deploy and run on Apache Jetspeed 2.2 Enterprise Portal.) 
+      -- Note shared lib folder path, depending on the Jetspeed's Tomcat version, in your build.properties.
 
 3. Testing
 
-(1) Start a repository server with test contents.
+  (1) Start a repository server with test contents.
 
-(2) Build and Run Tests
+  (2) Build and Run Tests
 
     $ mvn clean install -DskipTests
     $ mvn test
 
 4. Build
 
-mvn clean install -DskipTests
+  $ mvn clean install -DskipTests
 
 5. Website Generation
 
-mvn -P website site
+  $ mvn -P website site
 
 6. Running an example site
 
-(1) With Embedded Jetty
+  (1) With Embedded Jetty
 
-  - Run the example cms repository first.
-  - After Building, run the following command under /applications/site/ folder.
+    - Run the example cms repository first.
+    - After Building, run the following command under /applications/site/ folder.
 
-    $ mvn jetty:run-war
+      $ mvn jetty:run-war
   
-  - Visit the page: http://localhost:8085/site/content/news
-  
+    - Visit the page: http://localhost:8085/site/content/news
     
-(2) With Tomcat
+  (2) With Tomcat
 
-  - Copy build.properties-sample to build.properties in the project root folder.
-  - Edit the tomcat directory paths
-  - Run the following to deploy the site.
+    - Copy build.properties-sample to build.properties in the project root folder.
+    - Edit the tomcat directory path and shared lib folder path
+    - Run the following to deploy the site.
   
-    $ mvn -P tomcat clean install -DskipTests
+      $ mvn -P tomcat clean install -DskipTests
   
-  - Visit the page: http://localhost:8080/site/content/news
-  - You can visit cms by http://localhost:8080/cms/
-    and console by http://localhost:8080/cms/console.
+    - Visit the page: http://localhost:8080/site/content/news
+    - You can visit cms by http://localhost:8080/cms/
+      and console by http://localhost:8080/cms/console.
 
+  (3) With Jetspeed (on Tomcat)
 
+    - Copy build.properties-sample to build.properties in the project root folder.
+    - Edit the jetspeed server directory path and shared lib folder path
+    - Run the following to deploy the site.
+  
+      $ mvn -P jetspeed clean install -DskipTests
+  
+    - Visit the page: http://localhost:8080/jetspeed/
+    - Add news portlet in a portal page.
+    - You can visit cms by http://localhost:8080/cms/
+      and console by http://localhost:8080/cms/console.

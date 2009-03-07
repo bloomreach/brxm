@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 public class BasicHstLinkCreator implements HstLinkCreator {
 
-    private static final Logger log = LoggerFactory.getLogger(HstLinkCreator.class);
+    private static final Logger log = LoggerFactory.getLogger(BasicHstLinkCreator.class);
 
     public HstLink create(Service service, ResolvedSiteMapItem resolvedSiteMapItem) {
         if(service instanceof JCRService){

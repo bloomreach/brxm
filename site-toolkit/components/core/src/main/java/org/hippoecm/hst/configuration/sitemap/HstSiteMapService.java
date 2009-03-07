@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class HstSiteMapService extends AbstractJCRService implements HstSiteMap, Service{
     
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstSiteMap.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstSiteMapService.class);
     
     
     private HstSite hstSite;

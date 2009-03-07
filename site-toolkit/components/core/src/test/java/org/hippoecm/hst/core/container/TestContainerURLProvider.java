@@ -44,7 +44,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
     }
     
     @Test
-    public void testActionContainerURL() throws UnsupportedEncodingException {
+    public void testActionContainerURL() throws UnsupportedEncodingException, ContainerException {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
 
@@ -84,7 +84,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
     }
     
     @Test
-    public void testResourceContainerURL() throws UnsupportedEncodingException {
+    public void testResourceContainerURL() throws UnsupportedEncodingException, ContainerException {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
 

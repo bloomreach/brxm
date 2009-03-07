@@ -15,15 +15,15 @@
  */
 package org.hippoecm.hst.core.component;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 
 
 public interface HstURLFactory {
     
-    HstContainerURLProvider getUrlProvider(HttpServletRequest request);
+    HstContainerURLProvider getServletUrlProvider();
+    
+    HstContainerURLProvider getPortletUrlProvider();
 
     HstURL createURL(String type, String referenceNamespace, HstContainerURL base);
     

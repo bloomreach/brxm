@@ -16,7 +16,6 @@
 package org.hippoecm.hst.core.container;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
@@ -35,7 +34,7 @@ public class HstURLValve extends AbstractValve {
             ((HstRequestContextImpl) requestContext).setContextNamespace(contextNamespace);
         }
         
-        HstContainerURL baseURL = getUrlFactory().getUrlProvider((HttpServletRequest) servletRequest).parseURL(context.getServletRequest(), context.getServletResponse());
+        HstContainerURL baseURL = getUrlFactory().getServletUrlProvider().parseURL(context.getServletRequest(), context.getServletResponse());
         
         ((HstRequestContextImpl) requestContext).setBaseURL(baseURL);
         ((HstRequestContextImpl) requestContext).setURLFactory(getUrlFactory());

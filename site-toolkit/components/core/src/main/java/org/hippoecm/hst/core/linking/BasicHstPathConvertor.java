@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public class BasicHstPathConvertor implements HstPathConvertor{
 
-    private static final Logger log = LoggerFactory.getLogger(HstPathConvertor.class);
+    private static final Logger log = LoggerFactory.getLogger(BasicHstPathConvertor.class);
     
     public ConversionResult convert(String path, HstSite hstSite) {
         

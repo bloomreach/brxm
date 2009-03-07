@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
     
-    private final static Logger log = LoggerFactory.getLogger(HstSiteMapMatcher.class);
+    private final static Logger log = LoggerFactory.getLogger(BasicHstSiteMapMatcher.class);
     
     // the equivalence for *
     public final static String WILDCARD = "_default_";

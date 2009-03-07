@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 public class HstComponentsConfigurationService extends AbstractJCRService implements HstComponentsConfiguration, Service{
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentsConfiguration.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentsConfigurationService.class);
     
     /*
      * rootComponentConfigurations are component configurations that are directly retrievable through getComponentConfiguration(String id),

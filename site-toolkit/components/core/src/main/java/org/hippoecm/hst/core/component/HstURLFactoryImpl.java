@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.core.component;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 
@@ -29,20 +27,16 @@ public class HstURLFactoryImpl implements HstURLFactory {
         this.servletUrlProvider = servletUrlProvider;
     }
     
+    public HstContainerURLProvider getServletUrlProvider() {
+        return this.servletUrlProvider;
+    }
+
     public void setPortletUrlProvider(HstContainerURLProvider portletUrlProvider) {
         this.portletUrlProvider = portletUrlProvider;
     }
     
-    public HstContainerURLProvider getUrlProvider(HttpServletRequest request) {
-        HstContainerURLProvider urlProvider = null;
-        
-        if (request.getAttribute("javax.portlet.request") != null) {
-            urlProvider = this.portletUrlProvider;
-        } else {
-            urlProvider = this.servletUrlProvider;
-        }
-        
-        return urlProvider;
+    public HstContainerURLProvider getPortletUrlProvider() {
+        return this.portletUrlProvider;
     }
     
     public HstURL createURL(String type, String referenceNamespace, HstContainerURL baseContainerURL) {

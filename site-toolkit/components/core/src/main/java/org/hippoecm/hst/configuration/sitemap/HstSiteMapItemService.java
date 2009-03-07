@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 public class HstSiteMapItemService extends AbstractJCRService implements HstSiteMapItem, Service{
 
-    private static final Logger log = LoggerFactory.getLogger(HstSiteMapItem.class);
+    private static final Logger log = LoggerFactory.getLogger(HstSiteMapItemService.class);
     
     private static final String WILDCARD = "_default_";
     

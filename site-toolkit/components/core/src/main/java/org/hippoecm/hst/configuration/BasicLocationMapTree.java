@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 public class BasicLocationMapTree implements LocationMapTree{
 
-    private final static Logger log = LoggerFactory.getLogger(LocationMapTree.class);
+    private final static Logger log = LoggerFactory.getLogger(BasicLocationMapTree.class);
     
     private Map<String, LocationMapTreeItem> children = new HashMap<String, LocationMapTreeItem>();
     private String canonicalSiteContentPath;

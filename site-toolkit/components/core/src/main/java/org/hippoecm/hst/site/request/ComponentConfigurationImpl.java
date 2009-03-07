@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 public class ComponentConfigurationImpl implements ComponentConfiguration{
 
-    private final static Logger log = LoggerFactory.getLogger(ComponentConfiguration.class);
+    private final static Logger log = LoggerFactory.getLogger(ComponentConfigurationImpl.class);
     
     public Map<String, Object> unmodifiablePropertiesMap;
     

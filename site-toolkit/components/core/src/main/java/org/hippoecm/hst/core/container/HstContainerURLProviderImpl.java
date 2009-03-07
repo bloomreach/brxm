@@ -20,7 +20,7 @@ import java.io.UnsupportedEncodingException;
 public class HstContainerURLProviderImpl extends AbstractHstContainerURLProvider {
     
     @Override
-    public String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException {
+    public String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException, ContainerException {
         String path = buildHstURLPath(containerURL);
         StringBuilder url = new StringBuilder(containerURL.getContextPath()).append(path);
         return url.toString();

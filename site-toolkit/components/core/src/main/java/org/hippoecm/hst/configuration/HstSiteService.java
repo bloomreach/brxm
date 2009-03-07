@@ -49,7 +49,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     
     private HstSites hstSites;
     
-    private static final Logger log = LoggerFactory.getLogger(HstSite.class);
+    private static final Logger log = LoggerFactory.getLogger(HstSiteService.class);
     
     
     public HstSiteService(Node site, HstSites hstSites) throws ServiceException{

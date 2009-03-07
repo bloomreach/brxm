@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 public class HstSitesService extends AbstractJCRService implements HstSites, Service{
 
-    private Logger log = LoggerFactory.getLogger(HstSites.class) ;
+    private Logger log = LoggerFactory.getLogger(HstSitesService.class) ;
     private Map<String, HstSite> hstSites = new HashMap<String, HstSite>();
     
     private String sitesContentPath;

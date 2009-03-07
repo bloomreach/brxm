@@ -34,7 +34,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     
     private static final long serialVersionUID = 1L;
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentConfiguration.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentConfigurationService.class);
     
     private SortedMap<String, HstComponentConfiguration> componentConfigurations = new TreeMap<String, HstComponentConfiguration>();
     

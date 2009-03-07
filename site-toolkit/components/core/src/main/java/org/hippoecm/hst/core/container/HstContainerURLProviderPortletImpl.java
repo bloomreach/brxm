@@ -16,31 +16,38 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 
-import javax.portlet.BaseURL;
-import javax.portlet.MimeResponse;
-
+import org.apache.commons.beanutils.MethodUtils;
 import org.hippoecm.hst.container.HstContainerPortlet;
 import org.hippoecm.hst.container.HstContainerPortletContext;
 
 public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLProvider {
     
     @Override
-    public String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException {
+    public String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException, ContainerException {
         String path = buildHstURLPath(containerURL);
         
-        BaseURL portletURL = null;
-        MimeResponse response = (MimeResponse) HstContainerPortletContext.getCurrentResponse();
+        Object portletURL = null;
+        Object response = HstContainerPortletContext.getCurrentResponse();
         
-        if (containerURL.getActionWindowReferenceNamespace() != null) {
-            portletURL = response.createActionURL();
-        } else if (containerURL.getResourceWindowReferenceNamespace() != null) {
-            portletURL = response.createResourceURL();
-        } else {
-            portletURL = response.createRenderURL();
+        try {
+            if (containerURL.getActionWindowReferenceNamespace() != null) {
+                portletURL = MethodUtils.invokeMethod(response, "createActionURL", null);
+            } else if (containerURL.getResourceWindowReferenceNamespace() != null) {
+                portletURL = MethodUtils.invokeMethod(response, "createResourceURL", null);
+            } else {
+                portletURL = MethodUtils.invokeMethod(response, "createRenderURL", null);
+            }
+        
+            MethodUtils.invokeMethod(portletURL, "setParameter", new Object [] { HstContainerPortlet.HST_URL_PARAM_NAME, path });
+        } catch (NoSuchMethodException e) {
+            throw new ContainerException("Portlet support is not available.", e);
+        } catch (IllegalAccessException e) {
+            throw new ContainerException("Portlet support is not available.", e);
+        } catch (InvocationTargetException e) {
+            throw new ContainerException("Portlet support is not available.", e);
         }
-        
-        portletURL.setParameter(HstContainerPortlet.HST_URL_PARAM_NAME, path);
         
         return portletURL.toString();
     }

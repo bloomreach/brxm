@@ -43,7 +43,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         super(servletRequest);
         this.requestContext = requestContext;
         this.componentWindow = componentWindow;
-        this.parameterNameComponentSeparator = requestContext.getURLFactory().getUrlProvider(servletRequest).getParameterNameComponentSeparator();
+        this.parameterNameComponentSeparator = requestContext.getURLFactory().getServletUrlProvider().getParameterNameComponentSeparator();
     }
     
     public void setRequest(HttpServletRequest servletRequest) {

@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 public class HstComponentInvokerImpl implements HstComponentInvoker {
     
-    private final static Logger log = LoggerFactory.getLogger(HstComponentInvoker.class);
+    private final static Logger log = LoggerFactory.getLogger(HstComponentInvokerImpl.class);
     
     public void invokeAction(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;

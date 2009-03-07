@@ -62,7 +62,7 @@ public class ActionValve extends AbstractValve
                 Map<String, String []> renderParameters = response.getRenderParamerters();
                 
                 if (renderParameters != null) {
-                    getUrlFactory().getUrlProvider(servletRequest).mergeParameters(baseURL, window.getReferenceNamespace(), renderParameters);
+                    getUrlFactory().getServletUrlProvider().mergeParameters(baseURL, window.getReferenceNamespace(), renderParameters);
                     response.setRenderParameters(null);
                 }
                 
@@ -87,7 +87,7 @@ public class ActionValve extends AbstractValve
             
             if (redirectLocation == null) {
                 try {
-                    redirectLocation = getUrlFactory().getUrlProvider(servletRequest).toURLString(baseURL);
+                    redirectLocation = getUrlFactory().getServletUrlProvider().toURLString(baseURL);
                 } catch (UnsupportedEncodingException e) {
                     throw new ContainerException(e);
                 }

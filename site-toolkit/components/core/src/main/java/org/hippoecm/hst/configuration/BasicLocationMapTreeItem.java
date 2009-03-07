@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public class BasicLocationMapTreeItem implements LocationMapTreeItem{
 
-    private final static Logger log = LoggerFactory.getLogger(LocationMapTreeItem.class);
+    private final static Logger log = LoggerFactory.getLogger(BasicLocationMapTreeItem.class);
     
     private List<HstSiteMapItem> hstSiteMapItems = new ArrayList<HstSiteMapItem>();
     

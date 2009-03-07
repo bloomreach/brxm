@@ -21,6 +21,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 
@@ -98,7 +99,9 @@ public class HstURLImpl implements HstURL {
         try {
             return this.urlProvider.toURLString(containerURL);
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new HstComponentException(e);
+        } catch (ContainerException e) {
+            throw new HstComponentException(e);
         }
     }
 

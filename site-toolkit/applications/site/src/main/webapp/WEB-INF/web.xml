@@ -115,18 +115,6 @@
     <servlet-class>org.hippoecm.hst.servlet.StaticResourceServlet</servlet-class>
   </servlet>
   
-  <!--
-  <servlet>
-    <servlet-name>JetspeedContainer</servlet-name>
-    <servlet-class>org.apache.jetspeed.container.JetspeedContainerServlet</servlet-class>
-    <init-param>
-      <param-name>contextName</param-name>
-      <param-value>site</param-value>
-    </init-param>                            
-    <load-on-startup>100</load-on-startup>      
-  </servlet>
-  -->
-
   <servlet-mapping>
     <servlet-name>HstContainerServlet</servlet-name>
     <url-pattern>/content/*</url-pattern>
@@ -142,13 +130,6 @@
     <url-pattern>/staticresource</url-pattern>
   </servlet-mapping>
 
-  <!--
-  <servlet-mapping>
-    <servlet-name>JetspeedContainer</servlet-name>
-    <url-pattern>/container/*</url-pattern>
-  </servlet-mapping>
-  -->
-  
   <!-- The Usual Welcome File List -->
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>

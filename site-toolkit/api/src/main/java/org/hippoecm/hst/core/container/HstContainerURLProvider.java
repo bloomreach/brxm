@@ -35,6 +35,6 @@ public interface HstContainerURLProvider {
     
     void mergeParameters(HstContainerURL containerURL, String referenceNamespace, Map<String, String []> parameters);
     
-    String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException;
+    String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException, ContainerException;
     
 }

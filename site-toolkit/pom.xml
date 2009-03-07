@@ -241,13 +241,23 @@
   <dependencyManagement>
   
     <dependencies>
-    
+
+      <!-- JTA Spec -->
+          
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jta_1.1_spec</artifactId>
+        <version>${jta.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
       <!-- JCR API dependency -->
       
       <dependency>
         <groupId>javax.jcr</groupId>
         <artifactId>jcr</artifactId>
         <version>${javax.jcr.version}</version>
+        <scope>provided</scope>
       </dependency>
 
       <!-- Servlet API dependencies -->
@@ -293,33 +303,28 @@
         <groupId>xml-apis</groupId>
         <artifactId>xml-apis</artifactId>
         <version>${xml-apis.version}</version>
+        <scope>runtime</scope>
       </dependency>
       
       <dependency>
         <groupId>xerces</groupId>
         <artifactId>xercesImpl</artifactId>
         <version>${xerces.version}</version>
+        <scope>runtime</scope>
       </dependency>
       
       <dependency>
         <groupId>xerces</groupId>
         <artifactId>xerces</artifactId>
         <version>${xerces.version}</version>
+        <scope>runtime</scope>
       </dependency>
       
       <dependency>
         <groupId>xalan</groupId>
         <artifactId>xalan</artifactId>
         <version>${xalan.version}</version>
-      </dependency>
-      
-      <!-- JTA Dependency -->
-      
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jta_1.1_spec</artifactId>
-        <version>${jta.version}</version>
-        <scope>provided</scope>
+        <scope>runtime</scope>
       </dependency>
       
       <!-- Apache Commons -->
