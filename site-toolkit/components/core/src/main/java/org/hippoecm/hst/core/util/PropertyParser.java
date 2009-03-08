@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.site.request;
+package org.hippoecm.hst.core.util;
 
 import java.util.HashSet;
 import java.util.Properties;
@@ -29,11 +29,11 @@ public class PropertyParser extends PropertyPlaceholderConfigurer {
     private final static Logger log = LoggerFactory.getLogger(PropertyParser.class);
     private Properties properties;
     
-    protected PropertyParser(Properties properties){
+    public PropertyParser(Properties properties){
         super();
         this.properties = properties;
     }
-    protected Object resolveProperty(String name, Object o) {
+    public Object resolveProperty(String name, Object o) {
         if(o == null || properties == null) {
             return o;
         }

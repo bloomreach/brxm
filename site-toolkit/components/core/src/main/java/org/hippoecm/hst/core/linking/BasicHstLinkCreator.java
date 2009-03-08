@@ -23,7 +23,6 @@ import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemUtitlites;
-import org.hippoecm.hst.core.linking.HstPathConvertor.ConversionResult;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.provider.jcr.JCRUtilities;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
@@ -100,19 +99,20 @@ public class BasicHstLinkCreator implements HstLinkCreator {
      */
     private HstLink create(String path, ResolvedSiteMapItem resolvedSiteMapItem, boolean signature) {
      // Try to see if we can create a link within the HstSite where this HstSiteMapItem belongs to
-        HstPathConvertor hstPathConvertor = new BasicHstPathConvertor();
         HstSiteMap hstSiteMap = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap();
         HstSite hstSite = hstSiteMap.getSite();
         
-        if(path.startsWith(hstSite.getLocationMap().getCanonicalSiteContentPath())) {
-            ConversionResult result = hstPathConvertor.convert(path, hstSite);
-            if(result != null) {
+        if(path.startsWith(hstSite.getLocationMapTree().getCanonicalSiteContentPath())) {
+            
+            ResolvedLocationMapTreeItem resolvedLocation = hstSite.getLocationMapTree().match(path, hstSite );
+         
+            if(resolvedLocation != null) {
                 if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", path);
-                if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", path, result.getPath());
-                return new HstLinkImpl(result.getPath(), hstSite);
+                if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", path, resolvedLocation.getPath());
+                return new HstLinkImpl(resolvedLocation.getPath(), hstSite);
             } else {
-              // TODO should we try different HstSites?
-                if (log.isWarnEnabled()) {
+                // TODO what to return??
+                 if (log.isWarnEnabled()) {
                     log.warn("Unable to create a link for '{}' for HstSite '{}'. Return null", path, hstSite.getName());
                 }
             }

@@ -16,7 +16,12 @@
 package org.hippoecm.hst.configuration.sitemap;
 
 public class HstSiteMapItemUtitlites {
-     
+    
+    /**
+     * The wildcards are translated to parameters like ${1}/${2}
+     * @param siteMapItem
+     * @return String representation of the path
+     */
     public static String getPath(HstSiteMapItem siteMapItem) {
         StringBuffer path = new StringBuffer(siteMapItem.getValue());
         while (siteMapItem.getParentItem() != null) {

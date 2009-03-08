@@ -37,9 +37,7 @@ import org.slf4j.LoggerFactory;
 public class HstSiteMapItemService extends AbstractJCRService implements HstSiteMapItem, Service{
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItemService.class);
-    
-    private static final String WILDCARD = "_default_";
-    
+
     private Map<String, HstSiteMapItem> childSiteMapItems = new HashMap<String, HstSiteMapItem>();
    
     private String siteMapRootNodePath;
@@ -50,19 +48,25 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     private String path;
     
+    private String parameterizedPath;
+    
+    private int occurences;
+    
     private String relativeContentPath;
     
     private String componentConfigurationId;
     
     private List<String> roles;
-    
+
     private boolean isWildCard;
+    
+    private boolean isAny;
     
     private PropertyMap propertyMap;
     
     private HstSiteMap hstSiteMap;
     
-    private HstSiteMapItem parentItem;
+    private HstSiteMapItemService parentItem;
     
     private boolean isRepositoryBased;
     
@@ -70,7 +74,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     public HstSiteMapItemService(Node jcrNode, String siteMapRootNodePath, HstSiteMapItem parentItem, HstSiteMap hstSiteMap) throws ServiceException{
         super(jcrNode);
-        this.parentItem = parentItem;
+        this.parentItem = (HstSiteMapItemService)parentItem;
         this.hstSiteMap = hstSiteMap; 
         String nodePath = getValueProvider().getPath();
         if(!getValueProvider().getPath().startsWith(siteMapRootNodePath)) {
@@ -82,8 +86,23 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         this.id = this.path = nodePath.substring(siteMapRootNodePath.length()+1);
         // currently, the value is always the nodename
         this.value = getValueProvider().getName();
+        
+        if(parentItem != null) {
+            this.parameterizedPath = this.parentItem.getParameterizedPath()+"/";
+            this.occurences = this.parentItem.getWildCardAnyOccurences();
+        } else {
+            parameterizedPath = "";
+        }
         if(WILDCARD.equals(value)) {
+            occurences++; 
+            parameterizedPath = parameterizedPath + "${" + occurences + "}";
             this.isWildCard = true;
+        } else if(ANY.equals(value)) {
+            occurences++;
+            parameterizedPath = parameterizedPath + "${" + occurences + "}";
+            this.isAny = true;
+        } else {
+            parameterizedPath = parameterizedPath + getValueProvider().getName();
         }
         
         try {
@@ -201,6 +220,10 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     public boolean isWildCard() {
         return this.isWildCard;
     }
+    
+    public boolean isAny() {
+        return this.isAny;
+    }
 
     public boolean isRepositoryBased() {
         return isRepositoryBased;
@@ -216,6 +239,14 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
 
     public HstSiteMapItem getParentItem() {
         return this.parentItem;
+    }
+    
+    public String getParameterizedPath(){
+        return this.parameterizedPath;
+    }
+    
+    public int getWildCardAnyOccurences(){
+        return this.occurences;
     }
 
 }

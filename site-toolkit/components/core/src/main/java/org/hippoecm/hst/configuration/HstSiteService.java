@@ -39,6 +39,8 @@ import org.slf4j.LoggerFactory;
 
 public class HstSiteService extends AbstractJCRService implements HstSite, Service{
 
+    private static final long serialVersionUID = 1L;
+    
     private HstSiteMapService siteMapService;
     private HstComponentsConfigurationService componentsConfigurationService;
     private String name;
@@ -133,7 +135,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     private void add2LocationMap(BasicLocationMapTree locMap, HstSiteMapItem siteMapItem) {
         String normPath = PathUtils.normalizePath(siteMapItem.getRelativeContentPath());
         if( !(normPath == null || "".equals(normPath))) {
-            locMap.add(new ArrayList<String>(Arrays.asList(normPath.split("/"))), siteMapItem);
+            locMap.add(normPath, siteMapItem);
         }
         for(HstSiteMapItem child : siteMapItem.getChildren()) {
            add2LocationMap(locMap, child);
@@ -164,7 +166,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
         return this.hstSites;
     }
 
-    public LocationMapTree getLocationMap() {
+    public LocationMapTree getLocationMapTree() {
         return this.locationMapTree;
     }
 

@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.linking;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import javax.jcr.LoginException;
 import javax.jcr.Node;
@@ -25,7 +26,6 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSitesManager;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.service.ServiceFactory;
@@ -35,19 +35,27 @@ import org.hippoecm.hst.site.request.BasicHstSiteMapMatcher;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Test;
 
-public class TestLinks extends AbstractSpringTestCase{
+/**
+ * Simple links tests. Simple links are links which are created without having SiteMapItems containing wildcards (* or **), and thus
+ * no relativecontentpaths containing ${1}/${2} kind of constructions
+ *
+ */
+
+public class SimpleLinks extends AbstractSpringTestCase{
     
         private static final String TESTPROJECT_NAME = "testproject";
         
         private static final String TESTPROJECT_EXISTING_VIRTUALHANDLE= "/testpreview/testproject/hst:content/Products/SomeProduct";
         private static final String TESTPROJECT_EXISTING_VIRTUALDOCUMENT = "/testpreview/testproject/hst:content/Products/SomeProduct/SomeProduct";
-        private static final String TESTPROJECT_EXISTING_VIRTUALHANDLE_OTHER = "/testpreview/testproject/hst:content/Products/HippoCMS";
+        private static final String TESTPROJECT_EXISTING_VIRTUALHANDLE2 = "/testpreview/testproject/hst:content/Products/HippoCMS";
         
+         
         private HstSitesManager hstSitesManager;
         private HstLinkCreator hstLinkCreator;
         private HstSiteMapMatcher hstSiteMapMatcher;
         private HstSite hstSite;
         private ResolvedSiteMapItem res;
+        private Session session;
         
         @Override
         public void setUp() throws Exception{
@@ -57,7 +65,9 @@ public class TestLinks extends AbstractSpringTestCase{
             this.hstSiteMapMatcher = new BasicHstSiteMapMatcher();
             this.hstSite = this.hstSitesManager.getSites().getSite(TESTPROJECT_NAME);
             this.res = hstSiteMapMatcher.match("news/2009", hstSite);
-           
+            
+            Repository repository = (Repository) getComponent(Repository.class.getName());
+            this.session = repository.login();
         }
         
         /**
@@ -77,17 +87,12 @@ public class TestLinks extends AbstractSpringTestCase{
          * Test with no sitemap items involved having a wildcard, or thus with no 'hst:relativecontentpath' containing ${1} kind of
          * parameters
          */
-       @Test
-        public void testLinkCreateOfNode(){
+        @Test
+        public void testLinkCreateOfNode() throws RepositoryException{
             
-            Repository repository = (Repository) getComponent(Repository.class.getName());
-            
-            try {
-                Session session = repository.login();
-                
                 Node someProductHandle = (Node)session.getItem(TESTPROJECT_EXISTING_VIRTUALHANDLE);
                 Node someProductDocument = (Node)session.getItem(TESTPROJECT_EXISTING_VIRTUALDOCUMENT);
-                Node hippoCMSHandle = (Node)session.getItem(TESTPROJECT_EXISTING_VIRTUALHANDLE_OTHER);
+                Node hippoCMSHandle = (Node)session.getItem(TESTPROJECT_EXISTING_VIRTUALHANDLE2);
                 
                 // a link creation to a handle
                 HstLink hstLink = hstLinkCreator.create(someProductHandle, res);
@@ -98,16 +103,10 @@ public class TestLinks extends AbstractSpringTestCase{
                 assertEquals("The getPath of the HstLink must be equal to 'products/someproduct' but was '"+hstLink.getPath()+"' ", "products/someproduct", hstLink.getPath());
                 
                 // The sitemap item that matches returns a path 'products'. HippoCMS is part of the nodepath
-                // that is not represented within the sitemap relativeContentLocation
+                // that is not represented within the sitemap relativeContentLocation, so must return null.
                 hstLink = hstLinkCreator.create(hippoCMSHandle, res);
-                assertEquals("The getPath of the HstLink must be equal to 'products/HippoCMS' but was '"+hstLink.getPath()+"' ", "products/HippoCMS", hstLink.getPath());
-                
-            } catch (LoginException e) {
-                e.printStackTrace();
-            } catch (RepositoryException e) {
-                e.printStackTrace();
-            }
-            
+                assertNull("The path for '/testpreview/testproject/hst:content/Products/HippoCMS' cannot be translated",hstLink);
+           
             
         }
        
@@ -117,13 +116,9 @@ public class TestLinks extends AbstractSpringTestCase{
         */
   
        @Test
-       public void testLinkCreateOfService(){
-           
-        Repository repository = (Repository) getComponent(Repository.class.getName());
-
+       public void testLinkCreateOfService() throws RepositoryException{
+       
         try {
-            Session session = repository.login();
-            
             Node someProductHandle = (Node) session.getItem(TESTPROJECT_EXISTING_VIRTUALHANDLE);
             
             TestPage s = ServiceFactory.create(someProductHandle, TestPage.class);
@@ -146,11 +141,4 @@ public class TestLinks extends AbstractSpringTestCase{
            String getTitle();
        }
        
-//       
-//       @Test 
-//       public void testWithWildCardSiteMapItem(){
-//           
-//       }
-//       
-        
 }

@@ -32,6 +32,10 @@ public class BasicLocationMapTreeItem implements LocationMapTreeItem{
     
     private Map<String, LocationMapTreeItem> children = new HashMap<String, LocationMapTreeItem>();
     
+    private LocationMapTreeItem parentItem;
+    
+    private boolean isWildCard;
+    private boolean isAny;
     
     public void add(List<String> pathFragment, HstSiteMapItem hstSiteMapItem){
         if(pathFragment.isEmpty()) {
@@ -47,6 +51,12 @@ public class BasicLocationMapTreeItem implements LocationMapTreeItem{
         if(child == null) {
             child = new BasicLocationMapTreeItem();
             this.children.put(pathFragment.get(0), child);
+            child.setParentItem(this);
+            if(HstSiteMapItem.WILDCARD.equals(pathFragment.get(0))){
+                child.setIsWildCard(true);
+            } else if (HstSiteMapItem.ANY.equals(pathFragment.get(0))){
+                child.setIsAny(true);
+            }
         }
         pathFragment.remove(0);
         child.add(pathFragment , hstSiteMapItem);
@@ -60,5 +70,33 @@ public class BasicLocationMapTreeItem implements LocationMapTreeItem{
     public LocationMapTreeItem getChild(String name) {
         return this.children.get(name);
     }
+
+    public LocationMapTreeItem getParentItem() {
+        return this.parentItem;
+    }
+    
+    public void setParentItem(LocationMapTreeItem parentItem){
+        this.parentItem = parentItem;
+    }
+    
+    public boolean isAny() {
+        return this.isAny;
+    }
+
+
+    public boolean isWildCard() {
+        return this.isWildCard;
+    }
+    
+    public void setIsAny(boolean isAny) {
+        this.isAny = isAny;
+    }
+
+    public void setIsWildCard(boolean isWildCard) {
+        this.isWildCard = isWildCard;
+    }
+
+
+    
 
 }

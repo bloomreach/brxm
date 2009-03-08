@@ -21,10 +21,15 @@ import java.util.Map;
 
 public interface HstSiteMapItem {
 
+
+    public static final String WILDCARD = "_default_";
+    public static final String ANY = "_any_";
+    
     String getId(); // optional but needs to be unique within the containing HstSiteMap
     String getValue();
     String getPath(); // returns the full path from the item
     boolean isWildCard();
+    boolean isAny();
     boolean isVisible();
     boolean isRepositoryBased();
     String getRelativeContentPath();
@@ -41,6 +46,11 @@ public interface HstSiteMapItem {
     
     List<HstSiteMapItem> getChildren();
     HstSiteMapItem getChild(String value);
+    
+    /**
+     * Returns parent HstSiteMapItem and null when the item does not have a parent
+     * @return HstSiteMapItem 
+     */
     HstSiteMapItem getParentItem();
     HstSiteMap getHstSiteMap();
 }

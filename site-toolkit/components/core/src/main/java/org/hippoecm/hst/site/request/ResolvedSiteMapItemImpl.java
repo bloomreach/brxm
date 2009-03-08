@@ -22,6 +22,7 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.util.PropertyParser;
 
 public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
     

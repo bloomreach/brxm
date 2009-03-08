@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.util.PropertyParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
