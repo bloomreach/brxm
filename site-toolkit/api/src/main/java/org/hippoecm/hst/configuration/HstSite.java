@@ -30,6 +30,6 @@ public interface HstSite {
 
     HstSites getHstSites();
     
-    LocationMapTree getLocationMap();
+    LocationMapTree getLocationMapTree();
 
 }

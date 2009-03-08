@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration;
 
+import org.hippoecm.hst.core.linking.ResolvedLocationMapTreeItem;
+
 
 /**
  * Interface for inverted HstSiteMapItem tree where the tree is driven by the relativeContentPath's 
@@ -28,9 +30,10 @@ public interface LocationMapTree {
    /**
     * 
     * @param path
-    * @return best matching LocationMapTreeItem and null if no matching one is found
+    * @return  matching LocationMapTreeItem and null if no matching one is found
     */
-   LocationMapTreeItem find(String path);
+   ResolvedLocationMapTreeItem match(String path, HstSite hstSite);
    
    String getCanonicalSiteContentPath();
+   
 }

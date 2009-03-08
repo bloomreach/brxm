@@ -23,5 +23,8 @@ public interface LocationMapTreeItem {
 
     List<HstSiteMapItem> getHstSiteMapItems();
     LocationMapTreeItem getChild(String name);
+    LocationMapTreeItem getParentItem();
     
+    boolean isWildCard();
+    boolean isAny();
 }
