@@ -16,8 +16,6 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,19 +27,25 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
+import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract supporting class for Hst Link tags
  */
 
-public class HstLinkTag extends BaseHstURLTag {
+public class HstLinkTag extends TagSupport {
+    
+
+    private final static Logger log = LoggerFactory.getLogger(HstLinkTag.class);
     
     private static final long serialVersionUID = 1L;
 
-    protected String value;
+    protected HstLink link;
     
     protected String var;
     
@@ -58,13 +62,7 @@ public class HstLinkTag extends BaseHstURLTag {
      */
     @Override
     public int doStartTag() throws JspException{
-        
-        HstURL url = getUrl();
-        
-        if(url == null){
-            throw new IllegalStateException("internal error: url not set");
-        }
-        
+    
         if (var != null) {
             pageContext.removeAttribute(var, PageContext.PAGE_SCOPE);
         }
@@ -78,6 +76,11 @@ public class HstLinkTag extends BaseHstURLTag {
      */
     @Override
     public int doEndTag() throws JspException{
+       
+        if(link == null) {
+            log.warn("Cannot get a link because the hstLink is null");
+            return EVAL_PAGE;
+        }
         
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
@@ -96,39 +99,16 @@ public class HstLinkTag extends BaseHstURLTag {
             url.append(request.getServletPath());
         }
         
-        if (!this.value.startsWith("/")) {
+        String path = link.getPath();
+        if (!path.startsWith("/")) {
             url.append("/");
         }
         
-        url.append(this.value);
-        
-        boolean firstParamDone = (url.indexOf("?") >= 0);
-        
-        for (Map.Entry<String, List<String>> entry : this.parametersMap.entrySet()) {
-            String name = entry.getKey();
-            
-            for (String value : entry.getValue()) {
-                String encodedValue = value;
-                try {
-                    encodedValue = URLEncoder.encode(value, characterEncoding);
-                } catch (Exception e) {
-                }
-                
-                url.append(firstParamDone ? "&" : ":");
-                url.append(name).append("=");
-                url.append(encodedValue);
-                
-                firstParamDone = true;
-            }
-        }
+        url.append(path);
         
         String urlString = response.encodeURL(url.toString());
 
-        if (escapeXml)
-        {
-             urlString = doEscapeXml(urlString);
-        }
-        
+    
         if (var == null) {
             try {               
                 JspWriter writer = pageContext.getOut();
@@ -190,20 +170,13 @@ public class HstLinkTag extends BaseHstURLTag {
         return scope;
     }
     
-    public String getValue() {
-        return value;
+    public HstLink getValue() {
+        return link;
     }
     
-    /**
-     * Returns escapeXml property.
-     * @return Boolean
-     */
-    public Boolean getEscapeXml() {
-        return escapeXml;
-    }
     
-    public void setValue(String value) {
-        this.value = value;
+    public void setValue(HstLink hstLink) {
+        this.link = hstLink;
     }
     
     /**
@@ -221,107 +194,6 @@ public class HstLinkTag extends BaseHstURLTag {
     
     public void setScope(String scope) {
         this.scope = scope;
-    }
-    
-    /**
-     * Sets the escapeXml property.
-     * @param escapeXml
-     * @return void
-     */
-    public void setEscapeXml(Boolean escapeXml) {
-        this.escapeXml = escapeXml;
-    }
-    
-    
-    /**
-     * Adds a key,value pair to the parameter map. 
-     * @param key String
-     * @param value String
-     * @return void
-     */
-    protected void addParameter(String key,String value) {
-        if((key == null) || (key.length() == 0)){
-            throw new IllegalArgumentException(
-                    "the argument key must not be null or empty!");
-        }
-        
-        if((value == null) || (value.length() == 0)){//remove parameter
-            if(parametersMap.containsKey(key)){
-                parametersMap.remove(key);
-            }
-            removedParametersList.add(key);
-        }
-        else{//add value
-            List<String> valueList = null;
-        
-            if(parametersMap.containsKey(key)){
-                valueList = parametersMap.get(key);//get old value list                 
-            }
-            else{
-                valueList = new ArrayList<String>();// create new value list                        
-            }
-        
-            valueList.add(value);
-        
-            parametersMap.put(key, valueList);
-        }
-    }
-    
-    
-    /**
-     * Copies the parameters from map to the BaseURL.
-     * @param url BaseURL
-     * @return void
-     */
-    protected void setUrlParameters(HstURL url) {
-        for(String key : parametersMap.keySet()) {
-            
-            List<String> valueList = parametersMap.get(key);
-        
-            String[] valueArray = valueList.toArray(new String[0]);
-            
-            url.setParameter(key, valueArray);
-        }
-        
-        for (String key : removedParametersList) {
-            url.setParameter(key, (String) null);
-        }
-    }
-    
-    protected HstURL getUrl() {
-        return null;
-    }
-
-    protected void setUrl(HstURL url) {
-        
-    }
-    
-    
-    /**
-     * Replaces in String str the characters &,>,<,",' 
-     * with their corresponding character entity codes.
-     * @param str - the String where to replace 
-     * @return String 
-     */
-    protected String doEscapeXml(String str) {
-        if(!isEmpty(str)){
-            str = str.replaceAll("&", "&amp;");
-            str = str.replaceAll("<", "&lt;");
-            str = str.replaceAll(">", "&gt;");
-            str = str.replaceAll("\"", "&#034;");
-            str = str.replaceAll("'", "&#039;");
-        }
-        return str;
-    }
-       
-    
-    /**
-     * Checks if the string is empty. 
-     * @param str String
-     * @return boolean
-     */
-    private boolean isEmpty(String str) {
-        return ((str == null) || (str.length() == 0));
     }
     
     

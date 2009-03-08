@@ -103,9 +103,7 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         HstSite hstSite = hstSiteMap.getSite();
         
         if(path.startsWith(hstSite.getLocationMapTree().getCanonicalSiteContentPath())) {
-            
             ResolvedLocationMapTreeItem resolvedLocation = hstSite.getLocationMapTree().match(path, hstSite );
-         
             if(resolvedLocation != null) {
                 if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", path);
                 if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", path, resolvedLocation.getPath());
@@ -118,7 +116,7 @@ public class BasicHstLinkCreator implements HstLinkCreator {
             }
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("For HstSite '{}' we cannot a create a link for node '{}' because it is outside the site scope", hstSite.getName(), path);
+                log.debug("For HstSite '{}' we cannot create a link for node '{}' because it is outside the site scope", hstSite.getName(), path);
             }
             // TODO try to link to another HstSite that has a matching 'content base path'
         }

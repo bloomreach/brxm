@@ -100,7 +100,7 @@
             <rtexprvalue>false</rtexprvalue>
         </attribute>
         <attribute>
-            <name>path</name>
+            <name>value</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
