@@ -103,7 +103,11 @@ public class HstLinkTag extends TagSupport {
             url.append(this.context);
         } else {
             url.append(request.getContextPath());
-            url.append(request.getServletPath());
+            // only add the current servletpath for HstLink and not for 
+            // static links
+            if(this.link != null) {
+                url.append(request.getServletPath());
+            }
         }
         
         if(this.link != null) {
