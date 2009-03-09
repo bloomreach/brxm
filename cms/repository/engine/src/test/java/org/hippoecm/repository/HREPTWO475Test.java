@@ -56,12 +56,13 @@ public class HREPTWO475Test extends TestCase {
     }
 
     public void testIssue() throws RepositoryException {
-        Node node, child, root = session.getRootNode().addNode("test");
+        session.refresh(false);
+        Node root = session.getRootNode().addNode("test");
 
-        node = root.addNode("docs","nt:unstructured");
+        Node node = root.addNode("docs","nt:unstructured");
         node.addMixin("mix:referenceable");
         node = node.addNode("doc1",HippoNodeType.NT_HANDLE);
-        child = node.addNode("doc1","hippo:testdocument");
+        Node child = node.addNode("doc1","hippo:testdocument");
         child.addMixin("hippo:harddocument");
         child.setProperty("lang","en");
         child = node.addNode("doc1","hippo:testdocument");
@@ -119,6 +120,7 @@ public class HREPTWO475Test extends TestCase {
         node.setProperty("hippo:values",new String[] { "nl" });
         node.setProperty("hippo:modes",new String[] { "select" });
         session.save();
+        session.refresh(false);
 
         node = root.getNode("nav");
 
