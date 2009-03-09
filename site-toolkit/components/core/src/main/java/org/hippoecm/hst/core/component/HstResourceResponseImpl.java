@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.component;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -38,8 +39,8 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
         this.componentWindow = componentWindow;
     }
 
-    public void addProperty(String key, Element element) {
-        throw new UnsupportedOperationException("Resource response is not allowed to invoke addProperty().");
+    public void addHeadElement(Element element, String keyHint) {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke addHeadElement().");
     }
 
     public Element createElement(String tagName) {
@@ -62,7 +63,7 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
         return this.componentWindow.getReferenceNamespace();
     }
 
-    public Map<String, Element> getProperties() {
+    public List<Element> getHeadElements() {
         return null;
     }
 
@@ -78,8 +79,8 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
         throw new UnsupportedOperationException("Resource response is not allowed to invoke setRenderParameters().");
     }
     
-    public boolean containsProperty(String key) {
-        throw new UnsupportedOperationException("Resource response is not allowed to invoke containsProperty().");
+    public boolean containsHeadElement(String keyHint) {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke containsHeadElement().");
     }
     
     public void setRenderPath(String renderPath) {

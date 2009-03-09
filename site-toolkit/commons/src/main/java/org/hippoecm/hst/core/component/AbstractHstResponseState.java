@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -61,7 +62,7 @@ public abstract class AbstractHstResponseState implements HstResponseState {
     protected PrintWriter printWriter;
     protected Map<String, List<String>> headers;
     protected List<Cookie> cookies;
-    protected Map<String, Element> properties;
+    protected Map<Element, String> headElements;
     protected boolean committed;
     protected boolean hasStatus;
     protected boolean hasError;
@@ -491,26 +492,46 @@ public abstract class AbstractHstResponseState implements HstResponseState {
         }
     }
 
-    public void addProperty(String key, Element element) {
+    public void addHeadElement(Element element, String keyHint) {
         if (isMimeResponse && !committed) {
             // If the component is child of other component, then
             // the property should be passed into the parent component.
             // Otherwise, the property should be kept in the response state.
 
             if (response instanceof HstResponse) {
-                ((HstResponse) response).addProperty(key, element);
+                ((HstResponse) response).addHeadElement(element, keyHint);
             } else {
-                if (properties == null) {
-                    properties = new HashMap<String, Element>();
+                if (headElements == null) {
+                    headElements = new HashMap<Element, String>();
                 }
 
-                properties.put(key, element);
+                if (keyHint == null || !headElements.containsValue(keyHint)) {
+                    headElements.put(element, keyHint);
+                }
             }
         }
     }
+    
+    public boolean containsHeadElement(String keyHint) {
+        boolean containing = false;
+        
+        if (headElements != null && keyHint != null) {
+            containing = headElements.containsValue(keyHint);
+        }
+        
+        return containing;
+    }
 
-    public Map<String, Element> getProperties() {
-        return properties;
+    public List<Element> getHeadElements() {
+        List<Element> elements = null;
+        
+        if (headElements != null) {
+            elements = new ArrayList<Element>(headElements.keySet());
+        } else {
+            elements = Collections.emptyList();
+        }
+        
+        return elements;
     }
 
     public void clear() {
@@ -598,12 +619,12 @@ public abstract class AbstractHstResponseState implements HstResponseState {
                 }
             }
 
-            if (properties != null) {
-                for (Map.Entry<String, Element> entry : properties.entrySet()) {
-                    addResponseProperty(entry.getKey(), entry.getValue());
+            if (headElements != null) {
+                for (Map.Entry<Element, String> entry : headElements.entrySet()) {
+                    addResponseHeadElement(entry.getKey(), entry.getValue());
                 }
                 
-                properties = null;
+                headElements = null;
             }
 
             if (!hasError && redirectLocation == null) {
@@ -649,7 +670,7 @@ public abstract class AbstractHstResponseState implements HstResponseState {
     
     protected abstract void addResponseHeader(String name, String value);
     
-    protected abstract void addResponseProperty(String name, Element element);
+    protected abstract void addResponseHeadElement(Element element, String keyHint);
     
     protected abstract void setResponseStatus(int status);
     

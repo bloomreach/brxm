@@ -16,9 +16,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
-<hst:response-property name="hippo-application-site-style">
+<hst:head-contribution keyHint="hippo-application-site-style">
 <link type='text/css' rel='StyleSheet' media='all' href='<hst:resourceURL resourceId="static:/css/site.css"/>' />
-</hst:response-property>
+</hst:head-contribution>
 
 <script language="javascript">
 <!--

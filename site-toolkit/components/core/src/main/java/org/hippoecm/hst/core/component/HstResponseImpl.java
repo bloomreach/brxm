@@ -17,8 +17,8 @@ package org.hippoecm.hst.core.component;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -303,20 +303,24 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         return element;
     }
     
-    public void addProperty(String key, Element element) {
-        this.responseState.addProperty(key, element);
+    public void addHeadElement(Element element, String keyHint) {
+        this.responseState.addHeadElement(element, keyHint);
     }
     
-    public Map<String, Element> getProperties() {
-        Map<String, Element> properties = this.responseState.getProperties();
+    public List<Element> getHeadElements() {
+        return this.responseState.getHeadElements();
+    }
+
+    public boolean containsHeadElement(String keyHint) {
+        boolean contained = false;
         
-        if (properties == null) {
-            properties = Collections.emptyMap();
-        } else {
-            properties = Collections.unmodifiableMap(properties);
+        if (this.topParentHstResponse == null) {
+            contained = this.responseState.containsHeadElement(keyHint);
+        } else if (this != this.topParentHstResponse) {
+            contained = this.topParentHstResponse.containsHeadElement(keyHint);
         }
         
-        return properties;
+        return contained;
     }
 
     public void setRenderParameter(String key, String value) {
@@ -357,19 +361,6 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     
     public Map<String, String []> getRenderParamerters() {
         return this.renderParameters;
-    }
-
-    public boolean containsProperty(String key) {
-        boolean contained = false;
-        
-        if (this.topParentHstResponse == null) {
-            Map<String, Element> props = this.responseState.getProperties();
-            contained = (props != null && props.containsKey(key));
-        } else if (this != this.topParentHstResponse) {
-            contained = this.topParentHstResponse.containsProperty(key);
-        }
-        
-        return contained;
     }
 
     public void setRenderPath(String renderPath) {

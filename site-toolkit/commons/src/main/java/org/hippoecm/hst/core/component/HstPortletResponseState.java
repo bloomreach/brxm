@@ -75,8 +75,8 @@ public class HstPortletResponseState extends AbstractHstResponseState {
         this.response.addProperty(name, value);
     }
     
-    protected void addResponseProperty(String name, Element element) {
-        this.response.addProperty(name, element);
+    protected void addResponseHeadElement(Element element, String keyHint) {
+        this.response.addProperty(MimeResponse.MARKUP_HEAD_ELEMENT, element);
     }
 
     protected void setResponseStatus(int status) {

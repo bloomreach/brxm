@@ -111,24 +111,19 @@
         </attribute>
     </tag>
     <tag>
-        <name>response-property</name>
-        <tagclass>org.hippoecm.hst.tag.ResponsePropertyTag</tagclass>
+        <name>head-contribution</name>
+        <tagclass>org.hippoecm.hst.tag.HeadContributionTag</tagclass>
         <bodycontent>JSP</bodycontent>
         <attribute>
-            <name>name</name>
-            <required>true</required>
+            <name>keyHint</name>
+            <required>false</required>
             <rtexprvalue>false</rtexprvalue>
         </attribute>
     </tag>
     <tag>
-        <name>response-properties</name>
-        <tagclass>org.hippoecm.hst.tag.ResponsePropertiesTag</tagclass>
-        <bodycontent>JSP</bodycontent>
-        <attribute>
-            <name>var</name>
-            <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
-        </attribute>
+        <name>head-contributions</name>
+        <tagclass>org.hippoecm.hst.tag.HeadContributionsTag</tagclass>
+        <bodycontent>empty</bodycontent>
     </tag>
     <tag>
         <name>namespace</name>

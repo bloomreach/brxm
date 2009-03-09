@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.component;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -99,33 +100,32 @@ public interface HstResponse extends HttpServletResponse {
     
     /**
      * Adds an header element property to the response.
-     * If a header element with the provided key already exists 
-     * the provided element will be stored in addition to 
-     * the existing element under the same key.
+     * If keyHint argument is provided and if a header element 
+     * with the provided key hint already exists, then 
+     * the element will be ignored.
      * If the element is null the key is removed from the response.
      * If these header values are intended to be transmitted to the client 
      * they should be set before the response is committed.
      * 
-     * @param key
      * @param element
+     * @param keyHint
      */
-    void addProperty(String key, Element element);
+    void addHeadElement(Element element, String keyHint);
     
     /**
-     * Retrieves header element property map.
+     * Retrieves header element list.
      * This method is supposed to be invoked by the parent HstComponent
      * to render some header tag elements in a non-portal environment.
      * Under portal environment, this method is not supposed to be invoked
      * because the header tag elements should be written by the portal.
      * Under portal environment, the HstComponents can write some body
      * tag fragments only. If a HstComponent contributes some header
-     * tag elements by invoking {@link #addProperty(String, Element)},
+     * tag elements by invoking {@link #addHeadElement(Element, String)},
      * then the portal will write all the merged head tag elements finally.
      * 
-     * @param key
-     * @param element
+     * @return List with head element items
      */
-    Map<String, Element> getProperties();
+    List<Element> getHeadElements();
 
     /**
      * Asks if a property exists already or not.
@@ -134,9 +134,9 @@ public interface HstResponse extends HttpServletResponse {
      * @param key
      * @return
      */
-    boolean containsProperty(String key);
+    boolean containsHeadElement(String keyHint);
     
-    /**
+     /**
      * Sets the renderPath dynamically.
      * Normally, the renderPath is set in the configuration, but it can be
      * set dynamically in the {@link HstComponent#doBeforeRender(HstRequest, HstResponse)} method.

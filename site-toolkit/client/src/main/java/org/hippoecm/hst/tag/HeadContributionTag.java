@@ -21,37 +21,19 @@ import java.io.StringReader;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.hippoecm.hst.core.component.HstResponse;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import org.jdom.Document;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.DOMOutputter;
 
-public class ResponsePropertyTag extends BodyTagSupport {
+public class HeadContributionTag extends BodyTagSupport {
 
     private static final long serialVersionUID = 1L;
     
-    protected String name;
+    protected String keyHint;
     
-    protected DocumentBuilderFactory dbf;
-    protected DocumentBuilder db;
-
-    //*********************************************************************
-    // Constructor and initialization
-
-    public ResponsePropertyTag() {
-        super();
-        init();
-    }
-
-    protected void init() {
-        dbf = null;
-        db = null;
-    }
-
     public int doEndTag() throws JspException {
         HstResponse hstResponse = null;
 
@@ -63,57 +45,47 @@ public class ResponsePropertyTag extends BodyTagSupport {
             return SKIP_BODY;
         }
         
-        if (hstResponse.containsProperty(this.name)) {
+        if (this.keyHint != null && hstResponse.containsHeadElement(this.keyHint)) {
             return SKIP_BODY;
         }
         
         Reader reader = null;
         
         try {
-            // set up our DocumentBuilder
-            if (dbf == null) {
-                dbf = DocumentBuilderFactory.newInstance();
-                dbf.setNamespaceAware(true);
-                dbf.setValidating(false);
-            }
-
-            db = dbf.newDocumentBuilder();
-
             String xmlText = "";
 
-            if (bodyContent != null && bodyContent.getString() != null)
+            if (bodyContent != null && bodyContent.getString() != null) {
                 xmlText = bodyContent.getString().trim();
-
-            reader = new StringReader(xmlText);
-            Document d = db.parse(new InputSource(reader));
+            }
             
-            if (pageContext.getResponse() instanceof HstResponse) {
-                hstResponse.addProperty(this.name, d.getDocumentElement());
+            if (this.keyHint == null) {
+                this.keyHint = xmlText;
             }
 
+            reader = new StringReader(xmlText);
+            
+            SAXBuilder builder = new SAXBuilder(false);
+            Document doc = builder.build(reader);
+            DOMOutputter outputter = new DOMOutputter();
+            
+            hstResponse.addHeadElement(outputter.output(doc).getDocumentElement(), this.keyHint);
+
             return EVAL_PAGE;
-        } catch (SAXException ex) {
+        } catch (JDOMException ex) {
             throw new JspException(ex);
         } catch (IOException ex) {
-            throw new JspException(ex);
-        } catch (ParserConfigurationException ex) {
             throw new JspException(ex);
         } finally {
             if (reader != null) try { reader.close(); } catch (Exception ce) { }
         }
     }
     
-    public void setName(String name) {
-        this.name = name;
+    public void setKeyHint(String keyHint) {
+        this.keyHint = keyHint;
     }
     
-    public String getName() {
-        return this.name;
-    }
-
-    // Releases any resources we may have (or inherit)
-    public void release() {
-        init();
+    public String getKeyHint() {
+        return this.keyHint;
     }
 
 }

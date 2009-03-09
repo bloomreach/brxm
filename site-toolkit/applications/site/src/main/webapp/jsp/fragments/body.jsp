@@ -18,13 +18,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
-<hst:response-property name="hippo-widget-collection-dom">
+<hst:head-contribution keyHint="hippo-widget-collection-dom">
 <script language="javascript" src="http://www.onehippo.org/ajax/widget-collection.js"><![CDATA[
 <!--
 //alert("test");
 //-->
 ]]></script>
-</hst:response-property>
+</hst:head-contribution>
          
 <script language="javascript">
 <!--

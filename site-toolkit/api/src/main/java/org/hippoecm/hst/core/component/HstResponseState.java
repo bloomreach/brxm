@@ -17,8 +17,8 @@ package org.hippoecm.hst.core.component;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -99,9 +99,11 @@ public interface HstResponseState
 
     void setLocale(Locale locale);
 
-    void addProperty(String key, Element element);
+    void addHeadElement(Element element, String keyHint);
     
-    Map<String, Element> getProperties();
+    List<Element> getHeadElements();
+    
+    boolean containsHeadElement(String keyHint);
 
     void clear();
 

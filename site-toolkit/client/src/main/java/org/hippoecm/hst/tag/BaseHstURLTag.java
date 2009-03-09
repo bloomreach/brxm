@@ -104,8 +104,7 @@ public abstract class BaseHstURLTag extends TagSupport {
                 JspWriter writer = pageContext.getOut();
                 writer.print(urlString);
             } catch (IOException ioe) {
-                throw new JspException(
-                    "Portlet/ResourceURL-Tag Exception: cannot write to the output writer.");
+                throw new JspException("HstURL-Tag Exception: cannot write to the output writer.");
             }
         } 
         else {

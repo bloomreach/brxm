@@ -27,12 +27,7 @@ System.out.println("Console out from general_layout.jsp");
 <!-- include header -->
 <hst:include ref="header" />
 
-<hst:response-properties var="responseProperties" />
-<c:import url="/WEB-INF/copy.xsl" var="xsltCopy"/>
-<c:forEach var="propertyEntry" items="${responseProperties}">
-  <c:set var="responseProperty" value="${propertyEntry.value}" />
-  <x:transform xml="${responseProperty}" xslt="${xsltCopy}" />
-</c:forEach>
+<hst:head-contributions />
 
 </head>
 <body>
