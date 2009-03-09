@@ -27,16 +27,16 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         this.pipelines = pipelines;
     }
 
-    public void processRequest(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException, ContainerNoMatchException {
+    public void processRequest(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         Pipeline pipeline = this.pipelines.getDefaultPipeline();
 
         try {
             pipeline.beforeInvoke(servletConfig, servletRequest, servletResponse);
             pipeline.invoke(servletConfig, servletRequest, servletResponse);
             
-        } catch(ContainerNoMatchException e){
-          throw new ContainerNoMatchException(e);  	
-            
+        }
+        catch(ContainerNoMatchException e){
+          throw e;  	
         } catch (Throwable th) {
             throw new ContainerException(th);
         } finally {

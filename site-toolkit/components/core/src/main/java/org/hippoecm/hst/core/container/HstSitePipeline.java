@@ -46,19 +46,19 @@ public class HstSitePipeline implements Pipeline
     public void initialize() throws ContainerException {
     }
     
-    public void beforeInvoke(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException, ContainerNoMatchException {
+    public void beforeInvoke(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         invokeValves(servletConfig, servletRequest, servletResponse, preInvokingValves);
     }
 
-    public void invoke(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException, ContainerNoMatchException {
+    public void invoke(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         invokeValves(servletConfig, servletRequest, servletResponse, invokingValves);
     }
     
-    public void afterInvoke(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException, ContainerNoMatchException {
+    public void afterInvoke(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         invokeValves(servletConfig, servletRequest, servletResponse, postInvokingValves);
     }
     
-    private void invokeValves(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse, Valve [] valves) throws ContainerException, ContainerNoMatchException {
+    private void invokeValves(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse, Valve [] valves) throws ContainerException {
         if (valves != null && valves.length > 0) {
             new Invocation(servletConfig, servletRequest, servletResponse, valves).invokeNext();
         }
@@ -86,7 +86,7 @@ public class HstSitePipeline implements Pipeline
             this.valves = valves;
         }
 
-        public void invokeNext() throws ContainerException, ContainerNoMatchException {
+        public void invokeNext() throws ContainerException {
             if (at < valves.length)
             {
                 Valve next = valves[at];

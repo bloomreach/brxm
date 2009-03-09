@@ -22,7 +22,7 @@ import javax.servlet.ServletResponse;
 
 public interface ValveContext
 {
-    public void invokeNext() throws ContainerException, ContainerNoMatchException;
+    public void invokeNext() throws ContainerException;
     
     public ServletConfig getServletConfig();
     

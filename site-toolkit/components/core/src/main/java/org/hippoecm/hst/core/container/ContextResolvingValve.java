@@ -28,7 +28,7 @@ public class ContextResolvingValve extends AbstractValve
 {
     
     @Override
-    public void invoke(ValveContext context) throws ContainerException, ContainerNoMatchException
+    public void invoke(ValveContext context) throws ContainerException
     {
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());

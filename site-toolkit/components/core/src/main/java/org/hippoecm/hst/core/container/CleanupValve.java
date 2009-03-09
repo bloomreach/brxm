@@ -31,7 +31,7 @@ public class CleanupValve extends AbstractValve
     }
     
     @Override
-    public void invoke(ValveContext context) throws ContainerException, ContainerNoMatchException
+    public void invoke(ValveContext context) throws ContainerException
     {
         if (this.resourceLifecycleManagements != null) {
             for (ResourceLifecycleManagement resourceLifecycleManagement : this.resourceLifecycleManagements) {

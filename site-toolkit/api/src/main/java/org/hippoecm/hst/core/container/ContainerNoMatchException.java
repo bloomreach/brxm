@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.core.container;
 
-public class ContainerNoMatchException extends Exception {
+public class ContainerNoMatchException extends ContainerException {
 
     private static final long serialVersionUID = 1L;
 

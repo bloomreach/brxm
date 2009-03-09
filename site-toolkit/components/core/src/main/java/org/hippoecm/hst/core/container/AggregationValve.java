@@ -38,7 +38,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public class AggregationValve extends AbstractValve {
 
     @Override
-    public void invoke(ValveContext context) throws ContainerException, ContainerNoMatchException {
+    public void invoke(ValveContext context) throws ContainerException {
 
         ServletRequest servletRequest = context.getServletRequest();
         ServletResponse servletResponse = context.getServletResponse();

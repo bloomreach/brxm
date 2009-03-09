@@ -31,8 +31,7 @@ public interface HstRequestProcessor {
      * @param servletRequest the servletRequest of the HST request
      * @param servletResponse the servletResponse of the HST response
      * @throws ContainerException
-     * @throws ContainerNoMatchException 
      */
-    void processRequest(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException, ContainerNoMatchException;
+    void processRequest(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
 
 }

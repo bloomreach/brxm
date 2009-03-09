@@ -95,7 +95,7 @@ public abstract class AbstractValve implements Valve
         this.linkCreator = linkCreator;
     }
     
-    public abstract void invoke(ValveContext context) throws ContainerException, ContainerNoMatchException;
+    public abstract void invoke(ValveContext context) throws ContainerException;
 
     public void initialize() throws ContainerException {
     }

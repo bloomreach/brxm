@@ -18,7 +18,7 @@ package org.hippoecm.hst.core.container;
 
 public interface Valve
 {
-    public void invoke(ValveContext context) throws ContainerException, ContainerNoMatchException;
+    public void invoke(ValveContext context) throws ContainerException;
 
     /**
      * Initialize the valve before using in a pipeline.
