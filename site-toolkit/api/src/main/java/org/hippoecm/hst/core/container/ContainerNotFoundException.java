@@ -15,23 +15,23 @@
  */
 package org.hippoecm.hst.core.container;
 
-public class ContainerNoMatchException extends ContainerException {
+public class ContainerNotFoundException extends ContainerException {
 
     private static final long serialVersionUID = 1L;
 
-    public ContainerNoMatchException() {
+    public ContainerNotFoundException() {
         super();
     }
 
-    public ContainerNoMatchException(String message) {
+    public ContainerNotFoundException(String message) {
         super(message);
     }
 
-    public ContainerNoMatchException(Throwable nested) {
+    public ContainerNotFoundException(Throwable nested) {
         super(nested);
     }
 
-    public ContainerNoMatchException(String msg, Throwable nested) {
+    public ContainerNotFoundException(String msg, Throwable nested) {
         super(msg, nested);
     }
     

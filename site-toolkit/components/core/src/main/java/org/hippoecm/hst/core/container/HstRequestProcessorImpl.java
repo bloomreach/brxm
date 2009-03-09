@@ -35,7 +35,7 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
             pipeline.invoke(servletConfig, servletRequest, servletResponse);
             
         }
-        catch(ContainerNoMatchException e){
+        catch(ContainerNotFoundException e){
           throw e;  	
         } catch (Throwable th) {
             throw new ContainerException(th);

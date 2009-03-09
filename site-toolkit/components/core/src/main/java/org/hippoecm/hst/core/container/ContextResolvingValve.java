@@ -55,11 +55,11 @@ public class ContextResolvingValve extends AbstractValve
         try {
             resolvedSiteMapItem = this.siteMapMatcher.match(pathInfo, hstSite);
         } catch (Exception e) {
-            throw new ContainerNoMatchException("No match for " + pathInfo, e);
+            throw new ContainerNotFoundException("No match for " + pathInfo, e);
         }
         
         if (resolvedSiteMapItem == null) {
-            throw new ContainerNoMatchException("No match for " + pathInfo);
+            throw new ContainerNotFoundException("No match for " + pathInfo);
         }
         
         ((HstRequestContextImpl) requestContext).setResolvedSiteMapItem(resolvedSiteMapItem);
