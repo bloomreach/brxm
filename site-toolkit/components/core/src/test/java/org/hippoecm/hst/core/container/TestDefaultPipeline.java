@@ -87,7 +87,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
     }
     
     @Test
-    public void testDefaultPipeline() throws ContainerException, UnsupportedEncodingException {
+    public void testDefaultPipeline() throws ContainerException, UnsupportedEncodingException, ContainerNoMatchException {
         
         ((MockHttpServletRequest)servletRequest).setPathInfo("/news");
         
@@ -108,7 +108,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
     
     
     @Test
-    public void testDefaultPipeline2() throws ContainerException, UnsupportedEncodingException {
+    public void testDefaultPipeline2() throws ContainerException, UnsupportedEncodingException, ContainerNoMatchException {
         
         ((MockHttpServletRequest)servletRequest).setPathInfo("/news/2009/februari");
         
