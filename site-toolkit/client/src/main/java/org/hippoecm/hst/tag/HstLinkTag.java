@@ -30,6 +30,7 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,8 @@ public class HstLinkTag extends TagSupport {
     private static final long serialVersionUID = 1L;
 
     protected HstLink link;
+    
+    protected String path;
     
     protected String var;
     
@@ -76,9 +79,13 @@ public class HstLinkTag extends TagSupport {
      */
     @Override
     public int doEndTag() throws JspException{
-       
-        if(link == null) {
-            log.warn("Cannot get a link because the hstLink is null");
+        
+        if(this.link != null && this.path != null) { 
+           log.warn("Both HstLink & a path are set in single hst:link. Using the HstLink and disregard the path");
+        }
+        
+        if(this.link == null && this.path == null) {
+            log.warn("Cannot get a link because no value or path is set");
             return EVAL_PAGE;
         }
         
@@ -99,11 +106,13 @@ public class HstLinkTag extends TagSupport {
             url.append(request.getServletPath());
         }
         
-        String path = link.getPath();
+        if(this.path == null) {
+            String path = link.getPath();
+        }
+        
         if (!path.startsWith("/")) {
             url.append("/");
         }
-        
         url.append(path);
         
         String urlString = response.encodeURL(url.toString());
@@ -177,6 +186,10 @@ public class HstLinkTag extends TagSupport {
     
     public void setValue(HstLink hstLink) {
         this.link = hstLink;
+    }
+    
+    public void setPath(String path) {
+        this.path = path;
     }
     
     /**
