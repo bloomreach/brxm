@@ -106,14 +106,14 @@ public class HstLinkTag extends TagSupport {
             url.append(request.getServletPath());
         }
         
-        if(this.path == null) {
-            String path = link.getPath();
+        if(this.link != null) {
+            this.path = link.getPath();
         }
         
-        if (!path.startsWith("/")) {
+        if (!this.path.startsWith("/")) {
             url.append("/");
         }
-        url.append(path);
+        url.append(this.path);
         
         String urlString = response.encodeURL(url.toString());
 
@@ -148,6 +148,8 @@ public class HstLinkTag extends TagSupport {
         var = null;
         scope = null;
         context = null;
+        path = null;
+        link = null;
         
         return EVAL_PAGE;
     }
