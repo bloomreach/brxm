@@ -15,23 +15,24 @@
  */
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+public class ContainerNoMatchException extends Exception {
 
+    private static final long serialVersionUID = 1L;
 
-public interface ValveContext
-{
-    public void invokeNext() throws ContainerException, ContainerNoMatchException;
-    
-    public ServletConfig getServletConfig();
-    
-    public ServletRequest getServletRequest();
+    public ContainerNoMatchException() {
+        super();
+    }
 
-    public ServletResponse getServletResponse();
-    
-    public void setRootComponentWindow(HstComponentWindow rootComponentWindow);
-    
-    public HstComponentWindow getRootComponentWindow();
+    public ContainerNoMatchException(String message) {
+        super(message);
+    }
+
+    public ContainerNoMatchException(Throwable nested) {
+        super(nested);
+    }
+
+    public ContainerNoMatchException(String msg, Throwable nested) {
+        super(msg, nested);
+    }
     
 }
