@@ -31,7 +31,7 @@ public class InitializationValve extends AbstractValve
     }
     
     @Override
-    public void invoke(ValveContext context) throws ContainerException
+    public void invoke(ValveContext context) throws ContainerException, ContainerNoMatchException
     {
         HstRequestContext requestContext = getRequestContextComponent().create();
         ServletRequest servletRequest = context.getServletRequest();

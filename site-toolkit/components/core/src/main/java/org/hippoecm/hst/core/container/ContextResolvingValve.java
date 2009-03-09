@@ -28,7 +28,7 @@ public class ContextResolvingValve extends AbstractValve
 {
     
     @Override
-    public void invoke(ValveContext context) throws ContainerException
+    public void invoke(ValveContext context) throws ContainerException, ContainerNoMatchException
     {
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
@@ -55,11 +55,11 @@ public class ContextResolvingValve extends AbstractValve
         try {
             resolvedSiteMapItem = this.siteMapMatcher.match(pathInfo, hstSite);
         } catch (Exception e) {
-            throw new ContainerException("No match for " + pathInfo, e);
+            throw new ContainerNoMatchException("No match for " + pathInfo, e);
         }
         
         if (resolvedSiteMapItem == null) {
-            throw new ContainerException("No match for " + pathInfo);
+            throw new ContainerNoMatchException("No match for " + pathInfo);
         }
         
         ((HstRequestContextImpl) requestContext).setResolvedSiteMapItem(resolvedSiteMapItem);

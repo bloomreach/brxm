@@ -30,7 +30,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public class ResourceServingValve extends AbstractValve {
     
     @Override
-    public void invoke(ValveContext context) throws ContainerException {
+    public void invoke(ValveContext context) throws ContainerException, ContainerNoMatchException {
         ServletRequest servletRequest = context.getServletRequest();
         ServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());

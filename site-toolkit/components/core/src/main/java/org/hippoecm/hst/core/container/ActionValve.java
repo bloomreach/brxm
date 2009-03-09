@@ -35,7 +35,7 @@ public class ActionValve extends AbstractValve
 {
 
     @Override
-    public void invoke(ValveContext context) throws ContainerException
+    public void invoke(ValveContext context) throws ContainerException, ContainerNoMatchException
     {
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
         HttpServletResponse servletResponse = (HttpServletResponse) context.getServletResponse();

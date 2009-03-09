@@ -23,7 +23,7 @@ import org.hippoecm.hst.site.request.HstRequestContextImpl;
 public class HstURLValve extends AbstractValve {
     
     @Override
-    public void invoke(ValveContext context) throws ContainerException {
+    public void invoke(ValveContext context) throws ContainerException, ContainerNoMatchException {
 
         ServletRequest servletRequest = context.getServletRequest();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
