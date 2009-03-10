@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 888 terms</span>
+      <span class="shortdesc">Term index, 892 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -2833,6 +2833,14 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/tools/howto/snapshot_dependencies.html#How_to_ensure_that_projects_that_depend_on_snapshot_versions_of&#10;______packages_will_build_&#10;_____">How to ensure that projects that depend on snapshot versions of
+      packages will build?
+     </a>
+            </td>
+            <td>Howto: Using snapshot dependencies</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/fill_date_field_in_document.html#How_to_fill_a_date_field_in_a_document_">How to fill a date field in a document.</a>
             </td>
             <td>Howto: Fill date in Document</td>
@@ -3117,6 +3125,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/custom/howto/eclipse/import_project.html#Howto_import_an_existing_java_project_">Howto import an existing java project.</a>
+            </td>
+            <td>Import java project</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/tools/howto/maven/install_maven.html#Howto_install_Maven_">Howto install Maven.</a>
             </td>
             <td>Install Maven</td>
@@ -3132,6 +3146,12 @@
               <a href="../delve_into/tools/howto/eclipse/configure_workspace.html#Identify_Maven_local_repository">Identify Maven local repository</a>
             </td>
             <td>Configure Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/howto/eclipse/import_project.html#Import_java_project">Import java project</a>
+            </td>
+            <td>Import java project</td>
           </tr>
           <tr>
             <td>
@@ -4945,6 +4965,12 @@
               <a href="../delve_into/sysadmin/configuration/nodes/users.html#Users_Configuration">Users Configuration</a>
             </td>
             <td>Users Configuration</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/snapshot_dependencies.html#Using_snapshot_dependencies">Using snapshot dependencies</a>
+            </td>
+            <td>Howto: Using snapshot dependencies</td>
           </tr>
           <tr>
             <td>

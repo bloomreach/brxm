@@ -44,12 +44,20 @@
    fullname='delve_into/core/building/eclipse.xml.vm'
    relpath='delve_into/core/building'
   >eclipse</file>
+     <file ext='xml.vm~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/core/building/eclipse.xml.vm~'
+   relpath='delve_into/core/building'
+  >eclipse</file>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/core/building/index.xml'
    relpath='delve_into/core/building'
   >index</file>
      <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/core/building/maven.xml.vm'
+   relpath='delve_into/core/building'
+  >maven</file>
+     <file ext='xml.vm~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/core/building/maven.xml.vm~'
    relpath='delve_into/core/building'
   >maven</file>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
@@ -114,10 +122,14 @@
    fullname='delve_into/custom/howto/eclipse/configure_workspace.xml.vm'
    relpath='delve_into/custom/howto/eclipse'
   >configure_workspace</file>
-      <file ext='xml.vm~' mimetype='text/html charset=us-ascii' note='todo'
-   fullname='delve_into/custom/howto/eclipse/configure_workspace.xml.vm~'
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/custom/howto/eclipse/import_project.xml'
    relpath='delve_into/custom/howto/eclipse'
-  >configure_workspace</file>
+  >import_project</file>
+      <file ext='xml~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/custom/howto/eclipse/import_project.xml~'
+   relpath='delve_into/custom/howto/eclipse'
+  >import_project</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/custom/howto/eclipse/index.xml'
    relpath='delve_into/custom/howto/eclipse'
@@ -502,7 +514,7 @@
    fullname='delve_into/tools/howto/eclipse/configure_workspace.xml.vm'
    relpath='delve_into/tools/howto/eclipse'
   >configure_workspace</file>
-      <file ext='xml.vm~' mimetype='text/html charset=us-ascii' note='todo'
+      <file ext='xml.vm~' mimetype='text/html charset=us-ascii'
    fullname='delve_into/tools/howto/eclipse/configure_workspace.xml.vm~'
    relpath='delve_into/tools/howto/eclipse'
   >configure_workspace</file>
@@ -512,6 +524,10 @@
   >index</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/tools/howto/eclipse/start_eclipse.xml'
+   relpath='delve_into/tools/howto/eclipse'
+  >start_eclipse</file>
+      <file ext='xml~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/tools/howto/eclipse/start_eclipse.xml~'
    relpath='delve_into/tools/howto/eclipse'
   >start_eclipse</file>
       <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
@@ -544,6 +560,10 @@
    fullname='delve_into/tools/howto/maven/build_core_Hippo_CMS.xml.vm'
    relpath='delve_into/tools/howto/maven'
   >build_core_Hippo_CMS</file>
+      <file ext='xml.vm~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/tools/howto/maven/build_core_Hippo_CMS.xml.vm~'
+   relpath='delve_into/tools/howto/maven'
+  >build_core_Hippo_CMS</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/tools/howto/maven/index.xml'
    relpath='delve_into/tools/howto/maven'
@@ -561,6 +581,14 @@
    relpath='delve_into/tools/howto/maven'
   >run_development_package</file>
      </folder>
+     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/tools/howto/snapshot_dependencies.xml'
+   relpath='delve_into/tools/howto'
+  >snapshot_dependencies</file>
+     <file ext='xml~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/tools/howto/snapshot_dependencies.xml~'
+   relpath='delve_into/tools/howto'
+  >snapshot_dependencies</file>
     </folder>
     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/tools/index.xml'
@@ -974,6 +1002,10 @@
    fullname='delve_into/user/index.xml'
    relpath='delve_into/user'
   >index</file>
+    <file ext='xml~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/user/index.xml~'
+   relpath='delve_into/user'
+  >index</file>
     <folder>information_architects
      <folder>concepts
 <info>
@@ -1208,6 +1240,10 @@
   <folder>support
    <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='support/community.xml.vm'
+   relpath='support'
+  >community</file>
+   <file ext='xml.vm~' mimetype='text/html charset=us-ascii' note='todo'
+   fullname='support/community.xml.vm~'
    relpath='support'
   >community</file>
    <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes' note='todo'

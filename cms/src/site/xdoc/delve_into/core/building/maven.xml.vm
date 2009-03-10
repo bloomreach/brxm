@@ -24,16 +24,17 @@
   <body>
    <section name='Developing with Maven'>
 
-  <div class='warn'>
-   The contents of this page has been split up and the components have
-   been moved to <a href='../../tools/howto/index.html'>Tools howto</a>.
+   <div class='warn'>
+    The contents of this page has been split up and the components have
+    been moved to <a href='../../tools/howto/maven/index.html'>maven howto</a>.
+    in <a href='../../tools/howto/index.html'>Tools howto</a>.
 
-   If you read the upper level documents:
-   <a href='../../tools/howto/build_core_Hippo_CMS.html'>build core Hippo CMS</a>
-   and
-   <a href='../../tools/howto/run_development_package.html'>Run development package</a>
-   you will be referred to all the content that was previously here.
-  </div>
+    If you read the upper level documents:
+    <a href='../../tools/howto/maven/build_core_Hippo_CMS.html'>build core Hippo CMS</a>
+    and
+    <a href='../../tools/howto/maven/run_development_package.html'>Run development package</a>
+    you will be referred to all the content that was previously here.
+   </div>
   </section>
 
   </body>

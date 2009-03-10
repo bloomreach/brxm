@@ -29,7 +29,7 @@
   <body>
     <section name="Eclipse"><span class="shortdesc">Using eclipse for Hippo CMS addon projects</span>              <!-- tree -->
   This section is to describe how to configure eclipse to use with Hippo CMS addon projects.
- <table><tr><td><a href="./configure_workspace.html">Configure Workspace</a></td><td>Configure Eclipse Workspace for Hippo CMS addon projects: <a href="./configure_workspace.html#Configure_update_sites">Configure update sites</a>, <a href="./configure_workspace.html#Install_plugins">Install plugins</a>, <a href="./configure_workspace.html#War_overlays">War overlays</a>.</td></tr><tr><td><a href="./start_eclipse.html">Start Eclipse</a></td><td>Start Eclipse to work on Hippo CMS addon projects.</td></tr></table>                 <!-- tree, e.g. <subsection name='Alternative'> -->
+ <table><tr><td><a href="./configure_workspace.html">Configure Workspace</a></td><td>Configure Eclipse Workspace for Hippo CMS addon projects: <a href="./configure_workspace.html#Configure_update_sites">Configure update sites</a>, <a href="./configure_workspace.html#Install_plugins">Install plugins</a>, <a href="./configure_workspace.html#War_overlays">War overlays</a>.</td></tr><tr><td><a href="./import_project.html">Import java project</a></td><td>Howto import an existing java project.</td></tr><tr><td><a href="./start_eclipse.html">Start Eclipse</a></td><td>Start Eclipse to work on Hippo CMS addon projects.</td></tr></table>                 <!-- tree, e.g. <subsection name='Alternative'> -->
  </section>
   </body>
 </document>
