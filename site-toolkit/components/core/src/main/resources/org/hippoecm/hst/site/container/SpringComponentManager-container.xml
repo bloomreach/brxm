@@ -33,6 +33,7 @@
   
   <bean id="org.hippoecm.hst.core.container.HstComponentInvoker"
         class="org.hippoecm.hst.core.container.HstComponentInvokerImpl">
+    <property name="exceptionThrowable" value="${development.mode}" />
   </bean>
   
   <bean id="org.hippoecm.hst.core.container.HstNavigationalStateCodec"

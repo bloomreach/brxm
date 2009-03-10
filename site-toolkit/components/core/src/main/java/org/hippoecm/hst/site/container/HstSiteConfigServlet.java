@@ -15,9 +15,11 @@
  */
 package org.hippoecm.hst.site.container;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.Enumeration;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -30,6 +32,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationConverter;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.ConfigurationFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.HippoRepository;
@@ -50,7 +56,11 @@ import org.slf4j.LoggerFactory;
  */
 public class HstSiteConfigServlet extends HttpServlet {
 
-    private static final String CHECK_REPOSITORIES_RUNNING_INIT_PARAM = "check-repositories-running"; 
+    private static final String HST_CONFIGURATION_PARAM = "hst-configuration";
+
+    private static final String HST_CONFIGURATION_XML = "hst-configuration.xml";
+
+    private static final String CHECK_REPOSITORIES_RUNNING_INIT_PARAM = "check.repositories.running"; 
     
     private static final String REPOSITORY_ADDRESS_PARAM_SUFFIX = ".repository.address";
 
@@ -64,6 +74,8 @@ public class HstSiteConfigServlet extends HttpServlet {
     
     protected boolean initialized;
     protected boolean allRepositoriesAvailable;
+    
+    protected Configuration configuration;
 
     // -------------------------------------------------------------------
     // I N I T I A L I Z A T I O N
@@ -80,7 +92,9 @@ public class HstSiteConfigServlet extends HttpServlet {
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
         
-        boolean checkRepositoriesRunning = Boolean.parseBoolean(config.getInitParameter(CHECK_REPOSITORIES_RUNNING_INIT_PARAM)); 
+        this.configuration = getConfiguration(config);
+
+        boolean checkRepositoriesRunning = this.configuration.getBoolean(CHECK_REPOSITORIES_RUNNING_INIT_PARAM);
         
         if (!checkRepositoriesRunning) {
             doInit(config);
@@ -88,16 +102,14 @@ public class HstSiteConfigServlet extends HttpServlet {
             this.allRepositoriesAvailable = false;
             this.repositoryCheckingStatus.clear();
             
-            Enumeration enumParams = config.getInitParameterNames();
-            
-            while (enumParams.hasMoreElements()) {
-                String paramName = (String) enumParams.nextElement();
+            for (Iterator it = this.configuration.getKeys(); it.hasNext(); ) {
+                String propName = (String) it.next();
                 
-                if (paramName.endsWith(REPOSITORY_ADDRESS_PARAM_SUFFIX)) {
-                    String repositoryAddress = config.getInitParameter(paramName);
-                    String repositoryParamPrefix = paramName.substring(0, paramName.length() - REPOSITORY_ADDRESS_PARAM_SUFFIX.length());
-                    String repositoryUsername = config.getInitParameter(repositoryParamPrefix + ".repository.user.name");
-                    String repositoryPassword = config.getInitParameter(repositoryParamPrefix + ".repository.password");
+                if (propName.endsWith(REPOSITORY_ADDRESS_PARAM_SUFFIX)) {
+                    String repositoryAddress = this.configuration.getString(propName);
+                    String repositoryParamPrefix = propName.substring(0, propName.length() - REPOSITORY_ADDRESS_PARAM_SUFFIX.length());
+                    String repositoryUsername = this.configuration.getString(repositoryParamPrefix + ".repository.user.name");
+                    String repositoryPassword = this.configuration.getString(repositoryParamPrefix + ".repository.password");
     
                     if (repositoryAddress != null && !"".equals(repositoryAddress.trim())) {
                         this.repositoryCheckingStatus.put(new String [] { repositoryAddress.trim(), repositoryUsername, repositoryPassword }, Boolean.FALSE);
@@ -132,18 +144,9 @@ public class HstSiteConfigServlet extends HttpServlet {
     }
     
     protected synchronized void doInit(ServletConfig config) {
-        
-        Properties initProperties = new Properties();
-        
-        for (Enumeration paramNamesEnum = config.getInitParameterNames(); paramNamesEnum.hasMoreElements(); ) {
-            String paramName = (String) paramNamesEnum.nextElement();
-            String paramValue = config.getInitParameter(paramName);
-            
-            if (paramName.startsWith(INIT_PROPS_PARAM_PREFIX) && paramValue != null) {
-                initProperties.setProperty(paramName.substring(INIT_PROPS_PARAM_PREFIX.length()).trim(), paramValue.trim());
-            }
-        }
 
+        Properties initProperties = ConfigurationConverter.getProperties(this.configuration);
+        
         try {
             log.info("HSTSiteServlet attempting to create the Component manager...");
             this.componentManager = new SpringComponentManager(initProperties);
@@ -257,4 +260,33 @@ public class HstSiteConfigServlet extends HttpServlet {
         return allRunning;
     }
 
+    protected Configuration getConfiguration(ServletConfig servletConfig) throws ServletException {
+        Configuration configuration = null;
+        ConfigurationFactory factory = new ConfigurationFactory();
+        
+        String hstConfigurationFilePath = servletConfig.getInitParameter(HST_CONFIGURATION_PARAM);
+        File hstConfigurationFile = null;
+        
+        if (hstConfigurationFilePath == null) {
+            hstConfigurationFilePath = "/WEB-INF/" + HST_CONFIGURATION_XML;
+        }
+        
+        hstConfigurationFile = new File(servletConfig.getServletContext().getRealPath(hstConfigurationFilePath));
+        
+        if (hstConfigurationFile.isFile()) {
+            factory.setConfigurationFileName(hstConfigurationFile.toURI().toString());
+        } else {
+            URL configURL = Thread.currentThread().getContextClassLoader().getResource("/" + HST_CONFIGURATION_XML);
+            factory.setConfigurationURL(configURL);
+            factory.setBasePath(servletConfig.getServletContext().getRealPath("/WEB-INF"));
+        }
+        
+        try {
+            configuration = factory.getConfiguration();
+        } catch (ConfigurationException e) {
+            throw new ServletException(e);
+        }
+        
+        return configuration;
+    }
 }
