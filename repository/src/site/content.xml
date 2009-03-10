@@ -137,6 +137,9 @@
    <subsection>Configure update sites</subsection>
    <subsection>Install plugins</subsection>
    <subsection>War overlays</subsection>
+  </document><document ext="xml" filename="import_project" relpath="delve_into/custom/howto/eclipse">Import java project
+   <section>Import java project</section>
+   <shortdesc>Howto import an existing java project.</shortdesc>
   </document><document ext="xml" filename="index" relpath="delve_into/custom/howto/eclipse">
   </document><document ext="xml" filename="start_eclipse" relpath="delve_into/custom/howto/eclipse">Start Eclipse
    <section>Start Eclipse</section>
@@ -607,7 +610,12 @@
   </document><document ext="xml" filename="run_development_package" relpath="delve_into/tools/howto/maven">Run a development package
    <section>Run a development package</section>
    <shortdesc>How to build the package of a project and run it, all on the fly?</shortdesc>
-  </document></folder></folder><document ext="xml" filename="index" relpath="delve_into/tools">
+  </document></folder><document ext="xml" filename="snapshot_dependencies" relpath="delve_into/tools/howto">Using snapshot dependencies
+   <section>Using snapshot dependencies</section>
+   <shortdesc>How to ensure that projects that depend on snapshot versions of
+      packages will build?
+     </shortdesc>
+  </document></folder><document ext="xml" filename="index" relpath="delve_into/tools">
   </document></folder><folder>user
    
    <folder>cms_admins

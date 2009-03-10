@@ -24,16 +24,39 @@
 
 <body>
 <section name="Bin Startup Help">
- 
+
  <subsection name='Error messages'>
 
+  <div>
    <samp>Error: JAVA_HOME is not defined correctly. Unable to execute execute java</samp>
 
    <p>The Hippo CMS quickstart packages assumes that Java already works on your system, 
-      but your Java is not configured correctly, or is missing.         
+      but your Java is not configured correctly, or is missing.
       Consult <a href='sysadmin/requirements.html'>Requirements</a> for
       Java requirements for Hippo ECM.
    </p>
+ </div>
+ <div>
+
+   <samp>Error occurred during initialization of VM
+         Incompatible initial and maximum heap sizes specified
+   </samp>
+
+   <p>Errormessages about heapsize: some environments do not allow the large heapsize
+      asked for in the quickstart.
+   </p>
+
+   <p>Fix: change startup.sh
+   </p>
+
+    <code>EXTRA_JVM_ARGUMENTS="-Xms256m"</code>
+
+    <p>into</p>
+
+    <code>EXTRA_JVM_ARGUMENTS="-Xms256m -Xmx256m"</code>
+
+ </div>
+
 
  </subsection>
 
