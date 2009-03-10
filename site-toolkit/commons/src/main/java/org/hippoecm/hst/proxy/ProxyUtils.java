@@ -17,12 +17,11 @@ package org.hippoecm.hst.proxy;
 
 import java.util.Set;
 
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
-import org.apache.commons.beanutils.DynaBean;
+import org.apache.commons.proxy.Interceptor;
+import org.apache.commons.proxy.Invocation;
+import org.apache.commons.proxy.Invoker;
 import org.hippoecm.hst.service.ServiceBeanAccessProvider;
 import org.hippoecm.hst.service.ServiceNamespace;
-import org.springframework.aop.framework.ProxyFactory;
 
 public class ProxyUtils
 {
@@ -30,37 +29,29 @@ public class ProxyUtils
     {
     }
     
-    public static Object createDynaBeanProxy(final DynaBean dynaBean, Class ... proxyInterfaces) {
-        ProxyFactory factory = new ProxyFactory(proxyInterfaces);
-        factory.addAdvice(new DynaBeanMethodInterceptor(dynaBean));
-        return factory.getProxy();
-    }
-    
-    public static Object createdUnsupportableProxyObject(Object target, final Set<String> unsupportedMethodNames)
-    {
-        ProxyFactory factory = new ProxyFactory(target);
+    public static Object createdUnsupportableProxyObject(Object target, final Set<String> unsupportedMethodNames, Class ... proxyInterfaces) {
+        ProxyFactory factory = new ProxyFactory();
         
-        factory.addAdvice(new MethodInterceptor()
-        {
-            public Object invoke(MethodInvocation invocation) throws Throwable
-            {
-                if (unsupportedMethodNames.contains(invocation.getMethod().getName()))
-                {
+        Interceptor interceptor = new Interceptor() {
+
+            public Object intercept(Invocation invocation) throws Throwable {
+                if (unsupportedMethodNames.contains(invocation.getMethod().getName())) {
                     throw new UnsupportedOperationException("Unsupported operation: " + invocation.getMethod().getName());
                 }
 
                 return invocation.proceed();
             }
-        });
+            
+        };
         
-        return factory.getProxy();
+        return factory.createInterceptorProxy(target.getClass().getClassLoader(), target, interceptor, proxyInterfaces);
     }
     
     public static Object createBeanAccessProviderProxy(final ServiceBeanAccessProvider provider, Class ... proxyInterfaces) {
-        ProxyFactory factory = new ProxyFactory(proxyInterfaces);
+        ProxyFactory factory = new ProxyFactory();
         String defaultNamespacePrefix = findServiceNamespacePrefix(proxyInterfaces);
-        factory.addAdvice(new NamespacedBeanMethodInterceptor(provider, defaultNamespacePrefix));
-        return factory.getProxy();
+        Invoker invoker = new NamespacedBeanMethodInvoker(provider, defaultNamespacePrefix);
+        return factory.createInvokerProxy(proxyInterfaces[0].getClassLoader(), invoker, proxyInterfaces);
     }
     
     private static String findServiceNamespacePrefix(Class [] proxyInterfaces) {

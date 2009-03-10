@@ -30,7 +30,7 @@ import org.apache.commons.beanutils.LazyDynaBean;
 import org.apache.commons.beanutils.LazyDynaMap;
 import org.junit.Test;
 
-public class TestProxyUtils {
+public class TestDynaBeanProxyUtils {
 
     @Test
     public void testDynaBeanProxy() throws IllegalAccessException, InstantiationException {
@@ -47,7 +47,7 @@ public class TestProxyUtils {
         DynaClass dynaClass = new BasicDynaClass("employee", null, props);
         DynaBean dynaBean = dynaClass.newInstance();
 
-        IPersonInfo personInfo = (IPersonInfo) ProxyUtils.createDynaBeanProxy(dynaBean, IPersonInfo.class);
+        IPersonInfo personInfo = (IPersonInfo) DynaBeanProxyUtils.createDynaBeanProxy(dynaBean, IPersonInfo.class);
         
         personInfo.setFirstName("Fanny");
         assertEquals("Fanny", personInfo.getFirstName());
@@ -85,7 +85,7 @@ public class TestProxyUtils {
         
         DynaBean dynaBean = new LazyDynaBean();
 
-        IPersonInfo personInfo = (IPersonInfo) ProxyUtils.createDynaBeanProxy(dynaBean, IPersonInfo.class);
+        IPersonInfo personInfo = (IPersonInfo) DynaBeanProxyUtils.createDynaBeanProxy(dynaBean, IPersonInfo.class);
         
         personInfo.setFirstName("Fanny");
         assertEquals("Fanny", personInfo.getFirstName());
@@ -137,7 +137,7 @@ public class TestProxyUtils {
             }
         };
 
-        IPersonInfo personInfo = (IPersonInfo) ProxyUtils.createDynaBeanProxy(dynaBean, IPersonInfo.class);
+        IPersonInfo personInfo = (IPersonInfo) DynaBeanProxyUtils.createDynaBeanProxy(dynaBean, IPersonInfo.class);
         
         personInfo.setFirstName("Fanny");
         assertEquals("Fanny", personInfo.getFirstName());
@@ -195,7 +195,7 @@ public class TestProxyUtils {
         
         LazyDynaMap dynaBean = new LazyDynaMap(values);
 
-        IPersonInfo personInfo = (IPersonInfo) ProxyUtils.createDynaBeanProxy(dynaBean, IPersonInfo.class);
+        IPersonInfo personInfo = (IPersonInfo) DynaBeanProxyUtils.createDynaBeanProxy(dynaBean, IPersonInfo.class);
         
         assertEquals("Fanny", personInfo.getFirstName());
         assertEquals("Fanny", dynaBean.get("firstName"));

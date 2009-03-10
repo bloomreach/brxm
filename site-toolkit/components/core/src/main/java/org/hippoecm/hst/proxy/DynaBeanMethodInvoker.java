@@ -18,28 +18,25 @@ package org.hippoecm.hst.proxy;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.beanutils.MethodUtils;
+import org.apache.commons.proxy.Invoker;
 
-public class DynaBeanMethodInterceptor implements MethodInterceptor, Serializable {
+public class DynaBeanMethodInvoker implements Invoker, Serializable {
     
     private static final long serialVersionUID = 1L;
     
     private DynaBean dynaBean;
     
-    public DynaBeanMethodInterceptor(final DynaBean dynaBean) {
+    public DynaBeanMethodInvoker(final DynaBean dynaBean) {
         this.dynaBean = dynaBean;
     }
     
-    public Object invoke(MethodInvocation invocation) throws Throwable {
-        Method method = invocation.getMethod();
+    public Object invoke(Object proxy, Method method, Object [] args) throws Throwable {
         String methodName = method.getName();
 
         Class [] paramTypes = method.getParameterTypes();
         Class returnType = method.getReturnType();
-        Object [] args = invocation.getArguments();
         
         if (methodName.startsWith("get")) {
             String propName = getCamelString(methodName.substring(3));

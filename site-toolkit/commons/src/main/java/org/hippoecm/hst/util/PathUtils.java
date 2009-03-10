@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.util;
+package org.hippoecm.hst.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

@@ -18,30 +18,27 @@ package org.hippoecm.hst.proxy;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
+import org.apache.commons.proxy.Invoker;
 import org.hippoecm.hst.service.ServiceBeanAccessProvider;
 import org.hippoecm.hst.service.ServiceNamespace;
 
-public class NamespacedBeanMethodInterceptor implements MethodInterceptor, Serializable {
+public class NamespacedBeanMethodInvoker implements Invoker, Serializable {
     
     private static final long serialVersionUID = 1L;
     
     private ServiceBeanAccessProvider provider;
     private String defaultNamespacePrefix;
     
-    public NamespacedBeanMethodInterceptor(final ServiceBeanAccessProvider provider, String defaultNamespacePrefix) {
+    public NamespacedBeanMethodInvoker(final ServiceBeanAccessProvider provider, String defaultNamespacePrefix) {
         this.provider = provider;
         this.defaultNamespacePrefix = defaultNamespacePrefix;
     }
     
-    public Object invoke(MethodInvocation invocation) throws Throwable {
-        Method method = invocation.getMethod();
+    public Object invoke(Object proxy, Method method, Object [] args) throws Throwable {
         String namespacePrefix = getNamespacePrefix(method);
         String methodName = method.getName();
         Class [] paramTypes = method.getParameterTypes();
         Class returnType = method.getReturnType();
-        Object [] args = invocation.getArguments();
         
         if (methodName.startsWith("get") && paramTypes.length == 0) {
             String propName = getCamelString(methodName.substring(3));

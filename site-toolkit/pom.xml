@@ -76,6 +76,7 @@
     <commons-fileupload.version>1.2.1</commons-fileupload.version>
     <commons-io.version>1.4</commons-io.version>
     <commons-configuration.version>1.6</commons-configuration.version>
+    <commons-proxy.version>1.0</commons-proxy.version>
     
     <spring.version>2.5.6</spring.version>
         
@@ -386,6 +387,12 @@
         <groupId>commons-configuration</groupId>
         <artifactId>commons-configuration</artifactId>
         <version>${commons-configuration.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-proxy</artifactId>
+        <version>${commons-proxy.version}</version>
       </dependency>
       
       <!-- Logging -->

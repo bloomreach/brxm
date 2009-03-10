@@ -28,8 +28,8 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.core.linking.ResolvedLocationMapTreeItem;
 import org.hippoecm.hst.core.linking.ResolvedLocationMapTreeItemImpl;
-import org.hippoecm.hst.core.util.PathUtils;
 import org.hippoecm.hst.core.util.PropertyParser;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
