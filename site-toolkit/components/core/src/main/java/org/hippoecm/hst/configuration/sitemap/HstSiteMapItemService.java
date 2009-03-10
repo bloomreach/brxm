@@ -36,10 +36,12 @@ import org.slf4j.LoggerFactory;
 
 public class HstSiteMapItemService extends AbstractJCRService implements HstSiteMapItem, Service{
 
+    private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItemService.class);
 
     private Map<String, HstSiteMapItem> childSiteMapItems = new HashMap<String, HstSiteMapItem>();
-   
+
     private String siteMapRootNodePath;
     
     private String id;
@@ -72,6 +74,13 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     private boolean isVisible;
     
+    private List<HstSiteMapItemService> containsWildCardChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
+    private List<HstSiteMapItemService> containsAnyChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
+    private boolean containsAny;
+    private boolean containsWildCard;
+    private String postfix; 
+    private String prefix; 
+    
     public HstSiteMapItemService(Node jcrNode, String siteMapRootNodePath, HstSiteMapItem parentItem, HstSiteMap hstSiteMap) throws ServiceException{
         super(jcrNode);
         this.parentItem = (HstSiteMapItemService)parentItem;
@@ -87,6 +96,10 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         // currently, the value is always the nodename
         this.value = getValueProvider().getName();
         
+        if(this.value == null){
+            log.error("The 'value' of a SiteMapItem is not allowed to be null: '{}'", nodePath);
+            throw new ServiceException("The 'value' of a SiteMapItem is not allowed to be null. It is so for '"+nodePath+"'");
+        }
         if(parentItem != null) {
             this.parameterizedPath = this.parentItem.getParameterizedPath()+"/";
             this.occurences = this.parentItem.getWildCardAnyOccurences();
@@ -101,14 +114,35 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
             occurences++;
             parameterizedPath = parameterizedPath + "${" + occurences + "}";
             this.isAny = true;
-        } else {
-            parameterizedPath = parameterizedPath + getValueProvider().getName();
+        } else if(value.indexOf(WILDCARD) > -1) {
+            this.containsWildCard = true;
+            this.postfix = value.substring(value.indexOf(WILDCARD) + WILDCARD.length());
+            this.prefix = value.substring(0, value.indexOf(WILDCARD));
+            if(parentItem != null) {
+                ((HstSiteMapItemService)parentItem).addWildCardPrefixedChildSiteMapItems(this);
+            }
+            occurences++;
+            parameterizedPath = parameterizedPath + value.replace(WILDCARD, "${"+occurences+"}" );
+        } else if(value.indexOf(ANY) > -1) {
+            this.containsAny = true;
+            this.postfix = value.substring(value.indexOf(ANY) + ANY.length());
+            this.prefix = value.substring(0, value.indexOf(ANY));
+            if(parentItem != null) {
+                ((HstSiteMapItemService)parentItem).addAnyPrefixedChildSiteMapItems(this);
+            }
+            occurences++;
+            parameterizedPath = parameterizedPath + value.replace(ANY, "${"+occurences+"}" );
         }
+        else {
+            parameterizedPath = parameterizedPath + value;
+        }
+        
+        System.out.println(" parameterizedPath " + parameterizedPath );
         
         try {
             Node n = this.getValueProvider().getJcrNode();
             if(n.isNodeType(Configuration.SITEMAPITEM_MIXIN_PARTOFMENU)) {
-                if(this.isWildCard()) {
+                if(this.isWildCard() || containsAny || containsWildCard) {
                     log.warn("Setting isvisible mixin on a wildcard (*) sitemap item has no meaning. Skipping");
                 } else if(this.getParentItem()!= null) {
                     if(this.getParentItem().isVisible()) {
@@ -185,6 +219,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         return this.childSiteMapItems.get(value);
     }
 
+    
+    
     public List<HstSiteMapItem> getChildren() {
         return new ArrayList<HstSiteMapItem>(this.childSiteMapItems.values());
     }
@@ -216,7 +252,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     public String getValue() {
         return this.value;
     }
-
+    
     public boolean isWildCard() {
         return this.isWildCard;
     }
@@ -224,7 +260,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     public boolean isAny() {
         return this.isAny;
     }
-
+    
     public boolean isRepositoryBased() {
         return isRepositoryBased;
     }
@@ -247,6 +283,90 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     public int getWildCardAnyOccurences(){
         return this.occurences;
+    }
+
+   
+    // ---- BELOW FOR INTERNAL CORE SITEMAP MAP RESOLVING && LINKREWRITING ONLY  
+    
+    public void addWildCardPrefixedChildSiteMapItems(HstSiteMapItemService hstSiteMapItem){
+        this.containsWildCardChildSiteMapItems.add(hstSiteMapItem);
+    }
+    
+    public void addAnyPrefixedChildSiteMapItems(HstSiteMapItemService hstSiteMapItem){
+        this.containsAnyChildSiteMapItems.add(hstSiteMapItem);
+    }
+    
+    
+    public HstSiteMapItem getWildCardPatternChild(String value, List<HstSiteMapItem> excludeList){
+        if(value == null || containsWildCardChildSiteMapItems.isEmpty()) {
+            return null;
+        }
+        return match(value, containsWildCardChildSiteMapItems, excludeList);
+    }
+    
+    public HstSiteMapItem getAnyPatternChild(String[] elements, int position, List<HstSiteMapItem> excludeList){
+        if(value == null || containsAnyChildSiteMapItems.isEmpty()) {
+            return null;
+        }
+        StringBuffer remainder = new StringBuffer(elements[position]);
+        while(++position < elements.length) {
+            remainder.append("/").append(elements[position]);
+        }
+        return match(remainder.toString(), containsAnyChildSiteMapItems, excludeList);
+    }
+    
+    
+    private HstSiteMapItem match(String value, List<HstSiteMapItemService> patternSiteMapItems, List<HstSiteMapItem> excludeList) {
+        
+        for(HstSiteMapItemService item : patternSiteMapItems){
+            // if in exclude list, go to next
+            if(excludeList.contains(item)) {
+                continue;
+            }
+            // postFix must match
+            String itemPrefix = item.getPrefix();
+            if(itemPrefix != null && !"".equals(itemPrefix)){
+                if(itemPrefix.length() >= value.length()) {
+                    // can never match
+                    continue;
+                }
+                if(!value.substring(0, itemPrefix.length()).equals(itemPrefix)){
+                    // wildcard prefixed sitemap does not match the prefix. we can stop
+                    continue;
+                }
+            }
+            
+            String itemPostfix = item.getPostfix();
+            if(itemPostfix != null && !"".equals(itemPostfix)){
+                if(itemPostfix.length() >= value.length()) {
+                    // can never match
+                    continue;
+                }
+                if(!value.substring(value.length() - itemPostfix.length()).equals(itemPostfix)){
+                    // wildcard prefixed sitemap does not match the postfix . we can stop
+                    continue;
+                }
+            }
+            // if we got here, we passed the prefix and postfix test: return this item
+            return item;
+        }
+        return null;
+    }
+
+    public String getPostfix(){
+        return this.postfix;
+    }
+    
+    public String getPrefix(){
+        return this.prefix;
+    }
+    
+    public boolean containsWildCard() {
+        return this.containsWildCard;
+    }
+    
+    public boolean containsAny() {
+        return this.containsAny;
     }
 
 }

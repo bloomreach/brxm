@@ -16,11 +16,16 @@
 package org.hippoecm.hst.site.request;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.collections.map.LRUMap;
 import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.PathUtils;
@@ -37,7 +42,22 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
     // the equivalence for **
     public final static String ANY = "_any_";
     
+    /*
+     * Global cached map for *all subsites*
+     */
+    private Map<String, ResolvedSiteMapItem> cache = Collections.synchronizedMap(new LRUMap(10000));
+    
     public ResolvedSiteMapItem match(String pathInfo, HstSite hstSite) {
+        
+        String key = hstSite.getContentPath() + "_" + pathInfo;
+        ResolvedSiteMapItem cached = cache.get(key);
+        if(cached != null) {
+            if(cached instanceof NullResolvedSiteMapItem) {
+                log.warn("For path '{}' no sitemap item can be matched", key);
+                return null;
+            }
+            return cached;
+        }
         
         Properties params = new Properties();
         
@@ -59,12 +79,15 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             if(hstSiteMapItem == null) {
                 if(hstSiteMapItemAny == null) {
                     log.warn("Did not find a matching sitemap item and there is no catch all sitemap item configured (the ** matcher directly under the sitemap node). Return null");
+                    cache.put(key, new NullResolvedSiteMapItem());
                     return null;
                 } else {
                     log.warn("Did not find a matching sitemap item at all. Return the catch all sitemap item (the ** matcher) ");
                     // The ** has the value of the entire pathInfo
                     params.put("1", pathInfo);
-                    return new ResolvedSiteMapItemImpl(hstSiteMapItemAny, params);
+                    ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(hstSiteMapItemAny, params);
+                    cache.put(key, r);
+                    return r;
                 }
             } else {
                 params.put(String.valueOf(params.size()+1), elements[0]);
@@ -76,6 +99,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
       
         if(matchedSiteMapItem == null) {
             log.warn("No matching sitemap item found for path '{}'. Cannot return ResolvedSiteMapItem. Return null", pathInfo);
+            cache.put(key, new NullResolvedSiteMapItem());
             return null;
         }
         
@@ -87,7 +111,9 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             log.debug("Params for resolved sitemap item: '{}'", params);
         }
         
-        return new ResolvedSiteMapItemImpl(matchedSiteMapItem, params);
+        ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(matchedSiteMapItem, params);
+        cache.put(key, r);
+        return r;
     
     }
 
@@ -96,59 +122,108 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
     }
 
     private HstSiteMapItem traverseInToSiteMapItem(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements, List<HstSiteMapItem> checkedSiteMapItems) {
+        HstSiteMapItemService hstSiteMapItemService = (HstSiteMapItemService)hstSiteMapItem;
         
-        checkedSiteMapItems.add(hstSiteMapItem);
+        checkedSiteMapItems.add(hstSiteMapItemService);
         if(position == elements.length) {
            // we are ready
-           return hstSiteMapItem;
+           return hstSiteMapItemService;
        }
-       if(hstSiteMapItem.getChild(elements[position]) != null && !checkedSiteMapItems.contains(hstSiteMapItem.getChild(elements[position]))) {
-           return traverseInToSiteMapItem(hstSiteMapItem.getChild(elements[position]), params, ++position, elements, checkedSiteMapItems);
-       } else if(hstSiteMapItem.getChild(WILDCARD) != null && !checkedSiteMapItems.contains(hstSiteMapItem.getChild(WILDCARD))) {
+       HstSiteMapItem s; 
+       if( (s = hstSiteMapItemService.getChild(elements[position])) != null && !checkedSiteMapItems.contains(s)) {
+           return traverseInToSiteMapItem(s, params, ++position, elements, checkedSiteMapItems);
+       } else if( (s = hstSiteMapItemService.getWildCardPatternChild(elements[position], checkedSiteMapItems)) != null ) {
+           String parameter = getStrippedParameter((HstSiteMapItemService)s, elements[position]);
+           params.put(String.valueOf(params.size()+1), parameter);
+           return traverseInToSiteMapItem(s, params, ++position, elements, checkedSiteMapItems);
+       } else if( (s = hstSiteMapItemService.getChild(WILDCARD)) != null && !checkedSiteMapItems.contains(s)) {
            params.put(String.valueOf(params.size()+1), elements[position]);
-           return traverseInToSiteMapItem(hstSiteMapItem.getChild(WILDCARD), params, ++position, elements, checkedSiteMapItems);
-       } else if(hstSiteMapItem.getChild(ANY) != null ) {
-           return getANYMatchingSiteMap(hstSiteMapItem, params,position, elements);
+           return traverseInToSiteMapItem(s, params, ++position, elements, checkedSiteMapItems);
+       } else if( (s = hstSiteMapItemService.getAnyPatternChild(elements, position, checkedSiteMapItems)) != null ) {
+           StringBuffer remainder = new StringBuffer(elements[position]);
+           while(++position < elements.length) {
+               remainder.append("/").append(elements[position]);
+           }
+           String parameter = getStrippedParameter((HstSiteMapItemService)s, remainder.toString());
+           params.put(String.valueOf(params.size()+1), parameter);
+           return s;
+       } 
+       else if(hstSiteMapItemService.getChild(ANY) != null ) {
+           StringBuffer remainder = new StringBuffer(elements[position]);
+           while(++position < elements.length) {
+               remainder.append("/").append(elements[position]);
+           }
+           params.put(String.valueOf(params.size()+1), remainder.toString());
+           return hstSiteMapItem.getChild(ANY);
        }  
        else {
            // We did not find a match for traversing this sitemap item tree. Traverse up, and try another tree
-           return traverseUp(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
+           return traverseUp(hstSiteMapItemService, params, position, elements, checkedSiteMapItems);
        }
        
     }
-
 
     private HstSiteMapItem traverseUp(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements, List<HstSiteMapItem> checkedSiteMapItems) {
        if(hstSiteMapItem == null) {
            return null;
        }
+       HstSiteMapItem s; 
        if(hstSiteMapItem.isWildCard()) {
            // as this tree path did not result in a match, remove some params again
-           if(hstSiteMapItem.getChild(WILDCARD) != null && !checkedSiteMapItems.contains(hstSiteMapItem.getChild(WILDCARD))){
+           if( (s = hstSiteMapItem.getChild(WILDCARD)) != null && !checkedSiteMapItems.contains(s)){
                return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
            } else if(hstSiteMapItem.getChild(ANY) != null) {
                return traverseInToSiteMapItem(hstSiteMapItem, params,position, elements, checkedSiteMapItems);
            }
            params.remove(String.valueOf(params.size()));
            return traverseUp(hstSiteMapItem.getParentItem(),params, --position, elements, checkedSiteMapItems );
-       } else if(hstSiteMapItem.getChild(WILDCARD) != null && !checkedSiteMapItems.contains(hstSiteMapItem.getChild(WILDCARD))){
+       } else if( (s = hstSiteMapItem.getChild(WILDCARD)) != null && !checkedSiteMapItems.contains(s)){
            return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
        } else if(hstSiteMapItem.getChild(ANY) != null ){
            return traverseInToSiteMapItem(hstSiteMapItem, params,position, elements, checkedSiteMapItems);
        } else {    
            return traverseUp(hstSiteMapItem.getParentItem(),params, --position, elements, checkedSiteMapItems );
        }
-       
+
+    }
+    
+    private String getStrippedParameter(HstSiteMapItemService s, String parameter) {
+        String removePrefix = ((HstSiteMapItemService)s).getPrefix();
+        String removePostfix = ((HstSiteMapItemService)s).getPostfix();
+        if(removePrefix != null && parameter.startsWith(removePrefix))  {
+           parameter = parameter.substring(removePrefix.length());
+        }
+        if(removePostfix != null && parameter.endsWith(removePostfix))  {
+           parameter = parameter.substring(0, (parameter.length() - removePostfix.length()));
+        }
+        return parameter;
     }
     
     
-    private HstSiteMapItem getANYMatchingSiteMap(HstSiteMapItem hstSiteMapItem, Properties params, int position,
-            String[] elements) {
-            StringBuffer remainder = new StringBuffer(elements[position]);
-            while(++position < elements.length) {
-                remainder.append("/").append(elements[position]);
-            }
-            params.put(String.valueOf(params.size()+1), remainder.toString());
-            return hstSiteMapItem.getChild(ANY);
+    /*
+     * Placeholder for a null cached version
+     */
+    private class NullResolvedSiteMapItem implements ResolvedSiteMapItem{
+
+        public HstComponentConfiguration getHstComponentConfiguration() {
+            return null;
+        }
+
+        public HstSiteMapItem getHstSiteMapItem() {
+            return null;
+        }
+
+        public String getRelativeContentPath() {
+            return null;
+        }
+
+        public Properties getResolvedProperties() {
+            return null;
+        }
+
+        public Object getResolvedProperty(String name) {
+            return null;
+        }
+        
     }
 }

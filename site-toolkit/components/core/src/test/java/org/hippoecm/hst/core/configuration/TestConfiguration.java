@@ -49,14 +49,15 @@ public class TestConfiguration extends AbstractSpringTestCase {
      *      |- january  
      *      `- *
      *         |- *
-     *         `- **
+     *         |- *.html
+     *         |- **
+     *         `- **.html
      */
     
     @Test
     public void testUrl1(){
-        
         ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2009", hstSite);
-        assertTrue("Relative content path for 'news/2009' must be to be 'News/2009'", "News/2009".equals(res.getRelativeContentPath()));
+        assertTrue("", "news/_default_".equals(res.getHstSiteMapItem().getId()));
         
     }
     
@@ -64,15 +65,21 @@ public class TestConfiguration extends AbstractSpringTestCase {
     public void testUrl2(){
         
         ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2009/february/myArticle", hstSite);
-        assertTrue("Relative content path for 'news/2009/february/myArticle' must be to be 'News/2009/february/myArticle'", "News/2009/february/myArticle".equals(res.getRelativeContentPath()));
+        assertTrue("", "news/_default_/_default_/_default_".equals(res.getHstSiteMapItem().getId()));
        
+        res = hstSiteMapMatcher.match("news/2009/february/myArticle.html", hstSite);
+        assertTrue("", "news/_default_/_default_/_default_.html".equals(res.getHstSiteMapItem().getId()));
+       
+        
     }
     
     @Test
     public void testUrl3_matchANY(){
-        
         ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2009/february/day2/8oclock/16min/4sec/MyArticle", hstSite);
-        assertTrue("Relative content path for 'news/2009/february/day2/8oclock/16min/4sec/MyArticle' must be to be 'News/2009/february/day2/8oclock/16min/4sec/MyArticle'", "News/2009/february/day2/8oclock/16min/4sec/MyArticle".equals(res.getRelativeContentPath()));
+        assertTrue("", "news/_default_/_default_/_any_".equals(res.getHstSiteMapItem().getId()));
+        
+        res = hstSiteMapMatcher.match("news/2009/february/day2/8oclock/16min/4sec/MyArticle.html", hstSite);
+        assertTrue("", "news/_default_/_default_/_any_.html".equals(res.getHstSiteMapItem().getId()));
       
     }
     

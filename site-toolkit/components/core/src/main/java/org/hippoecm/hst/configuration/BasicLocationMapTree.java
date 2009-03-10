@@ -76,6 +76,7 @@ public class BasicLocationMapTree implements LocationMapTree{
         
         log.debug("Translated relative contentpath '{}' --> '{}'", unresolvedPath, resolvedPath);
         
+        
         List<String> pathFragment = new ArrayList<String>(Arrays.asList(resolvedPath.split("/")));
         add(pathFragment, hstSiteMapItem);
     }
@@ -253,6 +254,8 @@ public class BasicLocationMapTree implements LocationMapTree{
      * To be able to cache 'null', we use this placeholder null impl 
      */
     private class NullResolvedLocationMapTreeItem  implements ResolvedLocationMapTreeItem{
+
+        private static final long serialVersionUID = 1L;
 
         public String getHstSiteMapItemId() {
             return null;
