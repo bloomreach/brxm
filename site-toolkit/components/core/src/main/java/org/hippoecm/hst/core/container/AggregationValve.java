@@ -88,7 +88,7 @@ public class AggregationValve extends AbstractValve {
                 try {
                     // flush root component window content.
                     // note that the child component's contents are already flushed into the root component's response state.
-                    rootWindow.flushContent();
+                    rootWindow.getResponseState().flush();
                 } catch (Exception e) {
                     if (log.isDebugEnabled()) {
                         log.warn("Exception during flushing the response state.", e);

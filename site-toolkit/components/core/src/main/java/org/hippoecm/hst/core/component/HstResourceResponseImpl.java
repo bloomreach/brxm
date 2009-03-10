@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.component;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -93,6 +94,10 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
     
     public String getServeResourcePath() {
         return this.serveResourcePath;
+    }
+    
+    public void flushChildContent(String name) throws IOException {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke flushChildContent().");
     }
     
 }

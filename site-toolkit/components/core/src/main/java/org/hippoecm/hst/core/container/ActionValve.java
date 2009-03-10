@@ -28,7 +28,6 @@ import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
-import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class ActionValve extends AbstractValve
@@ -48,7 +47,7 @@ public class ActionValve extends AbstractValve
             
             if (window == null) {
                 if (log.isWarnEnabled()) {
-                    log.warn("Cannot find the action window: {0}", requestContext.getBaseURL().getActionWindowReferenceNamespace());
+                    log.warn("Cannot find the action window: {}", requestContext.getBaseURL().getActionWindowReferenceNamespace());
                 }
             } else {
                 // Check if it is invoked from portlet.
@@ -94,7 +93,9 @@ public class ActionValve extends AbstractValve
                     
                     if (baseURL.isViaPortlet()) {
                         HstContainerURLProvider urlProvider = getUrlFactory().getPortletUrlProvider();
-                        responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL));
+                        // TODO: Use the context relative HST url path to pass to portlet later.
+                        //responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL));
+                        responseState.sendRedirect(urlProvider.toURLString(baseURL));
                     } else {
                         HstContainerURLProvider urlProvider = getUrlFactory().getServletUrlProvider();
                         responseState.sendRedirect(urlProvider.toURLString(baseURL));

@@ -15,12 +15,12 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstResponseState;
 
 /**
  * HST Component Window.
@@ -127,10 +127,8 @@ public interface HstComponentWindow {
     HstComponentWindow getChildWindowByReferenceName(String referenceName);
     
     /**
-     * Flushes the output content of this component window
-     * 
-     * @throws IOException
+     * Returns the response state of this component window
      */
-    void flushContent() throws IOException;
+    HstResponseState getResponseState();
     
 }

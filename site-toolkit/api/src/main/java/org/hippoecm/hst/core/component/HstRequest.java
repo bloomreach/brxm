@@ -31,12 +31,6 @@ public interface HstRequest extends HttpServletRequest {
     HstRequestContext getRequestContext();
     
     /**
-     * Returns the current HstComponentWindow
-     * @return
-     */
-    HstComponentWindow getComponentWindow();
-    
-    /**
      * Returns the parameter map of this component window.
      * If the request is in the action lifecycle, then only action parameters can be accessible.
      * Otherwise, then only render parameters can be accessible.

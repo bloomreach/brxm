@@ -27,6 +27,7 @@ import javax.servlet.ServletResponse;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResourceResponseImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstResponseImpl;
@@ -40,7 +41,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
     public void invokeAction(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
-        HstComponentWindow window = hstRequest.getComponentWindow();
+        HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
         HstComponent component = window.getComponent();
         
         if (component != null) {
@@ -69,7 +70,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
     public void invokeBeforeRender(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
-        HstComponentWindow window = hstRequest.getComponentWindow();
+        HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
         HstComponent component = window.getComponent();
         
         if (component != null) {
@@ -98,11 +99,11 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
     public void invokeRender(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
-        HstComponentWindow window = hstRequest.getComponentWindow();
+        HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
         String dispatchUrl = ((HstResponseImpl) hstResponse).getRenderPath(); 
         
         if (dispatchUrl == null) {
-            dispatchUrl = hstRequest.getComponentWindow().getRenderPath();
+            dispatchUrl = ((HstRequestImpl) hstRequest).getComponentWindow().getRenderPath();
         }
         
         invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl, window);
@@ -115,7 +116,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
     public void invokeBeforeServeResource(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
-        HstComponentWindow window = hstRequest.getComponentWindow();
+        HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
         HstComponent component = window.getComponent();
         
         if (component != null) {
@@ -144,16 +145,16 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
     public void invokeServeResource(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
-        HstComponentWindow window = hstRequest.getComponentWindow();
+        HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
         
         String dispatchUrl = ((HstResourceResponseImpl) hstResponse).getServeResourcePath();
         
         if (dispatchUrl == null) {
-            dispatchUrl = hstRequest.getComponentWindow().getServeResourcePath();
+            dispatchUrl = window.getServeResourcePath();
         }
 
         if (dispatchUrl == null) {
-            dispatchUrl = hstRequest.getComponentWindow().getRenderPath();
+            dispatchUrl = window.getRenderPath();
         }
         
         invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl, window);

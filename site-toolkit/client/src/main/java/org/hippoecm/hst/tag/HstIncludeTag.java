@@ -17,12 +17,11 @@ package org.hippoecm.hst.tag;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.hippoecm.hst.core.component.HstResponse;
 
 /**
  * Abstract supporting class for Hst URL tags (action, redner and resource)
@@ -49,22 +48,13 @@ public class HstIncludeTag extends TagSupport {
     @Override
     public int doEndTag() throws JspException{
 
-        HttpServletRequest request = (HttpServletRequest) this.pageContext.getRequest();
+        HttpServletResponse response = (HttpServletResponse) this.pageContext.getResponse();
         
-        if (request instanceof HstRequest) {
-            HstComponentWindow myWindow = ((HstRequest) request).getComponentWindow();
-            HstComponentWindow childWindow = myWindow.getChildWindow(this.ref);
-            
-            if (childWindow == null) {
-                childWindow = myWindow.getChildWindowByReferenceName(this.ref);
-            }
-            
-            if (childWindow != null) {
-                try {
-                    this.pageContext.getOut().flush();
-                    childWindow.flushContent();
-                } catch (IOException e) {
-                }
+        if (response instanceof HstResponse) {
+            try {
+                this.pageContext.getOut().flush();
+                ((HstResponse) response).flushChildContent(this.ref);
+            } catch (IOException e) {
             }
         }
         

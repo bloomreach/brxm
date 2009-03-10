@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -124,14 +123,8 @@ public class HstComponentWindowImpl implements HstComponentWindow {
         return this.referenceNamespace;
     }
     
-    public void flushContent() throws IOException {
-        if (this.responseState != null) {
-            if (this.parentWindow != null) {
-                ((HstComponentWindowImpl) this.parentWindow).responseState.flushBuffer();
-            }
-            
-            this.responseState.flush();
-        }
+    public HstResponseState getResponseState() {
+        return this.responseState;
     }
     
     protected void addChildWindow(HstComponentWindow child) {

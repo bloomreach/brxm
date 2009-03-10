@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstRequestImpl;
+import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 
 public class HstMockJspServlet extends HttpServlet {
@@ -49,13 +51,12 @@ public class HstMockJspServlet extends HttpServlet {
 
         // add children here.
         if (req instanceof HstRequest) {
-            HstComponentWindow myWindow = ((HstRequest) req).getComponentWindow();
+            HstComponentWindow myWindow = ((HstRequestImpl) req).getComponentWindow();
             Map<String, HstComponentWindow> childWindowMap = myWindow.getChildWindowMap();
             
             if (childWindowMap != null) {
-                for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
-                    HstComponentWindow childWindow = entry.getValue();
-                    childWindow.flushContent();
+                for (String childName : childWindowMap.keySet()) {
+                    ((HstResponse) res).flushChildContent(childName);
                 }
             }
         }

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.component;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -153,5 +154,13 @@ public interface HstResponse extends HttpServletResponse {
      * @param serveResourcePath
      */
     void setServeResourcePath(String serveResourcePath);
+    
+    /**
+     * Flushes the buffer of child window.
+     * 
+     * @param name the name of the child window
+     * @throws IOException
+     */
+    void flushChildContent(String name) throws IOException;
     
 }

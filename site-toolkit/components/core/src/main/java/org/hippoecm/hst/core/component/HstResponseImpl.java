@@ -31,6 +31,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.hippoecm.hst.core.container.HstComponentWindowImpl;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -373,6 +374,18 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
 
     public void setServeResourcePath(String serveResourcePath) {
         throw new UnsupportedOperationException("hst response is not allowed to invoke setServeResourcePath().");
+    }
+    
+    public void flushChildContent(String name) throws IOException {
+        HstComponentWindow childWindow = this.componentWindow.getChildWindow(name);
+        
+        if (childWindow != null) {
+            if (this.responseState != null) {
+                this.responseState.flushBuffer();
+            }
+            
+            childWindow.getResponseState().flush();
+        }
     }
     
 }

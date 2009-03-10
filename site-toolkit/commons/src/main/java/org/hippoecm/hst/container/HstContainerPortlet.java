@@ -44,27 +44,6 @@ public class HstContainerPortlet extends GenericPortlet {
     
     public static final String HST_PATH_PARAM_NAME = "_hp";
     
-    /**
-     * Name of portlet init parameter for Action page
-     */
-    public static final String PARAM_ACTION_PAGE = "actionPage";
-    /**
-     * Name of portlet init parameter for Custom page
-     */
-    public static final String PARAM_CUSTOM_PAGE = "customPage";
-    /**
-     * Name of portlet init parameter for Edit page
-     */
-    public static final String PARAM_EDIT_PAGE = "editPage";
-    /**
-     * Name of portlet init parameter for Edit page
-     */
-    public static final String PARAM_HELP_PAGE = "helpPage";
-    /**
-     * Name of portlet init parameter for View page
-     */
-    public static final String PARAM_VIEW_PAGE = "viewPage";
-
     protected PortletContext portletContext;
     
     protected String hstServletPath = "/content";
@@ -93,37 +72,37 @@ public class HstContainerPortlet extends GenericPortlet {
 
     @Override
     public void doView(RenderRequest request, RenderResponse response) throws PortletException, IOException {
-        processRequest(request, response, PARAM_VIEW_PAGE);
+        processRequest(request, response);
     }
 
     @Override
     public void doEdit(RenderRequest request, RenderResponse response) throws PortletException, IOException {
-        processRequest(request, response, PARAM_EDIT_PAGE);
+        processRequest(request, response);
     }
 
     @Override
     public void doHelp(RenderRequest request, RenderResponse response) throws PortletException, IOException {
-        processRequest(request, response, PARAM_HELP_PAGE);
+        processRequest(request, response);
     }
 
     public void doCustom(RenderRequest request, RenderResponse response) throws PortletException, IOException {
-        processRequest(request, response, PARAM_CUSTOM_PAGE);
+        processRequest(request, response);
     }
 
     @Override
     public void processAction(ActionRequest request, ActionResponse response) throws PortletException, IOException {
-        processRequest(request, response, PARAM_ACTION_PAGE);
+        processRequest(request, response);
     }
 
     @Override
     public void serveResource(ResourceRequest request, ResourceResponse response) throws PortletException, IOException {
         if (request.getResourceID() != null) {
             // only handle serveResource by ResourceID parameter
-            processRequest(request, response, PARAM_VIEW_PAGE);
+            processRequest(request, response);
         }
     }
 
-    protected void processRequest(PortletRequest request, PortletResponse response, String pageType) throws PortletException, IOException {
+    protected void processRequest(PortletRequest request, PortletResponse response) throws PortletException, IOException {
         new HstContainerPortletContext(request, response);
         
         try {
