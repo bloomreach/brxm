@@ -415,6 +415,9 @@
         <inherited>true</inherited>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
+          <fork>true</fork>
+          <meminitial>128m</meminitial>
+          <maxmem>256m</maxmem>
           <target>1.5</target>
           <source>1.5</source>
         </configuration>
