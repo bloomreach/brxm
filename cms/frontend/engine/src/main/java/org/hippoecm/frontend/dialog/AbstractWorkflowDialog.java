@@ -124,11 +124,8 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog implements I
             ((UserSession) Session.get()).getJcrSession().refresh(true);
         } catch (Exception e) {
             String msg = e.getClass().getName() + ": " + e.getMessage();
-            log.error(msg);
+            log.error(msg, e);
             error(msg);
-            if (log.isDebugEnabled()) {
-                log.debug("Error from repository: ", e);
-            }
         }
     }
 
