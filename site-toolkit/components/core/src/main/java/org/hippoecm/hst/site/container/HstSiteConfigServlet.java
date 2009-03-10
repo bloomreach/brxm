@@ -17,7 +17,6 @@ package org.hippoecm.hst.site.container;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -36,6 +35,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.ConfigurationFactory;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.HippoRepository;
@@ -56,9 +56,13 @@ import org.slf4j.LoggerFactory;
  */
 public class HstSiteConfigServlet extends HttpServlet {
 
-    private static final String HST_CONFIGURATION_PARAM = "hst-configuration";
+    public static final String HST_CONFIGURATION_PARAM = "hst-configuration";
 
+    public static final String HST_CONFIG_PROPERTIES_PARAM = "hst-config-properties";
+    
     private static final String HST_CONFIGURATION_XML = "hst-configuration.xml";
+    
+    private static final String HST_CONFIG_PROPERTIES = "hst-config.properties";
 
     private static final String CHECK_REPOSITORIES_RUNNING_INIT_PARAM = "check.repositories.running"; 
     
@@ -67,8 +71,6 @@ public class HstSiteConfigServlet extends HttpServlet {
     private final static Logger log = LoggerFactory.getLogger(HstSiteConfigServlet.class);
     
     private static final long serialVersionUID = 1L;
-
-    private static final String INIT_PROPS_PARAM_PREFIX = "properties.";
 
     protected ComponentManager componentManager;
     
@@ -273,16 +275,19 @@ public class HstSiteConfigServlet extends HttpServlet {
         
         hstConfigurationFile = new File(servletConfig.getServletContext().getRealPath(hstConfigurationFilePath));
         
-        if (hstConfigurationFile.isFile()) {
-            factory.setConfigurationFileName(hstConfigurationFile.toURI().toString());
-        } else {
-            URL configURL = Thread.currentThread().getContextClassLoader().getResource("/" + HST_CONFIGURATION_XML);
-            factory.setConfigurationURL(configURL);
-            factory.setBasePath(servletConfig.getServletContext().getRealPath("/WEB-INF"));
-        }
-        
         try {
-            configuration = factory.getConfiguration();
+            if (hstConfigurationFile.isFile()) {
+                factory.setConfigurationFileName(hstConfigurationFile.toURI().toString());
+                configuration = factory.getConfiguration();
+            } else {
+                String hstConfigPropFilePath = servletConfig.getInitParameter(HST_CONFIG_PROPERTIES_PARAM);
+                
+                if (hstConfigPropFilePath == null) {
+                    hstConfigPropFilePath = servletConfig.getServletContext().getRealPath("/WEB-INF/" + HST_CONFIG_PROPERTIES);
+                }
+                
+                configuration = new PropertiesConfiguration(new File(hstConfigPropFilePath));
+            }
         } catch (ConfigurationException e) {
             throw new ServletException(e);
         }

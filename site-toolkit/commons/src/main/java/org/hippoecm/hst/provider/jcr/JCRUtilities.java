@@ -15,10 +15,11 @@
  */
 package org.hippoecm.hst.provider.jcr;
 
+import java.lang.reflect.Method;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,11 +27,22 @@ public class JCRUtilities {
 
     private static final Logger log = LoggerFactory.getLogger(JCRUtilities.class);
     
-    public static Node getCanonical(Node n){
-        if(n instanceof HippoNode) {
-            HippoNode hnode = (HippoNode)n;
+    public static Node getCanonical(Node n) {
+        Method getCanonicalNodeMethod = null;
+        
+        try {
+            getCanonicalNodeMethod = ((Object) n).getClass().getMethod("getCanonicalNodeMethod");
+        } catch (Exception e) {
+        }
+        
+        if (getCanonicalNodeMethod != null) {
             try {
-                Node canonical = hnode.getCanonicalNode();
+                Node canonical = null;
+                try {
+                    canonical = (Node) getCanonicalNodeMethod.invoke(n, null);
+                } catch (Exception e) {
+                }
+                
                 if(canonical == null) {
                     log.debug("Cannot get canonical node for '{}'. This means there is no phyiscal equivalence of the " +
                     		"virtual node. Return null", n.getPath());
