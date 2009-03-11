@@ -18,17 +18,36 @@
         <sv:value>hst:templates</sv:value>
     </sv:property>
     
-    <sv:node sv:name="body">
+    <sv:node sv:name="webpage">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:template</sv:value>
         </sv:property>
         <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/body.jsp</sv:value>
+            <sv:value>jsp/webpage.jsp</sv:value>
         </sv:property>
         <sv:property sv:name="hst:containers" sv:type="String">
-            <sv:value>topmenu</sv:value>
-            <sv:value>leftmenu</sv:value>
-            <sv:value>content</sv:value>
+            <sv:value>header</sv:value>
+        </sv:property>
+    </sv:node>
+    
+    <sv:node sv:name="header">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:template</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:renderpath" sv:type="String">
+            <sv:value>jsp/header.jsp</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:containers" sv:type="String">
+            <sv:value>title</sv:value>
+        </sv:property>
+    </sv:node>
+    
+    <sv:node sv:name="title">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:template</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:renderpath" sv:type="String">
+            <sv:value>jsp/title.jsp</sv:value>
         </sv:property>
     </sv:node>
     

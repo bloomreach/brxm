@@ -22,32 +22,32 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/pages/general_layout.jsp</sv:value>
+        <sv:property sv:name="hst:template" sv:type="String">
+            <sv:value>webpage</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="productsview">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/pages/general_layout.jsp</sv:value>
+        <sv:property sv:name="hst:template" sv:type="String">
+            <sv:value>webpage</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="productpage">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/pages/general_layout.jsp</sv:value>
+        <sv:property sv:name="hst:template" sv:type="String">
+            <sv:value>webpage</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="solutionsview">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/pages/general_layout.jsp</sv:value>
+        <sv:property sv:name="hst:template" sv:type="String">
+            <sv:value>webpage</sv:value>
         </sv:property>
     </sv:node>
 

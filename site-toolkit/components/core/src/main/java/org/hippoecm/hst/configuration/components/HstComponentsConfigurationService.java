@@ -52,7 +52,7 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
     private Set<String> usedReferenceNames = new HashSet<String>();
     private int autocreatedCounter = 0;
     
-    public HstComponentsConfigurationService(Node configurationNode) throws RepositoryException {
+    public HstComponentsConfigurationService(Node configurationNode, Map<String, String> templateRenderMap) throws RepositoryException {
         super(null);
         this.rootComponentConfigurations = new HashMap<String, HstComponentConfiguration>();
         this.childComponents = new ArrayList<HstComponentConfiguration>();
@@ -76,6 +76,11 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
         for(HstComponentConfiguration child: childComponents) {
             populateRootComponentConfigurations(child);
         }
+        
+        for(HstComponentConfiguration child: childComponents){
+            ((HstComponentConfigurationService)child).lookupRenderPath(templateRenderMap);
+        }
+        
     }
      
     public Service[] getChildServices() {
@@ -92,7 +97,7 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
         return this.rootComponentConfigurations;
     }
 
-    
+     
     private void autocreateReferenceNames(HstComponentConfiguration componentConfiguration){
         if(componentConfiguration.getReferenceName() == null) {
             String autoRefName = "r" + (++autocreatedCounter);

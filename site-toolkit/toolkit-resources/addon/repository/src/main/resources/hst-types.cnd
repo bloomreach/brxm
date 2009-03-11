@@ -30,12 +30,11 @@
 + * (hst:template)
 
 [hst:component] orderable
-- hst:componentclassname
-- hst:renderpath
-- hst:serveresourcepath
-- hst:referencename 
-- hst:referencecomponent
-- hst:serveresourcepath
+- hst:template (string) 
+- hst:componentclassname (string) 
+- hst:serveresourcepath(string) 
+- hst:referencename (string) 
+- hst:referencecomponent(string) 
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple 
 + * (hst:component)

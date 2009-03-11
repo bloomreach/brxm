@@ -15,13 +15,14 @@
  */
 package org.hippoecm.hst.configuration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
@@ -59,7 +60,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
         try {
             this.name = site.getName();
             this.hstSites = hstSites;
-            if(site.hasNode(Configuration.NODENAME_HST_CONTENTNODE) && site.hasNode(Configuration.NODEPATH_HST_CONFIGURATION)) {
+            if(site.hasNode(Configuration.NODENAME_HST_CONTENTNODE) && site.hasNode(Configuration.NODEPATH_HST_CONFIGURATION) ) {
                 if(hstSites.getSites().get(name) != null) {
                     throw new ServiceException("Duplicate subsite with same name for '"+name+"'. Skipping this one");
                 } else {
@@ -114,7 +115,22 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     }
     
     private void init(Node configurationNode) throws  RepositoryException, ServiceException {
-       this.componentsConfigurationService = new HstComponentsConfigurationService(configurationNode); 
+       Map<String, String> templateRenderMap = new HashMap<String,String>();
+       Node hstTemplates = configurationNode.getNode(Configuration.NODENAME_HST_TEMPLATES);
+       NodeIterator nodeIt = hstTemplates.getNodes();
+       while(nodeIt.hasNext()){
+           Node template = nodeIt.nextNode();
+           if(template == null) {
+               continue;
+           }
+           if(!template.hasProperty(Configuration.TEMPLATE_PROPERTY_RENDERPATH) ) {
+               log.warn("Skipping template '{}' because missing '{}' property", template.getPath(), Configuration.TEMPLATE_PROPERTY_RENDERPATH);
+               continue;
+           }
+           templateRenderMap.put(template.getName(), template.getProperty(Configuration.TEMPLATE_PROPERTY_RENDERPATH).getString());
+       }
+        
+       this.componentsConfigurationService = new HstComponentsConfigurationService(configurationNode, templateRenderMap); 
       
        Node siteMapNode = configurationNode.getNode(Configuration.NODENAME_HST_SITEMAP);
        this.siteMapService = new HstSiteMapService(this, siteMapNode);

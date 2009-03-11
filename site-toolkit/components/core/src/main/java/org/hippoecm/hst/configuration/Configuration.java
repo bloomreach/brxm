@@ -26,12 +26,14 @@ public class Configuration {
 
     public final static String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
     public final static String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";
-    public final static String COMPONENT_PROPERTY_RENDER_PATH = "hst:renderpath";
+    public final static String COMPONENT_PROPERTY_TEMPLATE_ = "hst:template";
     public final static String COMPONENT_PROPERTY_SERVE_RESOURCE_PATH = "hst:serveresourcepath";
     public final static String COMPONENT_PROPERTY_REFERECENCENAME = "hst:referencename";
     public final static String COMPONENT_PROPERTY_REFERECENCECOMPONENT =  "hst:referencecomponent";
     public final static String COMPONENT_PROPERTY_CONTENTBASEPATH =  "hst:componentcontentbasepath";
-    public final static String COMPONENT_PROPERTY_CONTEXTRELATIVEPATH =  "hst:contextrelativepath";
+    
+    
+    public final static String TEMPLATE_PROPERTY_RENDERPATH =  "hst:renderpath";
     
 
     public final static String SITEMAPITEM_MIXIN_PARTOFMENU =  "hst:partofmenu";
@@ -49,4 +51,5 @@ public class Configuration {
     public final static String NODENAME_HST_SITEMAP = "hst:sitemap";
     public final static String NODENAME_HST_COMPONENTS = "hst:components";
     public final static String NODENAME_HST_PAGES = "hst:pages";
+    public final static String NODENAME_HST_TEMPLATES = "hst:templates";
 }

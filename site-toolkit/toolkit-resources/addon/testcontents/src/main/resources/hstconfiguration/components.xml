@@ -22,22 +22,15 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/fragments/header.jsp</sv:value>
+        <sv:property sv:name="hst:template" sv:type="String">
+            <sv:value>header</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.Header</sv:value>
-        </sv:property>
-       
         <sv:node sv:name="title">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:component</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:renderpath" sv:type="String">
-                <sv:value>jsp/fragments/header/title.jsp</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentclassname" sv:type="String">
-                <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.header.DocumentTitle</sv:value>
+            <sv:property sv:name="hst:template" sv:type="String">
+                <sv:value>title</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>

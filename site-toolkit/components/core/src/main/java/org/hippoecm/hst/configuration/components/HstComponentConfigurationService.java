@@ -53,6 +53,8 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     
     private String renderPath;
     
+    private String hstTemplate;
+    
     private String serveResourcePath;
     
     private String referenceName;
@@ -80,7 +82,8 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
             if(componentClassName == null) {
                 this.componentClassName = GenericHstComponent.class.getName();
             }
-            this.renderPath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_RENDER_PATH);
+            
+            this.hstTemplate = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_TEMPLATE_);
             this.serveResourcePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH);
             this.propertyMap = getValueProvider().getPropertyMap();
         } 
@@ -140,6 +143,10 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         return this.renderPath;
     }
     
+    public String getHstTemplate(){
+        return this.hstTemplate;
+    }
+    
     public String getServeResourcePath() {
         return this.serveResourcePath;
     }
@@ -168,6 +175,18 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
        return this.componentConfigurations;
     }
 
+    
+    public void lookupRenderPath(Map<String, String> templateRenderMap) {
+        String templateRenderPath = templateRenderMap.get(this.getHstTemplate());
+        if(templateRenderPath == null) {
+            log.warn("Cannot find renderpath for component '{}'", this.getId());
+        }
+        this.renderPath = templateRenderPath;
+        for(HstComponentConfigurationService child :  orderedListConfigs) {
+            child.lookupRenderPath(templateRenderMap);
+        }
+    }
+    
     public void autocreateReferenceNames() {
         
         for(HstComponentConfigurationService child :  orderedListConfigs) {
