@@ -28,9 +28,6 @@
         <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.hstconfiguration.components.pages.GeneralLayout</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:referencename" sv:type="String">
-            <sv:value>newsoverview</sv:value>
-        </sv:property>
         
     </sv:node>
 

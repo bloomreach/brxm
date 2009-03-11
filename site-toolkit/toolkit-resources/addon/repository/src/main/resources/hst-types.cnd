@@ -29,11 +29,11 @@
 [hst:templates]
 + * (hst:template)
 
-[hst:component]
+[hst:component] orderable
 - hst:componentclassname
 - hst:renderpath
 - hst:serveresourcepath
-- hst:referencename mandatory
+- hst:referencename 
 - hst:referencecomponent
 - hst:serveresourcepath
 - hst:parameternames (string) multiple
@@ -41,10 +41,10 @@
 + * (hst:component)
 
 
-[hst:components] 
+[hst:components] orderable
 + * (hst:component)
 
-[hst:pages] 
+[hst:pages] orderable
 + * (hst:component)
 
 [hst:sitemapitem]

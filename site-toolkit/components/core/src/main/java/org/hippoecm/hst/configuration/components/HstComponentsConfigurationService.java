@@ -17,8 +17,10 @@ package org.hippoecm.hst.configuration.components;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -47,6 +49,8 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
      */
     private List<HstComponentConfiguration> childComponents;
     
+    private Set<String> usedReferenceNames = new HashSet<String>();
+    private int autocreatedCounter = 0;
     
     public HstComponentsConfigurationService(Node configurationNode) throws RepositoryException {
         super(null);
@@ -63,6 +67,10 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
             log.debug("Initializing the components for '{}'", Configuration.NODENAME_HST_PAGES);
             Node pages = configurationNode.getNode(Configuration.NODENAME_HST_PAGES);
             init(pages, configurationNode.getPath());
+        }
+        
+        for(HstComponentConfiguration child: childComponents) {
+            autocreateReferenceNames(child);
         }
         
         for(HstComponentConfiguration child: childComponents) {
@@ -84,6 +92,18 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
         return this.rootComponentConfigurations;
     }
 
+    
+    private void autocreateReferenceNames(HstComponentConfiguration componentConfiguration){
+        if(componentConfiguration.getReferenceName() == null) {
+            String autoRefName = "r" + (++autocreatedCounter);
+            while(usedReferenceNames.contains(autoRefName)){
+                autoRefName = "r" + (++autocreatedCounter);
+            }
+            ((HstComponentConfigurationService)componentConfiguration).setReferenceName(autoRefName);
+        }
+        ((HstComponentConfigurationService)componentConfiguration).autocreateReferenceNames();
+    }
+    
     private void populateRootComponentConfigurations(HstComponentConfiguration componentConfiguration){
         if(componentConfiguration.getId() != null) {
             rootComponentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
@@ -103,22 +123,21 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
             }
             if(child.isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
                 if(child.hasProperty(Configuration.COMPONENT_PROPERTY_REFERECENCENAME)) {
-                    try {
-                        HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child, configurationNodePath);
-                        childComponents.add(componentConfiguration);
-                        log.debug("Added component service with key '{}'",componentConfiguration.getId());
-                    } catch (ServiceException e) {
-                        if (log.isDebugEnabled()) {
-                            log.warn("Skipping component '{}'", child.getPath(), e);
-                        } else if (log.isWarnEnabled()) {
-                            log.warn("Skipping component '{}'", child.getPath());
-                        }
-                    }
-                } else {
-                    if (log.isWarnEnabled()) {
-                        log.warn("Skipping '{}' hst:component + child components because it does not contain the mandatory property '{}'",Configuration.COMPONENT_PROPERTY_REFERECENCENAME, child.getPath());
+                   // add to the used referencenames set 
+                    usedReferenceNames.add(child.getProperty(Configuration.COMPONENT_PROPERTY_REFERECENCENAME).getString());
+                }
+                try {
+                    HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child, configurationNodePath);
+                    childComponents.add(componentConfiguration);
+                    log.debug("Added component service with key '{}'",componentConfiguration.getId());
+                } catch (ServiceException e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Skipping component '{}'", child.getPath(), e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Skipping component '{}'", child.getPath());
                     }
                 }
+                
             } else {
                 if (log.isWarnEnabled()) {
                     log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(), (Configuration.NODETYPE_HST_COMPONENT));
