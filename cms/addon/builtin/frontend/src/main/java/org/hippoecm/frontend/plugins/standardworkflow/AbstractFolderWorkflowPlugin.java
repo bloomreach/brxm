@@ -51,7 +51,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.service.IBrowseService;
-import org.hippoecm.frontend.service.IEditService;
+import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.Document;
@@ -164,8 +165,8 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
     public void select(JcrNodeModel nodeModel) {
         IBrowseService<JcrNodeModel> browser = getPluginContext().getService(
                 getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class);
-        IEditService<JcrNodeModel> editor = getPluginContext().getService(
-                getPluginConfig().getString(IEditService.EDITOR_ID), IEditService.class);
+        IEditorManager editor = getPluginContext().getService(
+                getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
         try {
             if (nodeModel.getNode() != null
                     && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) || nodeModel.getNode().isNodeType(
@@ -196,13 +197,15 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
                                 }
                             }
                             if (editNodeModel != null) {
-                                editor.edit(editNodeModel);
+                                editor.openEditor(editNodeModel);
                             }
                         } catch (WorkflowException ex) {
                             log.error("Cannot auto-edit document", ex);
                         } catch (RemoteException ex) {
                             log.error("Cannot auto-edit document", ex);
                         } catch (RepositoryException ex) {
+                            log.error("Cannot auto-edit document", ex);
+                        } catch (ServiceException ex) {
                             log.error("Cannot auto-edit document", ex);
                         }
                     }

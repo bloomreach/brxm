@@ -17,8 +17,8 @@ package org.hippoecm.frontend.service;
 
 import org.apache.wicket.IClusterable;
 
-public interface IFactoryService extends IClusterable {
-    final static String SVN_ID = "$Id$";
+public interface IFocusListener extends IClusterable {
 
-    void delete(IClusterable service);
+    void onFocus(IRenderService renderService);
+
 }

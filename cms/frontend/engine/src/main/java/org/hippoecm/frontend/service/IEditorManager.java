@@ -13,15 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.edit;
+package org.hippoecm.frontend.service;
 
-class EditorException extends Exception {
-    private static final long serialVersionUID = 1L;
+import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IModel;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+public interface IEditorManager extends IClusterable {
+    final static String SVN_ID = "$Id$";
 
-    EditorException(String reason) {
-        super(reason);
-    }
+    String EDITOR_ID = "editor.id";
+
+    IEditor getEditor(IModel model);
+
+    IEditor openEditor(IModel model) throws ServiceException;
 }

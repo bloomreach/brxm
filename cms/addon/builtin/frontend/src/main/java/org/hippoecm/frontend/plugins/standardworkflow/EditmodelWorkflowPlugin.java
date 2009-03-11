@@ -30,7 +30,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.CopyModelDialog;
-import org.hippoecm.frontend.service.IEditService;
+import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
@@ -61,10 +61,11 @@ public class EditmodelWorkflowPlugin extends AbstractWorkflowPlugin {
                                 path.substring(1));
                         JcrItemModel itemModel = new JcrItemModel(node);
                         if (path != null) {
-                            IEditService viewService = context.getService(config.getString(IEditService.EDITOR_ID),
-                                    IEditService.class);
-                            if (viewService != null) {
-                                viewService.edit(new JcrNodeModel(itemModel));
+                            IEditorManager editorMgr = context.getService(config.getString(IEditorManager.EDITOR_ID),
+                                    IEditorManager.class);
+                            if (editorMgr != null) {
+                                JcrNodeModel nodeModel = new JcrNodeModel(itemModel);
+                                editorMgr.openEditor(nodeModel);
                             } else {
                                 log.warn("No view service found");
                             }

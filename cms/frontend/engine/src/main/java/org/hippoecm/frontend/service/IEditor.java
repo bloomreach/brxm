@@ -13,18 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugin;
+package org.hippoecm.frontend.service;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.plugin.config.IClusterConfig;
+import org.apache.wicket.model.IModel;
 
-public interface IClusterControl extends IClusterable {
-    final static String SVN_ID = "$Id$";
+public interface IEditor extends IClusterable {
 
-    IClusterConfig getClusterConfig();
+    /**
+     * Requests that the editor be closed.
+     * @throws EditorException when the editor is in a state where it cannot be closed.
+     */
+    void close() throws EditorException;
     
-    void start();
-
-    void stop();
+    IModel getModel();
 
 }

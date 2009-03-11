@@ -78,7 +78,7 @@ public class WorkflowPlugin implements IPlugin, IObserver, IDetachable {
     private IPluginConfig config;
     private String[] categories;
     private final IModelReference modelReference;
-    private JcrNodeModel model;
+    private WorkflowsModel workflowsModel;
     private List<Cluster> workflows;
 
     public WorkflowPlugin(IPluginContext context, IPluginConfig config) {
@@ -101,10 +101,9 @@ public class WorkflowPlugin implements IPlugin, IObserver, IDetachable {
         }
 
         if (config.getString(RenderService.MODEL_ID) != null) {
-            modelReference = context.getService(config.getString(RenderService.MODEL_ID),
-                    IModelReference.class);
+            modelReference = context.getService(config.getString(RenderService.MODEL_ID), IModelReference.class);
             if (modelReference != null) {
-                updateModel(modelReference.getModel());
+                updateModel((JcrNodeModel) modelReference.getModel());
                 context.registerService(new IObserver() {
                     private static final long serialVersionUID = 1L;
 
@@ -118,7 +117,7 @@ public class WorkflowPlugin implements IPlugin, IObserver, IDetachable {
                             updateModel(mce.getNewModel());
                         }
                     }
-                    
+
                 }, IObserver.class.getName());
             }
         } else {
@@ -128,31 +127,24 @@ public class WorkflowPlugin implements IPlugin, IObserver, IDetachable {
     }
 
     // implement IModelListener
-    public void updateModel(IModel imodel) {
+    public void updateModel(JcrNodeModel model) {
         closeWorkflows();
 
-        if (imodel != model && (imodel == null || !imodel.equals(model))) {
-            // unregister and re-register; observer model is changed 
-            if (model != null) {
-                context.unregisterService(this, IObserver.class.getName());
-            }
-            model = (JcrNodeModel) imodel;
-            if (model != null) {
-                context.registerService(this, IObserver.class.getName());
-            }
-        } else {
-            model = (JcrNodeModel) imodel;
+        // unregister and re-register; observer model is changed 
+        if (workflowsModel != null) {
+            context.unregisterService(this, IObserver.class.getName());
         }
+
         if (model == null || model.getNode() == null) {
             return;
         }
-
+        
         try {
             List<String> cats = new LinkedList<String>();
             for (String category : categories) {
                 cats.add(category);
             }
-            WorkflowsModel workflowsModel = new WorkflowsModel(model, cats);
+            workflowsModel = new WorkflowsModel(model, cats);
             if (log.isDebugEnabled()) {
                 try {
                     log.debug("obtained workflows on " + model.getNode().getPath() + " counted "
@@ -162,6 +154,8 @@ public class WorkflowPlugin implements IPlugin, IObserver, IDetachable {
                 }
             }
 
+            context.registerService(this, IObserver.class.getName());
+
             Iterator<WorkflowsModel> iter = workflowsModel.iterator(0, workflowsModel.size());
             while (iter.hasNext()) {
                 showWorkflow(iter.next());
@@ -169,10 +163,6 @@ public class WorkflowPlugin implements IPlugin, IObserver, IDetachable {
         } catch (RepositoryException ex) {
             log.error("could not setup workflow model", ex);
         }
-    }
-
-    protected JcrNodeModel getNodeModel() {
-        return model;
     }
 
     private void showWorkflow(final WorkflowsModel model) {
@@ -209,17 +199,16 @@ public class WorkflowPlugin implements IPlugin, IObserver, IDetachable {
     }
 
     public IObservable getObservable() {
-        // FIXME: should this be an ancestor of the model?  (the handle if it exists?)
-        return model;
+        return workflowsModel.getNodeModel();
     }
 
     public void onEvent(IEvent event) {
-        updateModel(model);
+        updateModel(workflowsModel.getNodeModel());
     }
 
     public void detach() {
-        if (model != null) {
-            model.detach();
+        if (workflowsModel != null) {
+            workflowsModel.detach();
         }
     }
 

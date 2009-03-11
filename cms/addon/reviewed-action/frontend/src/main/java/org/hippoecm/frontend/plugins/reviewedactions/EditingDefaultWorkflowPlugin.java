@@ -15,13 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
-import org.hippoecm.frontend.service.IEditService;
+import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.service.IEditorFilter;
+import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.repository.api.Workflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,27 +38,38 @@ public class EditingDefaultWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static Logger log = LoggerFactory.getLogger(EditingDefaultWorkflowPlugin.class);
 
-    public EditingDefaultWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+    public EditingDefaultWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        IEditor editor = context.getService(getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditor.class);
+        context.registerService(new IEditorFilter() {
+            private static final long serialVersionUID = 1L;
+
+            public void postClose(Object object) {
+                // nothing to do
+            }
+
+            public Object preClose() {
+                try {
+                    ((JcrNodeModel) getModel()).getNode().save();
+                    return new Object();
+                } catch (RepositoryException ex) {
+                    log.info(ex.getMessage());
+                    showException(ex);
+                }
+                return null;
+            }
+
+        }, context.getReference(editor).getServiceId());
 
         addWorkflowAction("save", new StringResourceModel("save", this, null), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void execute(Workflow wf) throws Exception {
-                close();
+                ((JcrNodeModel) getModel()).getNode().save();
             }
         });
     }
 
-    private void close() {
-        IPluginContext context = getPluginContext();
-        IEditService editor = context.getService(getPluginConfig().getString(IEditService.EDITOR_ID),
-                IEditService.class);
-        if (editor != null) {
-            editor.close(((WorkflowsModel) getModel()).getNodeModel());
-        } else {
-            log.warn("No editor service found");
-        }
-    }
 }

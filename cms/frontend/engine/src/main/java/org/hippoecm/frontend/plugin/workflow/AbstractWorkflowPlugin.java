@@ -195,7 +195,7 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin implements IAc
         updateActions();
     }
 
-    private void showException(Exception ex) {
+    protected void showException(Exception ex) {
         IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(),
                 IDialogService.class);
         if (dialogService != null) {
@@ -203,7 +203,7 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin implements IAc
         }
     }
 
-    private void execute(WorkflowAction action) {
+    protected void execute(WorkflowAction action) {
         // before saving (which possibly means deleting), find the handle
         final WorkflowsModel workflowModel = (WorkflowsModel) getModel();
         JcrNodeModel handle = workflowModel.getNodeModel();

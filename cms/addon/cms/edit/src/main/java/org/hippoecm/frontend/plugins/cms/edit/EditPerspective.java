@@ -21,15 +21,13 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
-import org.hippoecm.frontend.service.IEditService;
-import org.hippoecm.frontend.service.IRenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EditPerspective extends Perspective {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
 
     private static final long serialVersionUID = 1L;
@@ -41,28 +39,6 @@ public class EditPerspective extends Perspective {
     @Override
     public IModel getTitle() {
         return new NodeTranslator((JcrNodeModel) getModel()).getNodeName();
-    }
-
-    @Override
-    public void focus(IRenderService child) {
-        IPluginConfig config = getPluginConfig();
-        IPluginContext context = getPluginContext();
-
-        JcrNodeModel model = (JcrNodeModel) getModel();
-        if (model != null) {
-            if (config.getString("editor.id") != null) {
-                IEditService editor = context.getService(config.getString("editor.id"), IEditService.class);
-                if (editor != null) {
-                    editor.edit(model);
-                } else {
-                    log.warn("No edit service found");
-                }
-            } else {
-                log.warn("No edit service configure");
-            }
-        } else {
-            log.warn("Cannot request focus without model");
-        }
     }
 
 }

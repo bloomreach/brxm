@@ -29,7 +29,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.service.IFactoryService;
+import org.hippoecm.frontend.service.EditorException;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -143,8 +144,12 @@ public class TabsPlugin extends RenderPlugin {
 
     void onClose(Tab tabbie, AjaxRequestTarget target) {
         IServiceReference<IRenderService> reference = getPluginContext().getReference(tabbie.renderer);
-        IFactoryService factory = getPluginContext().getService(reference.getServiceId(), IFactoryService.class);
-        factory.delete(tabbie.renderer);
+        IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
+        try {
+            editor.close();
+        } catch (EditorException ex) {
+            log.info("Failed to close editor", ex);
+        }
     }
 
     private Tab findTabbie(IRenderService service) {
@@ -214,13 +219,11 @@ public class TabsPlugin extends RenderPlugin {
         // package internals
 
         boolean canClose() {
-            /*
             IServiceReference<IRenderService> reference = getPluginContext().getReference(renderer);
-            IFactoryService factory = getPluginContext().getService(reference.getServiceId(), IFactoryService.class);
-            if (factory != null) {
+            IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
+            if (editor != null) {
                 return true;
             }
-            */
             return false;
         }
 

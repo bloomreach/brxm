@@ -13,18 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugin;
+package org.hippoecm.frontend.service;
 
-import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.plugin.config.IClusterConfig;
+public class ServiceException extends Exception {
+    private static final long serialVersionUID = 1L;
 
-public interface IClusterControl extends IClusterable {
-    final static String SVN_ID = "$Id$";
+    public ServiceException(String message) {
+        super(message);
+    }
 
-    IClusterConfig getClusterConfig();
-    
-    void start();
+    public ServiceException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    void stop();
+    public ServiceException(Throwable cause) {
+        super(cause);
+    }
 
 }

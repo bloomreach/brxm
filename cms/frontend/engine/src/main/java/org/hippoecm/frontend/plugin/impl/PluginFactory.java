@@ -19,7 +19,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Session;
@@ -63,11 +62,12 @@ public class PluginFactory implements IClusterable {
                 loader = getClass().getClassLoader();
             }
             try {
-                Class clazz = Class.forName(className, true, loader);
-                Class[] formalArgs = new Class[] { IPluginContext.class, IPluginConfig.class };
-                Constructor constructor = clazz.getConstructor(formalArgs);
+                @SuppressWarnings("unchecked")
+                Class<? extends IPlugin> clazz = (Class<? extends IPlugin>) Class.forName(className, true, loader);
+                Class<?>[] formalArgs = new Class[] { IPluginContext.class, IPluginConfig.class };
+                Constructor<? extends IPlugin> constructor = clazz.getConstructor(formalArgs);
                 Object[] actualArgs = new Object[] { context, config };
-                plugin = (IPlugin) constructor.newInstance(actualArgs);
+                plugin = constructor.newInstance(actualArgs);
 
             } catch (ClassNotFoundException e) {
                 IResourceSettings resourceSettings = Application.get().getResourceSettings();

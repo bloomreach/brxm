@@ -23,17 +23,27 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
-import org.hippoecm.frontend.service.IEditService;
+import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.Workflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,19 +69,48 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implem
             log.warn("No validator id {} defined", IValidateService.VALIDATE_ID);
         }
 
+        IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
+        context.registerService(new IEditorFilter() {
+            private static final long serialVersionUID = 1L;
+
+            public void postClose(Object object) {
+                // nothing to do
+            }
+
+            public Object preClose() {
+                try {
+                    JcrNodeModel nodeModel = ((WorkflowsModel) getModel()).getNodeModel();
+                    Node node = nodeModel.getNode();
+                    boolean dirty = node.isModified();
+                    if (!dirty) {
+                        HippoSession session = (HippoSession) node.getSession();
+                        NodeIterator nodes = session.pendingChanges(node, "nt:base", true);
+                        if (nodes.hasNext()) {
+                            dirty = true;
+                        }
+                    }
+                    if (dirty) {
+                        IDialogService dialogService = context.getService(IDialogService.class.getName(),
+                                IDialogService.class);
+                        dialogService.show(new OnCloseDialog());
+                    } else {
+                        return new Object();
+                    }
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
+                    showException(ex);
+                }
+                return null;
+            }
+
+        }, context.getReference(editor).getServiceId());
+
         addWorkflowAction("save", new StringResourceModel("save", this, null), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void execute(Workflow workflow) throws Exception {
-                WorkflowsModel model = (WorkflowsModel) getModel();
-                final JcrNodeModel nodeModel = model.getNodeModel();
-                if (nodeModel.getNode() != null) {
-                    nodeModel.getNode().getSession().save();
-                } else {
-                    log.error("Node does not exist");
-                }
-                close();
+                doSave();
             }
 
         });
@@ -80,24 +119,37 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implem
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                WorkflowsModel model = (WorkflowsModel) TemplateEditingWorkflowPlugin.this.getModel();
-                JcrNodeModel nodeModel = model.getNodeModel();
-                if (nodeModel.getNode() != null) {
-                    try {
-                        nodeModel.getNode().refresh(false);
-                    } catch (RepositoryException ex) {
-                        log.error(ex.getMessage());
-                    }
-                } else {
-                    log.error("Node does not exist");
+                try {
+                    doRevert();
+                } catch (Exception ex) {
+                    showException(ex);
                 }
-                close();
             }
         };
         link.add(new Label("revert-label", new StringResourceModel("revert", this, null)));
         add(link);
     }
 
+    void doSave() throws Exception {
+        WorkflowsModel model = (WorkflowsModel) getModel();
+        final JcrNodeModel nodeModel = model.getNodeModel();
+        if (nodeModel.getNode() != null) {
+            nodeModel.getNode().getSession().save();
+        } else {
+            log.error("Node does not exist");
+        }
+    }
+    
+    void doRevert() throws Exception {
+        WorkflowsModel model = (WorkflowsModel) TemplateEditingWorkflowPlugin.this.getModel();
+        JcrNodeModel nodeModel = model.getNodeModel();
+        if (nodeModel.getNode() != null) {
+            nodeModel.getNode().refresh(false);
+        } else {
+            log.error("Node does not exist");
+        }
+    }
+    
     public boolean hasError() {
         if (!validated) {
             validate();
@@ -146,21 +198,63 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implem
         }
     }
 
+    JcrNodeModel getNodeModel() {
+        return ((WorkflowsModel) getModel()).getNodeModel();
+    }
+    
     @Override
     protected void onModelChanged() {
         validated = false;
         super.onModelChanged();
     }
 
-    private void close() {
-        IPluginContext context = getPluginContext();
-        IEditService viewer = context.getService(getPluginConfig().getString(IEditService.EDITOR_ID),
-                IEditService.class);
-        if (viewer != null) {
-            viewer.close(((WorkflowsModel) getModel()).getNodeModel());
-        } else {
-            log.warn("No editor service found");
+    private class OnCloseDialog extends AbstractDialog {
+        private static final long serialVersionUID = 1L;
+
+        public OnCloseDialog() {
+
+            this.ok.setVisible(false);
+
+            final Label exceptionLabel = new Label("exception", "");
+            exceptionLabel.setOutputMarkupId(true);
+            add(exceptionLabel);
+
+            addButton((AjaxButton) new AjaxButton(getButtonId()) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                    try {
+                        doRevert();
+                        closeDialog();
+                    } catch (Exception ex) {
+                        exceptionLabel.setModel(new Model(ex.getMessage()));
+                        target.addComponent(exceptionLabel);
+                    }
+                }
+            }.add(new Label("label", new ResourceModel("discard", "Discard"))));
+
+            addButton((AjaxButton) new AjaxButton(getButtonId()) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                    try {
+                        doSave();
+                        closeDialog();
+                    } catch (Exception ex) {
+                        exceptionLabel.setModel(new Model(ex.getMessage()));
+                        target.addComponent(exceptionLabel);
+                    }
+                }
+            }.add(new Label("label", new ResourceModel("save", "Save"))));
         }
+
+        public IModel getTitle() {
+            return new StringResourceModel("close-document", this, null, new Object[] { new PropertyModel(
+                    TemplateEditingWorkflowPlugin.this.getNodeModel(), "name") }, "Close {0}");
+        }
+
     }
 
 }

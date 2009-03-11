@@ -14,24 +14,8 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:head>
-    <script type="text/javascript" language="JavaScript">
-      Wicket.Window.unloadConfirmation = false;
-    </script>
-  </wicket:head>
-  <wicket:panel>
-    <div class="hippo-window">
-      <div class="hippo-root">
-        <form wicket:id="form">
-          <div wicket:id="feedback" class="hippo-login-feedback"/>
-          <wicket:child/>
-          <div class="hippo-window-buttons">
-            <wicket:container wicket:id="buttons">
-              <button wicket:id="button"><span wicket:id="label" /></button>
-            </wicket:container>
-          </div>
-        </form>
-      </div>
-    </div>
-  </wicket:panel>
+  <wicket:extend>
+    <wicket:message key="message" />
+    <span wicket:id="exception">[if exception happens, here]</span>
+  </wicket:extend>
 </html>
