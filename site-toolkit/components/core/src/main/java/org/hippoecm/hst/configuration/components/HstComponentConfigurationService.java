@@ -16,10 +16,10 @@
 package org.hippoecm.hst.configuration.components;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -43,6 +43,8 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     
     private SortedMap<String, HstComponentConfiguration> componentConfigurations = new TreeMap<String, HstComponentConfiguration>();
     
+    private Map<String, HstComponentConfigurationService> childConfByName = new HashMap<String, HstComponentConfigurationService>();
+    
     private List<HstComponentConfigurationService> orderedListConfigs = new ArrayList<HstComponentConfigurationService>();
     
     private String id;
@@ -50,7 +52,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     private String name;
 
     private String componentClassName;
-    
+
     private String renderPath;
     
     private String hstTemplate;
@@ -59,12 +61,25 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     
     private String referenceName;
     
+    private String referenceComponent;
+    
     private PropertyMap propertyMap;
     
     private String configurationRootNodePath;
     
-    private Set<String> usedChildReferenceNames = new HashSet<String>();
+    private List<String> usedChildReferenceNames = new ArrayList<String>();
     private int autocreatedCounter = 0;
+    
+    private String[] parameterNames;
+    private String[] parameterValues;
+     
+
+    // constructor for copy purpose only
+    private HstComponentConfigurationService(String id){
+        super(null);
+        this.id = id;
+    }
+
     
     public HstComponentConfigurationService(Node jcrNode, String configurationRootNodePath) throws ServiceException {
         super(jcrNode);
@@ -83,15 +98,14 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                 this.componentClassName = GenericHstComponent.class.getName();
             }
             
+            this.referenceComponent = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
             this.hstTemplate = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_TEMPLATE_);
             this.serveResourcePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH);
             this.propertyMap = getValueProvider().getPropertyMap();
         } 
-        
         init(jcrNode);
-       
     }
-
+    
     public void init(Node jcrNode) {
         try {
             for(NodeIterator nodeIt = jcrNode.getNodes(); nodeIt.hasNext();) {
@@ -105,11 +119,12 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                         usedChildReferenceNames.add(child.getProperty(Configuration.COMPONENT_PROPERTY_REFERECENCENAME).getString());
                     }
                     try {
-                        HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child, configurationRootNodePath);
+                        HstComponentConfigurationService componentConfiguration = new HstComponentConfigurationService(child, configurationRootNodePath);
                         componentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
                         
                         // we also need an ordered list
-                        orderedListConfigs.add((HstComponentConfigurationService)componentConfiguration);
+                        orderedListConfigs.add(componentConfiguration);
+                        childConfByName.put(child.getName(),componentConfiguration); 
                         log.debug("Added component service with key '{}'",componentConfiguration.getId());
                     } catch (ServiceException e) {
                         if (log.isDebugEnabled()) {
@@ -171,19 +186,102 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
          this.referenceName = referenceName;
     }
 
+    public String getReferenceComponent(){
+        return referenceComponent;
+    }
+    
     public SortedMap<String, HstComponentConfiguration> getChildren() {
        return this.componentConfigurations;
     }
 
+
+    private HstComponentConfigurationService copy(String newId, HstComponentConfigurationService child){
+        
+        HstComponentConfigurationService copy = new HstComponentConfigurationService(newId);
+        copy.componentClassName = child.componentClassName;
+        copy.configurationRootNodePath = child.configurationRootNodePath;
+        copy.hstTemplate = child.hstTemplate;
+        copy.name = child.name;
+        copy.propertyMap = child.propertyMap;
+        copy.referenceName = child.referenceName;
+        copy.renderPath = child.renderPath;
+        copy.referenceComponent = child.referenceComponent;
+        copy.serveResourcePath = child.serveResourcePath;
+        copy.parameterNames = child.parameterNames;
+        copy.parameterValues = child.parameterValues;
+        List<String> copyToList = new ArrayList<String>();
+        Collections.copy(copyToList, child.usedChildReferenceNames);
+        copy.usedChildReferenceNames = copyToList;
+        return copy;
+    }
     
-    public void lookupRenderPath(Map<String, String> templateRenderMap) {
+    public void populateComponentReferences(Map<String, HstComponentConfiguration> rootComponentConfigurations, List<HstComponentConfiguration> populated) {
+        if(populated.contains(this)) {
+            return;
+        }
+        
+        populated.add(this);
+        
+        if(this.getReferenceComponent() != null){
+            HstComponentConfigurationService referencedComp = (HstComponentConfigurationService)rootComponentConfigurations.get(this.getReferenceComponent());
+            if(referencedComp != null) {
+                 if(referencedComp.getReferenceComponent() != null) {
+                     // populate referenced comp first:
+                     referencedComp.populateComponentReferences(rootComponentConfigurations, populated);
+                 }
+                 // get all properties that are null from the referenced component:
+                 if(this.componentClassName == null) this.componentClassName = referencedComp.componentClassName;
+                 if(this.configurationRootNodePath == null) this.configurationRootNodePath = referencedComp.configurationRootNodePath;
+                 if(this.hstTemplate == null) this.hstTemplate = referencedComp.hstTemplate;
+                 if(this.name == null) this.name = referencedComp.name;
+                 if(this.propertyMap == null) this.propertyMap = referencedComp.propertyMap;
+                 if(this.referenceName == null) this.referenceName = referencedComp.referenceName;
+                 if(this.renderPath == null) this.renderPath = referencedComp.renderPath;
+                 if(this.referenceComponent == null) this.referenceComponent = referencedComp.referenceComponent;
+                 if(this.serveResourcePath == null) this.serveResourcePath = referencedComp.serveResourcePath;
+                 
+                 // TODO as parameter names & values are multiple, the names and value need to be merged!
+                 if(this.parameterNames == null) this.parameterNames = referencedComp.parameterNames;
+                 if(this.parameterValues == null) this.parameterValues = referencedComp.parameterValues;
+                 
+                 List<String> copyToList = new ArrayList<String>();
+                 Collections.copy(copyToList, referencedComp.usedChildReferenceNames);
+                 this.usedChildReferenceNames.addAll(copyToList);
+                
+                 // now we need to copy all the child components from the referenced component to this component.
+                 // Note this has to be a copy!! 
+                 
+                 for(HstComponentConfigurationService childToCopy : referencedComp.orderedListConfigs){
+                     if(childToCopy.getReferenceComponent() != null) {
+                         // populate child component if not yet happened
+                         childToCopy.populateComponentReferences(rootComponentConfigurations, populated);
+                     }
+                     if(this.childConfByName.get(childToCopy.name) != null){
+                         // we have an overlay again because we have a component with the same name
+                         this.childConfByName.get(childToCopy.name).populateComponentReferences(rootComponentConfigurations, populated);
+                     } else {
+                         // make a copy of the child
+                         String newId = this.id + "-" + childToCopy.id;
+                         HstComponentConfigurationService copy = this.copy(newId, childToCopy);
+                         this.componentConfigurations.put(copy.getId(), copy);
+                         this.orderedListConfigs.add(copy);
+                     } 
+                 }
+                  
+            } else {
+                log.warn("Cannot lookup referenced component '{}' for this component ['{}']", this.getReferenceComponent(), this.getId());
+            }
+        }
+    }
+    
+    public void setRenderPath(Map<String, String> templateRenderMap) {
         String templateRenderPath = templateRenderMap.get(this.getHstTemplate());
         if(templateRenderPath == null) {
             log.warn("Cannot find renderpath for component '{}'", this.getId());
         }
         this.renderPath = templateRenderPath;
         for(HstComponentConfigurationService child :  orderedListConfigs) {
-            child.lookupRenderPath(templateRenderMap);
+            child.setRenderPath(templateRenderMap);
         }
     }
     
@@ -200,6 +298,8 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
             }
         }
     }
+
+
 
    
 }

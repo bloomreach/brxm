@@ -69,16 +69,26 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
             init(pages, configurationNode.getPath());
         }
         
-        for(HstComponentConfiguration child: childComponents) {
-            autocreateReferenceNames(child);
-        }
         
         for(HstComponentConfiguration child: childComponents) {
             populateRootComponentConfigurations(child);
         }
         
+        // to avoid circular population, hold a list of already populated configs
+        List<HstComponentConfiguration> populated = new ArrayList<HstComponentConfiguration>();
+        for(HstComponentConfiguration child: rootComponentConfigurations.values()){
+            if(!populated.contains(child)) {
+                ((HstComponentConfigurationService)child).populateComponentReferences(rootComponentConfigurations, populated);
+            }
+        }
+        
+        
+        for(HstComponentConfiguration child: childComponents) {
+            autocreateReferenceNames(child);
+        }
+      
         for(HstComponentConfiguration child: childComponents){
-            ((HstComponentConfigurationService)child).lookupRenderPath(templateRenderMap);
+            ((HstComponentConfigurationService)child).setRenderPath(templateRenderMap);
         }
         
     }
