@@ -35,7 +35,7 @@
             <sv:value>hst:template</sv:value>
         </sv:property>
         <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/header.jsp</sv:value>
+            <sv:value>jsp/components/header.jsp</sv:value>
         </sv:property>
         <sv:property sv:name="hst:containers" sv:type="String">
             <sv:value>title</sv:value>
@@ -47,7 +47,16 @@
             <sv:value>hst:template</sv:value>
         </sv:property>
         <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/title.jsp</sv:value>
+            <sv:value>jsp/components/title.jsp</sv:value>
+        </sv:property>
+    </sv:node>
+    
+    <sv:node sv:name="body">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:template</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:renderpath" sv:type="String">
+            <sv:value>jsp/components/body.jsp</sv:value>
         </sv:property>
     </sv:node>
     
