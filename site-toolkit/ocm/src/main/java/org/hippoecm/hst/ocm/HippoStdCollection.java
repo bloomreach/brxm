@@ -25,7 +25,7 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 import org.hippoecm.repository.api.HippoNodeType;
 
-@Node(jcrType="hippostd:folder")
+@Node(jcrType="hippostd:folder", discriminator=false)
 public class HippoStdCollection extends HippoStdNode {
     
     public List<HippoStdCollection> getCollections() {

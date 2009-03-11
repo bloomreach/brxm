@@ -37,7 +37,6 @@ import org.apache.jackrabbit.ocm.manager.objectconverter.ProxyManager;
 import org.apache.jackrabbit.ocm.manager.objectconverter.impl.ProxyManagerImpl;
 import org.apache.jackrabbit.ocm.mapper.Mapper;
 import org.apache.jackrabbit.ocm.query.QueryManager;
-import org.apache.jackrabbit.ocm.query.impl.QueryManagerImpl;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -47,6 +46,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.ocm.HippoStdNode;
 import org.hippoecm.hst.ocm.manager.impl.HstAnnotationMapperImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstObjectConverterImpl;
+import org.hippoecm.hst.ocm.query.impl.HstQueryManagerImpl;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +61,6 @@ public class BaseHstComponent extends GenericHstComponent {
     public static final String OCM_REQUEST_CONTEXT_ATTR_NAME = BaseHstComponent.class.getName() + ".ocm";
     
     private boolean ocmInitialized;
-    private List<Class> annotatedClasses;
     private Mapper ocmMapper;
     private ObjectConverter ocmObjectConverter;
     private ObjectCache ocmRequestObjectCache;
@@ -90,7 +89,7 @@ public class BaseHstComponent extends GenericHstComponent {
         
         if (ocm == null) {
             try {
-                QueryManager queryManager = new QueryManagerImpl(this.ocmMapper, this.ocmAtomicTypeConverters, requestContext.getSession().getValueFactory());
+                QueryManager queryManager = new HstQueryManagerImpl(this.ocmMapper, this.ocmAtomicTypeConverters, requestContext.getSession().getValueFactory());
                 ocm = new ObjectContentManagerImpl(this.ocmMapper, this.ocmObjectConverter, queryManager, this.ocmRequestObjectCache, requestContext.getSession());
                 requestContext.setAttribute(OCM_REQUEST_CONTEXT_ATTR_NAME, ocm);
             } catch (UnsupportedRepositoryOperationException e) {
@@ -103,26 +102,29 @@ public class BaseHstComponent extends GenericHstComponent {
         return ocm;
     }
     
-    private synchronized void initOCMObjects() {
-        if (!this.ocmInitialized) {
-            this.annotatedClasses = new LinkedList<Class>();
-            List<String> classNames = loadAnnotatedClassNames();
+    protected Mapper createMapper() {
+        List<Class> annotatedClasses = new LinkedList<Class>();
+        List<String> classNames = loadAnnotatedClassNames();
+        
+        for (String className : classNames) {
+            Class clazz = null;
             
-            for (String className : classNames) {
-                Class clazz = null;
-                
-                try {
-                    clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
-                    this.annotatedClasses.add(clazz);
-                } catch (Exception e) {
-                    if (log.isWarnEnabled()) {
-                        log.warn("Skipped class registration into the mapper. Cannot load class: " + className);
-                    }
+            try {
+                clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
+                annotatedClasses.add(clazz);
+            } catch (Exception e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Skipped class registration into the mapper. Cannot load class: " + className);
                 }
             }
-            
-            this.ocmMapper = new HstAnnotationMapperImpl(this.annotatedClasses, "hst:document");
-            
+        }
+        
+        return new HstAnnotationMapperImpl(annotatedClasses, "hst:document");
+    }
+    
+    private synchronized void initOCMObjects() {
+        if (!this.ocmInitialized) {
+            this.ocmMapper = createMapper();
             DefaultAtomicTypeConverterProvider converterProvider = new DefaultAtomicTypeConverterProvider();
             this.ocmAtomicTypeConverters = converterProvider.getAtomicTypeConverters();
             

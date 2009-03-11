@@ -17,8 +17,10 @@ package org.hippoecm.hst.ocm;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -37,10 +39,12 @@ import org.apache.jackrabbit.ocm.manager.objectconverter.ProxyManager;
 import org.apache.jackrabbit.ocm.manager.objectconverter.impl.ProxyManagerImpl;
 import org.apache.jackrabbit.ocm.mapper.Mapper;
 import org.apache.jackrabbit.ocm.mapper.impl.digester.DigesterMapperImpl;
+import org.apache.jackrabbit.ocm.query.Filter;
+import org.apache.jackrabbit.ocm.query.Query;
 import org.apache.jackrabbit.ocm.query.QueryManager;
-import org.apache.jackrabbit.ocm.query.impl.QueryManagerImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstAnnotationMapperImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstObjectConverterImpl;
+import org.hippoecm.hst.ocm.query.impl.HstQueryManagerImpl;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.junit.After;
@@ -242,12 +246,55 @@ public class TestOCM {
         session.logout();
     }
     
+    @Test
+    public void testQueryManager() throws Exception {
+        List<Class> classes = new ArrayList<Class>();
+        classes.add(TextPage.class);
+        classes.add(HippoStdDocument.class);
+        classes.add(HippoStdCollection.class);
+        Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
+        
+        Session session = this.repository.login(this.defaultCredentials);
+        ObjectContentManager ocm = createObjectContentManager(session, mapper);
+        
+        // search collection
+        QueryManager qm = ocm.getQueryManager();
+        Filter filter = qm.createFilter(HippoStdDocument.class);
+        filter.setScope("/content/gettingstarted//");
+        Query query = qm.createQuery(filter);
+        Collection result = ocm.getObjects(query);
+        System.out.println("result: " + result);
+        assertFalse(result.isEmpty());
+
+        // search document by HippoStdDocument filter
+        filter = qm.createFilter(HippoStdDocument.class);
+        filter.setScope("/content/gettingstarted/pagecontent/Products/ProductsPage//");
+        query = qm.createQuery(filter);
+        HippoStdDocument doc = (HippoStdDocument) ocm.getObject(query);
+        System.out.println("doc: " + doc);
+        assertNotNull(doc);
+        assertTrue(doc instanceof TextPage);
+        
+        // search document by TextPage class filter with title filter.
+        // because the class is TextPage, we can use title filter here.
+        filter = qm.createFilter(TextPage.class);
+        filter.setScope("/content/gettingstarted/pagecontent/Products/ProductsPage//");
+        filter.addEqualTo("title", "Products");
+        query = qm.createQuery(filter);
+        TextPage page = (TextPage) ocm.getObject(query);
+        System.out.println("page: " + page);
+        assertNotNull(page);
+        assertTrue(page instanceof TextPage);
+        
+        session.logout();
+    }
+    
     private ObjectContentManager createObjectContentManager(Session session, Mapper mapper) throws UnsupportedRepositoryOperationException, RepositoryException {
         ObjectContentManager ocm = null;
         
         DefaultAtomicTypeConverterProvider converterProvider = new DefaultAtomicTypeConverterProvider();
         Map atomicTypeConverters = converterProvider.getAtomicTypeConverters();
-        QueryManager queryManager = new QueryManagerImpl(mapper, atomicTypeConverters, session.getValueFactory());
+        QueryManager queryManager = new HstQueryManagerImpl(mapper, atomicTypeConverters, session.getValueFactory());
         ProxyManager proxyManager = new ProxyManagerImpl();
         ObjectCache requestObjectCache = new RequestObjectCacheImpl();
         ObjectConverter objectConverter = new HstObjectConverterImpl(mapper, converterProvider, proxyManager, requestObjectCache);

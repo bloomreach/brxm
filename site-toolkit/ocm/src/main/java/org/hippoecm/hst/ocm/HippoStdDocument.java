@@ -18,7 +18,7 @@ package org.hippoecm.hst.ocm;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 
-@Node(jcrType="hippo:document")
+@Node(jcrType="hippo:document", discriminator=false)
 public class HippoStdDocument extends HippoStdNode {
 
     protected String stateSummary;
