@@ -77,7 +77,7 @@
     <commons-io.version>1.4</commons-io.version>
     <commons-configuration.version>1.6</commons-configuration.version>
     <commons-proxy.version>1.0</commons-proxy.version>
-    <commons-digester.version>2.0</commons-digester.version>
+    <commons-digester.version>1.8.1</commons-digester.version>
     
     <spring.version>2.5.6</spring.version>
         
@@ -395,13 +395,13 @@
         <artifactId>commons-proxy</artifactId>
         <version>${commons-proxy.version}</version>
       </dependency>
-
+      
       <dependency>
         <groupId>commons-digester</groupId>
         <artifactId>commons-digester</artifactId>
-        <version>${commons-digester.version}</version>
+        <version>${commons-digester.version}</version>        
       </dependency>
-      
+
       <!-- Logging -->
       
       <dependency>
