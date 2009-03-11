@@ -53,9 +53,9 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
         this.rootComponentConfigurations = new HashMap<String, HstComponentConfiguration>();
         this.childComponents = new ArrayList<HstComponentConfiguration>();
         
-        if(configurationNode.hasNode(Configuration.NODENAME_HST_FRAGMENTS)) {
-            log.debug("Initializing the components for '{}'", Configuration.NODENAME_HST_FRAGMENTS);
-            Node fragments = configurationNode.getNode(Configuration.NODENAME_HST_FRAGMENTS);
+        if(configurationNode.hasNode(Configuration.NODENAME_HST_COMPONENTS)) {
+            log.debug("Initializing the components for '{}'", Configuration.NODENAME_HST_COMPONENTS);
+            Node fragments = configurationNode.getNode(Configuration.NODENAME_HST_COMPONENTS);
             init(fragments, configurationNode.getPath());
         }
         

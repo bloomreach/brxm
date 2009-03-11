@@ -14,9 +14,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="hst:fragments" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="hst:components" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:fragments</sv:value>
+        <sv:value>hst:components</sv:value>
     </sv:property>
     <sv:node sv:name="header">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -31,6 +31,20 @@
         <sv:property sv:name="hst:referencename" sv:type="String">
             <sv:value>h</sv:value>
         </sv:property>
+        <sv:node sv:name="title">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:component</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:renderpath" sv:type="String">
+                <sv:value>jsp/fragments/header/title.jsp</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentclassname" sv:type="String">
+                <sv:value>org.hippoecm.hst.hstconfiguration.components.fragments.header.DocumentTitle</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencename" sv:type="String">
+                <sv:value>t</sv:value>
+            </sv:property>
+        </sv:node>
     </sv:node>
 
 </sv:node>
