@@ -22,7 +22,6 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 public class ComponentConfiguration {
 
     @Field(path=true) String path;
-    @Field(jcrName="hst:referencename") String referenceName;
     @Field(jcrName="hst:componentcontentbasepath") String componentContentBasePath;
     @Field(jcrName="hst:componentclassname") String componentClassName;
     @Field(jcrName="hst:renderpath") String renderPath;
@@ -33,14 +32,6 @@ public class ComponentConfiguration {
     
     public void setPath(String path) {
         this.path = path;
-    }
-    
-    public String getReferenceName() {
-        return referenceName;
-    }
-    
-    public void setReferenceName(String referenceName) {
-        this.referenceName = referenceName;
     }
     
     public String getComponentContentBasePath() {

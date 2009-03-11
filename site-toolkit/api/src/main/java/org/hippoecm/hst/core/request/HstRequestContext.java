@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.request;
 
+import java.util.Enumeration;
+
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
@@ -52,5 +54,13 @@ public interface HstRequestContext {
     HstURLFactory getURLFactory();
 
     HstLinkCreator getHstLinkCreator();
+    
+    void setAttribute(String name, Object object);
+    
+    Object getAttribute(String name);
+    
+    void removeAttribute(String name);
+    
+    Enumeration<String> getAttributeNames();
     
 }

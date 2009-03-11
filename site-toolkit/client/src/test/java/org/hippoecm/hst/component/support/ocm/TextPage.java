@@ -13,33 +13,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.ocm;
+package org.hippoecm.hst.component.support.ocm;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.hippoecm.hst.ocm.HippoStdDocument;
 
-@Node(jcrType="hippo:document")
-public class HippoStdDocument extends HippoStdNode {
+@Node(jcrType="gettingstarted:textpage")
+public class TextPage extends HippoStdDocument {
 
-    protected String stateSummary;
-    protected String state;
+    protected String title;
 
-    @Field(jcrName="hippostd:stateSummary") 
-    public String getStateSummary() {
-        return this.stateSummary;
+    @Field(jcrName="gettingstarted:title")
+    public String getTitle() {
+        return this.title;
     }
     
-    public void setStateSummary(String stateSummary) {
-        this.stateSummary = stateSummary;
-    }
-    
-    @Field(jcrName="hippostd:state") 
-    public String getState() {
-        return this.state;
-    }
-    
-    public void setState(String state) {
-        this.state = state;
+    public void setTitle(String title) {
+        this.title = title;
     }
     
 }

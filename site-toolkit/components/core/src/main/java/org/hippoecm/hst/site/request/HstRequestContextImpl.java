@@ -15,18 +15,25 @@
  */
 package org.hippoecm.hst.site.request;
 
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.collections.iterators.IteratorEnumeration;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 public class HstRequestContextImpl implements HstRequestContext {
 
@@ -38,7 +45,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected HstContainerURL baseURL;
     protected String contextNamespace;
     protected HstLinkCreator linkCreator;
-        
+    protected Map<String, Object> attributes;
 
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
@@ -101,6 +108,59 @@ public class HstRequestContextImpl implements HstRequestContext {
     
     public HstLinkCreator getHstLinkCreator() {
         return this.linkCreator;
+    }
+
+    public Object getAttribute(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("attribute name cannot be null.");
+        }
+        
+        Object value = null;
+        
+        if (this.attributes != null) {
+            value = this.attributes.get(name);
+        }
+        
+        return value;
+    }
+
+    public Enumeration<String> getAttributeNames() {
+        if (this.attributes != null) {
+            return new IteratorEnumeration(this.attributes.keySet().iterator());
+        } else {
+            List<String> emptyAttrNames = Collections.emptyList();
+            return new IteratorEnumeration(emptyAttrNames.iterator());
+        }
+    }
+
+    public void removeAttribute(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("attribute name cannot be null.");
+        }
+        
+        if (this.attributes != null) {
+            this.attributes.remove(name);
+        }
+    }
+
+    public void setAttribute(String name, Object object) {
+        if (name == null) {
+            throw new IllegalArgumentException("attribute name cannot be null.");
+        }
+        
+        if (object == null) {
+            removeAttribute(name);
+        }
+        
+        if (this.attributes == null) {
+            synchronized (this) {
+                if (this.attributes == null) {
+                    this.attributes = Collections.synchronizedMap(new HashMap<String, Object>());
+                }
+            }
+        }
+        
+        this.attributes.put(name, object);
     }
     
 }

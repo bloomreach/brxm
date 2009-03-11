@@ -21,24 +21,28 @@ import static org.junit.Assert.assertNotNull;
 import java.io.Serializable;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceFactory;
-import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
+import org.junit.Before;
 import org.junit.Test;
 
-public class TestJCRServiceBean extends AbstractSpringTestCase{
+public class TestJCRServiceBean {
     
     private static final String TESTPROJECT_EXISTING_VIRTUALNODE = "/testpreview/testproject/hst:content/Products/SomeProduct/SomeProduct";
-    private Repository repository;
-    
-    @Override 
-    public void setUp() throws Exception{
-        super.setUp();
-        repository  = (Repository) getComponent(Repository.class.getName());
+
+    protected HippoRepository repository;
+    protected SimpleCredentials defaultCredentials;
+
+    @Before
+    public void setUp() throws Exception {
+        this.repository = HippoRepositoryFactory.getHippoRepository("rmi://127.0.0.1:1099/hipporepository");
+        this.defaultCredentials = new SimpleCredentials("admin", "admin".toCharArray());
     }
     
     @Test

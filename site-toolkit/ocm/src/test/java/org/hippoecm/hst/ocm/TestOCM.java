@@ -36,11 +36,10 @@ import org.apache.jackrabbit.ocm.manager.objectconverter.ObjectConverter;
 import org.apache.jackrabbit.ocm.manager.objectconverter.ProxyManager;
 import org.apache.jackrabbit.ocm.manager.objectconverter.impl.ProxyManagerImpl;
 import org.apache.jackrabbit.ocm.mapper.Mapper;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.AnnotationMapperImpl;
+import org.apache.jackrabbit.ocm.mapper.impl.digester.DigesterMapperImpl;
 import org.apache.jackrabbit.ocm.query.QueryManager;
 import org.apache.jackrabbit.ocm.query.impl.QueryManagerImpl;
-import org.hippoecm.hst.ocm.HippoStdCollection;
-import org.hippoecm.hst.ocm.HippoStdDocument;
+import org.hippoecm.hst.ocm.manager.impl.HstAnnotationMapperImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstObjectConverterImpl;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
@@ -70,7 +69,7 @@ public class TestOCM {
     public void testComponentConfiguration() throws Exception {
         List<Class> classes = new ArrayList<Class>();
         classes.add(ComponentConfiguration.class);
-        Mapper mapper = new AnnotationMapperImpl(classes);
+        Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
         
         Session session = this.repository.login(this.defaultCredentials);
         
@@ -81,7 +80,6 @@ public class TestOCM {
         assertNotNull(compConfig);
         
         System.out.println("path: " + compConfig.getPath());
-        System.out.println("reference name: " + compConfig.getReferenceName());
         System.out.println("content base path: " + compConfig.getComponentContentBasePath());
         System.out.println("class name: " + compConfig.getComponentClassName());
         System.out.println("render path: " + compConfig.getRenderPath());
@@ -91,7 +89,6 @@ public class TestOCM {
         assertNotNull(compConfig);
         
         System.out.println("path: " + compConfig.getPath());
-        System.out.println("reference name: " + compConfig.getReferenceName());
         System.out.println("content base path: " + compConfig.getComponentContentBasePath());
         System.out.println("class name: " + compConfig.getComponentClassName());
         System.out.println("render path: " + compConfig.getRenderPath());
@@ -105,13 +102,12 @@ public class TestOCM {
         classes.add(TextPage.class);
         classes.add(HippoStdDocument.class);
         classes.add(HippoStdCollection.class);
-        Mapper mapper = new AnnotationMapperImpl(classes);
+        Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
         
         Session session = this.repository.login(this.defaultCredentials);
         
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
-        // Normal JCR Node path
         TextPage productsPage = (TextPage) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
@@ -122,6 +118,21 @@ public class TestOCM {
         System.out.println("stateSummary: " + productsPage.getStateSummary());
         System.out.println("state: " + productsPage.getState());
 
+        classes = new ArrayList<Class>();
+        classes.add(HippoStdDocument.class);
+        classes.add(HippoStdCollection.class);
+        mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
+        ocm = createObjectContentManager(session, mapper);
+        
+        HippoStdDocument productsPageDoc = (HippoStdDocument) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
+        assertNotNull(productsPageDoc);
+        assertNotNull(productsPageDoc.getNode());
+
+        System.out.println("productsPageDoc's node: " + productsPageDoc.getNode());
+        System.out.println("productsPageDoc's path: " + productsPageDoc.getPath());
+        System.out.println("productsPageDoc's stateSummary: " + productsPageDoc.getStateSummary());
+        System.out.println("productsPageDoc's state: " + productsPageDoc.getState());
+        
         session.logout();
     }
 
@@ -131,11 +142,72 @@ public class TestOCM {
         classes.add(TextPage.class);
         classes.add(HippoStdDocument.class);
         classes.add(HippoStdCollection.class);
-        Mapper mapper = new AnnotationMapperImpl(classes);
+        Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
         
         Session session = this.repository.login(this.defaultCredentials);
         
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
+        
+        TextPage productsPage = (TextPage) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
+        assertNotNull(productsPage);
+        assertNotNull(productsPage.getNode());
+        
+        System.out.println("node: " + productsPage.getNode());
+        System.out.println("path: " + productsPage.getPath());
+        System.out.println("title: " + productsPage.getTitle());
+        System.out.println("stateSummary: " + productsPage.getStateSummary());
+        System.out.println("state: " + productsPage.getState());
+        
+        // Normal JCR Node path
+        HippoStdCollection coll = (HippoStdCollection) ocm.getObject("/content/gettingstarted/pagecontent");
+        assertNotNull(coll);
+        assertNotNull(coll.getNode());
+        
+        System.out.println("node: " + coll.getNode());
+        System.out.println("path: " + coll.getPath());
+        
+        List<HippoStdCollection> childColl = coll.getCollections();
+        assertNotNull(childColl);
+        assertFalse(childColl.isEmpty());
+        
+        System.out.println("childColl: " + childColl);
+        
+        for (HippoStdCollection childCollItem : childColl) {
+            System.out.println("childCollItem: " + childCollItem.getName() + ", " + childCollItem.getPath());
+        }
+        
+        HippoStdCollection productsColl = (HippoStdCollection) ocm.getObject("/content/gettingstarted/pagecontent/Products");
+        
+        List<HippoStdDocument> childDocs = productsColl.getDocuments();
+        assertNotNull(childDocs);
+        assertFalse(childDocs.isEmpty());
+        
+        System.out.println("childDocs: " + childDocs);
+        
+        for (HippoStdDocument childDoc : childDocs) {
+            System.out.println("childDoc: " + childDoc.getName() + ", " + childDoc.getPath() + ", " + childDoc.getState() + ", " + childDoc.getStateSummary());
+        }
+
+        session.logout();
+    }
+    
+    @Test
+    public void testCollectionWithDigesterMapper() throws Exception {
+        Mapper mapper = new DigesterMapperImpl(getClass().getResourceAsStream("TestOCM-mapping.xml"));
+        
+        Session session = this.repository.login(this.defaultCredentials);
+        
+        ObjectContentManager ocm = createObjectContentManager(session, mapper);
+        
+        TextPage productsPage = (TextPage) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
+        assertNotNull(productsPage);
+        assertNotNull(productsPage.getNode());
+        
+        System.out.println("node: " + productsPage.getNode());
+        System.out.println("path: " + productsPage.getPath());
+        System.out.println("title: " + productsPage.getTitle());
+        System.out.println("stateSummary: " + productsPage.getStateSummary());
+        System.out.println("state: " + productsPage.getState());
         
         // Normal JCR Node path
         HippoStdCollection coll = (HippoStdCollection) ocm.getObject("/content/gettingstarted/pagecontent");
