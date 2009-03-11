@@ -41,7 +41,7 @@
 + * (hst:component)
 
 
-[hst:fragments] 
+[hst:components] 
 + * (hst:component)
 
 [hst:pages] 
@@ -60,7 +60,7 @@
 
 
 [hst:configuration] > hippo:document, hippostd:publishable, hippostd:publishableSummary, hippostd:languageable
-+ hst:fragments (hst:fragments) = hst:fragments 
++ hst:components (hst:components) = hst:components
 + hst:pages (hst:pages) = hst:pages 
 + hst:sitemap (hst:sitemap) = hst:sitemap  
 + hst:templates (hst:templates) = hst:templates
