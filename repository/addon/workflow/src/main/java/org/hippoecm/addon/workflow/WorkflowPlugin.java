@@ -109,7 +109,7 @@ public class WorkflowPlugin extends RenderPlugin {
         if(getModel() instanceof JcrNodeModel) {
             Node node = ((JcrNodeModel)getModel()).getNode();
             if(node != null) {
-                node.getPath();
+                //node.getPath();
             }
         }
         menu.clear();
