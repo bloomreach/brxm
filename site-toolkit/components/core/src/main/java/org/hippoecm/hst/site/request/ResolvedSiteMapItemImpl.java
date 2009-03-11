@@ -27,7 +27,8 @@ import org.hippoecm.hst.core.util.PropertyParser;
 public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
     
     private HstSiteMapItem hstSiteMapItem;
-    private Properties resolvedProperties;
+    private Properties resolvedParameters;
+    private String relativeContentPath;
     private HstComponentConfiguration hstComponentConfiguration;
     
     public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params) {
@@ -38,15 +39,16 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
         * We take the properties form the hstSiteMapItem getProperties and replace params (like ${1}) with the params[] array 
         */
        
-       this.resolvedProperties = new Properties();
+       this.resolvedParameters = new Properties();
        
        PropertyParser pp = new PropertyParser(params);
        
-       for(Entry<String, Object> entry : hstSiteMapItem.getProperties().entrySet()) {
+       for(Entry<String, String> entry : hstSiteMapItem.getParametrs().entrySet()) {
            Object o = pp.resolveProperty(entry.getKey(), entry.getValue());
-           resolvedProperties.put(entry.getKey(), o);
+           resolvedParameters.put(entry.getKey(), o);
        }
-       
+       relativeContentPath = (String)pp.resolveProperty("relativeContentPath", hstSiteMapItem.getRelativeContentPath());
+
     }
     
     
@@ -58,17 +60,17 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
         return this.hstComponentConfiguration;
     }
 
-    public Object getResolvedProperty(String name) {
-        return resolvedProperties.get(name);
+    public String getParameter(String name) {
+        return (String)resolvedParameters.get(name);
     }
     
-    public Properties getResolvedProperties(){
-        return this.resolvedProperties;
+    public Properties getParameters(){
+        return this.resolvedParameters;
     }
 
 
     public String getRelativeContentPath() {
-        return (String)this.getResolvedProperty("hst:relativecontentpath");
+        return relativeContentPath;
     }
   
 }

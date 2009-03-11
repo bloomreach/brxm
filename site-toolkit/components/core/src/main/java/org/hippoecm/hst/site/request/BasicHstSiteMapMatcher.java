@@ -47,8 +47,12 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
      */
     private Map<String, ResolvedSiteMapItem> cache = Collections.synchronizedMap(new LRUMap(10000));
     
+    public void invalidate(){
+        this.cache.clear();
+    }
+    
     public ResolvedSiteMapItem match(String pathInfo, HstSite hstSite) {
-        
+       
         String key = hstSite.getContentPath() + "_" + pathInfo;
         ResolvedSiteMapItem cached = cache.get(key);
         if(cached != null) {
@@ -213,17 +217,18 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             return null;
         }
 
+        public String getParameter(String name) {
+            return null;
+        }
+
+        public Properties getParameters() {
+            return null;
+        }
+
         public String getRelativeContentPath() {
             return null;
         }
 
-        public Properties getResolvedProperties() {
-            return null;
-        }
-
-        public Object getResolvedProperty(String name) {
-            return null;
-        }
         
     }
 }

@@ -15,8 +15,7 @@
  */
 package org.hippoecm.hst.site.request;
 
-import java.util.Map;
-
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.util.PropertyParser;
@@ -27,18 +26,18 @@ public class ComponentConfigurationImpl implements ComponentConfiguration{
 
     private final static Logger log = LoggerFactory.getLogger(ComponentConfigurationImpl.class);
     
-    public Map<String, Object> unmodifiablePropertiesMap;
+    public HstComponentConfiguration componentConfiguration;
     
-    public ComponentConfigurationImpl(Map<String, Object> properties) {
-        this.unmodifiablePropertiesMap = properties;
+    public ComponentConfigurationImpl(HstComponentConfiguration compConfig) {
+        this.componentConfiguration = compConfig;
     }
 
-    public Object getResolvedProperty(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
+    public Object getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
         
-        Object o = unmodifiablePropertiesMap.get(name);
-        PropertyParser pp = new PropertyParser(hstResolvedSiteMapItem.getResolvedProperties());
-        Object oparsed = pp.resolveProperty(name, o);
-        log.debug("Return value '{}' for property '{}'", oparsed, name);
-        return oparsed;
+        String paramValue = componentConfiguration.getParameter(name);
+        PropertyParser pp = new PropertyParser(hstResolvedSiteMapItem.getParameters());
+        Object parsedParamValue = pp.resolveProperty(name, paramValue);
+        log.debug("Return value '{}' for property '{}'", parsedParamValue, name);
+        return parsedParamValue;
     }
 }

@@ -74,6 +74,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     private boolean isVisible;
     
+    private Map<String,String> parameters = new HashMap<String,String>();
+    
     private List<HstSiteMapItemService> containsWildCardChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
     private List<HstSiteMapItemService> containsAnyChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
     private boolean containsAny;
@@ -137,7 +139,18 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
             parameterizedPath = parameterizedPath + value;
         }
         
-        System.out.println(" parameterizedPath " + parameterizedPath );
+        String[] parameterNames = getValueProvider().getStrings(Configuration.SITEMAPITEM_PROPERTY_PARAMETER_NAMES);
+        String[] parameterValues = getValueProvider().getStrings(Configuration.SITEMAPITEM_PROPERTY_PARAMETER_VALUES);
+        
+        if(parameterNames != null && parameterValues != null){
+           if(parameterNames.length != parameterValues.length) {
+               log.warn("Skipping parameters for component because they only make sense if there are equal number of names and values");
+           }  else {
+               for(int i = 0; i < parameterNames.length ; i++) {
+                   this.parameters.put(parameterNames[i], parameterValues[i]);
+               }
+           }
+        }
         
         try {
             Node n = this.getValueProvider().getJcrNode();
@@ -244,6 +257,18 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     public String getRelativeContentPath() {
         return this.relativeContentPath;
     }
+    
+
+    public String getParameter(String name) {
+        return this.parameters.get(name);
+    }
+    
+
+    public Map<String, String> getParametrs() {
+        return this.parameters;
+    }
+
+
 
     public List<String> getRoles() {
         return this.roles;

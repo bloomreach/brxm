@@ -20,6 +20,7 @@ import javax.jcr.observation.Event;
 
 import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.core.jcr.GenericEventListener;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +30,14 @@ public class HstSitesConfigurationEventListener extends GenericEventListener {
     
     protected HstSitesManager sitesManager;
     protected HstComponentRegistry componentRegistry;
+    protected HstSiteMapMatcher hstSiteMapMatcher;
     
     public void setSitesManager(HstSitesManager sitesManager) {
         this.sitesManager = sitesManager;
+    }
+    
+    public void setSiteMapMatcher(HstSiteMapMatcher hstSiteMapMatcher) {
+        this.hstSiteMapMatcher = hstSiteMapMatcher;
     }
     
     public void setComponentRegistry(HstComponentRegistry componentRegistry) {
@@ -86,5 +92,6 @@ public class HstSitesConfigurationEventListener extends GenericEventListener {
     private void doInvalidation() {
         this.componentRegistry.unregisterAllComponents();
         this.sitesManager.invalidate();
+        this.hstSiteMapMatcher.invalidate();
     }
 }

@@ -31,6 +31,9 @@ public class Configuration {
     public final static String COMPONENT_PROPERTY_REFERECENCENAME = "hst:referencename";
     public final static String COMPONENT_PROPERTY_REFERECENCECOMPONENT =  "hst:referencecomponent";
     public final static String COMPONENT_PROPERTY_CONTENTBASEPATH =  "hst:componentcontentbasepath";
+
+    public final static String COMPONENT_PROPERTY_PARAMETER_NAMES = "hst:parameternames";
+    public final static String COMPONENT_PROPERTY_PARAMETER_VALUES = "hst:parametervalues";
     
     
     public final static String TEMPLATE_PROPERTY_RENDERPATH =  "hst:renderpath";
@@ -44,6 +47,9 @@ public class Configuration {
     public final static String SITEMAPITEM_PROPERTY_ROLES =  "hst:roles";
     public final static String SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH =  "hst:relativecontentpath";
     public final static String SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID =  "hst:componentconfigurationid";
+
+    public final static String SITEMAPITEM_PROPERTY_PARAMETER_NAMES = "hst:parameternames";
+    public final static String SITEMAPITEM_PROPERTY_PARAMETER_VALUES = "hst:parametervalues";
     
    
     public final static String NODEPATH_HST_CONFIGURATION = "hst:configuration/hst:configuration";

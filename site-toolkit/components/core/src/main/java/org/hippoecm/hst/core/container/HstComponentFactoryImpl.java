@@ -49,11 +49,8 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
                 Class compClass = loader.loadClass(componentClassName);
                 component = (HstComponent) compClass.newInstance();
                 
-                Map<String, Object> tempProperties = compConfig.getProperties();
-                final Map<String, Object> properties = (Map<String, Object>) (tempProperties == null ? Collections.emptyMap() : Collections.unmodifiableMap(tempProperties));
-                tempProperties = null;
-                
-                ComponentConfiguration compConfigImpl = new ComponentConfigurationImpl(properties); 
+               
+                ComponentConfiguration compConfigImpl = new ComponentConfigurationImpl(compConfig); 
                 
                 component.init(servletConfig, compConfigImpl);
                 

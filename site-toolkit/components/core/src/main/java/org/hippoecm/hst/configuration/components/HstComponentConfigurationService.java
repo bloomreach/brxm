@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -70,9 +71,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     private List<String> usedChildReferenceNames = new ArrayList<String>();
     private int autocreatedCounter = 0;
     
-    private String[] parameterNames;
-    private String[] parameterValues;
-     
+    private Map<String,String> parameters = new HashMap<String,String>();
 
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id){
@@ -102,6 +101,18 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
             this.hstTemplate = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_TEMPLATE_);
             this.serveResourcePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH);
             this.propertyMap = getValueProvider().getPropertyMap();
+            String[] parameterNames = getValueProvider().getStrings(Configuration.COMPONENT_PROPERTY_PARAMETER_NAMES);
+            String[] parameterValues = getValueProvider().getStrings(Configuration.COMPONENT_PROPERTY_PARAMETER_VALUES);
+            
+            if(parameterNames != null && parameterValues != null){
+               if(parameterNames.length != parameterValues.length) {
+                   log.warn("Skipping parameters for component because they only make sense if there are equal number of names and values");
+               }  else {
+                   for(int i = 0; i < parameterNames.length ; i++) {
+                       this.parameters.put(parameterNames[i], parameterValues[i]);
+                   }
+               }
+            }
         } 
         init(jcrNode);
     }
@@ -170,6 +181,11 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         return propertyMap.getAllMapsCombined();
     }
     
+
+    public String getParameter(String name) {
+        return this.parameters.get(name);
+    }
+    
     public String getId() {
         return this.id;
     }
@@ -207,8 +223,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         copy.renderPath = child.renderPath;
         copy.referenceComponent = child.referenceComponent;
         copy.serveResourcePath = child.serveResourcePath;
-        copy.parameterNames = child.parameterNames;
-        copy.parameterValues = child.parameterValues;
+        copy.parameters = child.parameters;
         List<String> copyToList = new ArrayList<String>();
         Collections.copy(copyToList, child.usedChildReferenceNames);
         copy.usedChildReferenceNames = copyToList;
@@ -240,10 +255,19 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                  if(this.referenceComponent == null) this.referenceComponent = referencedComp.referenceComponent;
                  if(this.serveResourcePath == null) this.serveResourcePath = referencedComp.serveResourcePath;
                  
-                 // TODO as parameter names & values are multiple, the names and value need to be merged!
-                 if(this.parameterNames == null) this.parameterNames = referencedComp.parameterNames;
-                 if(this.parameterValues == null) this.parameterValues = referencedComp.parameterValues;
-                 
+                 if(this.parameters == null) {
+                     this.parameters = referencedComp.parameters;
+                 } else if(referencedComp.parameters != null){
+                     // as we already have parameters, add only the once we do not yet have
+                     for(Entry<String,String> entry : referencedComp.parameters.entrySet()){
+                         if(this.parameters.containsKey(entry.getKey())) { 
+                             // skip: we already have this parameter set ourselves
+                         } else {
+                           this.parameters.put(entry.getKey(), entry.getValue());  
+                         }
+                     }
+                 }
+                
                  List<String> copyToList = new ArrayList<String>();
                  Collections.copy(copyToList, referencedComp.usedChildReferenceNames);
                  this.usedChildReferenceNames.addAll(copyToList);

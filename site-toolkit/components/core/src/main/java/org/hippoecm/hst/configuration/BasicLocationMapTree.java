@@ -46,6 +46,7 @@ public class BasicLocationMapTree implements LocationMapTree{
     public BasicLocationMapTree(String canonicalSiteContentPath) {
         this.cache = Collections.synchronizedMap(new LRUMap(DEFAULT_CACHE_SIZE));
         this.canonicalSiteContentPath = canonicalSiteContentPath;
+        
     }
     
     public void add(String unresolvedPath, HstSiteMapItem hstSiteMapItem){
