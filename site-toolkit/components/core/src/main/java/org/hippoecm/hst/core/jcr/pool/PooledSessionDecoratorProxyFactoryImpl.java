@@ -89,11 +89,12 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 }
             }
 
-            if (ret != null && ret instanceof Item) {
-                Set<String> unsupportedMethodNames = new HashSet<String>();
-                unsupportedMethodNames.add("getSession");
-                ret = ProxyUtils.createdUnsupportableProxyObject(ret, unsupportedMethodNames, ret.getClass().getInterfaces());
-            }
+            // TODO: should it be provided?
+//            if (ret != null && ret instanceof Item) {
+//                Set<String> unsupportedMethodNames = new HashSet<String>();
+//                unsupportedMethodNames.add("getSession");
+//                ret = ProxyUtils.createdUnsupportableProxyObject(ret, unsupportedMethodNames, ret.getClass().getInterfaces());
+//            }
 
             return ret;
         }

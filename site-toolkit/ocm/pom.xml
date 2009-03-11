@@ -22,48 +22,92 @@
     <version>2.03.00-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Site Toolkit Client</name>
-  <description>Hippo Site Toolkit Client</description>
+  <name>Hippo Site Toolkit Commons</name>
+  <description>Hippo Site Toolkit Commons</description>
   <groupId>org.onehippo.ecm.hst</groupId>
-  <artifactId>hst-client</artifactId>
+  <artifactId>hst-ocm</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
+  
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>provided</scope>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
+    
     <dependency>
-      <groupId>javax.servlet.jsp</groupId>
-      <artifactId>jsp-api</artifactId>
-      <scope>provided</scope>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
     </dependency>
+    
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-proxy</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-connector</artifactId>
     </dependency>
+    
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-ocm</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-api</artifactId>
       <version>${pom.version}</version>
       <scope>provided</scope>
     </dependency>
+    
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-ocm</artifactId>
+      <artifactId>hst-commons</artifactId>
       <version>${pom.version}</version>
+      <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>jdom</groupId>
-      <artifactId>jdom</artifactId>
-    </dependency>
+    
     <!-- Test dependencies -->
+    
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-repository-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
+      <artifactId>hst-addon-repository</artifactId>
+      <version>${pom.version}</version>
+      <scope>test</scope>      
+    </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
+      <artifactId>hst-addon-testcontents</artifactId>
+      <version>${pom.version}</version>
+      <scope>test</scope>      
+    </dependency>
+    
   </dependencies>
 
   <build>

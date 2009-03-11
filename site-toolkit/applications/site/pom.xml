@@ -124,6 +124,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-ocm</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.onehippo.ecm.hst.components</groupId>
       <artifactId>hst-core</artifactId>
       <version>${project.version}</version>
@@ -210,11 +215,6 @@
             <scope>runtime</scope>
           </dependency>
           <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-proxy</artifactId>
-            <version>${commons-proxy.version}</version>
-          </dependency>
-          <dependency>
             <groupId>org.onehippo.ecm.hst</groupId>
             <artifactId>hst-api</artifactId>
             <version>${project.version}</version>
@@ -281,12 +281,6 @@
                           tofile="${tomcat.hst.shared.lib}/jcr-1.0.jar" />
                     <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" 
                           tofile="${tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
-                    <copy file="${settings.localRepository}/org/apache/commons/commons-proxy/1.0/commons-proxy-1.0.jar" 
-                          tofile="${tomcat.hst.shared.lib}/commons-proxy-1.0.jar" />
-                    <copy file="${settings.localRepository}/org/slf4j/slf4j-api/1.4.3/slf4j-api-1.4.3.jar" 
-                          tofile="${tomcat.hst.shared.lib}/slf4j-api-1.4.3.jar" />
-                    <copy file="${settings.localRepository}/org/slf4j/slf4j-simple/1.4.3/slf4j-simple-1.4.3.jar" 
-                          tofile="${tomcat.hst.shared.lib}/slf4j-simple-1.4.3.jar" />
                     <copy file="../../api/target/hst-api-${project.version}.jar"
                           tofile="${tomcat.hst.shared.lib}/hst-api-${project.version}.jar" />
                     <copy file="../../commons/target/hst-commons-${project.version}.jar"
@@ -322,21 +316,6 @@
                 <artifactId>geronimo-jta_1.1_spec</artifactId>
                 <version>${jta.version}</version>
                 <scope>runtime</scope>
-              </dependency>
-              <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-proxy</artifactId>
-                <version>${commons-proxy.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j.version}</version>
               </dependency>
             </dependencies>
           </plugin>
@@ -383,12 +362,6 @@
                           tofile="${tomcat.hst.shared.lib}/jcr-1.0.jar" />
                     <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" 
                           tofile="${tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
-                    <copy file="${settings.localRepository}/org/apache/commons/commons-proxy/1.0/commons-proxy-1.0.jar" 
-                          tofile="${tomcat.hst.shared.lib}/commons-proxy-1.0.jar" />
-                    <copy file="${settings.localRepository}/org/slf4j/slf4j-api/1.4.3/slf4j-api-1.4.3.jar" 
-                          tofile="${tomcat.hst.shared.lib}/slf4j-api-1.4.3.jar" />
-                    <copy file="${settings.localRepository}/org/slf4j/slf4j-simple/1.4.3/slf4j-simple-1.4.3.jar" 
-                          tofile="${tomcat.hst.shared.lib}/slf4j-simple-1.4.3.jar" />
                     <copy file="../../api/target/hst-api-${project.version}.jar"
                           tofile="${tomcat.hst.shared.lib}/hst-api-${project.version}.jar" />
                     <copy file="../../commons/target/hst-commons-${project.version}.jar"
@@ -425,21 +398,6 @@
                 <artifactId>geronimo-jta_1.1_spec</artifactId>
                 <version>${jta.version}</version>
                 <scope>runtime</scope>
-              </dependency>
-              <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-proxy</artifactId>
-                <version>${commons-proxy.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j.version}</version>
               </dependency>
             </dependencies>
           </plugin>

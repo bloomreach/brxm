@@ -590,6 +590,7 @@
       <modules>
         <module>api</module>
         <module>commons</module>
+        <module>ocm</module>
         <module>toolkit-resources</module>
         <module>components</module>
         <module>client</module>
