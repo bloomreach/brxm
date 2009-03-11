@@ -39,7 +39,9 @@ public class RootPlugin extends RenderPlugin implements ContextMenuManager {
 
         add(new AjaxEventBehavior("onclick") {
             public void onEvent(AjaxRequestTarget target) {
-                activeContextMenu.collapse(target);
+                if(activeContextMenu != null) {
+                    activeContextMenu.collapse(target);
+                }
             }
         });
     }

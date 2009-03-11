@@ -57,50 +57,9 @@ public class MenuButton extends Panel implements ContextMenu {
 
             });
         link.add(new Label("label",new StringResourceModel(menu.getName(),MenuButton.this,null,menu.getName())));
-        
-        /*AjaxEventBehavior evt = new AjaxEventBehavior("onmouseover") {
-                protected void onEvent(AjaxRequestTarget target) {
-                    System.err.println("IN");
-                    content.setVisible(true);nstalc
-                    target.addComponent(content);
-                    target.addComponent(MenuButton.this);
-                }
-                @Override
-                protected IAjaxCallDecorator getAjaxCallDecorator()
-                {
-                    return new CancelEventIfNoAjaxDecorator(null);
-                } 
-            };
-        evt.setThrottleDelay(Duration.seconds(5));
-        link.add(evt);
-        add(new AjaxEventBehavior("onmouseout") {
-                protected void onEvent(AjaxRequestTarget target) {
-                    System.err.println("OUT");
-                    if(!pinned) {
-                        content.setVisible(false);
-                        target.addComponent(content);
-                        target.addComponent(MenuButton.this);
-                    }
-                }
-                @Override
-                protected IAjaxCallDecorator getAjaxCallDecorator()
-                {
-                    return new CancelEventIfNoAjaxDecorator(null);
-                } 
-            });*/
-        /*
-link.add(new AttributeAppender("onmouseover", new Model("foo();return false;"), ";"));
-AjaxEventBehavior
-AjaxLink
-ondblclick
-        */
     }
-    
+
     public void collapse(AjaxRequestTarget target) {
-        if(active) {
-            active = false;
-            return;
-        }
         pinned = false;
         content.setVisible(pinned);
         target.addComponent(content);

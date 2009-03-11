@@ -30,9 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.Session;
 
-import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.addon.workflow.Menu;
-import org.hippoecm.addon.workflow.MenuBar;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -60,6 +57,7 @@ public class WorkflowPlugin extends RenderPlugin {
     
     private String[] categories;
     private final IModelReference modelReference;
+    private List<Menu> menu = new LinkedList<Menu>();
 
     public WorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -91,7 +89,7 @@ public class WorkflowPlugin extends RenderPlugin {
                     public void onEvent(IEvent event) {
                         if (event instanceof IModelReference.IModelChangeEvent) {
                             IModelReference.IModelChangeEvent<JcrNodeModel> mce = (IModelReference.IModelChangeEvent<JcrNodeModel>)event;
-                        //updateModel(mce.getNewModel());
+                            updateModel(mce.getNewModel());
                         }
                     }
                 }, IObserver.class.getName());
@@ -101,55 +99,64 @@ public class WorkflowPlugin extends RenderPlugin {
             log.warn("No model configured");
         }
 
-
-        List<Menu> menu = new LinkedList<Menu>();
-        try {
-        javax.jcr.Session session = ((UserSession)Session.get()).getJcrSession();
-        Node document = session.getRootNode().getNode("content/articles/myarticle1/myarticle1");
-        Workspace workspace = session.getWorkspace();
-        Map<String, WorkflowDescriptor> workflows = new LinkedHashMap<String, WorkflowDescriptor>();
-        if (workspace instanceof HippoWorkspace) {
-            WorkflowManager workflowMgr = ((HippoWorkspace)workspace).getWorkflowManager();
-            for (String category : categories) {
-                WorkflowDescriptor descriptor = workflowMgr.getWorkflowDescriptor(category, document);
-                if (descriptor != null) {
-                    workflows.put(category, descriptor);
-                }
-            }
-        }
-        Map<String, List<WorkflowDetail>> items = new LinkedHashMap<String, List<WorkflowDetail>>();
-        for (Map.Entry<String, WorkflowDescriptor> entry : workflows.entrySet()) {
-            LinkedList<WorkflowDetail> details = new LinkedList<WorkflowDetail>();
-            WorkflowDescriptor descriptor = entry.getValue();
-            try {
-                Class<Workflow>[] interfaces = descriptor.getInterfaces();
-                for (int i = 0; i < interfaces.length && i < 1; i++) {
-                    for (Method method : interfaces[i].getDeclaredMethods()) {
-                        details.add(new WorkflowDetail(descriptor, method));
-                    }
-                    items.put(entry.getKey(), details);
-                }
-            } catch (ClassNotFoundException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
-            }
-        }
-        for (Map.Entry<String, List<WorkflowDetail>> item : items.entrySet()) {
-            List<Menu> subs = new LinkedList<Menu>();
-            for (WorkflowDetail detail : item.getValue()) {
-                Method method = detail.method;
-                subs.add(new WorkflowMenu(detail));
-            }
-            menu.add(new Menu<Menu>(item.getKey(), subs));
-        }
-        }catch(RepositoryException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
-        }
-        
+        menu = new LinkedList<Menu>();
+        onModelChanged();
         add(new MenuBar("menu", menu));
     }
 
+    @Override
+    protected void onModelChanged() {
+        if(getModel() instanceof JcrNodeModel) {
+            Node node = ((JcrNodeModel)getModel()).getNode();
+            if(node != null) {
+                node.getPath();
+            }
+        }
+        menu.clear();
+        try {
+            javax.jcr.Session session = ((UserSession)Session.get()).getJcrSession();
+            Node document = session.getRootNode().getNode("content/articles/myarticle1/myarticle1");
+            Workspace workspace = session.getWorkspace();
+            Map<String, WorkflowDescriptor> workflows = new LinkedHashMap<String, WorkflowDescriptor>();
+            if (workspace instanceof HippoWorkspace) {
+                WorkflowManager workflowMgr = ((HippoWorkspace)workspace).getWorkflowManager();
+                for (String category : categories) {
+                    WorkflowDescriptor descriptor = workflowMgr.getWorkflowDescriptor(category, document);
+                    if (descriptor != null) {
+                        workflows.put(category, descriptor);
+                    }
+                }
+            }
+            Map<String, List<WorkflowDetail>> items = new LinkedHashMap<String, List<WorkflowDetail>>();
+            for (Map.Entry<String, WorkflowDescriptor> entry : workflows.entrySet()) {
+                LinkedList<WorkflowDetail> details = new LinkedList<WorkflowDetail>();
+                WorkflowDescriptor descriptor = entry.getValue();
+                try {
+                    Class<Workflow>[] interfaces = descriptor.getInterfaces();
+                    for (int i = 0; i < interfaces.length && i < 1; i++) {
+                        for (Method method : interfaces[i].getDeclaredMethods()) {
+                            details.add(new WorkflowDetail(descriptor, method));
+                        }
+                        items.put(entry.getKey(), details);
+                    }
+                } catch (ClassNotFoundException ex) {
+                    System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                    ex.printStackTrace(System.err);
+                }
+            }
+            for (Map.Entry<String, List<WorkflowDetail>> item : items.entrySet()) {
+                List<Menu> subs = new LinkedList<Menu>();
+                for (WorkflowDetail detail : item.getValue()) {
+                    subs.add(new WorkflowMenu(detail));
+                }
+                menu.add(new Menu<Menu>(item.getKey(), subs));
+            }
+        } catch (RepositoryException ex) {
+            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+            ex.printStackTrace(System.err);
+        }
+    }
+    
     public static class WorkflowMenu extends Menu {
         public WorkflowMenu(WorkflowDetail detail) {
             super(detail.getName());
