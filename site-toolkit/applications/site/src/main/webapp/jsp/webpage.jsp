@@ -18,7 +18,7 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
 <%
-System.out.println("Console out from general_layout.jsp");
+System.out.println("Console out from webpage.jsp");
 %>
 
 <html>
@@ -35,7 +35,7 @@ System.out.println("Console out from general_layout.jsp");
 <script language="javascript">
 <!--
 function <hst:namespace/>showPopup() {
-    alert("Hello from general_layout  component!");
+    alert("Hello from webpage component!");
 }
 //-->
 </script>
@@ -43,7 +43,7 @@ function <hst:namespace/>showPopup() {
 <span class="title">The new Hst is Coooooooooooool</span>
 
 <div class="page">
-    <div>
+    <!--div>
     
 	    <a href="javascript:<hst:namespace/>showPopup();">Show</a>
 	    
@@ -61,7 +61,7 @@ function <hst:namespace/>showPopup() {
 	    <a href="${firstUrl}">First</a>
 	    <a href="${lastUrl}">Last</a>
     
-    </div>
+    </div-->
     
     <hst:include ref="body" />
     

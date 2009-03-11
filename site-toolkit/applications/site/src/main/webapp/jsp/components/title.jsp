@@ -12,8 +12,5 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License. --%>
-<%@ page language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
-<title>My Title.....</title>
+<title>My website</title>

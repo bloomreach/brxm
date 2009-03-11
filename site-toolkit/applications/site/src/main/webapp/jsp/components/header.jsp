@@ -21,7 +21,4 @@
 
 <hst:include ref="title" />
 
-<!-- include style -->
-
-<hst:include ref="style" />
 
