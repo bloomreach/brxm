@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.javascript.BooleanSetting;
+import org.hippoecm.frontend.plugins.yui.javascript.IntSetting;
 import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiId;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiIdSetting;
@@ -34,7 +35,7 @@ public class UnitSettings extends YuiObject {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(UnitSettings.class);
-    
+
     private static final StringSetting POSITION = new StringSetting("position");
     private static final YuiIdSetting ID = new YuiIdSetting("id");
     private static final YuiIdSetting BODY = new YuiIdSetting("body");
@@ -45,7 +46,9 @@ public class UnitSettings extends YuiObject {
     private static final StringSetting GUTTER = new StringSetting("gutter");
     private static final BooleanSetting SCROLL = new BooleanSetting("scroll");
 
-    protected final static YuiType TYPE = new YuiType(POSITION, ID, BODY, WIDTH, HEIGHT, GUTTER, SCROLL);
+    private static final IntSetting Z_INDEX = new IntSetting("zindex");
+
+    protected final static YuiType TYPE = new YuiType(POSITION, ID, BODY, WIDTH, HEIGHT, GUTTER, SCROLL, Z_INDEX);
 
     public static final String TOP = "top";
     public static final String RIGHT = "right";
@@ -103,7 +106,7 @@ public class UnitSettings extends YuiObject {
     public String getBody() {
         return BODY.getScriptValue(BODY.get(this));
     }
-    
+
     public void setMarkupId(String markupId) {
         this.markupId = markupId;
         if (wrapperId != null) {

@@ -215,6 +215,13 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
             
             afterRender : function() {
+                for (var i = 0; i < this.config.units.length; i++) {
+                    var uCfg = this.config.units[i];
+                    var un = this.layout.getUnitByPosition(uCfg.position);
+                    if(un && uCfg.zindex > 0) {
+                        un.setStyle('zIndex', uCfg.zindex);
+                    }
+                }    
             },
             
             enhanceIds : function() {
