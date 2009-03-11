@@ -90,7 +90,7 @@
         <sv:value>center</sv:value>
       </sv:property>
       <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=editor-perspective-top,height=42</sv:value>
+        <sv:value>id=editor-perspective-top,height=84</sv:value>
       </sv:property>
       <sv:property sv:name="center" sv:type="String">
         <sv:value>id=editor-perspective-center,body=editor-perspective-center-body,scroll=true</sv:value>
@@ -130,6 +130,9 @@
       <sv:value>${cluster.id}.workflows</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
+      <sv:value>default</sv:value>
+      <sv:value>core</sv:value>
+      <sv:value>embedded</sv:value>
       <sv:value>default</sv:value>
     </sv:property>
     <sv:node sv:name="workflow.options">
