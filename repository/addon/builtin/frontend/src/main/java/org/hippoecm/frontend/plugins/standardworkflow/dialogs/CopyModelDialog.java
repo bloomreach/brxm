@@ -28,7 +28,9 @@ import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.EditmodelWorkflowPlugin;
-import org.hippoecm.frontend.service.IEditService;
+import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
@@ -74,9 +76,14 @@ public class CopyModelDialog extends AbstractWorkflowDialog {
                 IPluginContext context = getPlugin().getPluginContext();
                 IPluginConfig config = getPlugin().getPluginConfig();
 
-                IEditService viewService = context.getService(config.getString(IEditService.EDITOR_ID),
-                        IEditService.class);
-                viewService.edit(nodeModel);
+                IEditorManager editService = context.getService(config.getString(IEditorManager.EDITOR_ID),
+                        IEditorManager.class);
+                IEditor editor = editService.openEditor(nodeModel);
+                IRenderService renderer = context.getService(context.getReference(editor).getServiceId(),
+                        IRenderService.class);
+                if (renderer != null) {
+                    renderer.focus(null);
+                }
             } else {
                 log.error("no model found to edit");
             }

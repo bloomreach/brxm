@@ -33,18 +33,20 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IEditService;
+import org.hippoecm.frontend.service.EditorException;
+import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditorManagerPlugin implements IPlugin, IObserver, IRefreshable, IDetachable {
+public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -59,8 +61,8 @@ public class EditorManagerPlugin implements IPlugin, IObserver, IRefreshable, ID
     private EditorFactory editorFactory;
 
     private final IModelReference modelReference;
-    private Editor preview;
-    private Map<JcrNodeModel, Editor> editors;
+    private CmsEditor preview;
+    private Map<JcrNodeModel, CmsEditor> editors;
     private List<JcrNodeModel> pending;
     private transient boolean active = false;
 
@@ -68,14 +70,12 @@ public class EditorManagerPlugin implements IPlugin, IObserver, IRefreshable, ID
         this.context = context;
         this.config = config;
 
-        editors = new HashMap<JcrNodeModel, Editor>();
+        editors = new HashMap<JcrNodeModel, CmsEditor>();
         pending = new LinkedList<JcrNodeModel>();
-        editorFactory = new EditorFactory(context, config.getString("cluster.edit.name"), config
+        editorFactory = new EditorFactory(this, context, config.getString("cluster.edit.name"), config
                 .getPluginConfig("cluster.edit.options"));
-        previewFactory = new EditorFactory(context, config.getString("cluster.preview.name"), config
+        previewFactory = new EditorFactory(this, context, config.getString("cluster.preview.name"), config
                 .getPluginConfig("cluster.preview.options"));
-
-        context.registerService(this, IRefreshable.class.getName());
 
         // monitor document in browser 
         if (config.getString(RenderService.MODEL_ID) != null) {
@@ -89,18 +89,7 @@ public class EditorManagerPlugin implements IPlugin, IObserver, IRefreshable, ID
         }
 
         // register editor
-        context.registerService(new IEditService() {
-            private static final long serialVersionUID = 1L;
-
-            public void close(IModel model) {
-                EditorManagerPlugin.this.close(model);
-            }
-
-            public void edit(IModel model) {
-                EditorManagerPlugin.this.edit(model);
-            }
-
-        }, config.getString("editor.id"));
+        context.registerService(this, config.getString("editor.id"));
     }
 
     public void detach() {
@@ -118,7 +107,11 @@ public class EditorManagerPlugin implements IPlugin, IObserver, IRefreshable, ID
                 if (nodeModel != null && nodeModel.getNode() != null) {
                     // close preview when a new document is selected
                     if (preview != null) {
-                        preview.close();
+                        try {
+                            preview.close();
+                        } catch (EditorException ex) {
+                            log.error("Failed to close preview", ex);
+                        }
                         preview = null;
                     }
 
@@ -143,7 +136,12 @@ public class EditorManagerPlugin implements IPlugin, IObserver, IRefreshable, ID
                         // open editor if there is a draft
                         JcrNodeModel draftDocument = getDraftModel(nodeModel);
                         if (draftDocument != null) {
-                            openEditor(draftDocument);
+                            try {
+                                CmsEditor editor = openEditor(draftDocument);
+                                editor.focus();
+                            } catch (ServiceException ex) {
+                                log.error(ex.getMessage());
+                            }
                             return;
                         }
 
@@ -153,7 +151,7 @@ public class EditorManagerPlugin implements IPlugin, IObserver, IRefreshable, ID
                             try {
                                 this.preview = previewFactory.newEditor(previewDocument);
                                 this.preview.focus();
-                            } catch (EditorException ex) {
+                            } catch (CmsEditorException ex) {
                                 log.error(ex.getMessage());
                             }
                         } else {
@@ -175,7 +173,7 @@ public class EditorManagerPlugin implements IPlugin, IObserver, IRefreshable, ID
                         try {
                             this.preview = previewFactory.newEditor(nodeModel);
                             this.preview.focus();
-                        } catch (EditorException ex) {
+                        } catch (CmsEditorException ex) {
                             log.error(ex.getMessage());
                         }
                     }
@@ -188,138 +186,118 @@ public class EditorManagerPlugin implements IPlugin, IObserver, IRefreshable, ID
         }
     }
 
-    public void refresh() {
-        if (!active) {
-            active = true;
-            try {
-                if (preview != null) {
-                    JcrNodeModel previewModel = (JcrNodeModel) preview.getModel();
-                    if (!previewModel.getItemModel().exists()) {
-                        preview.close();
-                        preview = null;
-                        return;
-                    }
-                }
-
-                for (JcrNodeModel editorModel : editors.keySet()) {
-                    if (!editorModel.getItemModel().exists()) {
-                        editors.get(editorModel).close();
-                        editors.remove(editorModel);
-                        return;
-                    }
-                }
-
-                for (JcrNodeModel pendingModel : pending) {
-                    if (!pendingModel.getItemModel().exists()) {
-                        pending.remove(pendingModel);
-                        return;
-                    }
-                }
-            } finally {
-                active = false;
+    public IEditor getEditor(IModel editModel) {
+        if (editModel instanceof JcrNodeModel) {
+            // find editor
+            if (editors.containsKey(editModel)) {
+                return editors.get(editModel);
             }
+        } else {
+            log.warn("Unknown model type", editModel);
         }
+        return null;
     }
 
-    void edit(IModel editModel) {
-        if (!active) {
-            active = true;
-            try {
-                if (editModel instanceof JcrNodeModel) {
-                    JcrNodeModel nodeModel = (JcrNodeModel) editModel;
+    public CmsEditor openEditor(IModel model) throws ServiceException {
+        JcrNodeModel nodeModel = (JcrNodeModel) model;
 
-                    if (preview != null && nodeModel.equals(preview.getModel()) && nodeModel.getParentModel() != null
-                            && nodeModel.getParentModel().getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
-                        preview.focus();
-                    } else {
-                        if (preview != null) {
-                            preview.close();
-                            preview = null;
-                        }
-
-                        // open editor
-                        if (editors.containsKey(editModel)) {
-                            editors.get(editModel).focus();
-                        } else if (!pending.contains(editModel)) {
-                            openEditor((JcrNodeModel) editModel);
-                        }
-                    }
-
-                    IModelReference modelService = context.getService(config.getString(RenderService.MODEL_ID),
-                            IModelReference.class);
-                    if (modelService != null) {
-                        if (nodeModel.getParentModel() != null
-                                && nodeModel.getParentModel().getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
-                            modelService.setModel(nodeModel.getParentModel());
-                        } else {
-                            modelService.setModel(nodeModel);
-                        }
-                    }
-                } else {
-                    log.warn("Unknown model type", editModel);
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            } finally {
-                active = false;
-            }
+        if (editors.containsKey(nodeModel) || pending.contains(nodeModel)) {
+            throw new ServiceException("editor already exists");
         }
-    }
 
-    void close(IModel model) {
-        if (!active) {
-            active = true;
-            try {
-                if (model != null && model instanceof JcrNodeModel) {
-                    Node node = ((JcrNodeModel) model).getNode();
-                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        for (JcrNodeModel nodeModel : editors.keySet()) {
-                            if (nodeModel.getParentModel().equals(model)) {
-                                editors.get(nodeModel).close();
-                                editors.remove(nodeModel);
-                                break;
-                            }
-                        }
-                        for (JcrNodeModel nodeModel : pending) {
-                            if (nodeModel.getParentModel().equals(model)) {
-                                pending.remove(nodeModel);
-                            }
-                        }
-                    } else {
-                        if (editors.containsKey(model)) {
-                            editors.get(model).close();
-                            editors.remove(model);
-                        }
-                        if (pending.contains(model)) {
-                            pending.remove(model);
-                        }
-                    }
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            } finally {
-                active = false;
-            }
-        }
-    }
-
-    void openEditor(JcrNodeModel nodeModel) {
         if (editors.size() < 4) {
             try {
-                Editor editor = editorFactory.newEditor(nodeModel);
-                editors.put(nodeModel, editor);
-            } catch (EditorException ex) {
-                log.error(ex.getMessage());
-            } finally {
-                Editor editor = editors.get(nodeModel);
-                if (editor != null) {
-                    editor.focus();
+                // Close preview when it is
+                // 1) another document below the same handle as the passed-in model
+                // 2) the exact same node
+                if (preview != null) {
+                    JcrNodeModel previewModel = (JcrNodeModel) preview.getModel();
+                    if (nodeModel.getParentModel().equals(previewModel.getParentModel())) {
+                        Node node = nodeModel.getParentModel().getNode();
+                        try {
+                            if (node.isNodeType(HippoNodeType.NT_HANDLE) || nodeModel.equals(previewModel)) {
+                                preview.close();
+                            }
+                        } catch (EditorException ex) {
+                            log.error("Failed to close preview", ex);
+                        } catch (RepositoryException ex) {
+                            log.error("Unable to determine parent nodetype", ex);
+                        }
+                        preview = null;
+                    }
                 }
+
+                CmsEditor editor = editorFactory.newEditor(nodeModel);
+                editors.put(nodeModel, editor);
+                editor.focus();
+                return editor;
+            } catch (CmsEditorException ex) {
+                log.error(ex.getMessage());
+                throw new ServiceException("Initialization failed", ex);
             }
         } else {
             IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
             dialogService.show(new TooManyEditorsDialog());
             pending.add(nodeModel);
+            throw new ServiceException("Too many editors open");
+        }
+    }
+
+    void setActiveModel(JcrNodeModel nodeModel) {
+        try {
+            IModelReference modelService = context.getService(config.getString(RenderService.MODEL_ID),
+                    IModelReference.class);
+            if (modelService != null) {
+                if (nodeModel != null && nodeModel.getParentModel() != null
+                        && nodeModel.getParentModel().getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    modelService.setModel(nodeModel.getParentModel());
+                } else {
+                    modelService.setModel(nodeModel);
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+    }
+
+    void unregister(CmsEditor editor) {
+        JcrNodeModel model = (JcrNodeModel) editor.getModel();
+        if (model != null) {
+
+            // update selected node
+            if (!active) {
+                active = true;
+                JcrNodeModel nodeModel = (JcrNodeModel) modelReference.getModel();
+                if (nodeModel != null && nodeModel.getNode() != null) {
+                    try {
+                        Node node = nodeModel.getNode();
+                        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            if (model.getParentModel() != null && model.getParentModel().equals(nodeModel)) {
+                                setActiveModel(null);
+                            }
+                        } else {
+                            if (nodeModel.equals(model)) {
+                                setActiveModel(null);
+                            }
+                        }
+                    } catch (RepositoryException ex) {
+                        log.error("unable to update selected document");
+                    }
+                }
+                active = false;
+            }
+
+            // cleanup internals
+            if (editor == preview) {
+                preview = null;
+                return;
+            }
+            if (editors.containsKey(model)) {
+                editors.remove(model);
+            }
+            if (pending.contains(model)) {
+                pending.remove(model);
+            }
         }
     }
 

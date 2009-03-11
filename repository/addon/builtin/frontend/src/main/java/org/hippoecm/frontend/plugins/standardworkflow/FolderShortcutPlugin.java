@@ -46,7 +46,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
-import org.hippoecm.frontend.service.IEditService;
+import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
@@ -117,9 +118,9 @@ public class FolderShortcutPlugin extends RenderPlugin {
     // FIXME: pure duplication of logic in FolderWorkflowPlugin
     @SuppressWarnings("unchecked")
     public static void select(JcrNodeModel nodeModel, IServiceReference<IBrowseService> browseServiceRef,
-            IServiceReference<IEditService> editServiceRef) {
+            IServiceReference<IEditorManager> editServiceRef) {
         IBrowseService browser = browseServiceRef.getService();
-        IEditService editor = editServiceRef.getService();
+        IEditorManager editorMgr = editServiceRef.getService();
         try {
             if (nodeModel.getNode() != null
                     && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) || nodeModel.getNode().isNodeType(
@@ -129,7 +130,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 }
                 if (!nodeModel.getNode().isNodeType("hippostd:folder")
                         && !nodeModel.getNode().isNodeType("hippostd:directory")) {
-                    if (editor != null) {
+                    if (editorMgr != null) {
                         JcrNodeModel editNodeModel = nodeModel;
                         Node editNodeModelNode = nodeModel.getNode();
                         if (editNodeModelNode.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -151,13 +152,15 @@ public class FolderShortcutPlugin extends RenderPlugin {
                                 }
                             }
                             if (editNodeModel != null) {
-                                editor.edit(editNodeModel);
+                                editorMgr.openEditor(editNodeModel);
                             }
                         } catch (WorkflowException ex) {
                             log.error("Cannot auto-edit document", ex);
                         } catch (RemoteException ex) {
                             log.error("Cannot auto-edit document", ex);
                         } catch (RepositoryException ex) {
+                            log.error("Cannot auto-edit document", ex);
+                        } catch (ServiceException ex) {
                             log.error("Cannot auto-edit document", ex);
                         }
                     }
@@ -178,7 +181,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
         private String prototype = null;
         private String name;
         protected IServiceReference<IBrowseService> browseServiceRef;
-        protected IServiceReference<IEditService> editServiceRef;
+        protected IServiceReference<IEditorManager> editServiceRef;
         private Map<String, Set<String>> templates;
         protected final DropDownChoice folderChoice;
         protected final DropDownChoice categoryChoice;
@@ -195,8 +198,8 @@ public class FolderShortcutPlugin extends RenderPlugin {
 
             browseServiceRef = context.getReference(context.getService(config.getString(IBrowseService.BROWSER_ID),
                     IBrowseService.class));
-            editServiceRef = context.getReference(context.getService(config.getString(IEditService.EDITOR_ID),
-                    IEditService.class));
+            editServiceRef = context.getReference(context.getService(config.getString(IEditorManager.EDITOR_ID),
+                    IEditorManager.class));
 
             String workflowCategory = config.getString("gallery.workflow");
             Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();

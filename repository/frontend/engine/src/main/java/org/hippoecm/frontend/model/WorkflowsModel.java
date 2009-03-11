@@ -35,6 +35,8 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
     @SuppressWarnings("unused")
@@ -42,6 +44,8 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
 
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(WorkflowsModel.class);
+    
     private class Entry {
         String name;
         int order;
@@ -178,7 +182,7 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
                 return ((Entry) iter.next()).name;
             }
         } catch (RepositoryException ex) {
-            // FIXME
+            log.error("unable to determine name of workflow", ex);
         }
         return null;
     }
@@ -194,7 +198,7 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
                     return descriptors.get(0);
             }
         } catch (RepositoryException ex) {
-            // FIXME
+            log.error("unable to find workflow descriptor", ex);
         }
         return null;
     }
@@ -204,7 +208,7 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
             if (workflows == null)
                 initialize();
         } catch (RepositoryException ex) {
-            // FIXME
+            log.error("no workflows available", ex);
             return null;
         }
 
@@ -253,7 +257,7 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
                 initialize();
             return workflows.keySet().size();
         } catch (RepositoryException ex) {
-            // FIXME
+            log.error("no workflows found", ex);
             return 0;
         }
     }
@@ -261,4 +265,11 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
     public IModel model(Object object) {
         return (IModel) object;
     }
+
+    @Override
+    public void detach() {
+        super.detach();
+        workflows = null;
+    }
+
 }

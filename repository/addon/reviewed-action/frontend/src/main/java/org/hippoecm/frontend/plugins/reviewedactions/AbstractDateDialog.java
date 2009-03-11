@@ -59,7 +59,7 @@ public abstract class AbstractDateDialog extends AbstractWorkflowDialog {
                 }
             }
         }.setDefaultFormProcessing(false);
-        now.add(new Label("label", new ResourceModel("now")));
+        now.add(new Label("label", new ResourceModel("now", "Now")));
         addButton(now);
     }
 }

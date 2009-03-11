@@ -13,18 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugin;
+package org.hippoecm.frontend.plugins.cms.edit;
 
-import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.plugin.config.IClusterConfig;
+class CmsEditorException extends Exception {
+    private static final long serialVersionUID = 1L;
 
-public interface IClusterControl extends IClusterable {
-    final static String SVN_ID = "$Id$";
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
-    IClusterConfig getClusterConfig();
-    
-    void start();
-
-    void stop();
-
+    CmsEditorException(String reason) {
+        super(reason);
+    }
 }

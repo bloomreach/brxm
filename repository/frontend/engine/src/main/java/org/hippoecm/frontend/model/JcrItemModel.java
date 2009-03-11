@@ -45,6 +45,13 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     public JcrItemModel(Item item) {
         super(item);
+        if (item != null) {
+            try {
+                this.path = item.getPath();
+            } catch (RepositoryException ex) {
+                log.error("Unable to get item path", ex);
+            }
+        }
     }
 
     public JcrItemModel(String path) {
@@ -86,19 +93,22 @@ public class JcrItemModel extends LoadableDetachableModel {
     }
 
     public JcrItemModel getParentModel() {
-        int idx = getPath().lastIndexOf('/');
-        if (idx > 0) {
-            String parent = path.substring(0, path.lastIndexOf('/'));
-            return new JcrItemModel(parent);
-        } else if (idx == 0) {
-            if (path.equals("/")) {
-                return null;
+        String path = getPath();
+        if (path != null) {
+            int idx = path.lastIndexOf('/');
+            if (idx > 0) {
+                String parent = path.substring(0, path.lastIndexOf('/'));
+                return new JcrItemModel(parent);
+            } else if (idx == 0) {
+                if (path.equals("/")) {
+                    return null;
+                }
+                return new JcrItemModel("/");
+            } else {
+                log.error("Unrecognised path " + path);
             }
-            return new JcrItemModel("/");
-        } else {
-            log.error("Unrecognised path " + path);
-            return null;
         }
+        return null;
     }
 
     public boolean hasAncestor(JcrItemModel model) {

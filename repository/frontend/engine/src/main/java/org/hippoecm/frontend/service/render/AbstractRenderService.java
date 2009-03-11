@@ -36,6 +36,7 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBehaviorService;
+import org.hippoecm.frontend.service.IFocusListener;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -295,6 +296,10 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
     }
 
     public void focus(IRenderService child) {
+        List<IFocusListener> listeners = context.getServices(context.getReference(this).getServiceId(), IFocusListener.class);
+        for (IFocusListener listener : listeners) {
+            listener.onFocus(this);
+        }
         IRenderService parent = getParentService();
         if (parent != null) {
             parent.focus(this);
@@ -326,7 +331,6 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
     }
 
     // implement IStringResourceProvider
-    @SuppressWarnings("unchecked")
     public String getString(Map<String, String> criteria) {
         String[] translators = config.getStringArray(ITranslateService.TRANSLATOR_ID);
         if (translators != null) {

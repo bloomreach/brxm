@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.plugin.impl;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -26,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 public class ServiceForwarder extends ServiceTracker<IClusterable> {
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
@@ -59,6 +61,7 @@ public class ServiceForwarder extends ServiceTracker<IClusterable> {
     private PluginManager pluginMgr;
     private String source;
     private String target;
+    private List<IClusterable> forwarded;
 
     ServiceForwarder(PluginManager mgr, Class<?> clazz, String source, String target) {
         super(clazz);
@@ -66,6 +69,7 @@ public class ServiceForwarder extends ServiceTracker<IClusterable> {
         this.pluginMgr = mgr;
         this.source = source;
         this.target = target;
+        this.forwarded = new LinkedList<IClusterable>();
     }
 
     public void start() {
@@ -90,6 +94,7 @@ public class ServiceForwarder extends ServiceTracker<IClusterable> {
             stack.add(sourceEntry);
             log.debug("Forwarding " + service + " from " + source + " to " + target);
             pluginMgr.registerService(service, target);
+            forwarded.add(service);
             stack.remove(sourceEntry);
         }
         if (stack.size() == 0) {
@@ -99,20 +104,26 @@ public class ServiceForwarder extends ServiceTracker<IClusterable> {
 
     @Override
     protected void onRemoveService(IClusterable service, String name) {
-        Set<StackEntry> stack = threadLocal.get();
-        if (stack == null) {
-            threadLocal.set(stack = new HashSet<StackEntry>());
-        }
-        StackEntry targetEntry = new StackEntry(target, service);
-        if (!stack.contains(targetEntry)) {
-            StackEntry sourceEntry = new StackEntry(name, service);
-            stack.add(sourceEntry);
-            log.debug("Removing " + service + " from " + target + " (source: " + source + ")");
-            pluginMgr.unregisterService(service, target);
-            stack.remove(sourceEntry);
-        }
-        if (stack.size() == 0) {
-            threadLocal.remove();
+        if (forwarded.contains(service)) {
+            forwarded.remove(service);
+            Set<StackEntry> stack = threadLocal.get();
+            if (stack == null) {
+                threadLocal.set(stack = new HashSet<StackEntry>());
+            }
+            try {
+                StackEntry targetEntry = new StackEntry(target, service);
+                if (!stack.contains(targetEntry)) {
+                    StackEntry sourceEntry = new StackEntry(name, service);
+                    stack.add(sourceEntry);
+                    log.debug("Removing " + service + " from " + target + " (source: " + source + ")");
+                    pluginMgr.unregisterService(service, target);
+                    stack.remove(sourceEntry);
+                }
+            } finally {
+                if (stack.size() == 0) {
+                    threadLocal.remove();
+                }
+            }
         }
     }
 

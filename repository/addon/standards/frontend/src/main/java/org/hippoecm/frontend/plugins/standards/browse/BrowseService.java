@@ -117,14 +117,13 @@ public class BrowseService implements IBrowseService<IModel>, IDetachable {
         if (model instanceof JcrNodeModel) {
             JcrNodeModel document = findDocument((JcrNodeModel) model);
             if (folder != null) {
-                if (document != null) {
-                    updateDocumentModel(document);
-                }
+                updateDocumentModel(document);
                 setFolderModel(folder);
             } else {
                 log.warn("No folder found for model {}", model);
             }
         } else {
+            updateDocumentModel(null);
             log.warn("Model {} is not an JcrNodeModel", model);
         }
     }
@@ -135,7 +134,9 @@ public class BrowseService implements IBrowseService<IModel>, IDetachable {
     }
 
     private JcrNodeModel findDocument(JcrNodeModel document) {
-        if (document.getNode() == null || isFolder(document)) {
+        if (document == null) {
+            return null;
+        } else if (document.getNode() == null || isFolder(document)) {
             folder = document;
             document = null;
         } else {

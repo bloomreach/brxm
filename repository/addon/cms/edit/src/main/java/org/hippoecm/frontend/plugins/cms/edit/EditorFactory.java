@@ -33,15 +33,17 @@ public class EditorFactory implements IClusterable {
     private IPluginConfig config;
     private IPluginContext context;
     private String cluster;
+    private EditorManagerPlugin manager;
 
-    public EditorFactory(IPluginContext context, String cluster, IPluginConfig config) {
+    public EditorFactory(EditorManagerPlugin manager, IPluginContext context, String cluster, IPluginConfig config) {
+        this.manager = manager;
         this.context = context;
         this.cluster = cluster;
         this.config = config;
     }
 
-    public Editor newEditor(final IModel model) throws EditorException {
-        return new Editor(context, cluster, config, model);
+    public CmsEditor newEditor(final IModel model) throws CmsEditorException {
+        return new CmsEditor(manager, context, cluster, config, model);
     }
 
 }

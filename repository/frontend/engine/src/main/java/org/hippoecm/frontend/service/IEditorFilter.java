@@ -16,14 +16,26 @@
 package org.hippoecm.frontend.service;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.model.IModel;
 
-public interface IEditService<T extends IModel> extends IClusterable {
-    final static String SVN_ID = "$Id$";
+/**
+ * Interface to intercept editor lifecycle events.
+ * Register instances of this type at the IEditor instance.
+ */
+public interface IEditorFilter extends IClusterable {
 
-    String EDITOR_ID = "editor.id";
+    /**
+     * Pre-close lifecycle callback.  When the close() operation is cancelled
+     * (null is returned), the IEditor instance will throw an EditorException to
+     * notify the client.
+     * @return Context object that will be passed to postClose
+     *         When null, the stop() operation is cancelled.
+     */
+    Object preClose();
 
-    void edit(T model);
+    /**
+     * Post-close lifecycle callback.
+     * @param object
+     */
+    void postClose(Object object);
 
-    void close(T model);
 }
