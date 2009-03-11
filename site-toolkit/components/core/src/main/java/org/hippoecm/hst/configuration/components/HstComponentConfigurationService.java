@@ -28,6 +28,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.provider.PropertyMap;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
@@ -76,6 +77,9 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
             this.name = getValueProvider().getName();
             this.referenceName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCENAME);
             this.componentClassName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
+            if(componentClassName == null) {
+                this.componentClassName = GenericHstComponent.class.getName();
+            }
             this.renderPath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_RENDER_PATH);
             this.serveResourcePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH);
             this.propertyMap = getValueProvider().getPropertyMap();

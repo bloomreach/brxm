@@ -25,10 +25,6 @@
         <sv:property sv:name="hst:renderpath" sv:type="String">
             <sv:value>jsp/pages/general_layout.jsp</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.hstconfiguration.components.pages.GeneralLayout</sv:value>
-        </sv:property>
-        
     </sv:node>
 
 </sv:node>
