@@ -68,7 +68,8 @@ function <hst:namespace/>showPopup() {
         ${document.title}
         <br/>
         ${document.summary}
-       
+        <br/>
+        ${document.calendar.time}
         </li>
     </c:forEach>
     </ol>

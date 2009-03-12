@@ -15,22 +15,9 @@
  */
 package org.hippoecm.hst.ocm;
 
-import java.util.Calendar;
-
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 
-@Node(jcrType="testproject:newspage", discriminator=false)
-public class NewsPage extends GeneralPage {
-    
-    private Calendar calendar; 
-    
-    @Field(jcrName="testproject:date")
-    public Calendar getCalendar() {
-        return this.calendar;
-    }
-    
-    public void setCalendar(Calendar calendar) {
-        this.calendar = calendar;
-    }
+@Node(jcrType="testproject:textpage", discriminator=false)
+public class TextPage extends GeneralPage {
+
 }
