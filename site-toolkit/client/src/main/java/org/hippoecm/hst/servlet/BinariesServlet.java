@@ -42,6 +42,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.domain.DomainMapping;
 import org.hippoecm.hst.core.domain.DomainMappings;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,10 +75,12 @@ public class BinariesServlet extends HttpServlet {
             StringBuilder resourcePathBuilder = new StringBuilder(80);
             
             if (baseContentPath != null) {
-                resourcePathBuilder.append('/').append(baseContentPath);
+                resourcePathBuilder.append('/').append(PathUtils.normalizePath(baseContentPath));
             }
             
-            resourcePathBuilder.append('/').append(relPath);
+            if (relPath != null) {
+                resourcePathBuilder.append('/').append(PathUtils.normalizePath(relPath));
+            }
             
             resourcePath = resourcePathBuilder.toString();
             
