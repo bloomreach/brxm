@@ -43,6 +43,9 @@
         <sv:property sv:name="hst:template" sv:type="String">
             <sv:value>body</sv:value>
         </sv:property>
+        <sv:property sv:name="hst:componentclassname" sv:type="String">
+            <sv:value>org.hippoecm.hst.components.Body</sv:value>
+        </sv:property>
     </sv:node>
     
 </sv:node>
