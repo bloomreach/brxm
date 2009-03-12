@@ -15,16 +15,16 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:panel>
-        <div style="z-index: 8192; position: absolute; background: yellow; border-width: medium; border-color: black; border-top-style: none; border-bottom-style: ridge; border-left-style: ridge; border-right-style: ridge;">
-            <span wicket:id="wf"></span>
-            <table>
-                <tr>
-                    <td><span wicket:id="icon">[DROP DOWN ICON]</span><span wicket:id="text">[DROP DOWN TEXT]</span></td>
-                </tr>
-                <tr wicket:id="list">
-                    <td><span wicket:id="item">[WORKFLOW ACTION]</span></td>
-                </tr>
-            </table>
-        </div>
+        <ul class="hippo-toolbar-menu-item">
+            <li wicket:id="wf"></li>
+            <li>
+                <a class="hippo-toolbar-menu-item-button" href="#">
+                    <span class="hippo-toolbar-menu-item-button-icon" wicket:id="icon">[DROP DOWN ICON]</span><span wicket:id="text">[DROP DOWN TEXT]</span>
+                </a>
+            </li>
+                <li wicket:id="list">
+                    <span wicket:id="item">[WORKFLOW ACTION]</span>
+                </li>
+        </ul>
     </wicket:panel>
 </html>
