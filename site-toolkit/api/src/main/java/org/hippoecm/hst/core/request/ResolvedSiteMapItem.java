@@ -30,9 +30,9 @@ public interface ResolvedSiteMapItem {
      * @param name
      * @return property Object 
      */
-    Object getResolvedProperty(String name);
+    String getParameter(String name);
     
-    Properties getResolvedProperties();
+    Properties getParameters();
     
     HstSiteMapItem getHstSiteMapItem();
     

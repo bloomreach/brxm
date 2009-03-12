@@ -21,7 +21,7 @@ public interface HstSiteMapMatcher {
     
     ResolvedSiteMapItem match(String pathInfo,HstSite hstSite);
   
-   
+    void invalidate();
 }
 
 
