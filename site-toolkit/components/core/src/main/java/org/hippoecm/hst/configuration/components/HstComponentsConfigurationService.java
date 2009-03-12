@@ -16,8 +16,8 @@
 package org.hippoecm.hst.configuration.components;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,7 +54,7 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
     
     public HstComponentsConfigurationService(Node configurationNode, Map<String, String> templateRenderMap) throws RepositoryException {
         super(null);
-        this.rootComponentConfigurations = new HashMap<String, HstComponentConfiguration>();
+        this.rootComponentConfigurations = new LinkedHashMap<String, HstComponentConfiguration>();
         this.childComponents = new ArrayList<HstComponentConfiguration>();
         
         if(configurationNode.hasNode(Configuration.NODENAME_HST_COMPONENTS)) {

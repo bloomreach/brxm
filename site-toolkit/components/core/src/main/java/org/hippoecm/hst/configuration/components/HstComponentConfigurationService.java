@@ -211,8 +211,11 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     }
 
 
-    private HstComponentConfigurationService copy(String newId, HstComponentConfigurationService child){
-        
+    private HstComponentConfigurationService deepCopy(String newId, HstComponentConfigurationService child, List<HstComponentConfiguration> populated, Map<String, HstComponentConfiguration> rootComponentConfigurations){
+        if(child.getReferenceComponent() != null) {
+            // populate child component if not yet happened
+            child.populateComponentReferences(rootComponentConfigurations, populated);
+        }
         HstComponentConfigurationService copy = new HstComponentConfigurationService(newId);
         copy.componentClassName = child.componentClassName;
         copy.configurationRootNodePath = child.configurationRootNodePath;
@@ -227,6 +230,13 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         List<String> copyToList = new ArrayList<String>();
         Collections.copy(copyToList, child.usedChildReferenceNames);
         copy.usedChildReferenceNames = copyToList;
+        for(HstComponentConfigurationService descendant : child.orderedListConfigs) {
+            String descId = copy.id + descendant.id;
+            HstComponentConfigurationService copyDescendant = deepCopy(descId,descendant, populated, rootComponentConfigurations);
+            copy.componentConfigurations.put(copyDescendant.id, copyDescendant);
+            copy.orderedListConfigs.add(copyDescendant);
+            // do not need them by name for copies
+        }
         return copy;
     }
     
@@ -272,23 +282,22 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                  Collections.copy(copyToList, referencedComp.usedChildReferenceNames);
                  this.usedChildReferenceNames.addAll(copyToList);
                 
-                 // now we need to copy all the child components from the referenced component to this component.
+                 // now we need to copy all the descendant components from the referenced component to this component.
                  // Note this has to be a copy!! 
                  
                  for(HstComponentConfigurationService childToCopy : referencedComp.orderedListConfigs){
                      if(childToCopy.getReferenceComponent() != null) {
                          // populate child component if not yet happened
                          childToCopy.populateComponentReferences(rootComponentConfigurations, populated);
+                         // after population, add it
+                         addDeepCopy(childToCopy, populated, rootComponentConfigurations);
                      }
                      if(this.childConfByName.get(childToCopy.name) != null){
                          // we have an overlay again because we have a component with the same name
                          this.childConfByName.get(childToCopy.name).populateComponentReferences(rootComponentConfigurations, populated);
                      } else {
                          // make a copy of the child
-                         String newId = this.id + "-" + childToCopy.id;
-                         HstComponentConfigurationService copy = this.copy(newId, childToCopy);
-                         this.componentConfigurations.put(copy.getId(), copy);
-                         this.orderedListConfigs.add(copy);
+                         addDeepCopy(childToCopy, populated,rootComponentConfigurations);
                      } 
                  }
                   
@@ -297,6 +306,18 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
             }
         }
     }
+    
+    private void addDeepCopy(HstComponentConfigurationService childToCopy, List<HstComponentConfiguration> populated, Map<String, HstComponentConfiguration> rootComponentConfigurations) {
+        
+        String newId = this.id + "-" + childToCopy.id;
+        HstComponentConfigurationService copy = this.deepCopy(newId, childToCopy, populated, rootComponentConfigurations);
+        this.componentConfigurations.put(copy.getId(), copy);
+        this.orderedListConfigs.add(copy);
+        
+        
+    }
+
+
     
     public void setRenderPath(Map<String, String> templateRenderMap) {
         String templateRenderPath = templateRenderMap.get(this.getHstTemplate());
