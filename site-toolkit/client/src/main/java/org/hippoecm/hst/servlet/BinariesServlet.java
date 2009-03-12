@@ -49,6 +49,9 @@ import org.slf4j.LoggerFactory;
 
 public class BinariesServlet extends HttpServlet {
 
+    public static final String BASE_BINARIES_CONTENT_PATH_INIT_PARAM = "baseBinariesContentPath";
+    public static final String DEFAULT_BASE_BINARIES_CONTENT_PATH = "content";
+
     private static final long serialVersionUID = 1L;
     
     private static Logger log = LoggerFactory.getLogger(BinariesServlet.class);
@@ -58,10 +61,18 @@ public class BinariesServlet extends HttpServlet {
     
     protected DomainMappings domainMappings;
     protected HstSitesManager hstSitesManager;
+    
+    protected String baseBinariesContentPath = DEFAULT_BASE_BINARIES_CONTENT_PATH;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        
+        String param = config.getInitParameter(BASE_BINARIES_CONTENT_PATH_INIT_PARAM);
+        
+        if (param != null) {
+            this.baseBinariesContentPath = param;
+        }
     }
 
     @Override
@@ -71,7 +82,7 @@ public class BinariesServlet extends HttpServlet {
         Session session = null;
         
         try {
-            String baseContentPath = getBaseContentPath(request);
+            String baseContentPath = ("".equals(this.baseBinariesContentPath) ? getBaseContentPath(request) : this.baseBinariesContentPath);
             StringBuilder resourcePathBuilder = new StringBuilder(80);
             
             if (baseContentPath != null) {
