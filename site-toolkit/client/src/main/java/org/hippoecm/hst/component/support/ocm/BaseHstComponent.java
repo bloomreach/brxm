@@ -77,7 +77,7 @@ public class BaseHstComponent extends GenericHstComponent {
     }
     
     protected String getParameter(String name, HstRequest request) {
-        return (String)this.getComponentConfiguration().getParameter("cyear", request.getRequestContext().getResolvedSiteMapItem());
+        return (String)this.getComponentConfiguration().getParameter(name, request.getRequestContext().getResolvedSiteMapItem());
     }
     
     protected HippoStdNode getContentNode(HstRequest request) {

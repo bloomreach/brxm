@@ -102,7 +102,7 @@ public class TestBaseHstComponent extends AbstractClientSpringTestCase {
         System.out.println("contentNode: " + documentNode);
         assertTrue(documentNode instanceof TextPage);
         
-        Map<String, Object> properties = documentNode.getProperties();
+        Map<String, Object> properties = documentNode.getProperty();
         assertNotNull(properties);
         System.out.println("properties: " + properties);
         assertEquals("Products", properties.get("gettingstarted:title"));
