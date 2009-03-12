@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.ocm;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -141,6 +142,20 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         System.out.println("productsPageDoc's path: " + productsPageDoc.getPath());
         System.out.println("productsPageDoc's stateSummary: " + productsPageDoc.getStateSummary());
         System.out.println("productsPageDoc's state: " + productsPageDoc.getState());
+        
+        HippoStdCollection parentCollection = productsPageDoc.getCollection();
+        System.out.println("parentCollection: " + parentCollection);
+        System.out.println("parentCollection.path: " + parentCollection.getPath());
+        assertNotNull(parentCollection);
+        assertEquals("/content/gettingstarted/pagecontent/Products", parentCollection.getPath());
+        
+        List<HippoStdDocument> childDocs = parentCollection.getDocuments();
+        assertNotNull(childDocs);
+        assertFalse(childDocs.isEmpty());
+        System.out.println("childDocs: " + childDocs);
+        for (HippoStdDocument childDoc : childDocs) {
+            System.out.println("childDoc: " + childDoc);
+        }
         
         session.logout();
     }

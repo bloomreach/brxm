@@ -15,15 +15,33 @@
  */
 package org.hippoecm.hst.ocm;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Node(jcrType="hippo:document", discriminator=false)
-public class HippoStdDocument extends HippoStdNode {
+public class HippoStdDocument extends HippoStdNode implements SessionAware {
 
-    protected String stateSummary;
-    protected String state;
+    private static Logger log = LoggerFactory.getLogger(HippoStdDocument.class);
 
+    private transient Session session;
+    private String stateSummary;
+    private String state;
+    private HippoStdCollection parentCollection;
+
+    public Session getSession() {
+        return this.session;
+    }
+    
+    public void setSession(Session session) {
+        this.session = session;
+    }
+    
     @Field(jcrName="hippostd:stateSummary") 
     public String getStateSummary() {
         return this.stateSummary;
@@ -40,6 +58,33 @@ public class HippoStdDocument extends HippoStdNode {
     
     public void setState(String state) {
         this.state = state;
+    }
+    
+    public HippoStdCollection getCollection() {
+        if (this.parentCollection == null) {
+            if (this.session != null && getNode() != null && getSimpleObjectConverter() != null) {
+                try {
+                    javax.jcr.Node parent = getNode().getParent();
+                    
+                    if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        parent = parent.getParent();
+                    }
+                    
+                    this.parentCollection = (HippoStdCollection) getSimpleObjectConverter().getObject(this.session, parent.getPath());
+                } catch (RepositoryException e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Cannot retrieve parent collections: {}", e.getMessage(), e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Cannot retrieve parent collections: {}", e.getMessage());
+                    }
+                }
+
+                // Now detach the session because the session is probably from the pool.
+                setSession(null);
+            }
+        }
+        
+        return this.parentCollection;
     }
     
 }

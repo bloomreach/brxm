@@ -18,26 +18,16 @@ package org.hippoecm.hst.ocm;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.jcr.Session;
-
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 
-public class HippoStdNode implements SessionAware, NodeAware, SimpleObjectConverterAware {
+public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
 
-    protected transient Session session;
-    protected transient SimpleObjectConverter simpleObjectConverter;
     protected String path;
-    protected JCRValueProvider valueProvider;
 
-    public Session getSession() {
-        return this.session;
-    }
-
-    public void setSession(Session session) {
-        this.session = session;
-    }
+    private transient SimpleObjectConverter simpleObjectConverter;
+    private JCRValueProvider valueProvider;
 
     public javax.jcr.Node getNode() {
         javax.jcr.Node node = null;
@@ -93,4 +83,5 @@ public class HippoStdNode implements SessionAware, NodeAware, SimpleObjectConver
         
         return properties;
     }
+    
 }
