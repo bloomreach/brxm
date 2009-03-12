@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -33,21 +32,13 @@ public class HippoStdCollection extends HippoStdNode implements SessionAware {
     
     private static Logger log = LoggerFactory.getLogger(HippoStdCollection.class);
     
-    private transient Session session;
     private List<HippoStdCollection> childCollections;
     private List<HippoStdDocument> childDocuments;
     
-    public Session getSession() {
-        return this.session;
-    }
-    
-    public void setSession(Session session) {
-        this.session = session;
-    }
-    
+   
     public List<HippoStdCollection> getCollections() {
         if (this.childCollections == null) {
-            if (this.session == null || getNode() == null || getSimpleObjectConverter() == null) {
+            if (this.getSession() == null || getNode() == null || getSimpleObjectConverter() == null) {
                 this.childCollections = Collections.emptyList();
             } else {
                 this.childCollections = new LinkedList<HippoStdCollection>();
@@ -63,7 +54,7 @@ public class HippoStdCollection extends HippoStdNode implements SessionAware {
                         } 
                         
                         if (!child.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            HippoStdCollection childCol = (HippoStdCollection) getSimpleObjectConverter().getObject(this.session, child.getPath());
+                            HippoStdCollection childCol = (HippoStdCollection) getSimpleObjectConverter().getObject(this.getSession(), child.getPath());
                             this.childCollections.add(childCol);
                         }
                     }            
@@ -76,7 +67,7 @@ public class HippoStdCollection extends HippoStdNode implements SessionAware {
                 }
                 
                 // Now detach the session because the session is probably from the pool.
-                setSession(null);
+                //setSession(null);
             }
         }
         
@@ -85,7 +76,7 @@ public class HippoStdCollection extends HippoStdNode implements SessionAware {
     
     public List<HippoStdDocument> getDocuments() {
         if (this.childDocuments == null) {
-            if (this.session == null || getNode() == null || getSimpleObjectConverter() == null) {
+            if (this.getSession() == null || getNode() == null || getSimpleObjectConverter() == null) {
                 this.childDocuments = Collections.emptyList();
             } else {
                 this.childDocuments = new LinkedList<HippoStdDocument>();
@@ -102,10 +93,10 @@ public class HippoStdCollection extends HippoStdNode implements SessionAware {
                         
                         if (child.isNodeType(HippoNodeType.NT_HANDLE)) {
                             javax.jcr.Node docNode = child.getNode(child.getName());
-                            HippoStdDocument childDoc = (HippoStdDocument) getSimpleObjectConverter().getObject(this.session, docNode.getPath());
+                            HippoStdDocument childDoc = (HippoStdDocument) getSimpleObjectConverter().getObject(this.getSession(), docNode.getPath());
                             this.childDocuments.add(childDoc);
                         } else if(child.getParent().isNodeType(HippoNodeType.NT_HANDLE)){
-                            HippoStdDocument childDoc = (HippoStdDocument) getSimpleObjectConverter().getObject(this.session, child.getPath());
+                            HippoStdDocument childDoc = (HippoStdDocument) getSimpleObjectConverter().getObject(this.getSession(), child.getPath());
                             this.childDocuments.add(childDoc);
                         }
                     }            
@@ -118,11 +109,12 @@ public class HippoStdCollection extends HippoStdNode implements SessionAware {
                 }
 
                 // Now detach the session because the session is probably from the pool.
-                setSession(null);
+                //setSession(null);
             }
         }
         
         return this.childDocuments;
     }
+    
     
 }

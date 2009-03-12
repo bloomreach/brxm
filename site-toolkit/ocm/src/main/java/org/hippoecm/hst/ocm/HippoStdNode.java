@@ -18,16 +18,28 @@ package org.hippoecm.hst.ocm;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
 
+    private static Logger log = LoggerFactory.getLogger(HippoStdCollection.class);
+    
     protected String path;
-
+    
+    private transient Session session;
     private transient SimpleObjectConverter simpleObjectConverter;
     private JCRValueProvider valueProvider;
+    private HippoStdCollection parentCollection;
 
     public javax.jcr.Node getNode() {
         javax.jcr.Node node = null;
@@ -39,6 +51,15 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
         return node;
     }
 
+    public Session getSession() {
+        return this.session;
+    }
+    
+    public void setSession(Session session) {
+        this.session = session;
+    }
+    
+    
     public void setNode(javax.jcr.Node node) {
         if (this.valueProvider == null) {
             this.valueProvider = new JCRValueProviderImpl(node);
@@ -62,6 +83,7 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
         this.path = path;
     }
 
+    
     public String getName() {
         String name = "";
 
@@ -82,6 +104,34 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
         }
         
         return properties;
+    }
+    
+
+    public HippoStdCollection getParentCollection() {
+        if (this.parentCollection == null) {
+            if (this.session != null && getNode() != null && getSimpleObjectConverter() != null) {
+                try {
+                    javax.jcr.Node parent = getNode().getParent();
+                    
+                    if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        parent = parent.getParent();
+                    }
+                    
+                    this.parentCollection = (HippoStdCollection) getSimpleObjectConverter().getObject(this.session, parent.getPath());
+                } catch (RepositoryException e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Cannot retrieve parent collections: {}", e.getMessage(), e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Cannot retrieve parent collections: {}", e.getMessage());
+                    }
+                }
+
+                // Now detach the session because the session is probably from the pool.
+                //setSession(null);
+            }
+        }
+        
+        return this.parentCollection;
     }
     
 }
