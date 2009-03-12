@@ -71,7 +71,7 @@ public class TestBaseHstComponent {
         this.servletConfig = new MockServletConfig(servletContext);
         
         this.compConfig = new ComponentConfiguration() {
-            public Object getResolvedProperty(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
+            public Object getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
                 return null;
             }
         };
