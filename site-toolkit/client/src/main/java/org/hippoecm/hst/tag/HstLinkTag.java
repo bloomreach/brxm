@@ -30,13 +30,13 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.ocm.HippoStdNode;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.jndi.toolkit.url.UrlUtil;
 
 /**
  * Abstract supporting class for Hst Link tags
@@ -50,6 +50,8 @@ public class HstLinkTag extends TagSupport {
     private static final long serialVersionUID = 1L;
 
     protected HstLink link;
+    
+    protected HippoStdNode node;
     
     protected String path;
     
@@ -83,12 +85,8 @@ public class HstLinkTag extends TagSupport {
     @Override
     public int doEndTag() throws JspException{
         
-        if(this.link != null && this.path != null) { 
-           log.warn("Both HstLink & a path are set in single hst:link. Using the HstLink and disregard the path");
-        }
-        
-        if(this.link == null && this.path == null) {
-            log.warn("Cannot get a link because no value or path is set");
+        if(this.link == null && this.path == null && this.node == null) {
+            log.warn("Cannot get a link because no link , path or node is set");
             return EVAL_PAGE;
         }
         
@@ -102,6 +100,19 @@ public class HstLinkTag extends TagSupport {
         
         StringBuilder url = new StringBuilder();
 
+        if(this.node != null) {
+            if(node.getNode() == null) {
+                log.warn("Cannot get a link for a detached node");
+                return EVAL_PAGE;
+            }
+            if(!(request instanceof HstRequest)){
+                log.warn("Cannot only get links for HstRequest");
+                return EVAL_PAGE;
+            }
+            HstRequestContext reqContext = ((HstRequest)request).getRequestContext();
+            this.link = reqContext.getHstLinkCreator().create(node.getNode(), reqContext.getResolvedSiteMapItem());
+        }
+        
         if (this.context != null) {
             url.append(this.context);
         } else {
@@ -192,17 +203,28 @@ public class HstLinkTag extends TagSupport {
         return scope;
     }
     
-    public HstLink getValue() {
+    public HstLink getLink() {
         return link;
     }
     
+    public HippoStdNode getNode(){
+        return this.node;
+    }
     
-    public void setValue(HstLink hstLink) {
+    public String getPath(){
+        return this.path;
+    }
+    
+    public void setLink(HstLink hstLink) {
         this.link = hstLink;
     }
     
     public void setPath(String path) {
         this.path = path;
+    }
+    
+    public void setNode(HippoStdNode node) {
+        this.node = node;
     }
     
     /**

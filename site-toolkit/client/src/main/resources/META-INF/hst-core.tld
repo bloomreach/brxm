@@ -100,12 +100,17 @@
             <rtexprvalue>false</rtexprvalue>
         </attribute>
         <attribute>
-            <name>value</name>
+            <name>link</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>path</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>node</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>

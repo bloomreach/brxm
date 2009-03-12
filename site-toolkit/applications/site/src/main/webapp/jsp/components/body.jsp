@@ -44,18 +44,26 @@ function <hst:namespace/>showPopup() {
 <div>
 
     <div style="background-color:green; color:white; width:400px;">
-    PARENT : ${parent.name}  
+    <hst:link var="link" node="${parent}"/>
+    <a href="${link}">
+    PARENT : ${parent.name}      
+    </a>
     
-   
     </div>  
     <div style="background-color:blue; color:white; width:400px;">
+    <hst:link var="link" node="${current}"/>
+    <a href="${link}">
     CURRENT:    ${current.name}  
+    </a>
     </div>   
     <div style="background-color:yellow; width:400px;">
     <ol >
     <c:forEach var="folder" items="${collections}">
         <li>  
+            <hst:link var="link" node="${folder}"/>
+            <a href="${link}">
              ${folder.name}
+             </a>
         </li> 
     </c:forEach>
     </ol>
@@ -65,7 +73,10 @@ function <hst:namespace/>showPopup() {
     <ol >
     <c:forEach var="document" items="${documents}">
         <li >  
+        <hst:link var="link" node="${document}"/>
+        <a href="${link}">
         ${document.title}
+        </a>
         <br/>
         ${document.summary}
         <br/>
