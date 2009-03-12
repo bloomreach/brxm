@@ -21,10 +21,12 @@ public class HstLinkImpl implements HstLink{
 
     private String path;
     private HstSite hstSite;
+    private String[] pathElements;
     
     public HstLinkImpl(String path, HstSite hstSite){
         this.path = path;
         this.hstSite = hstSite;
+        this.pathElements = this.path.split("/");
     }
     
     public HstSite getHstSite() {
@@ -33,6 +35,10 @@ public class HstLinkImpl implements HstLink{
 
     public String getPath() {
         return this.path;
+    }
+    
+    public String[] getPathElements() {
+        return pathElements;
     }
 
 }

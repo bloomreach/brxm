@@ -32,8 +32,11 @@ import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.sun.jndi.toolkit.url.UrlUtil;
 
 /**
  * Abstract supporting class for Hst Link tags
@@ -109,17 +112,21 @@ public class HstLinkTag extends TagSupport {
                 url.append(request.getServletPath());
             }
         }
-        
+        String[] pathElements = null;
         if(this.link != null) {
-            this.path = link.getPath();
+            pathElements = link.getPathElements();
         }
         
-        if (!this.path.startsWith("/")) {
-            url.append("/");
+        if (this.path != null) {
+            path = PathUtils.normalizePath(path);
+            pathElements = path.split("/");
         }
-        url.append(this.path);
+        for(String elem : pathElements) {
+            String enc = response.encodeURL(elem);
+            url.append("/").append(enc);
+        }
         
-        String urlString = response.encodeURL(url.toString());
+        String urlString = url.toString();
 
     
         if (var == null) {

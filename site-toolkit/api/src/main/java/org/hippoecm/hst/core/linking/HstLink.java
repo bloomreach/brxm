@@ -28,6 +28,8 @@ public interface HstLink {
 
     String getPath();
     
+    String[] getPathElements();
+    
     HstSite getHstSite();
     
 }
