@@ -43,42 +43,38 @@ function <hst:namespace/>showPopup() {
 
 <div>
 
-Up: 
-<c:url var="parentUrl" value="${parent.link}" /> 
-<a href="${parentUrl}">
-${parent.name}  
-</a>    
-
-
-</div>
-
-<div>
-Folders:
-<ol>
-    <c:forEach var="folder" items="${folders}">
-        <li style="background-color:white">  
-            <c:url var="folderUrl" value="${folder.link}" /> 
-            <a href="${folderUrl}">
-            ${folder.name}  
-            </a>
+    <div style="background-color:green; color:white; width:400px;">
+    PARENT : ${parent.name}  
+    
+   
+    </div>  
+    <div style="background-color:blue; color:white; width:400px;">
+    CURRENT:    ${current.name}  
+    </div>   
+    <div style="background-color:yellow; width:400px;">
+    <ol >
+    <c:forEach var="folder" items="${collections}">
+        <li>  
+             ${folder.name}
+             
+             <hst:link var="link" x="folder">
         </li>
     </c:forEach>
-</ol>
+    </ol>
+   </div>
 
-</div>
+    <div style="background-color:green; width:400px;">
+    <ol >
+    <c:forEach var="document" items="${documents}">
+        <li >  
+             ${document.title}
+        </li>
+    </c:forEach>
+    </ol>
+    </div>
 
 <div>
-	Documents:
-	<ul>
-	    <c:forEach var="doc" items="${documents}">
-	        <li>    
-	            <a href="/site/content/${doc.link}">
-	            ${doc.page.title}  
-	            </a>
-	        </li>
-	    </c:forEach>
-	</ul>
-	
+
 	<a href="javascript:<hst:namespace/>showPopup();">Show</a>
 
     <hst:renderURL var="defaultUrl">

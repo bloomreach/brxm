@@ -17,13 +17,13 @@ package org.hippoecm.hst.components;
 
 import javax.servlet.ServletConfig;
 
-import org.hippoecm.hst.core.component.GenericHstComponent;
+import org.hippoecm.hst.component.support.ocm.BaseHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 
-public class GenericResourceServingHstComponent extends GenericHstComponent {
+public class GenericResourceServingHstComponent extends BaseHstComponent {
     
     protected String staticResourceServePath = "/staticresource";
     protected String repositoryResourceServePath = "/binaries";

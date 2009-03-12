@@ -28,9 +28,38 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.ocm.HippoStdCollection;
+import org.hippoecm.hst.ocm.HippoStdDocument;
+import org.hippoecm.hst.ocm.HippoStdNode;
 
 public class Body extends GenericResourceServingHstComponent {
     
+    
+    @Override
+    public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
+        super.doBeforeRender(request, response);
+        HippoStdNode  n = this.getContentNode(request);
+        
+        if(n == null) {
+            return;
+        }
+        
+        request.setAttribute("parent", n.getParentCollection());
+        request.setAttribute("current",(n));
+        
+        if(n instanceof HippoStdCollection) {
+            List<HippoStdCollection> collection = ((HippoStdCollection)n).getCollections();
+            request.setAttribute("collections",((HippoStdCollection)n).getCollections());
+            Object o = ((HippoStdCollection)n).getDocuments();
+            
+            request.setAttribute("documents",((HippoStdCollection)n).getDocuments());
+        }
+        
+        
+        
+    }
+
+
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
         
