@@ -56,9 +56,7 @@ function <hst:namespace/>showPopup() {
     <c:forEach var="folder" items="${collections}">
         <li>  
              ${folder.name}
-             
-             <hst:link var="link" x="folder">
-        </li>
+        </li> 
     </c:forEach>
     </ol>
    </div>
@@ -67,7 +65,10 @@ function <hst:namespace/>showPopup() {
     <ol >
     <c:forEach var="document" items="${documents}">
         <li >  
-             ${document.title}
+        ${document.title}
+        <br/>
+        ${document.summary}
+       
         </li>
     </c:forEach>
     </ol>

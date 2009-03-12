@@ -23,6 +23,8 @@ import org.hippoecm.hst.ocm.HippoStdDocument;
 public class NewsPage extends HippoStdDocument {
 
     protected String title;
+    protected String summary;
+
 
     @Field(jcrName="testproject:title")
     public String getTitle() {
@@ -31,6 +33,14 @@ public class NewsPage extends HippoStdDocument {
     
     public void setTitle(String title) {
         this.title = title;
+    }
+    @Field(jcrName="testproject:summary")
+    public String getSummary() {
+        return this.summary;
+    }
+    
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
     
 }
