@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.ocm.manager.impl;
 
+import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -32,8 +33,12 @@ import org.hippoecm.hst.ocm.SessionAware;
 import org.hippoecm.hst.ocm.SimpleObjectConverter;
 import org.hippoecm.hst.ocm.SimpleObjectConverterAware;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HstObjectConverterImpl extends ObjectConverterImpl implements SimpleObjectConverter {
+
+    private static Logger log = LoggerFactory.getLogger(HstObjectConverterImpl.class);
 
     protected Mapper mapper;
     protected AtomicTypeConverterProvider converterProvider;
@@ -87,25 +92,37 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
         Node node = null;
         
         try {
-            node = (Node) session.getItem(path);
-
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                object = getObject(session, path + "/" + node.getName());
+            if (!session.itemExists(path)) {
+                return null;
+            }
+            
+            Item item = session.getItem(path);
+            
+            if (!item.isNode()) {
+                if (log.isWarnEnabled()) {
+                    log.warn("The object is not a node: {}", path);
+                }
             } else {
-                object = super.getObject(session, path);
+                node = (Node) item;
                 
-                if (object instanceof SessionAware) {
-                    ((SessionAware) object).setSession(session);
+                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    object = getObject(session, path + "/" + node.getName());
+                } else {
+                    object = super.getObject(session, path);
+                    
+                    if (object instanceof SessionAware) {
+                        ((SessionAware) object).setSession(session);
+                    }
+                    
+                    if (object instanceof NodeAware) {
+                        ((NodeAware) object).setNode(node);
+                    }
+                    
+                    if (object instanceof SimpleObjectConverterAware) {
+                        ((SimpleObjectConverterAware) object).setSimpleObjectConverter(this);
+                    }
                 }
-                
-                if (object instanceof NodeAware) {
-                    ((NodeAware) object).setNode(node);
-                }
-                
-                if (object instanceof SimpleObjectConverterAware) {
-                    ((SimpleObjectConverterAware) object).setSimpleObjectConverter(this);
-                }
-            }            
+            }
         } catch (PathNotFoundException pnfe) {
             throw new ObjectContentManagerException("Impossible to get the object at " + path, pnfe);
         } catch (RepositoryException re) {
@@ -121,23 +138,35 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
         Node node = null;
         
         try {
-            node = (Node) session.getItem(path);
+            if (!session.itemExists(path)) {
+                return null;
+            }
             
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                object = getObject(session, clazz, path + "/" + node.getName());
+            Item item = session.getItem(path);
+            
+            if (!item.isNode()) {
+                if (log.isWarnEnabled()) {
+                    log.warn("The object is not a node: {}", path);
+                }
             } else {
-                object = super.getObject(session, clazz, path);
+                node = (Node) item;
                 
-                if (object instanceof SessionAware) {
-                    ((SessionAware) object).setSession(session);
-                }
-                
-                if (object instanceof NodeAware) {
-                    ((NodeAware) object).setNode(node);
-                }
-                
-                if (object instanceof SimpleObjectConverterAware) {
-                    ((SimpleObjectConverterAware) object).setSimpleObjectConverter(this);
+                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    object = getObject(session, clazz, path + "/" + node.getName());
+                } else {
+                    object = super.getObject(session, clazz, path);
+                    
+                    if (object instanceof SessionAware) {
+                        ((SessionAware) object).setSession(session);
+                    }
+                    
+                    if (object instanceof NodeAware) {
+                        ((NodeAware) object).setNode(node);
+                    }
+                    
+                    if (object instanceof SimpleObjectConverterAware) {
+                        ((SimpleObjectConverterAware) object).setSimpleObjectConverter(this);
+                    }
                 }
             }
         } catch (PathNotFoundException pnfe) {

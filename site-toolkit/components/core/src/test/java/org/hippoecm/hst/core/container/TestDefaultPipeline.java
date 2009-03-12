@@ -67,7 +67,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         newsprops.put("param1" , "${param1}");
         newsprops.put("param2" , "${param2}");
         //ComponentConfiguration newsCompConfig = new ComponentConfigurationImpl(newsprops); 
-        HstComponentFactory componentFactory = HstServices.getComponentFactory();
+        HstComponentFactory componentFactory = getComponent(HstComponentFactory.class.getName());
         
         HstComponent component = new NewsOverview();
         //component.init(this.servletConfig, newsCompConfig);

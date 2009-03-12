@@ -86,7 +86,7 @@ public class BaseHstComponent extends GenericHstComponent {
         String base = PathUtils.normalizePath(resolvedSitemapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
         String relPath = PathUtils.normalizePath(resolvedSitemapItem.getRelativeContentPath());
 
-        return (HippoStdNode) getObjectContentManager(request).getObject(base + relPath);
+        return (HippoStdNode) getObjectContentManager(request).getObject("/" + base + "/" + relPath);
     }
     
     protected ObjectContentManager getObjectContentManager(HstRequest request) {

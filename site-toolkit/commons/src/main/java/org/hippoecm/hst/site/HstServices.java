@@ -16,8 +16,6 @@
 package org.hippoecm.hst.site;
 
 import org.hippoecm.hst.core.container.ComponentManager;
-import org.hippoecm.hst.core.container.HstComponentFactory;
-import org.hippoecm.hst.core.container.HstComponentInvoker;
 import org.hippoecm.hst.core.container.HstRequestProcessor;
 
 public class HstServices {
@@ -41,16 +39,8 @@ public class HstServices {
         return HstServices.available;
     }
     
-    public static HstComponentFactory getComponentFactory() {
-        return getComponentManager().getComponent(HstComponentFactory.class.getName());
-    }
-    
     public static HstRequestProcessor getRequestProcessor() {
-        return getComponentManager().getComponent(HstRequestProcessor.class.getName());
-    }
-    
-    public static HstComponentInvoker getComponentInvoker() {
-        return getComponentManager().getComponent(HstComponentInvoker.class.getName());
+        return componentManager.getComponent(HstRequestProcessor.class.getName());
     }
     
 }

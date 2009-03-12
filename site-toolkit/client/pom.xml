@@ -51,6 +51,12 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-commons</artifactId>
+      <version>${pom.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-ocm</artifactId>
       <version>${pom.version}</version>
     </dependency>
