@@ -108,6 +108,8 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
                 node = (Node) item;
                 
                 if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    // if its a handle, we want the child node. If the child node is not present,
+                    // this node can be ignored
                     object = getObject(session, path + "/" + node.getName());
                 } else {
                     try {
