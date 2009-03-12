@@ -53,6 +53,8 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     private String name;
 
     private String componentClassName;
+    
+    private boolean hasClassNameConfigured;
 
     private String renderPath;
     
@@ -95,6 +97,8 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
             this.componentClassName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
             if(componentClassName == null) {
                 this.componentClassName = GenericHstComponent.class.getName();
+            } else {
+                this.hasClassNameConfigured = true;
             }
             
             this.referenceComponent = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
@@ -255,7 +259,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                      referencedComp.populateComponentReferences(rootComponentConfigurations, populated);
                  }
                  // get all properties that are null from the referenced component:
-                 if(this.componentClassName == null) this.componentClassName = referencedComp.componentClassName;
+                 if(!this.hasClassNameConfigured) this.componentClassName = referencedComp.componentClassName;
                  if(this.configurationRootNodePath == null) this.configurationRootNodePath = referencedComp.configurationRootNodePath;
                  if(this.hstTemplate == null) this.hstTemplate = referencedComp.hstTemplate;
                  if(this.name == null) this.name = referencedComp.name;
