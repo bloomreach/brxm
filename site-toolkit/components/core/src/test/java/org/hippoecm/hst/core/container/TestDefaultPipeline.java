@@ -35,10 +35,12 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+@Ignore
 public class TestDefaultPipeline extends AbstractSpringTestCase {
 
     protected HstComponentFactory componentFactory;
@@ -86,7 +88,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         ((HstComponentFactoryImpl) componentFactory).componentRegistry.registerComponent(this.servletConfig, "pages/newsoverview/header/title", component);
     }
     
-    //@Test
+    @Test
     public void testDefaultPipeline() throws ContainerException, UnsupportedEncodingException {
         
         ((MockHttpServletRequest)servletRequest).setPathInfo("/news");
@@ -107,7 +109,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
     }
     
     
-    //@Test
+    @Test
     public void testDefaultPipeline2() throws ContainerException, UnsupportedEncodingException {
         
         ((MockHttpServletRequest)servletRequest).setPathInfo("/news/2009/februari");
