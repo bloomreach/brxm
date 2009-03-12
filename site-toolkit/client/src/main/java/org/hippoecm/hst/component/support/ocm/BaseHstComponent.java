@@ -45,7 +45,6 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.ocm.HippoStdCollection;
 import org.hippoecm.hst.ocm.HippoStdDocument;
 import org.hippoecm.hst.ocm.HippoStdNode;
-import org.hippoecm.hst.ocm.manager.cache.HstRequestObjectCacheImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstAnnotationMapperImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstObjectConverterImpl;
 import org.hippoecm.hst.ocm.query.impl.HstQueryManagerImpl;
@@ -80,13 +79,12 @@ public class BaseHstComponent extends GenericHstComponent {
         return (String)this.getComponentConfiguration().getParameter(name, request.getRequestContext().getResolvedSiteMapItem());
     }
     
-    protected HippoStdNodeWrapper getContentNode(HstRequest request) {
+    protected HippoStdNode getContentNode(HstRequest request) {
         ResolvedSiteMapItem resolvedSitemapItem = request.getRequestContext().getResolvedSiteMapItem();
 
         String base = PathUtils.normalizePath(resolvedSitemapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
         String relPath = PathUtils.normalizePath(resolvedSitemapItem.getRelativeContentPath());
-        
-        return new HippoStdNodeWrapper((HippoStdNode) getObjectContentManager(request).getObject("/"+base+ "/" + relPath), request.getRequestContext());
+        return (HippoStdNode) getObjectContentManager(request).getObject("/"+base+ "/" + relPath);
     }
     
     protected ObjectContentManager getObjectContentManager(HstRequest request) {
@@ -133,7 +131,22 @@ public class BaseHstComponent extends GenericHstComponent {
             this.ocmMapper = createMapper();
             DefaultAtomicTypeConverterProvider converterProvider = new DefaultAtomicTypeConverterProvider();
             this.ocmAtomicTypeConverters = converterProvider.getAtomicTypeConverters();
-            this.ocmRequestObjectCache = new HstRequestObjectCacheImpl();
+        
+            this.ocmRequestObjectCache = new ObjectCache(){
+                public void cache(String key, Object o) {
+                }
+                public void clear() {
+                }
+
+                public Object getObject(String key) {
+                    return null;
+                }
+
+                public boolean isCached(String key) {
+                    return false;
+                }
+            };
+            
             ProxyManager proxyManager = new ProxyManagerImpl();
             this.ocmObjectConverter = new HstObjectConverterImpl(this.ocmMapper, converterProvider, proxyManager, this.ocmRequestObjectCache);
             
