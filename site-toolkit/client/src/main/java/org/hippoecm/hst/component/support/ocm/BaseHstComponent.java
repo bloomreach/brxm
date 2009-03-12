@@ -43,6 +43,8 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.ocm.HippoStdCollection;
+import org.hippoecm.hst.ocm.HippoStdDocument;
 import org.hippoecm.hst.ocm.HippoStdNode;
 import org.hippoecm.hst.ocm.manager.impl.HstAnnotationMapperImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstObjectConverterImpl;
@@ -161,11 +163,22 @@ public class BaseHstComponent extends GenericHstComponent {
             
             digester.parse(in);
         } catch (IOException e) {
-            throw new HstComponentException(e);
+            if (log.isWarnEnabled()) {
+                log.warn("No ocm annotated classes configuration available: " + ocmAnnotatedClassesResourcePath);
+            }
         } catch (SAXException e) {
-            throw new HstComponentException(e);
+            if (log.isWarnEnabled()) {
+                log.warn("ocm annotated classes configuration is not valid: " + ocmAnnotatedClassesResourcePath);
+            }
         } finally {
             if (in != null) try { in.close(); } catch (Exception ce) { }
+        }
+        
+        if (!classNames.contains(HippoStdDocument.class.getName())) {
+            classNames.add(HippoStdDocument.class.getName());
+        }
+        if (!classNames.contains(HippoStdCollection.class.getName())) {
+            classNames.add(HippoStdCollection.class.getName());
         }
         
         return classNames;
