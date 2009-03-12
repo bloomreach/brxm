@@ -126,7 +126,9 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     }
     
     public void detach(){
-        log.debug("Detaching node '{}'", this.nodePath);
+        if(this.nodePath != null) {
+            log.debug("Detaching node '{}'", this.nodePath);
+        }
         this.detached = true;
         this.jcrNode = null;
         this.canonicalNode = null;
