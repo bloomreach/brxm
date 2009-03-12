@@ -133,8 +133,21 @@ public class BaseHstComponent extends GenericHstComponent {
             this.ocmMapper = createMapper();
             DefaultAtomicTypeConverterProvider converterProvider = new DefaultAtomicTypeConverterProvider();
             this.ocmAtomicTypeConverters = converterProvider.getAtomicTypeConverters();
-            
-            this.ocmRequestObjectCache = new RequestObjectCacheImpl();
+        
+            this.ocmRequestObjectCache = new ObjectCache(){
+                public void cache(String key, Object o) {
+                }
+                public void clear() {
+                }
+
+                public Object getObject(String key) {
+                    return null;
+                }
+
+                public boolean isCached(String key) {
+                    return false;
+                }
+            };
             
             ProxyManager proxyManager = new ProxyManagerImpl();
             this.ocmObjectConverter = new HstObjectConverterImpl(this.ocmMapper, converterProvider, proxyManager, this.ocmRequestObjectCache);
