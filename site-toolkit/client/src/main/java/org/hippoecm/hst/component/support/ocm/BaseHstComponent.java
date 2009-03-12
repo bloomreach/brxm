@@ -80,13 +80,13 @@ public class BaseHstComponent extends GenericHstComponent {
         return (String)this.getComponentConfiguration().getParameter(name, request.getRequestContext().getResolvedSiteMapItem());
     }
     
-    protected HippoStdNode getContentNode(HstRequest request) {
+    protected HippoStdNodeWrapper getContentNode(HstRequest request) {
         ResolvedSiteMapItem resolvedSitemapItem = request.getRequestContext().getResolvedSiteMapItem();
 
         String base = PathUtils.normalizePath(resolvedSitemapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
         String relPath = PathUtils.normalizePath(resolvedSitemapItem.getRelativeContentPath());
-
-        return (HippoStdNode) getObjectContentManager(request).getObject("/" + base + "/" + relPath);
+        
+        return new HippoStdNodeWrapper((HippoStdNode) getObjectContentManager(request).getObject("/"+base+ "/" + relPath), request.getRequestContext());
     }
     
     protected ObjectContentManager getObjectContentManager(HstRequest request) {
