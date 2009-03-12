@@ -15,15 +15,17 @@
  */
 package org.hippoecm.hst.component.support.ocm;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
-import javax.jcr.LoginException;
-import javax.jcr.RepositoryException;
+import javax.jcr.Credentials;
+import javax.jcr.Repository;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
@@ -34,14 +36,13 @@ import org.hippoecm.hst.mock.MockHstRequest;
 import org.hippoecm.hst.mock.MockHstRequestContext;
 import org.hippoecm.hst.ocm.HippoStdCollection;
 import org.hippoecm.hst.ocm.HippoStdNode;
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.hst.test.AbstractClientSpringTestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
 
-public class TestBaseHstComponent {
+public class TestBaseHstComponent extends AbstractClientSpringTestCase {
 
     protected ServletContext servletContext;
     protected ServletConfig servletConfig;
@@ -49,13 +50,15 @@ public class TestBaseHstComponent {
     protected MockHstRequestContext hstRequestContext;
     protected MockHstRequest hstRequest;
     
-    protected HippoRepository repository;
-    protected SimpleCredentials defaultCredentials;
+    protected Repository repository;
+    protected Credentials defaultCredentials;
 
     @Before
     public void setUp() throws Exception {
-        this.repository = HippoRepositoryFactory.getHippoRepository("rmi://127.0.0.1:1099/hipporepository");
-        this.defaultCredentials = new SimpleCredentials("admin", "admin".toCharArray());
+        super.setUp();
+        
+        this.repository = getComponent(Repository.class.getName());
+        this.defaultCredentials = getComponent(Credentials.class.getName());
         
         this.servletContext = new MockServletContext() {
             @Override
@@ -79,10 +82,10 @@ public class TestBaseHstComponent {
         this.hstRequestContext = new MockHstRequestContext();
         this.hstRequest = new MockHstRequest();
         this.hstRequest.setRequestContext(this.hstRequestContext);
-   }
+    }
     
     @Test
-    public void testBaseHstComponent() throws LoginException, RepositoryException {
+    public void testBaseHstComponent() throws Exception {
         Session session = this.repository.login(this.defaultCredentials);
         this.hstRequestContext.setSession(session);
         BaseHstComponent baseHstComponent = new BaseHstComponent();
@@ -99,10 +102,20 @@ public class TestBaseHstComponent {
         System.out.println("contentNode: " + documentNode);
         assertTrue(documentNode instanceof TextPage);
         
-        HippoStdNode collectionNode = (HippoStdNode) ocm.getObject("/content/gettingstarted/pagecontent");
-        assertNotNull(collectionNode);
-        System.out.println("collectionNode: " + collectionNode);
-        assertTrue(collectionNode instanceof HippoStdCollection);
+        Map<String, Object> properties = documentNode.getProperties();
+        assertNotNull(properties);
+        System.out.println("properties: " + properties);
+        assertEquals("Products", properties.get("gettingstarted:title"));
+        
+        HippoStdNode collNode = (HippoStdNode) ocm.getObject("/content/gettingstarted/pagecontent");
+        assertNotNull(collNode);
+        System.out.println("collectionNode: " + collNode);
+        assertTrue(collNode instanceof HippoStdCollection);
+        
+        HippoStdCollection collectionNode = (HippoStdCollection) collNode;
+        List<HippoStdCollection> childCollections = collectionNode.getCollections();
+        assertNotNull(childCollections);
+        System.out.println("childCollections: " + childCollections);
     }
     
 }

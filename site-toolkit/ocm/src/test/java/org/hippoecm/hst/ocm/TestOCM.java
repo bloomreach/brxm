@@ -24,11 +24,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.Credentials;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 
+import org.apache.commons.beanutils.MethodUtils;
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.apache.jackrabbit.ocm.manager.atomictypeconverter.impl.DefaultAtomicTypeConverterProvider;
 import org.apache.jackrabbit.ocm.manager.cache.ObjectCache;
@@ -45,27 +47,30 @@ import org.apache.jackrabbit.ocm.query.QueryManager;
 import org.hippoecm.hst.ocm.manager.impl.HstAnnotationMapperImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstObjectConverterImpl;
 import org.hippoecm.hst.ocm.query.impl.HstQueryManagerImpl;
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.hst.test.AbstractOCMSpringTestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestOCM {
+public class TestOCM extends AbstractOCMSpringTestCase {
     
-    protected HippoRepository repository;
-    protected SimpleCredentials defaultCredentials;
+    protected Object repository;
+    protected Credentials defaultCredentials;
 
     @Before
     public void setUp() throws Exception {
-        this.repository = HippoRepositoryFactory.getHippoRepository("rmi://127.0.0.1:1099/hipporepository");
-        this.defaultCredentials = new SimpleCredentials("admin", "admin".toCharArray());
+        super.setUp();
+        
+        this.repository = getComponent(Repository.class.getName());
+        this.defaultCredentials = getComponent(Credentials.class.getName());
     }
     
     @After
     public void tearDown() throws Exception {
+        super.tearDown();
+        
         if (this.repository != null) {
-            this.repository.close();
+            MethodUtils.invokeMethod(this.repository, "close", null);
         }
     }
 
@@ -75,7 +80,7 @@ public class TestOCM {
         classes.add(ComponentConfiguration.class);
         Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
         
-        Session session = this.repository.login(this.defaultCredentials);
+        Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
         
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
@@ -108,7 +113,7 @@ public class TestOCM {
         classes.add(HippoStdCollection.class);
         Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
         
-        Session session = this.repository.login(this.defaultCredentials);
+        Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
         
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
@@ -148,7 +153,7 @@ public class TestOCM {
         classes.add(HippoStdCollection.class);
         Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
         
-        Session session = this.repository.login(this.defaultCredentials);
+        Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
         
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
@@ -197,9 +202,9 @@ public class TestOCM {
     
     @Test
     public void testCollectionWithDigesterMapper() throws Exception {
-        Mapper mapper = new DigesterMapperImpl(getClass().getResourceAsStream("TestOCM-mapping.xml"));
+        Mapper mapper = new DigesterMapperImpl(getClass().getResourceAsStream("ocm-annotated-classes.xml"));
         
-        Session session = this.repository.login(this.defaultCredentials);
+        Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
         
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
@@ -254,7 +259,7 @@ public class TestOCM {
         classes.add(HippoStdCollection.class);
         Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
         
-        Session session = this.repository.login(this.defaultCredentials);
+        Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
         // search collection

@@ -28,6 +28,7 @@ import org.apache.jackrabbit.ocm.manager.objectconverter.impl.ObjectConverterImp
 import org.apache.jackrabbit.ocm.manager.objectconverter.impl.SimpleFieldsHelper;
 import org.apache.jackrabbit.ocm.mapper.Mapper;
 import org.hippoecm.hst.ocm.NodeAware;
+import org.hippoecm.hst.ocm.SessionAware;
 import org.hippoecm.hst.ocm.SimpleObjectConverter;
 import org.hippoecm.hst.ocm.SimpleObjectConverterAware;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -87,11 +88,23 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
         
         try {
             node = (Node) session.getItem(path);
-            
+
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 object = getObject(session, path + "/" + node.getName());
             } else {
                 object = super.getObject(session, path);
+                
+                if (object instanceof SessionAware) {
+                    ((SessionAware) object).setSession(session);
+                }
+                
+                if (object instanceof NodeAware) {
+                    ((NodeAware) object).setNode(node);
+                }
+                
+                if (object instanceof SimpleObjectConverterAware) {
+                    ((SimpleObjectConverterAware) object).setSimpleObjectConverter(this);
+                }
             }            
         } catch (PathNotFoundException pnfe) {
             throw new ObjectContentManagerException("Impossible to get the object at " + path, pnfe);
@@ -99,14 +112,6 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
             throw new org.apache.jackrabbit.ocm.exception.RepositoryException("Impossible to get the object at " + path, re);
         }
         
-        if (object instanceof NodeAware) {
-            ((NodeAware) object).setNode(node);
-        }
-        
-        if (object instanceof SimpleObjectConverterAware) {
-            ((SimpleObjectConverterAware) object).setSimpleObjectConverter(this);
-        }
-
         return object;
     }
     
@@ -122,6 +127,18 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
                 object = getObject(session, clazz, path + "/" + node.getName());
             } else {
                 object = super.getObject(session, clazz, path);
+                
+                if (object instanceof SessionAware) {
+                    ((SessionAware) object).setSession(session);
+                }
+                
+                if (object instanceof NodeAware) {
+                    ((NodeAware) object).setNode(node);
+                }
+                
+                if (object instanceof SimpleObjectConverterAware) {
+                    ((SimpleObjectConverterAware) object).setSimpleObjectConverter(this);
+                }
             }
         } catch (PathNotFoundException pnfe) {
             throw new ObjectContentManagerException("Impossible to get the object at " + path, pnfe);
@@ -129,14 +146,6 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
             throw new org.apache.jackrabbit.ocm.exception.RepositoryException("Impossible to get the object at " + path, re);
         }
         
-        if (object instanceof NodeAware) {
-            ((NodeAware) object).setNode(node);
-        }
-        
-        if (object instanceof SimpleObjectConverterAware) {
-            ((SimpleObjectConverterAware) object).setSimpleObjectConverter(this);
-        }
-
         return object;
     }
     

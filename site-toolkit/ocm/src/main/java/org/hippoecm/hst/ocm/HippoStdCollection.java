@@ -24,74 +24,95 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Node(jcrType="hippostd:folder", discriminator=false)
 public class HippoStdCollection extends HippoStdNode {
     
+    private static Logger log = LoggerFactory.getLogger(HippoStdCollection.class);
+    
+    protected List<HippoStdCollection> childCollections;
+    protected List<HippoStdDocument> childDocuments;
+    
     public List<HippoStdCollection> getCollections() {
-        List<HippoStdCollection> cols = null;
-        
-        if (getNode() == null || getSimpleObjectConverter() == null) {
-            cols = Collections.emptyList();
-        } else {
-            cols = new LinkedList<HippoStdCollection>();
-
-            try {
-                javax.jcr.Node child = null;
-                
-                for (NodeIterator it = getNode().getNodes(); it.hasNext(); ) {
-                    child = it.nextNode();
+        if (this.childCollections == null) {
+            if (getNode() == null || getSimpleObjectConverter() == null) {
+                this.childCollections = Collections.emptyList();
+            } else {
+                this.childCollections = new LinkedList<HippoStdCollection>();
+    
+                try {
+                    javax.jcr.Node child = null;
                     
-                    if (child == null) {
-                        continue;
-                    } 
-                    
-                    if (!child.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        HippoStdCollection childCol = (HippoStdCollection) getSimpleObjectConverter().getObject(getNode().getSession(), child.getPath());
-                        cols.add(childCol);
+                    for (NodeIterator it = getNode().getNodes(); it.hasNext(); ) {
+                        child = it.nextNode();
+                        
+                        if (child == null) {
+                            continue;
+                        } 
+                        
+                        if (!child.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            HippoStdCollection childCol = (HippoStdCollection) getSimpleObjectConverter().getObject(getSession(), child.getPath());
+                            this.childCollections.add(childCol);
+                        }
+                    }            
+                } catch (RepositoryException e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Cannot retrieve child collections: {}", e.getMessage(), e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Cannot retrieve child collections: {}", e.getMessage());
                     }
-                }            
-            } catch (RepositoryException e) {
-                e.printStackTrace();
+                }
             }
+            
+            // Now detach the session because the session is probably from the pool.
+            setSession(null);
         }
         
-        return cols;
+        return this.childCollections;
     }
     
     public List<HippoStdDocument> getDocuments() {
-        List<HippoStdDocument> docs = null;
-
-        if (getNode() == null || getSimpleObjectConverter() == null) {
-            docs = Collections.emptyList();
-        } else {
-            docs = new LinkedList<HippoStdDocument>();
-            
-            try {
-                javax.jcr.Node child = null;
+        if (this.childDocuments == null) {
+            if (getNode() == null || getSimpleObjectConverter() == null) {
+                this.childDocuments = Collections.emptyList();
+            } else {
+                this.childDocuments = new LinkedList<HippoStdDocument>();
                 
-                for (NodeIterator it = getNode().getNodes(); it.hasNext(); ) {
-                    child = it.nextNode();
+                try {
+                    javax.jcr.Node child = null;
                     
-                    if (child == null) {
-                        continue;
-                    } 
-                    
-                    if (child.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        javax.jcr.Node docNode = child.getNode(child.getName());
-                        HippoStdDocument childDoc = (HippoStdDocument) getSimpleObjectConverter().getObject(docNode.getSession(), docNode.getPath());
-                        docs.add(childDoc);
-                    } else if(child.getParent().isNodeType(HippoNodeType.NT_HANDLE)){
-                        HippoStdDocument childDoc = (HippoStdDocument) getSimpleObjectConverter().getObject(child.getSession(), child.getPath());
-                        docs.add(childDoc);
+                    for (NodeIterator it = getNode().getNodes(); it.hasNext(); ) {
+                        child = it.nextNode();
+                        
+                        if (child == null) {
+                            continue;
+                        } 
+                        
+                        if (child.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            javax.jcr.Node docNode = child.getNode(child.getName());
+                            HippoStdDocument childDoc = (HippoStdDocument) getSimpleObjectConverter().getObject(getSession(), docNode.getPath());
+                            this.childDocuments.add(childDoc);
+                        } else if(child.getParent().isNodeType(HippoNodeType.NT_HANDLE)){
+                            HippoStdDocument childDoc = (HippoStdDocument) getSimpleObjectConverter().getObject(getSession(), child.getPath());
+                            this.childDocuments.add(childDoc);
+                        }
+                    }            
+                } catch (RepositoryException e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Cannot retrieve child documents: {}", e.getMessage(), e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Cannot retrieve child documents: {}", e.getMessage());
                     }
-                }            
-            } catch (RepositoryException e) {
-                e.printStackTrace();
+                }
             }
+
+            // Now detach the session because the session is probably from the pool.
+            setSession(null);
         }
         
-        return docs;
+        return this.childDocuments;
     }
     
 }

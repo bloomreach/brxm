@@ -62,26 +62,25 @@
       <groupId>jdom</groupId>
       <artifactId>jdom</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-aop</artifactId>
-    </dependency>
     <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -111,10 +110,28 @@
       <version>${pom.version}</version>
       <scope>test</scope>      
     </dependency>
+    <!-- HST Core must be used only as a 'test' scope. It may not be provided at runtime. -->
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.components</groupId>
+      <artifactId>hst-core</artifactId>
+      <version>${pom.version}</version>
+      <scope>test</scope>      
+    </dependency>
   </dependencies>
 
   <build>
     <defaultGoal>package</defaultGoal>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>..</directory>
+        <includes>
+          <include>*.properties</include>
+        </includes>
+      </testResource>
+    </testResources>
   </build>
 
 </project>
