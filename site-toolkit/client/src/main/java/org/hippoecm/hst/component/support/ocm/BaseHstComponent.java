@@ -45,6 +45,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.ocm.HippoStdCollection;
 import org.hippoecm.hst.ocm.HippoStdDocument;
 import org.hippoecm.hst.ocm.HippoStdNode;
+import org.hippoecm.hst.ocm.manager.cache.NOOPObjectCache;
 import org.hippoecm.hst.ocm.manager.impl.HstAnnotationMapperImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstObjectConverterImpl;
 import org.hippoecm.hst.ocm.query.impl.HstQueryManagerImpl;
@@ -131,22 +132,7 @@ public class BaseHstComponent extends GenericHstComponent {
             this.ocmMapper = createMapper();
             DefaultAtomicTypeConverterProvider converterProvider = new DefaultAtomicTypeConverterProvider();
             this.ocmAtomicTypeConverters = converterProvider.getAtomicTypeConverters();
-        
-            this.ocmRequestObjectCache = new ObjectCache(){
-                public void cache(String key, Object o) {
-                }
-                public void clear() {
-                }
-
-                public Object getObject(String key) {
-                    return null;
-                }
-
-                public boolean isCached(String key) {
-                    return false;
-                }
-            };
-            
+            this.ocmRequestObjectCache = new NOOPObjectCache();
             ProxyManager proxyManager = new ProxyManagerImpl();
             this.ocmObjectConverter = new HstObjectConverterImpl(this.ocmMapper, converterProvider, proxyManager, this.ocmRequestObjectCache);
             
