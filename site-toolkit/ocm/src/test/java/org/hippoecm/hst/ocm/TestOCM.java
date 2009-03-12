@@ -35,7 +35,6 @@ import org.apache.commons.beanutils.MethodUtils;
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.apache.jackrabbit.ocm.manager.atomictypeconverter.impl.DefaultAtomicTypeConverterProvider;
 import org.apache.jackrabbit.ocm.manager.cache.ObjectCache;
-import org.apache.jackrabbit.ocm.manager.cache.impl.RequestObjectCacheImpl;
 import org.apache.jackrabbit.ocm.manager.impl.ObjectContentManagerImpl;
 import org.apache.jackrabbit.ocm.manager.objectconverter.ObjectConverter;
 import org.apache.jackrabbit.ocm.manager.objectconverter.ProxyManager;
@@ -45,6 +44,7 @@ import org.apache.jackrabbit.ocm.mapper.impl.digester.DigesterMapperImpl;
 import org.apache.jackrabbit.ocm.query.Filter;
 import org.apache.jackrabbit.ocm.query.Query;
 import org.apache.jackrabbit.ocm.query.QueryManager;
+import org.hippoecm.hst.ocm.manager.cache.HstRequestObjectCacheImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstAnnotationMapperImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstObjectConverterImpl;
 import org.hippoecm.hst.ocm.query.impl.HstQueryManagerImpl;
@@ -316,7 +316,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         Map atomicTypeConverters = converterProvider.getAtomicTypeConverters();
         QueryManager queryManager = new HstQueryManagerImpl(mapper, atomicTypeConverters, session.getValueFactory());
         ProxyManager proxyManager = new ProxyManagerImpl();
-        ObjectCache requestObjectCache = new RequestObjectCacheImpl();
+        ObjectCache requestObjectCache = new HstRequestObjectCacheImpl();
         ObjectConverter objectConverter = new HstObjectConverterImpl(mapper, converterProvider, proxyManager, requestObjectCache);
         ocm = new ObjectContentManagerImpl(mapper, objectConverter, queryManager, requestObjectCache, session);
         

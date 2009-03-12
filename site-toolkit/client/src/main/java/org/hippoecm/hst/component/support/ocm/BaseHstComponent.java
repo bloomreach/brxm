@@ -30,7 +30,6 @@ import org.apache.commons.digester.Digester;
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.apache.jackrabbit.ocm.manager.atomictypeconverter.impl.DefaultAtomicTypeConverterProvider;
 import org.apache.jackrabbit.ocm.manager.cache.ObjectCache;
-import org.apache.jackrabbit.ocm.manager.cache.impl.RequestObjectCacheImpl;
 import org.apache.jackrabbit.ocm.manager.impl.ObjectContentManagerImpl;
 import org.apache.jackrabbit.ocm.manager.objectconverter.ObjectConverter;
 import org.apache.jackrabbit.ocm.manager.objectconverter.ProxyManager;
@@ -46,6 +45,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.ocm.HippoStdCollection;
 import org.hippoecm.hst.ocm.HippoStdDocument;
 import org.hippoecm.hst.ocm.HippoStdNode;
+import org.hippoecm.hst.ocm.manager.cache.HstRequestObjectCacheImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstAnnotationMapperImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstObjectConverterImpl;
 import org.hippoecm.hst.ocm.query.impl.HstQueryManagerImpl;
@@ -133,22 +133,7 @@ public class BaseHstComponent extends GenericHstComponent {
             this.ocmMapper = createMapper();
             DefaultAtomicTypeConverterProvider converterProvider = new DefaultAtomicTypeConverterProvider();
             this.ocmAtomicTypeConverters = converterProvider.getAtomicTypeConverters();
-        
-            this.ocmRequestObjectCache = new ObjectCache(){
-                public void cache(String key, Object o) {
-                }
-                public void clear() {
-                }
-
-                public Object getObject(String key) {
-                    return null;
-                }
-
-                public boolean isCached(String key) {
-                    return false;
-                }
-            };
-            
+            this.ocmRequestObjectCache = new HstRequestObjectCacheImpl();
             ProxyManager proxyManager = new ProxyManagerImpl();
             this.ocmObjectConverter = new HstObjectConverterImpl(this.ocmMapper, converterProvider, proxyManager, this.ocmRequestObjectCache);
             
