@@ -19,7 +19,6 @@
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon-cms</artifactId>
     <version>2.05.00-SNAPSHOT</version>
-    <relativePath>..</relativePath>
   </parent>
 
   <name>CMS management addon</name>
