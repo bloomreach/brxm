@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,11 +15,9 @@
  */
 package org.hippoecm.addon.workflow;
 
-import java.lang.reflect.Method;
-import java.util.LinkedHashMap;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -28,8 +26,13 @@ import javax.jcr.Workspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.wicket.Session;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.ListDataProvider;
+import org.apache.wicket.model.IModel;
 
+import org.hippoecm.frontend.model.FrontendNodeTypes;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -39,25 +42,23 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 
 public class WorkflowPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     private static final Logger log = LoggerFactory.getLogger(WorkflowPlugin.class);
-    
+
     public static final String CATEGORIES = "workflow.categories";
-    
+
     private String[] categories;
     private final IModelReference modelReference;
-    private List<Menu> menu = new LinkedList<Menu>();
 
     public WorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -99,86 +100,85 @@ public class WorkflowPlugin extends RenderPlugin {
             log.warn("No model configured");
         }
 
-        menu = new LinkedList<Menu>();
         onModelChanged();
-        add(new MenuBar("menu", menu));
     }
 
     @Override
     protected void onModelChanged() {
-        if(getModel() instanceof JcrNodeModel) {
-            Node node = ((JcrNodeModel)getModel()).getNode();
-            if(node != null) {
-                //node.getPath();
-            }
-        }
-        menu.clear();
-        try {
-            javax.jcr.Session session = ((UserSession)Session.get()).getJcrSession();
-            Node document = session.getRootNode().getNode("content/articles/myarticle1/myarticle1");
-            Workspace workspace = session.getWorkspace();
-            Map<String, WorkflowDescriptor> workflows = new LinkedHashMap<String, WorkflowDescriptor>();
-            if (workspace instanceof HippoWorkspace) {
-                WorkflowManager workflowMgr = ((HippoWorkspace)workspace).getWorkflowManager();
-                for (String category : categories) {
-                    WorkflowDescriptor descriptor = workflowMgr.getWorkflowDescriptor(category, document);
-                    if (descriptor != null) {
-                        workflows.put(category, descriptor);
-                    }
-                }
-            }
-            Map<String, List<WorkflowDetail>> items = new LinkedHashMap<String, List<WorkflowDetail>>();
-            for (Map.Entry<String, WorkflowDescriptor> entry : workflows.entrySet()) {
-                LinkedList<WorkflowDetail> details = new LinkedList<WorkflowDetail>();
-                WorkflowDescriptor descriptor = entry.getValue();
+        final MenuHierarchy menu = new MenuHierarchy();
+        List<Panel> list = new LinkedList<Panel>();
+        if (getModel() instanceof JcrNodeModel) {
+            Node documentNode = ((JcrNodeModel) getModel()).getNode();
+            if (documentNode != null) {
                 try {
-                    Class<Workflow>[] interfaces = descriptor.getInterfaces();
-                    for (int i = 0; i < interfaces.length && i < 1; i++) {
-                        for (Method method : interfaces[i].getDeclaredMethods()) {
-                            details.add(new WorkflowDetail(descriptor, method));
+                    Workspace workspace = documentNode.getSession().getWorkspace();
+                    if (workspace instanceof HippoWorkspace) {
+                        WorkflowManager workflowMgr = ((HippoWorkspace) workspace).getWorkflowManager();
+                        for (final String category : categories) {
+                            try {
+                                final WorkflowDescriptor descriptor = workflowMgr.getWorkflowDescriptor(category, documentNode);
+                                if (descriptor != null) {
+                                    String pluginRenderer = descriptor.getAttribute(FrontendNodeTypes.WORKFLOW_RENDERER);
+                                    Panel plugin;
+                                    WorkflowDescriptorModel pluginModel = new WorkflowDescriptorModel(descriptor, category, documentNode);
+                                    if (pluginRenderer == null || pluginRenderer.trim().equals("")) {
+                                        plugin = new StdWorkflowPlugin("item", pluginModel);
+                                    } else {
+                                        Class pluginClass = Class.forName(pluginRenderer);
+                                        //if(Panel.class.isAssignableFrom(pluginClass)) {
+                                        plugin = (Panel) pluginClass.getConstructor(new Class[]{String.class, IModel.class}).newInstance(new Object[]{"item", pluginModel});
+                                    }
+                                    plugin.visitChildren(new IVisitor() {
+                                        public Object component(Component component) {
+                                            try {
+                                                if (component instanceof ActionDescription) {
+                                                    menu.put(new String[]{category, descriptor.getAttribute(FrontendNodeTypes.WORKFLOW_RENDERER), ((ActionDescription) component).getId()}, (ActionDescription) component);
+                                                }
+                                            } catch (RepositoryException ex) {
+                                                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                                                ex.printStackTrace(System.err);
+                                            }
+                                            return IVisitor.CONTINUE_TRAVERSAL;
+                                        }
+                                    });
+                                    plugin.setVisible(false);
+                                    list.add(plugin);
+                                }
+                            } catch (ClassNotFoundException ex) {
+                                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                                ex.printStackTrace(System.err);
+                            } catch (NoSuchMethodException ex) {
+                                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                                ex.printStackTrace(System.err);
+                            } catch (InstantiationException ex) {
+                                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                                ex.printStackTrace(System.err);
+                            } catch (IllegalAccessException ex) {
+                                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                                ex.printStackTrace(System.err);
+                            } catch (InvocationTargetException ex) {
+                                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                                ex.printStackTrace(System.err);
+                            }
                         }
-                        items.put(entry.getKey(), details);
                     }
-                } catch (ClassNotFoundException ex) {
+                } catch (RepositoryException ex) {
                     System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                     ex.printStackTrace(System.err);
                 }
             }
-            for (Map.Entry<String, List<WorkflowDetail>> item : items.entrySet()) {
-                List<Menu> subs = new LinkedList<Menu>();
-                for (WorkflowDetail detail : item.getValue()) {
-                    subs.add(new WorkflowMenu(detail));
-                }
-                menu.add(new Menu<Menu>(item.getKey(), subs));
+        }
+        AbstractView view;
+        addOrReplace(view = new AbstractView("view", new ListDataProvider(list)) {
+            @Override
+            protected void populateItem(Item item) {
+                item.add((Panel) item.getModelObject());
             }
-        } catch (RepositoryException ex) {
-            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-            ex.printStackTrace(System.err);
-        }
-    }
-    
-    public static class WorkflowMenu extends Menu {
-        public WorkflowMenu(WorkflowDetail detail) {
-            super(detail.getName());
-        }
-    }
+        });
+        view.populate();
 
-    public static class WorkflowDetail {
-        transient WorkflowDescriptor descriptor;
-        transient Method method;
+        menu.restructure();
 
-        public WorkflowDetail(WorkflowDescriptor descriptor, Method method) {
-            this.descriptor = descriptor;
-            this.method = method;
-        }
-
-        public String getName() {
-            String methodName = method.getName();
-            Class[] params = method.getParameterTypes();
-            for (Class cls : params) {
-                methodName += "-" + cls.getName();
-            }
-            return methodName;
-        }
+        addOrReplace(new MenuBar("menu", menu));
     }
 }
