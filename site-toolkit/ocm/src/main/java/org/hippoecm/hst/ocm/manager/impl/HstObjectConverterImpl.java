@@ -21,6 +21,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.jackrabbit.ocm.exception.IncorrectPersistentClassException;
 import org.apache.jackrabbit.ocm.exception.ObjectContentManagerException;
 import org.apache.jackrabbit.ocm.manager.atomictypeconverter.AtomicTypeConverterProvider;
 import org.apache.jackrabbit.ocm.manager.cache.ObjectCache;
@@ -93,6 +94,7 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
         
         try {
             if (!session.itemExists(path)) {
+                log.debug("Cannot load object for path '{}' because node does not exist", path);
                 return null;
             }
             
@@ -108,8 +110,12 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
                 if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                     object = getObject(session, path + "/" + node.getName());
                 } else {
-                    object = super.getObject(session, path);
-                    
+                    try {
+                        object = super.getObject(session, path);
+                    } catch(IncorrectPersistentClassException e) {
+                        log.warn("Cannot load object for node : '{}' : {}", path, e);
+                        return null;
+                    }
                     if (object instanceof SessionAware) {
                         ((SessionAware) object).setSession(session);
                     }

@@ -29,7 +29,6 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.ocm.HippoStdCollection;
-import org.hippoecm.hst.ocm.HippoStdDocument;
 import org.hippoecm.hst.ocm.HippoStdNode;
 
 public class Body extends GenericResourceServingHstComponent {
@@ -38,6 +37,7 @@ public class Body extends GenericResourceServingHstComponent {
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
+        
         HippoStdNode  n = this.getContentNode(request);
         
         if(n == null) {
@@ -51,7 +51,6 @@ public class Body extends GenericResourceServingHstComponent {
             List<HippoStdCollection> collection = ((HippoStdCollection)n).getCollections();
             request.setAttribute("collections",((HippoStdCollection)n).getCollections());
             Object o = ((HippoStdCollection)n).getDocuments();
-            
             request.setAttribute("documents",((HippoStdCollection)n).getDocuments());
         }
         
