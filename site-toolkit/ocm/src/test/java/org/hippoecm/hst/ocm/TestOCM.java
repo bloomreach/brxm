@@ -44,7 +44,7 @@ import org.apache.jackrabbit.ocm.mapper.impl.digester.DigesterMapperImpl;
 import org.apache.jackrabbit.ocm.query.Filter;
 import org.apache.jackrabbit.ocm.query.Query;
 import org.apache.jackrabbit.ocm.query.QueryManager;
-import org.hippoecm.hst.ocm.manager.cache.HstRequestObjectCacheImpl;
+import org.hippoecm.hst.ocm.manager.cache.NOOPObjectCache;
 import org.hippoecm.hst.ocm.manager.impl.HstAnnotationMapperImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstObjectConverterImpl;
 import org.hippoecm.hst.ocm.query.impl.HstQueryManagerImpl;
@@ -309,6 +309,87 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         session.logout();
     }
     
+    @Test
+    public void testTextPageUpdate() throws Exception {
+        List<Class> classes = new ArrayList<Class>();
+        classes.add(TextPage.class);
+        classes.add(HippoStdDocument.class);
+        classes.add(HippoStdCollection.class);
+        Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
+        
+        Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
+        
+        ObjectContentManager ocm = createObjectContentManager(session, mapper);
+        
+        TextPage productsPage = (TextPage) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
+        assertNotNull(productsPage);
+        assertNotNull(productsPage.getNode());
+        
+        System.out.println("node: " + productsPage.getNode());
+        System.out.println("path: " + productsPage.getPath());
+        System.out.println("title: " + productsPage.getTitle());
+        System.out.println("stateSummary: " + productsPage.getStateSummary());
+        System.out.println("state: " + productsPage.getState());
+        
+        String oldTitle = productsPage.getTitle();
+        
+        // Now updating...
+        productsPage.setTitle("Hey, Dude!");
+        ocm.update(productsPage);
+        ocm.save();
+        
+        // Now validating the changes from the repository...
+        TextPage productsPageUpdated = (TextPage) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
+        assertNotNull(productsPageUpdated);
+        assertNotNull(productsPageUpdated.getNode());
+        assertEquals("Hey, Dude!", productsPageUpdated.getTitle());
+        
+        System.out.println("node: " + productsPageUpdated.getNode());
+        System.out.println("path: " + productsPageUpdated.getPath());
+        System.out.println("title: " + productsPageUpdated.getTitle());
+        System.out.println("stateSummary: " + productsPageUpdated.getStateSummary());
+        System.out.println("state: " + productsPageUpdated.getState());
+        
+        // Restores the changes back...
+        productsPageUpdated.setTitle(oldTitle);
+        ocm.update(productsPageUpdated);
+        ocm.save();
+        
+        session.logout();
+    }
+    
+    @Test
+    public void testAddAndDelete() throws Exception {
+        List<Class> classes = new ArrayList<Class>();
+        classes.add(TextPage.class);
+        classes.add(HippoStdDocument.class);
+        classes.add(HippoStdCollection.class);
+        Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
+        
+        Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
+        
+        ObjectContentManager ocm = createObjectContentManager(session, mapper);
+        
+        // insert a collection...
+        HippoStdCollection trainingCollection = new HippoStdCollection();
+        trainingCollection.setPath("/content/gettingstarted/pagecontent/Training");
+        ocm.insert(trainingCollection);
+        ocm.save();
+        
+        // validating the insertion from the repository...
+        HippoStdCollection trainingCollectionAdded = (HippoStdCollection) ocm.getObject("/content/gettingstarted/pagecontent/Training");
+        assertNotNull(trainingCollectionAdded);
+        assertNotNull(trainingCollectionAdded.getNode());
+        System.out.println("node: " + trainingCollectionAdded.getNode());
+        System.out.println("path: " + trainingCollectionAdded.getPath());
+        
+        // delete the node added.
+        ocm.remove(trainingCollectionAdded);
+        ocm.save();
+        
+        session.logout();
+    }
+    
     private ObjectContentManager createObjectContentManager(Session session, Mapper mapper) throws UnsupportedRepositoryOperationException, RepositoryException {
         ObjectContentManager ocm = null;
         
@@ -316,7 +397,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         Map atomicTypeConverters = converterProvider.getAtomicTypeConverters();
         QueryManager queryManager = new HstQueryManagerImpl(mapper, atomicTypeConverters, session.getValueFactory());
         ProxyManager proxyManager = new ProxyManagerImpl();
-        ObjectCache requestObjectCache = new HstRequestObjectCacheImpl();
+        ObjectCache requestObjectCache = new NOOPObjectCache();
         ObjectConverter objectConverter = new HstObjectConverterImpl(mapper, converterProvider, proxyManager, requestObjectCache);
         ocm = new ObjectContentManagerImpl(mapper, objectConverter, queryManager, requestObjectCache, session);
         
