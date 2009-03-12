@@ -75,10 +75,13 @@ public class BasicLocationMapTree implements LocationMapTree{
         PropertyParser pp = new PropertyParser(params);
         String resolvedPath = (String)pp.resolveProperty("relative contentpah", unresolvedPath);
         
+        if(resolvedPath == null) {
+            log.warn("Unable to resolve relative content path : '{}'. We skip this path for linkrewriting", unresolvedPath);
+            return;
+        } 
         log.debug("Translated relative contentpath '{}' --> '{}'", unresolvedPath, resolvedPath);
-        
-        
         List<String> pathFragment = new ArrayList<String>(Arrays.asList(resolvedPath.split("/")));
+        
         add(pathFragment, hstSiteMapItem);
     }
     
@@ -152,6 +155,9 @@ public class BasicLocationMapTree implements LocationMapTree{
                         }
                         HstSiteMapItem hstSiteMapItem = locationSiteMapTreeItemAny.getHstSiteMapItems().get(0);
                         String resolvedPath = (String)pp.resolveProperty("parameterizedPath", ((HstSiteMapItemService)hstSiteMapItem).getParameterizedPath());
+                        if(resolvedPath == null) {
+                            log.warn("Unable to resolve '{}'", ((HstSiteMapItemService)hstSiteMapItem).getParameterizedPath());
+                        }
                         ResolvedLocationMapTreeItem r = new ResolvedLocationMapTreeItemImpl(resolvedPath, hstSiteMapItem.getId());
                         this.cache.put(path, r);
                         return r;
@@ -174,7 +180,9 @@ public class BasicLocationMapTree implements LocationMapTree{
         }
         HstSiteMapItem hstSiteMapItem = matchedLocationMapTreeItem.getHstSiteMapItems().get(0);
         String resolvedPath = (String)pp.resolveProperty("parameterizedPath", ((HstSiteMapItemService)hstSiteMapItem).getParameterizedPath());
-        
+        if(resolvedPath == null) {
+            log.warn("Unable to resolve '{}'", ((HstSiteMapItemService)hstSiteMapItem).getParameterizedPath());
+        }
         
         log.info("Succesfully rewrote path '{}' into new sitemap path '{}'", origPath, resolvedPath);
         

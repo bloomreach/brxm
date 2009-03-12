@@ -46,7 +46,8 @@ public class PropertyParser extends PropertyPlaceholderConfigurer {
               s = this.parseStringValue((String)o, properties, exprSet );
             } catch (BeanDefinitionStoreException e) {
               if(log.isDebugEnabled()) {
-                  log.debug("Unable to replace property expression for property '{}'. Return original value '"+s+"'.",name, e); 
+                  log.debug("Unable to replace property expression for property '{}'. Return null : '{}'" ,name, e);
+                  return null;
               } else if (log.isWarnEnabled()) {
                   log.warn("Unable to replace property expression for property '{}'. Return original value '{}'.",name, s);
               }
@@ -69,7 +70,8 @@ public class PropertyParser extends PropertyPlaceholderConfigurer {
                     s = this.parseStringValue(unparsed[i], properties, exprSet );
                 } catch (BeanDefinitionStoreException e ) {
                     if(log.isDebugEnabled()) {
-                        log.debug("Unable to replace property expression for property '{}'. Return original value '"+s+"'.",name, e); 
+                        log.debug("Unable to replace property expression for property '{}'. Return null : '{}'.",name, e);
+                        s = null;
                     } else if (log.isWarnEnabled()) {
                         log.warn("Unable to replace property expression for property '{}'. Return original value '{}'.",name, s);
                     }    
