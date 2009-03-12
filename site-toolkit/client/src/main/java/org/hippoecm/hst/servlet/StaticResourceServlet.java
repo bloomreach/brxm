@@ -25,7 +25,7 @@ public class StaticResourceServlet extends HttpServlet {
     
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
-        String resourcePath = getResourcePath(request);
+        String path = getResourcePath(request);
         
         ServletContext context = getServletConfig().getServletContext();
         
@@ -35,9 +35,18 @@ public class StaticResourceServlet extends HttpServlet {
         BufferedOutputStream bos = null;
         
         try {
+            if (path == null) {
+                if (log.isWarnEnabled()) {
+                    log.warn("path is null, response status = 404)");
+                }
+                
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+            
             long lastModified = 0L;
             
-            File file = new File(context.getRealPath(resourcePath));
+            File file = new File(context.getRealPath(path));
             
             if (file.isFile()) {
                 lastModified = file.lastModified();
@@ -50,7 +59,7 @@ public class StaticResourceServlet extends HttpServlet {
                 response.setHeader("Cache-Control", "max-age=" + (expires / 1000));
             }
             
-            String mimeType = context.getMimeType(resourcePath);
+            String mimeType = context.getMimeType(path);
             
             if (mimeType == null) {
                 mimeType = "application/octet-stream";
@@ -58,7 +67,7 @@ public class StaticResourceServlet extends HttpServlet {
             
             response.setContentType(mimeType);
             
-            is = context.getResourceAsStream(resourcePath);
+            is = context.getResourceAsStream(path);
             bis = new BufferedInputStream(is);
             sos = response.getOutputStream();
             bos = new BufferedOutputStream(sos);
@@ -92,11 +101,13 @@ public class StaticResourceServlet extends HttpServlet {
         
         if (request instanceof HstRequest) {
             path = ((HstRequest) request).getResourceID();
-        } else {
+        }
+        
+        if (path == null) {
             path = request.getPathInfo();
         }
 
-        if (!path.startsWith("/") && path.indexOf(':') > 0) {
+        if (path != null && !path.startsWith("/") && path.indexOf(':') > 0) {
             path = path.substring(path.indexOf(':') + 1);
         }
         

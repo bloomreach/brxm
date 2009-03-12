@@ -36,7 +36,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.domain.DomainMapping;
+import org.hippoecm.hst.core.domain.DomainMappings;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -50,6 +54,9 @@ public class BinariesServlet extends HttpServlet {
     
     protected Repository repository;
     protected Credentials defaultCredentials;
+    
+    protected DomainMappings domainMappings;
+    protected HstSitesManager hstSitesManager;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -57,29 +64,45 @@ public class BinariesServlet extends HttpServlet {
     }
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        String path = getResourcePath(req);
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String relPath = getResourceRelPath(request);
+        String resourcePath = null;
         Session session = null;
         
         try {
-            session = getSession(req);
-            Item item = session.getItem(path);
+            String baseContentPath = getBaseContentPath(request);
+            StringBuilder resourcePathBuilder = new StringBuilder(80);
+            
+            if (baseContentPath != null) {
+                resourcePathBuilder.append('/').append(baseContentPath);
+            }
+            
+            resourcePathBuilder.append('/').append(relPath);
+            
+            resourcePath = resourcePathBuilder.toString();
+            
+            session = getSession(request);
+            Item item = null;
+            
+            if (resourcePath != null) {
+                item = session.getItem(resourcePath);
+            }
 
             if (item == null) {
                 if (log.isWarnEnabled()) {
-                    log.warn("item at path " + path + " not found, response status = 404)");
+                    log.warn("item at path " + resourcePath + " not found, response status = 404)");
                 }
                 
-                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
             
             if (!item.isNode()) {
                 if (log.isWarnEnabled()) {
-                    log.warn("item at path " + path + " is not a node, response status = 415)");
+                    log.warn("item at path " + resourcePath + " is not a node, response status = 415)");
                 }
                 
-                res.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+                response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
                 return;
             }
 
@@ -106,10 +129,10 @@ public class BinariesServlet extends HttpServlet {
 
             if (!node.hasProperty("jcr:mimeType")) {
                 if (log.isWarnEnabled()) {
-                    log.warn("item at path " + path + " has no property jcr:mimeType, response status = 415)");
+                    log.warn("item at path " + resourcePath + " has no property jcr:mimeType, response status = 415)");
                 }
                 
-                res.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+                response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
                 return;
             }
 
@@ -117,18 +140,18 @@ public class BinariesServlet extends HttpServlet {
 
             if (!node.hasProperty("jcr:data")) {
                 if (log.isWarnEnabled()) {
-                    log.warn("item at path " + path + " has no property jcr:data, response status = 404)");
+                    log.warn("item at path " + resourcePath + " has no property jcr:data, response status = 404)");
                 }
                 
-                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
             Property data = node.getProperty("jcr:data");
             InputStream istream = data.getStream();
 
-            res.setStatus(HttpServletResponse.SC_OK);
-            res.setContentType(mimeType);
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(mimeType);
 
             // TODO add a configurable factor + default minimum for expires. Ideally, this value is
             // stored in the repository
@@ -149,16 +172,16 @@ public class BinariesServlet extends HttpServlet {
                     expires = (System.currentTimeMillis() - lastModified);
                 }
                 
-                res.setDateHeader("Expires", expires + System.currentTimeMillis());
-                res.setDateHeader("Last-Modified", lastModified); 
-                res.setHeader("Cache-Control", "max-age="+(expires/1000));
+                response.setDateHeader("Expires", expires + System.currentTimeMillis());
+                response.setDateHeader("Last-Modified", lastModified); 
+                response.setHeader("Cache-Control", "max-age="+(expires/1000));
             } else {
-                res.setDateHeader("Expires", 0);
-                res.setHeader("Cache-Control", "max-age=0");
+                response.setDateHeader("Expires", 0);
+                response.setHeader("Cache-Control", "max-age=0");
             }
             
             
-            OutputStream ostream = res.getOutputStream();
+            OutputStream ostream = response.getOutputStream();
             byte[] buffer = new byte[1024];
             int len;
             while ((len = istream.read(buffer)) >= 0) {
@@ -167,19 +190,19 @@ public class BinariesServlet extends HttpServlet {
         } catch (PathNotFoundException ex) {
             if (log.isWarnEnabled()) {
                 log.warn("PathNotFoundException with message " + ex.getMessage() + " while getting binary data stream item "
-                        + "at path " + path + ", response status = 404)");
+                        + "at path " + resourcePath + ", response status = 404)");
             }
             
-            res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } catch (RepositoryException ex) {
             if (log.isWarnEnabled()) {
-                log.warn("Repository exception while resolving binaries request '" + req.getRequestURI() + "' : " + ex.getMessage());
+                log.warn("Repository exception while resolving binaries request '" + request.getRequestURI() + "' : " + ex.getMessage());
             }
             
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } finally {
             if (session != null) {
-                releaseSession(req, session);
+                releaseSession(request, session);
             }
         }
     }
@@ -218,20 +241,58 @@ public class BinariesServlet extends HttpServlet {
         }
     }
     
-    private String getResourcePath(HttpServletRequest request) {
+    private String getResourceRelPath(HttpServletRequest request) {
         String path = null;
         
         if (request instanceof HstRequest) {
             path = ((HstRequest) request).getResourceID();
-        } else {
+        }
+
+        if (path == null) {
             path = request.getPathInfo();
         }
 
-        if (!path.startsWith("/") && path.indexOf(':') > 0) {
+        if (path != null && !path.startsWith("/") && path.indexOf(':') > 0) {
             path = path.substring(path.indexOf(':') + 1);
         }
         
         return path;
+    }
+    
+    private String getBaseContentPath(HttpServletRequest request) {
+        String baseContentPath = null;
+        
+        try {
+            if (this.domainMappings == null) {
+                this.domainMappings = HstServices.getComponentManager().getComponent(DomainMappings.class.getName());
+            }
+            
+            if (this.hstSitesManager == null) {
+                this.hstSitesManager = HstServices.getComponentManager().getComponent(HstSitesManager.class.getName());
+            }
+            
+            if (this.domainMappings != null && this.hstSitesManager != null) {
+                String domainName = request.getServerName();
+                DomainMapping domainMapping = this.domainMappings.findDomainMapping(domainName);
+                
+                if (domainMapping != null) {
+                    String siteName = domainMapping.getSiteName();
+                    HstSite hstSite = this.hstSitesManager.getSites().getSite(siteName);
+                    
+                    if (hstSite != null) {
+                        baseContentPath = hstSite.getContentPath();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve base content path: {}", e.getMessage(), e);
+            } else if (log.isWarnEnabled()) {
+                log.warn("Failed to retrieve base content path: {}", e.getMessage());
+            }
+        }
+        
+        return baseContentPath;
     }
     
 }

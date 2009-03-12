@@ -78,12 +78,12 @@
 
   <servlet-mapping>
     <servlet-name>BinariesServlet</servlet-name>
-    <url-pattern>/binaries</url-pattern>
+    <url-pattern>/binaries/*</url-pattern>
   </servlet-mapping>
   
   <servlet-mapping>
     <servlet-name>StaticResourceServlet</servlet-name>
-    <url-pattern>/staticresource</url-pattern>
+    <url-pattern>/staticresource/*</url-pattern>
   </servlet-mapping>
 
   <!-- The Usual Welcome File List -->
