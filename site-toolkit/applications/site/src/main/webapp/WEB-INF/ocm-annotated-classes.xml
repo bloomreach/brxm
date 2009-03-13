@@ -17,5 +17,6 @@
 <jackrabbit-ocm>
 
   <annotated-class>org.hippoecm.hst.ocm.NewsPage</annotated-class>
+  <annotated-class>org.hippoecm.hst.ocm.TextPage</annotated-class>
 
 </jackrabbit-ocm>
