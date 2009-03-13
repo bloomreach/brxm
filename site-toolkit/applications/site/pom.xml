@@ -359,13 +359,13 @@
 
                     <echo>Replacing HST Shared Libraries.</echo>
                     <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" 
-                          tofile="${tomcat.hst.shared.lib}/jcr-1.0.jar" />
+                          tofile="${jetspeed.hst.shared.lib}/jcr-1.0.jar" />
                     <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" 
-                          tofile="${tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
+                          tofile="${jetspeed.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
                     <copy file="../../api/target/hst-api-${project.version}.jar"
-                          tofile="${tomcat.hst.shared.lib}/hst-api-${project.version}.jar" />
+                          tofile="${jetspeed.hst.shared.lib}/hst-api-${project.version}.jar" />
                     <copy file="../../commons/target/hst-commons-${project.version}.jar"
-                          tofile="${tomcat.hst.shared.lib}/hst-commons-${project.version}.jar" />
+                          tofile="${jetspeed.hst.shared.lib}/hst-commons-${project.version}.jar" />
                     
                     <echo>Replacing cms web application into jetspeed.</echo>
                     <delete dir="${jetspeed.hst.cms.webapp}" />
