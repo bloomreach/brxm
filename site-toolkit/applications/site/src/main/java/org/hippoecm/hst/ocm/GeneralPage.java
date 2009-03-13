@@ -16,8 +16,6 @@
 package org.hippoecm.hst.ocm;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.hippoecm.hst.ocm.HippoStdDocument;
 
 public class GeneralPage extends HippoStdDocument {
 
