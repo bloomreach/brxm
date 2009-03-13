@@ -81,14 +81,22 @@ function <hst:namespace/>showPopup() {
         ${document.summary}
         <br/>
         ${document.calendar.time}
+        
+        <div style="background-color:red" >
+        
+        ${document.html.content}
+        </div>
         </li>
+        
+        
+        
     </c:forEach>
     </ol>
     </div>
 
 <div>
 
-	<a href="javascript:<hst:namespace/>showPopup();">Show</a>
+    <a href="javascript:<hst:namespace/>showPopup();">Show</a>
 
     <hst:renderURL var="defaultUrl">
       <hst:param name="page" />

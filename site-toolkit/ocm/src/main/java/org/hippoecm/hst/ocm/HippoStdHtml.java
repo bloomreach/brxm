@@ -15,33 +15,21 @@
  */
 package org.hippoecm.hst.ocm;
 
-import java.util.Calendar;
-
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 
-@Node(jcrType="testproject:newspage", discriminator=false)
-public class NewsPage extends GeneralPage {
+@Node(jcrType="hippostd:html", discriminator=false)
+public class HippoStdHtml {
     
-    private Calendar calendar; 
-    private HippoStdHtml html;
+    private String content; 
     
-    @Field(jcrName="testproject:date")
-    public Calendar getCalendar() {
-        return this.calendar;
+    @Field(jcrName="hippostd:content")
+    public String getContent() {
+        return this.content;
     }
     
-    public void setCalendar(Calendar calendar) {
-        this.calendar = calendar;
+    public void setContent(String content) {
+        this.content = content;
     }
     
-    @Bean(jcrName="testproject:body")
-    public HippoStdHtml getHtml(){
-        return html;
-    }
-    
-    public void setHtml(HippoStdHtml html) {
-        this.html = html;
-    }
 }

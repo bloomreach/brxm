@@ -44,6 +44,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.ocm.HippoStdCollection;
 import org.hippoecm.hst.ocm.HippoStdDocument;
+import org.hippoecm.hst.ocm.HippoStdHtml;
 import org.hippoecm.hst.ocm.HippoStdNode;
 import org.hippoecm.hst.ocm.manager.cache.NOOPObjectCache;
 import org.hippoecm.hst.ocm.manager.impl.HstAnnotationMapperImpl;
@@ -171,6 +172,9 @@ public class BaseHstComponent extends GenericHstComponent {
             if (in != null) try { in.close(); } catch (Exception ce) { }
         }
         
+        if (!classNames.contains(HippoStdHtml.class.getName())) {
+            classNames.add(HippoStdHtml.class.getName());
+        }
         if (!classNames.contains(HippoStdDocument.class.getName())) {
             classNames.add(HippoStdDocument.class.getName());
         }
