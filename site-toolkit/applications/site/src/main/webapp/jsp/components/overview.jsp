@@ -21,20 +21,20 @@
 
 <div>
     <h1>My overview page</h1>
-    <div style="background-color:green; color:white; width:400px;">
+    <div style="border:1px black solid; width:400px;">
     <hst:link var="link" node="${parent}"/>
     <a href="${link}">
     PARENT : ${parent.name}      
     </a>
     
     </div>  
-    <div style="background-color:blue; color:white; width:400px;">
+    <div style="border:1px black solid; width:400px;">
     <hst:link var="link" node="${current}"/>
     <a href="${link}">
     CURRENT:    ${current.name}  
     </a>
     </div>   
-    <div style="background-color:yellow; width:400px;">
+    <div style="border:1px black solid; width:400px;">
     <ol >
     <c:forEach var="folder" items="${collections}">
         <li>  
@@ -47,7 +47,7 @@
     </ol>
    </div>
 
-    <div style="background-color:green; width:400px;">
+    <div style="border:1px black solid; width:400px;">
     <ol >
     <c:forEach var="document" items="${documents}">
         <li >  
@@ -56,22 +56,18 @@
         ${document.title}
         </a>
         <br/>
+        
         ${document.summary}
         <br/>
-        
+     
         ${document.calendar.time}
         
-        <div style="background-color:red" >
-        
-        ${document.html.content}
-        </div>
         </li>
             
     </c:forEach>
     </ol>
     
     </div>
-
     <div> 
         <h3>Paging</h3> 
         

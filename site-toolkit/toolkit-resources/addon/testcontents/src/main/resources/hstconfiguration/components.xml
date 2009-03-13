@@ -60,4 +60,35 @@
         </sv:property>
     </sv:node>
     
+    <sv:node sv:name="twopaneoverview">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:template" sv:type="String">
+            <sv:value>twopaneoverview</sv:value>
+        </sv:property>
+        <sv:node sv:name="top">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:component</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentclassname" sv:type="String">
+                <sv:value>org.hippoecm.hst.components.PageableOverview</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:template" sv:type="String">
+                <sv:value>overview</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="bottom">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:component</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentclassname" sv:type="String">
+                <sv:value>org.hippoecm.hst.components.PageableOverview</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:template" sv:type="String">
+                <sv:value>overview</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+    
 </sv:node>

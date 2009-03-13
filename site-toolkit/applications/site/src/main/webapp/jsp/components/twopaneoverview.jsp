@@ -18,28 +18,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
-<div>
 
-    <h1>My detail page</h1>
-    <div style="border:1px black solid; width:400px;">
-    <hst:link var="link" node="${parent}"/>
-    <a href="${link}">
-    PARENT : ${parent.name}      
-    </a>
-    
-    </div>  
-    <div style="border:1px black solid; width:400px;">
-    
-        ${document.title}
-       
-        <br/>
-        ${document.summary}
-        <br/>
-        ${document.calendar.time}
-        
-        <div style="border:1px black solid;" >
-        ${document.html.content}
-        </div>
-     
-        
-    </div>
+<div>
+    <hst:include ref="top" />
+</div>
+
+<div>
+<hst:include ref="bottom" />
+</div>
+
+   
