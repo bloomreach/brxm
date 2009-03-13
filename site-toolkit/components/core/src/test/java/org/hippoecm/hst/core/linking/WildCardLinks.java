@@ -38,13 +38,14 @@ public class WildCardLinks extends AbstractSpringTestCase{
     
         private static final String TESTPROJECT_NAME = "testproject";
 
-        private static final String TESTPROJECT_NODE1 = "/testpreview/testproject/hst:content/News";
-        private static final String TESTPROJECT_NODE2 = "/testpreview/testproject/hst:content/News/News1";
-        private static final String TESTPROJECT_NODE3 = "/testpreview/testproject/hst:content/News/News1/News1";
-        private static final String TESTPROJECT_NODE4 = "/testpreview/testproject/hst:content/News/2009";
-        private static final String TESTPROJECT_NODE5 = "/testpreview/testproject/hst:content/News/2009/April";
-        private static final String TESTPROJECT_NODE6 = "/testpreview/testproject/hst:content/News/2009/April/Day5";
-        private static final String TESTPROJECT_NODE7 = "/testpreview/testproject/hst:content/News/2009/April/Day5/Day5Article";
+        private static final String TESTPROJECT_FOLDER1 = "/testpreview/testproject/hst:content/News";
+        private static final String TESTPROJECT_DOCUMENT1 = "/testpreview/testproject/hst:content/News/News1";
+        private static final String TESTPROJECT_DOCUMENT2 = "/testpreview/testproject/hst:content/News/News1/News1";
+        private static final String TESTPROJECT_FOLDER2 = "/testpreview/testproject/hst:content/News/2009";
+        private static final String TESTPROJECT_FOLDER3 = "/testpreview/testproject/hst:content/News/2009/April";
+        private static final String TESTPROJECT_FOLDER4 = "/testpreview/testproject/hst:content/News/2009/April/Day5";
+        private static final String TESTPROJECT_DOCUMENT3 = "/testpreview/testproject/hst:content/News/2009/April/AprilNewsArticle";
+        private static final String TESTPROJECT_DOCUMENT4 = "/testpreview/testproject/hst:content/News/2009/April/Day5/Day5Article";
         
         
         
@@ -76,35 +77,39 @@ public class WildCardLinks extends AbstractSpringTestCase{
        
        @Test 
        public void testWithWildCardSiteMapItem() throws RepositoryException{
-           Node node1 = (Node)session.getItem(TESTPROJECT_NODE1);
+           Node node1 = (Node)session.getItem(TESTPROJECT_FOLDER1);
            HstLink hstLink = hstLinkCreator.create(node1, res);
            assertEquals("The getPath of the HstLink must be equal to 'news' but was '"+hstLink.getPath()+"' ","news", hstLink.getPath());
            
-           Node node2 = (Node)session.getItem(TESTPROJECT_NODE2);
+           Node node2 = (Node)session.getItem(TESTPROJECT_DOCUMENT1);
            hstLink = hstLinkCreator.create(node2, res);
            assertEquals("The getPath of the HstLink must be equal to 'news/News1' but was '"+hstLink.getPath()+"' ","news/News1", hstLink.getPath());
            
-           Node node3 = (Node)session.getItem(TESTPROJECT_NODE3);
+           Node node3 = (Node)session.getItem(TESTPROJECT_DOCUMENT2);
            hstLink = hstLinkCreator.create(node3, res);
            assertEquals("The getPath of the HstLink must be equal to 'news/News1' but was '"+hstLink.getPath()+"' ","news/News1", hstLink.getPath());
            
-           Node node4 = (Node)session.getItem(TESTPROJECT_NODE4);
+           Node node4 = (Node)session.getItem(TESTPROJECT_FOLDER2);
            hstLink = hstLinkCreator.create(node4, res);
            assertEquals("The getPath of the HstLink must be equal to 'news/2009' but was '"+hstLink.getPath()+"' ","news/2009", hstLink.getPath());
            
            
-           Node node5 = (Node)session.getItem(TESTPROJECT_NODE5);
+           Node node5 = (Node)session.getItem(TESTPROJECT_FOLDER3);
            hstLink = hstLinkCreator.create(node5, res);
            assertEquals("The getPath of the HstLink must be equal to 'news/2009/April' but was '"+hstLink.getPath()+"' ","news/2009/April", hstLink.getPath());
            
-           Node node6 = (Node)session.getItem(TESTPROJECT_NODE6);
+           Node node6 = (Node)session.getItem(TESTPROJECT_FOLDER4);
            hstLink = hstLinkCreator.create(node6, res);
            assertEquals("The getPath of the HstLink must be equal to 'news/2009/April/Day5' but was '"+hstLink.getPath()+"' ","news/2009/April/Day5", hstLink.getPath());
            
-           Node node7 = (Node)session.getItem(TESTPROJECT_NODE7);
+           Node node7 = (Node)session.getItem(TESTPROJECT_DOCUMENT3);
            hstLink = hstLinkCreator.create(node7, res);
-           assertEquals("The getPath of the HstLink must be equal to 'news/2009/April/Day5/Day5Article' but was '"+hstLink.getPath()+"' ","news/2009/April/Day5/Day5Article", hstLink.getPath());
-          
+           assertEquals("The getPath of the HstLink must be equal to 'news/2009/April/AprilNewsArticle.html' but was '"+hstLink.getPath()+"' ","news/2009/April/AprilNewsArticle.html", hstLink.getPath());
+           
+           Node node8 = (Node)session.getItem(TESTPROJECT_DOCUMENT4);
+           hstLink = hstLinkCreator.create(node8, res);
+           assertEquals("The getPath of the HstLink must be equal to 'news/2009/April/Day5/Day5Article.html' but was '"+hstLink.getPath()+"' ","news/2009/April/Day5/Day5Article.html", hstLink.getPath());
+        
        }
        
         

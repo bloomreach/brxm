@@ -38,6 +38,8 @@ public class Body extends GenericResourceServingHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
         
+        String s = this.getParameter("foo" , request);
+        
         HippoStdNode  n = this.getContentNode(request);
         
         if(n == null) {

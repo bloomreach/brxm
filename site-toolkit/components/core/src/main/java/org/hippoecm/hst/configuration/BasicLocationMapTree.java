@@ -26,6 +26,7 @@ import java.util.Properties;
 import org.apache.commons.collections.map.LRUMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
 import org.hippoecm.hst.core.linking.ResolvedLocationMapTreeItem;
 import org.hippoecm.hst.core.linking.ResolvedLocationMapTreeItemImpl;
 import org.hippoecm.hst.core.util.PropertyParser;
@@ -65,10 +66,35 @@ public class BasicLocationMapTree implements LocationMapTree{
         // traverse the ancestors list now to see if there are wildcard or any matchers
         int index = ancestorItems.size();
         while(index-- != 0) {
-            if(ancestorItems.get(index).isWildCard()) {
+            HstSiteMapItemService s = (HstSiteMapItemService)ancestorItems.get(index);
+            if(s.isWildCard()) {
                 params.put(String.valueOf(params.size()+1), HstSiteMapItem.WILDCARD);
-            } else if(ancestorItems.get(index).isAny()) {
+            } else if(s.isAny()) {
                 params.put(String.valueOf(params.size()+1), HstSiteMapItem.ANY);
+            } else if( s.containsWildCard() ) {
+                // we assume a postfix containing a "." only meant for document url extension, disregard for linkmatching first
+                String paramVal = s.getPrefix()+HstSiteMapItem.WILDCARD;
+                if(s.getPostfix().indexOf(".") > -1) {
+                    String post = s.getPostfix().substring(0,s.getPostfix().indexOf("."));
+                    if(!"".equals(post)) {
+                        paramVal += post;
+                    }
+                } else {
+                    paramVal += s.getPostfix();
+                }
+                params.put(String.valueOf(params.size()+1), paramVal);
+            } else if( s.containsAny() ) {
+               // we assume a postfix containing a "." only meant for document url extension, disregard for linkmatching first
+                String paramVal = s.getPrefix()+HstSiteMapItem.ANY;
+                if(s.getPostfix().indexOf(".") > -1) {
+                    String post = s.getPostfix().substring(0,s.getPostfix().indexOf("."));
+                    if(!"".equals(post)) {
+                        paramVal += post;
+                    }
+                } else {
+                    paramVal += s.getPostfix();
+                }
+                params.put(String.valueOf(params.size()+1), paramVal);
             }
         }
         
@@ -101,7 +127,7 @@ public class BasicLocationMapTree implements LocationMapTree{
     }
 
     
-    public ResolvedLocationMapTreeItem match(String path, HstSite hstSite) {
+    public ResolvedLocationMapTreeItem match(String path, HstSite hstSite,boolean representsDocument) {
         String origPath = path;
       
         if(!path.startsWith(this.getCanonicalSiteContentPath())){
@@ -175,10 +201,39 @@ public class BasicLocationMapTree implements LocationMapTree{
             cache.put(path, new NullResolvedLocationMapTreeItem());
             return null;
         }
+        HstSiteMapItem hstSiteMapItem = null;
+      
         if(matchedLocationMapTreeItem.getHstSiteMapItems().size() > 1) {
-            log.debug("Multiple sitemap items are suited equally for linkrewrite of '{}'. We Take the first.", path);
+            log.debug("Multiple sitemap items are suited equally for linkrewrite of '{}'. If we represent a document, see if can map to an extension", path);
+            for(HstSiteMapItem item : matchedLocationMapTreeItem.getHstSiteMapItems()) {
+                HstSiteMapItemService serv = (HstSiteMapItemService)item;
+                if(representsDocument) {
+                    if(serv.getExtension() != null) {
+                        //  found a sitemap item with an extension! Take this one
+                        hstSiteMapItem = serv;
+                        break;
+                    } else {
+                        continue;
+                    }
+                } else {
+                    if(serv.getExtension() == null) {
+                        //  found a sitemap item without an extension! Take this one
+                        hstSiteMapItem = serv;
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
+            }
+            if(hstSiteMapItem == null) {
+                log.debug("Did not find a sitemap item that can represent this item. We return the first sitemap item.");
+            }
+        } 
+        
+        if(hstSiteMapItem == null){
+            hstSiteMapItem = matchedLocationMapTreeItem.getHstSiteMapItems().get(0);
         }
-        HstSiteMapItem hstSiteMapItem = matchedLocationMapTreeItem.getHstSiteMapItems().get(0);
+        
         String resolvedPath = (String)pp.resolveProperty("parameterizedPath", ((HstSiteMapItemService)hstSiteMapItem).getParameterizedPath());
         if(resolvedPath == null) {
             log.warn("Unable to resolve '{}'", ((HstSiteMapItemService)hstSiteMapItem).getParameterizedPath());
@@ -187,6 +242,8 @@ public class BasicLocationMapTree implements LocationMapTree{
         log.info("Succesfully rewrote path '{}' into new sitemap path '{}'", origPath, resolvedPath);
         
         ResolvedLocationMapTreeItem r = new ResolvedLocationMapTreeItemImpl(resolvedPath, hstSiteMapItem.getId());
+        
+        
         cache.put(path, r);
         return r;
       

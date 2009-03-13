@@ -32,7 +32,7 @@ public interface LocationMapTree {
     * @param path
     * @return  matching LocationMapTreeItem and null if no matching one is found
     */
-   ResolvedLocationMapTreeItem match(String path, HstSite hstSite);
+   ResolvedLocationMapTreeItem match(String path, HstSite hstSite, boolean representsDocument);
    
    String getCanonicalSiteContentPath();
    

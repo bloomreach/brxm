@@ -81,6 +81,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     private boolean containsAny;
     private boolean containsWildCard;
     private String postfix; 
+    private String extension;
     private String prefix; 
     
     public HstSiteMapItemService(Node jcrNode, String siteMapRootNodePath, HstSiteMapItem parentItem, HstSiteMap hstSiteMap) throws ServiceException{
@@ -120,6 +121,9 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
             this.containsWildCard = true;
             this.postfix = value.substring(value.indexOf(WILDCARD) + WILDCARD.length());
             this.prefix = value.substring(0, value.indexOf(WILDCARD));
+            if(this.postfix.indexOf(".") > -1) {
+                this.extension = this.postfix.substring(this.postfix.indexOf("."));
+            }
             if(parentItem != null) {
                 ((HstSiteMapItemService)parentItem).addWildCardPrefixedChildSiteMapItems(this);
             }
@@ -128,6 +132,9 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         } else if(value.indexOf(ANY) > -1) {
             this.containsAny = true;
             this.postfix = value.substring(value.indexOf(ANY) + ANY.length());
+            if(this.postfix.indexOf(".") > -1) {
+                this.extension = this.postfix.substring(this.postfix.indexOf("."));
+            }
             this.prefix = value.substring(0, value.indexOf(ANY));
             if(parentItem != null) {
                 ((HstSiteMapItemService)parentItem).addAnyPrefixedChildSiteMapItems(this);
@@ -380,6 +387,10 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
 
     public String getPostfix(){
         return this.postfix;
+    }
+    
+    public String getExtension(){
+        return this.extension;
     }
     
     public String getPrefix(){

@@ -77,14 +77,19 @@ public class BasicHstLinkCreator implements HstLinkCreator {
                 log.debug("Node was not virtual");
             }
 
-            String nodePath = node.getPath();
+            
             
             if(node.isNodeType(HippoNodeType.NT_DOCUMENT) && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                log.debug("Node '{}' is a '{}' that belongs to a handle. Create the link with the handle", nodePath, HippoNodeType.NT_DOCUMENT);
-                nodePath = node.getParent().getPath();
+                node = node.getParent();
             }
             
-            return this.create(nodePath, resolvedSiteMapItem, true);
+            String nodePath = node.getPath();
+            
+            boolean representsDocument = false;
+            if(node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                representsDocument = true;
+            }
+            return this.create(nodePath, resolvedSiteMapItem, representsDocument);
             
         } catch (RepositoryException e) {
             log.error("Repository Exception during creating link", e);
@@ -97,13 +102,13 @@ public class BasicHstLinkCreator implements HstLinkCreator {
      * boolean signature is only needed to distinguish from create(String toSiteMapItemId, HstSiteMapItem currentSiteMapItem)
      * and not used
      */
-    private HstLink create(String path, ResolvedSiteMapItem resolvedSiteMapItem, boolean signature) {
+    private HstLink create(String path, ResolvedSiteMapItem resolvedSiteMapItem, boolean representsDocument) {
      // Try to see if we can create a link within the HstSite where this HstSiteMapItem belongs to
         HstSiteMap hstSiteMap = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap();
         HstSite hstSite = hstSiteMap.getSite();
         
         if(path.startsWith(hstSite.getLocationMapTree().getCanonicalSiteContentPath())) {
-            ResolvedLocationMapTreeItem resolvedLocation = hstSite.getLocationMapTree().match(path, hstSite );
+            ResolvedLocationMapTreeItem resolvedLocation = hstSite.getLocationMapTree().match(path, hstSite, representsDocument);
             if(resolvedLocation != null) {
                 if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", path);
                 if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", path, resolvedLocation.getPath());
