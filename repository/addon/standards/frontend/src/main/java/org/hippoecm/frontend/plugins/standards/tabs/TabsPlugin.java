@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -39,7 +40,10 @@ import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TabsPlugin extends RenderPlugin {
+import org.hippoecm.frontend.plugin.ContextMenuManager;
+import org.hippoecm.frontend.plugin.ContextMenu;
+
+public class TabsPlugin extends RenderPlugin implements ContextMenuManager {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -56,6 +60,7 @@ public class TabsPlugin extends RenderPlugin {
     private List<Tab> tabs;
     private ServiceTracker<IRenderService> tabsTracker;
     private int selectCount;
+    private ContextMenu activeContextMenu;
 
     public TabsPlugin(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
@@ -105,6 +110,18 @@ public class TabsPlugin extends RenderPlugin {
             }
         };
         context.registerTracker(tabsTracker, properties.getString(TAB_ID));
+
+        add(new AjaxEventBehavior("onclick") {
+            public void onEvent(AjaxRequestTarget target) {
+                if(activeContextMenu != null) {
+                    activeContextMenu.collapse(target);
+                }
+            }
+        });
+    }
+
+    public void addContextMenu(ContextMenu activeMenu) {
+        activeContextMenu = activeMenu;
     }
 
     @Override
@@ -239,5 +256,4 @@ public class TabsPlugin extends RenderPlugin {
             ((Panel) renderer).detach();
         }
     }
-
 }
