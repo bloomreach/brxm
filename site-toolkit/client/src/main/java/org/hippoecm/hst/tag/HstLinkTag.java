@@ -130,7 +130,7 @@ public class HstLinkTag extends TagSupport {
         
         String urlString = null;
         
-        if (response instanceof HstResponse) {
+        if (this.path == null && response instanceof HstResponse) {
             urlString = ((HstResponse) response).createNavigationalURL(url.toString()).toString();
         } else {
             // only add the current servletpath for HstLink and not for 
