@@ -46,10 +46,11 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
     protected ProxyManager proxyManager;
     protected ObjectCache requestObjectCache;
     protected SimpleFieldsHelper simpleFieldsHelp;
-    
-    public HstObjectConverterImpl(Mapper mapper, AtomicTypeConverterProvider converterProvider, ProxyManager proxyManager, ObjectCache requestObjectCache) {
+
+    public HstObjectConverterImpl(Mapper mapper, AtomicTypeConverterProvider converterProvider,
+            ProxyManager proxyManager, ObjectCache requestObjectCache) {
         super(mapper, converterProvider, proxyManager, requestObjectCache);
-        
+
         this.mapper = mapper;
         this.converterProvider = converterProvider;
         this.proxyManager = proxyManager;
@@ -61,32 +62,32 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
     public void insert(Session session, Object object) {
         super.insert(session, object);
     }
-    
+
     @Override
     public void insert(Session session, Node parentNode, String nodeName, Object object) {
         super.insert(session, parentNode, nodeName, object);
     }
-    
+
     @Override
     public void update(Session session, Object object) {
         super.update(session, object);
     }
-    
+
     @Override
     public void update(Session session, String uuId, Object object) {
         super.update(session, uuId, object);
     }
-    
+
     @Override
     public void update(Session session, Node objectNode, Object object) {
         super.update(session, objectNode, object);
     }
-    
+
     @Override
     public void update(Session session, Node parentNode, String nodeName, Object object) {
         super.update(session, parentNode, nodeName, object);
     }
-    
+
     @Override
     public Object getObject(Session session, String path) {
         Object object = null;
@@ -112,12 +113,8 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
                     // this node can be ignored
                     object = getObject(session, path + "/" + node.getName());
                 } else {
-                    try {
-                        object = super.getObject(session, path);
-                    } catch(IncorrectPersistentClassException e) {
-                        log.warn("Cannot load object for node : '{}' : {}", path, e);
-                        return null;
-                    }
+                    object = super.getObject(session, path);
+                    
                     if (object instanceof SessionAware) {
                         ((SessionAware) object).setSession(session);
                     }
@@ -131,6 +128,12 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
                     }
                 }
             }
+        } catch(IncorrectPersistentClassException e) {
+            if (log.isWarnEnabled()) {
+                String nodeType = "";
+                try { nodeType = node.getPrimaryNodeType().getName(); } catch (Exception re) {}
+                log.warn("Cannot find the class descriptor for {}: {}", nodeType, path);
+            }
         } catch (PathNotFoundException pnfe) {
             throw new ObjectContentManagerException("Impossible to get the object at " + path, pnfe);
         } catch (RepositoryException re) {
@@ -139,39 +142,39 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
         
         return object;
     }
-    
+
     @Override
     public Object getObject(Session session, Class clazz, String path) {
         Object object = null;
         Node node = null;
-        
+
         try {
             if (!session.itemExists(path)) {
                 return null;
             }
-            
+
             Item item = session.getItem(path);
-            
+
             if (!item.isNode()) {
                 if (log.isWarnEnabled()) {
                     log.warn("The object is not a node: {}", path);
                 }
             } else {
                 node = (Node) item;
-                
+
                 if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                     object = getObject(session, clazz, path + "/" + node.getName());
                 } else {
                     object = super.getObject(session, clazz, path);
-                    
+
                     if (object instanceof SessionAware) {
                         ((SessionAware) object).setSession(session);
                     }
-                    
+
                     if (object instanceof NodeAware) {
                         ((NodeAware) object).setNode(node);
                     }
-                    
+
                     if (object instanceof SimpleObjectConverterAware) {
                         ((SimpleObjectConverterAware) object).setSimpleObjectConverter(this);
                     }
@@ -180,25 +183,26 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
         } catch (PathNotFoundException pnfe) {
             throw new ObjectContentManagerException("Impossible to get the object at " + path, pnfe);
         } catch (RepositoryException re) {
-            throw new org.apache.jackrabbit.ocm.exception.RepositoryException("Impossible to get the object at " + path, re);
+            throw new org.apache.jackrabbit.ocm.exception.RepositoryException(
+                    "Impossible to get the object at " + path, re);
         }
-        
+
         return object;
     }
-    
+
     @Override
     public void retrieveAllMappedAttributes(Session session, Object object) {
         super.retrieveAllMappedAttributes(session, object);
     }
-    
+
     @Override
     public void retrieveMappedAttribute(Session session, Object object, String attributeName) {
         super.retrieveMappedAttribute(session, object, attributeName);
     }
-    
+
     @Override
     public String getPath(Session session, Object object) {
         return super.getPath(session, object);
     }
-    
+
 }
