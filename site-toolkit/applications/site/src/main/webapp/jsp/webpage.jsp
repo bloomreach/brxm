@@ -32,43 +32,13 @@ System.out.println("Console out from webpage.jsp");
 </head>
 <body>
 
-<script language="javascript">
-<!--
-function <hst:namespace/>showPopup() {
-    alert("Hello from webpage component!");
-}
-//-->
-</script>
-
-<span class="title">The new Hst is Coooooooooooool</span>
+<span class="title">The new Hst</span>
 
 <div class="page">
-    <!--div>
-    
-	    <a href="javascript:<hst:namespace/>showPopup();">Show</a>
-	    
-	    <hst:renderURL var="homeUrl">
-	      <hst:param name="page" />
-	    </hst:renderURL>
-	    <hst:renderURL var="firstUrl">
-	      <hst:param name="page" value="1" />
-	    </hst:renderURL>
-	    <hst:renderURL var="lastUrl">
-	      <hst:param name="page" value="9" />
-	    </hst:renderURL>
-	
-	    <a href="${homeUrl}">Home</a>
-	    <a href="${firstUrl}">First</a>
-	    <a href="${lastUrl}">Last</a>
-    
-    </div-->
-    
+  
     <hst:include ref="body" />
     
-    <div>
-        news parameters: <%=request.getParameterMap()%>
-    </div>
-
+    
 </div>
 
 </body>
