@@ -136,6 +136,7 @@ public interface HippoNodeType {
     final public static String HIPPO_NODETYPES = "hippo:nodetypes";
     final public static String HIPPO_NODETYPESRESOURCE = "hippo:nodetypesresource";
     final public static String HIPPO_ORDERED = "hippo:ordered";
+    final public static String HIPPO_PASSKEY = "hippo:passkey";
     final public static String HIPPO_PASSWORD = "hippo:password";
     final public static String HIPPO_PATH = "hippo:path";
     final public static String HIPPO_PATHS = "hippo:paths";

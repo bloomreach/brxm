@@ -51,7 +51,17 @@ public class RepositoryUserManager extends AbstractUserManager {
             return false;
         }
         try {
-            return PasswordHelper.checkHash(creds.getPassword(), getPasswordHash(getUser(creds.getUserID())));
+            char[] password = creds.getPassword();
+            Node userinfo = getUser(creds.getUserID());
+            
+            // check for pre-authenticated user
+            if (password != null && password.length > 0 && userinfo.hasProperty(HippoNodeType.HIPPO_PASSKEY) &&
+                userinfo.getProperty(HippoNodeType.HIPPO_PASSKEY).getString().equals(new String(password))) {
+                return true;
+            }
+
+            // do regular password check
+            return PasswordHelper.checkHash(password, getPasswordHash(userinfo));
         } catch (NoSuchAlgorithmException e) {
             throw new RepositoryException("Unknown algorithm found when authenticating user: " + creds.getUserID(), e);
         } catch (UnsupportedEncodingException e) {
