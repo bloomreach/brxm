@@ -144,6 +144,7 @@
 - hippo:securityprovider (string) = 'internal' mandatory autocreated
 - hippo:active (boolean) = true mandatory autocreated
 - hippo:password (string)
+- hippo:passkey (string)
 - hippo:lastlogin (date)
 
 [hippo:externaluser] > hippo:user
