@@ -115,19 +115,19 @@ public class WorkflowPlugin extends RenderPlugin {
                     if (workspace instanceof HippoWorkspace) {
                         WorkflowManager workflowMgr = ((HippoWorkspace) workspace).getWorkflowManager();
                         for (final String category : categories) {
-                            try {
+                            //try {
                                 final WorkflowDescriptor descriptor = workflowMgr.getWorkflowDescriptor(category, documentNode);
                                 if (descriptor != null) {
                                     String pluginRenderer = descriptor.getAttribute(FrontendNodeTypes.WORKFLOW_RENDERER);
                                     Panel plugin;
                                     WorkflowDescriptorModel pluginModel = new WorkflowDescriptorModel(descriptor, category, documentNode);
-                                    if (pluginRenderer == null || pluginRenderer.trim().equals("")) {
+                                    //if (pluginRenderer == null || pluginRenderer.trim().equals("")) {
                                         plugin = new StdWorkflowPlugin("item", pluginModel);
-                                    } else {
+                                    /*} else {
                                         Class pluginClass = Class.forName(pluginRenderer);
                                         //if(Panel.class.isAssignableFrom(pluginClass)) {
                                         plugin = (Panel) pluginClass.getConstructor(new Class[]{String.class, IModel.class}).newInstance(new Object[]{"item", pluginModel});
-                                    }
+                                    }*/
                                     plugin.visitChildren(new IVisitor() {
                                         public Object component(Component component) {
                                             try {
@@ -144,7 +144,7 @@ public class WorkflowPlugin extends RenderPlugin {
                                     plugin.setVisible(false);
                                     list.add(plugin);
                                 }
-                            } catch (ClassNotFoundException ex) {
+                            /*} catch (ClassNotFoundException ex) {
                                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                                 ex.printStackTrace(System.err);
                             } catch (NoSuchMethodException ex) {
@@ -159,7 +159,7 @@ public class WorkflowPlugin extends RenderPlugin {
                             } catch (InvocationTargetException ex) {
                                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                                 ex.printStackTrace(System.err);
-                            }
+                            }*/
                         }
                     }
                 } catch (RepositoryException ex) {
