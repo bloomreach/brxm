@@ -31,6 +31,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.ocm.HippoStdNode;
@@ -56,8 +57,6 @@ public class HstLinkTag extends TagSupport {
     protected String path;
     
     protected String var;
-    
-    protected String context;
     
     protected String scope;
 
@@ -113,18 +112,9 @@ public class HstLinkTag extends TagSupport {
             this.link = reqContext.getHstLinkCreator().create(node.getNode(), reqContext.getResolvedSiteMapItem());
         }
         
-        if (this.context != null) {
-            url.append(this.context);
-        } else {
-            url.append(request.getContextPath());
-            // only add the current servletpath for HstLink and not for 
-            // static links
-            if(this.link != null) {
-                url.append(request.getServletPath());
-            }
-        }
         String[] pathElements = null;
-        if(this.link != null) {
+
+        if (this.link != null) {
             pathElements = link.getPathElements();
         }
         
@@ -132,13 +122,27 @@ public class HstLinkTag extends TagSupport {
             path = PathUtils.normalizePath(path);
             pathElements = path.split("/");
         }
+        
         for(String elem : pathElements) {
             String enc = response.encodeURL(elem);
             url.append("/").append(enc);
         }
         
-        String urlString = url.toString();
-
+        String urlString = null;
+        
+        if (response instanceof HstResponse) {
+            urlString = ((HstResponse) response).createNavigationalURL(url.toString()).toString();
+        } else {
+            // only add the current servletpath for HstLink and not for 
+            // static links
+            if (this.link != null) {
+                url.insert(0, request.getContextPath() + request.getServletPath());
+            } else {
+                url.insert(0, request.getContextPath());
+            }
+            
+            urlString = url.toString();
+        }
     
         if (var == null) {
             try {               
@@ -169,7 +173,6 @@ public class HstLinkTag extends TagSupport {
         parametersMap.clear();
         var = null;
         scope = null;
-        context = null;
         path = null;
         link = null;
         
@@ -193,10 +196,6 @@ public class HstLinkTag extends TagSupport {
      */
     public String getVar() {
         return var;
-    }
-    
-    public String getContext() {
-        return context;
     }
     
     public String getScope() {
@@ -234,10 +233,6 @@ public class HstLinkTag extends TagSupport {
      */
     public void setVar(String var) {
         this.var = var;
-    }
-    
-    public void setContext(String context) {
-        this.context = context;
     }
     
     public void setScope(String scope) {

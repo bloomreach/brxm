@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.util.HttpUtils;
 import org.hippoecm.hst.core.util.Path;
 import org.slf4j.Logger;
@@ -86,8 +87,24 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
     }
 
     public HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse) {
+        return parseURL(servletRequest, servletResponse, null, null);
+    }
+    
+    public HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, String pathInfo) {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+        
+        String contextPath = request.getContextPath();
+        String servletPath = request.getServletPath();
+        
+        if (requestContext != null) {
+            HstContainerURL baseURL = requestContext.getBaseURL();
+            
+            if (baseURL != null) {
+                contextPath = baseURL.getContextPath();
+                servletPath = baseURL.getServletPath();
+            }
+        }
         
         HstContainerURLImpl url = new HstContainerURLImpl();
         
@@ -100,10 +117,13 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         }
         
         url.setCharacterEncoding(characterEncoding);
-        url.setContextPath(request.getContextPath());
-        url.setServletPath(request.getServletPath());
+        url.setContextPath(contextPath);
+        url.setServletPath(servletPath);
         
-        String pathInfo = request.getPathInfo();
+        if (pathInfo == null) {
+            pathInfo = request.getPathInfo();
+        }
+        
         url.setPathInfo(pathInfo);
         
         try {

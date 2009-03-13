@@ -33,6 +33,14 @@ public interface HstResponse extends HttpServletResponse {
     HstURL createRenderURL();
     
     /**
+     * Creates a HST Navigational Render URL
+     * 
+     * @param pathInfo the path to be navigated
+     * @return
+     */
+    HstURL createNavigationalURL(String pathInfo);
+    
+    /**
      * Creates a HST Action URL targeting the HstComponent.
      *  
      * @return

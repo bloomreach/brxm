@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import javax.xml.parsers.DocumentBuilder;
@@ -31,7 +32,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.hippoecm.hst.core.container.HstComponentWindow;
-import org.hippoecm.hst.core.container.HstComponentWindowImpl;
+import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -43,6 +44,8 @@ import org.w3c.dom.Element;
  */
 public class HstResponseImpl extends HttpServletResponseWrapper implements HstResponse
 {
+    protected HttpServletRequest request;
+    protected HttpServletResponse response;
     protected HstRequestContext requestContext;
     protected HstComponentWindow componentWindow;
     protected HstResponseState responseState;
@@ -51,8 +54,10 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     protected HstResponse topParentHstResponse;
     protected String renderPath;
     
-    public HstResponseImpl(HttpServletResponse response, HstRequestContext requestContext, HstComponentWindow componentWindow, HstResponseState responseState, HstResponse topParentHstResponse) {
+    public HstResponseImpl(HttpServletRequest request, HttpServletResponse response, HstRequestContext requestContext, HstComponentWindow componentWindow, HstResponseState responseState, HstResponse topParentHstResponse) {
         super(response);
+        this.request = request;
+        this.response = response;
         this.requestContext = requestContext;
         this.componentWindow = componentWindow;
         this.responseState = responseState;
@@ -61,6 +66,12 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     
     public HstURL createRenderURL() {
         return this.requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, this.componentWindow.getReferenceNamespace(), this.requestContext.getBaseURL());
+    }
+    
+    public HstURL createNavigationalURL(String pathInfo) {
+        HstContainerURL navURL = this.requestContext.getURLFactory().getServletUrlProvider().parseURL(this.request, this.response, this.requestContext, pathInfo);
+        HstURL navRenderURL = this.requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, this.componentWindow.getReferenceNamespace(), navURL);
+        return navRenderURL;
     }
     
     public HstURL createActionURL() {

@@ -22,6 +22,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 public interface HstContainerURLProvider {
     
@@ -30,6 +31,8 @@ public interface HstContainerURLProvider {
     String getParameterNameComponentSeparator();
 
     HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse);
+    
+    HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, String pathInfo);
     
     HstContainerURL createURL(HstContainerURL baseContainerURL, HstURL hstUrl);
     

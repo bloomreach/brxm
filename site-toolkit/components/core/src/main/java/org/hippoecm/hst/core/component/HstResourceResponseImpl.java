@@ -52,6 +52,10 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
         throw new UnsupportedOperationException("Resource response is not allowed to invoke createRenderURL().");
     }
     
+    public HstURL createNavigationalURL(String pathInfo) {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke createRenderURL().");
+    }
+
     public HstURL createActionURL() {
         throw new UnsupportedOperationException("Resource response is not allowed to invoke createActionURL().");
     }

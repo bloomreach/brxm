@@ -60,7 +60,7 @@ public class AggregationValve extends AbstractValve {
                 HstResponseState portletHstResponseState = (HstResponseState) servletRequest.getAttribute(HstResponseState.class.getName());
                 
                 if (portletHstResponseState != null) {
-                    parentResponse = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, null, portletHstResponseState, null);
+                    parentResponse = new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, null, portletHstResponseState, null);
                     topParentResponse = (HstResponse) parentResponse;
                 }
                 
@@ -115,7 +115,7 @@ public class AggregationValve extends AbstractValve {
         HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
         HstResponseState responseState = new HstServletResponseState((HttpServletRequest) servletRequest,
                 (HttpServletResponse) servletResponse);
-        HstResponse response = new HstResponseImpl((HttpServletResponse) servletResponse, requestContext, window,
+        HstResponse response = new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, window,
                 responseState, topComponentHstResponse);
         
         if (topComponentHstResponse == null) {
