@@ -32,7 +32,8 @@ System.out.println("Console out from webpage.jsp");
 </head>
 <body>
 
-<span class="title">The new Hst</span>
+<h1>The new Hst</h1>
+
 
 <div class="page">
   

@@ -74,6 +74,23 @@ public class HippoStdCollection extends HippoStdNode implements SessionAware {
         return this.childCollections;
     }
     
+    public List<HippoStdDocument> getDocuments(int from, int to) {
+        List<HippoStdDocument> docs =  getDocuments();
+        List<HippoStdDocument> subList = new LinkedList<HippoStdDocument>();
+        while(from < to) {
+            if(docs.size() <= from) {
+                return subList;
+            }
+            subList.add(docs.get(from));
+            from++;
+        }
+        return subList;
+    }
+    
+    public int getDocumentSize() {
+        return getDocuments().size();
+    }
+    
     public List<HippoStdDocument> getDocuments() {
         if (this.childDocuments == null) {
             if (this.getSession() == null || getNode() == null || getSimpleObjectConverter() == null) {

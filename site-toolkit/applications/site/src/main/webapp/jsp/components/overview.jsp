@@ -69,7 +69,19 @@
             
     </c:forEach>
     </ol>
+    
     </div>
 
+    <div> 
+        <h3>Paging</h3> 
+        
+        <c:forEach var="page" items="${pages}">
+            <hst:renderURL var="pagelink">
+                <hst:param name="page" value="${page.number}" />
+            </hst:renderURL>
+            <a href="${pagelink}">${page.number}</a>
+        </c:forEach>
+        
+    </div>
 
    
