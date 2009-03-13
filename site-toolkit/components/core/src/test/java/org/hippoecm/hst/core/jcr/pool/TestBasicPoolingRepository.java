@@ -104,7 +104,7 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
         session = null;
 
         try {
-            SimpleCredentials defaultCredentials = poolingRepository.getDefaultCredentials();
+            SimpleCredentials defaultCredentials = (SimpleCredentials) poolingRepository.getDefaultCredentials();
             SimpleCredentials testCredentials = new SimpleCredentials(defaultCredentials.getUserID(),
                     defaultCredentials.getPassword());
 

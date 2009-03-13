@@ -21,6 +21,7 @@ import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -28,8 +29,6 @@ import javax.jcr.SimpleCredentials;
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 
 /** 
  * <p>Basic implementation of <code>javax.jcr.Repository</code> that is
@@ -40,10 +39,13 @@ import org.hippoecm.repository.HippoRepositoryFactory;
  */
 public class BasicPoolingRepository implements PoolingRepository, MultipleRepositoryAware {
     
-    protected HippoRepository repository;
-    protected SimpleCredentials defaultCredentials;
+    protected Repository repository;
+    protected Credentials defaultCredentials;
+    protected boolean isSimpleDefaultCredentials;
     protected SessionDecorator sessionDecorator;
     
+    protected String repositoryProviderClassName = "org.hippoecm.hst.core.jcr.pool.JcrHippoRepositoryProvider";
+    protected JcrRepositoryProvider jcrRepositoryProvider;
     protected String repositoryAddress;
     protected String defaultCredentialsUserID;
     protected char [] defaultCredentailsPassword;
@@ -54,11 +56,19 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     protected ResourceLifecycleManagement pooledSessionLifecycleManagement;
     protected MultipleRepository multipleRepository;
 
-    public void setRepository(HippoRepository repository) throws RepositoryException {
+    public void setRepositoryProviderClassName(String repositoryProviderClassName) {
+        this.repositoryProviderClassName = repositoryProviderClassName;
+    }
+    
+    public String getRepositoryProviderClassName() {
+        return this.repositoryProviderClassName;
+    }
+    
+    public void setRepository(Repository repository) throws RepositoryException {
         this.repository = repository;
     }
 
-    public HippoRepository getRepository() throws RepositoryException {
+    public Repository getRepository() throws RepositoryException {
         return this.repository;
     }
     
@@ -70,11 +80,12 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         return this.repositoryAddress;
     }
 
-    public void setDefaultCredentials(SimpleCredentials defaultCredentials) {
+    public void setDefaultCredentials(Credentials defaultCredentials) {
         this.defaultCredentials = defaultCredentials;
+        this.isSimpleDefaultCredentials = (this.defaultCredentials != null && (this.defaultCredentials instanceof SimpleCredentials));
     }
 
-    public SimpleCredentials getDefaultCredentials() {
+    public Credentials getDefaultCredentials() {
         return this.defaultCredentials;
     }
     
@@ -146,7 +157,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         String descriptor = null;
 
         try {
-            descriptor = getRepository().getRepository().getDescriptor(key);
+            descriptor = getRepository().getDescriptor(key);
         } catch (RepositoryException e) {
         }
 
@@ -157,7 +168,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         String[] descriptorKeys = null;
 
         try {
-            descriptorKeys = getRepository().getRepository().getDescriptorKeys();
+            descriptorKeys = getRepository().getDescriptorKeys();
         } catch (RepositoryException e) {
         }
 
@@ -351,8 +362,15 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         
         // Initialize possible missing properties
         
-        if (getRepository() == null && getRepositoryAddress() != null) {
-            setRepository(HippoRepositoryFactory.getHippoRepository(getRepositoryAddress()));
+        if (getRepository() == null && getRepositoryProviderClassName() != null && getRepositoryAddress() != null) {
+            try {
+                this.jcrRepositoryProvider = (JcrRepositoryProvider) Class.forName(getRepositoryProviderClassName()).newInstance();
+            } catch (Throwable th) {
+                throw new RepositoryException("Cannot create an instance of JcrRepositoryProvider: " + getRepositoryProviderClassName());
+            }
+            
+            Repository repository = this.jcrRepositoryProvider.getRepository(getRepositoryAddress());
+            setRepository(repository);
         }
         
         if (getDefaultCredentials() == null && getDefaultCredentialsUserID() != null) {
@@ -413,12 +431,13 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
             this.sessionPool = null;
         }
         
-        if (this.repository != null) {
+        if (this.repository != null && this.jcrRepositoryProvider != null) {
             try {
-                this.repository.close();
+                this.jcrRepositoryProvider.returnRepository(this.repository);
             } catch (Exception e) {
             }
             this.repository = null;
+            this.jcrRepositoryProvider = null;
         }
     }
 
@@ -786,12 +805,12 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     }
     
     private boolean equalsCredentials(Credentials credentials) {
-        if (credentials instanceof SimpleCredentials) {
+        if (isSimpleDefaultCredentials && (credentials instanceof SimpleCredentials)) {
             SimpleCredentials other = (SimpleCredentials) credentials;
-            return (this.defaultCredentials.getUserID().equals(other.getUserID()));
+            return ((SimpleCredentials) this.defaultCredentials).getUserID().equals(other.getUserID());
+        } else {
+            return this.defaultCredentials.equals(credentials);
         }
-        
-        return false;
     }
     
     private class SessionFactory implements PoolableObjectFactory {

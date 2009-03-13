@@ -66,15 +66,14 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
         Reference ref = (Reference) obj;
         Enumeration addrs = ref.getAll();
         
-        String defaultCredentialsUserID = null;
-        String defaultCredentialsPassword = null; 
-        
         while (addrs.hasMoreElements()) {
             RefAddr addr = (RefAddr) addrs.nextElement();
             String type = addr.getType();
             String value = (String) addr.getContent();
             
-            if (type.equals("repositoryAddress")) {
+            if (type.equals("repositoryProviderClassName")) {
+                poolingRepository.setRepositoryProviderClassName(value);
+            } else if (type.equals("repositoryAddress")) {
                 poolingRepository.setRepositoryAddress(value);
             } else if (type.equals("defaultCredentialsUserID")) {
                 poolingRepository.setDefaultCredentialsUserID(value);
