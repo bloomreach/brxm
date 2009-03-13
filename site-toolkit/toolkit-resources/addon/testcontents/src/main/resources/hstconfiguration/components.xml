@@ -36,15 +36,27 @@
     </sv:node>
 
 
-    <sv:node sv:name="body">
+    <sv:node sv:name="overview">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>body</sv:value>
+            <sv:value>overview</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.components.Body</sv:value>
+            <sv:value>org.hippoecm.hst.components.Overview</sv:value>
+        </sv:property>
+    </sv:node>
+    
+    <sv:node sv:name="detail">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:template" sv:type="String">
+            <sv:value>detail</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentclassname" sv:type="String">
+            <sv:value>org.hippoecm.hst.components.Detail</sv:value>
         </sv:property>
     </sv:node>
     

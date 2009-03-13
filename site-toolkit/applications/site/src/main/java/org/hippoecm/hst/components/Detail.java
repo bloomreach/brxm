@@ -31,14 +31,13 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.ocm.HippoStdCollection;
 import org.hippoecm.hst.ocm.HippoStdNode;
 
-public class Body extends GenericResourceServingHstComponent {
+public class Detail extends GenericResourceServingHstComponent {
     
     
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
         
-        String s = this.getParameter("foo" , request);
         
         HippoStdNode  n = this.getContentNode(request);
         
@@ -47,17 +46,8 @@ public class Body extends GenericResourceServingHstComponent {
         }
         
         request.setAttribute("parent", n.getParentCollection());
-        request.setAttribute("current",(n));
-        
-        if(n instanceof HippoStdCollection) {
-            List<HippoStdCollection> collection = ((HippoStdCollection)n).getCollections();
-            request.setAttribute("collections",((HippoStdCollection)n).getCollections());
-            Object o = ((HippoStdCollection)n).getDocuments();
-            request.setAttribute("documents",((HippoStdCollection)n).getDocuments());
-        }
-        
-        
-        
+        request.setAttribute("document",(n));
+       
     }
 
 

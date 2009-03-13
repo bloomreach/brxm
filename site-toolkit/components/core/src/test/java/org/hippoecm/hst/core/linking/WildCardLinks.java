@@ -83,11 +83,11 @@ public class WildCardLinks extends AbstractSpringTestCase{
            
            Node node2 = (Node)session.getItem(TESTPROJECT_DOCUMENT1);
            hstLink = hstLinkCreator.create(node2, res);
-           assertEquals("The getPath of the HstLink must be equal to 'news/News1' but was '"+hstLink.getPath()+"' ","news/News1", hstLink.getPath());
+           assertEquals("The getPath of the HstLink must be equal to 'news/News1.html' but was '"+hstLink.getPath()+"' ","news/News1.html", hstLink.getPath());
            
            Node node3 = (Node)session.getItem(TESTPROJECT_DOCUMENT2);
            hstLink = hstLinkCreator.create(node3, res);
-           assertEquals("The getPath of the HstLink must be equal to 'news/News1' but was '"+hstLink.getPath()+"' ","news/News1", hstLink.getPath());
+           assertEquals("The getPath of the HstLink must be equal to 'news/News1.html' but was '"+hstLink.getPath()+"' ","news/News1.html", hstLink.getPath());
            
            Node node4 = (Node)session.getItem(TESTPROJECT_FOLDER2);
            hstLink = hstLinkCreator.create(node4, res);

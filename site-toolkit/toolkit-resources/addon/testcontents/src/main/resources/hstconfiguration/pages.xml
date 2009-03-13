@@ -18,7 +18,7 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:pages</sv:value>
     </sv:property>
-    <sv:node sv:name="standard">
+    <sv:node sv:name="standardoverview">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>
         </sv:property>
@@ -38,7 +38,32 @@
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/body</sv:value>
+                <sv:value>hst:components/overview</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+    
+    <sv:node sv:name="standarddetail">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:template" sv:type="String">
+            <sv:value>webpage</sv:value>
+        </sv:property>
+        <sv:node sv:name="header">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:component</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencecomponent" sv:type="String">
+                <sv:value>hst:components/header</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:component</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencecomponent" sv:type="String">
+                <sv:value>hst:components/detail</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
@@ -48,7 +73,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/standard</sv:value>
+            <sv:value>hst:pages/standardoverview</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="productsview">
@@ -56,15 +81,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/standard</sv:value>
-        </sv:property>
-    </sv:node>
-    <sv:node sv:name="productpage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/standard</sv:value>
+            <sv:value>hst:pages/standardoverview</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="solutionsview">
@@ -72,7 +89,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/standard</sv:value>
+            <sv:value>hst:pages/standardoverview</sv:value>
         </sv:property>
     </sv:node>
 
