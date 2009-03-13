@@ -15,20 +15,9 @@
  */
 package org.hippoecm.hst.components;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.ocm.HippoStdCollection;
 import org.hippoecm.hst.ocm.HippoStdNode;
 
 public class Detail extends GenericResourceServingHstComponent {
@@ -46,72 +35,11 @@ public class Detail extends GenericResourceServingHstComponent {
         }
         
         request.setAttribute("parent", n.getParentCollection());
-        request.setAttribute("document",(n));
+        request.setAttribute("document",n);
        
     }
 
 
-    @Override
-    public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        
-        if (ServletFileUpload.isMultipartContent(request)) {
-            try {
-                DiskFileItemFactory factory = new DiskFileItemFactory();
-                ServletFileUpload upload = new ServletFileUpload(factory);
-                
-                Map<String, String> fields = new HashMap<String, String>();
-                List<FileItem> items = (List<FileItem>) upload.parseRequest(request);
-                
-                for (FileItem item : items) {
-                    if (item.isFormField()) {
-                        fields.put(item.getFieldName(), item.getString());
-                    }
-                }
-                
-                String caption = fields.get("caption");
-                
-                String fileStoreDirPath = getServletConfig().getServletContext().getRealPath("/WEB-INF/file-storage");
-                File fileStoreDir = new File(fileStoreDirPath);
-                
-                if (!fileStoreDir.isDirectory()) {
-                    fileStoreDir.mkdirs();
-                }
-                
-                File storeFile = new File(fileStoreDir, caption);
-                
-                for (FileItem item : items) {
-                    if (!item.isFormField()) {
-                        item.write(storeFile);
-                    }
-                }
-            } catch (FileUploadException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("[HstComponent: " + getClass().getName() + "] doAction() with params: " + request.getParameterMap());
-            
-            String sort = request.getParameter("sort");
-            String redirect = request.getParameter("redirect");
-            
-            if (redirect != null && !"".equals(redirect)) {
-                try {
-                    response.sendRedirect(redirect);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return;
-            }
-            
-            if ("descending".equals(sort)) {
-                response.setRenderParameter("sortpage", "descending-10");
-            } else {
-                response.setRenderParameter("sortpage", "" + sort + "-00");
-            }
-        }
-        
-    }
 }
 
 
