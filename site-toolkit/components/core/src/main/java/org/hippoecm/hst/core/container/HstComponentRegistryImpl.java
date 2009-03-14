@@ -19,8 +19,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
-
 import org.hippoecm.hst.core.component.HstComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,18 +27,18 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
     
     static Logger log = LoggerFactory.getLogger(HstComponentRegistryImpl.class);
     
-    protected Map<ServletConfig, Map<String, HstComponent>> servletConfigComponentsMap = Collections.synchronizedMap(new HashMap<ServletConfig, Map<String, HstComponent>>());
+    protected Map<HstContainerConfig, Map<String, HstComponent>> servletConfigComponentsMap = Collections.synchronizedMap(new HashMap<HstContainerConfig, Map<String, HstComponent>>());
 
-    public HstComponent getComponent(ServletConfig servletConfig, String componentId) {
-        return getServletConfigComponentsMap(servletConfig, true).get(componentId);
+    public HstComponent getComponent(HstContainerConfig requestContainerConfig, String componentId) {
+        return getServletConfigComponentsMap(requestContainerConfig, true).get(componentId);
     }
 
-    public void registerComponent(ServletConfig servletConfig, String componentId, HstComponent component) {
-        getServletConfigComponentsMap(servletConfig, true).put(componentId, component);
+    public void registerComponent(HstContainerConfig requestContainerConfig, String componentId, HstComponent component) {
+        getServletConfigComponentsMap(requestContainerConfig, true).put(componentId, component);
     }
 
-    public void unregisterComponent(ServletConfig servletConfig, String componentId) {
-        HstComponent component = getServletConfigComponentsMap(servletConfig, true).remove(componentId);
+    public void unregisterComponent(HstContainerConfig requestContainerConfig, String componentId) {
+        HstComponent component = getServletConfigComponentsMap(requestContainerConfig, true).remove(componentId);
         
         if (component != null) {
             try {
@@ -60,16 +58,16 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
             return;
         }
         
-        Map<ServletConfig, Map<String, HstComponent>> copiedMap = Collections.synchronizedMap(new HashMap<ServletConfig, Map<String, HstComponent>>());
+        Map<HstContainerConfig, Map<String, HstComponent>> copiedMap = Collections.synchronizedMap(new HashMap<HstContainerConfig, Map<String, HstComponent>>());
         
         synchronized (this.servletConfigComponentsMap) {
-            for (ServletConfig servletConfig : this.servletConfigComponentsMap.keySet()) {
-                copiedMap.put(servletConfig, new HashMap<String, HstComponent>());
+            for (HstContainerConfig requestContainerConfig : this.servletConfigComponentsMap.keySet()) {
+                copiedMap.put(requestContainerConfig, new HashMap<String, HstComponent>());
             }
         }
         
-        for (ServletConfig servletConfig : copiedMap.keySet()) {
-            Map<String, HstComponent> compMap = getServletConfigComponentsMap(servletConfig, false);
+        for (HstContainerConfig requestContainerConfig : copiedMap.keySet()) {
+            Map<String, HstComponent> compMap = getServletConfigComponentsMap(requestContainerConfig, false);
             
             if (compMap != null) {
                 Map<String, HstComponent> copiedCompMap = new HashMap<String, HstComponent>();
@@ -80,11 +78,11 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
                     }
                 }
 
-                copiedMap.put(servletConfig, copiedCompMap);
+                copiedMap.put(requestContainerConfig, copiedCompMap);
             }
         }
         
-        for (Map.Entry<ServletConfig, Map<String, HstComponent>> entry : copiedMap.entrySet()) {
+        for (Map.Entry<HstContainerConfig, Map<String, HstComponent>> entry : copiedMap.entrySet()) {
             for (Map.Entry<String, HstComponent> compEntry : entry.getValue().entrySet()) {
                 unregisterComponent(entry.getKey(), compEntry.getKey());
             }
@@ -93,14 +91,14 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
         this.servletConfigComponentsMap.clear();
     }
     
-    protected Map<String, HstComponent> getServletConfigComponentsMap(ServletConfig servletConfig, boolean create) {
-        Map<String, HstComponent> componentsMap = this.servletConfigComponentsMap.get(servletConfig);
+    protected Map<String, HstComponent> getServletConfigComponentsMap(HstContainerConfig requestContainerConfig, boolean create) {
+        Map<String, HstComponent> componentsMap = this.servletConfigComponentsMap.get(requestContainerConfig);
         
         if (componentsMap == null && create) {
             componentsMap = Collections.synchronizedMap(new HashMap<String, HstComponent>());
-            this.servletConfigComponentsMap.put(servletConfig, componentsMap);
+            this.servletConfigComponentsMap.put(requestContainerConfig, componentsMap);
         }
         
-        return this.servletConfigComponentsMap.get(servletConfig);
+        return this.servletConfigComponentsMap.get(requestContainerConfig);
     }
 }

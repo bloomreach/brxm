@@ -15,11 +15,6 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.util.Collections;
-import java.util.Map;
-
-import javax.servlet.ServletConfig;
-
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -34,34 +29,45 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
         this.componentRegistry = componentRegistry;
     }
     
-    public HstComponent getComponentInstance(ServletConfig servletConfig, HstComponentConfiguration compConfig) throws HstComponentException {
+    public HstComponent getComponentInstance(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig) throws HstComponentException {
         
         String componentId = compConfig.getId();
-        HstComponent component = this.componentRegistry.getComponent(servletConfig, componentId);
+        HstComponent component = this.componentRegistry.getComponent(requestContainerConfig, componentId);
         
         if (component == null) {
-            
+            boolean initialized = false;
             String componentClassName = compConfig.getComponentClassName();
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            
+            ClassLoader containerClassloader = requestContainerConfig.getContextClassLoader();
+            ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
 
             try {
+                if (containerClassloader != currentClassloader) {
+                    Thread.currentThread().setContextClassLoader(containerClassloader);
+                }
                 
-                Class compClass = loader.loadClass(componentClassName);
+                Class compClass = containerClassloader.loadClass(componentClassName);
                 component = (HstComponent) compClass.newInstance();
-                
                
                 ComponentConfiguration compConfigImpl = new ComponentConfigurationImpl(compConfig); 
                 
-                component.init(servletConfig, compConfigImpl);
+                component.init(requestContainerConfig.getServletConfig(), compConfigImpl);
                 
-                this.componentRegistry.registerComponent(servletConfig, componentId, component);
-                
+                initialized = true;
             } catch (ClassNotFoundException e) {
                 throw new HstComponentException("Cannot find the class of " + componentId + ": " + componentClassName);
             } catch (InstantiationException e) {
                 throw new HstComponentException("Cannot instantiate the class of " + componentId + ": " + componentClassName);
             } catch (IllegalAccessException e) {
                 throw new HstComponentException("Illegal access to the class of " + componentId + ": " + componentClassName);
+            } finally {
+                if (containerClassloader != currentClassloader) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }                
+            }
+            
+            if (initialized) {
+                this.componentRegistry.registerComponent(requestContainerConfig, componentId, component);
             }
         }
         

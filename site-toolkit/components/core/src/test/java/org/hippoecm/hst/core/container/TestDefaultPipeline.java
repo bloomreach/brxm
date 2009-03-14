@@ -25,14 +25,13 @@ import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.container.HstContainerConfigImpl;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -47,6 +46,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
     protected Pipelines pipelines;
     protected Pipeline defaultPipeline;
     protected ServletConfig servletConfig;
+    protected HstContainerConfig requestContainerConfig;
     protected HttpServletRequest servletRequest;
     protected HttpServletResponse servletResponse;
 
@@ -60,6 +60,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         this.pipelines = (Pipelines) getComponent(Pipelines.class.getName());
         this.defaultPipeline = this.pipelines.getDefaultPipeline();
         this.servletConfig = (ServletConfig) getComponent(ServletConfig.class.getName());
+        this.requestContainerConfig = new HstContainerConfigImpl(this.servletConfig, getClass().getClassLoader());
         this.servletRequest = (HttpServletRequest) getComponent(HttpServletRequest.class.getName());
         this.servletResponse = (HttpServletResponse) getComponent(HttpServletResponse.class.getName());
      
@@ -75,17 +76,17 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         Map<String, Object> emptyProps = new HashMap<String, Object>();
         //ComponentConfiguration compConfig = new ComponentConfigurationImpl(emptyProps); 
        
-        ((HstComponentFactoryImpl) componentFactory).componentRegistry.registerComponent(this.servletConfig, "pages/newsoverview", component);
+        ((HstComponentFactoryImpl) componentFactory).componentRegistry.registerComponent(this.requestContainerConfig, "pages/newsoverview", component);
 
         component = new Header();
         //component.init(this.servletConfig, compConfig);
         
-        ((HstComponentFactoryImpl) componentFactory).componentRegistry.registerComponent(this.servletConfig, "pages/newsoverview/header", component);
+        ((HstComponentFactoryImpl) componentFactory).componentRegistry.registerComponent(this.requestContainerConfig, "pages/newsoverview/header", component);
 
         component = new DocumentTitle();
         //component.init(this.servletConfig, compConfig);
         
-        ((HstComponentFactoryImpl) componentFactory).componentRegistry.registerComponent(this.servletConfig, "pages/newsoverview/header/title", component);
+        ((HstComponentFactoryImpl) componentFactory).componentRegistry.registerComponent(this.requestContainerConfig, "pages/newsoverview/header/title", component);
     }
     
     @Test
@@ -93,14 +94,14 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         
         ((MockHttpServletRequest)servletRequest).setPathInfo("/news");
         
-        this.defaultPipeline.beforeInvoke(this.servletConfig, this.servletRequest, this.servletResponse);
+        this.defaultPipeline.beforeInvoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
         
         try {
-            this.defaultPipeline.invoke(this.servletConfig, this.servletRequest, this.servletResponse);
+            this.defaultPipeline.invoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
         } catch (Exception e) {
             throw new ContainerException(e);
         } finally {
-            this.defaultPipeline.afterInvoke(this.servletConfig, this.servletRequest, this.servletResponse);
+            this.defaultPipeline.afterInvoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
         }
         
         String content = ((MockHttpServletResponse) this.servletResponse).getContentAsString();
@@ -114,14 +115,14 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         
         ((MockHttpServletRequest)servletRequest).setPathInfo("/news/2009/februari");
         
-        this.defaultPipeline.beforeInvoke(this.servletConfig, this.servletRequest, this.servletResponse);
+        this.defaultPipeline.beforeInvoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
         
         try {
-            this.defaultPipeline.invoke(this.servletConfig, this.servletRequest, this.servletResponse);
+            this.defaultPipeline.invoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
         } catch (Exception e) {
             throw new ContainerException(e);
         } finally {
-            this.defaultPipeline.afterInvoke(this.servletConfig, this.servletRequest, this.servletResponse);
+            this.defaultPipeline.afterInvoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
         }
         
         String content = ((MockHttpServletResponse) this.servletResponse).getContentAsString();

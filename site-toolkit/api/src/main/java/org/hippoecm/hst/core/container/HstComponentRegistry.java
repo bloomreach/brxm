@@ -15,17 +15,15 @@
  */
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletConfig;
-
 import org.hippoecm.hst.core.component.HstComponent;
 
 public interface HstComponentRegistry {
 
-    void registerComponent(ServletConfig servletConfig, String componentId, HstComponent component);
+    void registerComponent(HstContainerConfig requestContainerConfig, String componentId, HstComponent component);
     
-    void unregisterComponent(ServletConfig servletConfig, String componentId);
+    void unregisterComponent(HstContainerConfig requestContainerConfig, String componentId);
     
-    HstComponent getComponent(ServletConfig servletConfig, String componentId);
+    HstComponent getComponent(HstContainerConfig requestContainerConfig, String componentId);
     
     void unregisterAllComponents();
     

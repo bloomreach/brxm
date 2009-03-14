@@ -49,7 +49,20 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
             }
         }
 
-        return (Session) factory.getProxy();
+        ClassLoader sessionClassloader = session.getClass().getClassLoader();
+        ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
+        
+        try {
+            if (sessionClassloader != currentClassloader) {
+                Thread.currentThread().setContextClassLoader(sessionClassloader);
+            }
+            
+            return (Session) factory.getProxy();
+        } finally {
+            if (sessionClassloader != currentClassloader) {
+                Thread.currentThread().setContextClassLoader(currentClassloader);
+            }
+        }
     }
 
     public void setPoolingRepository(PoolingRepository poolingRepository) {

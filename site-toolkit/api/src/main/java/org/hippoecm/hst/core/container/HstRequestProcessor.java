@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -27,11 +26,11 @@ public interface HstRequestProcessor {
     /**
      * processes Hst request
      * 
-     * @param servletConfig the servletConfig of the HST container servlet
+     * @param requestContainerConfig the holder for the servletConfig and classloader of the HST container
      * @param servletRequest the servletRequest of the HST request
      * @param servletResponse the servletResponse of the HST response
      * @throws ContainerException
      */
-    void processRequest(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+    void processRequest(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
 
 }

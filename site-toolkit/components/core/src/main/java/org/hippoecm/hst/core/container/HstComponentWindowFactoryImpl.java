@@ -17,8 +17,6 @@ package org.hippoecm.hst.core.container;
 
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
-
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -36,11 +34,11 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         return this.referenceNameSeparator;
     }
 
-    public HstComponentWindow create(ServletConfig servletConfig, HstRequestContext requestContext, HstComponentConfiguration compConfig, HstComponentFactory compFactory) throws HstComponentException {
-        return create(servletConfig, requestContext, compConfig, compFactory, null);
+    public HstComponentWindow create(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HstComponentConfiguration compConfig, HstComponentFactory compFactory) throws HstComponentException {
+        return create(requestContainerConfig, requestContext, compConfig, compFactory, null);
     }
     
-    public HstComponentWindow create(ServletConfig servletConfig, HstRequestContext requestContext, HstComponentConfiguration compConfig, HstComponentFactory compFactory, HstComponentWindow parentWindow) throws HstComponentException {
+    public HstComponentWindow create(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HstComponentConfiguration compConfig, HstComponentFactory compFactory, HstComponentWindow parentWindow) throws HstComponentException {
         
         String name = compConfig.getName();
         String referenceName = compConfig.getReferenceName();
@@ -80,7 +78,7 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         HstComponentException componentFactoryException = null;
         
         try {
-            component = compFactory.getComponentInstance(servletConfig, compConfig);
+            component = compFactory.getComponentInstance(requestContainerConfig, compConfig);
         } catch (Throwable th) {
             componentFactoryException = new HstComponentException(th.getMessage());
         }
@@ -104,7 +102,7 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         if (childCompConfigMap != null && !childCompConfigMap.isEmpty()) {
             for (Map.Entry<String, HstComponentConfiguration> entry : childCompConfigMap.entrySet()) {
                 HstComponentConfiguration childCompConfig = entry.getValue();
-                HstComponentWindow childCompWindow = create(servletConfig, requestContext, childCompConfig, compFactory, window);
+                HstComponentWindow childCompWindow = create(requestContainerConfig, requestContext, childCompConfig, compFactory, window);
                 window.addChildWindow(childCompWindow);
             }
         }

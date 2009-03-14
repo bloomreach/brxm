@@ -34,19 +34,51 @@ public class JcrHippoRepository implements Repository {
     }
     
     public String getDescriptor(String key) {
-        return this.hippoRepository.getRepository().getDescriptor(key);
+        ClassLoader currentClassloader = switchToRepositoryClassloader();
+        
+        try {
+            return this.hippoRepository.getRepository().getDescriptor(key);
+        } finally {
+            if (currentClassloader != null) {
+                Thread.currentThread().setContextClassLoader(currentClassloader);
+            }
+        }
     }
 
     public String[] getDescriptorKeys() {
-        return this.hippoRepository.getRepository().getDescriptorKeys();
+        ClassLoader currentClassloader = switchToRepositoryClassloader();
+        
+        try {
+            return this.hippoRepository.getRepository().getDescriptorKeys();
+        } finally {
+            if (currentClassloader != null) {
+                Thread.currentThread().setContextClassLoader(currentClassloader);
+            }
+        }
     }
 
     public Session login() throws LoginException, RepositoryException {
-        return this.hippoRepository.login();
+        ClassLoader currentClassloader = switchToRepositoryClassloader();
+        
+        try {
+            return this.hippoRepository.login();
+        } finally {
+            if (currentClassloader != null) {
+                Thread.currentThread().setContextClassLoader(currentClassloader);
+            }
+        }
     }
 
     public Session login(Credentials credentials) throws LoginException, RepositoryException {
-        return this.hippoRepository.login((SimpleCredentials) credentials);
+        ClassLoader currentClassloader = switchToRepositoryClassloader();
+        
+        try {
+            return this.hippoRepository.login((SimpleCredentials) credentials);
+        } finally {
+            if (currentClassloader != null) {
+                Thread.currentThread().setContextClassLoader(currentClassloader);
+            }
+        }
     }
 
     public Session login(String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
@@ -58,4 +90,19 @@ public class JcrHippoRepository implements Repository {
         return login(credentials);
     }
     
+    /*
+     * Because HippoRepository can be loaded in other classloader which is not the same as the caller's classloader,
+     * the context classloader needs to be switched.
+     */
+    private ClassLoader switchToRepositoryClassloader() {
+        ClassLoader repositoryClassloader = this.hippoRepository.getClass().getClassLoader();
+        ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
+        
+        if (repositoryClassloader != currentClassloader) {
+            Thread.currentThread().setContextClassLoader(repositoryClassloader);
+            return currentClassloader;
+        } else {
+            return null;
+        }
+    }
 }

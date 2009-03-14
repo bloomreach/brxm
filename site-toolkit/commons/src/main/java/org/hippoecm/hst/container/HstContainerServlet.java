@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.site.HstServices;
 
 /**
@@ -41,6 +42,8 @@ public class HstContainerServlet extends HttpServlet {
 
     public static final String CONSOLE_LOGGER = "console";
 
+    protected HstContainerConfig requestContainerConfig;
+    
     protected String contextNamespace;
     
     public void init(ServletConfig config) throws ServletException {
@@ -74,11 +77,15 @@ public class HstContainerServlet extends HttpServlet {
                 return;
             }
             
+            if (this.requestContainerConfig == null) {
+                this.requestContainerConfig = new HstContainerConfigImpl(getServletConfig(), Thread.currentThread().getContextClassLoader());
+            }
+            
             if (this.contextNamespace != null) {
                 req.setAttribute(ContainerConstants.CONTEXT_NAMESPACE_ATTRIBUTE, contextNamespace);
             }
             
-            HstServices.getRequestProcessor().processRequest(getServletConfig(), req, res);
+            HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res);
         } catch (Exception e) {
             final String msg = "Fatal error encountered while processing request: " + e.toString();
             log(msg, e);

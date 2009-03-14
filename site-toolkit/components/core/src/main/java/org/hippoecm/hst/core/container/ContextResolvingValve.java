@@ -71,7 +71,7 @@ public class ContextResolvingValve extends AbstractValve
         }
         
         try {
-            HstComponentWindow rootComponentWindow = getComponentWindowFactory().create(context.getServletConfig(), requestContext, rootComponentConfig, getComponentFactory());
+            HstComponentWindow rootComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, rootComponentConfig, getComponentFactory());
             context.setRootComponentWindow(rootComponentWindow);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {

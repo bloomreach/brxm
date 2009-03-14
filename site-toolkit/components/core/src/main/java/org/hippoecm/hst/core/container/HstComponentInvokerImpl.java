@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -44,13 +43,15 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         this.exceptionThrowable = exceptionThrowable;
     }
     
-    public void invokeAction(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void invokeAction(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
         HstComponent component = window.getComponent();
         
         if (component != null) {
+            ClassLoader currentClassloader = switchToContainerClassloader(requestContainerConfig);
+
             try {
                 component.doAction(hstRequest, hstResponse);
             } catch (HstComponentException e) {
@@ -75,19 +76,25 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 } else if (log.isWarnEnabled()) {
                     log.warn("Component exception caught: {}", th.getMessage());
                 }
+            } finally {
+                if (currentClassloader != null) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }                
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
         }
     }
 
-    public void invokeBeforeRender(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void invokeBeforeRender(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
         HstComponent component = window.getComponent();
         
         if (component != null) {
+            ClassLoader currentClassloader = switchToContainerClassloader(requestContainerConfig);
+
             try {
                 component.doBeforeRender(hstRequest, hstResponse);
             } catch (HstComponentException e) {
@@ -112,13 +119,17 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 } else if (log.isWarnEnabled()) {
                     log.warn("Component exception caught: {}", th.getMessage());
                 }
+            } finally {
+                if (currentClassloader != null) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }                
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
         }
     }
 
-    public void invokeRender(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void invokeRender(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
@@ -128,20 +139,22 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             dispatchUrl = ((HstRequestImpl) hstRequest).getComponentWindow().getRenderPath();
         }
         
-        invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl, window);
+        invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, dispatchUrl, window);
         
         if (window.hasComponentExceptions()) {
             renderErrorInformation(window, hstResponse);
         }
     }
 
-    public void invokeBeforeServeResource(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void invokeBeforeServeResource(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
         HstComponent component = window.getComponent();
         
         if (component != null) {
+            ClassLoader currentClassloader = switchToContainerClassloader(requestContainerConfig);
+
             try {
                 component.doBeforeServeResource(hstRequest, hstResponse);
             } catch (HstComponentException e) {
@@ -166,13 +179,17 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 } else if (log.isWarnEnabled()) {
                     log.warn("Component exception caught: {}", th.getMessage());
                 }
+            } finally {
+                if (currentClassloader != null) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }                
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
         }
     }
 
-    public void invokeServeResource(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void invokeServeResource(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
@@ -187,14 +204,14 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             dispatchUrl = window.getRenderPath();
         }
         
-        invokeDispatcher(servletConfig, servletRequest, servletResponse, dispatchUrl, window);
+        invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, dispatchUrl, window);
 
         if (window.hasComponentExceptions()) {
             renderErrorInformation(window, hstResponse);
         }
     }
 
-    protected void invokeDispatcher(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse, String dispatchUrl, HstComponentWindow window) throws ContainerException {
+    protected void invokeDispatcher(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, String dispatchUrl, HstComponentWindow window) throws ContainerException {
         RequestDispatcher disp = null;
         
         if (dispatchUrl != null) {
@@ -203,9 +220,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             }
             
             if (dispatchUrl.startsWith("/")) {
-                disp = servletConfig.getServletContext().getRequestDispatcher(dispatchUrl);
+                disp = requestContainerConfig.getServletConfig().getServletContext().getRequestDispatcher(dispatchUrl);
             } else {
-                disp = servletConfig.getServletContext().getNamedDispatcher(dispatchUrl);
+                disp = requestContainerConfig.getServletConfig().getServletContext().getNamedDispatcher(dispatchUrl);
             }
         }
         
@@ -215,6 +232,8 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             }
             window.addComponentExcpetion(new HstComponentException("The dispatch url is null."));
         } else {
+            ClassLoader currentClassloader = switchToContainerClassloader(requestContainerConfig);
+
             try {
                 disp.include(servletRequest, servletResponse);
             } catch (ServletException e) {
@@ -250,6 +269,10 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 } else if (log.isWarnEnabled()) {
                     log.warn("Component exception caught: {}", th.getMessage());
                 }
+            } finally {
+                if (currentClassloader != null) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }                
             }
         }
     }
@@ -273,5 +296,17 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             }
         }
     }
-
+    
+    private ClassLoader switchToContainerClassloader(HstContainerConfig requestContainerConfig) {
+        ClassLoader containerClassloader = requestContainerConfig.getContextClassLoader();
+        ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
+        
+        if (containerClassloader != currentClassloader) {
+            Thread.currentThread().setContextClassLoader(containerClassloader);
+            return currentClassloader;
+        } else {
+            return null;
+        }
+    }
+    
 }

@@ -61,7 +61,7 @@ public class ActionValve extends AbstractValve
                 HstResponseImpl response = new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, window, responseState, null);
                 ((HstComponentWindowImpl) window).setResponseState(responseState);
 
-                getComponentInvoker().invokeAction(context.getServletConfig(), request, response);
+                getComponentInvoker().invokeAction(context.getRequestContainerConfig(), request, response);
                 
                 Map<String, String []> renderParameters = response.getRenderParamerters();
                 

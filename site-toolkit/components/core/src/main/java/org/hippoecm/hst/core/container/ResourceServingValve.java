@@ -44,8 +44,8 @@ public class ResourceServingValve extends AbstractValve {
                 HstResponse response = new HstResourceResponseImpl((HttpServletResponse) servletResponse, window);
                 
                 HstComponentInvoker invoker = getComponentInvoker();
-                invoker.invokeBeforeServeResource(context.getServletConfig(), request, response);
-                invoker.invokeServeResource(context.getServletConfig(), request, response);
+                invoker.invokeBeforeServeResource(context.getRequestContainerConfig(), request, response);
+                invoker.invokeServeResource(context.getRequestContainerConfig(), request, response);
 
                 if (window.hasComponentExceptions() && log.isWarnEnabled()) {
                     for (HstComponentException hce : window.getComponentExceptions()) {

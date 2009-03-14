@@ -63,7 +63,10 @@ How to test and build Hippo Site Toolkit
   
       $ mvn -P jetspeed clean install -DskipTests
   
-    - Visit the page: http://localhost:8080/jetspeed/
-    - Add news portlet in a portal page.
+    - Please note the NOTICE from the build output in your console.
+      You need to edit two web.xml files and to restart Jetspeed as indicated.
+    - If you complete the final step in the above, 
+      visit the page: http://localhost:8080/jetspeed/
+      And, click 'HST-2 Demo' tab.
     - You can visit cms by http://localhost:8080/cms/
       and console by http://localhost:8080/cms/console.

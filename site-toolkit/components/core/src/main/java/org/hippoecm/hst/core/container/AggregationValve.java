@@ -20,7 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -74,11 +73,11 @@ public class AggregationValve extends AbstractValve {
                 sortComponentWindowsByHierarchy(rootWindow, sortedComponentWindowList);
                 HstComponentWindow [] sortedComponentWindows = sortedComponentWindowList.toArray(new HstComponentWindow[0]);
 
-                ServletConfig servletConfig = context.getServletConfig();
+                HstContainerConfig requestContainerConfig = context.getRequestContainerConfig();
                 // process doBeforeRender() of each component as sorted order, parent first.
-                processWindowsBeforeRender(servletConfig, sortedComponentWindows, requestMap, responseMap);
+                processWindowsBeforeRender(requestContainerConfig, sortedComponentWindows, requestMap, responseMap);
                 // process doRender() of each component as reversed sort order, child first.
-                processWindowsRender(servletConfig, sortedComponentWindows, requestMap, responseMap);
+                processWindowsRender(requestContainerConfig, sortedComponentWindows, requestMap, responseMap);
 
                 if (log.isWarnEnabled()) {
                     // log warnings of each component execution as reversed sort order, child first.
@@ -153,7 +152,7 @@ public class AggregationValve extends AbstractValve {
     }
 
     protected void processWindowsBeforeRender(
-            final ServletConfig servletConfig, 
+            final HstContainerConfig requestContainerConfig, 
             final HstComponentWindow [] sortedComponentWindows,
             final Map<HstComponentWindow, HstRequest> requestMap, 
             final Map<HstComponentWindow, HstResponse> responseMap)
@@ -163,13 +162,13 @@ public class AggregationValve extends AbstractValve {
             HstComponentWindow window = sortedComponentWindows[i];
             HstRequest request = requestMap.get(window);
             HstResponse response = responseMap.get(window);
-            getComponentInvoker().invokeBeforeRender(servletConfig, request, response);
+            getComponentInvoker().invokeBeforeRender(requestContainerConfig, request, response);
         }
 
     }
 
     protected void processWindowsRender(
-            final ServletConfig servletConfig, 
+            final HstContainerConfig requestContainerConfig, 
             final HstComponentWindow [] sortedComponentWindows,
             final Map<HstComponentWindow, HstRequest> requestMap, 
             final Map<HstComponentWindow, HstResponse> responseMap)
@@ -179,7 +178,7 @@ public class AggregationValve extends AbstractValve {
             HstComponentWindow window = sortedComponentWindows[i];
             HstRequest request = requestMap.get(window);
             HstResponse response = responseMap.get(window);
-            getComponentInvoker().invokeRender(servletConfig, request, response);
+            getComponentInvoker().invokeRender(requestContainerConfig, request, response);
         }
 
     }

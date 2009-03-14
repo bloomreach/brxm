@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -27,20 +26,38 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         this.pipelines = pipelines;
     }
 
-    public void processRequest(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
-        Pipeline pipeline = this.pipelines.getDefaultPipeline();
+    public void processRequest(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+        // this request processor's classloader could be different from the above classloader
+        // because this request processor and other components could be loaded from another web application context
+        // such as a portal web application.
+        //
+        // If the container's classloader is different from the request processor's classloader,
+        // then the container's classloader should be switched into the request processor's classloader
+        // because some components like HippoRepository component can be dependent
+        // on some interfaces/classes of its own classloader.
+        
+        ClassLoader containerClassLoader = requestContainerConfig.getContextClassLoader();
+        ClassLoader processorClassLoader = getClass().getClassLoader();
 
+        Pipeline pipeline = this.pipelines.getDefaultPipeline();
+        
         try {
-            pipeline.beforeInvoke(servletConfig, servletRequest, servletResponse);
-            pipeline.invoke(servletConfig, servletRequest, servletResponse);
+            if (processorClassLoader != containerClassLoader) {
+                Thread.currentThread().setContextClassLoader(processorClassLoader);
+            }
             
-        }
-        catch(ContainerNotFoundException e){
+            pipeline.beforeInvoke(requestContainerConfig, servletRequest, servletResponse);
+            pipeline.invoke(requestContainerConfig, servletRequest, servletResponse);
+        } catch(ContainerNotFoundException e){
           throw e;  	
         } catch (Throwable th) {
             throw new ContainerException(th);
         } finally {
-            pipeline.afterInvoke(servletConfig, servletRequest, servletResponse);
+            pipeline.afterInvoke(requestContainerConfig, servletRequest, servletResponse);
+            
+            if (processorClassLoader != containerClassLoader) {
+                Thread.currentThread().setContextClassLoader(containerClassLoader);
+            }
         }
     }
 

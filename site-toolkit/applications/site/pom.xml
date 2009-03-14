@@ -380,6 +380,79 @@
                     <copy file="${project.build.directory}/${project.artifactId}-${project.version}.war" 
                           tofile="${jetspeed.portal.webapp}/WEB-INF/deploy/${project.artifactId}.war" />
                     
+                    <echo>Copy core libaries into jetspeed</echo>
+                    <copy todir="${jetspeed.portal.webapp}/WEB-INF/lib">
+                      <fileset dir="${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/lib">
+                        <include name="commons-proxy-*.jar" />
+                      </fileset>
+                      <fileset dir="${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/lib">
+                        <exclude name="commons-*.jar" />
+                        <exclude name="hst-client-*.jar" />
+                        <exclude name="jstl-*.jar" />
+                        <exclude name="standard-*.jar" />
+                        <exclude name="spring-*.jar" />
+                        <exclude name="xml-apis-*.jar" />
+                        <exclude name="xercesImpl-*.jar" />
+                        <exclude name="xalan-*.jar" />
+                        <exclude name="jdo2-*.jar" />
+                        <exclude name="jpox-*.jar" />
+                      </fileset>
+                    </copy>
+
+                    <echo>Copy hst configuration into jetspeed</echo>
+                    <copy todir="${jetspeed.portal.webapp}/WEB-INF">
+                      <fileset dir="${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF">
+                        <include name="hst*.properties" />
+                        <include name="hst*.xml" />
+                      </fileset>
+                    </copy>
+                    
+                    <echo>Copy example psml page into jetspeed</echo>
+                    <copy todir="${jetspeed.portal.webapp}/WEB-INF/pages">
+                      <fileset dir="src/main/webapp/WEB-INF/portal-pages">
+                        <include name="**/*.psml" />
+                      </fileset>
+                    </copy>
+                                        
+                    <echo><![CDATA[
+========================================================================
+[Notice]
+
+Thank you for trying jetspeed profile.
+
+Deploying artifacts are done, but you need to edit two web.xml files.
+
+First, add the following servlet definition in /jetspeed/WEB-INF/web.xml
+
+  <servlet>
+    <servlet-name>HstSiteConfigServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+
+And, start the Jetspeed to auto-deploy site portlet application.
+If the /site portlet application is deployed into your /webapps directory,
+then stop the Jetspeed, 
+and comment out the following servlet in /site/WEB-INF/web.xml:
+
+  <!--
+  <servlet>
+    <servlet-name>HstSiteConfigServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  -->
+
+Finally, restart your Jetspeed and visit the following page:
+
+http://localhost:8080/jetspeed/portal/
+
+And, click `HST-2 Demo' menu!
+
+========================================================================
+                    ]]></echo>
+                    
                   </tasks>
                 </configuration>
                 <goals>

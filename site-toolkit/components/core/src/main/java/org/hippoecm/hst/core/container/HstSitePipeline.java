@@ -46,21 +46,21 @@ public class HstSitePipeline implements Pipeline
     public void initialize() throws ContainerException {
     }
     
-    public void beforeInvoke(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
-        invokeValves(servletConfig, servletRequest, servletResponse, preInvokingValves);
+    public void beforeInvoke(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+        invokeValves(requestContainerConfig, servletRequest, servletResponse, preInvokingValves);
     }
 
-    public void invoke(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
-        invokeValves(servletConfig, servletRequest, servletResponse, invokingValves);
+    public void invoke(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+        invokeValves(requestContainerConfig, servletRequest, servletResponse, invokingValves);
     }
     
-    public void afterInvoke(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
-        invokeValves(servletConfig, servletRequest, servletResponse, postInvokingValves);
+    public void afterInvoke(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+        invokeValves(requestContainerConfig, servletRequest, servletResponse, postInvokingValves);
     }
     
-    private void invokeValves(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse, Valve [] valves) throws ContainerException {
+    private void invokeValves(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, Valve [] valves) throws ContainerException {
         if (valves != null && valves.length > 0) {
-            new Invocation(servletConfig, servletRequest, servletResponse, valves).invokeNext();
+            new Invocation(requestContainerConfig, servletRequest, servletResponse, valves).invokeNext();
         }
     }
 
@@ -72,15 +72,15 @@ public class HstSitePipeline implements Pipeline
 
         private final Valve[] valves;
 
-        private final ServletConfig servletConfig;
+        private final HstContainerConfig requestContainerConfig;
         private final ServletRequest servletRequest;
         private final ServletResponse servletResponse;
         private HstComponentWindow rootComponentWindow;
 
         private int at = 0;
 
-        public Invocation(ServletConfig servletConfig, ServletRequest servletRequest, ServletResponse servletResponse, Valve[] valves) {
-            this.servletConfig = servletConfig;
+        public Invocation(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, Valve[] valves) {
+            this.requestContainerConfig = requestContainerConfig;
             this.servletRequest = servletRequest;
             this.servletResponse = servletResponse;
             this.valves = valves;
@@ -94,11 +94,11 @@ public class HstSitePipeline implements Pipeline
                 next.invoke(this);
             }
         }
-        
-        public ServletConfig getServletConfig() {
-            return this.servletConfig;
-        }
 
+        public HstContainerConfig getRequestContainerConfig() {
+            return this.requestContainerConfig;
+        }
+        
         public ServletRequest getServletRequest() {
             return this.servletRequest;
         }
