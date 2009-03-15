@@ -25,6 +25,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 
 /**
  * HstRequestContext provides repository content context
@@ -54,6 +55,8 @@ public interface HstRequestContext {
     HstURLFactory getURLFactory();
 
     HstLinkCreator getHstLinkCreator();
+    
+    HstCtxWhereClauseComputer getHstCtxWhereClauseComputer();
     
     void setAttribute(String name, Object object);
     

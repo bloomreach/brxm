@@ -38,6 +38,7 @@
     <property name="componentInvoker" ref="org.hippoecm.hst.core.container.HstComponentInvoker" />
     <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />
     <property name="linkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator" />
+    <property name="ctxWhereClauseComputer" ref="org.hippoecm.hst.core.search.HstCtxWhereClauseComputer" />
   </bean>
 
   <!-- Pre-processing valves -->

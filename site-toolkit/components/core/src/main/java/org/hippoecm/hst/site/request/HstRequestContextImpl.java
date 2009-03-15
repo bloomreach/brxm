@@ -34,6 +34,7 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 
 public class HstRequestContextImpl implements HstRequestContext {
 
@@ -45,6 +46,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected HstContainerURL baseURL;
     protected String contextNamespace;
     protected HstLinkCreator linkCreator;
+    protected HstCtxWhereClauseComputer ctxWhereClauseComputer;
     protected Map<String, Object> attributes;
 
     public HstRequestContextImpl(Repository repository) {
@@ -108,6 +110,14 @@ public class HstRequestContextImpl implements HstRequestContext {
     
     public HstLinkCreator getHstLinkCreator() {
         return this.linkCreator;
+    }
+    
+    public void setCtxWhereClauseComputer(HstCtxWhereClauseComputer ctxWhereClauseComputer){
+        this.ctxWhereClauseComputer = ctxWhereClauseComputer;
+    }
+    
+    public HstCtxWhereClauseComputer getHstCtxWhereClauseComputer(){
+        return this.ctxWhereClauseComputer;
     }
 
     public Object getAttribute(String name) {

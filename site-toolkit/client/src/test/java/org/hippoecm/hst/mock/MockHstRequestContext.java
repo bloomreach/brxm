@@ -28,6 +28,7 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 
 public class MockHstRequestContext implements HstRequestContext {
     
@@ -38,6 +39,7 @@ public class MockHstRequestContext implements HstRequestContext {
     protected HstURLFactory urlFactory;
     protected ResolvedSiteMapItem resolvedSiteMapItem;
     protected HstLinkCreator linkCreator;
+    protected HstCtxWhereClauseComputer ctxWhereClauseComputer;
     protected Credentials defaultCredentials;
 
     public Object getAttribute(String name) {
@@ -70,6 +72,14 @@ public class MockHstRequestContext implements HstRequestContext {
     
     public void setHstLinkCreator(HstLinkCreator linkCreator) {
         this.linkCreator = linkCreator;
+    }
+    
+    public void setCtxWhereClauseComputer(HstCtxWhereClauseComputer ctxWhereClauseComputer){
+        this.ctxWhereClauseComputer = ctxWhereClauseComputer;
+    }
+    
+    public HstCtxWhereClauseComputer getHstCtxWhereClauseComputer(){
+        return this.ctxWhereClauseComputer;
     }
     
     public ResolvedSiteMapItem getResolvedSiteMapItem() {

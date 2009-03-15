@@ -6,6 +6,7 @@ import org.hippoecm.hst.core.domain.DomainMappings;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,7 @@ public abstract class AbstractValve implements Valve
     protected HstComponentInvoker componentInvoker;
     protected HstURLFactory urlFactory;
     protected HstLinkCreator linkCreator;
+    protected HstCtxWhereClauseComputer ctxWhereClauseComputer;
     
     public HstSitesManager getSitesManager() {
         return sitesManager;
@@ -93,6 +95,14 @@ public abstract class AbstractValve implements Valve
     
     public void setLinkCreator(HstLinkCreator linkCreator) {
         this.linkCreator = linkCreator;
+    }
+    
+    public HstCtxWhereClauseComputer getCtxWhereClauseComputer(){
+        return this.ctxWhereClauseComputer;
+    }
+    
+    public void setCtxWhereClauseComputer(HstCtxWhereClauseComputer ctxWhereClauseComputer){
+        this.ctxWhereClauseComputer = ctxWhereClauseComputer;
     }
     
     public abstract void invoke(ValveContext context) throws ContainerException;
