@@ -51,6 +51,7 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
         return node;
     }
 
+    
     public Session getSession() {
         return this.session;
     }
@@ -74,6 +75,7 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
         this.simpleObjectConverter = simpleObjectConverter;
     }
 
+    // TODO replace below with getPath from valueprovider?
     @Field(path = true)
     public String getPath() {
         return this.path;

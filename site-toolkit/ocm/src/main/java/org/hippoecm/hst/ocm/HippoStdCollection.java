@@ -23,6 +23,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +90,23 @@ public class HippoStdCollection extends HippoStdNode implements SessionAware {
     
     public int getDocumentSize() {
         return getDocuments().size();
+    }
+    
+    public HippoStdDocument getDocument(String relPath){
+        if(relPath == null) {
+            log.warn("Cannot get HippoStdDocument for a relative path that is null.");
+            return null;
+        }
+        if(!relPath.equals(PathUtils.normalizePath(relPath))) {
+            log.warn("Relative path does end or start with a slash. Removing leading and trailing slashes");
+            relPath = PathUtils.normalizePath(relPath);
+        }
+        if(this.getNode() == null) {
+            log.warn("Node is detached. Cannot get document with relative path '{}'", relPath);
+            return null;
+        }
+        String absPath = this.getPath() + "/" + relPath;
+        return (HippoStdDocument) getSimpleObjectConverter().getObject(this.getSession(), absPath);
     }
     
     public List<HippoStdDocument> getDocuments() {
