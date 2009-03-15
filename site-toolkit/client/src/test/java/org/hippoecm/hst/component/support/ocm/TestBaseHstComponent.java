@@ -35,6 +35,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.mock.MockHstRequest;
 import org.hippoecm.hst.mock.MockHstRequestContext;
 import org.hippoecm.hst.ocm.HippoStdCollection;
+import org.hippoecm.hst.ocm.HippoStdFolder;
 import org.hippoecm.hst.ocm.HippoStdNode;
 import org.hippoecm.hst.test.AbstractClientSpringTestCase;
 import org.junit.Before;
@@ -114,12 +115,12 @@ public class TestBaseHstComponent extends AbstractClientSpringTestCase {
         HippoStdNode collNode = (HippoStdNode) ocm.getObject("/content/gettingstarted/pagecontent");
         assertNotNull(collNode);
         System.out.println("collectionNode: " + collNode);
-        assertTrue(collNode instanceof HippoStdCollection);
+        assertTrue(collNode instanceof HippoStdFolder);
         
-        HippoStdCollection collectionNode = (HippoStdCollection) collNode;
-        List<HippoStdCollection> childCollections = collectionNode.getCollections();
-        assertNotNull(childCollections);
-        System.out.println("childCollections: " + childCollections);
+        HippoStdFolder folderNode = (HippoStdFolder) collNode;
+        List<HippoStdFolder> childFolders = folderNode.getFolders();
+        assertNotNull(childFolders);
+        System.out.println("childFolders: " + childFolders);
     }
     
 }
