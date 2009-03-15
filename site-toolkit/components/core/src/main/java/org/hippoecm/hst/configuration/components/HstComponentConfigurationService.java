@@ -190,6 +190,10 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         return this.parameters.get(name);
     }
     
+    public Map<String, String> getParameters(){
+        return this.parameters;
+    }
+    
     public String getId() {
         return this.id;
     }

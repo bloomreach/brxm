@@ -15,6 +15,10 @@
  */
 package org.hippoecm.hst.site.request;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -32,11 +36,20 @@ public class ComponentConfigurationImpl implements ComponentConfiguration{
         this.componentConfiguration = compConfig;
     }
 
-    public Object getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
-        
+    public Map<String,String> getParameters(ResolvedSiteMapItem hstResolvedSiteMapItem) {
+        Map<String,String> parameters = new HashMap<String, String>();
+        PropertyParser pp = new PropertyParser(hstResolvedSiteMapItem.getParameters());
+        for(Entry<String, String> entry: componentConfiguration.getParameters().entrySet()) {
+            String parsedParamValue = (String)pp.resolveProperty(entry.getKey(), entry.getValue());
+            parameters.put(entry.getKey(), parsedParamValue);
+        }
+        return parameters;
+    }
+    
+    public String getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
         String paramValue = componentConfiguration.getParameter(name);
         PropertyParser pp = new PropertyParser(hstResolvedSiteMapItem.getParameters());
-        Object parsedParamValue = pp.resolveProperty(name, paramValue);
+        String parsedParamValue = (String)pp.resolveProperty(name, paramValue);
         log.debug("Return value '{}' for property '{}'", parsedParamValue, name);
         return parsedParamValue;
     }

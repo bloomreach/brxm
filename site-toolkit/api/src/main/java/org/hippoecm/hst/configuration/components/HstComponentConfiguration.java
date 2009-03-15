@@ -37,6 +37,8 @@ public interface HstComponentConfiguration {
     
     String getParameter(String name);
     
+    Map<String, String> getParameters();
+    
     SortedMap<String, HstComponentConfiguration> getChildren();
 
 }

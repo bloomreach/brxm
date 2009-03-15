@@ -271,7 +271,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     }
     
 
-    public Map<String, String> getParametrs() {
+    public Map<String, String> getParameters() {
         return this.parameters;
     }
 

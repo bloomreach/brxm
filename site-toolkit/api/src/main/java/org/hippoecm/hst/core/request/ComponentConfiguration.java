@@ -15,12 +15,20 @@
  */
 package org.hippoecm.hst.core.request;
 
+import java.util.Map;
+
 
 public interface ComponentConfiguration {
 
     /**
      * Returns the property and if an expession exists it is resolved with the help of the ResolvedSiteMapItem
      */
-    Object getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem);
-
+    String getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem);
+    
+    /**
+     * Returns all resolved parameters into a map
+     * @param hstResolvedSiteMapItem
+     * 
+     */
+    Map<String, String> getParameters(ResolvedSiteMapItem hstResolvedSiteMapItem);
 }
