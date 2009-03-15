@@ -54,7 +54,7 @@
 - hst:parametervalues (string) multiple
 + * (hst:sitemapitem)
 
-[hst:sitemap] 
+[hst:sitemap] orderable
 + * (hst:sitemapitem)
 
 
