@@ -17,6 +17,8 @@ package org.hippoecm.hst.core.search;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Value;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.api.HippoNode;
@@ -28,16 +30,19 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
 
     public final static Logger log = LoggerFactory.getLogger(HstCtxWhereClauseComputerImpl.class.getName()); 
     
-    public String getCtxWhereClause(Node node, HstRequestContext requestContext) {
+    public String getCtxWhereClause(Node node, HstRequestContext hstRequestContext) {
+        StringBuffer facetSelectClauses = new StringBuffer();
+        String path = null;
         try {
+            path = node.getPath();
             if(!(node instanceof HippoNode)) {
                 log.warn("Cannot compute a ctx where clause for a non HippoNode '{}'. Return", node.getPath());
                 return null;
             }
             
             HippoNode hnode = (HippoNode)node;
-            
             HippoNode canonical = (HippoNode)hnode.getCanonicalNode();
+            
             if(canonical == null) {
                 log.warn("Cannot compute a ctx where clause for a node that does not have a physical equivalence: '{}'. Return", node.getPath());
                 return null;
@@ -45,23 +50,90 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             else if (canonical.isSame(node)){
                 // either the site content root node (hst:content) or just a physical node.
                 if(node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                    //
+                   String scopeUUID = "'"+node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString()+"'";
+                   facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("=").append(scopeUUID);
+                   getFacetSelectClauses(hstRequestContext.getSession(), hnode, facetSelectClauses , false);
                 } else {
                     // We are not searching in a virtual structure: return null, there is no context where
-                    log.debug("Not a search in a virtual structure. Return null");
+                    log.debug("Not a search in a virtual structure. Return null for the ctx where clause");
                     return null;
                 }
-                log.debug("The search is ");
             } else {
                 // we are searching in a virtual node. Let's compute the context where clause to represent this in a physical search
+                // when we can get a canonical, we know for sure it is referenceable
+                String scopeUUID =  canonical.getUUID();
+                facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("=").append(scopeUUID);
+                getFacetSelectClauses(hstRequestContext.getSession(), hnode, facetSelectClauses , true);
             }
-            Node rootNode = node.getSession().getRootNode();
         } catch (RepositoryException e) {
            log.warn("Unable to get Context where clause: '{}'", e);
         }
         
+        if(facetSelectClauses.length() == 0) {
+            log.warn("No ctx where clause found");
+            return null;
+        }
+        log.debug("For node '{}' the ctxWhereClause is '{}'", path , facetSelectClauses.toString());
+        return facetSelectClauses.toString();
+    }
+    
+    private void getFacetSelectClauses(Session jcrSession, HippoNode node, StringBuffer facetSelectClauses, boolean traversUp){
+        try {
+            if(node == null || node.isSame(jcrSession.getRootNode())) {
+                return;
+            }
+            if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                Value[] modes = node.getProperty(HippoNodeType.HIPPO_MODES).getValues();
+                Value[] facets = node.getProperty(HippoNodeType.HIPPO_FACETS).getValues();
+                Value[] values = node.getProperty(HippoNodeType.HIPPO_VALUES).getValues();
+
+                if (modes.length == facets.length && facets.length == values.length) {
+                    for (int i = 0; i < modes.length; i++) {
+                        String mode = modes[i].getString();
+                        String facet = facets[i].getString();
+                        String value = values[i].getString();
+                        if (mode.equals("clear") || mode.equals("stick")) {
+                            log.debug("skipping mode 'clear' or 'stick' because ambigous how to handle them");
+                            continue;
+                        } else {
+                            if (facetSelectClauses.length() > 0) {
+                                facetSelectClauses.append(" and ");
+                            }
+                            if ("hippostd:state".equals(facet) && "unpublished".equals(value)) {
+                                // special case
+                                facetSelectClauses.append("(@hippostd:state='unpublished' or (@hippostd:state='published' and @hippostd:stateSummary!='changed'))");
+                            } else {
+                                facetSelectClauses.append("@").append(facet).append("='").append(value).append("'");
+                            }
+                        }
+                    }
+                } else {
+                    log.warn("Skipping invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
+                    return;
+                }
+            }
+            
+            if(traversUp) {
+                HippoNode parent = (HippoNode)node.getParent();
+                Node canonicalParent = parent.getCanonicalNode();
+                if(canonicalParent != null) {
+                    // only iterate up when we do have a canonical parent. 
+                    if(parent.isSame(canonicalParent)) {
+                    // if the parent is physical, we do need to further traverse up
+                        if(parent.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                            getFacetSelectClauses(jcrSession,(HippoNode)node.getParent(),  facetSelectClauses, false);
+                        }
+                    } else {
+                        getFacetSelectClauses(jcrSession, (HippoNode)node.getParent(),  facetSelectClauses, traversUp);
+                    }
+                } 
+                
+            }
+        } catch (RepositoryException e) {
+            log.warn("RepositoryException while trying to resolve facetselect clauses. Return null");
+            return;
+        }
         
-        return null;
     }
 
 }

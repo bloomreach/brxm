@@ -25,5 +25,5 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  */
 public interface HstCtxWhereClauseComputer {
 
-    public String getCtxWhereClause(Node node, HstRequestContext requestContext);
+    public String getCtxWhereClause(Node node, HstRequestContext hstRequestContext);
 }
