@@ -28,7 +28,7 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.ocm.HippoStdFolder;
 import org.hippoecm.hst.ocm.HippoStdDocument;
 import org.hippoecm.hst.ocm.HippoStdNode;
-import org.hippoecm.hst.ocm.HippoStdSearcher;
+//import org.hippoecm.hst.ocm.HippoStdSearcher;
 import org.hippoecm.hst.ocm.NewsPage;
 
 public class Overview extends GenericResourceServingHstComponent {
@@ -83,10 +83,10 @@ public class Overview extends GenericResourceServingHstComponent {
     }
 
     
-    private HippoStdSearcher getHippoStdSearcher(HippoStdNode hippoStdNode, HstRequest request) {
+    /*private HippoStdSearcher getHippoStdSearcher(HippoStdNode hippoStdNode, HstRequest request) {
         
         return null;
-    }
+    }*/
 
 
  
