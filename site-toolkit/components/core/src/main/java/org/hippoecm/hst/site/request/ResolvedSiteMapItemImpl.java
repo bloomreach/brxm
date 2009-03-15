@@ -41,6 +41,8 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
        
        this.resolvedParameters = new Properties();
        
+       resolvedParameters.putAll(params);
+       
        PropertyParser pp = new PropertyParser(params);
        
        for(Entry<String, String> entry : hstSiteMapItem.getParametrs().entrySet()) {
