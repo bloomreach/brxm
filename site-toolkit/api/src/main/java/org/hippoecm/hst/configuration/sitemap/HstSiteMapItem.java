@@ -48,7 +48,7 @@ public interface HstSiteMapItem {
     HstSiteMapItem getChild(String value);
     
     String getParameter(String name);
-    Map<String, String> getParametrs();
+    Map<String, String> getParameters();
     
     /**
      * Returns parent HstSiteMapItem and null when the item does not have a parent
