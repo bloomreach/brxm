@@ -21,7 +21,7 @@ import java.util.List;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.ocm.HippoStdCollection;
+import org.hippoecm.hst.ocm.HippoStdFolder;
 import org.hippoecm.hst.ocm.HippoStdNode;
 
 public class PageableOverview extends GenericResourceServingHstComponent {
@@ -60,18 +60,18 @@ public class PageableOverview extends GenericResourceServingHstComponent {
         int to  = ((currentPage) * pageSize);
         
         
-        request.setAttribute("parent", n.getParentCollection());
+        request.setAttribute("parent", n.getParentFolder());
         request.setAttribute("current",(n));
         
-        if(n instanceof HippoStdCollection) {
-            request.setAttribute("collections",((HippoStdCollection)n).getCollections());
-            Object o = ((HippoStdCollection)n).getDocuments();
+        if(n instanceof HippoStdFolder) {
+            request.setAttribute("collections",((HippoStdFolder)n).getFolders());
+            Object o = ((HippoStdFolder)n).getDocuments();
            
-            request.setAttribute("documents",((HippoStdCollection)n).getDocuments(from, to));
+            request.setAttribute("documents",((HippoStdFolder)n).getDocuments(from, to));
         }
        
         
-        int totalItems = ((HippoStdCollection)n).getDocumentSize();
+        int totalItems = ((HippoStdFolder)n).getDocumentSize();
         
         List<Page> pages = new ArrayList<Page>();
         

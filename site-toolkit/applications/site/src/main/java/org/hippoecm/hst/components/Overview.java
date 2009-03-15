@@ -15,14 +15,21 @@
  */
 package org.hippoecm.hst.components;
 
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
+import org.apache.jackrabbit.ocm.query.Filter;
+import org.apache.jackrabbit.ocm.query.Query;
+import org.apache.jackrabbit.ocm.query.QueryManager;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.ocm.HippoStdCollection;
+import org.hippoecm.hst.ocm.HippoStdFolder;
 import org.hippoecm.hst.ocm.HippoStdDocument;
 import org.hippoecm.hst.ocm.HippoStdNode;
+import org.hippoecm.hst.ocm.HippoStdSearcher;
+import org.hippoecm.hst.ocm.NewsPage;
 
 public class Overview extends GenericResourceServingHstComponent {
     
@@ -30,23 +37,60 @@ public class Overview extends GenericResourceServingHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
         
-        HippoStdNode  n = this.getContentNode(request);
+        System.out.println(this.getParameter("year" , request));
         
-        if(n == null) {
+        
+        HippoStdNode hippoStdNode = this.getContentNode(request);
+        
+        HippoStdSearcher searcher = this.getHippoStdSearcher(hippoStdNode, request);
+        
+        
+        String s = request.getRequestContext().getHstCtxWhereClauseComputer().getCtxWhereClause(hippoStdNode.getNode(), request.getRequestContext());
+        
+        System.out.println(s);
+        
+        ObjectContentManager ocm = this.getObjectContentManager(request);
+      
+        QueryManager queryManager = ocm.getQueryManager();
+       
+        Filter filter = queryManager.createFilter(NewsPage.class);
+        
+        
+        System.out.println(filter.toString());
+        //filter.setScope("/testcontent//");
+        
+        Query query = queryManager.createQuery(filter);
+        
+        long start = System.currentTimeMillis();
+        
+        Collection result = ocm.getObjects(query);
+       
+        
+        System.out.println("took " + (System.currentTimeMillis() - start));
+        
+        if(hippoStdNode == null) {
             return;
         }
         
-        request.setAttribute("parent", n.getParentCollection());
-        request.setAttribute("current",(n));
+        request.setAttribute("parent", hippoStdNode.getParentFolder());
+        request.setAttribute("current",hippoStdNode);
         
-        if(n instanceof HippoStdCollection) {
-            request.setAttribute("collections",((HippoStdCollection)n).getCollections());
-            request.setAttribute("documents",setDocuments((HippoStdCollection)n, 0 , Integer.MAX_VALUE));
+        if(hippoStdNode instanceof HippoStdFolder) {
+            request.setAttribute("collections",((HippoStdFolder)hippoStdNode).getFolders());
+            request.setAttribute("documents",setDocuments((HippoStdFolder)hippoStdNode, 0 , Integer.MAX_VALUE));
         }
         
     }
 
-    public List<HippoStdDocument> setDocuments(HippoStdCollection hippoStdCollection, int from, int to){
+    
+    private HippoStdSearcher getHippoStdSearcher(HippoStdNode hippoStdNode, HstRequest request) {
+        
+        return null;
+    }
+
+
+ 
+    public List<HippoStdDocument> setDocuments(HippoStdFolder hippoStdCollection, int from, int to){
         return hippoStdCollection.getDocuments(from, to);
     }
    

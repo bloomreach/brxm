@@ -47,8 +47,8 @@ public class HippoStdDocument extends HippoStdNode implements SessionAware {
         this.state = state;
     }
     
-    public HippoStdCollection getCollection() {
-        return this.getParentCollection();
+    public HippoStdFolder getFolder() {
+        return this.getParentFolder();
     }
     
 }

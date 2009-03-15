@@ -28,7 +28,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.ocm.HippoStdCollection;
+import org.hippoecm.hst.ocm.HippoStdFolder;
 import org.hippoecm.hst.ocm.HippoStdNode;
 
 public class Action extends GenericResourceServingHstComponent {
@@ -46,14 +46,14 @@ public class Action extends GenericResourceServingHstComponent {
             return;
         }
         
-        request.setAttribute("parent", n.getParentCollection());
+        request.setAttribute("parent", n.getParentFolder());
         request.setAttribute("current",(n));
         
-        if(n instanceof HippoStdCollection) {
-            List<HippoStdCollection> collection = ((HippoStdCollection)n).getCollections();
-            request.setAttribute("collections",((HippoStdCollection)n).getCollections());
-            Object o = ((HippoStdCollection)n).getDocuments();
-            request.setAttribute("documents",((HippoStdCollection)n).getDocuments());
+        if(n instanceof HippoStdFolder) {
+            List<HippoStdFolder> collection = ((HippoStdFolder)n).getFolders();
+            request.setAttribute("collections",((HippoStdFolder)n).getFolders());
+            Object o = ((HippoStdFolder)n).getDocuments();
+            request.setAttribute("documents",((HippoStdFolder)n).getDocuments());
         }
         
         

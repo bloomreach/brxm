@@ -111,7 +111,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         List<Class> classes = new ArrayList<Class>();
         classes.add(TextPage.class);
         classes.add(HippoStdDocument.class);
-        classes.add(HippoStdCollection.class);
+        classes.add(HippoStdFolder.class);
         Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
         
         Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
@@ -130,7 +130,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
 
         classes = new ArrayList<Class>();
         classes.add(HippoStdDocument.class);
-        classes.add(HippoStdCollection.class);
+        classes.add(HippoStdFolder.class);
         mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
         ocm = createObjectContentManager(session, mapper);
         
@@ -143,7 +143,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         System.out.println("productsPageDoc's stateSummary: " + productsPageDoc.getStateSummary());
         System.out.println("productsPageDoc's state: " + productsPageDoc.getState());
         
-        HippoStdCollection parentCollection = productsPageDoc.getCollection();
+        HippoStdFolder parentCollection = productsPageDoc.getFolder();
         System.out.println("parentCollection: " + parentCollection);
         System.out.println("parentCollection.path: " + parentCollection.getPath());
         assertNotNull(parentCollection);
@@ -165,7 +165,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         List<Class> classes = new ArrayList<Class>();
         classes.add(TextPage.class);
         classes.add(HippoStdDocument.class);
-        classes.add(HippoStdCollection.class);
+        classes.add(HippoStdFolder.class);
         Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
         
         Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
@@ -183,24 +183,24 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         System.out.println("state: " + productsPage.getState());
         
         // Normal JCR Node path
-        HippoStdCollection coll = (HippoStdCollection) ocm.getObject("/content/gettingstarted/pagecontent");
+        HippoStdFolder coll = (HippoStdFolder) ocm.getObject("/content/gettingstarted/pagecontent");
         assertNotNull(coll);
         assertNotNull(coll.getNode());
         
         System.out.println("node: " + coll.getNode());
         System.out.println("path: " + coll.getPath());
         
-        List<HippoStdCollection> childColl = coll.getCollections();
+        List<HippoStdFolder> childColl = coll.getFolders();
         assertNotNull(childColl);
         assertFalse(childColl.isEmpty());
         
         System.out.println("childColl: " + childColl);
         
-        for (HippoStdCollection childCollItem : childColl) {
+        for (HippoStdFolder childCollItem : childColl) {
             System.out.println("childCollItem: " + childCollItem.getName() + ", " + childCollItem.getPath());
         }
         
-        HippoStdCollection productsColl = (HippoStdCollection) ocm.getObject("/content/gettingstarted/pagecontent/Products");
+        HippoStdFolder productsColl = (HippoStdFolder) ocm.getObject("/content/gettingstarted/pagecontent/Products");
         
         List<HippoStdDocument> childDocs = productsColl.getDocuments();
         assertNotNull(childDocs);
@@ -234,24 +234,24 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         System.out.println("state: " + productsPage.getState());
         
         // Normal JCR Node path
-        HippoStdCollection coll = (HippoStdCollection) ocm.getObject("/content/gettingstarted/pagecontent");
+        HippoStdFolder coll = (HippoStdFolder) ocm.getObject("/content/gettingstarted/pagecontent");
         assertNotNull(coll);
         assertNotNull(coll.getNode());
         
         System.out.println("node: " + coll.getNode());
         System.out.println("path: " + coll.getPath());
         
-        List<HippoStdCollection> childColl = coll.getCollections();
+        List<HippoStdFolder> childColl = coll.getFolders();
         assertNotNull(childColl);
         assertFalse(childColl.isEmpty());
         
         System.out.println("childColl: " + childColl);
         
-        for (HippoStdCollection childCollItem : childColl) {
+        for (HippoStdFolder childCollItem : childColl) {
             System.out.println("childCollItem: " + childCollItem.getName() + ", " + childCollItem.getPath());
         }
         
-        HippoStdCollection productsColl = (HippoStdCollection) ocm.getObject("/content/gettingstarted/pagecontent/Products");
+        HippoStdFolder productsColl = (HippoStdFolder) ocm.getObject("/content/gettingstarted/pagecontent/Products");
         
         List<HippoStdDocument> childDocs = productsColl.getDocuments();
         assertNotNull(childDocs);
@@ -271,7 +271,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         List<Class> classes = new ArrayList<Class>();
         classes.add(TextPage.class);
         classes.add(HippoStdDocument.class);
-        classes.add(HippoStdCollection.class);
+        classes.add(HippoStdFolder.class);
         Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
         
         Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
@@ -314,7 +314,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         List<Class> classes = new ArrayList<Class>();
         classes.add(TextPage.class);
         classes.add(HippoStdDocument.class);
-        classes.add(HippoStdCollection.class);
+        classes.add(HippoStdFolder.class);
         Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
         
         Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
@@ -363,7 +363,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         List<Class> classes = new ArrayList<Class>();
         classes.add(TextPage.class);
         classes.add(HippoStdDocument.class);
-        classes.add(HippoStdCollection.class);
+        classes.add(HippoStdFolder.class);
         Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
         
         Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
@@ -371,13 +371,13 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
         // insert a collection...
-        HippoStdCollection trainingCollection = new HippoStdCollection();
+        HippoStdFolder trainingCollection = new HippoStdFolder();
         trainingCollection.setPath("/content/gettingstarted/pagecontent/Training");
         ocm.insert(trainingCollection);
         ocm.save();
         
         // validating the insertion from the repository...
-        HippoStdCollection trainingCollectionAdded = (HippoStdCollection) ocm.getObject("/content/gettingstarted/pagecontent/Training");
+        HippoStdFolder trainingCollectionAdded = (HippoStdFolder) ocm.getObject("/content/gettingstarted/pagecontent/Training");
         assertNotNull(trainingCollectionAdded);
         assertNotNull(trainingCollectionAdded.getNode());
         System.out.println("node: " + trainingCollectionAdded.getNode());

@@ -30,11 +30,12 @@ public class Detail extends GenericResourceServingHstComponent {
         
         HippoStdNode  n = this.getContentNode(request);
         
+        
         if(n == null) {
             return;
         }
         
-        request.setAttribute("parent", n.getParentCollection());
+        request.setAttribute("parent", n.getParentFolder());
         request.setAttribute("document",n);
        
     }

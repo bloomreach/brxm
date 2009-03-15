@@ -29,20 +29,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Node(jcrType="hippostd:folder", discriminator=false)
-public class HippoStdCollection extends HippoStdNode implements SessionAware {
+public class HippoStdFolder extends HippoStdNode implements SessionAware {
     
-    private static Logger log = LoggerFactory.getLogger(HippoStdCollection.class);
+    private static Logger log = LoggerFactory.getLogger(HippoStdFolder.class);
     
-    private List<HippoStdCollection> childCollections;
+    private List<HippoStdFolder> childFolders;
     private List<HippoStdDocument> childDocuments;
     
    
-    public List<HippoStdCollection> getCollections() {
-        if (this.childCollections == null) {
+    public List<HippoStdFolder> getFolders() {
+        if (this.childFolders == null) {
             if (this.getSession() == null || getNode() == null || getSimpleObjectConverter() == null) {
-                this.childCollections = Collections.emptyList();
+                this.childFolders = Collections.emptyList();
             } else {
-                this.childCollections = new LinkedList<HippoStdCollection>();
+                this.childFolders = new LinkedList<HippoStdFolder>();
     
                 try {
                     javax.jcr.Node child = null;
@@ -55,15 +55,15 @@ public class HippoStdCollection extends HippoStdNode implements SessionAware {
                         } 
                         
                         if (!child.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            HippoStdCollection childCol = (HippoStdCollection) getSimpleObjectConverter().getObject(this.getSession(), child.getPath());
-                            this.childCollections.add(childCol);
+                            HippoStdFolder childCol = (HippoStdFolder) getSimpleObjectConverter().getObject(this.getSession(), child.getPath());
+                            this.childFolders.add(childCol);
                         }
                     }            
                 } catch (RepositoryException e) {
                     if (log.isDebugEnabled()) {
-                        log.warn("Cannot retrieve child collections: {}", e.getMessage(), e);
+                        log.warn("Cannot retrieve child folders: {}", e.getMessage(), e);
                     } else if (log.isWarnEnabled()) {
-                        log.warn("Cannot retrieve child collections: {}", e.getMessage());
+                        log.warn("Cannot retrieve child folders: {}", e.getMessage());
                     }
                 }
                 
@@ -72,7 +72,7 @@ public class HippoStdCollection extends HippoStdNode implements SessionAware {
             }
         }
         
-        return this.childCollections;
+        return this.childFolders;
     }
     
     public List<HippoStdDocument> getDocuments(int from, int to) {

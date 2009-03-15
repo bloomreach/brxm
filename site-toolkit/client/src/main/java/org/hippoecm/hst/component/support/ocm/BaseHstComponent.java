@@ -42,7 +42,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.ocm.HippoStdCollection;
+import org.hippoecm.hst.ocm.HippoStdFolder;
 import org.hippoecm.hst.ocm.HippoStdDocument;
 import org.hippoecm.hst.ocm.HippoStdHtml;
 import org.hippoecm.hst.ocm.HippoStdNode;
@@ -178,8 +178,8 @@ public class BaseHstComponent extends GenericHstComponent {
         if (!classNames.contains(HippoStdDocument.class.getName())) {
             classNames.add(HippoStdDocument.class.getName());
         }
-        if (!classNames.contains(HippoStdCollection.class.getName())) {
-            classNames.add(HippoStdCollection.class.getName());
+        if (!classNames.contains(HippoStdFolder.class.getName())) {
+            classNames.add(HippoStdFolder.class.getName());
         }
         
         return classNames;
