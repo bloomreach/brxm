@@ -74,7 +74,11 @@ public class TestBaseHstComponent extends AbstractClientSpringTestCase {
         this.servletConfig = new MockServletConfig(servletContext);
         
         this.compConfig = new ComponentConfiguration() {
-            public Object getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
+            public String getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
+                return null;
+            }
+
+            public Map<String, String> getParameters(ResolvedSiteMapItem hstResolvedSiteMapItem) {
                 return null;
             }
         };
