@@ -41,37 +41,37 @@ public class Overview extends GenericResourceServingHstComponent {
         
         
         HippoStdNode hippoStdNode = this.getContentNode(request);
-        
-        HippoStdSearcher searcher = this.getHippoStdSearcher(hippoStdNode, request);
-        
-        
-        String s = request.getRequestContext().getHstCtxWhereClauseComputer().getCtxWhereClause(hippoStdNode.getNode(), request.getRequestContext());
-        
-        System.out.println(s);
-        
-        ObjectContentManager ocm = this.getObjectContentManager(request);
-      
-        QueryManager queryManager = ocm.getQueryManager();
-       
-        Filter filter = queryManager.createFilter(NewsPage.class);
-        
-        
-        System.out.println(filter.toString());
-        //filter.setScope("/testcontent//");
-        
-        Query query = queryManager.createQuery(filter);
-        
-        long start = System.currentTimeMillis();
-        
-        Collection result = ocm.getObjects(query);
-       
-        
-        System.out.println("took " + (System.currentTimeMillis() - start));
-        
-        if(hippoStdNode == null) {
-            return;
-        }
-        
+//        
+//        HippoStdSearcher searcher = this.getHippoStdSearcher(hippoStdNode, request);
+//        
+//        
+//        String s = request.getRequestContext().getHstCtxWhereClauseComputer().getCtxWhereClause(hippoStdNode.getNode(), request.getRequestContext());
+//        
+//        System.out.println(s);
+//        
+//        ObjectContentManager ocm = this.getObjectContentManager(request);
+//      
+//        QueryManager queryManager = ocm.getQueryManager();
+//       
+//        Filter filter = queryManager.createFilter(NewsPage.class);
+//        
+//        
+//        System.out.println(filter.toString());
+//        //filter.setScope("/testcontent//");
+//        
+//        Query query = queryManager.createQuery(filter);
+//        
+//        long start = System.currentTimeMillis();
+//        
+//        Collection result = ocm.getObjects(query);
+//       
+//        
+//        System.out.println("took " + (System.currentTimeMillis() - start));
+//        
+//        if(hippoStdNode == null) {
+//            return;
+//        }
+//        
         request.setAttribute("parent", hippoStdNode.getParentFolder());
         request.setAttribute("current",hippoStdNode);
         
