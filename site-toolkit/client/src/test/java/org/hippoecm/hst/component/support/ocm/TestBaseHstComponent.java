@@ -34,7 +34,6 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.mock.MockHstRequest;
 import org.hippoecm.hst.mock.MockHstRequestContext;
-import org.hippoecm.hst.ocm.HippoStdCollection;
 import org.hippoecm.hst.ocm.HippoStdFolder;
 import org.hippoecm.hst.ocm.HippoStdNode;
 import org.hippoecm.hst.test.AbstractClientSpringTestCase;
