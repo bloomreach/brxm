@@ -52,11 +52,11 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="hippo-directory">
+  <sv:node sv:name="hippostd-directory">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:domainrule</sv:value>
     </sv:property>
-    <sv:node sv:name="nodetype-hippo-directory">
+    <sv:node sv:name="nodetype-hippostd-directory">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:facetrule</sv:value>
       </sv:property>
