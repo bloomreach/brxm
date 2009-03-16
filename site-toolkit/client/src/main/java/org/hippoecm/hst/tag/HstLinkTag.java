@@ -136,8 +136,12 @@ public class HstLinkTag extends TagSupport {
         
         if (this.path == null && response instanceof HstResponse) {
             urlString = ((HstResponse) response).createNavigationalURL(url.toString()).toString();
+            // TODO fix for portal environment, see jira HSTTWO- 
+            if (urlString.indexOf("?") > -1 ) {
+                urlString = urlString.substring(0, urlString.indexOf("?"));
+            }
         } else {
-            // only add the current servletpath for HstLink and not for 
+            // only add the current servletpath for HstLink and not for HSTTWO-378
             // static links
             if (this.link != null) {
                 url.insert(0, request.getContextPath() + request.getServletPath());
