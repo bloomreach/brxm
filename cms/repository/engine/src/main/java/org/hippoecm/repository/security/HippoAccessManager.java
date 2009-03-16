@@ -609,9 +609,6 @@ public class HippoAccessManager implements AccessManager {
         if (log.isTraceEnabled()) {
             log.trace("Checking [" + pString(permissions) + "] for: " + id);
         }
-        if (!(id instanceof NodeId)) {
-            return true;
-        }
         if (isSystem) {
             if (log.isTraceEnabled()) {
                 log.trace("Granted [" + pString(permissions) + "] for: " + id + " to system user");
