@@ -30,7 +30,6 @@ import org.apache.jackrabbit.ocm.manager.objectconverter.impl.ObjectConverterImp
 import org.apache.jackrabbit.ocm.manager.objectconverter.impl.SimpleFieldsHelper;
 import org.apache.jackrabbit.ocm.mapper.Mapper;
 import org.hippoecm.hst.ocm.NodeAware;
-import org.hippoecm.hst.ocm.SessionAware;
 import org.hippoecm.hst.ocm.SimpleObjectConverter;
 import org.hippoecm.hst.ocm.SimpleObjectConverterAware;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -115,10 +114,6 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
                 } else {
                     object = super.getObject(session, path);
                     
-                    if (object instanceof SessionAware) {
-                        ((SessionAware) object).setSession(session);
-                    }
-                    
                     if (object instanceof NodeAware) {
                         ((NodeAware) object).setNode(node);
                     }
@@ -166,10 +161,6 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
                     object = getObject(session, clazz, path + "/" + node.getName());
                 } else {
                     object = super.getObject(session, clazz, path);
-
-                    if (object instanceof SessionAware) {
-                        ((SessionAware) object).setSession(session);
-                    }
 
                     if (object instanceof NodeAware) {
                         ((NodeAware) object).setNode(node);

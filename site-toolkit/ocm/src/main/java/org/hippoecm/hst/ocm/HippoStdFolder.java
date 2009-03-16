@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 import org.hippoecm.hst.util.PathUtils;
@@ -29,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Node(jcrType="hippostd:folder", discriminator=false)
-public class HippoStdFolder extends HippoStdNode implements SessionAware {
+public class HippoStdFolder extends HippoStdNode {
     
     private static Logger log = LoggerFactory.getLogger(HippoStdFolder.class);
     
@@ -39,7 +40,7 @@ public class HippoStdFolder extends HippoStdNode implements SessionAware {
    
     public List<HippoStdFolder> getFolders() {
         if (this.childFolders == null) {
-            if (this.getSession() == null || getNode() == null || getSimpleObjectConverter() == null) {
+            if (getNode() == null || getSimpleObjectConverter() == null) {
                 this.childFolders = Collections.emptyList();
             } else {
                 this.childFolders = new LinkedList<HippoStdFolder>();
@@ -55,7 +56,7 @@ public class HippoStdFolder extends HippoStdNode implements SessionAware {
                         } 
                         
                         if (!child.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            HippoStdFolder childCol = (HippoStdFolder) getSimpleObjectConverter().getObject(this.getSession(), child.getPath());
+                            HippoStdFolder childCol = (HippoStdFolder) getSimpleObjectConverter().getObject(getNode().getSession(), child.getPath());
                             this.childFolders.add(childCol);
                         }
                     }            
@@ -105,13 +106,20 @@ public class HippoStdFolder extends HippoStdNode implements SessionAware {
             log.warn("Node is detached. Cannot get document with relative path '{}'", relPath);
             return null;
         }
+        Session session = null;
+        try {
+            session = getNode().getSession();
+        } catch (RepositoryException e) {
+            log.warn("Node's session is available. Cannot get document with relative path '{}'", relPath);
+            return null;
+        }
         String absPath = this.getPath() + "/" + relPath;
-        return (HippoStdDocument) getSimpleObjectConverter().getObject(this.getSession(), absPath);
+        return (HippoStdDocument) getSimpleObjectConverter().getObject(session, absPath);
     }
     
     public List<HippoStdDocument> getDocuments() {
         if (this.childDocuments == null) {
-            if (this.getSession() == null || getNode() == null || getSimpleObjectConverter() == null) {
+            if (getNode() == null || getSimpleObjectConverter() == null) {
                 this.childDocuments = Collections.emptyList();
             } else {
                 this.childDocuments = new LinkedList<HippoStdDocument>();
@@ -128,10 +136,10 @@ public class HippoStdFolder extends HippoStdNode implements SessionAware {
                         
                         if (child.isNodeType(HippoNodeType.NT_HANDLE)) {
                             javax.jcr.Node docNode = child.getNode(child.getName());
-                            HippoStdDocument childDoc = (HippoStdDocument) getSimpleObjectConverter().getObject(this.getSession(), docNode.getPath());
+                            HippoStdDocument childDoc = (HippoStdDocument) getSimpleObjectConverter().getObject(getNode().getSession(), docNode.getPath());
                             this.childDocuments.add(childDoc);
                         } else if(child.getParent().isNodeType(HippoNodeType.NT_HANDLE)){
-                            HippoStdDocument childDoc = (HippoStdDocument) getSimpleObjectConverter().getObject(this.getSession(), child.getPath());
+                            HippoStdDocument childDoc = (HippoStdDocument) getSimpleObjectConverter().getObject(getNode().getSession(), child.getPath());
                             this.childDocuments.add(childDoc);
                         }
                     }            

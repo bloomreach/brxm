@@ -17,13 +17,9 @@ package org.hippoecm.hst.ocm;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Node(jcrType="hippo:document", discriminator=false)
-public class HippoStdDocument extends HippoStdNode implements SessionAware {
-
-    private static Logger log = LoggerFactory.getLogger(HippoStdDocument.class);
+public class HippoStdDocument extends HippoStdNode {
 
     private String stateSummary;
     private String state;

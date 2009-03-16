@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
@@ -34,7 +33,6 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
     
     protected String path;
     
-    private transient Session session;
     private transient SimpleObjectConverter simpleObjectConverter;
     private JCRValueProvider valueProvider;
     private HippoStdFolder parentFolder;
@@ -49,16 +47,6 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
         return node;
     }
 
-    
-    public Session getSession() {
-        return this.session;
-    }
-    
-    public void setSession(Session session) {
-        this.session = session;
-    }
-    
-    
     public void setNode(javax.jcr.Node node) {
         if (this.valueProvider == null) {
             this.valueProvider = new JCRValueProviderImpl(node);
@@ -109,7 +97,7 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
 
     public HippoStdFolder getParentFolder() {
         if (this.parentFolder == null) {
-            if (this.session != null && getNode() != null && getSimpleObjectConverter() != null) {
+            if (getNode() != null && getSimpleObjectConverter() != null) {
                 try {
                     javax.jcr.Node parent = getNode().getParent();
                     
@@ -117,7 +105,7 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
                         parent = parent.getParent();
                     }
                     
-                    this.parentFolder = (HippoStdFolder) getSimpleObjectConverter().getObject(this.session, parent.getPath());
+                    this.parentFolder = (HippoStdFolder) getSimpleObjectConverter().getObject(getNode().getSession(), parent.getPath());
                 } catch (RepositoryException e) {
                     if (log.isDebugEnabled()) {
                         log.warn("Cannot retrieve parent folder: {}", e.getMessage(), e);
@@ -125,9 +113,6 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
                         log.warn("Cannot retrieve parent folder: {}", e.getMessage());
                     }
                 }
-
-                // Now detach the session because the session is probably from the pool.
-                //setSession(null);
             }
         }
         
