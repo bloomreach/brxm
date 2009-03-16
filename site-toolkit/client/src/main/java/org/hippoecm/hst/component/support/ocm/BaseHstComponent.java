@@ -91,7 +91,18 @@ public class BaseHstComponent extends GenericHstComponent {
 
         String base = PathUtils.normalizePath(resolvedSitemapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
         String relPath = PathUtils.normalizePath(resolvedSitemapItem.getRelativeContentPath());
-        return (HippoStdNode) getObjectContentManager(request).getObject("/"+base+ "/" + relPath);
+        if(relPath == null || "".equals(relPath)) {
+            return (HippoStdNode) getObjectContentManager(request).getObject("/"+base);
+        } else {
+            return (HippoStdNode) getObjectContentManager(request).getObject("/"+base+ "/" + relPath);
+        }
+        
+    }
+    
+    protected HippoStdNode getSiteContentBaseNode(HstRequest request) {
+        ResolvedSiteMapItem resolvedSitemapItem = request.getRequestContext().getResolvedSiteMapItem();
+        String base = PathUtils.normalizePath(resolvedSitemapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
+        return (HippoStdNode) getObjectContentManager(request).getObject("/"+base);
     }
     
     protected HstQuery getHstQuery(HstRequest request) {
