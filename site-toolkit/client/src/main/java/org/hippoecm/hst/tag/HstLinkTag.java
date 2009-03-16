@@ -123,6 +123,10 @@ public class HstLinkTag extends TagSupport {
             pathElements = path.split("/");
         }
         
+        if(pathElements == null) {
+            log.warn("Unable to rewrite link. Return EVAL_PAGE");
+            return EVAL_PAGE;
+        }
         for(String elem : pathElements) {
             String enc = response.encodeURL(elem);
             url.append("/").append(enc);
