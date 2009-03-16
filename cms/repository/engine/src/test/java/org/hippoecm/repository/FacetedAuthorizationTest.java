@@ -485,7 +485,7 @@ public class FacetedAuthorizationTest extends TestCase {
         //        }
     }
 
-    @Ignore // FIXME HREPTWO-2126
+    @Test
     public void testSelfExclusionNotAllowed() throws RepositoryException {
         Node node;
         try {
@@ -517,10 +517,11 @@ public class FacetedAuthorizationTest extends TestCase {
             try {
                 userSession.refresh(false);
                 testData.getNode("writedoc0/mynode1");
+                // HREPTWO-2126
+                //fail("Shouldn't be allowed to add node you can't read.");
             } catch (PathNotFoundException e) {
                 // expected
             }
-            //fail("Shouldn't be allowed to add node you can't read.");
         } catch (AccessDeniedException e) {
             // expected
             userSession.refresh(false);
@@ -534,10 +535,11 @@ public class FacetedAuthorizationTest extends TestCase {
             try {
                 userSession.refresh(false);
                 testData.getNode("writedoc0/mynode2");
+                // HREPTWO-2126
+                //fail("Shouldn't be allowed to add node you can't write.");
             } catch (PathNotFoundException e) {
                 // expected
             }
-            //fail("Shouldn't be allowed to add node you can't write.");
         } catch (AccessDeniedException e) {
             // expected
             userSession.refresh(false);
