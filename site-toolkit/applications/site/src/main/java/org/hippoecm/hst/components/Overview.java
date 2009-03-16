@@ -27,7 +27,7 @@ import org.hippoecm.hst.ocm.HippoStdFolder;
 import org.hippoecm.hst.ocm.HippoStdNode;
 import org.hippoecm.hst.ocm.HippoStdNodeIterator;
 import org.hippoecm.hst.ocm.NewsPage;
-import org.hippoecm.hst.ocm.query.HippoQuery;
+import org.hippoecm.hst.ocm.query.HstQuery;
 import org.hippoecm.hst.ocm.query.HippoStdFilter;
 
 public class Overview extends GenericResourceServingHstComponent {
@@ -38,11 +38,11 @@ public class Overview extends GenericResourceServingHstComponent {
         
         
         HippoStdNode hippoStdNode = this.getContentNode(request);
-        HippoQuery query = this.getHippoQuery(request);
+        HstQuery query = this.getHstQuery(request);
         query.setScope(hippoStdNode);
         
         HippoStdFilter filter = query.createFilter(NewsPage.class);
-        //filter.addContains("title", "News");
+        filter.addContains("title", "News");
         query.setFilter(filter);
         
         query.addOrderByDescending("date");

@@ -50,7 +50,7 @@ import org.hippoecm.hst.ocm.HippoStdNode;
 import org.hippoecm.hst.ocm.manager.cache.NOOPObjectCache;
 import org.hippoecm.hst.ocm.manager.impl.HstAnnotationMapperImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstObjectConverterImpl;
-import org.hippoecm.hst.ocm.query.HippoQuery;
+import org.hippoecm.hst.ocm.query.HstQuery;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,13 +91,13 @@ public class BaseHstComponent extends GenericHstComponent {
         return (HippoStdNode) getObjectContentManager(request).getObject("/"+base+ "/" + relPath);
     }
     
-    protected HippoQuery getHippoQuery(HstRequest request) {
+    protected HstQuery getHstQuery(HstRequest request) {
         HstRequestContext requestContext = request.getRequestContext();
         ObjectContentManager ocm = getObjectContentManager(request);
         
-        HippoQuery hQuery = (HippoQuery)requestContext.getAttribute(QUERY_REQUEST_CONTEXT_ATTR_NAME);
+        HstQuery hQuery = (HstQuery)requestContext.getAttribute(QUERY_REQUEST_CONTEXT_ATTR_NAME);
         if(hQuery == null) {
-            hQuery = new HippoQuery(this.ocmMapper, ocm, request);
+            hQuery = new HstQuery(this.ocmMapper, ocm, request);
             requestContext.setAttribute(QUERY_REQUEST_CONTEXT_ATTR_NAME, hQuery);
         }
         return hQuery;

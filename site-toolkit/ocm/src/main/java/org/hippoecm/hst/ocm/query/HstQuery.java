@@ -21,9 +21,9 @@ import org.hippoecm.hst.ocm.query.impl.HstCtxWhereFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HippoQuery {
+public class HstQuery {
 
-    private static Logger log = LoggerFactory.getLogger(HippoQuery.class);
+    private static Logger log = LoggerFactory.getLogger(HstQuery.class);
     
     private ObjectContentManager ocm;
     private HstRequest request;
@@ -37,7 +37,7 @@ public class HippoQuery {
     
     private String orderByExpression = "";
     
-    public HippoQuery(Mapper mapper, ObjectContentManager ocm ,HstRequest request){
+    public HstQuery(Mapper mapper, ObjectContentManager ocm ,HstRequest request){
         this.ocm = ocm;
         this.mapper = mapper;
         this.request = request;
