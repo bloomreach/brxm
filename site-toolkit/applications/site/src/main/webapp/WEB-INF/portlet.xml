@@ -26,7 +26,7 @@
         <portlet-class>org.hippoecm.hst.container.HstContainerPortlet</portlet-class>
         <init-param>
             <name>hstServletPath</name>
-            <value>/content</value>
+            <value>/preview</value>
         </init-param>
         <init-param>
             <name>hstPathInfo</name>
