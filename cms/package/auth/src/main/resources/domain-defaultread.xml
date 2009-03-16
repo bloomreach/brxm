@@ -94,94 +94,6 @@
             </sv:property>
         </sv:node>
     </sv:node>
-    <sv:node sv:name="hippo-namespacefolder">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:domainrule</sv:value>
-        </sv:property>
-        <sv:node sv:name="type-hippo-namespacefolder">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:facetrule</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:facet" sv:type="String">
-                <sv:value>jcr:primaryType</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:type" sv:type="String">
-                <sv:value>Name</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:value" sv:type="String">
-                <sv:value>hippo:namespacefolder</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:equals" sv:type="Boolean">
-                <sv:value>true</sv:value>
-            </sv:property>
-        </sv:node>
-    </sv:node>
-    <sv:node sv:name="hippo-nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:domainrule</sv:value>
-        </sv:property>
-        <sv:node sv:name="type-hippo-nodetype">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:facetrule</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:facet" sv:type="String">
-                <sv:value>jcr:primaryType</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:type" sv:type="String">
-                <sv:value>Name</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:value" sv:type="String">
-                <sv:value>hippo:nodetype</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:equals" sv:type="Boolean">
-                <sv:value>true</sv:value>
-            </sv:property>
-        </sv:node>
-    </sv:node>
-    <sv:node sv:name="hippo-field">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:domainrule</sv:value>
-        </sv:property>
-        <sv:node sv:name="type-hippo-field">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:facetrule</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:facet" sv:type="String">
-                <sv:value>jcr:primaryType</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:type" sv:type="String">
-                <sv:value>Name</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:value" sv:type="String">
-                <sv:value>hippo:field</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:equals" sv:type="Boolean">
-                <sv:value>true</sv:value>
-            </sv:property>
-        </sv:node>
-    </sv:node>
-    <sv:node sv:name="hippo-template">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:domainrule</sv:value>
-        </sv:property>
-        <sv:node sv:name="type-hippo-template">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:facetrule</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:facet" sv:type="String">
-                <sv:value>jcr:primaryType</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:type" sv:type="String">
-                <sv:value>Name</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:value" sv:type="String">
-                <sv:value>hippo:templatetype</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:equals" sv:type="Boolean">
-                <sv:value>true</sv:value>
-            </sv:property>
-        </sv:node>
-    </sv:node>
     <sv:node sv:name="hippo-queryfolder">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:domainrule</sv:value>
@@ -242,28 +154,6 @@
             </sv:property>
             <sv:property sv:name="hippo:value" sv:type="String">
                 <sv:value>hippo:userfolder</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:equals" sv:type="Boolean">
-                <sv:value>true</sv:value>
-            </sv:property>
-        </sv:node>
-    </sv:node>
-    <sv:node sv:name="hippo-namespace">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:domainrule</sv:value>
-        </sv:property>
-        <sv:node sv:name="type-hippo-namespace">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:facetrule</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:facet" sv:type="String">
-                <sv:value>jcr:primaryType</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:type" sv:type="String">
-                <sv:value>Name</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:value" sv:type="String">
-                <sv:value>hippo:namespace</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:equals" sv:type="Boolean">
                 <sv:value>true</sv:value>
@@ -418,28 +308,6 @@
             </sv:property>
             <sv:property sv:name="hippo:value" sv:type="String">
                 <sv:value>reporting:report</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:equals" sv:type="Boolean">
-                <sv:value>true</sv:value>
-            </sv:property>
-        </sv:node>
-    </sv:node>
-    <sv:node sv:name="hippo-prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:domainrule</sv:value>
-        </sv:property>
-        <sv:node sv:name="nodetype-hippo-prototype">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:facetrule</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:facet" sv:type="String">
-                <sv:value>nodename</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:type" sv:type="String">
-                <sv:value>Name</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:value" sv:type="String">
-                <sv:value>hippo:prototype</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:equals" sv:type="Boolean">
                 <sv:value>true</sv:value>
