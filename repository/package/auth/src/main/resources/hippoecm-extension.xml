@@ -164,21 +164,6 @@
     </sv:node>
 
     <!--Domains configuration -->
-    <sv:node sv:name="domain-defaultwrite">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:initializeitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>908</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentresource" sv:type="String">
-            <sv:value>domain-defaultwrite.xml</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration/hippo:domains</sv:value>
-        </sv:property>
-    </sv:node>
-
     <sv:node sv:name="domain-defaultread">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:initializeitem</sv:value>
@@ -194,30 +179,30 @@
         </sv:property>
     </sv:node>
 
-    <sv:node sv:name="domain-workflow">
+    <sv:node sv:name="domain-defaultwrite">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:initializeitem</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>908</sv:value>
+            <sv:value>909</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentresource" sv:type="String">
-            <sv:value>domain-workflow.xml</sv:value>
+            <sv:value>domain-defaultwrite.xml</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentroot" sv:type="String">
             <sv:value>/hippo:configuration/hippo:domains</sv:value>
         </sv:property>
     </sv:node>
 
-    <sv:node sv:name="domain-hippofolders">
+    <sv:node sv:name="domain-workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:initializeitem</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>908</sv:value>
+            <sv:value>910</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentresource" sv:type="String">
-            <sv:value>domain-hippofolders.xml</sv:value>
+            <sv:value>domain-workflow.xml</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentroot" sv:type="String">
             <sv:value>/hippo:configuration/hippo:domains</sv:value>
@@ -229,7 +214,7 @@
             <sv:value>hippo:initializeitem</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>909</sv:value>
+            <sv:value>911</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentresource" sv:type="String">
             <sv:value>domain-hippodocuments.xml</sv:value>
@@ -239,12 +224,43 @@
         </sv:property>
     </sv:node>
 
+    <sv:node sv:name="domain-hippofolders">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:initializeitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:sequence" sv:type="Double">
+            <sv:value>912</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentresource" sv:type="String">
+            <sv:value>domain-hippofolders.xml</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentroot" sv:type="String">
+            <sv:value>/hippo:configuration/hippo:domains</sv:value>
+        </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="domain-hippogallery">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:initializeitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:sequence" sv:type="Double">
+            <sv:value>913</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentresource" sv:type="String">
+            <sv:value>domain-hippogallery.xml</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentroot" sv:type="String">
+            <sv:value>/hippo:configuration/hippo:domains</sv:value>
+        </sv:property>
+    </sv:node>
+
+
     <sv:node sv:name="domain-hipporequests">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:initializeitem</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>910</sv:value>
+            <sv:value>914</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentresource" sv:type="String">
             <sv:value>domain-hipporequests.xml</sv:value>
@@ -253,5 +269,5 @@
             <sv:value>/hippo:configuration/hippo:domains</sv:value>
         </sv:property>
     </sv:node>
-
 </sv:node>
+
