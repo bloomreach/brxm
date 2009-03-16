@@ -17,8 +17,6 @@ package org.hippoecm.hst.components;
 
 import java.util.List;
 
-import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
-import org.apache.jackrabbit.ocm.query.QueryManager;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -27,8 +25,8 @@ import org.hippoecm.hst.ocm.HippoStdFolder;
 import org.hippoecm.hst.ocm.HippoStdNode;
 import org.hippoecm.hst.ocm.HippoStdNodeIterator;
 import org.hippoecm.hst.ocm.NewsPage;
-import org.hippoecm.hst.ocm.query.HstQuery;
 import org.hippoecm.hst.ocm.query.HippoStdFilter;
+import org.hippoecm.hst.ocm.query.HstQuery;
 
 public class Overview extends GenericResourceServingHstComponent {
     
@@ -38,9 +36,13 @@ public class Overview extends GenericResourceServingHstComponent {
         
         
         HippoStdNode hippoStdNode = this.getContentNode(request);
+        
+        if(hippoStdNode == null) {
+            hippoStdNode = this.getSiteContentBaseNode(request);
+        }
+        
         HstQuery query = this.getHstQuery(request);
         query.setScope(hippoStdNode);
-        
         HippoStdFilter filter = query.createFilter(NewsPage.class);
         filter.addContains("title", "News");
         query.setFilter(filter);
@@ -51,8 +53,6 @@ public class Overview extends GenericResourceServingHstComponent {
         
         while(it.hasNext()) {
             NewsPage p = (NewsPage)it.nextHippoStdNode();
-            System.out.println( p.getName() + " <--> " +  p.getDate().getTime().toString());
-           
         }
        
       
