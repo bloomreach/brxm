@@ -75,12 +75,21 @@ public class SimpleHmlStringParser {
                 if (hrefIndexEnd > hrefIndexStart) {
                     String documentPath = html.substring(hrefIndexStart, hrefIndexEnd);
 
-                    
-                    String url = "";
+                    String url = getHref(documentPath,node, reqContext, response);
 
                     offset = endTag;
                     sb.append(html.substring(globalOffset, hrefIndexStart));
-                    sb.append(url);
+                    if(url != null) {
+                        if(request.getContextPath() != null) {
+                            sb.append(request.getContextPath());
+                        } 
+                        if(request.getServletPath() != null) {
+                            sb.append(request.getServletPath());
+                        } 
+                        sb.append(url);
+                    } else {
+                       log.warn("Skip href because url is null"); 
+                    }
                     sb.append(html.substring(hrefIndexEnd, endTag));
                     appended = true;
                 }
@@ -129,7 +138,7 @@ public class SimpleHmlStringParser {
                         }
                         sb.append(translatedSrc);
                     } else {
-                        log.warn("Could not translate image src. Skip");
+                        log.warn("Could not translate image src. Skip src");
                     }
                     sb.append(html.substring(srcIndexEnd, endTag));
                     appended = true;
@@ -149,6 +158,63 @@ public class SimpleHmlStringParser {
         }
     }
 
+    public static String getHref(String path, HippoNode node, HstRequestContext reqContext,
+            HttpServletResponse response) {
+
+        for (String prefix : EXTERNALS) {
+            if (path.startsWith(prefix)) {
+                return path;
+            }
+        }
+        try {
+            path = URLDecoder.decode(path, "utf-8");
+        } catch (UnsupportedEncodingException e1) {
+            log.warn("UnsupportedEncodingException for documentPath");
+        }
+
+        // translate the documentPath to a URL in combination with the Node and the mapping object
+        if (path.startsWith("/")) {
+            // absolute location, try to translate directly
+            log.warn("Cannot rewrite absolute path '{}'. Expected a relative path. Return '{}'", path, path);
+            return path;
+        } else {
+            // relative node, most likely a facetselect node:
+            String uuid = null;
+            try {
+                Node facetSelectNode = node.getNode(path);
+                if (facetSelectNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                    uuid = facetSelectNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                    Session session = reqContext.getSession();
+                    Node deref = session.getNodeByUUID(uuid);
+                    
+                    HstLink link = reqContext.getHstLinkCreator().create(deref, reqContext.getResolvedSiteMapItem());
+                    
+                    if(link == null) {
+                        log.warn("Unable to create a link for '{}'. Return orginal path", path);
+                    } else {
+                        StringBuffer href = new StringBuffer();
+                        for(String elem : link.getPathElements()) {
+                            String enc = response.encodeURL(elem);
+                            href.append("/").append(enc);
+                        }
+                        log.debug("Rewrote internal link '{}' to link '{}'", path, href.toString());
+                        return href.toString();
+                    }
+                } else {
+                    log.warn("relative node as link, but the node is not a facetselect. Unable to rewrite this to a URL. Return '{}'", path);
+                    return path;
+                }
+            } catch (ItemNotFoundException e) {
+                log.warn("Unable to rewrite href '{}' to proper url : '{}'. Return null", path, e.getMessage());
+            } catch (PathNotFoundException e) {
+                log.warn("Unable to rewrite href '{}' to proper url : '{}'. Return null", path, e.getMessage());
+            } catch (RepositoryException e) {
+                log.warn("Unable to rewrite href '{}' to proper url : '{}'. Return null", path, e.getMessage());
+            }
+        }
+        return null;
+    }
+    
     
     public static String getSrcLink(String path, HippoNode node, HstRequestContext reqContext, HttpServletResponse response) {
 
