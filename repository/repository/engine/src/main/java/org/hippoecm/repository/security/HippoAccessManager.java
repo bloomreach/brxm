@@ -480,12 +480,20 @@ public class HippoAccessManager implements AccessManager {
         if (facetRule.getFacet().equalsIgnoreCase("nodename")) {
             boolean match = false;
             if (facetRule.getType() == PropertyType.NAME) {
-                log.trace("Checking node : {} for nodeType: {}", nodeState.getNodeId(), facetRule);
+                log.trace("Checking node : {} for nodename: {}", nodeState.getNodeId(), facetRule);
                 Name nodeName = hierMgr.getName(nodeState.getId());
                 if (nodeName == null) {
                     log.warn("Failed to resolve name of {}", nodeState.getNodeId());
                 } else {
-                    if (nodeName.equals(facetRule.getValueName())) {
+                    if (FacetAuthConstants.EXPANDER_USER.equals(facetRule.getValue())) {
+                        if (isUser && userId.equals(npRes.getJCRName(nodeName))) {
+                            match = true;
+                        }
+                    } else if (FacetAuthConstants.EXPANDER_GROUP.equals(facetRule.getValue())) {
+                        if (isUser && groupIds.contains(npRes.getJCRName(nodeName))) {
+                            match = true;
+                        }
+                    } else if (nodeName.equals(facetRule.getValueName())) {
                         match = true;
                     }
                 }
@@ -626,7 +634,7 @@ public class HippoAccessManager implements AccessManager {
         }
 
         // Check read access cache
-        if ((permissions & Permission.READ) != 0) {
+        if (permissions == Permission.READ) {
             Boolean allowRead = readAccessCache.get(id);
             if (allowRead != null) {
                 if (log.isTraceEnabled()) {
