@@ -107,9 +107,10 @@ public class TestOCM extends AbstractOCMSpringTestCase {
     }
     
     @Test
-    public void testTextPage() throws Exception {
+    public void testTextPage1() throws Exception {
         List<Class> classes = new ArrayList<Class>();
-        classes.add(TextPage.class);
+        classes.add(TextPage1.class);
+        classes.add(HippoStdHtml.class);
         classes.add(HippoStdDocument.class);
         classes.add(HippoStdFolder.class);
         Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
@@ -118,15 +119,18 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
-        TextPage productsPage = (TextPage) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
+        TextPage1 productsPage = (TextPage1) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
+        assertNotNull(productsPage.getHtml());
+        assertNotNull(productsPage.getHtml().getContent());
         
         System.out.println("node: " + productsPage.getNode());
         System.out.println("path: " + productsPage.getPath());
         System.out.println("title: " + productsPage.getTitle());
         System.out.println("stateSummary: " + productsPage.getStateSummary());
         System.out.println("state: " + productsPage.getState());
+        System.out.println("html: " + productsPage.getHtml().getContent());
 
         classes = new ArrayList<Class>();
         classes.add(HippoStdDocument.class);
@@ -159,11 +163,12 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         
         session.logout();
     }
-
+    
     @Test
-    public void testCollection() throws Exception {
+    public void testTextPage2() throws Exception {
         List<Class> classes = new ArrayList<Class>();
-        classes.add(TextPage.class);
+        classes.add(TextPage2.class);
+        classes.add(HippoStdHtml.class);
         classes.add(HippoStdDocument.class);
         classes.add(HippoStdFolder.class);
         Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
@@ -172,7 +177,40 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
-        TextPage productsPage = (TextPage) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
+        TextPage2 productsPage = (TextPage2) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
+        assertNotNull(productsPage);
+        assertNotNull(productsPage.getNode());
+        //assertNotNull(productsPage.getComments());
+        //assertFalse(productsPage.getComments().isEmpty());
+       
+        System.out.println("node: " + productsPage.getNode());
+        System.out.println("path: " + productsPage.getPath());
+        System.out.println("title: " + productsPage.getTitle());
+        System.out.println("stateSummary: " + productsPage.getStateSummary());
+        System.out.println("state: " + productsPage.getState());
+        
+        List<TextPageComment> comments = productsPage.getComments();
+        if (comments != null) {
+            for (TextPageComment comment : comments) {
+                System.out.println("comment: " + comment.getComment());
+            }
+        }
+    }
+
+    @Test
+    public void testCollection() throws Exception {
+        List<Class> classes = new ArrayList<Class>();
+        classes.add(TextPage1.class);
+        classes.add(HippoStdHtml.class);
+        classes.add(HippoStdDocument.class);
+        classes.add(HippoStdFolder.class);
+        Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
+        
+        Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
+        
+        ObjectContentManager ocm = createObjectContentManager(session, mapper);
+        
+        TextPage1 productsPage = (TextPage1) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
         
@@ -217,13 +255,13 @@ public class TestOCM extends AbstractOCMSpringTestCase {
     
     @Test
     public void testCollectionWithDigesterMapper() throws Exception {
-        Mapper mapper = new DigesterMapperImpl(getClass().getResourceAsStream("ocm-annotated-classes.xml"));
+        Mapper mapper = new DigesterMapperImpl(getClass().getResourceAsStream("jackrabbit-ocm-descriptor.xml"));
         
         Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
         
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
-        TextPage productsPage = (TextPage) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
+        TextPage1 productsPage = (TextPage1) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
         
@@ -269,7 +307,8 @@ public class TestOCM extends AbstractOCMSpringTestCase {
     @Test
     public void testQueryManager() throws Exception {
         List<Class> classes = new ArrayList<Class>();
-        classes.add(TextPage.class);
+        classes.add(TextPage1.class);
+        classes.add(HippoStdHtml.class);
         classes.add(HippoStdDocument.class);
         classes.add(HippoStdFolder.class);
         Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
@@ -293,18 +332,18 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         HippoStdDocument doc = (HippoStdDocument) ocm.getObject(query);
         System.out.println("doc: " + doc);
         assertNotNull(doc);
-        assertTrue(doc instanceof TextPage);
+        assertTrue(doc instanceof TextPage1);
         
         // search document by TextPage class filter with title filter.
         // because the class is TextPage, we can use title filter here.
-        filter = qm.createFilter(TextPage.class);
+        filter = qm.createFilter(TextPage1.class);
         filter.setScope("/content/gettingstarted/pagecontent/Products/ProductsPage//");
         filter.addEqualTo("title", "Products");
         query = qm.createQuery(filter);
-        TextPage page = (TextPage) ocm.getObject(query);
+        TextPage1 page = (TextPage1) ocm.getObject(query);
         System.out.println("page: " + page);
         assertNotNull(page);
-        assertTrue(page instanceof TextPage);
+        assertTrue(page instanceof TextPage1);
         
         session.logout();
     }
@@ -312,7 +351,8 @@ public class TestOCM extends AbstractOCMSpringTestCase {
     @Test
     public void testTextPageUpdate() throws Exception {
         List<Class> classes = new ArrayList<Class>();
-        classes.add(TextPage.class);
+        classes.add(TextPage1.class);
+        classes.add(HippoStdHtml.class);
         classes.add(HippoStdDocument.class);
         classes.add(HippoStdFolder.class);
         Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
@@ -321,7 +361,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
-        TextPage productsPage = (TextPage) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
+        TextPage1 productsPage = (TextPage1) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
         
@@ -339,7 +379,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         ocm.save();
         
         // Now validating the changes from the repository...
-        TextPage productsPageUpdated = (TextPage) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
+        TextPage1 productsPageUpdated = (TextPage1) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
         assertNotNull(productsPageUpdated);
         assertNotNull(productsPageUpdated.getNode());
         assertEquals("Hey, Dude!", productsPageUpdated.getTitle());
@@ -361,7 +401,8 @@ public class TestOCM extends AbstractOCMSpringTestCase {
     @Test
     public void testAddAndDelete() throws Exception {
         List<Class> classes = new ArrayList<Class>();
-        classes.add(TextPage.class);
+        classes.add(TextPage1.class);
+        classes.add(HippoStdHtml.class);
         classes.add(HippoStdDocument.class);
         classes.add(HippoStdFolder.class);
         Mapper mapper = new HstAnnotationMapperImpl(classes, "hippo:document");

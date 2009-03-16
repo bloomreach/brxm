@@ -151,12 +151,12 @@
       <testResource>
         <directory>src/test/resources</directory>
       </testResource>
-      <!--<testResource>
+      <testResource>
         <directory>..</directory>
         <includes>
           <include>*.properties</include>
         </includes>
-      </testResource>-->
+      </testResource>
     </testResources>
   </build>
 

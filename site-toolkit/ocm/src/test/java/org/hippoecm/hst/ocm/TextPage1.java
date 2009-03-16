@@ -17,12 +17,14 @@ package org.hippoecm.hst.ocm;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import org.hippoecm.hst.ocm.HippoStdDocument;
 
 @Node(jcrType="gettingstarted:textpage", discriminator=false)
-public class TextPage extends HippoStdDocument {
+public class TextPage1 extends HippoStdDocument {
 
     protected String title;
+    protected HippoStdHtml html;
 
     @Field(jcrName="gettingstarted:title")
     public String getTitle() {
@@ -32,5 +34,13 @@ public class TextPage extends HippoStdDocument {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    @Bean(jcrName="gettingstarted:body")
+    public HippoStdHtml getHtml() {
+        return this.html;
+    }
     
+    public void setHtml(HippoStdHtml html) {
+        this.html = html;
+    }
 }

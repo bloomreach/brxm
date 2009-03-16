@@ -64,10 +64,7 @@
   <servlet>
     <servlet-name>BinariesServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.servlet.BinariesServlet</servlet-class>
-    <init-param>
-      <param-name>baseBinariesContentPath</param-name>
-      <param-value>testcontent</param-value>
-    </init-param>
+  
   </servlet>
   
   <servlet>
