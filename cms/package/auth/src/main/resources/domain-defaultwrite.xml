@@ -182,6 +182,45 @@
             </sv:property>
         </sv:node>
     </sv:node>
+    <sv:node sv:name="self">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:domainrule</sv:value>
+        </sv:property>
+        <sv:node sv:name="match-username">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:facetrule</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:facet" sv:type="String">
+                <sv:value>nodename</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:type" sv:type="String">
+                <sv:value>Name</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:value" sv:type="String">
+                <sv:value>__user__</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:equals" sv:type="Boolean">
+                <sv:value>true</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="type-user">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:facetrule</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:facet" sv:type="String">
+                <sv:value>jcr:primaryType</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:type" sv:type="String">
+                <sv:value>Name</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:value" sv:type="String">
+                <sv:value>hippo:user</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:equals" sv:type="Boolean">
+                <sv:value>true</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
     <sv:node sv:name="hippo:authrole">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:authrole</sv:value>
