@@ -15,16 +15,13 @@
  */
 package org.hippoecm.hst.core.jcr.pool;
 
-import java.util.List;
-
 import javax.jcr.Credentials;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.aopalliance.aop.Advice;
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
-import org.springframework.aop.framework.ProxyFactory;
+import org.apache.commons.proxy.Interceptor;
+import org.apache.commons.proxy.Invocation;
+import org.hippoecm.hst.proxy.ProxyFactory;
 
 public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator, PoolingRepositoryAware {
     
@@ -34,17 +31,9 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
     }
 
     public final Session decorate(Session session) {
-        ProxyFactory factory = new ProxyFactory(session);
-        factory.addAdvice(new PooledSessionInterceptor());
-
-        List<Advice> advices = getAdvices();
-
-        if (advices != null) {
-            for (Advice advice : advices) {
-                factory.addAdvice(advice);
-            }
-        }
-
+        ProxyFactory factory = new ProxyFactory();
+        Interceptor interceptor = getInterceptor();
+        
         ClassLoader sessionClassloader = session.getClass().getClassLoader();
         ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
         
@@ -53,7 +42,7 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 Thread.currentThread().setContextClassLoader(sessionClassloader);
             }
             
-            return (Session) factory.getProxy();
+            return (Session) factory.createInterceptorProxy(session.getClass().getClassLoader(), session, interceptor, new Class [] { Session.class });
         } finally {
             if (sessionClassloader != currentClassloader) {
                 Thread.currentThread().setContextClassLoader(currentClassloader);
@@ -65,14 +54,14 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
         this.poolingRepository = poolingRepository;
     }
 
-    protected List<Advice> getAdvices() {
-        return null;
+    protected Interceptor getInterceptor() {
+        return new PooledSessionInterceptor();
     }
 
-    private class PooledSessionInterceptor implements MethodInterceptor {
+    protected class PooledSessionInterceptor implements Interceptor {
         private boolean alreadyReturned;
 
-        public Object invoke(MethodInvocation invocation) throws Throwable {
+        public Object intercept(Invocation invocation) throws Throwable {
             Object ret = null;
 
             if (this.alreadyReturned) {
@@ -82,7 +71,7 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 
                 if ("logout".equals(methodName)) {
                     // when logout(), it acturally returns the session to the pool
-                    Session session = (Session) invocation.getThis();
+                    Session session = (Session) invocation.getProxy();
                     this.alreadyReturned = true;
                     poolingRepository.returnSession(session);
                 } else if ("getRepository".equals(methodName)) {

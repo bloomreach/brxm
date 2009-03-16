@@ -36,14 +36,14 @@ import org.junit.Test;
 
 public class TestBasicPoolingRepository extends AbstractSpringTestCase {
     
-    
-    
     protected BasicPoolingRepository poolingRepository;
+    protected BasicPoolingRepository readOnlyPoolingRepository;
     
     @Before
     public void setUp() throws Exception {
         super.setUp();
         this.poolingRepository = (BasicPoolingRepository) getComponent(PoolingRepository.class.getName());
+        this.readOnlyPoolingRepository = (BasicPoolingRepository) getComponent(PoolingRepository.class.getName() + ".readOnly");
 
         assertTrue("The maxActive configuration must be greater than zero for test.", this.poolingRepository.getMaxActive() > 0);
         assertTrue("The maxActive configuration must not be smaller than maxIdle configuration for test.", 
@@ -69,7 +69,6 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
         long start = System.currentTimeMillis();
         
         try {
-            
             Session oneMore = repository.login();
             fail("The session must not be borrowed here because of the active session limit.");
         } catch (NoAvailableSessionException e) {
@@ -118,6 +117,29 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
             session.save();
         } catch (UnsupportedRepositoryOperationException uroe) {
             fail("The session is not writable one: " + session);
+        } finally {
+            if (session != null)
+                session.logout();
+        }
+    }
+    
+    @Test
+    public void testReadOnlyBasicPoolingRepository() throws Exception {
+        Repository repository = this.readOnlyPoolingRepository;
+
+        Session session = null;
+
+        try {
+            session = repository.login();
+            Node node = session.getRootNode();
+            assertNotNull("The root node is null.", node);
+
+            try {
+                session.save();
+                fail("Oh, the session is not readonly!");
+            } catch (UnsupportedOperationException uoe) {
+                // well done.
+            }
         } finally {
             if (session != null)
                 session.logout();
