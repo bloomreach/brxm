@@ -42,7 +42,12 @@
           <property name="noLocal" value="false" />
           <property name="eventListener">
             <bean class="org.hippoecm.hst.configuration.HstSitesConfigurationEventListener">
-              <property name="sitesManager" ref="org.hippoecm.hst.configuration.HstSitesManager" />
+              <property name="sitesManagers">
+                <list>
+                  <ref bean="org.hippoecm.hst.configuration.HstSitesManager.preview" />
+                  <ref bean="org.hippoecm.hst.configuration.HstSitesManager.live" />
+                </list>
+              </property>  
               <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
               <property name="componentRegistry" ref="org.hippoecm.hst.core.container.HstComponentRegistry" />
             </bean>
