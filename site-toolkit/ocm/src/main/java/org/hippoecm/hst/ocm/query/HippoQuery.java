@@ -18,7 +18,6 @@ import org.hippoecm.hst.ocm.HippoStdNode;
 import org.hippoecm.hst.ocm.HippoStdNodeIterator;
 import org.hippoecm.hst.ocm.impl.HippoStdNodeIteratorImpl;
 import org.hippoecm.hst.ocm.query.impl.HstCtxWhereFilter;
-import org.hippoecm.hst.ocm.query.impl.HstFilterImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +30,12 @@ public class HippoQuery {
     private HstCtxWhereFilter hstCtxWhereFilter;
     private HippoStdFilter hippoStdFilter;
     private Mapper mapper;
+    
+    ClassDescriptor classDescriptor;
+
+    private final static String ORDER_BY_STRING =  "order by ";
+    
+    private String orderByExpression = "";
     
     public HippoQuery(Mapper mapper, ObjectContentManager ocm ,HstRequest request){
         this.ocm = ocm;
@@ -49,6 +54,7 @@ public class HippoQuery {
     
     public HippoStdFilter createFilter(Class clazz) {
         Filter filter = ocm.getQueryManager().createFilter(clazz);
+        classDescriptor = mapper.getClassDescriptorByClass(filter.getFilterClass());
         return  new HippoStdFilter(filter);
     }
 
@@ -71,6 +77,8 @@ public class HippoQuery {
             query.append("//(element, " + this.getNodeType(filter)+ ")") ;
             query = query.append("[").append(filter.getJcrExpression()).append("]");
         }
+        
+        query.append(this.getOrderByExpression());
         
         return new HippoStdNodeIteratorImpl(this.ocm, getNodeIterator(query.toString(), "xpath"));
     }
@@ -106,6 +114,60 @@ public class HippoQuery {
         {
            return jcrNodeType;
         }
+    }
+    
+    public void addOrderByDescending(String fieldNameAttribute)
+    {
+        //Changes made to maintain the query state updated with every addition
+        //@author Shrirang Edgaonkar
+        addExpression("@" + this.getJcrFieldName(fieldNameAttribute) + " descending");
+    }
+
+    /**
+     *
+     * @see org.apache.jackrabbit.ocm.query.Query#addOrderByAscending(java.lang.String)
+     */
+    public void addOrderByAscending(String fieldNameAttribute)
+    {
+        addExpression("@" + this.getJcrFieldName(fieldNameAttribute) + " ascending");
+    }
+    
+    public void addJCRExpression(String jcrExpression) {
+        addExpression(jcrExpression);
+     }
+    
+    
+    private void addExpression(String jcrExpression) {
+         if(this.orderByExpression.equals(""))
+         {  
+             this.orderByExpression += jcrExpression ;
+         }else
+             this.orderByExpression += (" , " + jcrExpression) ;
+    }
+
+    
+    public String getOrderByExpression()
+    {
+        if(orderByExpression.equals(""))
+            return "";
+        else
+        {   
+            if(this.orderByExpression.contains(ORDER_BY_STRING))
+                return this.orderByExpression;
+            else
+                return (ORDER_BY_STRING + this.orderByExpression);
+        }
+    }
+    
+    
+    private String getJcrFieldName(String fieldAttribute)
+    {
+        if(classDescriptor == null) {
+            log.warn("Can only add a order by after a filter is set");
+            return fieldAttribute;
+        }
+        return classDescriptor.getJcrName(fieldAttribute);
+            
     }
 
 }

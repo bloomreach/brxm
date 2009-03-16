@@ -17,6 +17,10 @@ public class HippoStdFilter {
         return this.filter;
     }
     
+    public Class getFilterClass() {
+        return this.filter.getFilterClass();
+    }
+    
     public void addContains(String scope, String fullTextSearch){
         this.filter.addContains(scope, fullTextSearch);
     }
