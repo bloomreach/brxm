@@ -115,6 +115,23 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
+    
+    <tag>
+        <name>html</name>
+        <tagclass>org.hippoecm.hst.tag.HstHtmlTag</tagclass>
+        <teiclass>org.hippoecm.hst.tag.HstHtmlTag$TEI</teiclass>
+        <bodycontent>JSP</bodycontent>
+        <attribute>
+            <name>var</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>node</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
     <tag>
         <name>head-contribution</name>
         <tagclass>org.hippoecm.hst.tag.HeadContributionTag</tagclass>

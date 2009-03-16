@@ -38,7 +38,8 @@
         ${document.date.time}
         
         <div style="border:1px black solid;" >
-        ${document.html.content}
+         <hst:html node="${document.html}"/>
+     
         </div>
      
         

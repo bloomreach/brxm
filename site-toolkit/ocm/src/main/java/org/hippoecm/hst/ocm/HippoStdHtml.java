@@ -19,9 +19,19 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 
 @Node(jcrType="hippostd:html", discriminator=false)
-public class HippoStdHtml {
+public class HippoStdHtml implements NodeAware{
     
     private String content; 
+    private javax.jcr.Node node;
+    
+    public void setNode(javax.jcr.Node node) {
+        this.node = node;
+    }
+    
+    public javax.jcr.Node getNode(){
+       return this.node;
+    }
+    
     
     @Field(jcrName="hippostd:content")
     public String getContent() {
@@ -31,5 +41,6 @@ public class HippoStdHtml {
     public void setContent(String content) {
         this.content = content;
     }
+
     
 }

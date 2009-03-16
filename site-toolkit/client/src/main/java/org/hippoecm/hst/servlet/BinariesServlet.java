@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class BinariesServlet extends HttpServlet {
 
     public static final String BASE_BINARIES_CONTENT_PATH_INIT_PARAM = "baseBinariesContentPath";
-    public static final String DEFAULT_BASE_BINARIES_CONTENT_PATH = "content";
+    public static final String DEFAULT_BASE_BINARIES_CONTENT_PATH = "";
 
     private static final long serialVersionUID = 1L;
     
@@ -82,10 +82,10 @@ public class BinariesServlet extends HttpServlet {
         Session session = null;
         
         try {
-            String baseContentPath = ("".equals(this.baseBinariesContentPath) ? getBaseContentPath(request) : this.baseBinariesContentPath);
+            String baseContentPath = this.baseBinariesContentPath;
             StringBuilder resourcePathBuilder = new StringBuilder(80);
             
-            if (baseContentPath != null) {
+            if (baseContentPath != null && !"".equals(baseContentPath)) {
                 resourcePathBuilder.append('/').append(PathUtils.normalizePath(baseContentPath));
             }
             
@@ -273,40 +273,5 @@ public class BinariesServlet extends HttpServlet {
         return path;
     }
     
-    private String getBaseContentPath(HttpServletRequest request) {
-        String baseContentPath = null;
-        
-        try {
-            if (this.domainMappings == null) {
-                this.domainMappings = HstServices.getComponentManager().getComponent(DomainMappings.class.getName());
-            }
-            
-            if (this.hstSitesManager == null) {
-                this.hstSitesManager = HstServices.getComponentManager().getComponent(HstSitesManager.class.getName());
-            }
-            
-            if (this.domainMappings != null && this.hstSitesManager != null) {
-                String domainName = request.getServerName();
-                DomainMapping domainMapping = this.domainMappings.findDomainMapping(domainName);
-                
-                if (domainMapping != null) {
-                    String siteName = domainMapping.getSiteName();
-                    HstSite hstSite = this.hstSitesManager.getSites().getSite(siteName);
-                    
-                    if (hstSite != null) {
-                        baseContentPath = hstSite.getContentPath();
-                    }
-                }
-            }
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve base content path: {}", e.getMessage(), e);
-            } else if (log.isWarnEnabled()) {
-                log.warn("Failed to retrieve base content path: {}", e.getMessage());
-            }
-        }
-        
-        return baseContentPath;
-    }
-    
+  
 }
