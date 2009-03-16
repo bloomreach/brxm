@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration;
 
+import java.util.List;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 
@@ -28,12 +30,12 @@ public class HstSitesConfigurationEventListener extends GenericEventListener {
     
     static Logger log = LoggerFactory.getLogger(HstSitesConfigurationEventListener.class);
     
-    protected HstSitesManager sitesManager;
+    protected List<HstSitesManager> sitesManagers;
     protected HstComponentRegistry componentRegistry;
     protected HstSiteMapMatcher hstSiteMapMatcher;
     
-    public void setSitesManager(HstSitesManager sitesManager) {
-        this.sitesManager = sitesManager;
+    public void setSitesManagers(List<HstSitesManager> sitesManagers) {
+        this.sitesManagers = sitesManagers;
     }
     
     public void setSiteMapMatcher(HstSiteMapMatcher hstSiteMapMatcher) {
@@ -91,7 +93,9 @@ public class HstSitesConfigurationEventListener extends GenericEventListener {
 
     private void doInvalidation() {
         this.componentRegistry.unregisterAllComponents();
-        this.sitesManager.invalidate();
+        for(HstSitesManager s: sitesManagers) {
+            s.invalidate();
+        }
         this.hstSiteMapMatcher.invalidate();
     }
 }

@@ -1,5 +1,7 @@
 package org.hippoecm.hst.core.container;
 
+import java.util.Map;
+
 import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.domain.DomainMappings;
@@ -13,7 +15,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractValve implements Valve
 {
     protected final static Logger log = LoggerFactory.getLogger(AbstractValve.class);
-    protected HstSitesManager sitesManager;
+    protected Map<String, HstSitesManager> sitesManagers;
     protected DomainMappings domainMappings;
     protected HstSiteMapMatcher siteMapMatcher;
     protected HstRequestContextComponent requestContextComponent;
@@ -24,12 +26,12 @@ public abstract class AbstractValve implements Valve
     protected HstLinkCreator linkCreator;
     protected HstCtxWhereClauseComputer ctxWhereClauseComputer;
     
-    public HstSitesManager getSitesManager() {
-        return sitesManager;
+    public HstSitesManager getSitesManager(String name) {
+        return sitesManagers.get(name);
     }
 
-    public void setSitesManager(HstSitesManager sitesManager) {
-        this.sitesManager = sitesManager;
+    public void setSitesManagers(Map<String, HstSitesManager> sitesManagers) {
+        this.sitesManagers = sitesManagers;
     }
 
     public DomainMappings getDomainMappings() {

@@ -42,7 +42,7 @@ public class ContextResolvingValve extends AbstractValve
         }
 
         String siteName = domainMapping.getSiteName();
-        HstSite hstSite = getSitesManager().getSites().getSite(siteName);
+        HstSite hstSite = getSitesManager(servletRequest.getServletPath()).getSites().getSite(siteName);
         
         if (hstSite == null) {
             throw new ContainerException("No site found for " + siteName);

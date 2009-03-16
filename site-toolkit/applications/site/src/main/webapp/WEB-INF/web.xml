@@ -21,7 +21,7 @@
   <!-- Spring Log4j Web Configuration Init Parameters -->
   <context-param>
     <param-name>log4jConfigLocation</param-name>
-    <param-value>/WEB-INF/log4j.properties</param-value>
+    <param-value>/WEB-INF/log4j.xml</param-value>
   </context-param>
 
   <context-param>
@@ -64,7 +64,6 @@
   <servlet>
     <servlet-name>BinariesServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.servlet.BinariesServlet</servlet-class>
-  
   </servlet>
   
   <servlet>
@@ -74,8 +73,15 @@
   
   <servlet-mapping>
     <servlet-name>HstContainerServlet</servlet-name>
-    <url-pattern>/content/*</url-pattern>
+    <url-pattern>/preview/*</url-pattern>
   </servlet-mapping>
+
+
+  <servlet-mapping>
+    <servlet-name>HstContainerServlet</servlet-name>
+    <url-pattern>/live/*</url-pattern>
+  </servlet-mapping>
+
 
   <servlet-mapping>
     <servlet-name>BinariesServlet</servlet-name>
