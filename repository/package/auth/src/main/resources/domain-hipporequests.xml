@@ -27,11 +27,11 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:domain</sv:value>
     </sv:property>
-    <sv:node sv:name="hippo:domainrule">
+    <sv:node sv:name="hippo-request">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:domainrule</sv:value>
         </sv:property>
-        <sv:node sv:name="hippo:facetrule">
+        <sv:node sv:name="nodetype-hippo-request">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:facetrule</sv:value>
             </sv:property>
