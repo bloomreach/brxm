@@ -25,6 +25,7 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 public class TextPage2 extends HippoStdDocument {
 
     protected String title;
+    protected String uuid;
     
     // Currently, JackRabbit OCM Collection annotation is working 
     // for field declaration only, not working for getter.
@@ -49,6 +50,15 @@ public class TextPage2 extends HippoStdDocument {
         this.title = title;
     }
 
+    @Field(uuid=true)
+    public String getUuid() {
+        return this.uuid;
+    }
+    
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+    
     public List<TextPageComment> getComments() {
         return this.comments;
     }

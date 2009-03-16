@@ -180,9 +180,11 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         TextPage2 productsPage = (TextPage2) ocm.getObject("/content/gettingstarted/pagecontent/Products/ProductsPage");
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
+        assertNotNull(productsPage.getUuid());
         //assertNotNull(productsPage.getComments());
         //assertFalse(productsPage.getComments().isEmpty());
-       
+
+        System.out.println("uuid: " + productsPage.getUuid());
         System.out.println("node: " + productsPage.getNode());
         System.out.println("path: " + productsPage.getPath());
         System.out.println("title: " + productsPage.getTitle());
