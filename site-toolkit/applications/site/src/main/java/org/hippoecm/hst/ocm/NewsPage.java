@@ -24,16 +24,16 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 @Node(jcrType="testproject:newspage", discriminator=false)
 public class NewsPage extends GeneralPage {
     
-    private Calendar calendar; 
+    private Calendar date; 
     private HippoStdHtml html;
     
     @Field(jcrName="testproject:date")
-    public Calendar getCalendar() {
-        return this.calendar;
+    public Calendar getDate() {
+        return this.date;
     }
     
-    public void setCalendar(Calendar calendar) {
-        this.calendar = calendar;
+    public void setDate(Calendar date) {
+        this.date = date;
     }
     
     @Bean(jcrName="testproject:body")

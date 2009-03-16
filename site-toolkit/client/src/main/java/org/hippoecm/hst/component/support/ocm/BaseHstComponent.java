@@ -36,20 +36,21 @@ import org.apache.jackrabbit.ocm.manager.objectconverter.ProxyManager;
 import org.apache.jackrabbit.ocm.manager.objectconverter.impl.ProxyManagerImpl;
 import org.apache.jackrabbit.ocm.mapper.Mapper;
 import org.apache.jackrabbit.ocm.query.QueryManager;
+import org.apache.jackrabbit.ocm.query.impl.QueryManagerImpl;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.ocm.HippoStdFolder;
 import org.hippoecm.hst.ocm.HippoStdDocument;
+import org.hippoecm.hst.ocm.HippoStdFolder;
 import org.hippoecm.hst.ocm.HippoStdHtml;
 import org.hippoecm.hst.ocm.HippoStdNode;
 import org.hippoecm.hst.ocm.manager.cache.NOOPObjectCache;
 import org.hippoecm.hst.ocm.manager.impl.HstAnnotationMapperImpl;
 import org.hippoecm.hst.ocm.manager.impl.HstObjectConverterImpl;
-import org.hippoecm.hst.ocm.query.impl.HstQueryManagerImpl;
+import org.hippoecm.hst.ocm.query.HippoQuery;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,7 @@ public class BaseHstComponent extends GenericHstComponent {
     public static final String OCM_ANNOTATED_CLASSES_CONF_PARAM = "ocm-annotated-classes";
     public static final String DEFAULT_OCM_ANNOTATED_CLASSES_CONF = "/WEB-INF/ocm-annotated-classes.xml";
     public static final String OCM_REQUEST_CONTEXT_ATTR_NAME = BaseHstComponent.class.getName() + ".ocm";
+    public static final String QUERY_REQUEST_CONTEXT_ATTR_NAME = BaseHstComponent.class.getName() + ".query";
     
     private boolean ocmInitialized;
     private Mapper ocmMapper;
@@ -89,13 +91,24 @@ public class BaseHstComponent extends GenericHstComponent {
         return (HippoStdNode) getObjectContentManager(request).getObject("/"+base+ "/" + relPath);
     }
     
+    protected HippoQuery getHippoQuery(HstRequest request) {
+        HstRequestContext requestContext = request.getRequestContext();
+        ObjectContentManager ocm = getObjectContentManager(request);
+        
+        HippoQuery hQuery = (HippoQuery)requestContext.getAttribute(QUERY_REQUEST_CONTEXT_ATTR_NAME);
+        if(hQuery == null) {
+            hQuery = new HippoQuery(this.ocmMapper, ocm, request);
+            requestContext.setAttribute(QUERY_REQUEST_CONTEXT_ATTR_NAME, hQuery);
+        }
+        return hQuery;
+    }
+    
     protected ObjectContentManager getObjectContentManager(HstRequest request) {
         HstRequestContext requestContext = request.getRequestContext();
         ObjectContentManager ocm = (ObjectContentManager) requestContext.getAttribute(OCM_REQUEST_CONTEXT_ATTR_NAME);
-        
         if (ocm == null) {
             try {
-                QueryManager queryManager = new HstQueryManagerImpl(this.ocmMapper, this.ocmAtomicTypeConverters, requestContext.getSession().getValueFactory());
+                QueryManager queryManager = new QueryManagerImpl(this.ocmMapper, this.ocmAtomicTypeConverters, requestContext.getSession().getValueFactory());
                 ocm = new ObjectContentManagerImpl(this.ocmMapper, this.ocmObjectConverter, queryManager, this.ocmRequestObjectCache, requestContext.getSession());
                 requestContext.setAttribute(OCM_REQUEST_CONTEXT_ATTR_NAME, ocm);
             } catch (UnsupportedRepositoryOperationException e) {

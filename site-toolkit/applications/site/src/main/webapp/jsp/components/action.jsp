@@ -80,7 +80,7 @@ function <hst:namespace/>showPopup() {
         <br/>
         ${document.summary}
         <br/>
-        ${document.calendar.time}
+        ${document.date.time}
         
         <div style="background-color:red" >
         

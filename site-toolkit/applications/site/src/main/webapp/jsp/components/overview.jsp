@@ -60,7 +60,7 @@
         ${document.summary}
         <br/>
      
-        ${document.calendar.time}
+        ${document.date.time}
         
         </li>
             

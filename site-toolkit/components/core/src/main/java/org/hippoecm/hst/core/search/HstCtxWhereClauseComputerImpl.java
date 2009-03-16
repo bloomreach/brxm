@@ -51,7 +51,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                 // either the site content root node (hst:content) or just a physical node.
                 if(node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                    String scopeUUID = "'"+node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString()+"'";
-                   facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("=").append(scopeUUID);
+                   facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("'");
                    getFacetSelectClauses(hstRequestContext.getSession(), hnode, facetSelectClauses , false);
                 } else {
                     // We are not searching in a virtual structure: return null, there is no context where
@@ -62,7 +62,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                 // we are searching in a virtual node. Let's compute the context where clause to represent this in a physical search
                 // when we can get a canonical, we know for sure it is referenceable
                 String scopeUUID =  canonical.getUUID();
-                facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("=").append(scopeUUID);
+                facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("'");
                 getFacetSelectClauses(hstRequestContext.getSession(), hnode, facetSelectClauses , true);
             }
         } catch (RepositoryException e) {
@@ -73,6 +73,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             log.warn("No ctx where clause found");
             return null;
         }
+        facetSelectClauses.append(" and not(@jcr:primaryType='nt:frozenNode')");
         log.debug("For node '{}' the ctxWhereClause is '{}'", path , facetSelectClauses.toString());
         return facetSelectClauses.toString();
     }

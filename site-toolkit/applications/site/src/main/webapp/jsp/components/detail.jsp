@@ -35,7 +35,7 @@
         <br/>
         ${document.summary}
         <br/>
-        ${document.calendar.time}
+        ${document.date.time}
         
         <div style="border:1px black solid;" >
         ${document.html.content}
