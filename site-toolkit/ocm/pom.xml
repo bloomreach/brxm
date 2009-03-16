@@ -29,7 +29,12 @@
   <packaging>jar</packaging>
 
   <dependencies>
-  
+    
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -146,12 +151,12 @@
       <testResource>
         <directory>src/test/resources</directory>
       </testResource>
-      <testResource>
+      <!--<testResource>
         <directory>..</directory>
         <includes>
           <include>*.properties</include>
         </includes>
-      </testResource>
+      </testResource>-->
     </testResources>
   </build>
 
