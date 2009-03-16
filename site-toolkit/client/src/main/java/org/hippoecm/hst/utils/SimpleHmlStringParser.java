@@ -75,20 +75,24 @@ public class SimpleHmlStringParser {
                 if (hrefIndexEnd > hrefIndexStart) {
                     String documentPath = html.substring(hrefIndexStart, hrefIndexEnd);
 
-                    String url = getHref(documentPath,node, reqContext, response);
-
                     offset = endTag;
                     sb.append(html.substring(globalOffset, hrefIndexStart));
-                    if(url != null) {
-                        if(request.getContextPath() != null) {
-                            sb.append(request.getContextPath());
-                        } 
-                        if(request.getServletPath() != null) {
-                            sb.append(request.getServletPath());
-                        } 
-                        sb.append(url);
+                    
+                    if(isExternal(documentPath)) {
+                        sb.append(documentPath);
                     } else {
-                       log.warn("Skip href because url is null"); 
+                        String url = getHref(documentPath,node, reqContext, response);
+                        if(url != null) {
+                            if(request.getContextPath() != null) {
+                                sb.append(request.getContextPath());
+                            } 
+                            if(request.getServletPath() != null) {
+                                sb.append(request.getServletPath());
+                            } 
+                            sb.append(url);
+                        } else {
+                           log.warn("Skip href because url is null"); 
+                        }
                     }
                     sb.append(html.substring(hrefIndexEnd, endTag));
                     appended = true;
@@ -130,16 +134,21 @@ public class SimpleHmlStringParser {
                     
                     offset = endTag;
                     sb.append(html.substring(globalOffset, srcIndexStart));
-                    
-                    String translatedSrc = getSrcLink(srcPath, node, reqContext, response);
-                    if(translatedSrc != null) {
-                        if(request.getContextPath() != null) {
-                            sb.append(request.getContextPath());
-                        }
-                        sb.append(translatedSrc);
+                   
+                    if(isExternal(srcPath)) {
+                        sb.append(srcPath);
                     } else {
-                        log.warn("Could not translate image src. Skip src");
+                        String translatedSrc = getSrcLink(srcPath, node, reqContext, response);
+                        if(translatedSrc != null) {
+                            if(request.getContextPath() != null) {
+                                sb.append(request.getContextPath());
+                            }
+                            sb.append(translatedSrc);
+                        } else {
+                            log.warn("Could not translate image src. Skip src");
+                        }
                     }
+                    
                     sb.append(html.substring(srcIndexEnd, endTag));
                     appended = true;
                 }
@@ -160,12 +169,7 @@ public class SimpleHmlStringParser {
 
     public static String getHref(String path, HippoNode node, HstRequestContext reqContext,
             HttpServletResponse response) {
-
-        for (String prefix : EXTERNALS) {
-            if (path.startsWith(prefix)) {
-                return path;
-            }
-        }
+        
         try {
             path = URLDecoder.decode(path, "utf-8");
         } catch (UnsupportedEncodingException e1) {
@@ -215,14 +219,16 @@ public class SimpleHmlStringParser {
         return null;
     }
     
-    
-    public static String getSrcLink(String path, HippoNode node, HstRequestContext reqContext, HttpServletResponse response) {
-
+    public static boolean isExternal(String path) {
         for (String prefix : EXTERNALS) {
             if (path.startsWith(prefix)) {
-                return path;
+                return true;
             }
         }
+        return false;
+    }
+    
+    public static String getSrcLink(String path, HippoNode node, HstRequestContext reqContext, HttpServletResponse response) {
 
         try {
             path = URLDecoder.decode(path, "utf-8");
