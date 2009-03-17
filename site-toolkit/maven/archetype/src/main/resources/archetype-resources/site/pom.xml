@@ -1,3 +1,4 @@
+#set( $dollar = '$' )
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2008 Hippo
@@ -47,19 +48,19 @@
      <groupId>javax.servlet</groupId>
      <artifactId>servlet-api</artifactId>
      <scope>provided</scope>
-     <version>${servlet-api.version}</version>
+     <version>${dollar}{servlet-api.version}</version>
    </dependency>
    <dependency>
      <groupId>javax.servlet</groupId>
      <artifactId>jstl</artifactId>
      <scope>runtime</scope>
-     <version>${jstl.version}</version>
+     <version>${dollar}{jstl.version}</version>
    </dependency>
    <dependency>
      <groupId>taglibs</groupId>
      <artifactId>standard</artifactId>
      <scope>runtime</scope>
-     <version>${taglibs.version}</version>
+     <version>${dollar}{taglibs.version}</version>
    </dependency>
 	<dependency>
 		<groupId>org.onehippo.forge.simpleEmail</groupId>
@@ -69,22 +70,22 @@
   <dependency>
     <groupId>xml-apis</groupId>
     <artifactId>xml-apis</artifactId>
-    <version>${xml-apis.version}</version>
+    <version>${dollar}{xml-apis.version}</version>
   </dependency>
   <dependency>
     <groupId>xerces</groupId>
     <artifactId>xercesImpl</artifactId>
-    <version>${xerces.version}</version>
+    <version>${dollar}{xerces.version}</version>
   </dependency>
   <dependency>
     <groupId>xerces</groupId>
     <artifactId>xerces</artifactId>
-    <version>${xerces.version}</version>
+    <version>${dollar}{xerces.version}</version>
   </dependency>
   <dependency>
     <groupId>xalan</groupId>
     <artifactId>xalan</artifactId>
-    <version>${xalan.version}</version>
+    <version>${dollar}{xalan.version}</version>
   </dependency>
   <dependency>
     <groupId>org.slf4j</groupId>
@@ -106,17 +107,17 @@
   <dependency>
     <groupId>org.springframework</groupId>
     <artifactId>spring-core</artifactId>
-    <version>${spring.version}</version>
+    <version>${dollar}{spring.version}</version>
   </dependency>
   <dependency>
     <groupId>org.springframework</groupId>
     <artifactId>spring-web</artifactId>
-    <version>${spring.version}</version>
+    <version>${dollar}{spring.version}</version>
   </dependency>
   <dependency>
     <groupId>org.onehippo.ecm.hst</groupId>
     <artifactId>hst-api</artifactId>
-    <version>${hst.version}</version>
+    <version>${dollar}{hst.version}</version>
     <!--
       <scope>provided</scope>
     -->
@@ -124,7 +125,7 @@
   <dependency>
     <groupId>org.onehippo.ecm.hst</groupId>
     <artifactId>hst-commons</artifactId>
-    <version>${hst.version}</version>
+    <version>${dollar}{hst.version}</version>
     <!--
       <scope>provided</scope>
     -->
@@ -132,18 +133,18 @@
   <dependency>
     <groupId>org.onehippo.ecm.hst.components</groupId>
     <artifactId>hst-core</artifactId>
-    <version>${hst.version}</version>
+    <version>${dollar}{hst.version}</version>
   </dependency>
   <dependency>
     <groupId>org.onehippo.ecm.hst</groupId>
     <artifactId>hst-client</artifactId>
-    <version>${hst.version}</version>
+    <version>${dollar}{hst.version}</version>
   </dependency>
   
    <dependency>
      <groupId>org.onehippo.ecm.hst</groupId>
      <artifactId>hst-ocm</artifactId>
-     <version>${hst.version}</version>
+     <version>${dollar}{hst.version}</version>
    </dependency>
   
    <dependency>
@@ -168,7 +169,7 @@
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <webAppConfig>            
             <contextPath>/site</contextPath>
-            <tempDirectory>${project.build.directory}/work</tempDirectory>
+            <tempDirectory>${dollar}{project.build.directory}/work</tempDirectory>
           </webAppConfig>
           <connectors>
             <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
@@ -259,22 +260,22 @@
                   <tasks>
 
                     <echo>Replacing HST Shared Libraries.</echo>
-                    <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${tomcat.hst.shared.lib}/jcr-1.0.jar" />
-                    <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
-                    <copy file="../../api/target/hst-api-${project.version}.jar" tofile="${tomcat.hst.shared.lib}/hst-api-${project.version}.jar" />
-                    <copy file="../../commons/target/hst-commons-${project.version}.jar" tofile="${tomcat.hst.shared.lib}/hst-commons-${project.version}.jar" />
+                    <copy file="${dollar}{settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${dollar}{tomcat.hst.shared.lib}/jcr-1.0.jar" />
+                    <copy file="${dollar}{settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${dollar}{tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
+                    <copy file="../../api/target/hst-api-${dollar}{project.version}.jar" tofile="${dollar}{tomcat.hst.shared.lib}/hst-api-${dollar}{project.version}.jar" />
+                    <copy file="../../commons/target/hst-commons-${dollar}{project.version}.jar" tofile="${dollar}{tomcat.hst.shared.lib}/hst-commons-${dollar}{project.version}.jar" />
                     
                     <echo>Replacing cms web application into tomcat.</echo>
-                    <delete dir="${tomcat.hst.cms.webapp}" />
-                    <mkdir dir="${tomcat.hst.cms.webapp}" />
-                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.00.01.war" dest="${tomcat.hst.cms.webapp}" />
+                    <delete dir="${dollar}{tomcat.hst.cms.webapp}" />
+                    <mkdir dir="${dollar}{tomcat.hst.cms.webapp}" />
+                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.00.01.war" dest="${dollar}{tomcat.hst.cms.webapp}" />
                                       
                     <echo>Replacing site web application into tomcat.</echo>
-                    <delete dir="${tomcat.server.home}/webapps/${project.artifactId}" />
-                    <mkdir dir="${tomcat.server.home}/webapps/${project.artifactId}" />
-                    <unwar src="${project.build.directory}/${project.artifactId}-${project.version}.war" dest="${tomcat.server.home}/webapps/${project.artifactId}" />
+                    <delete dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.artifactId}" />
+                    <mkdir dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.artifactId}" />
+                    <unwar src="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}.war" dest="${dollar}{tomcat.server.home}/webapps/${dollar}{project.artifactId}" />
                     <delete>
-                      <fileset dir="${tomcat.server.home}/webapps/${project.artifactId}/WEB-INF/lib">
+                      <fileset dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.artifactId}/WEB-INF/lib">
                         <include name="jcr-*.jar" />
                         <include name="hst-api-*.jar" />
                         <include name="hst-commons-*.jar" />

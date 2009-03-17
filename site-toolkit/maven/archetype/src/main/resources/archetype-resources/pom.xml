@@ -1,3 +1,4 @@
+#set( $dollar = '$' )
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2008 Hippo
@@ -56,121 +57,121 @@
       <dependency>
         <groupId>javax.jcr</groupId>
         <artifactId>jcr</artifactId>
-        <version>${javax.jcr.version}</version>
+        <version>${dollar}{javax.jcr.version}</version>
       </dependency>
       
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
-        <version>${servlet-api.version}</version>
+        <version>${dollar}{servlet-api.version}</version>
         <scope>provided</scope>
       </dependency>
     
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>jstl</artifactId>
-        <version>${jstl.version}</version>
+        <version>${dollar}{jstl.version}</version>
         <scope>runtime</scope>
       </dependency>
     
       <dependency>
         <groupId>taglibs</groupId>
         <artifactId>standard</artifactId>
-        <version>${taglibs.version}</version>
+        <version>${dollar}{taglibs.version}</version>
         <scope>runtime</scope>
       </dependency>
    
       <dependency>
         <groupId>xml-apis</groupId>
         <artifactId>xml-apis</artifactId>
-        <version>${xml-apis.version}</version>
+        <version>${dollar}{xml-apis.version}</version>
         <scope>runtime</scope>
       </dependency>
     
       <dependency>
         <groupId>xerces</groupId>
         <artifactId>xercesImpl</artifactId>
-        <version>${xerces.version}</version>
+        <version>${dollar}{xerces.version}</version>
         <scope>runtime</scope>
       </dependency>
     
       <dependency>
         <groupId>xerces</groupId>
         <artifactId>xerces</artifactId>
-        <version>${xerces.version}</version>
+        <version>${dollar}{xerces.version}</version>
         <scope>runtime</scope>
       </dependency>
     
       <dependency>
         <groupId>xalan</groupId>
         <artifactId>xalan</artifactId>
-        <version>${xalan.version}</version>
+        <version>${dollar}{xalan.version}</version>
         <scope>runtime</scope>
       </dependency>
     
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>${slf4j.version}</version>
+        <version>${dollar}{slf4j.version}</version>
       </dependency>
     
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
-        <version>${slf4j.version}</version>
+        <version>${dollar}{slf4j.version}</version>
         <scope>runtime</scope>
       </dependency>
     
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
-        <version>${log4j.version}</version>
+        <version>${dollar}{log4j.version}</version>
         <scope>runtime</scope>
       </dependency>
     
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-core</artifactId>
-        <version>${spring.version}</version>
+        <version>${dollar}{spring.version}</version>
       </dependency>
     
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-web</artifactId>
-        <version>${spring.version}</version>
+        <version>${dollar}{spring.version}</version>
       </dependency>
     
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jta_1.1_spec</artifactId>
-        <version>${jta.version}</version>
+        <version>${dollar}{jta.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-package-war</artifactId>
-        <version>${hippoecm.version}</version>
+        <version>${dollar}{hippoecm.version}</version>
         <type>war</type>
       </dependency>
 
       <dependency>
         <groupId>org.onehippo.ecm.hst</groupId>
         <artifactId>hst-api</artifactId>
-        <version>${hst.version}</version>
+        <version>${dollar}{hst.version}</version>
         <type>jar</type>
       </dependency>
       
       <dependency>
         <groupId>org.onehippo.ecm.hst</groupId>
         <artifactId>hst-commons</artifactId>
-        <version>${hst.version}</version>
+        <version>${dollar}{hst.version}</version>
         <type>jar</type>
       </dependency>
       
       <dependency>
         <groupId>org.onehippo.ecm.hst</groupId>
         <artifactId>hst-client</artifactId>
-        <version>${hst.version}</version>
+        <version>${dollar}{hst.version}</version>
         <type>jar</type>
       </dependency>
       
@@ -182,7 +183,7 @@
       <dependency>
         <groupId>org.onehippo.ecm.hst.components</groupId>
         <artifactId>hst-core</artifactId>
-        <version>${hst.version}</version>
+        <version>${dollar}{hst.version}</version>
         <type>jar</type>
         <scope>runtime</scope>
       </dependency>
@@ -190,35 +191,35 @@
       <dependency>
         <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
         <artifactId>hst-addon-repository</artifactId>
-        <version>${hst.version}</version>
+        <version>${dollar}{hst.version}</version>
         <type>jar</type>
       </dependency>
       
       <dependency>
         <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
         <artifactId>hst-addon-configuration-editor-frontend</artifactId>
-        <version>${hst.version}</version>
+        <version>${dollar}{hst.version}</version>
         <type>jar</type>
       </dependency>
       
       <dependency>
         <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
         <artifactId>hst-addon-configuration-editor-repository</artifactId>
-        <version>${hst.version}</version>
+        <version>${dollar}{hst.version}</version>
         <type>jar</type>
       </dependency>
       
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-test</artifactId>
-        <version>${spring.version}</version>
+        <version>${dollar}{spring.version}</version>
         <scope>test</scope>
       </dependency>
     
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>${junit.version}</version>
+        <version>${dollar}{junit.version}</version>
         <scope>test</scope>
       </dependency>
             

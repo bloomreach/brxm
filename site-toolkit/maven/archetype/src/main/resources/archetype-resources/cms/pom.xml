@@ -1,3 +1,4 @@
+#set( $dollar = '$' )
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2008 Hippo
@@ -71,7 +72,7 @@
           </manifest>
           <archive>
             <manifestEntries>
-              <Implementation-Build>${buildNumber}</Implementation-Build>
+              <Implementation-Build>${dollar}{buildNumber}</Implementation-Build>
             </manifestEntries>
           </archive>
           <overlays>

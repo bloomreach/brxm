@@ -31,7 +31,7 @@
   <properties>
     <gettingstarted.app.groupId>org.onehippo.ecm.hst</gettingstarted.app.groupId>
     <gettingstarted.app.artifactId>gettingstarted</gettingstarted.app.artifactId>
-    <gettingstarted.app.version>1.00.01</gettingstarted.app.version>
+    <gettingstarted.app.version>1.01.00</gettingstarted.app.version>
   </properties>
   
   <build>
