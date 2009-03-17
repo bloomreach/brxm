@@ -30,7 +30,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
-import org.apache.wicket.model.IModel;
 
 import org.hippoecm.frontend.model.FrontendNodeTypes;
 import org.hippoecm.frontend.model.IModelReference;
@@ -38,8 +37,10 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.widgets.AbstractView;
@@ -88,8 +89,8 @@ public class WorkflowPlugin extends RenderPlugin {
                     }
 
                     public void onEvent(IEvent event) {
-                        if (event instanceof IModelReference.IModelChangeEvent) {
-                            IModelReference.IModelChangeEvent<JcrNodeModel> mce = (IModelReference.IModelChangeEvent<JcrNodeModel>)event;
+        if (event instanceof IModelReference.IModelChangeEvent) {
+        IModelReference.IModelChangeEvent<JcrNodeModel> mce = (IModelReference.IModelChangeEvent<JcrNodeModel>)event;
                             updateModel(mce.getNewModel());
                         }
                     }
@@ -115,36 +116,48 @@ public class WorkflowPlugin extends RenderPlugin {
                     if (workspace instanceof HippoWorkspace) {
                         WorkflowManager workflowMgr = ((HippoWorkspace) workspace).getWorkflowManager();
                         for (final String category : categories) {
-                            //try {
+                            try {
                                 final WorkflowDescriptor descriptor = workflowMgr.getWorkflowDescriptor(category, documentNode);
                                 if (descriptor != null) {
                                     String pluginRenderer = descriptor.getAttribute(FrontendNodeTypes.WORKFLOW_RENDERER);
-                                    Panel plugin;
+                                    Panel plugin = null;
                                     WorkflowDescriptorModel pluginModel = new WorkflowDescriptorModel(descriptor, category, documentNode);
-                                    //if (pluginRenderer == null || pluginRenderer.trim().equals("")) {
+                                    if (pluginRenderer == null || pluginRenderer.trim().equals("")) {
                                         plugin = new StdWorkflowPlugin("item", pluginModel);
-                                    /*} else {
+                                    } else {
                                         Class pluginClass = Class.forName(pluginRenderer);
-                                        //if(Panel.class.isAssignableFrom(pluginClass)) {
-                                        plugin = (Panel) pluginClass.getConstructor(new Class[]{String.class, IModel.class}).newInstance(new Object[]{"item", pluginModel});
-                                    }*/
-                                    plugin.visitChildren(new IVisitor() {
-                                        public Object component(Component component) {
-                                            try {
-                                                if (component instanceof ActionDescription) {
-                                                    menu.put(new String[]{category, descriptor.getAttribute(FrontendNodeTypes.WORKFLOW_RENDERER), ((ActionDescription) component).getId()}, (ActionDescription) component);
-                                                }
-                                            } catch (RepositoryException ex) {
-                                                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                                                ex.printStackTrace(System.err);
+                                        if(IPlugin.class.isAssignableFrom(pluginClass)) {
+                                            plugin = (Panel) pluginClass.getConstructor(new Class[]{IPluginContext.class, IPluginConfig.class}).newInstance(new Object[]{getPluginContext(), getPluginConfig().getPluginConfig("workflow.options")});
+                                            if(plugin instanceof IRenderService) {
+                                                ((IRenderService)plugin).bind(null, "id");
                                             }
-                                            return IVisitor.CONTINUE_TRAVERSAL;
+                                            plugin.setModel(pluginModel);
+                                        } else if(Panel.class.isAssignableFrom(pluginClass)) {
+                                            plugin = (Panel) pluginClass.getConstructor(new Class[]{String.class, WorkflowDescriptorModel.class}).newInstance(new Object[]{"item", pluginModel});
+                                            plugin.setModel(pluginModel);
+                                        } else {
+                                            plugin = new Panel("item");
                                         }
-                                    });
-                                    plugin.setVisible(false);
-                                    list.add(plugin);
+                                    }
+                                    if (plugin != null) {
+                                        plugin.visitChildren(new IVisitor() {
+                                            public Object component(Component component) {
+                                                try {
+                                                    if (component instanceof ActionDescription) {
+                                                        menu.put(new String[] {category, descriptor.getAttribute(FrontendNodeTypes.WORKFLOW_RENDERER), ((ActionDescription)component).getId()}, (ActionDescription)component);
+                                                    }
+                                                } catch (RepositoryException ex) {
+                                                    System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                                                    ex.printStackTrace(System.err);
+                                                }
+                                                return IVisitor.CONTINUE_TRAVERSAL;
+                                            }
+                                        });
+                                        plugin.setVisible(false);
+                                        list.add(plugin);
+                                    }
                                 }
-                            /*} catch (ClassNotFoundException ex) {
+                            } catch (ClassNotFoundException ex) {
                                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                                 ex.printStackTrace(System.err);
                             } catch (NoSuchMethodException ex) {
@@ -159,7 +172,7 @@ public class WorkflowPlugin extends RenderPlugin {
                             } catch (InvocationTargetException ex) {
                                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                                 ex.printStackTrace(System.err);
-                            }*/
+                            }
                         }
                     }
                 } catch (RepositoryException ex) {

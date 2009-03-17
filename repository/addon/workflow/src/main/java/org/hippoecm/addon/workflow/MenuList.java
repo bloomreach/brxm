@@ -24,7 +24,10 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 
-class MenuList extends Panel {
+class MenuList extends Panel implements MenuComponent {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     MenuList(String id, ActionDescription wf, MenuHierarchy menu) {
@@ -55,7 +58,7 @@ class MenuList extends Panel {
             image.setVisible(false);
             add(image);
         }*/
-        add(new DataView("list", new ListDataProvider(menu.list(1))) {
+        add(new DataView("list", new ListDataProvider(menu.list(this))) {
             public void populateItem(final Item item) {
                 MenuItem menuItem = (MenuItem)item.getModelObject();
                 item.add(menuItem);

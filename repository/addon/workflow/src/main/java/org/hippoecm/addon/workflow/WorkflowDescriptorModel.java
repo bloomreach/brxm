@@ -27,6 +27,9 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 
 public class WorkflowDescriptorModel extends LoadableDetachableModel {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     String path;
     String category;
 
@@ -46,5 +49,11 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel {
             ex.printStackTrace(System.err);
             return null;
         }
+    }
+    
+    /** @deprecated */
+    public Node getNode() throws RepositoryException {
+        Session session = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
+        return session.getRootNode().getNode(path.substring(1));
     }
 }
