@@ -18,21 +18,27 @@ package org.hippoecm.addon.workflow;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 
-class MenuBar extends Panel {
+class MenuBar extends Panel implements MenuComponent {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     List<MenuButton> buttons;
     public MenuBar(String id, MenuHierarchy list) {
         super(id);
         buttons = new LinkedList<MenuButton>();
-        add(new DataView("list", new ListDataProvider(list.list(0))) {
+        add(new DataView("list", new ListDataProvider(list.list(this))) {
             public void populateItem(final Item item) {
-                MenuButton button = (MenuButton)item.getModelObject();
-                buttons.add(button);
+                Component button = (Component)item.getModelObject();
+                if (button instanceof MenuButton) {
+                    buttons.add((MenuButton)button);
+                }
                 item.add(button);
             }
         });

@@ -35,6 +35,9 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 
 class StdWorkflowPlugin extends Panel {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     StdWorkflowPlugin(String id, WorkflowDescriptorModel model) {
         super(id, model);
         List<StdWorkflow> list = new LinkedList<StdWorkflow>();
@@ -43,7 +46,7 @@ class StdWorkflowPlugin extends Panel {
             Class<Workflow>[] interfaces = descriptor.getInterfaces();
             for (int i = 0; i < interfaces.length && i < 1; i++) {
                 for (Method method : interfaces[i].getDeclaredMethods()) {
-                    StdWorkflow wf = new StdWorkflow("idd", method.getName()) {
+                    StdWorkflow wf = new StdWorkflow("id", method.getName()) {
                         @Override
                         protected void execute() {
                             try {

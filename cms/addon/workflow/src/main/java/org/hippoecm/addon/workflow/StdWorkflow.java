@@ -15,12 +15,31 @@
  */
 package org.hippoecm.addon.workflow;
 
+import java.rmi.RemoteException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.ServiceException;
+import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 
 abstract class StdWorkflow extends ActionDescription {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
     
     private String name;
@@ -71,4 +90,43 @@ abstract class StdWorkflow extends ActionDescription {
     }
 
     protected abstract void execute();
+    
+    public static abstract class Compatibility extends StdWorkflow {
+        RenderPlugin enclosingPlugin;
+
+        public Compatibility(String id, String name, RenderPlugin enclosingPlugin) {
+            super(id, name);
+            this.enclosingPlugin = enclosingPlugin;
+        }
+
+        protected abstract void execute(Workflow wf) throws Exception;
+
+        protected void execute() {
+            try {
+                WorkflowDescriptor descriptor = (WorkflowDescriptor)enclosingPlugin.getModelObject();
+                Session session = ((UserSession)getSession()).getJcrSession();
+                session.refresh(true);
+                session.save();
+                WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
+                Workflow workflow = manager.getWorkflow(descriptor);
+                execute(workflow);
+                session.refresh(false);
+            } catch (WorkflowException ex) {
+                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch (ServiceException ex) {
+                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch (RemoteException ex) {
+                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch (RepositoryException ex) {
+                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch (Exception ex) {
+                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                ex.printStackTrace(System.err);
+            }
+        }
+    }
 }

@@ -55,14 +55,12 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
       <version>2.05.01-SNAPSHOT</version>
-      <scope>runtime</scope>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
       <version>2.05.01-SNAPSHOT</version>
-      <scope>runtime</scope>
       <type>jar</type>
     </dependency>
     <dependency>

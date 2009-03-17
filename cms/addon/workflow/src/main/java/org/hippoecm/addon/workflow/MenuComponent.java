@@ -15,28 +15,8 @@
  */
 package org.hippoecm.addon.workflow;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.plugin.ContextMenu;
-
-abstract class MenuLink extends AjaxLink {
+interface MenuComponent {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    final String SVN_ID = "$Id$";
 
-    public MenuLink(String id) {
-        super(id);
-    }
-
-    public MenuLink(String id, StringResourceModel model) {
-        super(id, model);
-    }
-
-    @Override
-    public void onClick(AjaxRequestTarget target) {
-        ((ContextMenu)findParent(ContextMenu.class)).collapse(target);
-        onClick();
-    }
-
-    public abstract void onClick();
 }

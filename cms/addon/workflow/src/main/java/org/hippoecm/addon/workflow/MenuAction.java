@@ -16,16 +16,18 @@
 package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.hippoecm.frontend.plugin.ContextMenu;
 
-class MenuItem extends Panel {
+class MenuAction extends Panel implements ContextMenu {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: $";
 
     private static final long serialVersionUID = 1L;
 
-    public MenuItem(String id, final ActionDescription wf) {
+    public MenuAction(String id, final ActionDescription wf) {
         super(id);
 
         Component fragment = wf.getFragment("text");
@@ -45,5 +47,8 @@ class MenuItem extends Panel {
         } else if (fragment instanceof Fragment) {
             add(fragment);
         }
+    }
+    
+    public void collapse(AjaxRequestTarget target) {
     }
 }

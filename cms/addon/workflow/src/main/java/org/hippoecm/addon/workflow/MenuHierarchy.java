@@ -23,6 +23,9 @@ import java.util.Map;
 import org.apache.wicket.Component;
 
 class MenuHierarchy {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private Map<String, MenuHierarchy> submenus = new LinkedHashMap<String, MenuHierarchy>();
     private List<ActionDescription> items = new LinkedList<ActionDescription>();
 
@@ -41,21 +44,53 @@ class MenuHierarchy {
     }
 
     public void restructure() {
+        Map<String, MenuHierarchy> submenus = this.submenus;
+        List<ActionDescription> items = this.items;
+        this.submenus = new LinkedHashMap<String, MenuHierarchy>();
+        this.items = new LinkedList<ActionDescription>();
+        if(submenus.containsKey("default")) {
+            MenuHierarchy submenu = submenus.get("default");
+            for(ActionDescription action : submenu.items) {
+                if(action.getId().equals("edit")) {
+                    put(action);
+                } else if(action.getId().equals("delete")) {
+                    put(new String[] { "document" }, action);
+                } else if(action.getId().equals("copy")) {
+                    put(new String[] { "document" }, action);
+                } else if(action.getId().equals("move")) {
+                    put(new String[] { "document" }, action);
+                } else if(action.getId().equals("rename")) {
+                    put(new String[] { "document" }, action);
+                } else if(action.getId().equals("publish")) {
+                    put(new String[] { "publication" }, action);
+                } else if(action.getId().equals("depublish")) {
+                    put(new String[] { "publication" }, action);
+                } else {
+                    put(new String[] { "miscelleneous" }, action);
+                }
+            }
+        }
+        if(submenus.containsKey("editing")) {
+            MenuHierarchy submenu = submenus.get("editing");
+            for(ActionDescription action : submenu.items) {
+                put(action);
+            }
+        }
     }
 
-    List<Component> list(int context) {
+    List<Component> list(MenuComponent context) {
         List<Component> list = new LinkedList<Component>();
-        switch (context) {
-            case 0:
-                for (Map.Entry<String, MenuHierarchy> submenu : submenus.entrySet()) {
-                    list.add(new MenuButton("item", submenu.getKey(), submenu.getValue()));
-                }
-                break;
-            case 1:
-                for(ActionDescription item : items) {
-                    list.add(new MenuItem("item", item));
-                }
-                break;
+        if (context instanceof MenuBar) {
+            for (ActionDescription item : items) {
+                list.add(new MenuAction("item", item));
+            }
+             for (Map.Entry<String, MenuHierarchy> submenu : submenus.entrySet()) {
+                list.add(new MenuButton("item", submenu.getKey(), submenu.getValue()));
+            }
+       } else {
+            for (ActionDescription item : items) {
+                list.add(new MenuItem("item", item));
+            }
         }
         return list;
     }
