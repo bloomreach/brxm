@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+--><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>${groupId}</groupId>
+    <artifactId>${rootArtifactId}</artifactId>
+    <version>${version}</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <name>My Hippo Site Toolkit Project website</name>
+  <description>My Hippo Site Toolkit Project website</description>
+  <artifactId>${artifactId}</artifactId>
+  <groupId>${groupId}</groupId>
+  <packaging>war</packaging>
+
+ <dependencies>
+     <!-- Dependencies needed to be able to send mail -->
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+      <version>1.4</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
+      <version>1.1</version>
+      <scope>provided</scope>
+    </dependency>   
+   <dependency>
+     <groupId>javax.servlet</groupId>
+     <artifactId>servlet-api</artifactId>
+     <scope>provided</scope>
+     <version>${servlet-api.version}</version>
+   </dependency>
+   <dependency>
+     <groupId>javax.servlet</groupId>
+     <artifactId>jstl</artifactId>
+     <scope>runtime</scope>
+     <version>${jstl.version}</version>
+   </dependency>
+   <dependency>
+     <groupId>taglibs</groupId>
+     <artifactId>standard</artifactId>
+     <scope>runtime</scope>
+     <version>${taglibs.version}</version>
+   </dependency>
+	<dependency>
+		<groupId>org.onehippo.forge.simpleEmail</groupId>
+		<artifactId>SimpleEmail</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>      
+  <dependency>
+    <groupId>xml-apis</groupId>
+    <artifactId>xml-apis</artifactId>
+    <version>${xml-apis.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>xerces</groupId>
+    <artifactId>xercesImpl</artifactId>
+    <version>${xerces.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>xerces</groupId>
+    <artifactId>xerces</artifactId>
+    <version>${xerces.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>xalan</groupId>
+    <artifactId>xalan</artifactId>
+    <version>${xalan.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-api</artifactId>
+    <version>1.4.3</version>
+  </dependency>
+  <dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-log4j12</artifactId>
+    <version>1.4.3</version>
+    <scope>runtime</scope>
+  </dependency>
+  <dependency>
+    <groupId>log4j</groupId>
+    <artifactId>log4j</artifactId>
+    <version>1.2.13</version>
+    <scope>runtime</scope>
+  </dependency>
+  <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-core</artifactId>
+    <version>${spring.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-web</artifactId>
+    <version>${spring.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>org.onehippo.ecm.hst</groupId>
+    <artifactId>hst-api</artifactId>
+    <version>${hst.version}</version>
+    <!--
+      <scope>provided</scope>
+    -->
+  </dependency>
+  <dependency>
+    <groupId>org.onehippo.ecm.hst</groupId>
+    <artifactId>hst-commons</artifactId>
+    <version>${hst.version}</version>
+    <!--
+      <scope>provided</scope>
+    -->
+  </dependency>
+  <dependency>
+    <groupId>org.onehippo.ecm.hst.components</groupId>
+    <artifactId>hst-core</artifactId>
+    <version>${hst.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>org.onehippo.ecm.hst</groupId>
+    <artifactId>hst-client</artifactId>
+    <version>${hst.version}</version>
+  </dependency>
+  
+   <dependency>
+     <groupId>org.onehippo.ecm.hst</groupId>
+     <artifactId>hst-ocm</artifactId>
+     <version>${hst.version}</version>
+   </dependency>
+  
+   <dependency>
+     <groupId>org.apache.geronimo.specs</groupId>
+     <artifactId>geronimo-jta_1.1_spec</artifactId>
+     <scope>provided</scope>
+     <version>1.1</version>
+   </dependency>
+  
+  </dependencies>
+  
+  
+           
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <plugins>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.1.10</version>
+        <configuration>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <webAppConfig>            
+            <contextPath>/site</contextPath>
+            <tempDirectory>${project.build.directory}/work</tempDirectory>
+          </webAppConfig>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+              <port>8085</port>
+            </connector>
+          </connectors>
+        </configuration>
+        <dependencies>
+          <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-api</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jta</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>atomikos-util</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <inherited>true</inherited>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <target>1.5</target>
+          <source>1.5</source>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <wtpversion>1.5</wtpversion>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <profiles>
+    
+    <profile>
+      <id>tomcat</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>1.0-alpha-1</version>
+            <executions>
+              <execution>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>read-project-properties</goal>
+                </goals>
+                <configuration>
+                  <quiet>true</quiet>
+                  <files>
+                    <file>build.properties</file>
+                  </files>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.2</version>
+            <executions>
+              <execution>
+                <id>deploy-to-tomcat</id>
+                <phase>install</phase>
+                <configuration>
+                  <tasks>
+
+                    <echo>Replacing HST Shared Libraries.</echo>
+                    <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${tomcat.hst.shared.lib}/jcr-1.0.jar" />
+                    <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
+                    <copy file="../../api/target/hst-api-${project.version}.jar" tofile="${tomcat.hst.shared.lib}/hst-api-${project.version}.jar" />
+                    <copy file="../../commons/target/hst-commons-${project.version}.jar" tofile="${tomcat.hst.shared.lib}/hst-commons-${project.version}.jar" />
+                    
+                    <echo>Replacing cms web application into tomcat.</echo>
+                    <delete dir="${tomcat.hst.cms.webapp}" />
+                    <mkdir dir="${tomcat.hst.cms.webapp}" />
+                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.00.01.war" dest="${tomcat.hst.cms.webapp}" />
+                                      
+                    <echo>Replacing site web application into tomcat.</echo>
+                    <delete dir="${tomcat.server.home}/webapps/${project.artifactId}" />
+                    <mkdir dir="${tomcat.server.home}/webapps/${project.artifactId}" />
+                    <unwar src="${project.build.directory}/${project.artifactId}-${project.version}.war" dest="${tomcat.server.home}/webapps/${project.artifactId}" />
+                    <delete>
+                      <fileset dir="${tomcat.server.home}/webapps/${project.artifactId}/WEB-INF/lib">
+                        <include name="jcr-*.jar" />
+                        <include name="hst-api-*.jar" />
+                        <include name="hst-commons-*.jar" />
+                      </fileset>
+                    </delete>
+                    
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>javax.jcr</groupId>
+                <artifactId>jcr</artifactId>
+                <version>1.0</version>
+              </dependency>
+              <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jta_1.1_spec</artifactId>
+                <version>1.1</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
