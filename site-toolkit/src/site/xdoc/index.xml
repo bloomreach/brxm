@@ -23,6 +23,12 @@
     </properties>
     <body>
         <section name="What is Hippo Site Toolkit 2?">
+            
+            <span class='shortdesc'>
+                Hippo Site Toolkit 2 is being finalized for release mid-April. The documentation
+                will be online at the time of the release. In the meantime, you can already
+                check out the <a href="apidocs/index.html">API documentation</a>.
+            </span>
 
             <p> 
                 Hippo ECM comes with a set of tools and components to allow rapid development of websites, the Hippo Site Toolkit 2. 
