@@ -36,7 +36,7 @@
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.login.LoginPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.login.RememberMeLoginPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.root</sv:value>
