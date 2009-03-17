@@ -18,7 +18,7 @@ package org.hippoecm.hst.core.container;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HstContainerURLImpl implements HstContainerURL {
+public class HstContainerURLImpl implements HstContainerURL, Cloneable {
 
     protected String characterEncoding;
     protected String contextPath;
@@ -100,8 +100,14 @@ public class HstContainerURLImpl implements HstContainerURL {
     }
     
     public void setParameters(Map<String, String[]> parameters) {
-        for (Map.Entry<String, String []> entry : parameters.entrySet()) {
-            setParameter(entry.getKey(), entry.getValue());
+        if (parameters == null) {
+            if (this.parameterMap != null) {
+                this.parameterMap.clear();
+            }
+        } else {
+            for (Map.Entry<String, String []> entry : parameters.entrySet()) {
+                setParameter(entry.getKey(), entry.getValue());
+            }
         }
     }
     

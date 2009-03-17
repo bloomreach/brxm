@@ -210,14 +210,16 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
     }
     
     public void mergeParameters(HstContainerURL containerURL, String referenceNamespace, Map<String, String []> parameterMap) {
-        for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
-            String name = referenceNamespace + this.parameterNameComponentSeparator + entry.getKey();
-            String [] values = entry.getValue();
-            
-            if (values == null || values.length == 0) {
-                containerURL.setParameter(name, (String) null);
-            } else {
-                containerURL.setParameter(name, values);
+        if (referenceNamespace != null) {
+            for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+                String name = referenceNamespace + this.parameterNameComponentSeparator + entry.getKey();
+                String [] values = entry.getValue();
+                
+                if (values == null || values.length == 0) {
+                    containerURL.setParameter(name, (String) null);
+                } else {
+                    containerURL.setParameter(name, values);
+                }
             }
         }
     }
