@@ -27,32 +27,36 @@ import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.OnCloseDialog;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IValidateService;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin implements IValidateService {
+public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlugin implements IValidateService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
+
     private static Logger log = LoggerFactory.getLogger(EditingReviewedActionsWorkflowPlugin.class);
 
     private transient boolean validated = false;
@@ -85,12 +89,12 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
                                     private static final long serialVersionUID = 1L;
 
                                     @Override
-                                    protected boolean validateSession(List<IValidateService> validators) {
+                                    public boolean validateSession(List<IValidateService> validators) {
                                         return true;
                                     }
 
                                     @Override
-                                    protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+                                    public void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
                                         Node handleNode = handleModel.getNode();
                                         handleNode.refresh(false);
                                         handleNode.getSession().refresh(true);
@@ -101,7 +105,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
                                         BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                                         workflow.disposeEditableInstance();
                                     }
-                                });
+                                }, true);
                             }
 
                             public void save() {
@@ -113,7 +117,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
                                         BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                                         workflow.commitEditableInstance();
                                     }
-                                });
+                                }, true);
                             }
 
                             public void close() {
@@ -130,8 +134,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
                             }
                         };
 
-                        JcrNodeModel nodeModel = ((WorkflowsModel) getModel()).getNodeModel();
-                        Node node = nodeModel.getNode();
+                        Node node = ((WorkflowDescriptorModel) getModel()).getNode();
                         boolean dirty = node.isModified();
                         if (!dirty) {
                             HippoSession session = ((HippoSession) node.getSession());
@@ -143,7 +146,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
                         if (dirty) {
                             IDialogService dialogService = context.getService(IDialogService.class.getName(),
                                     IDialogService.class);
-                            dialogService.show(new OnCloseDialog(actions, nodeModel, editor));
+                            dialogService.show(new OnCloseDialog(actions, new JcrNodeModel(node), editor));
                         } else {
                             actions.revert();
                             return new Object();
@@ -170,12 +173,12 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
                 workflow.commitEditableInstance();
 
                 // get new instance of the workflow, previous one may have invalidated itself
-                WorkflowsModel wfModel = (WorkflowsModel) getModel();
-                wfModel.detach();
+                EditingReviewedActionsWorkflowPlugin.this.getModel().detach();
+                WorkflowDescriptor descriptor = (WorkflowDescriptor)(EditingReviewedActionsWorkflowPlugin.this.getModel().getObject());
                 ((UserSession) Session.get()).getJcrSession().refresh(true);
-
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow(wfModel.getWorkflowDescriptor());
+                workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow(descriptor);
+
                 Document draft = workflow.obtainEditableInstance();
                 IModelReference ref = context.getService(config.getString("model.id"), IModelReference.class);
                 ref.setModel(new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByUUID(
@@ -195,7 +198,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
     public void validate() {
         isvalid = true;
         try {
-            Node handle = ((WorkflowsModel) getModel()).getNodeModel().getNode();
+            Node handle = ((WorkflowDescriptorModel) getModel()).getNode();
             String currentUser = handle.getSession().getUserID();
             NodeIterator variants = handle.getNodes(handle.getName());
             Node toBeValidated = null;
