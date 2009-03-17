@@ -71,5 +71,6 @@ public interface BasicReviewedActionsWorkflow extends Workflow, EditableWorkflow
     /**
      * Restores a historic version of the document
      */
-    public void restore(Calendar historic) throws WorkflowException, RemoteException;
+    public void restore(Calendar historic) 
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }
