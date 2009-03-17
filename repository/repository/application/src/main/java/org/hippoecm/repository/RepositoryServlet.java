@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.rmi.ConnectException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
@@ -311,8 +312,7 @@ public class RepositoryServlet extends HttpServlet {
             while (pathElts.hasMoreTokens()) {
                 pathElt = pathElts.nextToken();
                 pathEltName = StringEscapeUtils.escapeHtml(NodeNameCodec.decode(pathElt));
-
-                currentPath += "/" + StringEscapeUtils.escapeHtml(pathElt);
+                currentPath += "/" + URLEncoder.encode(pathElt, "UTF-8");
                 writer.print("<a href=\"" + req.getContextPath() + req.getServletPath() + "/" + currentPath + "/\">/"
                         + pathEltName + "</a>");
             }
@@ -324,7 +324,12 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("    <ul>");
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();
-                writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath() + "/" + StringEscapeUtils.escapeHtml(child.getPath()) + "/" + "\">");
+                String childPath = "";
+                StringTokenizer childElts = new StringTokenizer(path, "/");
+                while (childElts.hasMoreTokens()) {
+                    childPath += "/" + URLEncoder.encode(childElts.nextToken(), "UTF-8");
+                }
+                writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath() + childPath + "/" + "\">");
                 String displayName = StringEscapeUtils.escapeHtml(NodeNameCodec.decode(((HippoNode)child).getDisplayName()));
                 if (child.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     writer.print(displayName + " [" + child.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]");
