@@ -35,6 +35,7 @@
                 integrates with Hippo CMS. Create a JSP based view layer using the provided tag library and expression language. 
             </p>
             
+            <!--
             <subsection name="Learn more">
                 <p>
                     For a general overview of Hippo Site Toolkit, see which <a href="about/features.html">features</a> it offers,
@@ -49,6 +50,7 @@
                     your hands dirty by delving into Hippo Site Toolkit.
                 </p>
             </subsection>
+            -->
 
 
 
