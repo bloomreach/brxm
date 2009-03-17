@@ -152,6 +152,7 @@ public class TraversePerfTestCase extends TestCase {
     @Test
     public void testLocal() throws Exception {
         build(session, content);
+        session.save();
         long duration = test(session, 100);
         HistoryWriter.write("traversal", Double.toString(duration / 100.0), "ms");
     }
