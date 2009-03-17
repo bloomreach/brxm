@@ -25,12 +25,15 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.repository.api.Workflow;
 
+/**
+ * @deprecated 
+ */
 public abstract class WorkflowAction implements IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
-    protected boolean validateSession(List<IValidateService> validators) {
+    public boolean validateSession(List<IValidateService> validators) {
         for (IValidateService validator : validators) {
             validator.validate();
             if (validator.hasError()) {
@@ -40,7 +43,7 @@ public abstract class WorkflowAction implements IClusterable {
         return true;
     }
 
-    protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+    public void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
         // save the handle so that the workflow uses the correct content
         Node handleNode = handleModel.getNode();
         handleNode.getSession().save();

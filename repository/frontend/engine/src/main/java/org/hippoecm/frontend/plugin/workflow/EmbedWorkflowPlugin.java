@@ -20,7 +20,9 @@ import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public class EmbedWorkflowPlugin extends WorkflowPlugin implements IDetachable {
+/**
+ * @deprecated 
+ */public class EmbedWorkflowPlugin extends WorkflowPlugin implements IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
