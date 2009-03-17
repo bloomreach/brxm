@@ -83,7 +83,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             private static final long serialVersionUID = 1L;
             // Workaround for HREPTWO-1328
             @Override
-            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+            public void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
                 Node handleNode = handleModel.getNode();
                 handleNode.getSession().refresh(false);
             }
@@ -114,7 +114,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             private static final long serialVersionUID = 1L;
             // Workaround for HREPTWO-1328
             @Override
-            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+            public void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
                 Node handleNode = handleModel.getNode();
                 handleNode.getSession().refresh(false);
             }
@@ -137,7 +137,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             private static final long serialVersionUID = 1L;
             // Workaround for HREPTWO-1328
             @Override
-            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+            public void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
                 Node handleNode = handleModel.getNode();
                 handleNode.getSession().refresh(false);
             }
@@ -158,7 +158,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             private static final long serialVersionUID = 1L;
             // Workaround for HREPTWO-1328
             @Override
-            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+            public void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
                 Node handleNode = handleModel.getNode();
                 handleNode.getSession().refresh(false);
             }

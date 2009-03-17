@@ -15,29 +15,33 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.rmi.RemoteException;
 import java.util.Date;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.Component;
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.AbstractNameDialog;
-import org.hippoecm.frontend.dialog.AbstractDestinationDialog;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
@@ -45,11 +49,12 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
+public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -84,7 +89,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             private static final long serialVersionUID = 1L;
             // Workaround for HREPTWO-1328
             @Override
-            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+            public void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
                 Node handleNode = handleModel.getNode();
                 handleNode.getSession().refresh(false);
             }
@@ -115,7 +120,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             private static final long serialVersionUID = 1L;
             // Workaround for HREPTWO-1328
             @Override
-            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+            public void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
                 Node handleNode = handleModel.getNode();
                 handleNode.getSession().refresh(false);
             }
@@ -138,7 +143,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             private static final long serialVersionUID = 1L;
             // Workaround for HREPTWO-1328
             @Override
-            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+            public void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
                 Node handleNode = handleModel.getNode();
                 handleNode.getSession().refresh(false);
             }
@@ -156,7 +161,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
             // Workaround for HREPTWO-1328
             @Override
-            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+            public void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
                 Node handleNode = handleModel.getNode();
                 handleNode.getSession().refresh(false);
             }
@@ -180,14 +185,24 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                     private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog() {
-
-                return new AbstractNameDialog(FullReviewedActionsWorkflowPlugin.this, renameTitle, renameText, "") {
+                return new CompatibilityWorkflowPlugin.NameDialog(renameTitle, renameText, "") {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected void execute() throws Exception {
-                        FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                        workflow.rename(NodeNameCodec.encode(name, true));
+                    protected String execute() {
+                        try {
+                            WorkflowDescriptorModel model = (WorkflowDescriptorModel) FullReviewedActionsWorkflowPlugin.this.getModel();
+                            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                            FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) manager.getWorkflow((WorkflowDescriptor)(model.getObject()));
+                            workflow.rename(NodeNameCodec.encode(name, true));
+                            return null;
+                        } catch(RepositoryException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(WorkflowException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(RemoteException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        }
                     }
                 };
             }
@@ -206,13 +221,24 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
             public AbstractDialog createDialog() {
 
-                return new AbstractDestinationDialog(FullReviewedActionsWorkflowPlugin.this, copyTitle, copyText) {
+                return new CompatibilityWorkflowPlugin.DestinationDialog(copyTitle, copyText) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected void execute() throws Exception {
-                        FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                        workflow.copy(new Document(destination.getNode().getUUID()), name);
+                    protected String execute() {
+                        try {
+                            WorkflowDescriptorModel model = (WorkflowDescriptorModel) FullReviewedActionsWorkflowPlugin.this.getModel();
+                            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                            FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) manager.getWorkflow((WorkflowDescriptor)(model.getObject()));
+                            workflow.copy(new Document(destination.getNode().getUUID()), name);
+                            return null;
+                        } catch(RepositoryException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(WorkflowException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(RemoteException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        }
                     }
                 };
             }
@@ -231,13 +257,24 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
             public AbstractDialog createDialog() {
 
-                return new AbstractDestinationDialog(FullReviewedActionsWorkflowPlugin.this, moveTitle, moveText) {
+                return new CompatibilityWorkflowPlugin.DestinationDialog(moveTitle, moveText) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected void execute() throws Exception {
-                        FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                        workflow.move(new Document(destination.getNode().getUUID()), name);
+                    protected String execute() {
+                        try {
+                            WorkflowDescriptorModel model = (WorkflowDescriptorModel) FullReviewedActionsWorkflowPlugin.this.getModel();
+                            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                            FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) manager.getWorkflow((WorkflowDescriptor)(model.getObject()));
+                            workflow.move(new Document(destination.getNode().getUUID()), name);
+                            return null;
+                        } catch(RepositoryException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(WorkflowException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(RemoteException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        }
                     }
                 };
             }
@@ -257,16 +294,27 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
             public AbstractDialog createDialog() {
 
-                return new AbstractDateDialog(FullReviewedActionsWorkflowPlugin.this, schedulePublishText, new Date()) {
+                return new DateDialog(schedulePublishText, new Date()) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected void execute() throws Exception {
-                        FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                        if (date != null) {
-                            workflow.publish(date);
-                        } else {
-                            workflow.publish();
+                    protected String execute() {
+                        try {
+                            WorkflowDescriptorModel model = (WorkflowDescriptorModel) FullReviewedActionsWorkflowPlugin.this.getModel();
+                            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                            FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) manager.getWorkflow((WorkflowDescriptor)(model.getObject()));
+                            if (date != null) {
+                                workflow.publish(date);
+                            } else {
+                                workflow.publish();
+                            }
+                            return null;
+                        } catch(RepositoryException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(WorkflowException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(RemoteException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
                         }
                     }
 
@@ -291,16 +339,27 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
             public AbstractDialog createDialog() {
 
-                return new AbstractDateDialog(FullReviewedActionsWorkflowPlugin.this, scheduleDePublishText, new Date()) {
+                return new DateDialog(scheduleDePublishText, new Date()) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected void execute() throws Exception {
-                        FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                        if (date != null) {
-                            workflow.depublish(date);
-                        } else {
-                            workflow.depublish();
+                    protected String execute() {
+                        try {
+                            WorkflowDescriptorModel model = (WorkflowDescriptorModel) FullReviewedActionsWorkflowPlugin.this.getModel();
+                            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                            FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) manager.getWorkflow((WorkflowDescriptor)(model.getObject()));
+                            if (date != null) {
+                                workflow.depublish(date);
+                            } else {
+                                workflow.depublish();
+                            }
+                            return null;
+                        } catch(RepositoryException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(WorkflowException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(RemoteException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
                         }
                     }
 
@@ -310,56 +369,5 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 };
             }
         });
-    }
-
-    // FIXME: duplicate implementation in BasicviewedActionsWorkflowPlugin
-    @Override
-    public void onModelChanged() {
-        super.onModelChanged();
-
-        WorkflowsModel model = (WorkflowsModel) getModel();
-        try {
-            JcrNodeModel nodeModel = model.getNodeModel();
-            caption = new NodeTranslator(nodeModel).getNodeName();
-
-            Node node = nodeModel.getNode();
-            Node child = null;
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                pendingRequest = false;
-                for (NodeIterator iter = node.getNodes("hippo:request"); iter.hasNext(); ) {
-                    Node request = iter.nextNode();
-                        if(request.isNodeType(HippoNodeType.NT_REQUEST)) {
-                            if(!request.hasProperty("type") || !request.getProperty("type").getString().equals("rejected")) {
-                                pendingRequest = true;
-                            }
-                        }
-                }
-                for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext(); ) {
-                    child = iter.nextNode();
-                    if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                        node = child;
-                        if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").getString().equals("draft")) {
-                            break;
-                        }
-                    } else {
-                        child = null;
-                    }
-                }
-            }
-            if (child != null && child.hasProperty("hippostd:stateSummary")) {
-                stateSummary = node.getProperty("hippostd:stateSummary").getString();
-            }
-            isLocked = false;
-            locked.setVisible(isLocked);
-            if (child != null && child.hasProperty("hippostd:state") &&
-                child.getProperty("hippostd:state").getString().equals("draft") && child.hasProperty("hippostd:holder") &&
-                !child.getProperty("hippostd:holder").getString().equals(child.getSession().getUserID())) {
-                isLocked = true;
-                locked.setVisible(isLocked);
-            }
-        } catch (RepositoryException ex) {
-            // status unknown, maybe there are legit reasons for this, so don't emit a warning
-            log.info(ex.getClass().getName() + ": " + ex.getMessage());
-        }
     }
 }
