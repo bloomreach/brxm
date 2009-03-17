@@ -42,6 +42,9 @@ import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated 
+ */
 public class WorkflowPlugin implements IPlugin, IObserver, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
