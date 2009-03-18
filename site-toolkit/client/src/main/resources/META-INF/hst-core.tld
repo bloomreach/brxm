@@ -125,7 +125,7 @@
             <name>resourceId</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
-            <type>org.hippoecm.hst.core.component.HstURL</type>
+            <type>java.lang.String</type>
             <description>
                 The resourceID to be used by the HstComponent.
             </description>
