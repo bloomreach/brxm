@@ -19,21 +19,35 @@ import org.hippoecm.hst.core.linking.ResolvedLocationMapTreeItem;
 
 
 /**
- * Interface for inverted HstSiteMapItem tree where the tree is driven by the relativeContentPath's 
- * of all HstSiteMapItem's instead of the tree based on the HstSiteMapItem hierarchy.
+ * The <code>LocationMapTree</code> is the container for a tree of <code>LocationMapTreeItem</code>'s that are
+ * used for internal linkrewriting. Typically it is created by aggregating all the relative content paths from 
+ * all <code>SiteMapItem</code>'s, and create a mapping from this. The 
+ * <code>match(String path, HstSite hstSite, boolean representsDocument)</code> tries to return the best matching
+ * <code>ResolvedLocationMapTreeItem<code> possible for some absolute <code>path</code>. A path can only be rewritten
+ * if it belongs to the scope of the <scope>HstSite</scope>. If the <code>path</code> cannot be matched, <code>null</code>
+ * will be returned from the match.
  * 
  */
 public interface LocationMapTree {
 
+   /**
+    * @param name the name of the locationMapTreeItem
+    * @return the locatioMapTreeItem with this <code>name</code> and <code>null</code> if none exists with this name
+    */
    LocationMapTreeItem getTreeItem(String name);
 
    /**
-    * 
-    * @param path
-    * @return  matching LocationMapTreeItem and null if no matching one is found
-    */
+    * Tries to find the best match for the <code>path</code> within this <code>LocationMapTree</code> belonging to <code>HstSite</code>.
+    * As it can easily happen that multiple <code>SiteMapItem</code>'s are suitable for to match the <code>path</code>, implementing
+    * classes should try to return the 'best' match. Typically, the 'best' match would be a match that resolves to a <code>SiteMapItem</code>
+    * containing a relative content path that is the most specific for the current path. 
+    *
+    * @param path the path you want to match
+    * @param hstSite the current <code>HstSite</code> a match is tried for
+    * @param representsDocument a boolean indicating whether the path to be rewritten is belonging to a document
+    * @return the resolvedLocationMapTreeItem that contains a rewritten path and the hstSiteMapId which is the unique id of the
+    * HstSiteMapItem that returned the best match. If no match can be made, <code>null</code> is returned 
+    */ 
    ResolvedLocationMapTreeItem match(String path, HstSite hstSite, boolean representsDocument);
-   
-   String getCanonicalSiteContentPath();
    
 }

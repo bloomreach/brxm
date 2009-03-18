@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.linking;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.configuration.BasicLocationMapTree;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
@@ -107,23 +108,25 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         HstSiteMap hstSiteMap = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap();
         HstSite hstSite = hstSiteMap.getSite();
         
-        if(path.startsWith(hstSite.getLocationMapTree().getCanonicalSiteContentPath())) {
-            ResolvedLocationMapTreeItem resolvedLocation = hstSite.getLocationMapTree().match(path, hstSite, representsDocument);
-            if(resolvedLocation != null) {
-                if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", path);
-                if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", path, resolvedLocation.getPath());
-                return new HstLinkImpl(resolvedLocation.getPath(), hstSite);
-            } else {
-                // TODO what to return??
-                 if (log.isWarnEnabled()) {
-                    log.warn("Unable to create a link for '{}' for HstSite '{}'. Return null", path, hstSite.getName());
+        if(hstSite.getLocationMapTree() instanceof BasicLocationMapTree) {
+            if(path.startsWith(((BasicLocationMapTree)hstSite.getLocationMapTree()).getCanonicalSiteContentPath())) {
+                ResolvedLocationMapTreeItem resolvedLocation = hstSite.getLocationMapTree().match(path, hstSite, representsDocument);
+                if(resolvedLocation != null) {
+                    if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", path);
+                    if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", path, resolvedLocation.getPath());
+                    return new HstLinkImpl(resolvedLocation.getPath(), hstSite);
+                } else {
+                    // TODO what to return??
+                     if (log.isWarnEnabled()) {
+                        log.warn("Unable to create a link for '{}' for HstSite '{}'. Return null", path, hstSite.getName());
+                    }
                 }
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("For HstSite '{}' we cannot create a link for node '{}' because it is outside the site scope", hstSite.getName(), path);
+                }
+                // TODO try to link to another HstSite that has a matching 'content base path'
             }
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("For HstSite '{}' we cannot create a link for node '{}' because it is outside the site scope", hstSite.getName(), path);
-            }
-            // TODO try to link to another HstSite that has a matching 'content base path'
         }
         return null;
     }
