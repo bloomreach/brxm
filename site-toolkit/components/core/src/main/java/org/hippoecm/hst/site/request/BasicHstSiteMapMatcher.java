@@ -108,7 +108,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         }
         
         if(log.isInfoEnabled()){
-            String path = matchedSiteMapItem.getPath();
+            String path = matchedSiteMapItem.getId();
             path = path.replace("_default_", "*");
             path = path.replace("_any_", "**");
             log.info("For path '{}' we found SiteMapItem with path '{}'", pathInfo, path);

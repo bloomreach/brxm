@@ -18,13 +18,28 @@ package org.hippoecm.hst.configuration.sitemap;
 import java.util.List;
 import java.util.Map;
  
-
+/**
+ * A <code>HstSiteMapItem<code> is used as a representation of a logical path (element) for matching (part of a) external URL 
+ * to a repository content location. Through its id it can be directly accessed by the {@link HstSiteMap}, to for example
+ * create a link to it. Obviously, creating a link to a <code>HstSiteMapItem</code> does only make sense when its path in the 
+ * <code>HstSiteMap</code> does not contain WILDCARD's ( <code>*</code> or <code>**</code>) 
+ *
+ */
 public interface HstSiteMapItem {
 
-
-    String getId(); // optional but needs to be unique within the containing HstSiteMap
+    /**
+     * The id of a <code>HstSiteMapItem</code> is mandatory and must be unique within its containing <code>{@link HstSiteMap}</code> because
+     * <code>{@link HstSiteMap#getSiteMapItemById(String)}</code> must uniquely return a <code>HstSiteMapItem</code>
+     * @return the id of this HstSiteMapItem
+     */
+    String getId(); 
+    
+    /**
+     * 
+     * @return
+     */
     String getValue();
-    String getPath(); // returns the full path from the item
+    
     boolean isWildCard();
     boolean isAny();
     boolean isVisible();

@@ -88,7 +88,6 @@ public class ConfigurationViewUtilities {
         String newLine = "\n" + indent + SMALL_INDENT + "-";
         buf.append(newLine).append("id = ").append(hstSiteMapItem.getId());
         buf.append(newLine).append("value = ").append(hstSiteMapItem.getValue());
-        buf.append(newLine).append("path = ").append(hstSiteMapItem.getPath());
         buf.append(newLine).append("relativecontentpath = ").append(hstSiteMapItem.getRelativeContentPath());
         buf.append(newLine).append("componentconfigurationid = ").append(hstSiteMapItem.getComponentConfigurationId());
         buf.append(newLine).append("iswildcard = ").append(hstSiteMapItem.isWildCard());

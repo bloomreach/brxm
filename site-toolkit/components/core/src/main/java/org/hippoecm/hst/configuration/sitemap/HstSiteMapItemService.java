@@ -48,8 +48,6 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     private String value;
     
-    private String path;
-    
     private String parameterizedPath;
     
     private int occurences;
@@ -95,7 +93,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
 
         this.siteMapRootNodePath = siteMapRootNodePath;
         // path & id are the same
-        this.id = this.path = nodePath.substring(siteMapRootNodePath.length()+1);
+        this.id = nodePath.substring(siteMapRootNodePath.length()+1);
         // currently, the value is always the nodename
         this.value = getValueProvider().getName();
         
@@ -251,10 +249,6 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
 
     public String getId() {
         return this.id;
-    }
-
-    public String getPath() {
-        return this.path;
     }
 
     public Map<String, Object> getProperties() {
