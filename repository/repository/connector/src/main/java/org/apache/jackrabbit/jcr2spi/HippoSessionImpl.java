@@ -170,7 +170,7 @@ public class HippoSessionImpl extends SessionImpl implements NamespaceResolver, 
             Node candidate = (Node) itemManager.getItem(state.getHierarchyEntry());
             if(nodeType != null && !candidate.isNodeType(nodeType))
                 continue;
-            if(node != null && (node.isSame(candidate) || node.getParent().isSame(node)))
+            if(node != null && (node.isSame(candidate) || node.isSame(node.getParent())))
                 continue;
             nodes.add(candidate);
         }
