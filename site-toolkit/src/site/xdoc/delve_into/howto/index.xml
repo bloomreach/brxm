@@ -37,10 +37,12 @@
             <a href="start_project.html">Start a project</a>.
         </p>
         
+        <!-- TODO uncomment when reference guide is updated
         <p>
           If you are looking for detailed information on a specific component
           of Hippo Site Toolkit, check out the <a href="../reference/index.html">reference guide</a>.
         </p>
+        -->
                    
       </section>
     </body>

@@ -26,7 +26,7 @@
       <span class='shortdesc'>Setting up a new project with Hippo Site Toolkit 2 using a Maven archetype</span>
   
       <p>
-        The Hippo Site Toolkit 2 is a toolkit for developing JSP based websites using
+        Hippo Site Toolkit 2 is a toolkit for developing JSP based websites using
         the Hippo ECM stack. This page helps you to get up and running with your own
         HST-2 based project as quickly as possible. It is assumed that you have
         <a href="http://maven.apache.org/">Maven 2</a> installed, and that you have
@@ -37,29 +37,30 @@
       <subsection name="Creating your project">
 
         <p>
-          To kick start your project, you can use the <code>site-toolkit-archetype</code> template.
+          To kick start your project, you can use the <i>hst-archetype</i> template.
           The default code provides: a custom CMS project containing a pre-configured content repository 
           and CMS, sample content, and a sample website. 
         </p>
         
         <p>
-          To create a project named <code>myproject</code> in the <code>org.example</code> package, use the 
+          To create a project named <i>myproject</i> in the <i>org.example</i> package, use the 
           following command in a location of choice:
         </p>
 
+        <!-- TODO strip archetype:generate command, use menu options -> easier --> 
         <source>
 mvn archetype:generate \
  -DremoteRepositories=http://repository.hippocms.org/maven2,http://repo1.maven.org/maven2 \
  -DarchetypeGroupId=org.onehippo.ecm.hst \
  -DarchetypeArtifactId=hst-archetype \
- -DarchetypeVersion=2.02.05 \
+ -DarchetypeVersion=2.03.00 \
  -Dversion=1.01.00 \
  -DgroupId=org.example \
  -DartifactId=myproject
         </source>
         
         <p>
-          Maven will create a project for you (in a newly created directory named <code>myproject</code>)
+          Maven will create a project for you (in a newly created directory named <i>myproject</i>)
           containing 3 subprojects:
         </p>
         
@@ -87,10 +88,10 @@ mvn archetype:generate \
         
         <ul>
           <li>
-            <p>myproject-cms-1.01.00.war (located in <code>cms/target</code>)</p>
+            <p>myproject-cms-1.01.00.war (located in <i>cms/target</i>)</p>
           </li>
           <li>
-            <p>myproject-site-1.01.00.war (located in <code>site/target</code>)</p>
+            <p>myproject-site-1.01.00.war (located in <i>site/target</i>)</p>
           </li>
         </ul>
       
@@ -98,34 +99,43 @@ mvn archetype:generate \
       
       <subsection name="Deploying your project in Tomcat">
         
-        <p>
-          Download Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache Tomcat</a> website
-          and install it. In the following instructions we assume you installed it in a directory named
-          <code>apache-tomcat-6.0.16</code>.
-        </p>
-        
-        <p>
-          Download <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a>
-          to <code>apache-tomcat-6.0.16/lib</code>.
-        </p>
-        
-        <p>
-          Copy <code>myproject-cms-1.01.00.war</code> to <code>apache-tomcat-6.0.16/webapps/cms.war</code>.
-        </p>
-        
-        <p>
-          Copy <code>myproject-site-1.01.00.war</code> to <code>apache-tomcat-6.0.16/webapps/site.war</code>.
-        </p>
-        
-        <p>
-          Start Tomcat with one of the startup scripts in <code>apache-tomcat-6.0.16/bin</code>.
-        </p>
-        
-        <p>
-          Hippo CMS is now available at <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a>.
-          You can login as user <i>admin</i> using the password <i>admin</i>. The sample website is now available
-          at <a href="http://localhost:8080/site/preview/index">http://localhost:8080/site/preview/index</a>.
-        </p>
+        <ol>
+          <li>
+            <p>
+              Download Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache Tomcat</a> website
+              and install it. In the following instructions we assume you installed it in a directory named
+              <i>apache-tomcat</i>.
+            </p>
+          </li>
+          <li>
+            <p>
+              Download <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a>
+              to <i>apache-tomcat/lib</i>.
+            </p>
+          </li>
+          <li>
+            <p>
+              Copy <i>myproject-cms-1.01.00.war</i> to <i>apache-tomcat/webapps/cms.war</i>.
+            </p>
+          </li>
+          <li>
+            <p>
+              Copy <i>myproject-site-1.01.00.war</i> to <i>apache-tomcat/webapps/site.war</i>.
+            </p>
+          </li>
+          <li>
+            <p>
+              Start Tomcat with one of the startup scripts in <i>apache-tomcat/bin</i>.
+            </p>
+          </li>
+          <li>
+            <p>
+              Hippo CMS is now available at <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a>.
+              You can login as user <i>admin</i> using the password <i>admin</i>. The sample website is now available
+              at <a href="http://localhost:8080/site/">http://localhost:8080/site/</a>.
+            </p>
+          </li>
+        </ol>
         
       </subsection>
       
@@ -137,7 +147,7 @@ mvn archetype:generate \
         </p>
         
         <p>
-          To run the CMS and repository, run the following command from the <code>cms</code> directory:
+          To run the CMS and repository, run the following command from the <i>cms</i> directory:
         </p>
         
         <source>mvn jetty:run-war</source>
@@ -148,15 +158,16 @@ mvn archetype:generate \
         </p>
         
         <p>
-          To run the sample website, run the following command from the <code>site</code> directory:
+          To run the sample website, run the following command from the <i>site</i> directory:
         </p>
         
         <source>mvn jetty:run</source>
 
         <p>
-          The sample website is now available at <a href="http://127.0.0.1:8085/site/preview/index">http://127.0.0.1:8085/site/preview/index</a>.
+          The sample website is now available at <a href="http://127.0.0.1:8085/site/">http://127.0.0.1:8085/site/</a>.
         </p>
 
+        <!-- TODO update screenshots
         <p>
           <a href="../../images/tutorials/getting-started-cms-signin.png">
             <img alt="screenshot" src="../../images/tutorials/getting-started-cms-signin-thumbnail.jpg" width="400" height="310" />
@@ -165,21 +176,25 @@ mvn archetype:generate \
             <img alt="screenshot" src="../../images/tutorials/getting-started-site-thumbnail.jpg" width="400" height="310" />
           </a>
         </p>
+        -->
 
         <p>
           <i>Note: while running in Jetty is great for development, it is not recommended for production.</i> 
         </p>
 
       </subsection>
+
+      <!-- TODO uncomment when Hello World page is updated
+      <subsection name="Next Step">
+        <p>
+          Now that your project is up and running, go on and add a
+          <a href="hello_world.html">Hello World</a> page to your website!
+        </p>
+      </subsection>
+      -->
       
     </section>
     
-    <section name="Next Step">
-      <p>
-        Now that your project is up and running, go on and add a
-        <a href="hello_world.html">Hello World</a> page to your website!
-      </p>
-    </section>
     
   </body>
 </document>
