@@ -23,18 +23,20 @@
     </properties>
     <body>
         <section name="What is Hippo Site Toolkit 2?">
-            
+
             <span class='shortdesc'>
                 Hippo Site Toolkit 2 is being finalized for release mid-April. The documentation
-                will be online at the time of the release. In the meantime, you can already
-                check out the <a href="apidocs/index.html">API documentation</a>.
+                will be online at the time of the release.
             </span>
 
-            <p> 
+            <p>
+                In the meantime, you can already
+                check out the <a href="apidocs/index.html">API documentation</a>.
+            </p>
+            <p>
                 Hippo ECM comes with a set of tools and components to allow rapid development of websites, the Hippo Site Toolkit 2. 
             </p>
-
-            <p> 
+            <p>
                 Hippo Site Toolkit 2 is an open source toolkit for Java web developers, to build websites based on 
                 <a href="http://www.onehippo.org/cms7/">Hippo CMS 7</a>. Assemble your
                 website by configuring templates, site map, navigation and URL space through a straightforward user interface, that
