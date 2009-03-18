@@ -25,6 +25,4 @@ public interface LocationMapTreeItem {
     LocationMapTreeItem getChild(String name);
     LocationMapTreeItem getParentItem();
     
-    boolean isWildCard();
-    boolean isAny();
 }

@@ -282,7 +282,7 @@ public class BasicLocationMapTree implements LocationMapTree{
         if(locationMapTreeItem == null) {
             return null;
         }
-        if(locationMapTreeItem.isWildCard()) {
+        if(((BasicLocationMapTreeItem)locationMapTreeItem).isWildCard()) {
             // as this tree path did not result in a match, remove some params again
             if(locationMapTreeItem.getChild(HstSiteMapItem.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstSiteMapItem.WILDCARD))){
                 return traverseInToLocationMapTreeItem(locationMapTreeItem, params, position, elements, checkedLocationMapTreeItems);
