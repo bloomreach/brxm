@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeModel;
@@ -128,7 +129,10 @@ public abstract class JcrTree extends Tree {
             if (canonical == null) {
                 return true;
             }
-            return !hippoNode.getCanonicalNode().isSame(hippoNode);
+            return !canonical.isSame(hippoNode);
+        } catch (ItemNotFoundException e) {
+            // canonical node no longer exists
+            return true;
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
             return false;

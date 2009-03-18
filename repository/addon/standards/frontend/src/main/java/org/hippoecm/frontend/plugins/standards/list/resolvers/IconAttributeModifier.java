@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.AttributeModifier;
@@ -54,21 +53,16 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
             Node node = nodeModel.getNode();
             if (node != null) {
                 try {
-                    String type = node.getPrimaryNodeType().getName();
-    
                     if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        NodeIterator nodeIt = node.getNodes();
-                        while (nodeIt.hasNext()) {
-                            Node childNode = nodeIt.nextNode();
-                            if (childNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                                type = childNode.getPrimaryNodeType().getName();
-                                break;
-                            }
-                        }
-                        if (type.indexOf(":") > -1) {
+                        return "document-16";
+                    } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                        Node parent = node.getParent();
+                        if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
                             return "document-16";
                         }
                     }
+
+                    String type = node.getPrimaryNodeType().getName();
                     if (type.equals("hippo:templatetype")) {
                         return "document-16";
                     }

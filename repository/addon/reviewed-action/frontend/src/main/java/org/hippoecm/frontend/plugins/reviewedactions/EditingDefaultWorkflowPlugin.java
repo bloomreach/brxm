@@ -19,6 +19,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
@@ -51,7 +52,7 @@ public class EditingDefaultWorkflowPlugin extends AbstractWorkflowPlugin {
 
             public Object preClose() {
                 try {
-                    ((JcrNodeModel) getModel()).getNode().save();
+                    ((WorkflowsModel) getModel()).getNodeModel().getNode().save();
                     return new Object();
                 } catch (RepositoryException ex) {
                     log.info(ex.getMessage());
@@ -67,7 +68,7 @@ public class EditingDefaultWorkflowPlugin extends AbstractWorkflowPlugin {
 
             @Override
             public void execute(Workflow wf) throws Exception {
-                ((JcrNodeModel) getModel()).getNode().save();
+                ((WorkflowsModel) getModel()).getNodeModel().getNode().save();
             }
         });
     }

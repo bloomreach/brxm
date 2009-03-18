@@ -139,7 +139,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.2</sv:value>
+          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.3</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -268,10 +268,36 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+            <sv:value>org.hippoecm.defaultcontent.Annotated</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${wicket.id}</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.extensions" sv:type="String">
+            <sv:value>extension.main</sv:value>
+            <sv:value>extension.select</sv:value>
+            <sv:value>extension.mixins</sv:value>
+          </sv:property>
+          <sv:property sv:name="extension.main" sv:type="String">
+            <sv:value>${cluster.id}.main</sv:value>
+          </sv:property>
+          <sv:property sv:name="extension.select" sv:type="String">
+            <sv:value>${cluster.id}.select</sv:value>
+          </sv:property>
+          <sv:property sv:name="extension.mixins" sv:type="String">
+            <sv:value>${cluster.id}.mixins</sv:value>
+          </sv:property>
+        </sv:node>
+
+        <sv:node sv:name="main">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>${cluster.id}.main</sv:value>
           </sv:property>
           <sv:property sv:name="item" sv:type="String">
             <sv:value>${cluster.id}.field</sv:value>
@@ -333,12 +359,17 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Introduction</sv:value>
           </sv:property>
-          <sv:property sv:name="template.cols" sv:type="String">
-            <sv:value>60</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.rows" sv:type="String">
-            <sv:value>10</sv:value>
-          </sv:property>
+          <sv:node sv:name="cluster.options">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+            <sv:property sv:name="cols" sv:type="String">
+              <sv:value>60</sv:value>
+            </sv:property>
+            <sv:property sv:name="rows" sv:type="String">
+              <sv:value>10</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
 
         <sv:node sv:name="body">
@@ -366,8 +397,69 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Body</sv:value>
           </sv:property>
-          <sv:property sv:name="template.width" sv:type="String">
-            <sv:value>100%</sv:value>
+          <sv:node sv:name="cluster.options">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+            <sv:property sv:name="width" sv:type="String">
+              <sv:value>100%</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+
+        <sv:node sv:name="mixinPicker">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.mixin.MixinPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>${cluster.id}.select</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>${wicket.model}</sv:value>
+          </sv:property>
+          <sv:property sv:name="engine" sv:type="String">
+            <sv:value>${engine}</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
+          </sv:property>
+          <sv:property sv:name="mixins" sv:type="String">
+            <sv:value>hippostd:taggable</sv:value>
+          </sv:property>
+          <sv:node sv:name="cluster.options">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+            <sv:property sv:name="wicket.id" sv:type="String">
+              <sv:value>${cluster.id}.mixin</sv:value>
+            </sv:property>
+            <sv:property sv:name="wicket.model" sv:type="String">
+              <sv:value>${wicket.model}</sv:value>
+            </sv:property>
+            <sv:property sv:name="engine" sv:type="String">
+              <sv:value>${engine}</sv:value>
+            </sv:property>
+            <sv:property sv:name="mode" sv:type="String">
+              <sv:value>${mode}</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+
+        <sv:node sv:name="mixins">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>${cluster.id}.mixins</sv:value>
+          </sv:property>
+          <sv:property sv:name="item" sv:type="String">
+            <sv:value>${cluster.id}.mixin</sv:value>
           </sv:property>
         </sv:node>
 
@@ -423,7 +515,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.2</sv:value>
+          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.3</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -459,7 +551,7 @@
             <sv:value>date</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>Date</sv:value>
+            <sv:value>hippostd:date</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
             <sv:value>defaultcontent:date</sv:value>
@@ -536,9 +628,6 @@
         <sv:property sv:name="defaultcontent:title" sv:type="String">
           <sv:value>title</sv:value>
         </sv:property>
-        <sv:property sv:name="defaultcontent:date" sv:type="Date">
-          <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
-        </sv:property>
         <sv:property sv:name="defaultcontent:introduction" sv:type="String">
           <sv:value>introduction</sv:value>
         </sv:property>
@@ -548,6 +637,17 @@
         <sv:property sv:name="hippostd:stateSummary" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
+        <sv:node sv:name="defaultcontent:date">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippostd:date</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>mix:referenceable</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:date" sv:type="Date">
+            <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
+          </sv:property>
+        </sv:node>
         <sv:node sv:name="defaultcontent:body">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippostd:html</sv:value>
@@ -644,7 +744,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${cluster.id}.field</sv:value>
@@ -691,9 +791,14 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Introduction</sv:value>
           </sv:property>
-          <sv:property sv:name="template.width" sv:type="String">
-            <sv:value>90%</sv:value>
-          </sv:property>
+          <sv:node sv:name="cluster.options">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+            <sv:property sv:name="width" sv:type="String">
+              <sv:value>90%</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
 
         <sv:node sv:name="body">
@@ -721,9 +826,14 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Body</sv:value>
           </sv:property>
-          <sv:property sv:name="template.width" sv:type="String">
-            <sv:value>90%</sv:value>
-          </sv:property>
+          <sv:node sv:name="cluster.options">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+            <sv:property sv:name="width" sv:type="String">
+              <sv:value>90%</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
 
         <sv:node sv:name="internallink">
@@ -805,7 +915,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.2</sv:value>
+          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.3</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -841,7 +951,7 @@
             <sv:value>date</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>Date</sv:value>
+            <sv:value>hippostd:date</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
             <sv:value>defaultcontent:date</sv:value>
@@ -902,9 +1012,6 @@
         <sv:property sv:name="defaultcontent:title" sv:type="String">
           <sv:value>title</sv:value>
         </sv:property>
-        <sv:property sv:name="defaultcontent:date" sv:type="Date">
-          <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
-        </sv:property>
         <sv:property sv:name="defaultcontent:introduction" sv:type="String">
           <sv:value>introduction</sv:value>
         </sv:property>
@@ -914,6 +1021,17 @@
         <sv:property sv:name="hippostd:stateSummary" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
+        <sv:node sv:name="defaultcontent:date">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippostd:date</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>mix:referenceable</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:date" sv:type="Date">
+            <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
+          </sv:property>
+        </sv:node>
         <sv:node sv:name="defaultcontent:body">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippostd:html</sv:value>
@@ -997,7 +1115,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${cluster.id}.field</sv:value>
@@ -1044,9 +1162,14 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Introduction</sv:value>
           </sv:property>
-          <sv:property sv:name="template.width" sv:type="String">
-            <sv:value>90%</sv:value>
-          </sv:property>
+          <sv:node sv:name="cluster.options">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+            <sv:property sv:name="width" sv:type="String">
+              <sv:value>90%</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
 
         <sv:node sv:name="body">
@@ -1074,10 +1197,15 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Body</sv:value>
           </sv:property>
+          <sv:node sv:name="cluster.options">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+            <sv:property sv:name="width" sv:type="String">
+              <sv:value>90%</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
-        <sv:property sv:name="template.width" sv:type="String">
-          <sv:value>90%</sv:value>
-        </sv:property>
       </sv:node>
     </sv:node>
   </sv:node>
@@ -1129,7 +1257,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.2</sv:value>
+          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.3</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -1316,9 +1444,14 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Introduction</sv:value>
           </sv:property>
-          <sv:property sv:name="template.width" sv:type="String">
-            <sv:value>90%</sv:value>
-          </sv:property>
+          <sv:node sv:name="cluster.options">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+            <sv:property sv:name="width" sv:type="String">
+              <sv:value>90%</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
 
         <sv:node sv:name="query">

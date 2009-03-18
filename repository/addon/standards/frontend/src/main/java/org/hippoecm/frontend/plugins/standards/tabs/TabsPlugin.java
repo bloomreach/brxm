@@ -165,7 +165,7 @@ public class TabsPlugin extends RenderPlugin implements ContextMenuManager {
         try {
             editor.close();
         } catch (EditorException ex) {
-            log.info("Failed to close editor", ex);
+            log.info("Failed to close editor: " + ex.getMessage());
         }
     }
 

@@ -89,6 +89,9 @@
       <sv:value>./_node/_name</sv:value>
       <sv:value>$name</sv:value>
     </sv:property>
+    <sv:property sv:name="hippostd:icon" sv:type="String">
+      <sv:value>adddocument_ico</sv:value>
+    </sv:property>
     <sv:node sv:name="hippostd:templates">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippostd:templates</sv:value>
@@ -124,9 +127,6 @@
         </sv:node>
       </sv:node>
     </sv:node>
-    <sv:property sv:name="hippostd:icon" sv:type="String">
-      <sv:value>adddocument_ico</sv:value>
-    </sv:property>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:translation</sv:value>
@@ -179,6 +179,9 @@
       <sv:value>./_name</sv:value>
       <sv:value>$name</sv:value>
     </sv:property>
+    <sv:property sv:name="hippostd:icon" sv:type="String">
+      <sv:value>addfolder_ico</sv:value>
+    </sv:property>
     <sv:node sv:name="hippostd:templates">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippostd:templates</sv:value>
@@ -210,9 +213,6 @@
         </sv:property>
       </sv:node>
     </sv:node>
-    <sv:property sv:name="hippostd:icon" sv:type="String">
-      <sv:value>addfolder_ico</sv:value>
-    </sv:property>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:translation</sv:value>

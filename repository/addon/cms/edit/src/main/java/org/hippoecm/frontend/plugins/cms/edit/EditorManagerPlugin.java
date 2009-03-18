@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -42,6 +43,7 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +66,10 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
     private CmsEditor preview;
     private Map<JcrNodeModel, CmsEditor> editors;
     private List<JcrNodeModel> pending;
-    private transient boolean active = false;
+    transient boolean active = false;
+
+    // map physical handle -> virtual path
+    private Map<JcrNodeModel, JcrNodeModel> lastReferences;
 
     public EditorManagerPlugin(final IPluginContext context, final IPluginConfig config) {
         this.context = context;
@@ -76,6 +81,8 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
                 .getPluginConfig("cluster.edit.options"));
         previewFactory = new EditorFactory(this, context, config.getString("cluster.preview.name"), config
                 .getPluginConfig("cluster.preview.options"));
+
+        lastReferences = new HashMap<JcrNodeModel, JcrNodeModel>();
 
         // monitor document in browser 
         if (config.getString(RenderService.MODEL_ID) != null) {
@@ -115,8 +122,40 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
                         preview = null;
                     }
 
-                    // find existing editor
+                    // find physical node
                     Node node = nodeModel.getNode();
+                    if (node instanceof HippoNode) {
+                        try {
+                            Node canonical = ((HippoNode) node).getCanonicalNode();
+                            if (canonical == null) {
+                                return;
+                            }
+                            if (!canonical.isSame(node)) {
+                                // use physical handle as the basis for lookup
+                                if (canonical.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                                    Node parent = canonical.getParent();
+                                    if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                        canonical = parent;
+                                    }
+                                }
+
+                                // put in LRU map for reverse lookup when editor is selected
+                                JcrNodeModel canonicalModel = new JcrNodeModel(canonical);
+                                lastReferences.put(canonicalModel, nodeModel.getParentModel());
+
+                                node = canonical;
+                                nodeModel = canonicalModel;
+                            } else {
+                                if (node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                                    lastReferences.remove(nodeModel.getParentModel());
+                                }
+                            }
+                        } catch (ItemNotFoundException ex) {
+                            // physical node no longer exists
+                            return;
+                        }
+                    }
+
                     if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                         // focus existing editor, if it exists
                         for (JcrNodeModel editorModel : editors.keySet()) {
@@ -207,6 +246,8 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
 
         if (editors.size() < 4) {
             try {
+                active = true;
+
                 // Close preview when it is
                 // 1) another document below the same handle as the passed-in model
                 // 2) the exact same node
@@ -230,10 +271,14 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
                 CmsEditor editor = editorFactory.newEditor(nodeModel);
                 editors.put(nodeModel, editor);
                 editor.focus();
+
+                setActiveModel(nodeModel);
                 return editor;
             } catch (CmsEditorException ex) {
                 log.error(ex.getMessage());
                 throw new ServiceException("Initialization failed", ex);
+            } finally {
+                active = false;
             }
         } else {
             IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
@@ -248,9 +293,53 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
             IModelReference modelService = context.getService(config.getString(RenderService.MODEL_ID),
                     IModelReference.class);
             if (modelService != null) {
-                if (nodeModel != null && nodeModel.getParentModel() != null
-                        && nodeModel.getParentModel().getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
-                    modelService.setModel(nodeModel.getParentModel());
+                if (nodeModel != null && nodeModel.getParentModel() != null) {
+                    JcrNodeModel parentModel = nodeModel.getParentModel();
+                    Node parentNode = parentModel.getNode();
+                    if (parentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        if (lastReferences.containsKey(parentModel)) {
+                            JcrNodeModel targetParent = lastReferences.get(parentModel);
+                            // Locate document in target.  The first node (lowest sns index in target)
+                            // whose canonical equivalent is under the handle will be used.
+                            int index = 0;
+                            Node target = null;
+                            try {
+                                NodeIterator nodes = targetParent.getNode().getNodes(parentModel.getNode().getName());
+                                while (nodes.hasNext()) {
+                                    Node node = nodes.nextNode();
+                                    if (node == null || !(node instanceof HippoNode)) {
+                                        continue;
+                                    }
+                                    try {
+                                        Node canonical = ((HippoNode) node).getCanonicalNode();
+                                        if (canonical == null) {
+                                            continue;
+                                        }
+                                        if (canonical.getParent().isSame(parentNode)) {
+                                            if (index == 0 || node.getIndex() < index) {
+                                                index = node.getIndex();
+                                                target = node;
+                                            }
+                                        }
+                                    } catch (ItemNotFoundException ex) {
+                                        // physical node no longer exists
+                                        continue;
+                                    }
+                                }
+                            } catch (RepositoryException ex) {
+                                log.error(ex.getMessage());
+                            }
+                            if (target != null) {
+                                modelService.setModel(new JcrNodeModel(target));
+                                return;
+                            } else {
+                                log.warn("unable to find virtual equivalent");
+                            }
+                        }
+                        modelService.setModel(parentModel);
+                    } else {
+                        modelService.setModel(nodeModel);
+                    }
                 } else {
                     modelService.setModel(nodeModel);
                 }
@@ -263,35 +352,41 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
     void unregister(CmsEditor editor) {
         JcrNodeModel model = (JcrNodeModel) editor.getModel();
         if (model != null) {
-
-            // update selected node
+            
             if (!active) {
                 active = true;
-                JcrNodeModel nodeModel = (JcrNodeModel) modelReference.getModel();
-                if (nodeModel != null && nodeModel.getNode() != null) {
-                    try {
-                        Node node = nodeModel.getNode();
-                        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            if (model.getParentModel() != null && model.getParentModel().equals(nodeModel)) {
-                                setActiveModel(null);
-                            }
-                        } else {
-                            if (nodeModel.equals(model)) {
-                                setActiveModel(null);
+
+                JcrNodeModel parentModel = model.getParentModel();
+                try {
+                    Node parent = parentModel.getNode();
+                    if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        // Deselect the currently selected node if it corresponds
+                        // to the editor that is being closed.
+                        JcrNodeModel selectedNodeModel = (JcrNodeModel) modelReference.getModel();
+                        Node selected = selectedNodeModel.getNode();
+                        if (selected != null && selected instanceof HippoNode) {
+                            try {
+                                Node canonical = ((HippoNode) selected).getCanonicalNode();
+                                if (canonical != null) {
+                                    if (canonical.isSame(selected) || canonical.getParent().isSame(parent)) {
+                                        modelReference.setModel(null);
+                                    }
+                                }
+                            } catch (ItemNotFoundException ex) {
+                                // physical item no longer exists
                             }
                         }
-                    } catch (RepositoryException ex) {
-                        log.error("unable to update selected document");
+
+                        // cleanup lru list
+                        lastReferences.remove(parentModel);
                     }
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
                 }
                 active = false;
             }
 
             // cleanup internals
-            if (editor == preview) {
-                preview = null;
-                return;
-            }
             if (editors.containsKey(model)) {
                 editors.remove(model);
             }

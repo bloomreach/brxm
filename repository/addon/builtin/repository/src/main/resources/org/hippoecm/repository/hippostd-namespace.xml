@@ -442,6 +442,128 @@
 
   </sv:node>
 
+  <sv:node sv:name="taggable">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:templatetype</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:translated</sv:value>
+    </sv:property>
+
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>taggable</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>nl</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>merkbaar</sv:value>
+      </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="hippo:nodetype">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippo:nodetype">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/hippostd/nt/1.2</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:mixin" sv:type="Boolean">
+          <sv:value>true</sv:value>
+        </sv:property>
+
+        <sv:node sv:name="hippo:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:name" sv:type="String">
+            <sv:value>tags</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:path" sv:type="String">
+            <sv:value>hippostd:tags</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:multiple" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+
+    <sv:node sv:name="hippo:template">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+
+      <sv:node sv:name="hippo:template">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugincluster</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:services" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>engine</sv:value>
+          <sv:value>wicket.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:properties" sv:type="String">
+          <sv:value>mode</sv:value>
+        </sv:property>
+        <sv:node sv:name="tags">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>${wicket.id}</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>${wicket.model}</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
+          </sv:property>
+          <sv:property sv:name="engine" sv:type="String">
+            <sv:value>${engine}</sv:value>
+          </sv:property>
+          <sv:property sv:name="type" sv:type="String">
+            <sv:value>hippostd:taggable</sv:value>
+          </sv:property>
+          <sv:property sv:name="field" sv:type="String">
+            <sv:value>tags</sv:value>
+          </sv:property>
+          <sv:property sv:name="caption" sv:type="String">
+            <sv:value>Tags</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+
+  </sv:node>
+
   <sv:node sv:name="folder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>

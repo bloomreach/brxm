@@ -136,12 +136,13 @@ public class WorkflowPlugin implements IPlugin, IObserver, IDetachable {
         // unregister and re-register; observer model is changed 
         if (workflowsModel != null) {
             context.unregisterService(this, IObserver.class.getName());
+            workflowsModel = null;
         }
 
         if (model == null || model.getNode() == null) {
             return;
         }
-        
+
         try {
             List<String> cats = new LinkedList<String>();
             for (String category : categories) {

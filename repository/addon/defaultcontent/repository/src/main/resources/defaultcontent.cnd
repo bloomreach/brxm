@@ -20,7 +20,7 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.2'>
 <hippostd='http://www.hippoecm.org/hippostd/nt/1.2'>
-<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.2'>
+<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.3'>
 
 [defaultcontent:article] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 - defaultcontent:title (string)
@@ -28,15 +28,15 @@
 
 [defaultcontent:news] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 - defaultcontent:title (string)
-- defaultcontent:date (date)
 - defaultcontent:introduction (string)
++ defaultcontent:date (hippostd:date)
 + defaultcontent:body (hippostd:html)
 + defaultcontent:internallink (hippo:facetselect)
 
 [defaultcontent:event] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 - defaultcontent:title (string)
-- defaultcontent:date (date)
 - defaultcontent:introduction (string)
++ defaultcontent:date (hippostd:date)
 + defaultcontent:body (hippostd:html)
 
 [defaultcontent:overview] > hippo:document, hippostd:publishable, hippostd:publishableSummary
