@@ -48,9 +48,9 @@ public class BasicLocationMapTreeItem implements LocationMapTreeItem{
             child = new BasicLocationMapTreeItem();
             this.children.put(pathFragment.get(0), child);
             child.setParentItem(this);
-            if(HstSiteMapItem.WILDCARD.equals(pathFragment.get(0))){
+            if(Configuration.WILDCARD.equals(pathFragment.get(0))){
                 child.setIsWildCard(true);
-            } else if (HstSiteMapItem.ANY.equals(pathFragment.get(0))){
+            } else if (Configuration.ANY.equals(pathFragment.get(0))){
                 child.setIsAny(true);
             }
         }

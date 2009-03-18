@@ -22,9 +22,6 @@ import java.util.Map;
 public interface HstSiteMapItem {
 
 
-    public static final String WILDCARD = "_default_";
-    public static final String ANY = "_any_";
-    
     String getId(); // optional but needs to be unique within the containing HstSiteMap
     String getValue();
     String getPath(); // returns the full path from the item

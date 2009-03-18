@@ -109,18 +109,18 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         } else {
             parameterizedPath = "";
         }
-        if(WILDCARD.equals(value)) {
+        if(Configuration.WILDCARD.equals(value)) {
             occurences++; 
             parameterizedPath = parameterizedPath + "${" + occurences + "}";
             this.isWildCard = true;
-        } else if(ANY.equals(value)) {
+        } else if(Configuration.ANY.equals(value)) {
             occurences++;
             parameterizedPath = parameterizedPath + "${" + occurences + "}";
             this.isAny = true;
-        } else if(value.indexOf(WILDCARD) > -1) {
+        } else if(value.indexOf(Configuration.WILDCARD) > -1) {
             this.containsWildCard = true;
-            this.postfix = value.substring(value.indexOf(WILDCARD) + WILDCARD.length());
-            this.prefix = value.substring(0, value.indexOf(WILDCARD));
+            this.postfix = value.substring(value.indexOf(Configuration.WILDCARD) + Configuration.WILDCARD.length());
+            this.prefix = value.substring(0, value.indexOf(Configuration.WILDCARD));
             if(this.postfix.indexOf(".") > -1) {
                 this.extension = this.postfix.substring(this.postfix.indexOf("."));
             }
@@ -128,19 +128,19 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
                 ((HstSiteMapItemService)parentItem).addWildCardPrefixedChildSiteMapItems(this);
             }
             occurences++;
-            parameterizedPath = parameterizedPath + value.replace(WILDCARD, "${"+occurences+"}" );
-        } else if(value.indexOf(ANY) > -1) {
+            parameterizedPath = parameterizedPath + value.replace(Configuration.WILDCARD, "${"+occurences+"}" );
+        } else if(value.indexOf(Configuration.ANY) > -1) {
             this.containsAny = true;
-            this.postfix = value.substring(value.indexOf(ANY) + ANY.length());
+            this.postfix = value.substring(value.indexOf(Configuration.ANY) + Configuration.ANY.length());
             if(this.postfix.indexOf(".") > -1) {
                 this.extension = this.postfix.substring(this.postfix.indexOf("."));
             }
-            this.prefix = value.substring(0, value.indexOf(ANY));
+            this.prefix = value.substring(0, value.indexOf(Configuration.ANY));
             if(parentItem != null) {
                 ((HstSiteMapItemService)parentItem).addAnyPrefixedChildSiteMapItems(this);
             }
             occurences++;
-            parameterizedPath = parameterizedPath + value.replace(ANY, "${"+occurences+"}" );
+            parameterizedPath = parameterizedPath + value.replace(Configuration.ANY, "${"+occurences+"}" );
         }
         else {
             parameterizedPath = parameterizedPath + value;
