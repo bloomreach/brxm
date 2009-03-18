@@ -22,8 +22,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeType;
+import javax.jcr.Value;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
 
@@ -70,7 +71,7 @@ class NodeTypesEditor extends CheckGroup {
     public void onModelChanged() {
 
     }
-    
+
     @Override
     protected boolean wantOnSelectionChangedNotifications() {
         return true;
@@ -80,24 +81,28 @@ class NodeTypesEditor extends CheckGroup {
     protected void onSelectionChanged(Collection selection) {
         if (getModelObject() instanceof List && nodeModel != null) {
             try {
+                Node node = nodeModel.getNode();
+
                 Set<String> actualTypes = new HashSet<String>();
-                NodeType[] nodeTypes = nodeModel.getNode().getMixinNodeTypes();
-                for (NodeType nodeType : nodeTypes) {
-                    actualTypes.add(nodeType.getName());
+                if (node.hasProperty("jcr:mixinTypes")) {
+                    Value[] nodeTypes = node.getProperty("jcr:mixinTypes").getValues();
+                    for (Value nodeType : nodeTypes) {
+                        actualTypes.add(nodeType.getString());
+                    }
                 }
 
                 HashSet<String> toBeAdded = new HashSet<String>(selection);
                 toBeAdded.removeAll(actualTypes);
-                for (String add : new ArrayList<String>(toBeAdded)){
-                    nodeModel.getNode().addMixin(add);
+                for (String add : new ArrayList<String>(toBeAdded)) {
+                    node.addMixin(add);
                 }
 
                 actualTypes.removeAll(new HashSet<String>(selection));
-                for (String remove : new ArrayList<String>(actualTypes)){
-                    nodeModel.getNode().removeMixin(remove);
+                for (String remove : new ArrayList<String>(actualTypes)) {
+                    node.removeMixin(remove);
                 }
             } catch (RepositoryException e) {
-                log.error(e.getMessage());
+                log.error(e.getMessage(), e);
             }
         }
     }

@@ -14,6 +14,10 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippostd:templatequery</sv:value>
     </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:translated</sv:value>
+      <sv:value>hippostd:translated</sv:value>
+    </sv:property>
     <sv:property sv:name="jcr:language" sv:type="String">
         <sv:value>xpath</sv:value>
     </sv:property>
@@ -36,5 +40,33 @@
                 <sv:value>mix:referenceable</sv:value>
             </sv:property>
         </sv:node>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Template Editor Namespace</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:workflow" sv:type="String">
+        <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>nl</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Template Editor Namespace</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:workflow" sv:type="String">
+        <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+      </sv:property>
     </sv:node>
 </sv:node>

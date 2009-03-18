@@ -60,16 +60,6 @@ public class JcrItemModel extends LoadableDetachableModel {
     }
 
     public String getPath() {
-        if (path == null && isAttached()) {
-            Item item = (Item) getObject();
-            if (item != null) {
-                try {
-                    path = item.getPath();
-                } catch (RepositoryException e) {
-                    log.error(e.getMessage());
-                }
-            }
-        }
         return path;
     }
 
@@ -140,11 +130,15 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     @Override
     public void detach() {
-        if (isAttached()) {
+        if (isAttached() && path != null) {
             Item item = (Item) getObject();
             if (item != null) {
                 try {
-                    path = item.getPath();
+                    if (!path.equals(item.getPath())) {
+                        super.detach();
+                        throw new RuntimeException(
+                                "JcrItemModel path is different from Item path.  Model should no longer be used");
+                    }
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
                 }
@@ -156,6 +150,7 @@ public class JcrItemModel extends LoadableDetachableModel {
     private void writeObject(ObjectOutputStream output) throws IOException {
         if (isAttached()) {
             log.warn("Undetached JcrItemModel " + getPath());
+            detach();
         }
         output.defaultWriteObject();
     }

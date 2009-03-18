@@ -28,6 +28,7 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,13 +141,27 @@ public class BrowseService implements IBrowseService<IModel>, IDetachable {
             folder = document;
             document = null;
         } else {
-            folder = document.getParentModel();
+            folder = getParent(document);
             while (!isFolder(folder)) {
                 document = folder;
-                folder = folder.getParentModel();
+                folder = getParent(document);
             }
         }
         return document;
+    }
+
+    private JcrNodeModel getParent(JcrNodeModel model) {
+        JcrNodeModel parentModel = model.getParentModel();
+        try {
+            // skip facetresult nodes in hierarchy
+            Node parent = parentModel.getNode();
+            if (parent.isNodeType(HippoNodeType.NT_FACETRESULT)) {
+                return new JcrNodeModel(parent.getParent());
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return parentModel;
     }
 
     private boolean isFolder(JcrNodeModel nodeModel) {
@@ -154,7 +169,8 @@ public class BrowseService implements IBrowseService<IModel>, IDetachable {
             try {
                 Node node = nodeModel.getNode();
                 if (node.isNodeType("hippostd:folder") || node.isNodeType("hippostd:directory")
-                        || node.isNodeType("hippo:namespace")) {
+                        || node.isNodeType("hippo:namespace") || node.isNodeType(HippoNodeType.NT_FACETSEARCH)
+                        || node.isNodeType(HippoNodeType.NT_FACETSUBSEARCH)) {
                     return true;
                 }
             } catch (RepositoryException ex) {

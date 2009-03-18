@@ -51,7 +51,7 @@ public abstract class AbstractManagementListingPlugin extends AbstractListingPlu
     }
 
     @Override
-    protected ISortableDataProvider getDataProvider() {
+    protected ISortableDataProvider newDataProvider() {
         return new SortableDataProvider() {
             private static final long serialVersionUID = 1L;
 

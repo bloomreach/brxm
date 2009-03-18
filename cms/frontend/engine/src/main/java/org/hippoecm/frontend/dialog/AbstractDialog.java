@@ -273,8 +273,10 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
     }
 
     public void render(PluginRequestTarget target) {
-        target.addComponent(feedback);
-        target.addComponent(ok);
+        if (target != null) {
+            target.addComponent(feedback);
+            target.addComponent(ok);
+        }
     }
 
     public void onClose() {

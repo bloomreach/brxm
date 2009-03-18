@@ -51,7 +51,7 @@ class CmsEditor implements IEditor {
     private EditorManagerPlugin manager;
     private IFocusListener focusListener;
 
-    CmsEditor(EditorManagerPlugin manager, IPluginContext context, String clusterName, IPluginConfig config,
+    CmsEditor(final EditorManagerPlugin manager, IPluginContext context, String clusterName, IPluginConfig config,
             IModel model) throws CmsEditorException {
         this.manager = manager;
         this.model = (JcrNodeModel) model;
@@ -89,7 +89,11 @@ class CmsEditor implements IEditor {
             private static final long serialVersionUID = 1L;
 
             public void onFocus(IRenderService renderService) {
-                CmsEditor.this.manager.setActiveModel(CmsEditor.this.model);
+                if (!manager.active) {
+                    manager.active = true;
+                    manager.setActiveModel(CmsEditor.this.model);
+                    manager.active = false;
+                }
             }
 
         };

@@ -185,7 +185,7 @@
             <sv:value/>
           </sv:property>
         </sv:node>
-        <sv:node sv:name="hideFacetSearchType">
+        <sv:node sv:name="hideResultsetType">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
@@ -199,7 +199,7 @@
             <sv:value/>
           </sv:property>
           <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippo:facetsearch</sv:value>
+            <sv:value>hippo:facetresult</sv:value>
           </sv:property>
           <sv:property sv:name="target" sv:type="String">
             <sv:value/>

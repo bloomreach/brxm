@@ -46,6 +46,8 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements Tabl
     private final IModelReference documentReference;
     private ListDataTable dataTable;
     private ListPagingDefinition pagingDefinition;
+    private ISortableDataProvider provider;
+    private IObserver providerObserver;
 
     public AbstractListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -96,7 +98,39 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements Tabl
         return new ListDataTable(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
     }
 
-    protected ISortableDataProvider getDataProvider() {
+    private ISortableDataProvider getDataProvider() {
+        if (provider == null) {
+            provider = newDataProvider();
+            if (provider instanceof IObservable) {
+                providerObserver = new IObserver() {
+                    private static final long serialVersionUID = 1L;
+
+                    public IObservable getObservable() {
+                        return (IObservable) provider;
+                    }
+
+                    public void onEvent(IEvent event) {
+                        redraw();
+                    }
+                    
+                };
+                getPluginContext().registerService(providerObserver, IObserver.class.getName());
+            }
+        }
+        return provider;
+    }
+    
+    private void dumpDataProvider() {
+        if (provider != null) {
+            if (providerObserver != null) {
+                getPluginContext().unregisterService(providerObserver, IObserver.class.getName());
+                providerObserver = null;
+            }
+            provider = null;
+        }
+    }
+    
+    protected ISortableDataProvider newDataProvider() {
         return new DocumentsProvider((JcrNodeModel) getModel(), new DocumentListFilter(getPluginConfig()),
                 getTableDefinition().getComparators());
     }
@@ -137,6 +171,8 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements Tabl
     @SuppressWarnings("unchecked")
     public void onModelChanged() {
         dataTable.destroy();
+        dumpDataProvider();
+
         dataTable = getListDataTable("table", getTableDefinition(), getDataProvider(), this, isOrderable(),
                 pagingDefinition);
         replace(dataTable);

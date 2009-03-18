@@ -50,7 +50,7 @@ public class ListDataTable extends DataTable {
     private Map<Item, IObserver> observers;
     private Set<Item> dirty;
     private TableSelectionListener selectionListener;
-    private IDataProvider provider;
+    private final IDataProvider provider;
 
     public interface TableSelectionListener {
         public void selectionChanged(IModel model);
@@ -64,7 +64,7 @@ public class ListDataTable extends DataTable {
 
         this.provider = dataProvider;
         this.selectionListener = selectionListener;
-
+        
         if (tableDefinition.showColumnHeaders()) {
             addTopToolbar(new AjaxFallbackHeadersToolbar(this, dataProvider) {
                 private static final long serialVersionUID = 1L;
