@@ -23,7 +23,6 @@ import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemUtitlites;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.provider.jcr.JCRUtilities;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
@@ -153,13 +152,13 @@ public class BasicHstLinkCreator implements HstLinkCreator {
             return null;
         }
 
-        String path = HstSiteMapItemUtitlites.getPath(toSiteMapItem);
+        String path = getPath(toSiteMapItem);
 
         return new HstLinkImpl(path, hstSiteMap.getSite());
     }
 
     public HstLink create(HstSiteMapItem toHstSiteMapItem) {
-        return new HstLinkImpl(HstSiteMapItemUtitlites.getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite());
+        return new HstLinkImpl(getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite());
     }
 
     public HstLink create(HstSite hstSite, String toSiteMapItemId) {
@@ -173,9 +172,38 @@ public class BasicHstLinkCreator implements HstLinkCreator {
             return null;
         }
 
-        return new HstLinkImpl(HstSiteMapItemUtitlites.getPath(siteMapItem), hstSite);
+        return new HstLinkImpl(getPath(siteMapItem), hstSite);
     }
 
+    /**
+     * The wildcards are translated to parameters like ${1}/${2}
+     * @param siteMapItem
+     * @return String representation of the path
+     */
+    public static String getPath(HstSiteMapItem siteMapItem) {
+        StringBuffer path = new StringBuffer(siteMapItem.getValue());
+        while (siteMapItem.getParentItem() != null) {
+            siteMapItem = siteMapItem.getParentItem();
+            path.insert(0, "/").insert(0, siteMapItem.getValue());
+        }
+        return path.toString();
+    }
     
+    public static String getPath(HstSiteMapItem siteMapItem, String relPath) {
+        StringBuffer path = new StringBuffer(siteMapItem.getValue());
+        while (siteMapItem.getParentItem() != null) {
+            siteMapItem = siteMapItem.getParentItem();
+            path.insert(0, "/").insert(0, siteMapItem.getValue());
+        }
+        if(relPath == null) {
+            return path.toString();
+        }
+        if(relPath.startsWith("/")) {
+            path.append(relPath);
+        } else {
+            path.append("/").append(relPath);
+        }
+        return path.toString();
+    }
 
 }
