@@ -15,18 +15,18 @@
  */
 package org.hippoecm.hst.tag;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.dom.DOMDocumentFactory;
+import org.dom4j.io.SAXReader;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.jdom.Document;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.DOMOutputter;
 
 public class HeadContributionTag extends BodyTagSupport {
 
@@ -60,20 +60,24 @@ public class HeadContributionTag extends BodyTagSupport {
             
             if (this.keyHint == null) {
                 this.keyHint = xmlText;
+
+                if (hstResponse.containsHeadElement(this.keyHint)) {
+                    return SKIP_BODY;
+                }
             }
 
+            DOMDocumentFactory factory = new DOMDocumentFactory();
+            SAXReader saxReader = new SAXReader(factory);
             reader = new StringReader(xmlText);
-            
-            SAXBuilder builder = new SAXBuilder(false);
-            Document doc = builder.build(reader);
-            DOMOutputter outputter = new DOMOutputter();
-            
-            hstResponse.addHeadElement(outputter.output(doc).getDocumentElement(), this.keyHint);
+            Document doc = saxReader.read(reader);
+            Element elem = doc.getRootElement();
+
+            hstResponse.addHeadElement((org.w3c.dom.Element) elem, this.keyHint);
 
             return EVAL_PAGE;
-        } catch (JDOMException ex) {
+        } catch (DocumentException ex) {
             throw new JspException(ex);
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             throw new JspException(ex);
         } finally {
             if (reader != null) try { reader.close(); } catch (Exception ce) { }

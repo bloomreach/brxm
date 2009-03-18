@@ -62,7 +62,7 @@
     
     <junit.version>4.5</junit.version>
     
-    <jdom.version>1.1</jdom.version>
+    <dom4j.version>1.6.1</dom4j.version>
 
     <xml-apis.version>2.0.2</xml-apis.version>
     <xerces.version>2.3.0</xerces.version>
@@ -302,12 +302,12 @@
         <version>${taglibs.version}</version>
       </dependency>
       
-      <!-- JDOM Library -->
+      <!-- DOM4J Library -->
       
       <dependency>
-        <groupId>jdom</groupId>
-        <artifactId>jdom</artifactId>
-        <version>${jdom.version}</version>
+        <groupId>dom4j</groupId>
+        <artifactId>dom4j</artifactId>
+        <version>${dom4j.version}</version>
       </dependency>
       
       <!-- XML Parser and XSLT Processor. JSTL XML Tag requires all the followings. -->

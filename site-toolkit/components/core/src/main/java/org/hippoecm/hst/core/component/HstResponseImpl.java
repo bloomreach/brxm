@@ -27,15 +27,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
+import org.dom4j.dom.DOMElement;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -301,19 +297,7 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     }
 
     public Element createElement(String tagName) {
-        Element element = null;
-        
-        try {
-            DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-            docBuilder = docBuilderFactory.newDocumentBuilder();
-            Document doc = docBuilder.newDocument();
-            element = doc.createElement(tagName);
-        } catch (ParserConfigurationException e) {
-            throw new DOMException((short) 0, "Initialization fail");
-        }
-        
-        return element;
+        return new DOMElement(tagName);
     }
     
     public void addHeadElement(Element element, String keyHint) {
@@ -392,10 +376,6 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         HstComponentWindow childWindow = this.componentWindow.getChildWindow(name);
         
         if (childWindow != null) {
-            if (this.responseState != null) {
-                this.responseState.flushBuffer();
-            }
-            
             childWindow.getResponseState().flush();
         }
     }

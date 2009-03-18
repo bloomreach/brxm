@@ -21,16 +21,27 @@ import java.util.List;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
+import org.dom4j.io.DOMReader;
+import org.dom4j.io.HTMLWriter;
+import org.dom4j.io.OutputFormat;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.jdom.input.DOMBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
-import org.w3c.dom.Element;
 
 public class HeadContributionsTag extends TagSupport {
 
     private static final long serialVersionUID = 1L;
+    private OutputFormat outputFormat = OutputFormat.createPrettyPrint();
+    
+    public void setXhtml(boolean xhtml) {
+        this.outputFormat.setXHTML(xhtml);
+    }
+    
+    public boolean getXhtml() {
+        return this.outputFormat.isXHTML();
+    }
     
     public int doEndTag() throws JspException {
         HstResponse hstResponse = null;
@@ -40,29 +51,36 @@ public class HeadContributionsTag extends TagSupport {
         }
 
         if (hstResponse != null) {
-            List<Element> headElements = hstResponse.getHeadElements();
+            List<org.w3c.dom.Element> headElements = hstResponse.getHeadElements();
             
             if (headElements != null && !headElements.isEmpty()) {
-                XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-                DOMBuilder domBuilder = null;
                 JspWriter writer = pageContext.getOut();
+                HTMLWriter htmlWriter = new HTMLWriter(writer, this.outputFormat);
                 
                 try {
-                    org.jdom.Element jdomHeadElement = null;
+                    org.dom4j.Element dom4jHeadElement = null;
+                    DocumentBuilder documentBuilder = null;
                     
-                    for (Element headElement : headElements) {
-                        if (headElement instanceof org.jdom.Element) {
-                            jdomHeadElement = (org.jdom.Element) headElement;
+                    for (org.w3c.dom.Element headElement : headElements) {
+                        if (headElement instanceof org.dom4j.Element) {
+                            dom4jHeadElement = (org.dom4j.Element) headElement;
                         } else {
-                            if (domBuilder == null) {
-                                domBuilder = new DOMBuilder();
+                            if (documentBuilder == null) {
+                                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                                documentBuilder = factory.newDocumentBuilder();
                             }
                             
-                            jdomHeadElement = domBuilder.build(headElement);
+                            org.w3c.dom.Document w3cDoc = documentBuilder.newDocument();
+                            w3cDoc.appendChild(headElement);
+                            DOMReader reader = new DOMReader();
+                            org.dom4j.Document dom4jDoc = reader.read(w3cDoc);
+                            dom4jHeadElement = dom4jDoc.getRootElement();
                         }
                         
-                        writer.print(outputter.outputString(jdomHeadElement));
+                        htmlWriter.write(dom4jHeadElement);
                     }
+                } catch (ParserConfigurationException e) {
+                    throw new JspException("HeadContributionsTag Exception: cannot write to the output writer.");
                 } catch (IOException ioe) {
                     throw new JspException("HeadContributionsTag Exception: cannot write to the output writer.");
                 }

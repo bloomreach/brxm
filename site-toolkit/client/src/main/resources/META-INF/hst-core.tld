@@ -234,6 +234,16 @@
             all the contributed HEAD elements. By inserting this tag, the root HstComponent
             can render all the contributed HEAD elements.
         </description>
+        <attribute>
+            <name>xhtml</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>boolean</type>
+            <description>
+                If this attribute is true, then the output will be generated as XHTML format.
+                By default, this value is false.
+            </description>
+        </attribute>
     </tag>
     
     <tag>
