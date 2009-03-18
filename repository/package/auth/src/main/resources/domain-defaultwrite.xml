@@ -164,7 +164,7 @@
                 <sv:value>hippo:facetrule</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:facet" sv:type="String">
-                <sv:value>jcr:primaryType</sv:value>
+                <sv:value>nodetype</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:type" sv:type="String">
                 <sv:value>Name</sv:value>
