@@ -23,6 +23,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.w3c.dom.Element;
 
+/**
+ * The <CODE>HstResponse</CODE> defines the interface to assist a
+ * HstComponent in creating and sending a response to the client. The HstComponent
+ * container uses specialized versions of this interface when invoking a
+ * HstComponent.
+ * The HstComponent container creates these objects and passes them as arguments to
+ * the HstComponent's <CODE>doAction, doBeforeRender</CODE> and <CODE>doBeforeServeResource</CODE> methods.
+ * 
+ * @version $Id$
+ */
 public interface HstResponse extends HttpServletResponse {
     
     /**

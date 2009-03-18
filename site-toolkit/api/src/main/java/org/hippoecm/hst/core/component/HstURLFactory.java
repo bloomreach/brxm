@@ -19,12 +19,36 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 
 
+/**
+ * HstURL Factory interface.
+ * It is mainly responsible to generate HstURL.
+ * 
+ * @version $Id$
+ */
 public interface HstURLFactory {
     
+    /**
+     * Returns HstURLProvider implementation for servlet environment.
+     * 
+     * @return HstContainerURLProvider
+     */
     HstContainerURLProvider getServletUrlProvider();
     
+    /**
+     * Returns HstURLProvider implementation for portlet environment.
+     * 
+     * @return HstContainerURLProvider
+     */
     HstContainerURLProvider getPortletUrlProvider();
 
+    /**
+     * Returns HstURL for the HstURL type with reference namespace based on the base container URL
+     * 
+     * @param type the HstURL type. It should one of {@link HstURL#ACTION_TYPE}, {@link HstURL#RENDER_TYPE} or {@link HstURL#RESOURCE_TYPE}.
+     * @param referenceNamespace the reference namespace of the HstComponent's window.
+     * @param base the base HstContainer URL
+     * @return HstContainerURLProvider
+     */
     HstURL createURL(String type, String referenceNamespace, HstContainerURL base);
     
 }

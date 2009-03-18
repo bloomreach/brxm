@@ -19,9 +19,16 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
+/**
+ * The <CODE>HstRequest</CODE> defines the interface to provide client
+ * request information to a HstComponent. The HstComponent container creates these objects and 
+ * passes them as  arguments to the HstComponent's <CODE>doAction</CODE>,
+ * <CODE>doBeforeRender</CODE> and <CODE>doBeforeServeResource</CODE> methods.
+ * 
+ * @version $Id$
+ */
 public interface HstRequest extends HttpServletRequest {
     
     /**

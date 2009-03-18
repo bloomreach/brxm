@@ -26,7 +26,16 @@ import javax.servlet.http.Cookie;
 import org.w3c.dom.Element;
 
 /**
- * Temporarily holds the current state of a HST response
+ * Temporarily holds the current state of a HST response.
+ * Basically the response of each HstComponent is buffered and stored in
+ * a HstResponseState implementation.
+ * At the final stage, the HstComponent container will flush every buffered content
+ * by using this HstResponseState implementation.
+ * Therefore, this interface has all the similar methods which can be found in 
+ * <CODE>javax.servlet.http.HttpServletResponse</CODE> or <CODE>javax.portlet.PortletResponse</CODE>
+ * to keep the contents buffered.
+ * 
+ * @version $Id$
  */
 public interface HstResponseState
 {

@@ -15,6 +15,11 @@
  */
 package org.hippoecm.hst.core.request;
 
+/**
+ * Factory component to create HstRequestContext object.
+ * 
+ * @version $Id$
+ */
 public interface HstRequestContextComponent
 {
     /**
