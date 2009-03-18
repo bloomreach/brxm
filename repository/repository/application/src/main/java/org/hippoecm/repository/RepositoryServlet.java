@@ -329,7 +329,7 @@ public class RepositoryServlet extends HttpServlet {
                 while (childElts.hasMoreTokens()) {
                     childPath += "/" + URLEncoder.encode(childElts.nextToken(), "UTF-8");
                 }
-                writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath() + StringEscapeUtils.escapeHtml(childPath) + "/" + "\">");
+                writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath() + childPath + "/" + "\">");
                 String displayName = StringEscapeUtils.escapeHtml(NodeNameCodec.decode(((HippoNode)child).getDisplayName()));
                 if (child.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     writer.print(displayName + " [" + child.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]");
