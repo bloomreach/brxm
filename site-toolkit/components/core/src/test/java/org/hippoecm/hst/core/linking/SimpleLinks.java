@@ -110,32 +110,7 @@ public class SimpleLinks extends AbstractSpringTestCase{
             
         }
        
-       /**
-        * Test with no sitemap items involved having a wildcard, or thus with no 'hst:relativecontentpath' containing ${1} kind of
-        * parameters
-        */
-  
-       @Test
-       public void testLinkCreateOfService() throws RepositoryException{
-       
-        try {
-            Node someProductHandle = (Node) session.getItem(TESTPROJECT_EXISTING_VIRTUALHANDLE);
-            
-            TestPage s = ServiceFactory.create(someProductHandle, TestPage.class);
-            
-            
-            HstLink hstLink = hstLinkCreator.create(s.getUnderlyingService(), res);
-            
-            assertEquals("The getPath of the HstLink must be equal to 'products/someproduct' but was '"+hstLink.getPath()+"' ","products/someproduct", hstLink.getPath());
-             
-        } catch (LoginException e) {
-            e.printStackTrace();
-        } catch (RepositoryException e) {
-            e.printStackTrace();
-        }
-      }
-       
-       
+
        @ServiceNamespace(prefix = "testproject")
        public interface TestPage extends UnderlyingServiceAware{
            String getTitle();

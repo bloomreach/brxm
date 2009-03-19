@@ -25,9 +25,6 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.provider.jcr.JCRUtilities;
-import org.hippoecm.hst.provider.jcr.JCRValueProvider;
-import org.hippoecm.hst.service.Service;
-import org.hippoecm.hst.service.jcr.JCRService;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,28 +33,7 @@ public class BasicHstLinkCreator implements HstLinkCreator {
 
     private static final Logger log = LoggerFactory.getLogger(BasicHstLinkCreator.class);
 
-    public HstLink create(Service service, ResolvedSiteMapItem resolvedSiteMapItem) {
-        if(service instanceof JCRService){
-            return this.create((JCRService)service, resolvedSiteMapItem);
-        }
-        String path  = service.getValueProvider().getPath();
-        return this.create(path, resolvedSiteMapItem, true);
-    }
-
-    public HstLink create(JCRService jcrService, ResolvedSiteMapItem resolvedSiteMapItem) {
-        JCRValueProvider provider = jcrService.getValueProvider();
-        
-        if(provider.getHandlePath() != null) {
-            return this.create(provider.getHandlePath(), resolvedSiteMapItem, true);
-        } else if(provider.getCanonicalPath() != null) {
-            return this.create(provider.getCanonicalPath(), resolvedSiteMapItem, true);
-        } else {
-            return this.create(provider.getPath(), resolvedSiteMapItem, true);
-        }
-        
-    }
-
-    
+   
     /**
      * If the node is of type hippo:document and it is below a hippo:handle, we will
      * rewrite the link wrt hippo:handle, because a handle is the umbrella of a document
