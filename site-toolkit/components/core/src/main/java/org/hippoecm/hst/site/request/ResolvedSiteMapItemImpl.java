@@ -19,7 +19,6 @@ import java.util.Properties;
 import java.util.Map.Entry;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.util.PropertyParser;
@@ -36,7 +35,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
        this.hstComponentConfiguration = hstSiteMapItem.getHstSiteMap().getSite().getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
 
        /*
-        * We take the properties form the hstSiteMapItem getProperties and replace params (like ${1}) with the params[] array 
+        * We take the properties form the hstSiteMapItem getParameters and replace params (like ${1}) with the params[] array 
         */
        
        this.resolvedParameters = new Properties();
