@@ -30,6 +30,11 @@ public interface Service {
      */
     public Service[] getChildServices();
     
+    /**
+     * Closing a valueprovider means that the underlying value provider might be closed after calling this method, though 
+     * this is up to the implementation.
+     * @param closeChildServices
+     */
     public void closeValueProvider(boolean closeChildServices);
     
 }
