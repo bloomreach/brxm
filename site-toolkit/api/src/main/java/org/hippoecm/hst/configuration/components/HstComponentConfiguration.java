@@ -122,9 +122,20 @@ public interface HstComponentConfiguration {
      */
     String getServeResourcePath();
 
-    
+    /**
+     * Returns the parameter value for the parameter <code>name</code> and <code>null</code> if not present. Note that
+     * from the <code>HstComponentConfiguration</code> always 'raw' parameters are returned. 'Raw' as in unresolved with respect
+     * to property placeholders. So, a value might be ${year} or ${1}. In a {@link org.hippoecm.hst.core.component.HstComponent} 
+     * instance, the implementation might have implemented some resolving for these values. 
+     * @param name the name of the parameter
+     * @return the configured parameter value for this <code>name</code> and <code>null</code> if not existing
+     */
     String getParameter(String name);
     
+    /**
+     * Returns the map of all parameters. Also see {@link #getParameter(String)}
+     * @return the map of all configured parameters, and an empty map if no parameters present
+     */
     Map<String, String> getParameters();
     
     /**
