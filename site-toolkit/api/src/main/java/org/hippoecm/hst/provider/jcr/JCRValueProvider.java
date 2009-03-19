@@ -21,6 +21,11 @@ import org.hippoecm.hst.provider.ValueProvider;
 
 public interface JCRValueProvider extends ValueProvider{
 
+    /**
+     * returns the {@link Node} that was used to create this value provider with or <code>null</code> when the
+     * node is already detached
+     * @return the jcr node 
+     */
     public Node getJcrNode();
 
     /**
