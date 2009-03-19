@@ -28,18 +28,18 @@ import java.util.Map;
  * <P>
  * There are four types of PortletURLs:
  * <ul>
- * <li>Action URLs, they are created with <CODE>createActionURL</CODE>, and 
+ * <li>Action URLs, they are created with <CODE>{@link HstResponse#createActionURL()}</CODE>, and 
  *     trigger an action request followed by a render request.
- * <li>Render URLs, they are created with <CODE>createRenderURL</CODE>, and
+ * <li>Render URLs, they are created with <CODE>{@link HstResponse#createRenderURL()}</CODE>, and
  *     trigger a render request.
- * <li>Resource URLs, they are created with <CODE>createResourceURL</CODE>, and
+ * <li>Resource URLs, they are created with <CODE>{@link HstResponse#createResourceURL()}</CODE>, and
  *     trigger a resource rendering request.
- * <li>Navigational Render URLs, they are created with <CODE>createNavigationalURL</CODE>, and
+ * <li>Navigational Render URLs, they are created with <CODE>{@link HstResponse#createNavigationalURL(String)}</CODE>, and
  *     trigger a render request to another navigation link url.
  * </ul>
  * <p>
  * The string representation of a HstURL does not need to be a valid 
- * URL at the time the HstComponent is generating its content. It may contain  
+ * URL at the time the <code>{@link HstComponent}</code> is generating its content. It may contain  
  * special tokens that will be converted to a valid URL, by the container or portal, 
  * before the content is returned to the client.
  * </p>
