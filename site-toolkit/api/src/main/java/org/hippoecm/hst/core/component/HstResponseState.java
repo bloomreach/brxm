@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
  * At the final stage, the HstComponent container will flush every buffered content
  * by using this HstResponseState implementation.
  * Therefore, this interface has all the similar methods which can be found in 
- * <CODE>javax.servlet.http.HttpServletResponse</CODE> or <CODE>javax.portlet.PortletResponse</CODE>
+ * <CODE>{@link javax.servlet.http.HttpServletResponse}</CODE> or <CODE>{@link javax.portlet.PortletResponse}</CODE>
  * to keep the contents buffered.
  * 
  * @version $Id$
