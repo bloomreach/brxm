@@ -86,13 +86,6 @@ public interface HstSiteMapItem {
     List<String> getRoles();  
     
     /**
-     * This method returns a {@link Map} of all the configured cloned properties. Modifying the returned Objects in the Map 
-     * should not modify the properties of this <code>HstSiteMapItem</code>!  
-     * @return Map of all cloned properties as they are configured
-     */
-    Map<String, Object> getProperties();
-    
-    /**
      * Returns a <code>List</code> of all child <code>HstSiteMapItem</code>'s of this <code>HstSiteMapItem</code>
      * @return
      */
