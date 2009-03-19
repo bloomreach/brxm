@@ -72,8 +72,14 @@ public interface HstSiteMapItem {
      * This will be replaced by a {@link org.hippoecm.hst.sitemenu.SiteMenu} implementation
      * @return boolean isRepositoryBased
      */
-    boolean isRepositoryBased();
     @Deprecated
+    boolean isRepositoryBased();
+    
+    /**
+     * This method returns a content path, relative to the {@link org.hippoecm.hst.configuration.HstSite#getContentPath()}. This value can 
+     * contain property placeholders, like ${1}/${2}, which should be resolved in the {@link org.hippoecm.hst.core.request.ResolvedSiteMapItem#getRelativeContentPath()}  
+     * @return the content path relative to the {@link org.hippoecm.hst.configuration.HstSite#getContentPath()}
+     */
     String getRelativeContentPath();
     
     /**
