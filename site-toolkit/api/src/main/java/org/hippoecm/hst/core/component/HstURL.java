@@ -26,7 +26,7 @@ import java.util.Map;
  * An HstURL is created through the <CODE>HstResponse</CODE>.
  * Parameters can be added to <CODE>HstURL</CODE> objects. 
  * <P>
- * There are four types of PortletURLs:
+ * There are four types of HstURLs:
  * <ul>
  * <li>Action URLs, they are created with <CODE>{@link HstResponse#createActionURL()}</CODE>, and 
  *     trigger an action request followed by a render request.
