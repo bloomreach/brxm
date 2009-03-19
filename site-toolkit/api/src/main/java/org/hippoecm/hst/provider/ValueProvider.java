@@ -20,8 +20,15 @@ import java.util.Calendar;
 import java.util.Map;
 
 public interface ValueProvider extends Serializable{
-    
+  
+    /**
+     * @return the path of the object used to create this valueprovider with
+     */
     public String getPath();
+    
+    /**
+     * @return the name of the object used to create this valueprovider with
+     */
     public String getName();
     
     /**
