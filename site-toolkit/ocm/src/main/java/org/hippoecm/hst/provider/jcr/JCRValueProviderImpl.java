@@ -30,7 +30,6 @@ import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.PropertyDefinition;
 
 import org.hippoecm.hst.provider.PropertyMap;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,12 +41,8 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     
     // transient node because ValueProvider implements Serializable
     private transient Node jcrNode;
-    private transient Node canonicalNode;
-    private transient Node handle;
     
     private String nodePath;
-    private String canonicalPath;
-    private String handlePath;
     
     private String nodeName;
     private boolean detached = false;
@@ -72,21 +67,6 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             try {
                 this.nodePath = jcrNode.getPath();
                 this.nodeName = jcrNode.getName();
-                this.canonicalNode = JCRUtilities.getCanonical(jcrNode);
-                if(canonicalNode == null) {
-                    log.debug("Node does not have a canonical representation");
-                } else {
-                    // if canonical node is a handle, set the handle. If canonical node is null, node cannot be a hippo:document
-                    this.canonicalPath = canonicalNode.getPath();
-                    if(canonicalNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        this.handle = canonicalNode;
-                        this.handlePath = handle.getPath();
-                    } else if(canonicalNode.isNodeType(HippoNodeType.NT_DOCUMENT) && canonicalNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                       this.handle = canonicalNode.getParent();
-                       this.handlePath = handle.getPath();
-                    }
-                    
-                }
             } catch (RepositoryException e) {
                 log.error("Repository Exception: {}", e.getMessage());
             }
@@ -101,38 +81,13 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         return this.jcrNode;
     }
     
-    public Node getCanonical(){
-        if(isDetached()) {
-            log.warn("Node '{}' is detached. Return null", nodePath);
-            return null;
-        }
-        return this.canonicalNode;
-    }
-    
-    public String getCanonicalPath(){
-        return this.canonicalPath;
-    }
-    
-    public Node getHandle(){
-        if(isDetached()) {
-            log.warn("Node '{}' is detached. Return null", nodePath);
-            return null;
-        }
-        return this.handle;
-    }
-    
-    public String getHandlePath(){
-        return this.handlePath;
-    }
-    
+   
     public void detach(){
         if(this.nodePath != null) {
             log.debug("Detaching node '{}'", this.nodePath);
         }
         this.detached = true;
         this.jcrNode = null;
-        this.canonicalNode = null;
-        this.handle = null;
     }
     
     public boolean isDetached(){
