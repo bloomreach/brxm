@@ -222,18 +222,18 @@ public class ObservationTest extends TestCase {
         testNode.setProperty("test", "bla");
 
         JcrObservationManager.getInstance().processEvents();
-        assertTrue(events.size() == 2);
+        assertTrue(events.size() == 1);
 
         JcrObservationManager.getInstance().processEvents();
-        assertTrue(events.size() == 2);
+        assertTrue(events.size() == 1);
 
         testNode.setProperty("test", "die");
 
         JcrObservationManager.getInstance().processEvents();
-        assertTrue(events.size() == 3);
+        assertTrue(events.size() == 1);
 
         JcrObservationManager.getInstance().processEvents();
-        assertTrue(events.size() == 3);
+        assertTrue(events.size() == 1);
 
         session.save();
     }

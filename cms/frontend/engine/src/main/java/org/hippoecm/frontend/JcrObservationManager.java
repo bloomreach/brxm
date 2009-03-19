@@ -251,11 +251,7 @@ public class JcrObservationManager implements ObservationManager {
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
                 String path;
-                if (node.isNew()) {
-                    path = node.getParent().getPath();
-                } else {
-                    path = node.getPath();
-                }
+                path = node.getPath();
                 if (isDeep) {
                     if (path.startsWith(this.path)) {
                         nodes.add(node);
@@ -277,9 +273,20 @@ public class JcrObservationManager implements ObservationManager {
             try {
                 List<Node> nodes = new LinkedList<Node>();
                 if (nodeTypes == null) {
+                    if (root.isModified()) {
+                        nodes.add(root);
+                    }
                     NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null);
                     processPending(iter, nodes);
                 } else {
+                    if (root.isModified()) {
+                        for (String type : nodeTypes) {
+                            if (root.isNodeType(type)) {
+                                nodes.add(root);
+                                break;
+                            }
+                        }
+                    }
                     for (String type : nodeTypes) {
                         NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, type);
                         processPending(iter, nodes);
@@ -289,11 +296,7 @@ public class JcrObservationManager implements ObservationManager {
                 List<String> paths = new LinkedList<String>();
                 for (Node node : nodes) {
                     String path;
-                    if (node.isNew()) {
-                        path = node.getParent().getPath();
-                    } else {
-                        path = node.getPath();
-                    }
+                    path = node.getPath();
                     paths.add(path);
                     if (pending.containsKey(path)) {
                         Iterator<Event> iter = pending.get(path).update();
