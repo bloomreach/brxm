@@ -174,11 +174,10 @@
 
   <mailingLists>
     <mailingList>
-      <name>Hippo Site Dev List</name>
-      <subscribe>hippo-hst-dev-subscribe@lists.hippocms.org</subscribe>
-      <unsubscribe>hippo-hst-dev-unsubscribe@lists.hippocms.org</unsubscribe>
-      <post>hippo-hst-dev@lists.onehippo.com</post>
-      <archive>http://lists.hippoforge.org/mailman/listinfo/hippo-hst-dev/</archive>
+      <name>Hippo Site Toolkit Forums</name>
+      <subscribe>hippo-hst-dev-subscribe@lists.onehippo.org</subscribe>
+      <unsubscribe>hippo-hst-dev-unsubscribe@lists.onehippo.org</unsubscribe>
+      <archive>http://lists.onehippo.org/pipermail/hippo-hst-dev/</archive>
     </mailingList>
   </mailingLists>
 
