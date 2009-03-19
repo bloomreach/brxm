@@ -17,6 +17,11 @@ package org.hippoecm.hst.service;
 
 import java.lang.reflect.Method;
 
+/**
+ * Property access provider interface to the {@link Service} instances.
+ * 
+ * @version $Id$
+ */
 public interface ServiceBeanAccessProvider {
     
     Object getProperty(String namespacePrefix, String name, Class returnType, Method method);

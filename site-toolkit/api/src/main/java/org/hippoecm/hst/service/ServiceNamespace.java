@@ -22,6 +22,12 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+
+/**
+ * Allows for the annotation of a Java class so mapping through simple java interface to a JCR node.
+ * 
+ * @version $Id$
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})

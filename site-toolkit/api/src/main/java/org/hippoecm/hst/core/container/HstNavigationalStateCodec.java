@@ -17,10 +17,31 @@ package org.hippoecm.hst.core.container;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Codec component interface to generate navigation state information string.
+ * 
+ * @version $Id$
+ */
 public interface HstNavigationalStateCodec {
 
+    /**
+     * Encodes the parameter with the specified character encoding
+     * 
+     * @param value
+     * @param characterEncoding
+     * @return
+     * @throws UnsupportedEncodingException
+     */
     public String encodeParameters(String value, String characterEncoding) throws UnsupportedEncodingException;
 
+    /**
+     * Decodes the parameter with the specified character encoding
+     * 
+     * @param value
+     * @param characterEncoding
+     * @return
+     * @throws UnsupportedEncodingException
+     */
     public String decodeParameters(String value, String characterEncoding) throws UnsupportedEncodingException;
     
 }

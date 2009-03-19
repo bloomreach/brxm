@@ -15,8 +15,18 @@
  */
 package org.hippoecm.hst.core.jcr.pool;
 
+/**
+ * Interface to be implemented by beans (such as session) that wish to be aware of its owning multiple repository.
+ * 
+ * @version $Id$
+ */
 public interface MultipleRepositoryAware {
 
+    /**
+     * Callback that supplies the its owning multiple repository
+     * 
+     * @param multipleRepository
+     */
     void setMultipleRepository(MultipleRepository multipleRepository);
     
 }

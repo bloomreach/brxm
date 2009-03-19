@@ -15,11 +15,27 @@
  */
 package org.hippoecm.hst.core.container;
 
+/**
+ * The {@link Pipeline} container interface.
+ * 
+ * @version $Id$
+ */
 public interface Pipelines
 {
     
+    /**
+     * Returns the default pipeline.
+     * 
+     * @return
+     */
     Pipeline getDefaultPipeline();
     
+    /**
+     * Returns the specified pipeline by the name.
+     * 
+     * @param name
+     * @return
+     */
     Pipeline getPipeline(String name);
     
 }

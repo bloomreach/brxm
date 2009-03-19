@@ -15,8 +15,16 @@
  */
 package org.hippoecm.hst.core.container;
 
+/**
+ * HstComponent container constants
+ * 
+ * @version $Id$
+ */
 public interface ContainerConstants {
 
-   String CONTEXT_NAMESPACE_ATTRIBUTE = "org.hippoecm.hst.container.context.namespace";
+    /**
+     * The context namespace attribute name
+     */
+    String CONTEXT_NAMESPACE_ATTRIBUTE = "org.hippoecm.hst.container.context.namespace";
     
 }

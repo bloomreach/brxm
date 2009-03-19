@@ -22,12 +22,35 @@ import javax.jcr.Repository;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 
+/**
+ * Interface extending {@link javax.jcr.Repository} to allow
+ * transparent access to internal multiple repositories based on credentials
+ * given by the caller.
+ * 
+ * @version $Id$
+ */
 public interface MultipleRepository extends Repository {
     
+    /**
+     * Returns the internal repository map.
+     * 
+     * @return
+     */
     Map<Credentials, Repository> getRepositoryMap();
     
+    /**
+     * Returns the internal repository which has the specified credentials as its default credentials.
+     * 
+     * @param credentials
+     * @return
+     */
     Repository getRepositoryByCredentials(Credentials credentials);
     
+    /**
+     * Returns the resource lifecycle management implementation.
+     * @see {@link ResourceLifecycleManagement}
+     * @return
+     */
     ResourceLifecycleManagement [] getResourceLifecycleManagements();
 
 }

@@ -15,8 +15,18 @@
  */
 package org.hippoecm.hst.core.jcr.pool;
 
+/**
+ * Interface to be implemented by beans (such as session) that wish to be aware of its owning pooling repository.
+ * 
+ * @version $Id$
+ */
 public interface PoolingRepositoryAware
 {
+    /**
+     * Callback that supplies the its owning pooling repository
+     * 
+     * @param poolingRepository
+     */
     public void setPoolingRepository(PoolingRepository poolingRepository);
 }
 

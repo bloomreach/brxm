@@ -15,11 +15,42 @@
  */
 package org.hippoecm.hst.core.container;
 
+/**
+ * ComponentManager interface.
+ * This is responsible for initializing, starting, stopping and closing container components.
+ * 
+ * @version $Id$
+ */
 public interface ComponentManager
 {
+    
+    /**
+     * Initializes the component manager and container components.
+     */
     void initialize();
+    
+    /**
+     * Starts the component manager to serve container components.
+     */
     void start();
+    
+    /**
+     * Returns the registered container component
+     * 
+     * @param <T> component type
+     * @param name the name of the component
+     * @return component
+     */
     <T> T getComponent(String name);
+    
+    /**
+     * Stop the component manager.
+     */
     void stop();
+    
+    /**
+     * Closes the component manager and all the components.
+     */
     void close();
+    
 }

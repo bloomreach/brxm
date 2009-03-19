@@ -15,9 +15,21 @@
  */
 package org.hippoecm.hst.core.container;
 
-
+/**
+ * General valve interface.
+ * Valves are to be assembled and invoked by a {@link Pipeline}.
+ * 
+ * @version $Id$
+ */
 public interface Valve
 {
+    
+    /**
+     * Invoke this valve
+     * 
+     * @param context
+     * @throws ContainerException
+     */
     public void invoke(ValveContext context) throws ContainerException;
 
     /**

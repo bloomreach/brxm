@@ -19,8 +19,21 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 
+/**
+ * The factory interface which is responsible for creating HstComponent instances.
+ * 
+ * @version $Id$
+ */
 public interface HstComponentFactory {
     
+    /**
+     * Returns the HstComponent instance.
+     * 
+     * @param requestContainerConfig the HstContainer configuration
+     * @param compConfig the HstComponent configuration
+     * @return the instance of the HstComponent
+     * @throws HstComponentException
+     */
     HstComponent getComponentInstance(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig) throws HstComponentException;
     
 }

@@ -15,18 +15,54 @@
  */
 package org.hippoecm.hst.core;
 
+/**
+ * Resource management interface.
+ * Some resource pool such as JCR session pool can expose an implementation
+ * of this interface, and then the container can register disposable resources
+ * and unregister the disposable resources after serving request.
+ * 
+ * @version $Id$
+ */
 public interface ResourceLifecycleManagement {
     
+    /**
+     * Returns true if resource lifecycle management is turned on.
+     * 
+     * @return
+     */
     boolean isActive();
     
+    /**
+     * Turns on or off the resource lifecycle management.
+     * 
+     * @param active
+     */
     void setActive(boolean active);
     
+    /**
+     * Registers a disposable resource.
+     * 
+     * @param resource
+     */
     void registerResource(Object resource);
     
+    /**
+     * Unregisters the disposable resource.
+     * 
+     * @param resource
+     */
     void unregisterResource(Object resource);
     
+    /**
+     * Dispose the specified resource.
+     * 
+     * @param resource
+     */
     void disposeResource(Object resource);
     
+    /**
+     * Dispose all the resources.
+     */
     void disposeAllResources();
     
 }

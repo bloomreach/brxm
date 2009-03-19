@@ -17,10 +17,26 @@ package org.hippoecm.hst.core.domain;
 
 import java.util.List;
 
+/**
+ * The container interface for {@link DomainMapping}
+ * 
+ * @version $Id$
+ */
 public interface DomainMappings {
 
+    /**
+     * Returns the list of {@link DomainMapping} instances.
+     * 
+     * @return
+     */
     List<DomainMapping> getDomainMappings();
     
+    /**
+     * Returns the proper @{link DomainMapping} for the domainName.
+     * 
+     * @param domainName
+     * @return
+     */
     DomainMapping findDomainMapping(String domainName);
     
 }

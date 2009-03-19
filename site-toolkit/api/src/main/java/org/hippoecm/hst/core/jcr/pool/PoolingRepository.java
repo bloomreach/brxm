@@ -23,20 +23,72 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 
+/**
+ * Interface extending {@link javax.jcr.Repository} to allow
+ * transparent access to internal session pooling implementation.
+ * 
+ * @version $Id$
+ */
 public interface PoolingRepository extends Repository {
 
+    /**
+     * When the sessions in the pool are exhausted, the pool will be blocked for the specified interval
+     * to wait for available idle session.
+     */
     String WHEN_EXHAUSTED_BLOCK = "block";
+    
+    /**
+     * When the sessions in the pool are exhausted, the pool will throw exception instantly without
+     * waiting for available idle session. 
+     */
     String WHEN_EXHAUSTED_FAIL = "fail";
+    
+    /**
+     * When the sessions in the pool are exhausted, the pool will grow the action session count to serve
+     * the request. This option will make the max active count limit meaningless.
+     */
     String WHEN_EXHAUSTED_GROW = "grow";
 
+    /**
+     * Returns the current active session count in the pool.
+     * 
+     * @return
+     */
     public int getNumActive();
 
+    /**
+     * Returns the current idle session count in the pool.
+     * @return
+     */
     public int getNumIdle();
 
+    /**
+     * Returns the session to the pool.
+     * 
+     * @param session
+     */
     public void returnSession(Session session);
     
+    /**
+     * Returns the resource lifecycle management implementation of this pool.
+     * 
+     * @see {@link ResourceLifecycleManagement}
+     * @return
+     */
     public ResourceLifecycleManagement getResourceLifecycleManagement(); 
     
+    /**
+     * Tries impersonation by the provided the credentials.
+     * If this pooling repository is contained in a {@link MultipleRepository} implementation
+     * and the containing {@link MultipleRepository} has a proper repository for the provided credentials,
+     * then it can return a proper session impersonated.
+     * Otherwise, it throws a RepositoryException. 
+     * 
+     * @param credentials
+     * @return
+     * @throws LoginException
+     * @throws RepositoryException
+     */
     public Session impersonate(Credentials credentials) throws LoginException, RepositoryException;
 
 }

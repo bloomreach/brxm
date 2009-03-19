@@ -16,10 +16,25 @@
 package org.hippoecm.hst.service;
 
 
+/**
+ * Interface to be implemented by beans that wish to be aware of its originating {@link Service} instance.
+ * 
+ * @version $Id$
+ */
 public interface UnderlyingServiceAware {
 
+    /**
+     * Returns the originating {@link Service} instance.
+     * 
+     * @return
+     */
     Service getUnderlyingService();
     
+    /**
+     * Callback that supplies the originating {@link Service} instance.
+     * 
+     * @param node
+     */
     void setUnderlyingService(Service service);
     
 }

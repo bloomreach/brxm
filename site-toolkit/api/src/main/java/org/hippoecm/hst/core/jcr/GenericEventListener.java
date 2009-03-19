@@ -19,6 +19,13 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
+/**
+ * The <CODE>GenericEventListener</CODE> class provides a default implementation for
+ * the {@link EventListener} interface.
+ * This receives an event and dispatches each event to a specialized method.
+ * The child class of this class can override some methods which are related to
+ * its own interests.
+ */
 public class GenericEventListener implements EventListener {
 
     public final void onEvent(EventIterator events) {

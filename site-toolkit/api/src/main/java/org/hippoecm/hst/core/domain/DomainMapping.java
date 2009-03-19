@@ -15,10 +15,25 @@
  */
 package org.hippoecm.hst.core.domain;
 
+/**
+ * DomainMapping which holds the mapping between domain name and site name.
+ * 
+ * @version $Id$
+ */
 public interface DomainMapping {
 
+    /**
+     * Returns the domain name.
+     * 
+     * @return
+     */
     String getDomainName();
     
+    /**
+     * Returns the site name for the domain.
+     * 
+     * @return
+     */
     String getSiteName();
     
 }

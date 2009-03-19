@@ -17,10 +17,18 @@ package org.hippoecm.hst.core.jcr.pool;
 
 import java.util.NoSuchElementException;
 
+/**
+ * The <CODE>NoAvailableSessionException</CODE> class defines the exception
+ * that a JCR session pooling repository can throw when it is unable to return an available session
+ * since its pooled session are already exhausted and it cannot create new session.
+ */
 public class NoAvailableSessionException extends NoSuchElementException {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Constructs a new NoAvailableSessionException exception.
+     */
     public NoAvailableSessionException() {
         super();
     }

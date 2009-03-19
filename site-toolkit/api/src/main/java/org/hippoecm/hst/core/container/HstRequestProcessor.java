@@ -19,12 +19,15 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * Request processor. This processor should be called by HstComponent dispatcher servlet.
+ * Request processor. This request processor is called by HstComponent container servlet.
+ * This request processor can be initialized and run by another web application and its own classloader.
+ * So, the HstComponent container servlet or other components should not assume that this
+ * request processor is loaded by the same classloader.
  */
 public interface HstRequestProcessor {
     
     /**
-     * processes Hst request
+     * processes request
      * 
      * @param requestContainerConfig the holder for the servletConfig and classloader of the HST container
      * @param servletRequest the servletRequest of the HST request

@@ -17,20 +17,66 @@ package org.hippoecm.hst.core.jcr;
 
 import javax.jcr.observation.EventListener;
 
+/**
+ * Holds {@link EventListener} and its configuration information.
+ * 
+ * @version $Id$
+ */
 public interface EventListenerItem {
 
+    /**
+     * Returns the {@link EventListener} instance.
+     * 
+     * @return
+     */
     EventListener getEventListener();
     
+    /**
+     * Returns the event type for the event listener.
+     * @see {@link javax.jcr.observation.Event}
+     * @see {@link javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)}
+     * @return
+     */
     int getEventTypes();
     
+    /**
+     * Returns the absolute path for the event listener.
+     * 
+     * @see {@link javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)}
+     * @return
+     */
     String getAbsolutePath();
     
+    /**
+     * Flag to check the event listener be registered with <CODE>deep</CODE> option. 
+     *
+     * @see {@link javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)}
+     * @return
+     */
     boolean isDeep();
-    
+
+    /**
+     * Returns the UUID array for the event listener.
+     * 
+     * @see {@link javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)}
+     * @return
+     */
     String [] getUuids();
-    
+
+    /**
+     * Returns the node type name array for the event listener.
+     * 
+     * @see {@link javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)}
+     * @return
+     */
     String [] getNodeTypeNames();
     
+    /**
+     * Flag to check the event listener be registered with <CODE>noLocal</CODE> option.
+     * 
+     * @see {@link javax.jcr.observation.ObservationManager#addEventListener(EventListener, int, String, boolean, String[], String[], boolean)}
+     * @return
+     */
     boolean isNoLocal();
     
 }

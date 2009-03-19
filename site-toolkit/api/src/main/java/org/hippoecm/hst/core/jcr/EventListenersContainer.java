@@ -17,14 +17,37 @@ package org.hippoecm.hst.core.jcr;
 
 import java.util.List;
 
+/**
+ * The container interface for {@link EventListenerItem} instances.
+ * This is responsible for registering all the event listener item.
+ * 
+ * @version $Id$
+ */
 public interface EventListenersContainer {
 
+    /**
+     * Sets event listener items.
+     * 
+     * @param eventListenerItems
+     */
     void setEventListenerItems(List<EventListenerItem> eventListenerItems);
     
+    /**
+     * Returns the event listener items.
+     * @return
+     */
     List<EventListenerItem> getEventListenerItems();
     
+    /**
+     * Registers all event listener items and
+     * starts the event listener container.
+     */
     void start();
     
+    /**
+     * Removes all event listener items and
+     * stop the event listener container.
+     */
     void stop();
     
 }

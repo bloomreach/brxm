@@ -17,14 +17,42 @@ package org.hippoecm.hst.core.container;
 
 import org.hippoecm.hst.core.component.HstComponent;
 
+/**
+ * The HstComponent registry interface
+ * 
+ * @version $Id$
+ */
 public interface HstComponentRegistry {
 
+    /**
+     * Registers the HstComponent. The key is the pair of container configuration and component ID.
+     * 
+     * @param requestContainerConfig the container configuration
+     * @param componentId the component ID
+     * @param component
+     */
     void registerComponent(HstContainerConfig requestContainerConfig, String componentId, HstComponent component);
     
+    /**
+     * Unregister the HstComponent. The key is the pair of container configuration and component ID.
+     * 
+     * @param requestContainerConfig the container configuration
+     * @param componentId the component ID
+     */
     void unregisterComponent(HstContainerConfig requestContainerConfig, String componentId);
-    
+
+    /**
+     * Returns the registered HstComponent. The key is the pair of container configuration and component ID.
+     * 
+     * @param requestContainerConfig the container configuration
+     * @param componentId the component ID
+     * @return the HstComponent registered with the key pair.
+     */
     HstComponent getComponent(HstContainerConfig requestContainerConfig, String componentId);
     
+    /**
+     * Unregisters all the HstComponents.
+     */
     void unregisterAllComponents();
     
 }

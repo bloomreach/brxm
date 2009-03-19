@@ -19,18 +19,54 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 
+/**
+ * Context information during invoking valves in a pipeline.
+ * This holds the necessary objects to serve a request.
+ * 
+ * @version $Id$
+ */
 public interface ValveContext
 {
+    
+    /**
+     * Requests invocation of next possible valve.
+     * @throws ContainerException
+     */
     void invokeNext() throws ContainerException;
     
+    /**
+     * Returns the HstComponent container configuration.
+     * 
+     * @return
+     */
     HstContainerConfig getRequestContainerConfig();
     
+    /**
+     * Returns the current servlet request.
+     * 
+     * @return
+     */
     ServletRequest getServletRequest();
 
+    /**
+     * Returns the current servlet response.
+     * 
+     * @return
+     */
     ServletResponse getServletResponse();
     
+    /**
+     * Sets the root {@link HstComponentWindow} instance to serve the current request.
+     * 
+     * @param rootComponentWindow
+     */
     void setRootComponentWindow(HstComponentWindow rootComponentWindow);
     
+    /**
+     * Returns the root {@link HstComponentWindow} instance to serve the current request.
+     * 
+     * @return
+     */
     HstComponentWindow getRootComponentWindow();
     
 }

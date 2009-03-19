@@ -18,17 +18,56 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+/**
+ * Pipeline interface.
+ * {@link HstRequestProcessor} will invoke the proper {@link Pipeline} instance to serve the request.
+ * 
+ * @version $Id$
+ */
 public interface Pipeline
 {
     
+    /**
+     * Initializes the pipeline
+     * @throws ContainerException
+     */
     void initialize() throws ContainerException;
     
+    /**
+     * Does pre-processing step for the request processing.
+     * 
+     * @param requestContainerConfig the HstComponent container configuration
+     * @param servletRequest
+     * @param servletResponse
+     * @throws ContainerException
+     */
     void beforeInvoke(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
 
+    /**
+     * Invokes the request processing
+     * 
+     * @param requestContainerConfig the HstComponent container configuration
+     * @param servletRequest
+     * @param servletResponse
+     * @throws ContainerException
+     */
     void invoke(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
     
+    /**
+     * Does post-processing step for the request processing.
+     * 
+     * @param requestContainerConfig the HstComponent container configuration
+     * @param servletRequest
+     * @param servletResponse
+     * @throws ContainerException
+     */
     void afterInvoke(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
 
+    /**
+     * Destroys the pipeline.
+     * 
+     * @throws ContainerException
+     */
     void destroy() throws ContainerException;
     
 }
