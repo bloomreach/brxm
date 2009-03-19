@@ -19,7 +19,7 @@ import org.hippoecm.hst.core.linking.ResolvedLocationMapTreeItem;
 
 
 /**
- * The <code>LocationMapTree</code> is the container for a tree of <code>LocationMapTreeItem</code>'s that are
+ * Expert: The <code>LocationMapTree</code> is the container for a tree of <code>LocationMapTreeItem</code>'s that are
  * used for internal linkrewriting. Typically it is created by aggregating all the relative content paths from 
  * all <code>SiteMapItem</code>'s, and create a mapping from this. The 
  * <code>match(String path, HstSite hstSite, boolean representsDocument)</code> tries to return the best matching

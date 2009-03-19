@@ -19,10 +19,31 @@ import java.util.List;
 
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
+/**
+ * Expert: A <code>LocationMapTreeItem</code> is an item in the tree of the containing <code>LocationMapTree</code>.  
+ * It contains references to the <code>HstSiteMapItem</code>'s that belong to this <code>LocationMapTreeItem</code>. A
+ * <code>HstSiteMapItem</code> must not belong to multiple <code>LocationMapTreeItem<code>'s. 
+ * 
+ */
 public interface LocationMapTreeItem {
 
+    /**
+     * @return List of <code>HstSiteMapItem</code>'s belonging to this LocationMapTreeItem
+     */
     List<HstSiteMapItem> getHstSiteMapItems();
+    
+    /**
+     * 
+     * @param name the name of the child <code>LocationMapTreeItem</code>
+     * @return The child <code>LocationMapTreeItem</code> with this <code>name</code> or <code>null</code> if there 
+     * exists no child with this name
+     */
     LocationMapTreeItem getChild(String name);
+    
+    /**
+     * 
+     * @return the parent <code>LocationMapTreeItem</code> of this item or <code>null</code> when it is a root <code>LocationMapTreeItem</code>
+     */
     LocationMapTreeItem getParentItem();
     
 }

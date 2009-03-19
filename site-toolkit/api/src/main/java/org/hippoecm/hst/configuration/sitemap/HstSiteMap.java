@@ -19,14 +19,42 @@ import java.util.List;
 
 import org.hippoecm.hst.configuration.HstSite;
 
+/**
+ * A <code>HstSiteMap</code> contains a list of (root) <code>HstSiteMapItem</code> objects which themselves might contain additional 
+ * <code>HstSiteMapItem</code> children and so on. As a <code>HstSiteMapItem</code> might have an id, which needs to be unique 
+ * within the <code>HstSiteMap</code>, through which a direct lookup of such a <code>HstSiteMapItem</code> is also possible
+ * 
+ */
 public interface HstSiteMap {
     
+    /**
+     * Return the {@link HstSite} this <code>HstSiteMap</code> belongs to. 
+     * @return the site this <code>HstSiteMap</code> belongs to
+     */
     HstSite getSite();
     
+    /**
+     * The list of <code>SiteMapItem</code>'s that are <code>root</code> items. They represent the first paths of the urls
+     * @return a List of all root <code>SiteMapItem</code>'s
+     */
     List<HstSiteMapItem> getSiteMapItems();
 
+    /**
+     * Return the child <code>HstSiteMapItem</code> that has the corresponding <code>value</code> ({@link HstSiteMapItem#getValue()} ) 
+     * and <code>null</code> otherwise
+     * @param value the value of the child <code>HstSiteMapItem</code> as it would be return by {@link HstSiteMapItem#getValue()} 
+     * @return Returns the HstSiteMapItem object corresponding to the unique <code>value</code> and <code>null</code> if no <code>HstSiteMapItem</code>
+     * exists with this <code>value</code> in this <code>HstSiteMapItem</code> object. 
+     */
     HstSiteMapItem getSiteMapItem(String value);
     
+    /**
+     * Return the child <code>HstSiteMapItem</code> that has the corresponding <code>id</code> ({@link HstSiteMapItem#getId()} ) 
+     * and <code>null</code> otherwise
+     * @param id the id of the child <code>HstSiteMapItem</code> as it would be return by {@link HstSiteMapItem#getId()} 
+     * @return Returns the HstSiteMapItem object corresponding to the unique <code>value</code> and <code>null</code> if no <code>HstSiteMapItem</code>
+     * exists with this <code>value</code> in this <code>HstSiteMapItem</code> object. 
+     */
     HstSiteMapItem getSiteMapItemById(String id);
     
   }

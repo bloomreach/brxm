@@ -18,18 +18,46 @@ package org.hippoecm.hst.configuration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 
+/**
+ * The <code>HstSite</code> object is the object representing a site. It contains a reference to the site content base
+ * path returned by {@link #getContentPath()}, to the site's components configuration returned by 
+ * <code>{@link #getComponentsConfiguration()}</code> and the site's sitemap, returned by <code>{@link #getSiteMap()}</code> and the site's
+ * <code>{@link LocationMapTree}</code> return by <code>{@link #getLocationMapTree()}</code>
+ * 
+ */
 public interface HstSite {
 
+    /**
+     * Each contained <code>HstSite</code> within its <code>HstSites</code> container has a unique name. <code>getName()</code>
+     * returns this unique name. 
+     * @return the unique name for this <code>HstSite</code> within its <code>HstSites</code> container. 
+     */
     String getName();
 
+    /**
+     * Returns the absolute content path for this <code>HstSite</code> 
+     * @return The absolute content path for this <code>HstSite</code>
+     */
     String getContentPath();
 
+    /**
+     * @return the componentsConfiguration for this <code>HstSite</code>
+     */
     HstComponentsConfiguration getComponentsConfiguration();
 
+    /**
+     * @return the hstSiteMap for this <code>HstSite</code>
+     */
     HstSiteMap getSiteMap();
 
+    /**
+     * @return the hstSites object that is the container for this <code>HstSite</code>
+     */
     HstSites getHstSites();
     
+    /**
+     * @return the locationMapTree for this <code>HstSite</code>
+     */
     LocationMapTree getLocationMapTree();
 
 }
