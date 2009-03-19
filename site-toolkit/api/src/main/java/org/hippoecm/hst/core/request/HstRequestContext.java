@@ -52,6 +52,10 @@ public interface HstRequestContext {
      */
     Credentials getDefaultCredentials();
     
+    /**
+     * Returns the {@link ResolvedSiteMapItem} for this request
+     * @return the resolvedSiteMapItem for this request
+     */
     ResolvedSiteMapItem getResolvedSiteMapItem();
     
     /**
@@ -64,28 +68,29 @@ public interface HstRequestContext {
     String getContextNamespace();
     
     /**
-     * Returns the base container URL of the current request lifecycle.
+     * Returns the base container URL ({@link HstContainerURL} ) of the current request lifecycle.
      * 
      * @return HstContainerURL
      */
     HstContainerURL getBaseURL();
     
     /**
-     * Returns the HstURLFactory to create HstURLs
+     * Returns the {@link HstURLFactory} to create HstURLs
      * 
      * @return HstURLFactory
      */
     HstURLFactory getURLFactory();
 
     /**
-     * Returns the HstLinkCreator to create navigational links
+     * Returns the {@link HstLinkCreator} to create navigational links
      * 
      * @return HstLinkCreator
      */
     HstLinkCreator getHstLinkCreator();
     
     /**
-     * Returns HstCtxWhereClauseComputer
+     * Returns a {@link HstCtxWhereClauseComputer} instance that can compute a filter (context where clause) for searching 
+     * in virtual structures.
      * 
      * @return HstCtxWhereClauseComputer
      */
