@@ -16,7 +16,7 @@
 package org.hippoecm.hst.core.domain;
 
 /**
- * DomainMapping which holds the mapping between domain name and site name.
+ * DomainMapping which holds the mapping between domain (host) name and site name.
  * 
  * @version $Id$
  */
