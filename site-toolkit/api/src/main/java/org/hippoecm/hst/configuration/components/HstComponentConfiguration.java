@@ -18,6 +18,8 @@ package org.hippoecm.hst.configuration.components;
 import java.util.Map;
 import java.util.SortedMap;
 
+import org.hippoecm.hst.core.component.HstComponent;
+
 /**
  * A <code>HstComponentConfiguration</code> specifies a (Java) componentClassName implementing the {@link org.hippoecm.hst.core.component.HstComponent} 
  * interface to provide the actual behavior for content rendering and (inter)action processing.
@@ -71,10 +73,10 @@ import java.util.SortedMap;
  * could also have the value <code>${1}</code> where ${1} might first be substituted by the matched wildcard in the <code>HstSiteMapItem</code>.
  * Obviously, this is all up to the implementation whether to support this.
  *  
- * 
- * 
  * <p/>
- * 
+ * NOTE: As {@link HstComponent} instances can access <code>HstComponentConfiguration</code> instances but should not be able to modify them, 
+ * implementations must make sure that through the api a <code>HstComponentConfiguration</code> instance cannot be changed. Returned List and Map
+ * should be therefor unmodifiable.  
  * 
  */
 public interface HstComponentConfiguration {
@@ -133,12 +135,16 @@ public interface HstComponentConfiguration {
     String getParameter(String name);
     
     /**
-     * Returns the map of all parameters. Also see {@link #getParameter(String)}
+     * Returns the map of all parameters. Also see {@link #getParameter(String)}.
+     * Implementations should return an unmodifiable map, for example {@link java.util.Collections$UnmodifiableMap} to avoid 
+     * client code changing configuration
      * @return the map of all configured parameters, and an empty map if no parameters present
      */
     Map<String, String> getParameters();
     
     /**
+     * Implementations should return an unmodifiable sorted map, for example {@link java.util.Collections$UnmodifiableSortedMap} to avoid 
+     * client code changing configuration
      * @return all <code>HstComponentConfiguration</code> childrens, and an empty Map if no children present
      */
     SortedMap<String, HstComponentConfiguration> getChildren();

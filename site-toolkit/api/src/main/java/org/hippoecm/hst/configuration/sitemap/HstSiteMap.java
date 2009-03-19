@@ -18,12 +18,17 @@ package org.hippoecm.hst.configuration.sitemap;
 import java.util.List;
 
 import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.core.component.HstComponent;
 
 /**
  * A <code>HstSiteMap</code> contains a list of (root) <code>HstSiteMapItem</code> objects which themselves might contain additional 
  * <code>HstSiteMapItem</code> children and so on. As a <code>HstSiteMapItem</code> might have an id, which needs to be unique 
  * within the <code>HstSiteMap</code>, through which a direct lookup of such a <code>HstSiteMapItem</code> is also possible
  * 
+ * <p/>
+ * NOTE: As {@link HstComponent} instances can access <code>HstSiteMap</code> instances but should not be able to modify them, 
+ * implementations must make sure that through the api a <code>HstSiteMap</code> instance cannot be changed. Returned List and Map
+ * should be therefor unmodifiable. 
  */
 public interface HstSiteMap {
     
@@ -34,7 +39,9 @@ public interface HstSiteMap {
     HstSite getSite();
     
     /**
-     * The list of <code>SiteMapItem</code>'s that are <code>root</code> items. They represent the first paths of the urls
+     * The list of <code>SiteMapItem</code>'s that are <code>root</code> items. They represent the first paths of the urls.
+     * Implementations should return an unmodifiable list, for example {@link java.util.Collections$UnmodifiableList} to avoid 
+     * client code changing configuration
      * @return a List of all root <code>SiteMapItem</code>'s
      */
     List<HstSiteMapItem> getSiteMapItems();

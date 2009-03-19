@@ -18,6 +18,7 @@ package org.hippoecm.hst.configuration.sitemap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -235,7 +236,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     
     public List<HstSiteMapItem> getChildren() {
-        return new ArrayList<HstSiteMapItem>(this.childSiteMapItems.values());
+        return Collections.unmodifiableList(new ArrayList<HstSiteMapItem>(this.childSiteMapItems.values()));
     }
 
     public String getComponentConfigurationId() {
@@ -257,13 +258,12 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
 
     public Map<String, String> getParameters() {
-        return this.parameters;
+        return Collections.unmodifiableMap(this.parameters);
     }
 
 
-
     public List<String> getRoles() {
-        return this.roles;
+        return Collections.unmodifiableList(this.roles);
     }
 
     public String getValue() {

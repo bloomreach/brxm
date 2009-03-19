@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.configuration;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,7 +90,7 @@ public class HstSitesService extends AbstractJCRService implements HstSites, Ser
     }
 
     public Map<String, HstSite> getSites() {
-        return hstSites;
+        return Collections.unmodifiableMap(hstSites);
     }
 
     public String getSitesContentPath() {

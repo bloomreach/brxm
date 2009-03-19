@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.sitemap;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -117,7 +118,7 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
 
 
     public List<HstSiteMapItem> getSiteMapItems() {
-        return new ArrayList<HstSiteMapItem>(rootSiteMapItems.values());
+        return Collections.unmodifiableList(new ArrayList<HstSiteMapItem>(rootSiteMapItems.values()));
     }
 
     public HstSite getSite() {

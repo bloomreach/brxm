@@ -27,7 +27,12 @@ import org.hippoecm.hst.core.component.HstComponent;
  * create a link to it. Obviously, creating a link to a <code>HstSiteMapItem</code> does only make sense when its path in the 
  * <code>HstSiteMap</code> does not contain WILDCARD's ( <code>*</code> or <code>**</code>) 
  *
+ * <p/>
+ * NOTE: As {@link HstComponent} instances can access <code>HstSiteMapItem</code> instances but should not be able to modify them, 
+ * implementations must make sure that through the api a <code>HstSiteMapItem</code> instance cannot be changed. Returned List and Map
+ * should be therefor unmodifiable. 
  */
+
 public interface HstSiteMapItem {
 
     /**
@@ -80,13 +85,16 @@ public interface HstSiteMapItem {
     String getComponentConfigurationId();
     
     /**
-     * TODO 
+     * {@link HstComponent} instances can access <code>HstSiteMapItem</code> but should not be able to modify them, implementations
+     * should return an unmodifiable List
      * @return
      */
     List<String> getRoles();  
     
     /**
-     * Returns a <code>List</code> of all child <code>HstSiteMapItem</code>'s of this <code>HstSiteMapItem</code>
+     * Returns a <code>List</code> of all child <code>HstSiteMapItem</code>'s of this <code>HstSiteMapItem</code>.    
+     * Implementations should return an unmodifiable list, for example {@link java.util.Collections$UnmodifiableList} to avoid 
+     * client code changing configuration
      * @return
      */
     List<HstSiteMapItem> getChildren();
@@ -114,7 +122,9 @@ public interface HstSiteMapItem {
     String getParameter(String name);
     
     /**
-     * See {@link #getParameter(String)}
+     * See {@link #getParameter(String)}, only now the parameters map is returned.
+     * Implementations should return an unmodifiable map, for example {@link java.util.Collections$UnmodifiableMap} to avoid 
+     * client code changing configuration
      * @return the Map of parameters contained in this <code>HstSiteMapItem</code>
      */
     Map<String, String> getParameters();

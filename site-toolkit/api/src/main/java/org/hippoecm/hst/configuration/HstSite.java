@@ -25,6 +25,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
  * <code>{@link LocationMapTree}</code> return by <code>{@link #getLocationMapTree()}</code>
  * 
  */
+
 public interface HstSite {
 
     /**

@@ -17,11 +17,17 @@ package org.hippoecm.hst.configuration;
 
 import java.util.Map;
 
+import org.hippoecm.hst.core.component.HstComponent;
+
 /**
  * The <code>HstSites</code> is the entry point for a hst2 configuration for multiple HstSite's in a certain scope 
  * (for example live or preview). Through this object you can access some specific <code>HstSite</code> by <code>{@link #getSite(String name)}</code>
  * all all <code>HstSite</code>'s held by this <code>HstSites</code> object.
- *
+ * 
+ * <p/>
+ * NOTE: As {@link HstComponent} instances can access <code>HstSites</code> instances but should not be able to modify them, 
+ * implementations must make sure that through the api a <code>HstSites</code> instance cannot be changed. Returned List and Map
+ * should be therefor unmodifiable. 
  */
 public interface HstSites {
     
@@ -31,6 +37,8 @@ public interface HstSites {
     String getSitesContentPath();
 
     /**
+     * Implementations should return an unmodifiable map, for example {@link java.util.Collections$UnmodifiableMap} to avoid 
+     * client code changing configuration
      * @return a map containing all the <code>HstSite</code>'s belonging to this <code>HstSites</code> object
      */
     Map<String, HstSite> getSites();

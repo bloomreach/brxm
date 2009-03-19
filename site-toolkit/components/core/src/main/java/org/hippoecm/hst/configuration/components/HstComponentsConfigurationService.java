@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.components;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -104,7 +105,7 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
     
 
     public Map<String, HstComponentConfiguration> getComponentConfigurations() {
-        return this.rootComponentConfigurations;
+        return Collections.unmodifiableMap(this.rootComponentConfigurations);
     }
 
      

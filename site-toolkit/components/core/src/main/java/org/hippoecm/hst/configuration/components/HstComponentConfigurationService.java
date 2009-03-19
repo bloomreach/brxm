@@ -188,7 +188,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     }
     
     public Map<String, String> getParameters(){
-        return this.parameters;
+        return Collections.unmodifiableMap(this.parameters);
     }
     
     public String getId() {
@@ -212,7 +212,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     }
     
     public SortedMap<String, HstComponentConfiguration> getChildren() {
-       return this.componentConfigurations;
+       return Collections.unmodifiableSortedMap(this.componentConfigurations);
     }
 
 
