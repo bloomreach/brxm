@@ -342,7 +342,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
                     throw new SAXException("error while retrieving value", ioe);
                 }
             } else {
-                PropInfo prop = new PropInfo(currentPropName, currentPropType, (TextValue[]) currentPropValues
+                PropInfo prop = new PropInfo(resolver, currentPropName, currentPropType, (TextValue[]) currentPropValues
                         .toArray(new TextValue[currentPropValues.size()]));
                 state.props.add(prop);
             }
