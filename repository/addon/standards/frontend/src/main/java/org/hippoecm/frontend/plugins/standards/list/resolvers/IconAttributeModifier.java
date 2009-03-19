@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -22,6 +23,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +58,29 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
                     if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                         return "document-16";
                     } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                        Node parent = node.getParent();
-                        if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            return "document-16";
+                        if (node instanceof HippoNode) {
+                            Node canonical;
+                            try {
+                                canonical = ((HippoNode) node).getCanonicalNode();
+                                if (canonical == null) {
+                                    return "folder-virtual-16";
+                                }
+                            } catch (ItemNotFoundException ex) {
+                                return "alert-16";
+                            }
+                            Node parent = canonical.getParent();
+                            if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                if (!canonical.isSame(node)) {
+                                    return "document-virtual-16";
+                                } else {
+                                    return "document-16";
+                                }
+                            }
+                        } else {
+                            Node parent = node.getParent();
+                            if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                return "document-16";
+                            }
                         }
                     }
 
