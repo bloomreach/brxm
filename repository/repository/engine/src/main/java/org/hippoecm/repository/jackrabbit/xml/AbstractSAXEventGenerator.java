@@ -277,7 +277,7 @@ abstract class AbstractSAXEventGenerator {
         enteringProperties(node, level);
 
         // Collect all properties (and sort them, see JCR-1084)
-        SortedMap properties = new TreeMap();
+        SortedMap<String, Property> properties = new TreeMap<String, Property>();
         PropertyIterator propIter = node.getProperties();
         while (propIter.hasNext()) {
             Property property = propIter.nextProperty();
@@ -286,22 +286,22 @@ abstract class AbstractSAXEventGenerator {
 
         // serialize jcr:primaryType, jcr:mixinTypes & jcr:uuid first:
         if (properties.containsKey(jcrPrimaryType)) {
-            process((Property) properties.remove(jcrPrimaryType), level + 1);
+            process(properties.remove(jcrPrimaryType), level + 1);
         } else {
             throw new RepositoryException(
                     "Missing jcr:primaryType property: " + node.getPath());
         }
         if (properties.containsKey(jcrMixinTypes)) {
-            process((Property) properties.remove(jcrMixinTypes), level + 1);
+            process(properties.remove(jcrMixinTypes), level + 1);
         }
         if (properties.containsKey(jcrUUID)) {
-            process((Property) properties.remove(jcrUUID), level + 1);
+            process(properties.remove(jcrUUID), level + 1);
         }
 
         // serialize remaining properties
-        Iterator iterator = properties.values().iterator();
+        Iterator<Property> iterator = properties.values().iterator();
         while (iterator.hasNext()) {
-            process((Property) iterator.next(), level + 1);
+            process(iterator.next(), level + 1);
         }
 
         // leaving properties
@@ -408,7 +408,7 @@ abstract class AbstractSAXEventGenerator {
         /**
          * Local namespace declarations.
          */
-        private final Map namespaces;
+        private final Map<String, String> namespaces;
 
         /**
          * Instantiate a new stack
@@ -417,7 +417,7 @@ abstract class AbstractSAXEventGenerator {
          */
         public NamespaceStack(NamespaceStack parent) {
             this.parent = parent;
-            this.namespaces = new HashMap();
+            this.namespaces = new HashMap<String, String>();
         }
 
         /**
@@ -427,7 +427,7 @@ abstract class AbstractSAXEventGenerator {
          * @return namespace URI (or <code>null</code> when unknown)
          */
         public String getNamespaceURI(String prefix) {
-            String namespace = (String) namespaces.get(prefix);
+            String namespace = namespaces.get(prefix);
             if (namespace != null) {
                 // found in this element, return right away
                 return namespace;

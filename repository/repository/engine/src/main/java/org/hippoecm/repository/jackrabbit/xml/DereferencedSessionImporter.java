@@ -86,7 +86,7 @@ public class DereferencedSessionImporter implements Importer {
         this.uuidBehavior = uuidBehavior;
         this.mergeBehavior = mergeBehavior;
         this.referenceBehavior = referenceBehavior;
-        this.resolver = resolver = new DefaultNamePathResolver(session, true);
+        this.resolver = new DefaultNamePathResolver(session, true);
 
         isRootReferenceable = false;
         try {
@@ -292,6 +292,7 @@ public class DereferencedSessionImporter implements Importer {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public void startNode(NodeInfo nodeInfo, List propInfos) throws RepositoryException {
         NodeImpl parent = parents.peek();
 

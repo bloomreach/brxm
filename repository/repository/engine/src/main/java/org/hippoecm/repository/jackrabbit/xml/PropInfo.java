@@ -59,6 +59,11 @@ public class PropInfo {
      */
     private static Logger log = LoggerFactory.getLogger(PropInfo.class);
 
+
+    /**
+     * Resolver
+     */
+    private final NamePathResolver resolver;
     /**
      * Name of the property being imported.
      */
@@ -86,7 +91,7 @@ public class PropInfo {
      * @param type type of the property being imported
      * @param values value(s) of the property being imported
      */
-    public PropInfo(Name name, int type, TextValue[] values) {
+    public PropInfo(NamePathResolver resolver, Name name, int type, TextValue[] values) {
         if (name.getLocalName().endsWith(Reference.REFERENCE_SUFFIX)) {
             String local = name.getLocalName();
             local = local.substring(0, (local.length() - Reference.REFERENCE_SUFFIX.length()));
@@ -100,6 +105,7 @@ public class PropInfo {
             this.type = type;
         }
         this.values = values.clone();
+        this.resolver = resolver;
     }
 
     /**
@@ -230,10 +236,11 @@ public class PropInfo {
     }
 
     private boolean isGeneratedProperty(Name name) throws RepositoryException {
-        if (HippoNodeType.HIPPO_PATHS.equals(name)) {
+        
+        if (HippoNodeType.HIPPO_PATHS.equals(resolver.getJCRName(name))) {
             return true;
         }
-        if (HippoNodeType.HIPPO_RELATED.equals(name)) {
+        if (HippoNodeType.HIPPO_RELATED.equals(resolver.getJCRName(name))) {
             return true;
         }
         return false;
