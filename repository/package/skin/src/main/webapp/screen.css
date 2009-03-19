@@ -364,14 +364,26 @@ left: 0px;
 
 .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button{
 width: 90px; display: block; height: 17px; padding-left: 24px; padding-top: 3px;
-border: 1px solid #f1f1f1;
+border: 1px solid #cccccc;
 background: url("images/hippo-toolbar-menu-item.png") no-repeat right -20px;
+cursor: pointer;
 }
 
 .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button:hover{
 border: 1px solid #afafaf;
 background: url("images/hippo-toolbar-menu-item.png") no-repeat top right; color: black
 }
+
+body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-single
+{
+background: transparent;
+}
+body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-single:hover{
+border: 1px solid #afafaf;
+background: #fff6e0;
+}
+
+
 
 .hippo-toolbar .hippo-toolbar-section .hippo-toolbar-menu-item-button{
 display: block; float: none; border: 1px solid transparent; padding: 5px }
@@ -585,7 +597,13 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 .hippo-tree div.wicket-tree div.row-selected{padding-top: 2px; padding-bottom: 2px;}
 
 /* set the hippo color styling */
-.hippo-tree div.wicket-tree div.row-selected {background-color: #fedc89}
+
+/* styling for the folder drop dowm */
+/*
+.hippo-tree div.wicket-tree div.row-selected {background: #fedc89 url("images/controls/folderdropdownicon.png") no-repeat right 2px;}
+*/
+
+.hippo-tree div.wicket-tree div.row-selected {background: #fedc89}
 .hippo-tree div.wicket-tree div.row a,
 .hippo-tree div.wicket-tree div.row-selected a {font-weight: normal; color: black;}
 
