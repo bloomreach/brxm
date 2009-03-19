@@ -6,7 +6,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstCtxWhereFilter {
     
-    private String jcrExpression = "";
+    private String jcrExpression;
     
     public HstCtxWhereFilter(HstRequestContext requestContext, Node node) {
        this.jcrExpression = requestContext.getHstCtxWhereClauseComputer().getCtxWhereClause(node, requestContext);

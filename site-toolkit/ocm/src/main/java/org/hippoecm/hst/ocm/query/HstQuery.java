@@ -82,12 +82,18 @@ public class HstQuery {
     public HippoStdNodeIterator execute(){
         StringBuffer query = new StringBuffer();
         if(hippoStdFilter.getFilter() == null) {
-            query.append("//(element, hippo:document)[" + hstCtxWhereFilter.getJcrExpression() +"]");
+            if(hstCtxWhereFilter.getJcrExpression() == null) {
+                query.append("//(element, hippo:document)");
+            } else {
+                query.append("//(element, hippo:document)[" + hstCtxWhereFilter.getJcrExpression() +"]");
+            }
         }
         if( hippoStdFilter.getFilter() instanceof FilterImpl) {
             FilterImpl filter = (FilterImpl)hippoStdFilter.getFilter();
-           
-            filter.addJCRExpression(hstCtxWhereFilter.getJcrExpression());
+            
+            if(hstCtxWhereFilter.getJcrExpression() != null) {
+                filter.addJCRExpression(hstCtxWhereFilter.getJcrExpression());
+            }
             
             query.append("//element(*, " + this.getNodeType(filter)+ ")") ;
             query = query.append("[").append(filter.getJcrExpression()).append("]");
