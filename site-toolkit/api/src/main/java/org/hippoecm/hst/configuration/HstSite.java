@@ -55,9 +55,4 @@ public interface HstSite {
      */
     HstSites getHstSites();
     
-    /**
-     * @return the locationMapTree for this <code>HstSite</code>
-     */
-    LocationMapTree getLocationMapTree();
-
 }

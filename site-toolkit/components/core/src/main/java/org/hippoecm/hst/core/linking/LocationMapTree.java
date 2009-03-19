@@ -13,8 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration;
+package org.hippoecm.hst.core.linking;
 
+import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.core.linking.ResolvedLocationMapTreeItem;
 
 

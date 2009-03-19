@@ -30,6 +30,8 @@ import org.hippoecm.hst.configuration.components.HstComponentsConfigurationServi
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
+import org.hippoecm.hst.core.linking.BasicLocationMapTree;
+import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;

@@ -18,8 +18,8 @@ package org.hippoecm.hst.core.linking;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.BasicLocationMapTree;
 import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.HstSiteService;
 import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -81,7 +81,7 @@ public class BasicHstLinkCreator implements HstLinkCreator {
     private HstLink create(String path, ResolvedSiteMapItem resolvedSiteMapItem, boolean representsDocument) {
      // Try to see if we can create a link within the HstSite where this HstSiteMapItem belongs to
         HstSiteMap hstSiteMap = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap();
-        HstSite hstSite = hstSiteMap.getSite();
+        HstSiteService hstSite = (HstSiteService)hstSiteMap.getSite();
         
         if(hstSite.getLocationMapTree() instanceof BasicLocationMapTree) {
             if(path.startsWith(((BasicLocationMapTree)hstSite.getLocationMapTree()).getCanonicalSiteContentPath())) {
