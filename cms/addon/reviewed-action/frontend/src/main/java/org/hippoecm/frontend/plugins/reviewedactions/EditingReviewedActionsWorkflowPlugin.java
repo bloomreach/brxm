@@ -25,12 +25,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.Session;
 import org.apache.wicket.model.StringResourceModel;
-
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -53,6 +49,8 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlugin implements IValidateService {
     @SuppressWarnings("unused")
@@ -176,17 +174,19 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 workflow.commitEditableInstance();
 
                 ((UserSession) Session.get()).getJcrSession().refresh(false);
-                
+
                 // get new instance of the workflow, previous one may have invalidated itself
                 EditingReviewedActionsWorkflowPlugin.this.getModel().detach();
-                WorkflowDescriptor descriptor = (WorkflowDescriptor)(EditingReviewedActionsWorkflowPlugin.this.getModel().getObject());
+                WorkflowDescriptor descriptor = (WorkflowDescriptor) (EditingReviewedActionsWorkflowPlugin.this
+                        .getModel().getObject());
                 ((UserSession) Session.get()).getJcrSession().refresh(true);
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow(descriptor);
 
                 Document draft = workflow.obtainEditableInstance();
                 IModelReference ref = context.getService(config.getString("model.id"), IModelReference.class);
-                ref.setModel(new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByUUID(draft.getIdentity())));
+                ref.setModel(new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByUUID(
+                        draft.getIdentity())));
 
             }
         });
@@ -196,17 +196,19 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
 
             @Override
             public void execute(Workflow wf) throws Exception {
-                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow)wf;
+                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
-                closing = true;
-                IEditor editor = context.getService(getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditor.class);
-                editor.close();
-                System.err.println("BERRY#0 "+config.getString("browser.id"));
+
+                ((UserSession) Session.get()).getJcrSession().refresh(true);
+
                 IBrowseService browser = context.getService("browser.id", IBrowseService.class);
-                System.err.println("BERRY#1 "+browser);
-                System.err.println("BERRY#2 "+((WorkflowDescriptorModel)EditingReviewedActionsWorkflowPlugin.this.getModel()));
-                System.err.println("BERRY#3 "+((WorkflowDescriptorModel)EditingReviewedActionsWorkflowPlugin.this.getModel()).getNode());
-                browser.browse(new JcrNodeModel(((WorkflowDescriptorModel)EditingReviewedActionsWorkflowPlugin.this.getModel()).getNode()));
+                browser.browse(new JcrNodeModel(((WorkflowDescriptorModel) EditingReviewedActionsWorkflowPlugin.this
+                        .getModel()).getNode()));
+
+                IEditor editor = context.getService(getPluginConfig().getString(IEditorManager.EDITOR_ID),
+                        IEditor.class);
+                closing = true;
+                editor.close();
             }
         });
     }
