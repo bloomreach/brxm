@@ -93,7 +93,7 @@ public class ReviewedActions extends RenderPlugin {
         add(new StdWorkflow("copy", "copy") {
             protected void execute() {
                 context.getService(IDialogService.class.getName(), IDialogService.class).show(new AbstractDialog() {
-                    @Override
+
                     public IModel getTitle() {
                         return new Model("Sure");
                     }
@@ -104,7 +104,7 @@ public class ReviewedActions extends RenderPlugin {
         add(new StdWorkflow("move", "move") {
             protected void execute() {
                 context.getService(IDialogService.class.getName(), IDialogService.class).show(new AbstractDialog() {
-                    @Override
+
                     public IModel getTitle() {
                         return new Model("Sure");
                     }
@@ -115,7 +115,7 @@ public class ReviewedActions extends RenderPlugin {
         add(new StdWorkflow("rename", "rename") {
             protected void execute() {
                 context.getService(IDialogService.class.getName(), IDialogService.class).show(new AbstractDialog() {
-                    @Override
+
                     public IModel getTitle() {
                         return new Model("Sure");
                     }
