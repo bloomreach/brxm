@@ -21,13 +21,25 @@ import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
-
+/**
+ * HstLinkCreator implementations must be able to create a <code>{@link HstLink}</code> for the methods
+ * <ul>
+ *  <li>{@link #create(HstSiteMapItem)}</li>
+ *  <li>{@link #create(HstSite, String)}</li>
+ *  <li>{@link #create(Node, ResolvedSiteMapItem)}</li>
+ *  <li>{@link #create(String, ResolvedSiteMapItem)}</li>
+ * </ul>
+ * 
+ * A specific implementation must be available on the <code>HstRequestContext</code> through the 
+ * {@link org.hippoecm.hst.core.request.HstRequestContext#getHstLinkCreator()}.
+ *
+ */
 public interface HstLinkCreator {
 
     /**
      * Rewrite a jcr Node to a HstLink wrt its current HstSiteMapItem
      * @param node
-     * @param siteMapItem
+     * @param resolvedSiteMapItem
      * @return HstLink 
      */
     HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem);
@@ -35,25 +47,29 @@ public interface HstLinkCreator {
     /**
      * For creating a link from a HstSiteMapItem to a HstSiteMapItem with toSiteMapItemId within the same Site
      * @param toSiteMapItemId
-     * @param currentSiteMapItem
+     * @param resolvedSiteMapItem
      * @return HstLink
      */
     HstLink create(String toSiteMapItemId, ResolvedSiteMapItem resolvedSiteMapItem);
     
     /**
      * Regardless the current context, create a HstLink to the HstSiteMapItem that you use as argument. This is only possible if the sitemap item does not
-     * contain any ancestor with a wildcard
-     * @param toHstSiteMapItem
-     * @return HstLink
+     * contain any ancestor including itself with a wildcard, because the link is ambiguous in that case. 
+     * If a wildcard is encountered, this method can return <code>null</code>, though this is up to the implementation
+     * @param toHstSiteMapItem the {@link HstSiteMapItem} to link to
+     * @return an <code>HstLink</code> instance or <code>null<code> 
      */
     HstLink create(HstSiteMapItem toHstSiteMapItem);
     
     
     /**
-     * create a link to siteMapItem of hstSite. This is only possible if the sitemap item does not
-     * contain any ancestor with a wildcard
-     * @param hstSite
-     * @param toSiteMapItemId
+     * create a link to a HstSiteMapItem with id <code>toSiteMapItemId</code> that belongs to <code>HstSite</code> hstSite.
+     * Note that the HstSite can be a different one then the current, possibly resulting in a cross-domain link. 
+     * A <code>HstLink</code> can only be created unambiguous if the <code>HstSiteMapItem</code> belonging to toSiteMapItemId does not
+     * contain any ancestor including itself with a wildcard. 
+     * If a wildcard is encountered, this method can return <code>null</code>, though this is up to the implementation
+     * @param hstSite the HstSite the toSiteMapItemId should be in
+     * @param toSiteMapItemId the id of the SiteMapItem ({@link HstSiteMapItem#getId()})
      * @return HstLink
      */
     HstLink create(HstSite hstSite, String toSiteMapItemId);
