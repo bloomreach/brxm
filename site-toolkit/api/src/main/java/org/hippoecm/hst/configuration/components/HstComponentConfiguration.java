@@ -18,27 +18,118 @@ package org.hippoecm.hst.configuration.components;
 import java.util.Map;
 import java.util.SortedMap;
 
+/**
+ * A <code>HstComponentConfiguration</code> specifies a (Java) componentClassName implementing the {@link org.hippoecm.hst.core.component.HstComponent} 
+ * interface to provide the actual behavior for content rendering and (inter)action processing.
+ * <p/>
+ * Furthermore, a <code>HstComponentConfiguration</code> can have child <code>HstComponentConfiguration</code> elements which are identified by a referenceName.
+ * This <code>referenceName</code> can be used by the {@link org.hippoecm.hst.core.component.HstComponent} and its renderer to access its children 
+ * request state and include their rendering output within its own rendering output. This referenceName is also use to build up a unique 
+ * <code>referencePath</code> to identify a specific <code>HstComponent</code> within the whole tree of the <code>HstComponent</code> elements within 
+ * the current request. It is up to the implementation to if this <code>referenceName</code> needs to be configured, or is auto-created. The 
+ * constraint to the <code>referenceName</code> is that is MUST be unique for sibbling <code>HstComponentConfiguration</code>'s. 
+ * Implementations auto-creating the <code>referenceName</code> can better use a deterministic algorithm to make sure that the same 
+ * configuration results in the same auto-created <code>referenceName</code>'s, to avoid the need of sticky sessions in a clustered environment. 
+ * Though, this is up to the implementation.
+ * <p/>
+ * The <code>referencePath</code> is derived automatically by prepending a <code>HstComponentConfiguration</code> its parent 
+ * <code>referencePath</code> to the <code>referenceName</code>,  separated by a configurable character. 
+ * As a <code>HstComponent</code> its referencePath is furthermore used to uniquely (prefix) request parameters which might end up
+ * in an external URL, a <code>referenceName</code> is not allowed to contain any of the following characters (bracket not included): 
+ * <code>[.,:/\'"?& |-+#$%~]</code>
+ * <p/>
+ * For a <code>root HstComponentConfiguration</code> however, the HstComponent referencePath will only contain the (root) ".", not 
+ * its own referenceName which is simply ignored, and as such there is no restriction on which characters are used for 
+ * it (or even that it has a value).
+ * <p/>
+ * A root <code>HstComponentConfiguration</code> on the other hand is required to have an id, uniquely identifying it among other 
+ * root HstComponentConfiguration objects. This id is used for lookup from the {@link HstComponentsConfiguration} and as reference 
+ * by a {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem}.
+ * <p/>
+ * A HstComponentConfiguration provides access to its children through a <code>SortedMap<String, HstComponentConfiguration></code>, allowing 
+ * the HST2 runtime to look them up by <code>referenceName</code> and/or <code>referencePath</code>, as well as process them in a sorted order. 
+ * As the ordering in which <code>HstComponent</code> children are processed might be significant, the <code>HstComponentConfiguration</code> 
+ * implementation is required to use a <code>SortedMap</code> implementation (like a TreeMap) which returns the children in the order 
+ * of the configuration/creation (not the "natural" ordering based only on the referenceName).
+ * <p/>
+ * A <code>HstComponentConfiguration</code> may define a <code>rendererPath</code> to a view renderer (resource) which is a 
+ * web application  context relative (possibly servlet) path to be dispatched to during rendering, for example pointing to a JSP file, 
+ * or maybe a script (like Velocity/Freemarker) to be "executed".
+ * Note: to allow repository based/stored renderer scripts, a prefix might be used for indicating scripts that live in the repository. 
+ * This is up to the implementation to provide.
+ * <p/>
+ * Finally, a <code>HstComponentConfiguration</code> may have additional parameters which are meaningful for its actual <code>HstComponent</code> 
+ * implementation, which are provided as a simple map, accessible through {@link #getParameters()}. The actual <code>HstComponent</code> 
+ * will access the <code>HstComponentConfiguration</code> through <code>
+ * {@link org.hippoecm.hst.core.request.ComponentConfiguration#getParameter(String, org.hippoecm.hst.core.request.ResolvedSiteMapItem)}
+ * </code> that can manipulate the parameter values. For example, the implementation can use some 'property placeholder' to be resolved 
+ * for the request. Typically, an <code>HstComponent</code> might be interested in some parameters from the matched 
+ * {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem} item. Suppose the matched <code>HstSiteMapItem</code> has a parameter name 
+ * <code>foo</code> with value <code>bar</code>, then a <code>HstComponentConfiguration</code> could have a parameter name called <code>lux</code>
+ * with value <code>${foo}</code>. The runtime <code>HstComponent</code> fetching the parameter <code>lux</code> could then get the resolved
+ * value <code>bar</code> returned from the matched {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem}. Obviously, the {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem}
+ * could also have the value <code>${1}</code> where ${1} might first be substituted by the matched wildcard in the <code>HstSiteMapItem</code>.
+ * Obviously, this is all up to the implementation whether to support this.
+ *  
+ * 
+ * 
+ * <p/>
+ * 
+ * 
+ */
 public interface HstComponentConfiguration {
-
-    String getId();
     
-    // unique in sibblings
+    /**
+     * Returns the id for this <code>HstComponentConfiguration</code>. The id must be unique within the container 
+     * {@link HstComponentsConfiguration}, or <code>null</code> if it is not needed to be directly accessed by the
+     * <code>HstComponentsConfiguration</code> through {@link HstComponentsConfiguration#getComponentConfiguration(String)}. 
+     * Every <code>HstComponentConfiguration</code> that can be referred to from within a {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem}
+     * must have an id.
+     * 
+     * @return the id of this HstComponentConfiguration or <code>null</code> if no id set
+     */
+    String getId();
+
+    /**
+     * Return the name of this <code>HstComponentConfiguration</code>. It <strong>must</strong> be unique amongst sibling <code>HstComponentConfiguration</code>'s.
+     * The value returned by this method, is the value that must be used in rendering code (jsp/velocity/freemarker) to include the output
+     * of a child <code>HstComponent</code> instance.
+     * 
+     * @return the logical name this HstComponentConfiguration, unique amongst its siblings
+     */
     String getName();
 
+    /**
+     * Return the referenceName of this <code>HstComponentConfiguration</code>. It <strong>must</strong> be unique amongst sibling <code>HstComponentConfiguration</code>'s.
+     * The value returned by this method, is the value that will occur as part of the <code>referencePath</code> in request parameter names
+     * 
+     * @return the referenceName this HstComponentConfiguration, unique amongst its siblings
+     */
     String getReferenceName();
 
+    /**
+     * @return the fully-qualified class name of the class implementing the {@link org.hippoecm.hst.core.component.HstComponent} interface
+     */
     String getComponentClassName();
 
+    /**
+     * @return the location of the view renderer
+     */
     String getRenderPath();
     
+    /**
+     * @return return the servletpath of the servlet that must serve the resources for this <code>HstComponent</code>
+     */
     String getServeResourcePath();
 
-    Map<String, Object> getProperties();
     
     String getParameter(String name);
     
     Map<String, String> getParameters();
     
+    /**
+     * @return all <code>HstComponentConfiguration</code> childrens, and an empty Map if no children present
+     */
     SortedMap<String, HstComponentConfiguration> getChildren();
 
 }

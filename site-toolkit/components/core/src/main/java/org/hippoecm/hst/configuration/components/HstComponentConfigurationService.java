@@ -87,6 +87,8 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         if(!getValueProvider().getPath().startsWith(configurationRootNodePath)) {
             throw new ServiceException("Node path of the component cannot start without the global components path. Skip Component");
         }
+        
+        
         this.configurationRootNodePath = configurationRootNodePath;
         // id is the relative path wrt configuration components path
         this.id = getValueProvider().getPath().substring(configurationRootNodePath.length()+1);
@@ -180,11 +182,6 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     public String getServeResourcePath() {
         return this.serveResourcePath;
     }
-
-    public Map<String, Object> getProperties() {
-        return propertyMap.getAllMapsCombined();
-    }
-    
 
     public String getParameter(String name) {
         return this.parameters.get(name);
