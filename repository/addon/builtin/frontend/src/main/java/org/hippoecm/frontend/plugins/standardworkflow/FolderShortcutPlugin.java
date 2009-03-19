@@ -36,12 +36,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -57,6 +57,7 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
@@ -203,12 +204,13 @@ public class FolderShortcutPlugin extends RenderPlugin {
 
             String workflowCategory = config.getString("gallery.workflow");
             Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+            WorkflowDescriptor folderWorkflowDescriptor = null;
             try {
                 WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
-                Workflow workflow = (folder != null ? manager.getWorkflow(workflowCategory, folder) : null);
+                folderWorkflowDescriptor = (folder != null ? manager.getWorkflowDescriptor(workflowCategory, folder) : null);
+                Workflow workflow = (folderWorkflowDescriptor != null ? manager.getWorkflow(folderWorkflowDescriptor) : null);
                 if (workflow instanceof FolderWorkflow) {
-                    FolderWorkflow folderWorkflow = (FolderWorkflow) workflow;
-                    templates = folderWorkflow.list();
+                    templates = ((FolderWorkflow) workflow).list();
                 } else {
                     folder = jcrSession.getRootNode().getNode(
                             defaultFolder.startsWith("/") ? defaultFolder.substring(1) : defaultFolder);
@@ -297,11 +299,9 @@ public class FolderShortcutPlugin extends RenderPlugin {
             categoryChoice.setOutputMarkupId(true);
 
             ok.setEnabled(false);
-            if (folder != null) {
+            if (folder != null && folderWorkflowDescriptor != null) {
                 try {
-                    List<String> categories = new LinkedList<String>();
-                    categories.add(workflowCategory);
-                    setModel(new WorkflowsModel(new JcrNodeModel(folder), categories));
+                    setModel(new WorkflowDescriptorModel(folderWorkflowDescriptor, workflowCategory, folder));
                     ok.setEnabled(true);
                 } catch (RepositoryException ex) {
                     setModel(null);
@@ -367,11 +367,10 @@ public class FolderShortcutPlugin extends RenderPlugin {
             }
             try {
                 IModel model = getModel();
-                if (model != null && model instanceof WorkflowsModel) {
+                if (model != null && model instanceof WorkflowDescriptorModel) {
                     Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
                     WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
-                    FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow(((WorkflowsModel) model)
-                            .getWorkflowDescriptor());
+                    FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow((WorkflowDescriptor)((WorkflowDescriptorModel) model).getObject());
                     if (prototype == null) {
                         error("You need to select a type");
                         return;

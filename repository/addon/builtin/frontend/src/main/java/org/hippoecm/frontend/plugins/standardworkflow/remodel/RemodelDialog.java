@@ -25,38 +25,48 @@ import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrSessionModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugins.standardworkflow.export.CndSerializer;
 import org.hippoecm.frontend.plugins.standardworkflow.export.NamespaceUpdater;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.JcrTypeStore;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow;
 import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow.TypeUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RemodelDialog extends AbstractWorkflowDialog {
+public class RemodelDialog extends CompatibilityWorkflowPlugin.Dialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(RemodelDialog.class);
 
     private RemodelWizard wizard;
+    
+    private CompatibilityWorkflowPlugin plugin;
 
-    public RemodelDialog(AbstractWorkflowPlugin plugin) {
-        super(plugin);
+    public RemodelDialog(CompatibilityWorkflowPlugin plugin) {
+        plugin . super();
+        this.plugin = plugin;
 
-        if (plugin.getModel() == null || ((WorkflowsModel) plugin.getModel()).getNodeModel().getNode() == null) {
+        try {
+        if (plugin.getModel() == null || ((WorkflowDescriptorModel) plugin.getModel()).getNode() == null) {
             add(new Label("wizard"));
         } else {
             wizard = new RemodelWizard("wizard");
             add(wizard);
+        }
+        } catch(RepositoryException ex) {
+            add(new Label("wizard"));
         }
 
         ok.setVisible(false);
@@ -78,11 +88,12 @@ public class RemodelDialog extends AbstractWorkflowDialog {
     }
 
     @Override
-    protected void execute() throws Exception {
+    protected String execute() {
+        try {
         JcrSessionModel sessionModel = ((UserSession) Session.get()).getJcrSessionModel();
 
-        WorkflowsModel wflModel = (WorkflowsModel) getPlugin().getModel();
-        Node node = wflModel.getNodeModel().getNode();
+        WorkflowDescriptorModel wflModel = (WorkflowDescriptorModel) plugin.getModel();
+        Node node = wflModel.getNode();
         String namespace = node.getName();
 
         CndSerializer serializer = new CndSerializer(sessionModel, namespace);
@@ -108,17 +119,14 @@ public class RemodelDialog extends AbstractWorkflowDialog {
 
         sessionModel.getSession().save();
 
-        TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) getWorkflow();
+        WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+        TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) manager.getWorkflow((WorkflowDescriptor) wflModel.getObject());
         if (workflow != null) {
             log.info("remodelling namespace " + namespace);
             try {
                 /* String[] nodes = */
                 workflow.updateModel(namespace, cnd, update);
                 sessionModel.getSession().save();
-
-                // log out; the session model will log in again.
-                // Sessions cache path resolver information, which is incorrect after remapping the prefix.
-                sessionModel.flush();
             } catch (RepositoryException ex) {
                 // log out; the session model will log in again.
                 // Sessions cache path resolver information, which is incorrect after remapping the prefix.
@@ -128,6 +136,10 @@ public class RemodelDialog extends AbstractWorkflowDialog {
             }
         } else {
             log.warn("no remodeling workflow available on selected node");
+        }
+        return null;
+        } catch(Exception ex) {
+            return ex.getClass().getName()+": "+ex.getMessage();
         }
     }
 }

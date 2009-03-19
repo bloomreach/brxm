@@ -252,6 +252,12 @@ public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implement
         }
     }
 
+    public Workflow getWorkflow() throws MappingException, RepositoryException {
+        final WorkflowDescriptorModel workflowModel = (WorkflowDescriptorModel)CompatibilityWorkflowPlugin.this.getModel();
+        WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+        return manager.getWorkflow((WorkflowDescriptor)(workflowModel.getObject()));
+    }
+    
     public abstract class Dialog extends AbstractDialog implements IStringResourceProvider {
         private static final long serialVersionUID = 1L;
 
@@ -388,33 +394,32 @@ public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implement
 
     public abstract class DateDialog extends Dialog {
 
-    protected Date date;
+        protected Date date;
 
-    protected Button now;
+        protected Button now;
 
-    public DateDialog(IModel question, Date date) {
-        super();
-        this.date = date;
+        public DateDialog(IModel question, Date date) {
+            super();
+            this.date = date;
 
-        add(new Label("question", question));
+            add(new Label("question", question));
 
-        add(new AjaxDateTimeField("value", new PropertyModel(this, "date")));
+            add(new AjaxDateTimeField("value", new PropertyModel(this, "date")));
 
-        now = new AjaxButton(getButtonId(), this) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onSubmit(AjaxRequestTarget target, Form form) {
-                DateDialog.this.date = null;
-                onOk();
-                if (!hasError()) {
-                    closeDialog();
-                }
-            }
-        }.setDefaultFormProcessing(false);
-        now.add(new Label("label", new ResourceModel("now", "Now")));
-        addButton(now);
+            now = new AjaxButton(getButtonId(), this) {
+                    private static final long serialVersionUID = 1L;
+                    
+                    @Override
+                        public void onSubmit(AjaxRequestTarget target, Form form) {
+                        DateDialog.this.date = null;
+                        onOk();
+                        if (!hasError()) {
+                            closeDialog();
+                        }
+                    }
+                }.setDefaultFormProcessing(false);
+            now.add(new Label("label", new ResourceModel("now", "Now")));
+            addButton(now);
+        }
     }
-}
-
 }

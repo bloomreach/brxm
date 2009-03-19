@@ -15,29 +15,32 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.rmi.RemoteException;
 import javax.jcr.Node;
 
+import javax.jcr.RepositoryException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.AbstractNameDialog;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultWorkflowPlugin extends AbstractWorkflowPlugin {
+public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -59,7 +62,7 @@ public class DefaultWorkflowPlugin extends AbstractWorkflowPlugin {
 
             @Override
             public void execute(Workflow wf) throws Exception {
-                Node handleNode = ((WorkflowsModel)DefaultWorkflowPlugin.this.getModel()).getNodeModel().getNode();
+                Node handleNode = ((WorkflowDescriptorModel)DefaultWorkflowPlugin.this.getModel()).getNode();
                 Node docNode = handleNode.getNodes(handleNode.getName()).nextNode();
                 IEditorManager viewer = getPluginContext().getService(getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
                 if (viewer != null) {
@@ -94,13 +97,24 @@ public class DefaultWorkflowPlugin extends AbstractWorkflowPlugin {
 
             public AbstractDialog createDialog() {
 
-                return new AbstractNameDialog(DefaultWorkflowPlugin.this, renameTitle, renameText, "") {
+                return new NameDialog(renameTitle, renameText, "") {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected void execute() throws Exception {
+                    protected String execute() {
+                        try {
                         DefaultWorkflow workflow = (DefaultWorkflow) getWorkflow();
                         workflow.rename(NodeNameCodec.encode(name, true));
+                        return null;
+                        } catch(MappingException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(RepositoryException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(WorkflowException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(RemoteException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        }
                     }
                 };
             }
@@ -109,8 +123,12 @@ public class DefaultWorkflowPlugin extends AbstractWorkflowPlugin {
 
     @Override
     public void onModelChanged() {
+        try {
         super.onModelChanged();
-        WorkflowsModel model = (WorkflowsModel) getModel();
-        caption = new NodeTranslator(model.getNodeModel()).getNodeName();
+        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getModel();
+        caption = new NodeTranslator(new JcrNodeModel(model.getNode())).getNodeName();
+        } catch(RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
     }
 }
