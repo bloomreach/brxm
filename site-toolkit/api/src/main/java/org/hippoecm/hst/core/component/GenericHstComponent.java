@@ -38,9 +38,8 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
  * </ul>
  * <strong>NOTE:</strong> <code>HstComponent</code>'s typically run on multithreaded servers, so take care that a
  * HstComponent must handle concurrent requests and be careful to synchronize access
- * to shared resources. Shared resources include in-memory data such as instance
- * or class variables and external objects such as files, database connections,
- * and network connections.
+ * to shared resources (in other words, be thread safe, see {@link HstComponent}). Shared resources include in-memory data such as 
+ * instance or class variables and external objects such as files, database connections, and network connections. 
  * 
  * @version $Id$
  */
