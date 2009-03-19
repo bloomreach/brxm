@@ -21,8 +21,10 @@ import org.hippoecm.hst.configuration.HstSite;
  * Implementations should be able to match a path (pathInfo) in combination with a <code>{@link HstSite}</code> object to a
  * <code>{@link ResolvedSiteMapItem}</code>. Typically a <code>ResolvedSiteMapItem</code> is a request context based instance of a
  * <code>{@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem}</code>, where possibly property placeholders in <code>{@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem#getParameters()}</code>
- * are replaced by there request context sensitive values. For example, a ${1} parameter value might be replaced by the value that matched
+ * are replaced by their request context sensitive values. For example, a ${1} parameter value might be replaced by the value that matched
  * to the first <code>HstSiteMapItem</code> containing a wildcard. 
+ * <p/>
+ * Note: the {@link ResolvedSiteMapItem} is accessible by every <code>HstComponent</code> instance through the <code>HstRequestContext</code>
  * <p/>
  * When no <code>HstSiteMapItem</code> can be found to match the <code>pathInfo</code>, the implementation can return null for the 
  * {@link #match(String, HstSite)}, but is also allowed to return some catch all <code>ResolvedSiteMapItem</code>
