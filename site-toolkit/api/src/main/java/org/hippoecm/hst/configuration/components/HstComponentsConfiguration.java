@@ -17,10 +17,29 @@ package org.hippoecm.hst.configuration.components;
 
 import java.util.Map;
 
+/**
+ * A <code>HstComponentConfigurations</code> contains a map of (root) <code>HstComponentConfiguration</code> objects which themselves might 
+ * contain additional <code>HstComponentConfiguration</code> children and so on.
+ * Each root <code>HstComponentConfiguration</code> is identified by a unique id within the <code>HstComponentConfiguration<'/code>s object. 
+ *
+ */
 public interface HstComponentsConfiguration {
 
+    /**
+     * Return the map of all root <code>HstComponentConfiguration</code>'s where the keys are the the <code>HstComponentConfiguration</code>'s 
+     * ({@link HstComponentConfiguration#getId()})
+     * @return the map of all root <code>HstComponentConfiguration</code>'s and an empty map 
+     * if not root <code>HstComponentConfiguration</code>'s are present. The keys in the map are the id's of the <code>HstComponentConfiguration</code>'s 
+     * ({@link HstComponentConfiguration#getId()})
+     */
     Map<String, HstComponentConfiguration> getComponentConfigurations();
 
+    /**
+     * Returns the root <code>HstComponentConfiguration</code> whose {@link HstComponentConfiguration#getId()} equals this <code>id</code>.
+     * @param id the id of the root <code>HstComponentConfiguration</code>
+     * @return a root <code>HstComponentConfiguration</code> whose {@link HstComponentConfiguration#getId()} equals this <code>id</code>. 
+     * When there is no <code>HstComponentConfiguration</code> with this <code>id</code>, <code>null</code>  is returned.
+     */
     HstComponentConfiguration getComponentConfiguration(String id);
 
 }
