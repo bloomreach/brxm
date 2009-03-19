@@ -30,8 +30,8 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    String path;
-    String category;
+    private String path;
+    private String category;
 
     public WorkflowDescriptorModel(WorkflowDescriptor descriptor, String category, Node subject) throws RepositoryException {
         super(descriptor);
@@ -43,7 +43,7 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel {
         try {
             Session session = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
             WorkflowManager workflowManager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
-            return workflowManager.getWorkflowDescriptor(category, session.getRootNode().getNode(path.substring(1)));
+            return workflowManager.getWorkflowDescriptor(category, getNode(session));
         } catch (RepositoryException ex) {
             System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
             ex.printStackTrace(System.err);
@@ -51,9 +51,33 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel {
         }
     }
     
-    /** @deprecated */
+    /** @deprecated by design FIXME */
     public Node getNode() throws RepositoryException {
         Session session = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
-        return session.getRootNode().getNode(path.substring(1));
+        return getNode(session);
+    }
+
+    private Node getNode(Session session) throws RepositoryException {
+        Node node = session.getRootNode();
+        String relPath = path.substring(1);
+        if (node.hasNode(relPath)) {
+            return node.getNode(path.substring(1));
+        } else if (relPath.contains("/")) {
+            // FIXME should be more intelligent
+            int pos = relPath.lastIndexOf("/");
+            if (pos < 0) {
+                return null;
+            }
+            String name = relPath.substring(pos + 1);
+            if (name.contains("[")) {
+                name = name.substring(0, name.lastIndexOf("["));
+            }
+            relPath = relPath.substring(0, pos);
+            node = node.getNode(relPath);
+            node = node.getNode(name);
+            return node;
+        } else {
+            return null;
+        }
     }
 }

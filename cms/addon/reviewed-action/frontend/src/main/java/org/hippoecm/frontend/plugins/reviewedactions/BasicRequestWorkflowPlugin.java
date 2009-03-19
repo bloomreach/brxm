@@ -24,21 +24,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
 
 
-public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
+public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -78,10 +76,10 @@ public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        WorkflowsModel model = (WorkflowsModel) getModel();
+        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getModel();
         schedule = null;
         try {
-            Node node = model.getNodeModel().getNode();
+            Node node = model.getNode();
             Node child = null;
             if (node.isNodeType(HippoNodeType.NT_DOCUMENT) && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                 node = node.getParent();

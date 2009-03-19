@@ -18,11 +18,11 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
@@ -31,7 +31,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditingDefaultWorkflowPlugin extends AbstractWorkflowPlugin {
+public class EditingDefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -52,7 +52,7 @@ public class EditingDefaultWorkflowPlugin extends AbstractWorkflowPlugin {
 
             public Object preClose() {
                 try {
-                    ((WorkflowsModel) getModel()).getNodeModel().getNode().save();
+                    ((WorkflowDescriptorModel) getModel()).getNode().save();
                     return new Object();
                 } catch (RepositoryException ex) {
                     log.info(ex.getMessage());
@@ -68,7 +68,7 @@ public class EditingDefaultWorkflowPlugin extends AbstractWorkflowPlugin {
 
             @Override
             public void execute(Workflow wf) throws Exception {
-                ((WorkflowsModel) getModel()).getNodeModel().getNode().save();
+                ((WorkflowDescriptorModel) getModel()).getNode().save();
             }
         });
     }

@@ -25,8 +25,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.Session;
 import org.apache.wicket.model.StringResourceModel;
+
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -37,10 +41,11 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.OnCloseDialog;
 import org.hippoecm.frontend.service.EditorException;
+import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
+import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IValidateService;
-import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoSession;
@@ -48,8 +53,6 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlugin implements IValidateService {
     @SuppressWarnings("unused")
@@ -164,7 +167,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
 
         }, context.getReference(editor).getServiceId());
 
-        addWorkflowAction("save", new StringResourceModel("save", this, null), new WorkflowAction() {
+        addWorkflowAction("save", new StringResourceModel("save", this, null, "Save"), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -172,6 +175,8 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
 
+                ((UserSession) Session.get()).getJcrSession().refresh(false);
+                
                 // get new instance of the workflow, previous one may have invalidated itself
                 EditingReviewedActionsWorkflowPlugin.this.getModel().detach();
                 WorkflowDescriptor descriptor = (WorkflowDescriptor)(EditingReviewedActionsWorkflowPlugin.this.getModel().getObject());
@@ -181,10 +186,28 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
 
                 Document draft = workflow.obtainEditableInstance();
                 IModelReference ref = context.getService(config.getString("model.id"), IModelReference.class);
-                ref.setModel(new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByUUID(
-                        draft.getIdentity())));
-            }
+                ref.setModel(new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByUUID(draft.getIdentity())));
 
+            }
+        });
+
+        addWorkflowAction("done", new StringResourceModel("done", this, null, "Done"), new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void execute(Workflow wf) throws Exception {
+                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow)wf;
+                workflow.commitEditableInstance();
+                closing = true;
+                IEditor editor = context.getService(getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditor.class);
+                editor.close();
+                System.err.println("BERRY#0 "+config.getString("browser.id"));
+                IBrowseService browser = context.getService("browser.id", IBrowseService.class);
+                System.err.println("BERRY#1 "+browser);
+                System.err.println("BERRY#2 "+((WorkflowDescriptorModel)EditingReviewedActionsWorkflowPlugin.this.getModel()));
+                System.err.println("BERRY#3 "+((WorkflowDescriptorModel)EditingReviewedActionsWorkflowPlugin.this.getModel()).getNode());
+                browser.browse(new JcrNodeModel(((WorkflowDescriptorModel)EditingReviewedActionsWorkflowPlugin.this.getModel()).getNode()));
+            }
         });
     }
 

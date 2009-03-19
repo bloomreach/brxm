@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -31,24 +32,25 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IValidateService;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.Workflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implements IValidateService {
+public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin implements IValidateService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -79,8 +81,7 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implem
 
             public Object preClose() {
                 try {
-                    JcrNodeModel nodeModel = ((WorkflowsModel) getModel()).getNodeModel();
-                    Node node = nodeModel.getNode();
+                    Node node = ((WorkflowDescriptorModel) getModel()).getNode();
                     boolean dirty = node.isModified();
                     if (!dirty) {
                         HippoSession session = (HippoSession) node.getSession();
@@ -131,23 +132,12 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implem
     }
 
     void doSave() throws Exception {
-        WorkflowsModel model = (WorkflowsModel) getModel();
-        final JcrNodeModel nodeModel = model.getNodeModel();
-        if (nodeModel.getNode() != null) {
-            nodeModel.getNode().getSession().save();
-        } else {
-            log.error("Node does not exist");
-        }
+        ((UserSession) Session.get()).getJcrSession().save();
     }
     
     void doRevert() throws Exception {
-        WorkflowsModel model = (WorkflowsModel) TemplateEditingWorkflowPlugin.this.getModel();
-        JcrNodeModel nodeModel = model.getNodeModel();
-        if (nodeModel.getNode() != null) {
-            nodeModel.getNode().refresh(false);
-        } else {
-            log.error("Node does not exist");
-        }
+        WorkflowDescriptorModel model = (WorkflowDescriptorModel) TemplateEditingWorkflowPlugin.this.getModel();
+        model.getNode().refresh(false);
     }
     
     public boolean hasError() {
@@ -161,7 +151,7 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implem
         validated = true;
         isvalid = true;
         try {
-            Node node = ((WorkflowsModel) getModel()).getNodeModel().getNode();
+            Node node = ((WorkflowDescriptorModel) getModel()).getNode();
             if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
                 NodeIterator ntNodes = node.getNode(HippoNodeType.HIPPO_NODETYPE)
                         .getNodes(HippoNodeType.HIPPO_NODETYPE);
@@ -198,10 +188,6 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implem
         }
     }
 
-    JcrNodeModel getNodeModel() {
-        return ((WorkflowsModel) getModel()).getNodeModel();
-    }
-    
     @Override
     protected void onModelChanged() {
         validated = false;
@@ -251,8 +237,12 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implem
         }
 
         public IModel getTitle() {
+            try {
             return new StringResourceModel("close-document", this, null, new Object[] { new PropertyModel(
-                    TemplateEditingWorkflowPlugin.this.getNodeModel(), "name") }, "Close {0}");
+                    ((WorkflowDescriptorModel)TemplateEditingWorkflowPlugin.this.getModel()).getNode(), "name") }, "Close {0}");
+            } catch(RepositoryException ex) {
+                return new StringResourceModel("close-document", this, null, new Object[] { });
+            }
         }
 
     }

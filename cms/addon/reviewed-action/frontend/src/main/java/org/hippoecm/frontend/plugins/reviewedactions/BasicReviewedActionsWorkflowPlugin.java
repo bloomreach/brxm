@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.beans.Visibility;
+import java.rmi.RemoteException;
 import java.util.Date;
 
 import javax.jcr.Node;
@@ -26,29 +28,31 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
+public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -187,12 +191,23 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected void execute() throws Exception {
+                    protected String execute() {
+                        try {
                         BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow();
                         if (date != null) {
                             workflow.requestPublication(date);
                         } else {
                             workflow.requestPublication();
+                        }
+                        return null;
+                        } catch(MappingException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(RepositoryException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(WorkflowException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(RemoteException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
                         }
                     }
 
@@ -221,12 +236,23 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected void execute() throws Exception {
+                    protected String execute() {
+                        try {
                         BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow();
                         if (date != null) {
                             workflow.requestDepublication(date);
                         } else {
                             workflow.requestDepublication();
+                        }
+                        return null;
+                        } catch(MappingException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(RepositoryException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(WorkflowException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        } catch(RemoteException ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
                         }
                     }
 
@@ -243,9 +269,9 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     public void onModelChanged() {
         super.onModelChanged();
 
-        WorkflowsModel model = (WorkflowsModel) getModel();
+        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getModel();
         try {
-            JcrNodeModel nodeModel = model.getNodeModel();
+            JcrNodeModel nodeModel = new JcrNodeModel(model.getNode());
             caption = new NodeTranslator(nodeModel).getNodeName();
 
             Node node = nodeModel.getNode();

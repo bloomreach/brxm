@@ -15,11 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 
-public class NullWorkflowPlugin extends AbstractWorkflowPlugin {
+public class NullWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

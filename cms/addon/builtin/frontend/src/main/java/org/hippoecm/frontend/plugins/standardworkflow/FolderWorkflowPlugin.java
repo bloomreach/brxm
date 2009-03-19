@@ -17,17 +17,15 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.AbstractNameDialog;
-import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.IDialogFactory;
-import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
@@ -52,24 +50,29 @@ public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog() {
-                return new AbstractWorkflowDialog(FolderWorkflowPlugin.this) {
+                return new CompatibilityWorkflowPlugin.Dialog() {
                     @Override
-                    protected void execute() throws Exception {
+                    protected String execute() {
+                        try {
                         // FIXME: this assumes that folders are always embedded in other folders
                         // and there is some logic here to look up the parent.  The real solution is
                         // in the visual component to merge two workflows.
-                        WorkflowsModel model = (WorkflowsModel) FolderWorkflowPlugin.this.getModel();
-                        Node node = model.getNodeModel().getNode();
+                        WorkflowDescriptorModel model = (WorkflowDescriptorModel) FolderWorkflowPlugin.this.getModel();
+                        Node node = model.getNode();
                         WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
                         workflow.delete(node.getName() + "[" + node.getIndex() + "]");
+                        return null;
+                        } catch(Exception ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        }
                     }
                     
                     public IModel getTitle() {
                         StringResourceModel text;
                         try {
-                            Object[] params = new Object[] { ((WorkflowsModel) FolderWorkflowPlugin.this.getModel())
-                                    .getNodeModel().getNode().getName() };
+                            Object[] params = new Object[] { ((WorkflowDescriptorModel) FolderWorkflowPlugin.this.getModel())
+                                    .getNode().getName() };
                             text = new StringResourceModel("delete-message-extended", this, null, params);
                         } catch (RepositoryException ex) {
                             text = new StringResourceModel("delete-message", this, null);
@@ -87,19 +90,24 @@ public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog() {
-                return new AbstractNameDialog(FolderWorkflowPlugin.this, renameTitle, renameText, "") {
+                return new NameDialog(renameTitle, renameText, "") {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected void execute() throws Exception {
+                    protected String execute() {
+                        try {
                         // FIXME: this assumes that folders are always embedded in other folders
                         // and there is some logic here to look up the parent.  The real solution is
                         // in the visual component to merge two workflows.
-                        WorkflowsModel model = (WorkflowsModel) FolderWorkflowPlugin.this.getModel();
-                        Node node = model.getNodeModel().getNode();
+                        WorkflowDescriptorModel model = (WorkflowDescriptorModel) FolderWorkflowPlugin.this.getModel();
+                        Node node = model.getNode();
                         WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
                         workflow.rename(node.getName() + "[" + node.getIndex() + "]", NodeNameCodec.encode(name, true));
+                        return null;
+                        } catch(Exception ex) {
+                            return ex.getClass().getName()+": "+ex.getMessage();
+                        }
                     }
                 };
             }
