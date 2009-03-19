@@ -527,7 +527,7 @@
       <sv:value>service.browse</sv:value>
     </sv:property>
     <sv:property sv:name="search.paths" sv:type="String">
-      <sv:value>/content</sv:value>
+      <sv:value>/content/documents</sv:value>
     </sv:property>
     <sv:property sv:name="ignore.chars" sv:type="String">
       <sv:value>*</sv:value>
@@ -763,7 +763,7 @@
       <sv:value>model.browse.document</sv:value>
     </sv:property>
     <sv:property sv:name="model.folder.root" sv:type="String">
-      <sv:value>/content</sv:value>
+      <sv:value>/content/documents</sv:value>
     </sv:property>
     <sv:property sv:name="perspective.title" sv:type="String">
       <sv:value>browse-perspective-title</sv:value>

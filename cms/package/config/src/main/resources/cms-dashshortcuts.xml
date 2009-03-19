@@ -40,7 +40,7 @@
       <sv:value>model.browse.folder</sv:value>
     </sv:property>
     <sv:property sv:name="gotolink.default" sv:type="String">
-      <sv:value>/content</sv:value>
+      <sv:value>/content/documents</sv:value>
     </sv:property>
     <sv:property sv:name="model.document" sv:type="String">
       <sv:value>${model.document}</sv:value>
@@ -67,7 +67,7 @@
       <sv:value>model.browse.folder</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.default" sv:type="String">
-      <sv:value>/content</sv:value>
+      <sv:value>/content/documents</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.workflow" sv:type="String">
       <sv:value>shortcuts</sv:value>
