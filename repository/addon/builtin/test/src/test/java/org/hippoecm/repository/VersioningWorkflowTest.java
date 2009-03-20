@@ -162,6 +162,7 @@ public class VersioningWorkflowTest extends TestCase {
         node.checkout();
         node.setProperty("hippostd:holder", node.getProperty("hippostd:holder").getString() + ".");
         session.save();
+        session.refresh(false);
         versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
         Map<Calendar, Set<String>> history = versionwf.list();
         int count = 0;
