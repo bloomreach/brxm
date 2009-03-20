@@ -58,7 +58,6 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         if (node.hasNode("versioning")) {
             node.getNode("versioning").remove();
         }
-        node = node.addNode("versioning");
         node = node.addNode("versioning", "hippo:workflowcategory");
         node = node.addNode("version", "hippo:workflow");
         node.setProperty("hippo:nodetype", "hippo:document");
