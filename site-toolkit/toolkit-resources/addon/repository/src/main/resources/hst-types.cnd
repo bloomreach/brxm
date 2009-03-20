@@ -53,12 +53,26 @@
 [hst:sitemap] orderable
 + * (hst:sitemapitem)
 
+[hst:sitemenuitem] orderable
+- hst:name (string)
+- hst:referencesitemapitem (string)
+- hst:foldersonly (boolean)
++ * (hst:sitemenuitem)
+
+[hst:sitemenu] orderable
+- hst:name (string)
++ * (hst:sitemenuitem)
+
+[hst:sitemenus]
++ * (hst:sitemenu) 
+
 
 [hst:configuration] > hippo:document, hippostd:publishable, hippostd:publishableSummary, hippostd:languageable
 + hst:components (hst:components) = hst:components
 + hst:pages (hst:pages) = hst:pages 
 + hst:sitemap (hst:sitemap) = hst:sitemap  
 + hst:templates (hst:templates) = hst:templates
++ hst:sitemenus (hst:sitemenus) = hst:sitemenus
 
 
 [hst:redirectmapping]
