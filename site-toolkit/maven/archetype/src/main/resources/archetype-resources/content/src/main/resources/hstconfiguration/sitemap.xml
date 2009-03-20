@@ -24,9 +24,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hst:partofmenu</sv:value>
-        </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>hst:pages/home</sv:value>
         </sv:property>
@@ -37,9 +34,6 @@
     <sv:node sv:name="about">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hst:partofmenu</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>hst:pages/about</sv:value>

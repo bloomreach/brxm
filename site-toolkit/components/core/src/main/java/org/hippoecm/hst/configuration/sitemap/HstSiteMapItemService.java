@@ -66,10 +66,6 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     private HstSiteMapItemService parentItem;
     
-    private boolean isRepositoryBased;
-    
-    private boolean isVisible;
-    
     private Map<String,String> parameters = new HashMap<String,String>();
     
     private List<HstSiteMapItemService> containsWildCardChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
@@ -153,36 +149,6 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
                    this.parameters.put(parameterNames[i], parameterValues[i]);
                }
            }
-        }
-        
-        try {
-            Node n = this.getValueProvider().getJcrNode();
-            if(n.isNodeType(Configuration.SITEMAPITEM_MIXIN_PARTOFMENU)) {
-                if(this.isWildCard() || containsAny || containsWildCard) {
-                    log.warn("Setting isvisible mixin on a wildcard (*) sitemap item has no meaning. Skipping");
-                } else if(this.getParentItem()!= null) {
-                    if(this.getParentItem().isVisible()) {
-                        this.isVisible = true;
-                    } else {
-                        log.warn("SiteMapItem '{}' cannot be visible if parent item is not visible. Ignore visible", nodePath);
-                    }
-                } else {
-                    this.isVisible = true;
-                }
-            } 
-            if(n.isNodeType(Configuration.SITEMAPITEM_MIXIN_REPOSITORYBASED)) {
-                if(this.isWildCard()) {
-                    if(this.getParentItem() != null && this.getParentItem().isVisible()) {
-                        // set repository based and visible on true
-                        this.isRepositoryBased = true;
-                        this.isVisible = true;
-                    }
-                } else {
-                    log.warn("A repositorybased mixin does only have meaning on a SiteMapItem '*'. Skipping repository based for '{}'", nodePath);
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("RepositoryException : ", e);
         }
         
         this.relativeContentPath = getValueProvider().getString(Configuration.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
@@ -277,15 +243,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     public boolean isAny() {
         return this.isAny;
     }
-    
-    public boolean isRepositoryBased() {
-        return isRepositoryBased;
-    }
-
-    public boolean isVisible() {
-        return isVisible;
-    }
-    
+  
     public HstSiteMap getHstSiteMap() {
         return this.hstSiteMap;
     }

@@ -18,10 +18,6 @@
 <hippostd='http://www.hippoecm.org/hippostd/nt/1.2'>
 <hippo='http://www.hippoecm.org/nt/1.2'>
 
-[hst:partofmenu] mixin
-
-[hst:repositorybased] mixin
-
 [hst:template]
 - hst:renderpath (string)
 - hst:containers (string) multiple

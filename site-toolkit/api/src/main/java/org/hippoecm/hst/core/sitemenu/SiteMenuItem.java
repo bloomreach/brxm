@@ -38,7 +38,7 @@ public interface SiteMenuItem extends Serializable{
     
     /**
      * 
-     * @return a HstLink that contains a proper link for this SiteMenuItem
+     * @return a HstLink that contains a link for this SiteMenuItem
      */
     HstLink getHstLink();
     
