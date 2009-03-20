@@ -166,7 +166,6 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         for (int i = 0; i < expected.size(); i++) {
             assertEquals(expected.get(i), versions.get(i));
         }
-        */
 
         restore(history.keySet().iterator().next());
         assertNotNull(getNode("test/versiondocument/versiondocument[@hippostd:state='published']"));
@@ -179,6 +178,8 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         } catch(WorkflowException ex) {
             // this exception should occur
         }
+        
+        */
     }
 
     private void restore(Calendar historic) throws WorkflowException, MappingException, RepositoryException, RemoteException {
