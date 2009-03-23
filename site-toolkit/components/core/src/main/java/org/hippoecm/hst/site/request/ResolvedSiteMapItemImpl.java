@@ -18,22 +18,35 @@ package org.hippoecm.hst.site.request;
 import java.util.Properties;
 import java.util.Map.Entry;
 
+import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.sitemenu.SiteMenus;
 import org.hippoecm.hst.core.util.PropertyParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
-    
+
+    private final static Logger log = LoggerFactory.getLogger(ResolvedSiteMapItemImpl.class);
     private HstSiteMapItem hstSiteMapItem;
     private Properties resolvedParameters;
     private String relativeContentPath;
     private HstComponentConfiguration hstComponentConfiguration;
     
     public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params) {
+       HstSite hstSite = hstSiteMapItem.getHstSiteMap().getSite();
        this.hstSiteMapItem = hstSiteMapItem;
-       this.hstComponentConfiguration = hstSiteMapItem.getHstSiteMap().getSite().getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
-
+       if(hstSiteMapItem.getComponentConfigurationId() == null) {
+           log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the sitemap item '{}' does not have a component configuration id.", hstSiteMapItem.getId());
+       } else {
+           this.hstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
+           if(hstComponentConfiguration == null) {
+               log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the component configuration id cannot be found.", hstSiteMapItem.getComponentConfigurationId());
+           }
+       }
+       
        /*
         * We take the properties form the hstSiteMapItem getParameters and replace params (like ${1}) with the params[] array 
         */
@@ -50,6 +63,14 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
        }
        relativeContentPath = (String)pp.resolveProperty("relativeContentPath", hstSiteMapItem.getRelativeContentPath());
 
+       /*
+        * Now, make request based instances of the sitemenu configurations, and make this accessible through the resolved sitemap item. 
+        */
+       
+       
+       /*
+        * Now, according the current matched hstSiteMapItem, set the correct sitemenu instances on 'selected = true'
+        */
     }
     
     
@@ -72,6 +93,11 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
 
     public String getRelativeContentPath() {
         return relativeContentPath;
+    }
+
+
+    public SiteMenus getSiteMenus() {
+        return null;
     }
   
 }

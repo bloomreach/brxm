@@ -13,14 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.request.sitemenu;
+package org.hippoecm.hst.core.sitemenu;
 
 import java.io.Serializable;
 import java.util.Map;
 
 /**
- * Implementation of this interface is the container of all the <code>{@link SiteMenu}</code>'s that are needed in the frontend.
- * 
+ * Implementation of this interface is the container of all the <code>{@link SiteMenu}</code>'s that are needed to build site menus.
+ * The implementations of this class, and of <code>{@link SiteMenu}</code> and <code>{@link SiteMenuItem}</code>, are the request context based instances of their
+ * configuration equivalences, <code>{@link SiteMenusConfiguration}</code>'s, <code>{@link SiteMenuConfiguration}</code>'s and <code>{@link SiteMenuItemConfiguration}</code>'s
+ * <p/>
+ * The configuration parts are the request independent objects, while this package contains the request dependent instances, which typically
+ * have the configuration as their template from which these instances are created. 
  */
 public interface SiteMenus extends Serializable{
 

@@ -19,6 +19,7 @@ import java.util.Properties;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.sitemenu.SiteMenus;
 
 /**
  * An instance of the implementation of this interface will be available on the <code>{@link HstRequestContext}</code>. It has a reference
@@ -66,4 +67,11 @@ public interface ResolvedSiteMapItem {
      * @return the <code>HstComponentConfiguration</code> that is found through {@link #getHstSiteMapItem()}
      */
     HstComponentConfiguration getHstComponentConfiguration();
+    
+    /**
+     * Through an implementation of this interface, access to a <code>SiteMenus</code> implementation can be provided. If a frontend does
+     * not use a <code>SiteMenus</code> implementation, <code>null</code> can be returned
+     * @return the <code>SiteMenus</code> instance for the current request or <code>null</code> if the application does not use a site menu from the framework
+     */
+    SiteMenus getSiteMenus();
 }

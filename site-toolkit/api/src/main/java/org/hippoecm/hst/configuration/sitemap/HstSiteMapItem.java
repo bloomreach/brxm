@@ -73,7 +73,7 @@ public interface HstSiteMapItem {
      * If a HstSiteMapItem can be used to resolve a url, it must have a componentConfigurationId referencing 
      * the component configuration the will handle the request processing. This component configuration can be
      * the root of a component configuration tree, see {@link HstComponentConfiguration}.
-     * @return the componentConfigurationId for this <code>SiteMapItem</code>
+     * @return the componentConfigurationId for this <code>SiteMapItem</code> or <code>null</code>
      */
     String getComponentConfigurationId();
     
