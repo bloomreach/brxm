@@ -35,11 +35,13 @@ public class BoilerPlateTest extends TestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        // add test specific setup code here
     }
 
     @Override
     @After
     public void tearDown() throws Exception {
+        // add test specific teardown code here
         super.tearDown();
     }
     
@@ -52,3 +54,4 @@ public class BoilerPlateTest extends TestCase {
         assertTrue("super.setUp failed to create session", session.isLive());
     }
 }
+
