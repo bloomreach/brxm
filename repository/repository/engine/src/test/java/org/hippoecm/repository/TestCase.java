@@ -15,9 +15,14 @@
  */
 package org.hippoecm.repository;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -110,8 +115,9 @@ public abstract class TestCase
     }
 
     protected void setUp(boolean clearRepository) throws Exception {
-        if(clearRepository)
+        if(clearRepository) {
             clear();
+        }
         if (external != null) {
             server = external;
         } else {
@@ -121,7 +127,14 @@ public abstract class TestCase
         while (session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
             session.save();
+            session.refresh(false);
         }
+        assertFalse("Setup failed to cleanup test node", session.getRootNode().hasNode("test"));
+        assertTrue("Missig jcr:system node", session.getRootNode().hasNode("jcr:system"));
+        //assertTrue("Missig hippo:log node", session.getRootNode().hasNode("hippo:log"));
+        //assertTrue("Missig hippo:namespaces node", session.getRootNode().hasNode("hippo:namespaces"));
+        assertTrue("Missig hippo:configuration node", session.getRootNode().hasNode("hippo:configuration"));
+        //assertEquals("Found more than five subnodes of the root node, probably the previous test didn't cleanup it's test nodes.", 4L, session.getRootNode().getNodes().getSize());
     }
     
     @After
@@ -143,8 +156,9 @@ public abstract class TestCase
             server.close();
             server = null;
         }
-        if(clearRepository)
+        if(clearRepository) {
             clear();
+        }
     }
 
     protected void build(Session session, String[] contents) throws RepositoryException {

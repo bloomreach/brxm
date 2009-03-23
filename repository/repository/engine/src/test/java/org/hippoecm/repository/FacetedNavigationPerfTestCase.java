@@ -23,18 +23,31 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.testutils.history.HistoryWriter;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class FacetedNavigationPerfTestCase extends FacetedNavigationAbstractTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+    
     @Test
     public void testPerformance() throws RepositoryException, IOException {
         int[] numberOfNodesInTests = new int[] { 500 };
         for (int i = 0; i < numberOfNodesInTests.length; i++) {
-            numDocs = numberOfNodesInTests[i];
-            Node node = commonStart();
+            commonStart(numberOfNodesInTests[i]);
+            Node node = getSearchNode();
             long count, tBefore, tAfter;
             tBefore = System.currentTimeMillis();
             node = node.getNode("x1");
@@ -43,23 +56,22 @@ public class FacetedNavigationPerfTestCase extends FacetedNavigationAbstractTest
             node = node.getNode(HippoNodeType.HIPPO_RESULTSET);
             count = node.getProperty(HippoNodeType.HIPPO_COUNT).getLong();
             tAfter = System.currentTimeMillis();
-            HistoryWriter.write("FacetedNavigationPerfTest" + numDocs, Long.toString(tAfter - tBefore), "ms");
+            HistoryWriter.write("FacetedNavigationPerfTest" + numberOfNodesInTests[i], Long.toString(tAfter - tBefore), "ms");
         }
         commonEnd();
     }
 
     @Test
     public void testFullFacetedNavigationTraversal() throws RepositoryException, IOException {
-        numDocs = 500;
         long tBefore, tAfter;
-
-        Node node = commonStart();
+        commonStart(500);
+        Node node = getSearchNode();
 
         tBefore = System.currentTimeMillis();
         facetedNavigationNodeTraversal(node, 1, node.getDepth() + 10);
         tAfter = System.currentTimeMillis();
 
-        HistoryWriter.write("FullFacetedNavigationTraversal" + numDocs, Long.toString(tAfter - tBefore), "ms");
+        HistoryWriter.write("FullFacetedNavigationTraversal" + 500, Long.toString(tAfter - tBefore), "ms");
         commonEnd();
     }
 

@@ -25,7 +25,7 @@ import org.hippoecm.repository.security.user.UserManager;
 public abstract class AbstractSecurityProvider implements SecurityProvider {
 
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
 
     protected UserManager userManager = new DummyUserManager();
     protected GroupManager groupManager = new DummyGroupManager();

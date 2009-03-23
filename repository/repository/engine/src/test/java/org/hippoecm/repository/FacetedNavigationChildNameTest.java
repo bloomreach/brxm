@@ -34,49 +34,30 @@ public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTes
 
     @Test
     public void testFacetIssues() throws RepositoryException {
+        commonStart();
+
         final String simple = "testnode";
         final String encodeMe = "2..,!@#$%^&*()_-[]{}|\\:;'\".,/?testnode";
-        Node node;
 
-        // first create a document node
-        {
-            if (!session.getRootNode().hasNode("test"))
-                session.getRootNode().addNode("test", "nt:unstructured");
-            if (!session.getRootNode().getNode("test").hasNode("documents"))
-                session.getRootNode().getNode("test").addNode("documents", "nt:unstructured").addMixin("mix:referenceable");
-            node = session.getRootNode().getNode("test/documents");
-            //String encodeMe = "yadida";
-            Node docNode = node.addNode(simple, "hippo:testdocument");
-            docNode.addMixin("hippo:harddocument");
-            docNode.setProperty("x", "success");
-            docNode.setProperty("y", encodeMe);
-            session.save();
-        }
+        Node node = session.getRootNode().getNode("test/documents");
+        Node docNode = node.addNode(simple, "hippo:testdocument");
+        docNode.addMixin("hippo:harddocument");
+        docNode.setProperty("x", "success");
+        docNode.setProperty("y", encodeMe);
+        session.save();
 
-        // create the faceted navigation
-        {
-            node = session.getRootNode().getNode("test/navigation").addNode("navxy", HippoNodeType.NT_FACETSEARCH);
-            node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "navxy");
-            node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
-            node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x", "y" });
-            session.save();
-        }
-
-        String path = "test/navigation/navxy/success";
-        Node facetNode = session.getRootNode().getNode(path);
+        Node facetNode = getSearchNode().getNode("success");
         assertNotNull(facetNode);
         facetNode.hashCode(); // This earlier caused a NullPointerException, see HREPTWO-269
         assertEquals("success", facetNode.getName());
 
-
         Node nodeFromFacet = (Node) facetNode.getNode(HippoNodeType.HIPPO_RESULTSET).getNodes().nextNode();
         try {
-            path = "test/navigation/navxy/success/"+NodeNameCodec.encode(encodeMe, true);
-            facetNode = session.getRootNode().getNode(path);
-            //System.out.println(facetNode.getName());
+            String path = "success/" + NodeNameCodec.encode(encodeMe, true);
+            facetNode = getSearchNode().getNode(path);
             assertEquals(NodeNameCodec.encode(encodeMe, true), facetNode.getName());
             nodeFromFacet = (Node) facetNode.getNode(HippoNodeType.HIPPO_RESULTSET).getNodes().nextNode();
-            Node docNode = session.getRootNode().getNode("test/documents").getNode(simple);
+            docNode = session.getRootNode().getNode("test/documents").getNode(simple);
             assertTrue(nodeFromFacet.hasProperty("x"));
             assertTrue(nodeFromFacet.hasProperty("y"));
             assertEquals(docNode.getProperty("x").getString(), nodeFromFacet.getProperty("x").getString());
@@ -84,7 +65,5 @@ public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTes
         } catch (PathNotFoundException e) {
             fail("Issue HREPTWO-270 should be reopened");
         }
-
-        session.refresh(false);
     }
 }

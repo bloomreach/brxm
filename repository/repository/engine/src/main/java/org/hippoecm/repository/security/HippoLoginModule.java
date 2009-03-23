@@ -32,10 +32,10 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
-import org.apache.jackrabbit.core.security.CredentialsCallback;
 import org.apache.jackrabbit.core.security.SecurityConstants;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
+import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
 import org.hippoecm.repository.security.domain.Domain;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
@@ -119,7 +119,6 @@ public class HippoLoginModule implements LoginModule {
             callbackHandler.handle(new Callback[] { ccb });
             SimpleCredentials creds = (SimpleCredentials) ccb.getCredentials();
 
-            // TODO: impersonate from rootSession -> systemSession
             rootSession = (Session) creds.getAttribute("rootSession");
             if (rootSession == null) {
                 throw new LoginException("RootSession not set.");
@@ -170,7 +169,7 @@ public class HippoLoginModule implements LoginModule {
             securityManager.init(rootSession);
 
             // check for anonymous login
-            if (creds == null || creds.getUserID() == null) {
+            if (creds.getUserID() == null) {
                 log.info("Authenticated as anonymous.");
                 principals.add(new AnonymousPrincipal());
                 setGroupPrincipals(null);
@@ -319,16 +318,25 @@ public class HippoLoginModule implements LoginModule {
                 }
             }
 
-            // merge permissions for the roles for a domain
-            int perms = 0;
+            // check for indirectly included roles
+            Set<String> includedRoles = new HashSet<String>();
             for (String roleId : roles) {
-                perms |= securityManager.getJCRPermissionsForRole(roleId);
+                includedRoles.addAll(securityManager.getRolesForRole(roleId));
             }
-            log.info("User {} has perms {} for domain {} ", new Object[] { userId, perms, domain.getName() });
+            roles.addAll(includedRoles);
 
-            if (perms > 0) {
+            log.info("User {} has roles {} for domain {} ", new Object[] { userId, roles, domain.getName() });
+
+            // get all privileges associated with the roles
+            Set<String> privileges = new HashSet<String>();
+            for (String roleId : roles) {
+                privileges.addAll(securityManager.getPrivilegesForRole(roleId));
+            }
+            log.info("User {} has privileges {} for domain {} ", new Object[] { userId, privileges, domain.getName() });
+
+            if (privileges.size() > 0) {
                 // create and add facet auth principal
-                FacetAuthPrincipal fap = new FacetAuthPrincipal(domain.getName(), domain.getDomainRules(), roles, perms);
+                FacetAuthPrincipal fap = new FacetAuthPrincipal(domain.getName(), domain.getDomainRules(), roles, privileges);
                 principals.add(fap);
             }
         }

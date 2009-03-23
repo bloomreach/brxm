@@ -27,6 +27,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.Value;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
@@ -305,7 +306,7 @@ public class SecurityManager {
             while (nodeIter.hasNext()) {
                 // the parent of the auth role node is the domain node
                 Domain domain = new Domain(nodeIter.nextNode().getParent());
-                log.debug("Domain '{}' found for user: {}", domain.getName(), userId);
+                log.trace("Domain '{}' found for user: {}", domain.getName(), userId);
                 domains.add(domain);
             }
         } catch (RepositoryException e) {
@@ -335,7 +336,7 @@ public class SecurityManager {
             while (nodeIter.hasNext()) {
                 // the parent of the auth role node is the domain node
                 Domain domain = new Domain(nodeIter.nextNode().getParent());
-                log.debug("Domain '{}' found for group: {}", domain.getName(), groupId);
+                log.trace("Domain '{}' found for group: {}", domain.getName(), groupId);
                 domains.add(domain);
             }
         } catch (RepositoryException e) {
@@ -344,59 +345,145 @@ public class SecurityManager {
         return domains;
     }
 
+//    /**
+//     * Get the numerical permissions of a role.
+//     * @param roleId
+//     * @return
+//     * @deprecated
+//     */
+//    public int getJCRPermissionsForRole(String roleId) {
+//        int permissions = 0;
+//        Node roleNode;
+//
+//        // does the role already exists
+//        log.trace("Looking for role: {} in path: {}", roleId, rolesPath);
+//        String path = rolesPath + "/" + roleId;
+//        try {
+//            try {
+//                roleNode = session.getRootNode().getNode(path);
+//                log.trace("Found role node: {}", roleNode.getName());
+//            } catch (PathNotFoundException e) {
+//                log.warn("Role not found: {}", roleId);
+//                return Role.NONE;
+//            }
+//            try {
+//                if (roleNode.getProperty(HippoNodeType.HIPPO_JCRREAD).getBoolean()) {
+//                    log.trace("Adding jcr read permissions for role: {}", roleId);
+//                    permissions += Role.READ;
+//                }
+//            } catch (PathNotFoundException e) {
+//                // ignore, role doesn't has the permission
+//            }
+//
+//            try {
+//                if (roleNode.getProperty(HippoNodeType.HIPPO_JCRWRITE).getBoolean()) {
+//                    log.trace("Adding jcr write permissions for role: {}", roleId);
+//                    permissions += Role.WRITE;
+//                }
+//            } catch (PathNotFoundException e) {
+//                // ignore, role doesn't has the permission
+//            }
+//
+//            try {
+//                if (roleNode.getProperty(HippoNodeType.HIPPO_JCRREMOVE).getBoolean()) {
+//                    log.trace("Adding jcr remove permissions for role: {}", roleId);
+//                    permissions += Role.REMOVE;
+//                }
+//            } catch (PathNotFoundException e) {
+//                // ignore, role doesn't has the permission
+//            }
+//        } catch (RepositoryException e) {
+//            log.error("Error while looking up role: " + roleId, e);
+//            return Role.NONE;
+//        }
+//        return permissions;
+//    }
+
     /**
-     * Get the numerical permissions of a role.
+     * Get the roles included be roleId
      * @param roleId
      * @return
      */
-    public int getJCRPermissionsForRole(String roleId) {
-        int permissions = 0;
-        Node roleNode;
+    public Set<String> getRolesForRole(String roleId) {
+        return getRolesForRole(roleId, new HashSet<String>());
+    }
 
-        // does the role already exists
+    /**
+     * Internal helper method to recursively find the roles belonging to a role
+     * @param roleId
+     * @param currentRoles
+     * @return
+     */
+    private Set<String> getRolesForRole(String roleId, Set<String> currentRoles) {
+        Node roleNode;
         log.trace("Looking for role: {} in path: {}", roleId, rolesPath);
         String path = rolesPath + "/" + roleId;
         try {
-            try {
-                roleNode = session.getRootNode().getNode(path);
-                log.trace("Found role node: {}", roleNode.getName());
-            } catch (PathNotFoundException e) {
-                log.warn("Role not found: {}", roleId);
-                return Role.NONE;
-            }
-            try {
-                if (roleNode.getProperty(HippoNodeType.HIPPO_JCRREAD).getBoolean()) {
-                    log.trace("Adding jcr read permissions for role: {}", roleId);
-                    permissions += Role.READ;
+            roleNode = session.getRootNode().getNode(path);
+            log.trace("Found role node: {}", roleNode.getName());
+            if (roleNode.hasProperty(HippoNodeType.HIPPO_ROLES)) {
+                Value[] values = roleNode.getProperty(HippoNodeType.HIPPO_ROLES).getValues();
+                for (Value value : values) {
+                    if (!currentRoles.contains(value.getString())) {
+                        currentRoles.add(value.getString());
+                        currentRoles.addAll(getRolesForRole(value.getString(), currentRoles));
+                    }
                 }
-            } catch (PathNotFoundException e) {
-                // ignore, role doesn't has the permission
             }
-
-            try {
-                if (roleNode.getProperty(HippoNodeType.HIPPO_JCRWRITE).getBoolean()) {
-                    log.trace("Adding jcr write permissions for role: {}", roleId);
-                    permissions += Role.WRITE;
-                }
-            } catch (PathNotFoundException e) {
-                // ignore, role doesn't has the permission
-            }
-
-            try {
-                if (roleNode.getProperty(HippoNodeType.HIPPO_JCRREMOVE).getBoolean()) {
-                    log.trace("Adding jcr remove permissions for role: {}", roleId);
-                    permissions += Role.REMOVE;
-                }
-            } catch (PathNotFoundException e) {
-                // ignore, role doesn't has the permission
-            }
+        } catch (PathNotFoundException e) {
+            log.warn("Role not found: {}", roleId);
         } catch (RepositoryException e) {
             log.error("Error while looking up role: " + roleId, e);
-            return Role.NONE;
         }
-        return permissions;
+        return currentRoles;
     }
-
+    
+    /**
+     * Get the privileges of a role
+     * @param roleId
+     * @return
+     */
+    public Set<String> getPrivilegesForRole(String roleId) {
+        Set<String> privileges = new HashSet<String>();
+        Node roleNode;
+        log.trace("Looking for role: {} in path: {}", roleId, rolesPath);
+        String path = rolesPath + "/" + roleId;
+        try {
+            roleNode = session.getRootNode().getNode(path);
+            log.trace("Found role node: {}", roleNode.getName());
+            if (roleNode.hasProperty(HippoNodeType.HIPPO_PRIVILEGES)) {
+                Value[] values = roleNode.getProperty(HippoNodeType.HIPPO_PRIVILEGES).getValues();
+                for (Value value : values) {
+                    // FIXME: temp hack for aggregate privileges as defined in jsr-283, 6.11.1.2
+                    String privilege = value.getString();
+                    if ("jcr:write".equals(privilege)) {
+                        privileges.add("jcr:write");
+                        privileges.add("jcr:setProperties");
+                        privileges.add("jcr:addChildNodes");
+                        privileges.add("jcr:removeChildNodes");
+                    } else if ("jcr:all".equals(privilege)) {
+                        privileges.add("jcr:read");
+                        // jcr:acp
+                        privileges.add("jcr:getAccessControlPolicy");
+                        privileges.add("jcr:setAccessControlPolicy");
+                        // jcr:wrte
+                        privileges.add("jcr:setProperties");
+                        privileges.add("jcr:addChildNodes");
+                        privileges.add("jcr:removeChildNodes");
+                        
+                    } else {
+                        privileges.add(privilege);
+                    }
+                }
+            }
+        } catch (PathNotFoundException e) {
+            log.warn("Role not found: {}", roleId);
+        } catch (RepositoryException e) {
+            log.error("Error while looking up role: " + roleId, e);
+        }
+        return privileges;
+    }
+    
     /**
      * Sanitize the raw userId input according to the case sensitivity of the 
      * security provider.

@@ -44,12 +44,12 @@ public class HREPTWO650Test extends FacetedNavigationAbstractTest {
 
     @Test
     public void testDates() throws RepositoryException {
-        numDocs = 0;
-        commonStart();
-        addNodeWithDate(session.getRootNode().getNode("test/documents"));
+        commonStart(0);
+        addNodeWithDate(getDocsNode());
         addFacetDateSearch(session.getRootNode().getNode("test"));
         session.save();
         assertTrue(session.getRootNode().getNode("test/facetdatesearch").getNodes().getSize() > 1 );
+        commonEnd();
     }
 
     private void addFacetDateSearch(Node rootNode) throws RepositoryException {

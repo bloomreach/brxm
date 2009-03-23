@@ -15,41 +15,40 @@
  */
 package org.hippoecm.repository;
 
-import javax.jcr.Node;
+import static org.junit.Assert.*;
+
 import javax.jcr.RepositoryException;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class HREPTWO280Test extends FacetedNavigationAbstractTest {
+/**
+ * An example class to show how to write unit tests for the repository.
+ */
+public class BoilerPlateTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    
+    @Override
     @Before
-    @Override
     public void setUp() throws Exception {
-      super.setUp();
+        super.setUp();
     }
 
-    @After
     @Override
+    @After
     public void tearDown() throws Exception {
-      super.tearDown();
+        super.tearDown();
     }
-
+    
+    /**
+     * A trivial test as demo
+     * @throws RepositoryException
+     */
     @Test
-    public void testIssue() throws RepositoryException {
-        commonStart();
-
-        Node node, searchNode = getSearchNode();
-        traverse(session.getRootNode().getNode("test/navigation"));
-        node = session.getRootNode().getNode("test/documents").addNode("aap");
-        node.setProperty("x", "x1");
-        session.save();
-        searchNode = getSearchNode();
-        traverse(searchNode);
-
-        commonEnd();
+    public void testSessionLiveTest() throws RepositoryException {
+        assertTrue("super.setUp failed to create session", session.isLive());
     }
 }

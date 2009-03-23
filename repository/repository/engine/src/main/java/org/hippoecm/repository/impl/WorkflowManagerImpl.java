@@ -148,8 +148,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     }
                     if (item.isNodeType(workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) {
                         boolean hasPermission = true;
-                        if(workflowNode.hasProperty(HippoNodeType.HIPPO_ROLES)) {
-                            Value[] privileges = workflowNode.getProperty(HippoNodeType.HIPPO_ROLES).getValues();
+                        if(workflowNode.hasProperty(HippoNodeType.HIPPO_PRIVILEGES)) {
+                            Value[] privileges = workflowNode.getProperty(HippoNodeType.HIPPO_PRIVILEGES).getValues();
                             for(int i=0; i<privileges.length; i++) {
                                 try {
                                     item.getSession().checkPermission(item.getPath(), privileges[i].getString());
@@ -218,8 +218,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         Node documentNode = (document.getIdentity()!=null ? session.getNodeByUUID(document.getIdentity()) : null);
                         if ((documentNode != null && documentNode.isNodeType(workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) || documentClass.isAssignableFrom(document.getClass())) {
                             boolean hasPermission = true;
-                            if(workflowNode.hasProperty(HippoNodeType.HIPPO_ROLES)) {
-                                Value[] privileges = workflowNode.getProperty(HippoNodeType.HIPPO_ROLES).getValues();
+                            if(workflowNode.hasProperty(HippoNodeType.HIPPO_PRIVILEGES)) {
+                                Value[] privileges = workflowNode.getProperty(HippoNodeType.HIPPO_PRIVILEGES).getValues();
                                 for(int i=0; i<privileges.length; i++) {
                                     try {
                                         session.checkPermission(documentNode.getPath(), privileges[i].getString());

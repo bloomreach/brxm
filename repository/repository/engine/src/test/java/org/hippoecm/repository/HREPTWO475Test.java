@@ -17,44 +17,19 @@ package org.hippoecm.repository;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
+import org.junit.Test;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class HREPTWO475Test extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
-    protected HippoRepository server;
-    protected Session session;
-
-    public void setUp() throws Exception {
-        server = HippoRepositoryFactory.getHippoRepository();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        session.save();
-    }
-
-    public void tearDown() throws Exception {
-        session.refresh(false);
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        if(session != null) {
-            session.logout();
-        }
-        if (server != null) {
-            server.close();
-        }
-    }
-
+    @Test
     public void testIssue() throws RepositoryException {
         session.refresh(false);
         Node root = session.getRootNode().addNode("test");

@@ -51,25 +51,40 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
     private static int hierDepth = 1;
     private static int saveInterval = 250;
     private final static int defaultNumDocs = 20;
-    protected int numDocs = -1;
-
+    private int numDocs = -1;
+    private static Random rnd;
     private String[] nodeNames;
     protected boolean verbose = false;
     private Map<Integer,Document> documents;
 
-    public FacetedNavigationAbstractTest() {
+    protected FacetedNavigationAbstractTest() {
+    }
+
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    private void createNodeNames() {
         nodeNames = new String[alphabet.length()];
         for (int i=0; i<alphabet.length(); i++) {
             nodeNames[i] = alphabet.substring(i,i+1);
         }
-        numDocs = defaultNumDocs;
     }
-
+    
     private void createStructure(Node node, int level) throws ItemExistsException, PathNotFoundException, VersionException,
                                                               ConstraintViolationException, LockException, RepositoryException {
         for (int i=0; i<alphabet.length(); i++) {
-            if(verbose)
+            if(verbose) {
                 System.out.println(("          ".substring(0,level))+nodeNames[i]);
+            }
             Node child = node.addNode(nodeNames[i],"hippo:testdocument");
             child.addMixin("hippo:harddocument");
             if (level-1 > 0) {
@@ -81,47 +96,64 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         }
     }
 
-    protected Map<Integer,Document> fill() throws RepositoryException {
-        Node node = session.getRootNode().getNode("test");
-
-        if (!node.hasNode("documents")) {
-            node.addNode("documents", "nt:unstructured").addMixin("mix:referenceable");
+    private Node getRandomDocNode() throws RepositoryException {
+        StringBuffer path = new StringBuffer("test/documents");
+        for (int depth = 0; depth < hierDepth; depth++) {
+            path.append("/");
+            path.append(nodeNames[rnd.nextInt(alphabet.length())]);
         }
-        if (!node.hasNode("navigation")) {
-            node.addNode("navigation");
-        }
-
-        node = node.getNode("documents");
-        createStructure(node, hierDepth);
+        return session.getRootNode().getNode(path.toString());
+        
+    }
+    
+    private Map<Integer,Document> fill(Node node) throws RepositoryException {
+        Node docs = node.addNode("documents", "nt:unstructured");
+        docs.addMixin("mix:referenceable");
+        createStructure(docs, hierDepth);
         session.save();
-        Map<Integer,Document> documents = new HashMap<Integer,Document>();
-        for (int docid=0; docid<numDocs; docid++) {
-            Random rnd = new Random(docid);
+        // don't change seed. Tests depend on it to stay the same
+        rnd = new Random(1L);
+        Map<Integer, Document> documents = new HashMap<Integer, Document>();
+        for (int docid = 0; docid < numDocs; docid++) {
             Document document = new Document(docid);
-            Node child = node;
-            for (int depth=0; depth<hierDepth; depth++)
-                child = child.getNode(nodeNames[rnd.nextInt(alphabet.length())]);
-            child = child.addNode(Integer.toString(docid),"hippo:testdocument");
-            child.addMixin("hippo:harddocument");
-            child.setProperty("docid",Integer.toString(docid));
+            
+            Node doc = getRandomDocNode();
+            doc = doc.addNode(Integer.toString(docid), "hippo:testdocument");
+            doc.addMixin("hippo:harddocument");
+            doc.setProperty("docid", Integer.toString(docid));
             if ((document.x = rnd.nextInt(3)) > 0) {
-                child.setProperty("x","x"+document.x);
+                doc.setProperty("x", "x" + document.x);
             }
             if ((document.y = rnd.nextInt(3)) > 0) {
-                child.setProperty("y","y"+document.y);
+                doc.setProperty("y", "y" + document.y);
             }
             if ((document.z = rnd.nextInt(3)) > 0) {
-                child.setProperty("z","z"+document.z);
+                doc.setProperty("z", "z" + document.z);
             }
-            if ((docid+1) % saveInterval == 0) {
+            if ((docid + 1) % saveInterval == 0) {
                 session.save();
             }
-            documents.put(new Integer(docid), document);
+            documents.put(Integer.valueOf(docid), document);
         }
-        session.save();
         return documents;
     }
 
+    final void createSearchNode(Node node) throws RepositoryException {
+        node = node.addNode("navigation");
+        node = node.addNode("xyz", HippoNodeType.NT_FACETSEARCH);
+        node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "xyz");
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x", "y", "z" });
+    }
+    
+    final Node getSearchNode() throws RepositoryException {
+        return session.getRootNode().getNode("test/navigation/xyz");
+    }
+    
+    final Node getDocsNode() throws RepositoryException {
+        return session.getRootNode().getNode("test/documents");
+    }
+    
     protected void traverse(Node node) throws RepositoryException {
         if(verbose) {
             if(node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
@@ -130,8 +162,9 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         }
         for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
             Node child = iter.nextNode();
-            if (!child.getPath().equals("/jcr:system"))
+            if (!"jcr:system".equals(child.getName())) {
                 traverse(child);
+            }
         }
     }
 
@@ -188,36 +221,49 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         assertEquals("counted and reference mismatch on "+facetPath, checkedCount, realCount);
     }
 
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        if (!session.getRootNode().hasNode("test")) {
-            session.getRootNode().addNode("test");
-        }
-        session.getRootNode().getNode("test").addNode("navigation");
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    protected Node commonStart() throws RepositoryException {
-        documents = fill();
-        session.save();
-        Node node = session.getRootNode().getNode("test/navigation");
-        node = node.addNode("xyz", HippoNodeType.NT_FACETSEARCH);
-        node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "xyz");
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
-        node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x", "y", "z" });
+    final void commonStart(int numDocs) throws RepositoryException {
+        this.numDocs = numDocs;
+        Node test = session.getRootNode().addNode("test");
+        createNodeNames();
+        documents = fill(test);
+        // do save and refresh to make sure the uuid is generated
         session.save();
         session.refresh(false);
-        return session.getRootNode().getNode("test/navigation").getNode("xyz");
+        createSearchNode(test);
+        session.save();
+        session.refresh(false);
+    }
+    
+    final void commonStart() throws RepositoryException {
+        /**
+         * DefaultNumDocs results in:
+/test/navigation/xyz    25
+/test/navigation/xyz/x1 8
+/test/navigation/xyz/x1/y1      3
+/test/navigation/xyz/x1/y1/z1   1
+/test/navigation/xyz/x1/y1/z1/hippo:resultset   1
+/test/navigation/xyz/x1/y1/hippo:resultset      3
+/test/navigation/xyz/x1/y2      3
+/test/navigation/xyz/x1/y2/z1   1
+/test/navigation/xyz/x1/y2/z1/hippo:resultset   1
+/test/navigation/xyz/x1/y2/z2   1
+/test/navigation/xyz/x1/y2/z2/hippo:resultset   1
+/test/navigation/xyz/x1/y2/hippo:resultset      3
+/test/navigation/xyz/x1/hippo:resultset 8
+/test/navigation/xyz/x2 6
+/test/navigation/xyz/x2/y1      6
+/test/navigation/xyz/x2/y1/z1   2
+/test/navigation/xyz/x2/y1/z1/hippo:resultset   2
+/test/navigation/xyz/x2/y1/z2   2
+/test/navigation/xyz/x2/y1/z2/hippo:resultset   2
+/test/navigation/xyz/x2/y1/hippo:resultset      6
+/test/navigation/xyz/x2/hippo:resultset 6
+/test/navigation/xyz/hippo:resultset    25
+         */
+        commonStart(defaultNumDocs);
     }
 
-    protected void commonEnd() throws RepositoryException {
+    final void commonEnd() throws RepositoryException {
     }
 
     public boolean getVerbose() {

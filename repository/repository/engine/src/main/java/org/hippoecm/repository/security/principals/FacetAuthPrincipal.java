@@ -20,9 +20,6 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.Set;
 
-import org.apache.jackrabbit.core.security.AccessManager;
-import org.apache.jackrabbit.core.security.authorization.Permission;
-import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.security.domain.DomainRule;
 
 /**
@@ -57,9 +54,9 @@ public class FacetAuthPrincipal implements Serializable, Principal {
     private final Set<String> roles;
 
     /**
-     * The JCR permissions of the user for the domain
+     * The set of roles of the user for the domain
      */
-    private final int permissions;
+    private final Set<String> privileges;
 
 
     /**
@@ -70,7 +67,7 @@ public class FacetAuthPrincipal implements Serializable, Principal {
      * @param permissionss
      * @throws IllegalArgumentException if <code>name</code> is <code>null</code>.
      */
-    public FacetAuthPrincipal(String domain, Set<DomainRule> domainRules, Set<String> roles, int permissions) throws IllegalArgumentException {
+    public FacetAuthPrincipal(String domain, Set<DomainRule> domainRules, Set<String> roles, Set<String> privileges) throws IllegalArgumentException {
         if (domain == null) {
             throw new IllegalArgumentException("facet can not be null");
         }
@@ -88,7 +85,7 @@ public class FacetAuthPrincipal implements Serializable, Principal {
         this.name = domain;
         this.roles = Collections.unmodifiableSet(roles);
         this.rules = Collections.unmodifiableSet(domainRules);
-        this.permissions = permissions;
+        this.privileges = Collections.unmodifiableSet(privileges);
     }
 
 
@@ -111,6 +108,14 @@ public class FacetAuthPrincipal implements Serializable, Principal {
     }
 
     /**
+     * Get the set of privileges
+     * @return the privileges the user has for the domain
+     */
+    public Set<String> getPrivileges() {
+        return privileges;
+    }
+
+    /**
      * Get the set of domain rules defining the domain
      * @return the domain rules defining the domain
      */
@@ -118,53 +123,6 @@ public class FacetAuthPrincipal implements Serializable, Principal {
         return rules;
     }
 
-    /**
-     * Match the JCR permissions
-     * @param requestedPermissions the permissions the users requests
-     * @return wether the permissions are granted within the domain
-     */
-    public boolean matchPermissions(int requestedPermissions) {
-        if((requestedPermissions & Permission.READ) != 0) {
-            if((permissions&AccessManager.READ) != AccessManager.READ) {
-                return false;
-            }
-        }
-        if((requestedPermissions & (Permission.ADD_NODE|Permission.SET_PROPERTY)) != 0) {
-            if((permissions&AccessManager.WRITE) != AccessManager.WRITE) {
-                return false;
-            }
-        }
-        if((requestedPermissions & (Permission.REMOVE_PROPERTY|Permission.REMOVE_NODE)) != 0) {
-            if((permissions&AccessManager.REMOVE) != AccessManager.REMOVE) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * String for pretty printing and generating the hashcode
-     * @param facet
-     * @param values
-     * @param permissions
-     * @return
-     */
-    private String buildString(Name facet, String[] values, long permissions) {
-        // create nice name (also used for hashing)
-        StringBuffer buf = new StringBuffer();
-        buf.append("[");
-        buf.append(facet);
-        buf.append(" = ");
-        for(int i = 0; i<values.length;i++) {
-            if (i > 0) buf.append(" or ");
-            buf.append(values[i]);
-        }
-        buf.append("] [");
-        buf.append("permissions: ");
-        buf.append(permissions);
-        buf.append("]");
-        return buf.toString();
-    }
 
     public String toString() {
         return ("FacetAuthPrincipal: " + name);

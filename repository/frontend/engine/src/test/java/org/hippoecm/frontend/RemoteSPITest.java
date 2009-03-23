@@ -32,6 +32,7 @@ import org.junit.runners.Suite;
 @RunWith(RemoteSPITest.class)
 @Suite.SuiteClasses({
   org.hippoecm.frontend.model.event.ObservationTest.class
+
 })
 public class RemoteSPITest extends Suite
 {

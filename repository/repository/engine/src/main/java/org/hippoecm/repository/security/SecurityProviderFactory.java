@@ -58,7 +58,7 @@ public class SecurityProviderFactory {
     public SecurityProvider create(Session session, String providerId) throws ValueFormatException, PathNotFoundException, RepositoryException, ClassNotFoundException,
             InstantiationException, IllegalAccessException {
         Node providerNode = session.getRootNode().getNode(securityPath + "/" + providerId);
-        Class clazz = Class.forName(providerNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString());
+        Class<?> clazz = Class.forName(providerNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString());
         SecurityProvider sp = (SecurityProvider) clazz.newInstance();
 
         // create new session for each provider

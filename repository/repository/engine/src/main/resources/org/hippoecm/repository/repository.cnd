@@ -101,7 +101,7 @@
 
 [hippo:workflow] > hippo:type
 - hippo:workflow (string)
-- hippo:roles (string) multiple
+- hippo:privileges (string) multiple
 + hippo:types (hippo:types) = hippo:types mandatory autocreated
 + hippo:config (nt:unstructured) = nt:unstructured
 
@@ -162,9 +162,11 @@
 - * (string)
 
 [hippo:role] > nt:base
-- hippo:jcrread (boolean)  = 'true' mandatory autocreated
-- hippo:jcrwrite (boolean)  = 'false' mandatory autocreated
-- hippo:jcrremove (boolean)  = 'false' mandatory autocreated
+- hippo:privileges (string) multiple
+- hippo:roles (string) multiple
+- hippo:jcrread (boolean)
+- hippo:jcrwrite (boolean)
+- hippo:jcrremove (boolean)
 
 [hippo:externalrole] > hippo:role
 - hippo:securityprovider (string) = 'internal' mandatory autocreated

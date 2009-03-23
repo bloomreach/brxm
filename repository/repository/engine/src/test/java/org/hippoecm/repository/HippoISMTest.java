@@ -61,7 +61,7 @@ public class HippoISMTest extends FacetedNavigationAbstractTest {
         try {
             commonStart();
             // external node indicates for the half regular half virtual nodes
-            Node externalNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
+            Node externalNode = getSearchNode();
             traverse(externalNode);
             traverse(externalNode);
             traverse(externalNode);
