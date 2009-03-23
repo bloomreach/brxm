@@ -54,13 +54,11 @@
 + * (hst:sitemapitem)
 
 [hst:sitemenuitem] orderable
-- hst:name (string)
 - hst:referencesitemapitem (string)
 - hst:foldersonly (boolean)
 + * (hst:sitemenuitem)
 
 [hst:sitemenu] orderable
-- hst:name (string)
 + * (hst:sitemenuitem)
 
 [hst:sitemenus]

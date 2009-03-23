@@ -13,33 +13,37 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.sitemenu;
+package org.hippoecm.hst.core.request.sitemenu;
 
 import java.io.Serializable;
 import java.util.List;
 
+import org.hippoecm.hst.core.linking.HstLink;
+
 /**
- * The interface for a SiteMenu implementation, containing possibly a tree of {@link SiteMenuItem}'s
  *
  */
-public interface SiteMenu extends Serializable{
+public interface SiteMenuItem extends Serializable{
     /**
-     * Returns the name of this SiteMenu. For example, you could have a "topmenu", "leftmenu" and "footermenu" on your site/portal,
-     * where these names might be appropriate 
-     * @return the name of this SiteMenu
+     * 
+     * @return the name of this SiteMenuItem
      */
     String getName();
     
     /**
-     * Based on the request, the implementation should be able to indicate whether this SiteMenu is selected (highlighted) or not
      * 
-     * @return <code>true</code> when the current SiteMenu is selected
+     * @return all direct child SiteMenuItem's of this item
      */
-    boolean isSelected();
-    
+    List<SiteMenuItem> getChildMenuItems();
     
     /**
-     * @return returns all direct child {@link SiteMenuItem}'s of this SiteMenu
+     * 
+     * @return a HstLink that contains a link for this SiteMenuItem
      */
-    List<SiteMenuItem> getSiteMenuItems();
+    HstLink getHstLink();
+    
+    /**
+     * @return <code>true</code> is the SiteMenuItem is selected
+     */
+    boolean isSelected();
 }

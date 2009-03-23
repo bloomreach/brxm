@@ -30,6 +30,8 @@ import org.hippoecm.hst.configuration.components.HstComponentsConfigurationServi
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
+import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
+import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfigurationService;
 import org.hippoecm.hst.core.linking.BasicLocationMapTree;
 import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.service.AbstractJCRService;
@@ -46,6 +48,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     
     private HstSiteMapService siteMapService;
     private HstComponentsConfigurationService componentsConfigurationService;
+    private HstSiteMenusConfiguration siteMenusConfigurations;
     private String name;
     private String contentPath;
     private String canonicalcontentPath;
@@ -135,10 +138,19 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
        this.componentsConfigurationService = new HstComponentsConfigurationService(configurationNode, templateRenderMap); 
       
        Node siteMapNode = configurationNode.getNode(Configuration.NODENAME_HST_SITEMAP);
-       this.siteMapService = new HstSiteMapService(this, siteMapNode);
-   
+       this.siteMapService = new HstSiteMapService(this, siteMapNode);   
        this.locationMapTree = this.createLocationMap();
        
+       if(configurationNode.hasNode(Configuration.NODENAME_HST_SITEMENUS)) {
+           Node siteMenusNode = configurationNode.getNode(Configuration.NODENAME_HST_SITEMENUS);
+           try {
+           this.siteMenusConfigurations = new HstSiteMenusConfigurationService(this, siteMenusNode);
+           } catch (ServiceException e) {
+               log.error("ServiceException: Skipping SiteMenusConfiguration '{}'", e);
+           }
+       } else {
+           log.info("There is no configuration for 'hst:sitemenus' for this HstSite. The clien cannot use the HstSiteMenusConfiguration");
+       }
     }
 
     private LocationMapTree createLocationMap() {
@@ -183,9 +195,13 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     public HstSites getHstSites(){
         return this.hstSites;
     }
-
+    
     public LocationMapTree getLocationMapTree() {
         return this.locationMapTree;
+    }
+
+    public HstSiteMenusConfiguration getSiteMenusConfiguration() {
+        return this.siteMenusConfigurations;
     }
 
 

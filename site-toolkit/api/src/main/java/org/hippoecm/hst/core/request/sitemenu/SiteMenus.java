@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.sitemenu;
+package org.hippoecm.hst.core.request.sitemenu;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -35,5 +35,10 @@ public interface SiteMenus extends Serializable{
      * @return the {@link SiteMenu} having the correct name
      */
     SiteMenu getSiteMenu(String name);
-    
+ 
+    /**
+     * 
+     * @return the currently selected sitemenu
+     */
+    SiteMenu getSelectedSiteMenu();
 }
