@@ -34,7 +34,7 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
     @Before
     @Override
     public void setUp() throws Exception {
-        super.setUp();
+        super.setUp(true);
     }
 
     @After
@@ -45,37 +45,70 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
 
     @Test
     public void testTraversal() throws RepositoryException, IOException {
-        Node node = commonStart();
-        traverse(node); // for a full verbose dump use: Utilities.dump(root);
+        commonStart();
+        traverse(getSearchNode());
         commonEnd();
     }
 
     @Test
     public void testCounts() throws RepositoryException, IOException {
-        numDocs = 500;
-        commonStart();
+        commonStart(500);
+        /**
+         * Test with 500 results in:
+            /test/navigation/xyz    505
+            /test/navigation/xyz/x1 166
+            /test/navigation/xyz/x1/y1      56
+            /test/navigation/xyz/x1/y1/z2   21
+            /test/navigation/xyz/x1/y1/z2/hippo:resultset   21
+            /test/navigation/xyz/x1/y1/z1   18
+            /test/navigation/xyz/x1/y1/z1/hippo:resultset   18
+            /test/navigation/xyz/x1/y1/hippo:resultset      56
+            /test/navigation/xyz/x1/y2      53
+            /test/navigation/xyz/x1/y2/z2   15
+            /test/navigation/xyz/x1/y2/z2/hippo:resultset   15
+            /test/navigation/xyz/x1/y2/z1   14
+            /test/navigation/xyz/x1/y2/z1/hippo:resultset   14
+            /test/navigation/xyz/x1/y2/hippo:resultset      53
+            /test/navigation/xyz/x1/hippo:resultset 166
+            /test/navigation/xyz/x2 156
+            /test/navigation/xyz/x2/y1      61
+            /test/navigation/xyz/x2/y1/z1   24
+            /test/navigation/xyz/x2/y1/z1/hippo:resultset   24
+            /test/navigation/xyz/x2/y1/z2   17
+            /test/navigation/xyz/x2/y1/z2/hippo:resultset   17
+            /test/navigation/xyz/x2/y1/hippo:resultset      61
+            /test/navigation/xyz/x2/y2      51
+            /test/navigation/xyz/x2/y2/z2   16
+            /test/navigation/xyz/x2/y2/z2/hippo:resultset   16
+            /test/navigation/xyz/x2/y2/z1   15
+            /test/navigation/xyz/x2/y2/z1/hippo:resultset   15
+            /test/navigation/xyz/x2/y2/hippo:resultset      51
+            /test/navigation/xyz/x2/hippo:resultset 156
+            /test/navigation/xyz/hippo:resultset    505
+         */
+        
         check("/test/navigation/xyz/x1", 1, 0, 0);
-        check("/test/navigation/xyz/x2", 2, 0, 0);
         check("/test/navigation/xyz/x1/y1", 1, 1, 0);
-        check("/test/navigation/xyz/x1/y2", 1, 2, 0);
-        check("/test/navigation/xyz/x2/y1", 2, 1, 0);
-        check("/test/navigation/xyz/x2/y2", 2, 2, 0);
-        check("/test/navigation/xyz/x1/y1/z1", 1, 1, 1);
         check("/test/navigation/xyz/x1/y1/z2", 1, 1, 2);
-        check("/test/navigation/xyz/x1/y2/z1", 1, 2, 1);
+        check("/test/navigation/xyz/x1/y1/z1", 1, 1, 1);
+        check("/test/navigation/xyz/x1/y2", 1, 2, 0);
         check("/test/navigation/xyz/x1/y2/z2", 1, 2, 2);
+        check("/test/navigation/xyz/x1/y2/z1", 1, 2, 1);
+        check("/test/navigation/xyz/x2", 2, 0, 0);
+        check("/test/navigation/xyz/x2/y1", 2, 1, 0);
         check("/test/navigation/xyz/x2/y1/z1", 2, 1, 1);
         check("/test/navigation/xyz/x2/y1/z2", 2, 1, 2);
-        check("/test/navigation/xyz/x2/y2/z1", 2, 2, 1);
+        check("/test/navigation/xyz/x2/y2", 2, 2, 0);
         check("/test/navigation/xyz/x2/y2/z2", 2, 2, 2);
-        commonEnd();
+        check("/test/navigation/xyz/x2/y2/z1", 2, 2, 1);
+        
     }
 
     @Test
     public void testGetItemFromSession() throws RepositoryException {
         commonStart();
-
-        String basePath = "/test/navigation/xyz/x1/y1/z2";
+        
+        String basePath = "/test/navigation/xyz/x2/y1/z2";
         Item item = session.getItem(basePath);
         assertNotNull(item);
         assertTrue(item instanceof Node);
@@ -86,15 +119,13 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
 
         Node resultSetNode_2 = (Node)session.getItem(basePath + "/" + HippoNodeType.HIPPO_RESULTSET);
         assertNotNull(resultSetNode_2);
-
-        commonEnd();
     }
 
     @Test
     public void testGetItemFromNode() throws RepositoryException {
         commonStart();
 
-        String basePath = "/test/navigation/xyz/x1/y1/z2";
+        String basePath = "/test/navigation/xyz/x2/y1/z2";
         Item item = session.getItem(basePath);
         assertNotNull(item);
         assertTrue(item instanceof Node);
@@ -105,56 +136,54 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
 
         Node resultSetNode_2 = (Node)session.getItem(basePath + "/" + HippoNodeType.HIPPO_RESULTSET);
         assertNotNull(resultSetNode_2);
-
-        commonEnd();
     }
 
     @Test
     public void testVirtualNodeHasNoJcrUUID() throws RepositoryException {
         commonStart();
 
-        Node node = session.getRootNode().getNode("test/navigation").getNode("xyz").getNode("x1").getNode("y1").getNode("z2");
+        Node node = getSearchNode().getNode("x2").getNode("y1").getNode("z2");
         node = node.getNode(HippoNodeType.HIPPO_RESULTSET);
 
         // deliberate while loop to force that we have at least one child node to traverse
         NodeIterator iter = node.getNodes();
-        do {
+        while (iter.hasNext()) {
             node = iter.nextNode();
-            assertFalse(node.hasProperty("jcr:uuid"));
-            assertTrue(node.hasProperty("hippo:uuid"));
-            /* FIXME: enable these for checks for HREPTWO-283
-             *  assertFalse(node.isNodeType("mix:referenceable"));
-             */
-        } while(iter.hasNext());
-
-        commonEnd();
+            if (node != null) {
+                assertFalse(node.hasProperty("jcr:uuid"));
+                assertTrue(node.hasProperty("hippo:uuid"));
+                /* FIXME: enable these for checks for HREPTWO-283
+                 *  assertFalse(node.isNodeType("mix:referenceable"));
+                 */
+            }
+        }
     }
 
     @Test
     public void testAddingNodesOpenFacetSearch() throws RepositoryException {
         commonStart();
 
-        Node node, child, searchNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
-        traverse(searchNode);
+        Node node, child, searchNode = getSearchNode();
+        //traverse(searchNode);
 
         assertFalse(searchNode.getNode("x1").hasNode("yy"));
         session.refresh(false);
         session.save();
 
-        node = session.getRootNode().getNode("test/documents");
+        node = getDocsNode();
         child = node.addNode("test", "hippo:testdocument");
         child.addMixin("hippo:harddocument");
         child.setProperty("x", "x1");
         child.setProperty("y", "yy");
         node.save();
 
-        searchNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
+        searchNode = getSearchNode();
         assertTrue(searchNode.getNode("x1").hasNode("yy"));
         assertTrue(searchNode.getNode("x1").getNode("yy").hasNode(HippoNodeType.HIPPO_RESULTSET));
         assertTrue(searchNode.getNode("x1").getNode("yy").getNode(HippoNodeType.HIPPO_RESULTSET).hasNode("test"));
         assertFalse(searchNode.getNode("x1").getNode("yy").getNode(HippoNodeType.HIPPO_RESULTSET).hasNode("test[2]"));
 
-        node = session.getRootNode().getNode("test/documents");
+        node = getDocsNode();
         child = node.addNode("test", "hippo:testdocument");
         child.addMixin("hippo:harddocument");
         child.setProperty("x", "x1");
@@ -162,17 +191,17 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
         session.save();
         session.refresh(false);
 
-        searchNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
+        searchNode = getSearchNode();
         assertTrue(searchNode.getNode("x1").hasNode("yy"));
         assertTrue(searchNode.getNode("x1").getNode("yy").hasNode(HippoNodeType.HIPPO_RESULTSET));
         assertTrue(searchNode.getNode("x1").getNode("yy").getNode(HippoNodeType.HIPPO_RESULTSET).hasNode("test"));
         assertTrue(searchNode.getNode("x1").getNode("yy").getNode(HippoNodeType.HIPPO_RESULTSET).hasNode("test[2]"));
 
-        session.getRootNode().getNode("test/documents").getNode("test").setProperty("y","zz");
+        getDocsNode().getNode("test").setProperty("y","zz");
         session.save();
         session.refresh(false);
 
-        searchNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
+        searchNode = getSearchNode();
         assertTrue(searchNode.getNode("x1").hasNode("yy"));
         assertTrue(searchNode.getNode("x1").getNode("yy").hasNode(HippoNodeType.HIPPO_RESULTSET));
         assertTrue(searchNode.getNode("x1").getNode("yy").getNode(HippoNodeType.HIPPO_RESULTSET).hasNode("test"));
@@ -183,9 +212,10 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
     }
 
     @Test
-    public void testPerformance() throws RepositoryException, IOException {
-        Node node = commonStart();
-        node.getNode("x1").getNode("y2").getNode("z2").getNode(HippoNodeType.HIPPO_RESULTSET).getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+    public void testPerformance() throws RepositoryException {
+        commonStart();
+        Node searchNode = getSearchNode();
+        searchNode.getNode("x2").getNode("y1").getNode("z2").getNode(HippoNodeType.HIPPO_RESULTSET).getProperty(HippoNodeType.HIPPO_COUNT).getLong();
         commonEnd();
     }
 }

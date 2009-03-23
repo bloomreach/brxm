@@ -35,6 +35,8 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
 
+import org.apache.jackrabbit.api.jsr283.security.AccessControlManager;
+import org.apache.jackrabbit.api.jsr283.security.Privilege;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.NodeImpl;
@@ -140,25 +142,24 @@ abstract class SessionImplHelper {
      * @throws RepositoryException
      */
     public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
-        AccessManager accessMgr = sessionImpl.getAccessManager();
-        if(accessMgr instanceof HippoAccessManager) {
+        AccessControlManager acMgr = sessionImpl.getAccessControlManager();
 
-            // build the set of actions to be checked
-            String[] strings = actions.split(",");
-            HashSet<String> privileges = new HashSet<String>();
-            for (int i = 0; i < strings.length; i++) {
-                // skip the default jcr permissions as the have already been checked.
-                if(!SessionImpl.READ_ACTION.equals(strings[i]) &&
-                        !SessionImpl.REMOVE_ACTION.equals(strings[i]) &&
-                        !SessionImpl.ADD_NODE_ACTION.equals(strings[i]) &&
-                        !SessionImpl.SET_PROPERTY_ACTION.equals(strings[i])) {
+        // build the set of actions to be checked
+        String[] strings = actions.split(",");
+        HashSet<Privilege> privileges = new HashSet<Privilege>();
+        for (int i = 0; i < strings.length; i++) {
+            // skip the default jcr permissions as the have already been checked.
+            if(!SessionImpl.READ_ACTION.equals(strings[i]) &&
+                    !SessionImpl.REMOVE_ACTION.equals(strings[i]) &&
+                    !SessionImpl.ADD_NODE_ACTION.equals(strings[i]) &&
+                    !SessionImpl.SET_PROPERTY_ACTION.equals(strings[i])) {
 
-                    privileges.add(strings[i]);
-                }
+                privileges.add(acMgr.privilegeFromName(strings[i]));
             }
-            if (privileges.size() > 0) {
-                if (!((HippoAccessManager) accessMgr).hasPrivileges(absPath, privileges.toArray(new String[privileges.size()])))
-                    throw new AccessControlException("Privileges '" + actions + "' denied for " + absPath);
+        }
+        if (privileges.size() > 0) {
+            if (!acMgr.hasPrivileges(absPath, privileges.toArray(new Privilege[privileges.size()]))) {
+                throw new AccessControlException("Privileges '" + actions + "' denied for " + absPath);
             }
         }
     }

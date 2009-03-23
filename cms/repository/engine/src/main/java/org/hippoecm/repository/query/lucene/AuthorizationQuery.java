@@ -95,8 +95,10 @@ public class AuthorizationQuery {
         BooleanQuery authQuery = new BooleanQuery(true);
         Iterator<FacetAuthPrincipal> facetAuthsIt = facetAuths.iterator();
         while (facetAuthsIt.hasNext()) {
-            // TODO test for facetAuthPrincipal wether 'read' is bit is set to 1 in ROLE
             FacetAuthPrincipal facetAuthPrincipal = facetAuthsIt.next();
+            if (!facetAuthPrincipal.getPrivileges().contains("jcr:read")) {
+                continue;
+            }
             Iterator<DomainRule> domainRulesIt = facetAuthPrincipal.getRules().iterator();
             while (domainRulesIt.hasNext()) {
                 DomainRule domainRule = domainRulesIt.next();

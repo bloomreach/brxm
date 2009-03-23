@@ -27,13 +27,12 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:role</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:jcrread" sv:type="Boolean">
-        <sv:value>true</sv:value>
+    <sv:property sv:name="hippo:privileges" sv:type="String">
+        <sv:value>jcr:read</sv:value>
+        <sv:value>jcr:write</sv:value>
+        <sv:value>hippo:editor</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:jcrwrite" sv:type="Boolean">
-        <sv:value>true</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:jcrremove" sv:type="Boolean">
-        <sv:value>true</sv:value>
+    <sv:property sv:name="hippo:roles" sv:type="String">
+        <sv:value>author</sv:value>
     </sv:property>
 </sv:node>

@@ -51,18 +51,6 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    @Override
-    protected Node commonStart() throws RepositoryException {
-        numDocs = 10;
-        fill();
-        session.save();
-        addFacetSelect();
-        addFacetSearch();
-        session.save();
-        session.refresh(false);
-        return null;
-    }
-
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -75,7 +63,9 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
 
     @Test
     public void testFacetSearchExport() throws RepositoryException, Exception {
-        commonStart();
+        commonStart(10);
+        addFacetSelect();
+        addFacetSearch();
         Result result = new Result();
         ContentHandler handler = new ContentHandlerImpl(result, new String[] {"facetsearch"} );
         this.session.exportSystemView("/test/facetsearch", handler, true, false);
@@ -88,7 +78,9 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
 
     @Test
     public void testFacetSelectExport() throws RepositoryException, Exception {
-        commonStart();
+        commonStart(10);
+        addFacetSelect();
+        addFacetSearch();
         Result result = new Result();
         ContentHandler handler = new ContentHandlerImpl(result,  new String[] {"facetselect"});
         this.session.exportSystemView("/test/facetselect", handler, true, false);
@@ -100,7 +92,9 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
 
     @Test
     public void testTotalExport() throws RepositoryException, Exception {
-        commonStart();
+        commonStart(10);
+        addFacetSelect();
+        addFacetSearch();
         Result result = new Result();
         ContentHandler handler = new ContentHandlerImpl(result, new String[] {"facetsearch", "facetselect"});
         this.session.exportSystemView("/test", handler, true, false);
@@ -113,13 +107,13 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
     private void addFacetSearch() throws RepositoryException {
         Node facetsearchNode = session.getRootNode().getNode("test").addNode("facetsearch", HippoNodeType.NT_FACETSEARCH);
         facetsearchNode.setProperty(HippoNodeType.HIPPO_QUERYNAME, "xyz");
-        facetsearchNode.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
+        facetsearchNode.setProperty(HippoNodeType.HIPPO_DOCBASE, getDocsNode().getUUID());
         facetsearchNode.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x", "y", "z" });
     }
 
     private void addFacetSelect() throws RepositoryException {
         Node facetselectNode = session.getRootNode().getNode("test").addNode("facetselect", HippoNodeType.NT_FACETSELECT);
-        facetselectNode.setProperty("hippo:docbase", session.getRootNode().getNode("test/documents").getUUID());
+        facetselectNode.setProperty("hippo:docbase", getDocsNode().getUUID());
         facetselectNode.setProperty("hippo:facets", new String[] {});
         facetselectNode.setProperty("hippo:values", new String[] {});
         facetselectNode.setProperty("hippo:modes", new String[] {});

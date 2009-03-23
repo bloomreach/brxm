@@ -54,6 +54,7 @@
             <sv:value>hippo:authrole</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:groups" sv:type="String">
+            <sv:value>admin</sv:value>
             <sv:value>editor</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:role" sv:type="String">

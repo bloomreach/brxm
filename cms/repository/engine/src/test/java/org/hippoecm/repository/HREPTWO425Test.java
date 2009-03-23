@@ -15,46 +15,20 @@
  */
 package org.hippoecm.repository;
 
+import static org.junit.Assert.assertTrue;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import junit.framework.TestCase;
-
 import org.hippoecm.repository.api.HippoNodeType;
+import org.junit.Test;
 
 public class HREPTWO425Test extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
-    protected HippoRepository server;
-    protected Session session;
-
-    public void setUp() throws Exception {
-        server = HippoRepositoryFactory.getHippoRepository();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        session.save();
-    }
-
-    public void tearDown() throws Exception {
-        session.refresh(false);
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        if(session != null) {
-            session.logout();
-        }
-        if (server != null) {
-            server.close();
-        }
-    }
-
+    @Test
     public void testIssue() throws RepositoryException {
         Node node = session.getRootNode().addNode("test");
         node.addMixin("hippo:harddocument");

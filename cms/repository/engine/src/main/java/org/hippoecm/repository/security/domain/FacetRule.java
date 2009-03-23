@@ -247,7 +247,7 @@ public class FacetRule implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("FacetRule");
-        sb.append("(").append(type).append(")");
+        sb.append("(").append(PropertyType.nameFromValue(type)).append(")");
         sb.append("[");
         sb.append(facet);
         if (equals) {

@@ -28,8 +28,8 @@
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippo:namespace</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:roles" sv:type="String">
-      <sv:value>admin</sv:value>
+    <sv:property sv:name="hippo:privileges" sv:type="String">
+      <sv:value>hippo:admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.TemplateEditorWorkflowImpl</sv:value>
@@ -75,8 +75,8 @@
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippostd:gallery</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:roles" sv:type="String">
-      <sv:value>author</sv:value>
+    <sv:property sv:name="hippo:privleges" sv:type="String">
+      <sv:value>hippo:author</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
@@ -100,8 +100,8 @@
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippostd:folder</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:roles" sv:type="String">
-      <sv:value>author</sv:value>
+    <sv:property sv:name="hippo:privileges" sv:type="String">
+      <sv:value>hippo:author</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
@@ -125,8 +125,8 @@
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippostd:directory</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:roles" sv:type="String">
-      <sv:value>author</sv:value>
+    <sv:property sv:name="hippo:privileges" sv:type="String">
+      <sv:value>hippo:author</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
@@ -150,8 +150,8 @@
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>rep:root</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:roles" sv:type="String">
-      <sv:value>admin</sv:value>
+    <sv:property sv:name="hippo:privileges" sv:type="String">
+      <sv:value>hippo:admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>

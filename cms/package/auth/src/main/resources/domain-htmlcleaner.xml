@@ -147,7 +147,7 @@
             <sv:value>everybody</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:role" sv:type="String">
-            <sv:value>jcrread</sv:value>
+            <sv:value>readonly</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>

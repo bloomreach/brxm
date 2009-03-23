@@ -24,7 +24,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-public class FacetedNavigationNamespaceTest extends FacetedNavigationAbstractTest {
+public class FacetedNavigationNamespaceTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -41,19 +41,19 @@ public class FacetedNavigationNamespaceTest extends FacetedNavigationAbstractTes
         super.tearDown();
     }
 
-    protected void commonSetup() throws RepositoryException {
-        createDocuments();
+    private void commonStart() throws RepositoryException {
+        Node test = session.getRootNode().addNode("test");
+        Node docs = test.addNode("documents");
+        Node nav = test.addNode("navigation");
+        createDocuments(docs);
         session.save();
-        createNavigation();
+        session.refresh(false);
+        createNavigation(nav);
         session.save();
         session.refresh(false);
     }
-
-    public void createDocuments() throws RepositoryException {
-        if (!session.getRootNode().hasNode("documents")) {
-            session.getRootNode().addNode("documents");
-        }
-        Node docNode = session.getRootNode().getNode("documents");
+    
+    public void createDocuments(Node docNode) throws RepositoryException {
         Node normalNode = docNode.addNode("normal");
         Node namespaceNode = docNode.addNode("namespace");
         Node bothNode = docNode.addNode("both");
@@ -80,49 +80,45 @@ public class FacetedNavigationNamespaceTest extends FacetedNavigationAbstractTes
         }
     }
 
-    public void createNavigation() throws RepositoryException {
-        if (!session.getRootNode().hasNode("navigation")) {
-            session.getRootNode().addNode("navigation");
-        }
-        Node navNode = session.getRootNode().getNode("navigation");
+    public void createNavigation(Node navNode) throws RepositoryException {
         Node node;
 
         // search without namespace
         node = navNode.addNode("normalsearch", HippoNodeType.NT_FACETSEARCH);
         node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "normalsearch");
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("documents/normal").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents/normal").getUUID());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "facettest" });
 
         // search with namespace
         node = navNode.addNode("namespacesearch", HippoNodeType.NT_FACETSEARCH);
         node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "normalsearch");
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("documents/namespace").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents/namespace").getUUID());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "hippo:facettest" });
 
         // search both
         node = navNode.addNode("bothsearch", HippoNodeType.NT_FACETSEARCH);
         node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "bothsearch");
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("documents/both").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents/both").getUUID());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "hippo:facettest" });
 
 
         // select without namespace
         node = navNode.addNode("normalselect", HippoNodeType.NT_FACETSELECT);
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("documents/normal").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents/normal").getUUID());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "facettest" });
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { "val0" });
         node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { "stick" });
 
         // select with namespace
         node = navNode.addNode("namespaceselect", HippoNodeType.NT_FACETSELECT);
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("documents/namespace").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents/namespace").getUUID());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "hippo:facettest" });
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { "val0" });
         node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { "stick" });
 
         // select with both
         node = navNode.addNode("bothselect", HippoNodeType.NT_FACETSELECT);
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("documents/both").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents/both").getUUID());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "hippo:facettest" });
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { "val0" });
         node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { "stick" });
@@ -130,8 +126,8 @@ public class FacetedNavigationNamespaceTest extends FacetedNavigationAbstractTes
 
     @Test
     public void testFacetSearchWithoutNamespace() throws RepositoryException {
-        commonSetup();
-        Node node = session.getRootNode().getNode("navigation/normalsearch");
+        commonStart();
+        Node node = session.getRootNode().getNode("test/navigation/normalsearch");
         for (int j = 0; j < PROP_COUNT; j++) {
             assertTrue(node.hasNode("val" + j));
             assertTrue(node.getNode("val" + j).hasProperty(HippoNodeType.HIPPO_COUNT));
@@ -141,8 +137,8 @@ public class FacetedNavigationNamespaceTest extends FacetedNavigationAbstractTes
 
     @Test
     public void testFacetSearchWithNamespace() throws RepositoryException {
-        commonSetup();
-        Node node = session.getRootNode().getNode("navigation/namespacesearch");
+        commonStart();
+        Node node = session.getRootNode().getNode("test/navigation/namespacesearch");
         for (int j = 0; j < PROP_COUNT; j++) {
             assertTrue(node.hasNode("val" + j));
             assertTrue(node.getNode("val" + j).hasProperty(HippoNodeType.HIPPO_COUNT));
@@ -152,8 +148,8 @@ public class FacetedNavigationNamespaceTest extends FacetedNavigationAbstractTes
 
     @Test
     public void testFacetSearchWithBoth() throws RepositoryException {
-        commonSetup();
-        Node node = session.getRootNode().getNode("navigation/bothsearch");
+        commonStart();
+        Node node = session.getRootNode().getNode("test/navigation/bothsearch");
         for (int j = 0; j < PROP_COUNT; j++) {
             assertTrue(node.hasNode("val" + j));
             assertTrue(node.getNode("val" + j).hasProperty(HippoNodeType.HIPPO_COUNT));
@@ -163,8 +159,8 @@ public class FacetedNavigationNamespaceTest extends FacetedNavigationAbstractTes
 
     @Test
     public void testFacetSelectWithoutNamespace() throws RepositoryException {
-        commonSetup();
-        Node node = session.getRootNode().getNode("navigation/normalselect");
+        commonStart();
+        Node node = session.getRootNode().getNode("test/navigation/normalselect");
         NodeIterator iter = node.getNodes();
         assertEquals(NODE_COUNT, iter.getSize());
         for (int j = 0; j < NODE_COUNT; j++) {
@@ -174,8 +170,8 @@ public class FacetedNavigationNamespaceTest extends FacetedNavigationAbstractTes
 
     @Test
     public void testFacetSelectWithNamespace() throws RepositoryException {
-        commonSetup();
-        Node node = session.getRootNode().getNode("navigation/namespaceselect");
+        commonStart();
+        Node node = session.getRootNode().getNode("test/navigation/namespaceselect");
         NodeIterator iter = node.getNodes();
         assertEquals(NODE_COUNT, iter.getSize());
         for (int j = 0; j < NODE_COUNT; j++) {
@@ -185,8 +181,8 @@ public class FacetedNavigationNamespaceTest extends FacetedNavigationAbstractTes
 
     @Test
     public void testFacetSelectWithBoth() throws RepositoryException {
-        commonSetup();
-        Node node = session.getRootNode().getNode("navigation/bothselect");
+        commonStart();
+        Node node = session.getRootNode().getNode("test/navigation/bothselect");
         NodeIterator iter = node.getNodes();
         assertEquals(NODE_COUNT, iter.getSize());
         for (int j = 0; j < NODE_COUNT; j++) {

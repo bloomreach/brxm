@@ -73,7 +73,11 @@ public final class Modules<T extends Object> implements Iterable<T> {
                 try {
                     Manifest manifest = new Manifest(url.openStream());
                     String modulesString = manifest.getMainAttributes().getValue("Hippo-Modules");
-                    log.info("Modules as specified by manifest {} are {}", url.toString(), (modulesString != null ? modulesString : "none"));
+                    if (modulesString != null) {
+                        log.info("Hippo-Modules specified by manifest {} : {}", url.toString(), modulesString);
+                    } else {
+                        log.debug("Hippo-Modules specified by manifest  {} : none", url.toString());
+                    }
                     if (modulesString != null) {
                         for (StringTokenizer tok = new StringTokenizer(modulesString); tok.hasMoreTokens();) {
                             String moduleClassName = tok.nextToken().trim();
@@ -113,10 +117,10 @@ public final class Modules<T extends Object> implements Iterable<T> {
 
     static void setModules(Modules modules) {
         allModules = modules;
-        if (log.isDebugEnabled()) {
-            log.debug("Default list of modules set to:");
+        if (log.isInfoEnabled()) {
+            log.info("Default list of modules set to:");
             for (Object module : allModules) {
-                log.debug("  " + module.getClass().getName());
+                log.info("  " + module.getClass().getName());
             }
         }
     }

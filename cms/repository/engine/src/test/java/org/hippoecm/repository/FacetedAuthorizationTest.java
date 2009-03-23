@@ -15,6 +15,15 @@
  */
 package org.hippoecm.repository;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.security.AccessControlException;
 
 import javax.jcr.AccessDeniedException;
@@ -25,15 +34,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -127,7 +127,7 @@ public class FacetedAuthorizationTest extends TestCase {
         Node ar = hipDocDomain.addNode("hippo:authrole", HippoNodeType.NT_AUTHROLE);
         Node dr  = hipDocDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
         Node fr  = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
-        ar.setProperty(HippoNodeType.HIPPO_ROLE, "jcrread");
+        ar.setProperty(HippoNodeType.HIPPO_ROLE, "readonly");
         ar.setProperty(HippoNodeType.HIPPO_USERS, new String[] {TEST_USER_ID});
         fr.setProperty(HippoNodeType.HIPPO_FACET, "nodetype");
         fr.setProperty(HippoNodeType.HIPPO_VALUE, "hippo:testdocument");
@@ -138,7 +138,7 @@ public class FacetedAuthorizationTest extends TestCase {
         ar = readDomain.addNode("hippo:authrole", HippoNodeType.NT_AUTHROLE);
         dr  = readDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
         fr  = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
-        ar.setProperty(HippoNodeType.HIPPO_ROLE, "jcrread");
+        ar.setProperty(HippoNodeType.HIPPO_ROLE, "readonly");
         ar.setProperty(HippoNodeType.HIPPO_USERS, new String[] {TEST_USER_ID});
         fr.setProperty(HippoNodeType.HIPPO_FACET, "authtest");
         fr.setProperty(HippoNodeType.HIPPO_VALUE, "canread");
@@ -146,7 +146,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
         dr  = readDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
         fr  = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
-        ar.setProperty(HippoNodeType.HIPPO_ROLE, "jcrread");
+        ar.setProperty(HippoNodeType.HIPPO_ROLE, "readonly");
         ar.setProperty(HippoNodeType.HIPPO_USERS, new String[] {TEST_USER_ID});
         fr.setProperty(HippoNodeType.HIPPO_FACET, "user");
         fr.setProperty(HippoNodeType.HIPPO_VALUE, "__user__");
@@ -154,7 +154,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
         dr  = readDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
         fr  = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
-        ar.setProperty(HippoNodeType.HIPPO_ROLE, "jcrread");
+        ar.setProperty(HippoNodeType.HIPPO_ROLE, "readonly");
         ar.setProperty(HippoNodeType.HIPPO_USERS, new String[] {TEST_USER_ID});
         fr.setProperty(HippoNodeType.HIPPO_FACET, "group");
         fr.setProperty(HippoNodeType.HIPPO_VALUE, "__group__");
@@ -162,7 +162,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
         dr  = readDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
         fr  = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
-        ar.setProperty(HippoNodeType.HIPPO_ROLE, "jcrread");
+        ar.setProperty(HippoNodeType.HIPPO_ROLE, "readonly");
         ar.setProperty(HippoNodeType.HIPPO_USERS, new String[] {TEST_USER_ID});
         fr.setProperty(HippoNodeType.HIPPO_FACET, "role");
         fr.setProperty(HippoNodeType.HIPPO_VALUE, "__role__");
@@ -173,7 +173,7 @@ public class FacetedAuthorizationTest extends TestCase {
         ar = writeDomain.addNode("hippo:authrole", HippoNodeType.NT_AUTHROLE);
         dr  = writeDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
         fr  = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
-        ar.setProperty(HippoNodeType.HIPPO_ROLE, "jcrwrite");
+        ar.setProperty(HippoNodeType.HIPPO_ROLE, "readwrite");
         ar.setProperty(HippoNodeType.HIPPO_USERS, new String[] {TEST_USER_ID});
         fr.setProperty(HippoNodeType.HIPPO_FACET, "authtest");
         fr.setProperty(HippoNodeType.HIPPO_VALUE, "canwrite");
@@ -225,7 +225,7 @@ public class FacetedAuthorizationTest extends TestCase {
         testData.getNode("expanders").addNode("groupadmin",  "hippo:ntunstructured").setProperty("group", "admin");
         testData.getNode("expanders/groupadmin").addMixin("hippo:harddocument");
 
-        testData.getNode("expanders").addNode("roletest",  "hippo:ntunstructured").setProperty("role", "jcrread");
+        testData.getNode("expanders").addNode("roletest",  "hippo:ntunstructured").setProperty("role", "readonly");
         testData.getNode("expanders/roletest").addMixin("hippo:harddocument");
         testData.getNode("expanders").addNode("roleadmin",  "hippo:ntunstructured").setProperty("group", "admin");
         testData.getNode("expanders/roleadmin").addMixin("hippo:harddocument");
@@ -266,7 +266,7 @@ public class FacetedAuthorizationTest extends TestCase {
     @After
     public void tearDown() throws Exception {
         cleanup();
-        super.tearDown(true);
+        super.tearDown();
     }
 
     @Test
@@ -299,30 +299,28 @@ public class FacetedAuthorizationTest extends TestCase {
         assertTrue(testData.hasNode("readdoc0/subwrite"));
         assertTrue(testData.hasNode("writedoc0/subread"));
         assertTrue(testData.hasNode("writedoc0/subwrite"));
-
-        // the iterator only sees 4 nodes, but they are directly accessible
-        assertTrue(testData.hasNode("nothing0/subread"));
-        assertTrue(testData.hasNode("nothing0/subwrite"));
     }
 
     @Test
     public void testSubReadsNotAllowed() throws RepositoryException {
         assertFalse(testData.hasNode("readdoc0/subnothing"));
         assertFalse(testData.hasNode("writedoc0/subnothing"));
+        assertFalse(testData.hasNode("nothing0/subread"));
+        assertFalse(testData.hasNode("nothing0/subwrite"));
     }
 
     @Test
     public void testWritesAllowed() throws RepositoryException {
         Node node;
 
-        userSession.checkPermission(testData.getPath() + "/" + "writedoc0/test" , SET_PROPERTY_ACTION);
+        userSession.checkPermission(testData.getPath() + "/" + "writedoc0" , SET_PROPERTY_ACTION);
         node = testData.getNode("writedoc0");
         node.setProperty("test", "allowed");
         userSession.save();
 
-        userSession.checkPermission(testData.getPath() + "/" + "writedoc0/newnode" , ADD_NODE_ACTION);
+        userSession.checkPermission(testData.getPath() + "/" + "writedoc0" , ADD_NODE_ACTION);
         node = testData.getNode("writedoc0");
-        node.addNode("newnode", "nt:unstructured").setProperty("authtest", "canread");
+        node.addNode("newnode", "hippo:ntunstructured").setProperty("authtest", "canwrite");
         userSession.save();
     }
 
@@ -330,14 +328,12 @@ public class FacetedAuthorizationTest extends TestCase {
     public void testSubWritesAllowed() throws RepositoryException {
         Node node;
 
-        userSession.checkPermission(testData.getPath() + "/" + "readdoc0/subwrite/test" , SET_PROPERTY_ACTION);
         node = testData.getNode("readdoc0/subwrite");
         node.setProperty("test", "allowed");
         userSession.save();
 
-        userSession.checkPermission(testData.getPath() + "/" + "readdoc0/subwrite/newnode" , ADD_NODE_ACTION);
         node = testData.getNode("readdoc0/subwrite");
-        node.addNode("newnode", "nt:unstructured").setProperty("authtest", "canread");
+        node.addNode("newnode", "hippo:ntunstructured").setProperty("authtest", "canwrite");
         userSession.save();
     }
 
@@ -386,31 +382,6 @@ public class FacetedAuthorizationTest extends TestCase {
             // expected
             userSession.refresh(false);
         }
-
-        // TODO: make a descission what to do in these cases
-//        try {
-//            // should this be allowed? currently not; write needs read on parent
-//            node = testData.getNode("nothing0/subwrite");
-//            node.setProperty("test", "allowed");
-//
-//            Utilities.dump(session.getRootNode());
-//            userSession.save();
-//            fail("Shouldn't be allowed: read on parent node required for setting property.");
-//        } catch (AccessDeniedException e) {
-//            // expected
-//            userSession.refresh(false);
-//        }
-//
-//        try {
-//            // should this be allowed? currently not; write needs read on parent
-//            node = testData.getNode("nothing0/subwrite");
-//            node.addNode("newnode", "hippo:ntunstructured");
-//            userSession.save();
-//            fail("Shouldn't be allowed: read on parent node required for adding node.");
-//        } catch (AccessDeniedException e) {
-//            // expected
-//            userSession.refresh(false);
-//        }
     }
 
     @Test
@@ -475,14 +446,14 @@ public class FacetedAuthorizationTest extends TestCase {
         }
         // FIXME HREPTWO-2126: Should not be allowed to remove nodes on which the 
         // user only has read permisssions
-        //        try {
-        //            testData.getNode("writedoc0/subread").remove();
-        //            userSession.save();
-        //            fail("Shouldn't be allowed to remove node.");
-        //        } catch (AccessDeniedException e) {
-        //            // expected
-        //            userSession.refresh(false);
-        //        }
+        try {
+            testData.getNode("writedoc0/subread").remove();
+            userSession.save();
+            fail("Shouldn't be allowed to remove node.");
+        } catch (AccessDeniedException e) {
+            // expected
+            userSession.refresh(false);
+        }
     }
 
     @Test
@@ -510,15 +481,14 @@ public class FacetedAuthorizationTest extends TestCase {
 
         try {
             node = testData.getNode("writedoc0");
-            node.addNode("mynode1", "nt:unstructured").setProperty("authtest", "none");
+            node.addNode("mynode1", "hippo:ntunstructured").setProperty("authtest", "none");
             userSession.save();
-
+            
             // JackRabbit swallows the AccessDeniedException, so check manually for node
             try {
                 userSession.refresh(false);
                 testData.getNode("writedoc0/mynode1");
-                // HREPTWO-2126
-                //fail("Shouldn't be allowed to add node you can't read.");
+                fail("Shouldn't be allowed to add node you can't read.");
             } catch (PathNotFoundException e) {
                 // expected
             }
@@ -528,15 +498,14 @@ public class FacetedAuthorizationTest extends TestCase {
         }
         try {
             node = testData.getNode("writedoc0");
-            node.addNode("mynode2", "nt:unstructured").setProperty("authtest", "read");
+            node.addNode("mynode2", "hippo:ntunstructured").setProperty("authtest", "canread");
             userSession.save();
-
+            
             // JackRabbit swallows the AccessDeniedException, so check manually for node
             try {
                 userSession.refresh(false);
                 testData.getNode("writedoc0/mynode2");
-                // HREPTWO-2126
-                //fail("Shouldn't be allowed to add node you can't write.");
+                fail("Shouldn't be allowed to add node you can't write.");
             } catch (PathNotFoundException e) {
                 // expected
             }
@@ -548,6 +517,11 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Test
     public void testFacetSearch() throws RepositoryException {
+//        System.out.println("--------------------DUMP-ROOT----------------------");
+//        Utilities.dump(session.getRootNode());
+//        System.out.println("--------------------DUMP-USER----------------------");
+//        Utilities.dump(userSession.getRootNode());
+//        System.out.println("--------------------DUMP-END----------------------");
         Node navNode = testNav.getNode("search");
         assertTrue(navNode.hasNode("hippo:resultset/readdoc0"));
         assertTrue(navNode.hasNode("hippo:resultset/writedoc0"));
@@ -571,7 +545,7 @@ public class FacetedAuthorizationTest extends TestCase {
         // XPath doesn't like the query from the root
         Query query = queryManager.createQuery("//element(*,hippo:ntunstructured)", Query.XPATH);
         NodeIterator iter = query.execute().getNodes();
-        assertEquals(12L, iter.getSize());
+        assertEquals(10L, iter.getSize());
     }
 
     @Test
@@ -579,118 +553,97 @@ public class FacetedAuthorizationTest extends TestCase {
         QueryManager queryManager = userSession.getWorkspace().getQueryManager();
         Query query = queryManager.createQuery("SELECT * FROM hippo:ntunstructured", Query.SQL);
         NodeIterator iter = query.execute().getNodes();
-        assertEquals(12L, iter.getSize());
+        assertEquals(10L, iter.getSize());
     }
 
     @Test
-    public void testCheckPermissionRoleJcrRead() throws RepositoryException {
-        userSession.checkPermission(testData.getPath() + "/readdoc0", "jcrread");
-        userSession.checkPermission(testData.getPath() + "/readdoc0/subread", "jcrread");
-        userSession.checkPermission(testData.getPath() + "/writedoc0/subread", "jcrread");
-        userSession.checkPermission(testData.getPath() + "/nothing0/subread", "jcrread");
+    public void testCheckPermissionPrivilegeJcrRead() throws RepositoryException {
+        userSession.checkPermission(testData.getPath() + "/readdoc0", "jcr:read");
+        userSession.checkPermission(testData.getPath() + "/readdoc0/subread", "jcr:read");
+        userSession.checkPermission(testData.getPath() + "/writedoc0/subread", "jcr:read");
     }
 
     @Test
-    public void testCheckPermissionRoleJcrWrite() throws RepositoryException {
-        userSession.checkPermission(testData.getPath() + "/readdoc0/subwrite", "jcrwrite");
-        userSession.checkPermission(testData.getPath() + "/writedoc0", "jcrwrite");
-        userSession.checkPermission(testData.getPath() + "/writedoc0/subwrite", "jcrwrite");
-        userSession.checkPermission(testData.getPath() + "/nothing0/subwrite", "jcrwrite");
+    public void testCheckPermissionPrivilegeJcrWrite() throws RepositoryException {
+        userSession.checkPermission(testData.getPath() + "/writedoc0", "jcr:write");
+        userSession.checkPermission(testData.getPath() + "/writedoc0/subwrite", "jcr:write");
+        userSession.checkPermission(testData.getPath() + "/readdoc0/subwrite", "jcr:write");
     }
 
+
     @Test
-    public void testCheckPermissionNotRoleJcrRead() throws RepositoryException {
+    public void testCheckPermissionNotPrivilegeJcrRead() throws RepositoryException {
         try {
-            userSession.checkPermission(testData.getPath() + "/readdoc0/subwrite", "jcrread");
-            fail("User shouldn't be allowed action 'jcrread' on : " + testData.getPath() + "/readdoc0/subwrite");
-        } catch (AccessControlException e) {
-            // expected
-        }
-        try {
-            userSession.checkPermission(testData.getPath() + "/readdoc0/subwrite", "jcrread");
-            fail("User shouldn't be allowed action 'jcrread' on : " + testData.getPath() + "/readdoc0/subwrite");
-        } catch (AccessControlException e) {
-            // expected
-        }
-        try {
-            userSession.checkPermission(testData.getPath() + "/readdoc0/subnothing", "jcrread");
+            userSession.checkPermission(testData.getPath() + "/readdoc0/subnothing", "jcr:read");
             fail("User shouldn't be allowed action 'jcrread' on : " + testData.getPath() + "/readdoc0/subnothing");
         } catch (AccessControlException e) {
             // expected
         }
         try {
-            userSession.checkPermission(testData.getPath() + "/writedoc0", "jcrread");
-            fail("User shouldn't be allowed action 'read' on : " + testData.getPath() + "/writedoc0");
-        } catch (AccessControlException e) {
-            // expected
-        }
-        try {
-            userSession.checkPermission(testData.getPath() + "/writedoc0/subwrite", "jcrread");
-            fail("User shouldn't be allowed action 'read' on : " + testData.getPath() + "/writedoc0/subwrite");
-        } catch (AccessControlException e) {
-            // expected
-        }
-        try {
-            userSession.checkPermission(testData.getPath() + "/writedoc0/subnothing", "jcrread");
+            userSession.checkPermission(testData.getPath() + "/writedoc0/subnothing", "jcr:read");
             fail("User shouldn't be allowed action 'read' on : " + testData.getPath() + "/writedoc0/subnothing");
         } catch (AccessControlException e) {
             // expected
         }
         try {
-            userSession.checkPermission(testData.getPath() + "/nothing0", "jcrread");
+            userSession.checkPermission(testData.getPath() + "/nothing0", "jcr:read");
             fail("User shouldn't be allowed action 'read' on : " + testData.getPath() + "/nothing0");
         } catch (AccessControlException e) {
             // expected
         }
         try {
-            userSession.checkPermission(testData.getPath() + "/nothing0/subwrite", "jcrread");
-            fail("User shouldn't be allowed action 'read' on : " + testData.getPath() + "/nothing0/subwrite");
-        } catch (AccessControlException e) {
-            // expected
-        }
-        try {
-            userSession.checkPermission(testData.getPath() + "/nothing0/subnothing", "jcrread");
+            userSession.checkPermission(testData.getPath() + "/nothing0/subnothing", "jcr:read");
             fail("User shouldn't be allowed action 'read' on : " + testData.getPath() + "/nothing0/subnothing");
         } catch (AccessControlException e) {
             // expected
         }
-    }
-
-
-    @Test
-    public void testCheckPermissionNotRoleJcrWrite() throws RepositoryException {
         try {
-            userSession.checkPermission(testData.getPath() + "/readdoc0", "jcrwrite");
-            fail("User shouldn't be allowed action 'jcrall' on : " + testData.getPath() + "/readdoc0");
-        } catch (AccessControlException e) {
-            // expected
-        }
-        try {
-            userSession.checkPermission(testData.getPath() + "/readdoc0/subread", "jcrwrite");
-            fail("User shouldn't be allowed action 'jcrall' on : " + testData.getPath() + "/readdoc0/subread");
-        } catch (AccessControlException e) {
-            // expected
-        }
-        try {
-            userSession.checkPermission(testData.getPath() + "/readdoc0/subnothing", "jcrwrite");
-            fail("User shouldn't be allowed action 'jcrall' on : " + testData.getPath() + "/readdoc0/subnothing");
-        } catch (AccessControlException e) {
-            // expected
-        }
-        try {
-            userSession.checkPermission(testData.getPath() + "/nothing0", "jcrwrite");
-            fail("User shouldn't be allowed action 'read' on : " + testData.getPath() + "/nothing0");
-        } catch (AccessControlException e) {
-            // expected
-        }
-        try {
-            userSession.checkPermission(testData.getPath() + "/nothing0/subread", "jcrwrite");
+            userSession.checkPermission(testData.getPath() + "/nothing0/subread", "jcr:read");
             fail("User shouldn't be allowed action 'read' on : " + testData.getPath() + "/nothing0/subread");
         } catch (AccessControlException e) {
             // expected
         }
         try {
-            userSession.checkPermission(testData.getPath() + "/nothing0/subnothing", "jcrwrite");
+            userSession.checkPermission(testData.getPath() + "/nothing0/subwrite", "jcr:read");
+            fail("User shouldn't be allowed action 'read' on : " + testData.getPath() + "/nothing0/subwrite");
+        } catch (AccessControlException e) {
+            // expected
+        }
+    }
+    @Test
+    public void testCheckPermissionNotPrivilegeJcrWrite() throws RepositoryException {
+        try {
+            userSession.checkPermission(testData.getPath() + "/readdoc0", "jcr:write");
+            fail("User shouldn't be allowed action 'jcrall' on : " + testData.getPath() + "/readdoc0");
+        } catch (AccessControlException e) {
+            // expected
+        }
+        try {
+            userSession.checkPermission(testData.getPath() + "/readdoc0/subread", "jcr:write");
+            fail("User shouldn't be allowed action 'jcrall' on : " + testData.getPath() + "/readdoc0/subread");
+        } catch (AccessControlException e) {
+            // expected
+        }
+        try {
+            userSession.checkPermission(testData.getPath() + "/readdoc0/subnothing", "jcr:write");
+            fail("User shouldn't be allowed action 'jcrall' on : " + testData.getPath() + "/readdoc0/subnothing");
+        } catch (AccessControlException e) {
+            // expected
+        }
+        try {
+            userSession.checkPermission(testData.getPath() + "/nothing0", "jcr:write");
+            fail("User shouldn't be allowed action 'read' on : " + testData.getPath() + "/nothing0");
+        } catch (AccessControlException e) {
+            // expected
+        }
+        try {
+            userSession.checkPermission(testData.getPath() + "/nothing0/subread", "jcr:write");
+            fail("User shouldn't be allowed action 'read' on : " + testData.getPath() + "/nothing0/subread");
+        } catch (AccessControlException e) {
+            // expected
+        }
+        try {
+            userSession.checkPermission(testData.getPath() + "/nothing0/subnothing", "jcr:write");
             fail("User shouldn't be allowed action 'read' on : " + testData.getPath() + "/nothing0/subnothing");
         } catch (AccessControlException e) {
             // expected

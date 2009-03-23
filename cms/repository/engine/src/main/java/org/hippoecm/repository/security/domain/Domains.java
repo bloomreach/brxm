@@ -39,11 +39,6 @@ public class Domains {
     private final static String SVN_ID = "$Id$";
 
     /**
-     * The AAContext
-     */
-    private ManagerContext context;
-
-    /**
      * The system/root session
      */
     private Session session;
@@ -76,7 +71,6 @@ public class Domains {
      * @throws RepositoryException
      */
     public void init(ManagerContext context) {
-        this.context = context;
         this.session = context.getSession();
         this.domainsPath = context.getPath();
         loadDomains();
