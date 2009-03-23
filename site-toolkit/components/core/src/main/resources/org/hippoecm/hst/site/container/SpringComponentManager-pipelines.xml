@@ -43,6 +43,7 @@
     <property name="componentInvoker" ref="org.hippoecm.hst.core.container.HstComponentInvoker" />
     <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />
     <property name="linkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator" />
+    <property name="siteMenusManager" ref="org.hippoecm.hst.core.sitemenu.HstSiteMenusManager" />
     <property name="ctxWhereClauseComputer" ref="org.hippoecm.hst.core.search.HstCtxWhereClauseComputer" />
   </bean>
 
@@ -58,6 +59,9 @@
   </bean>
   
   <bean id="contextResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ContextResolvingValve">
+  </bean>
+  
+  <bean id="siteMenusResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SiteMenusResolvingValve">
   </bean>
   
   <bean id="actionValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ActionValve">
@@ -92,6 +96,7 @@
               <list>
                 <ref bean="urlValve" />
                 <ref bean="contextResolvingValve" />
+                <ref bean="siteMenusResolvingValve" />
                 <ref bean="actionValve" />
                 <ref bean="resourceServingValve" />
                 <ref bean="aggregationValve" />

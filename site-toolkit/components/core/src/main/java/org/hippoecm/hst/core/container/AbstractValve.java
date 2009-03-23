@@ -9,6 +9,7 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
+import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +25,7 @@ public abstract class AbstractValve implements Valve
     protected HstComponentInvoker componentInvoker;
     protected HstURLFactory urlFactory;
     protected HstLinkCreator linkCreator;
+    protected HstSiteMenusManager siteMenusManager;
     protected HstCtxWhereClauseComputer ctxWhereClauseComputer;
     
     public HstSitesManager getSitesManager(String name) {
@@ -97,6 +99,14 @@ public abstract class AbstractValve implements Valve
     
     public void setLinkCreator(HstLinkCreator linkCreator) {
         this.linkCreator = linkCreator;
+    }
+    
+    public void setSiteMenusManager(HstSiteMenusManager siteMenusManager) {
+        this.siteMenusManager = siteMenusManager;
+    }
+    
+    public HstSiteMenusManager getHstSiteMenusManager(){
+        return this.siteMenusManager;
     }
     
     public HstCtxWhereClauseComputer getCtxWhereClauseComputer(){

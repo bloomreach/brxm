@@ -63,14 +63,6 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
        }
        relativeContentPath = (String)pp.resolveProperty("relativeContentPath", hstSiteMapItem.getRelativeContentPath());
 
-       /*
-        * Now, make request based instances of the sitemenu configurations, and make this accessible through the resolved sitemap item. 
-        */
-       
-       
-       /*
-        * Now, according the current matched hstSiteMapItem, set the correct sitemenu instances on 'selected = true'
-        */
     }
     
     
@@ -95,9 +87,4 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
         return relativeContentPath;
     }
 
-
-    public HstSiteMenus getSiteMenus() {
-        return null;
-    }
-  
 }

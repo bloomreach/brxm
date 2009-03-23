@@ -68,10 +68,5 @@ public interface ResolvedSiteMapItem {
      */
     HstComponentConfiguration getHstComponentConfiguration();
     
-    /**
-     * Through an implementation of this interface, access to a <code>SiteMenus</code> implementation can be provided. If a frontend does
-     * not use a <code>SiteMenus</code> implementation, <code>null</code> can be returned
-     * @return the <code>SiteMenus</code> instance for the current request or <code>null</code> if the application does not use a site menu from the framework
-     */
-    HstSiteMenus getSiteMenus();
+    
 }
