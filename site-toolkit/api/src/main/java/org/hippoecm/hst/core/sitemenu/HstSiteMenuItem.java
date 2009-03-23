@@ -23,7 +23,7 @@ import org.hippoecm.hst.core.linking.HstLink;
 /**
  *
  */
-public interface SiteMenuItem extends Serializable{
+public interface HstSiteMenuItem extends Serializable{
     /**
      * 
      * @return the name of this SiteMenuItem
@@ -34,7 +34,7 @@ public interface SiteMenuItem extends Serializable{
      * 
      * @return all direct child SiteMenuItem's of this item
      */
-    List<SiteMenuItem> getChildMenuItems();
+    List<HstSiteMenuItem> getChildMenuItems();
     
     /**
      * 

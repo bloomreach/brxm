@@ -28,7 +28,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.sitemenu.SiteMenus;
+import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -230,7 +230,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             return null;
         }
 
-        public SiteMenus getSiteMenus() {
+        public HstSiteMenus getSiteMenus() {
             return null;
         }
 

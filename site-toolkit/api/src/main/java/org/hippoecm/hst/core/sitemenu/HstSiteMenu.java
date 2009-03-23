@@ -19,10 +19,10 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * The interface for a SiteMenu implementation, containing possibly a tree of {@link SiteMenuItem}'s
+ * The interface for a SiteMenu implementation, containing possibly a tree of {@link HstSiteMenuItem}'s
  *
  */
-public interface SiteMenu extends Serializable{
+public interface HstSiteMenu extends Serializable{
     /**
      * Returns the name of this SiteMenu. For example, you could have a "topmenu", "leftmenu" and "footermenu" on your site/portal,
      * where these names might be appropriate 
@@ -40,10 +40,10 @@ public interface SiteMenu extends Serializable{
     /**
      * @return the currently selected sitemenu item
      */
-    SiteMenuItem getSelectedSiteMenuItem();
+    HstSiteMenuItem getSelectedSiteMenuItem();
     
     /**
-     * @return returns all direct child {@link SiteMenuItem}'s of this SiteMenu
+     * @return returns all direct child {@link HstSiteMenuItem}'s of this SiteMenu
      */
-    List<SiteMenuItem> getSiteMenuItems();
+    List<HstSiteMenuItem> getSiteMenuItems();
 }

@@ -22,7 +22,7 @@ import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.sitemenu.SiteMenus;
+import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +96,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
     }
 
 
-    public SiteMenus getSiteMenus() {
+    public HstSiteMenus getSiteMenus() {
         return null;
     }
   
