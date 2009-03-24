@@ -103,9 +103,9 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 StringResourceModel text;
                 try {
                     Object[] params = new Object[]{((WorkflowDescriptorModel) FolderWorkflowPlugin.this.getModel()).getNode().getName()};
-                    text = new StringResourceModel("delete-message-extended", this, null, params);
+                    text = new StringResourceModel("delete-message-extended", FolderWorkflowPlugin.this, null, params);
                 } catch (RepositoryException ex) {
-                    text = new StringResourceModel("delete-message", this, null);
+                    text = new StringResourceModel("delete-message", FolderWorkflowPlugin.this, null);
                 }
                 return text;
             }
@@ -134,7 +134,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 for (final String category : prototypes.keySet()) {
                     list.add(new WorkflowAction("id", category, new ResourceReference(getClass(), "document-new-16.png")) {
                         public String prototype;
-                        public String name;
+                        public String targetName;
                         @Override
                         protected Dialog createRequestDialog() {
                             return new FolderWorkflowDialog(this, new Model(category), category, prototypes.get(category));
@@ -145,7 +145,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin {
                             if (prototype == null) {
                                 throw new IllegalArgumentException("You need to select a type");
                             }
-                            if (name == null || "".equals(name)) {
+                            if (targetName == null || "".equals(targetName)) {
                                 throw new IllegalArgumentException("You need to enter a name");
                             }
                             if (workflow != null) {
@@ -153,7 +153,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin {
                                     log.error("unknown folder type " + prototype);
                                     return "Unknown folder type " + prototype;
                                 }
-                                String path = workflow.add(category, prototype, NodeNameCodec.encode(name, true));
+                                String path = workflow.add(category, prototype, NodeNameCodec.encode(targetName, true));
 
                                 ((UserSession) Session.get()).getJcrSession().refresh(true);
 
@@ -249,14 +249,14 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin {
             this.category = category;
             this.prototypes = prototypes;
 
-            PropertyModel nameModel = new PropertyModel(action, "name");
-            PropertyModel prototypeModel = new PropertyModel(this, "prototype");
+            PropertyModel nameModel = new PropertyModel(action, "targetName");
+            PropertyModel prototypeModel = new PropertyModel(action, "prototype");
 
             TextField text = new TextField("name", nameModel);
             text.setRequired(true);
             add(text);
 
-            Label typelabel = new Label("typelabel", new StringResourceModel("document-type", action, null));
+            Label typelabel = new Label("typelabel", new StringResourceModel("document-type", FolderWorkflowPlugin.this, null));
             add(typelabel);
 
             if (prototypes.size() > 1) {

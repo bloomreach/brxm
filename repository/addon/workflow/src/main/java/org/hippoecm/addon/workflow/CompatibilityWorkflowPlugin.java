@@ -128,7 +128,7 @@ public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implement
 
         protected String execute(WorkflowDescriptorModel model) {
             try {
-                WorkflowDescriptor descriptor = (WorkflowDescriptor) WorkflowAction.this.getModelObject();
+                WorkflowDescriptor descriptor = (WorkflowDescriptor) model.getObject();
                 WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
                 javax.jcr.Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
                 session.save();
@@ -204,7 +204,7 @@ public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implement
              * the action to be performed when the dialog's ok button is clicked.
              */
             protected final String execute() {
-                return WorkflowAction.this.execute((WorkflowDescriptorModel) WorkflowAction.this.getModel());
+                return WorkflowAction.this.execute((WorkflowDescriptorModel) CompatibilityWorkflowPlugin.this.getModel());
             }
         }
 

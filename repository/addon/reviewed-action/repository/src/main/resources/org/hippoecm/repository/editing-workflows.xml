@@ -34,7 +34,7 @@
             <sv:value>org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflowImpl</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:display" sv:type="String">
-            <sv:value>Author Reviewed actions workflow</sv:value>
+            <sv:value>Editing publishable documents</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.reviewedactions.EditingReviewedActionsWorkflowPlugin</sv:value>

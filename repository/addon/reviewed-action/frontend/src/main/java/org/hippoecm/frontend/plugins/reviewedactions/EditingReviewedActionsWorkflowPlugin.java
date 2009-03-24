@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -25,8 +26,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.Session;
 import org.apache.wicket.model.StringResourceModel;
+
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -44,13 +49,13 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlugin implements IValidateService {
     @SuppressWarnings("unused")
@@ -72,7 +77,8 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
         } else {
             log.warn("No validator id {} defined", IValidateService.VALIDATE_ID);
         }
-/*
+
+        final CompatibilityWorkflowPlugin plugin = this;
         final IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
         context.registerService(new IEditorFilter() {
             private static final long serialVersionUID = 1L;
@@ -84,43 +90,46 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 if (!closing) {
                     try {
                         OnCloseDialog.Actions actions = new OnCloseDialog.Actions() {
-
                             public void revert() {
-                                execute(new WorkflowAction() {
-                                    private static final long serialVersionUID = 1L;
-
-                                    @Override
-                                    public boolean validateSession(List<IValidateService> validators) {
-                                        return true;
+                                try {
+                                    WorkflowDescriptor descriptor = (WorkflowDescriptor)plugin.getModelObject();
+                                    WorkflowManager manager = ((UserSession)org.apache.wicket.Session.get()).getWorkflowManager();
+                                    javax.jcr.Session session = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
+                                    Node handleNode = ((WorkflowDescriptorModel)plugin.getModel()).getNode();
+                                    if (handleNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                                        handleNode = handleNode.getParent();
                                     }
-
-                                    @Override
-                                    public void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
-                                        Node handleNode = handleModel.getNode();
-                                        handleNode.refresh(false);
-                                        handleNode.getSession().refresh(true);
-                                    }
-
-                                    @Override
-                                    public void execute(Workflow wf) throws Exception {
-                                        BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
-                                        workflow.disposeEditableInstance();
-                                    }
-                                }, true);
+                                    handleNode.refresh(false);
+                                    handleNode.getSession().refresh(true);
+                                    Workflow workflow = manager.getWorkflow(descriptor);
+                                    ((BasicReviewedActionsWorkflow)workflow).disposeEditableInstance();
+                                    session.refresh(true);
+                                } catch (RepositoryException ex) {
+                                    log.error("failure while reverting", ex);
+                                } catch (WorkflowException ex) {
+                                    log.error("failure while reverting", ex);
+                                } catch (RemoteException ex) {
+                                    log.error("failure while reverting", ex);
+                                }
                             }
-
                             public void save() {
-                                execute(new WorkflowAction() {
-                                    private static final long serialVersionUID = 1L;
-
-                                    @Override
-                                    public void execute(Workflow wf) throws Exception {
-                                        BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
-                                        workflow.commitEditableInstance();
-                                    }
-                                }, true);
+                                try {
+                                    WorkflowDescriptor descriptor = (WorkflowDescriptor)plugin.getModelObject();
+                                    WorkflowManager manager = ((UserSession)org.apache.wicket.Session.get()).getWorkflowManager();
+                                    javax.jcr.Session session = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
+                                    session.save();
+                                    session.refresh(true);
+                                    Workflow workflow = manager.getWorkflow(descriptor);
+                                    ((BasicReviewedActionsWorkflow)workflow).commitEditableInstance();
+                                    session.refresh(false);
+                                } catch (RepositoryException ex) {
+                                    log.error("failure while reverting", ex);
+                                } catch (WorkflowException ex) {
+                                    log.error("failure while reverting", ex);
+                                } catch (RemoteException ex) {
+                                    log.error("failure while reverting", ex);
+                                }
                             }
-
                             public void close() {
                                 IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
                                 try {
@@ -155,7 +164,6 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         log.error(ex.getMessage());
-                        showException(ex);
                     }
                     return null;
                 } else {
@@ -165,11 +173,9 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
 
         }, context.getReference(editor).getServiceId());
 
-        addWorkflowAction("save", new StringResourceModel("save", this, null, "Save"), new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-
+        add(new WorkflowAction("save", new StringResourceModel("save", this, null, "Save").getString(), null) {
             @Override
-            public void execute(Workflow wf) throws Exception {
+            protected String execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
 
@@ -187,31 +193,31 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 IModelReference ref = context.getService(config.getString("model.id"), IModelReference.class);
                 ref.setModel(new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByUUID(
                         draft.getIdentity())));
-
+                return null;
             }
         });
 
-        addWorkflowAction("done", new StringResourceModel("done", this, null, "Done"), new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
 
+        add(new WorkflowAction("done", new StringResourceModel("done", this, null, "Done").getString(), null) {
             @Override
-            public void execute(Workflow wf) throws Exception {
+            public String execute(Workflow wf) throws Exception {
+                IBrowseService browser = context.getService("browser.id", IBrowseService.class);
+                IEditor editor = context.getService(getPluginConfig().getString(IEditorManager.EDITOR_ID),IEditor.class);
+
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
-
                 ((UserSession) Session.get()).getJcrSession().refresh(true);
 
-                IBrowseService browser = context.getService("browser.id", IBrowseService.class);
                 browser.browse(new JcrNodeModel(((WorkflowDescriptorModel) EditingReviewedActionsWorkflowPlugin.this.getModel()).getNode()));
 
-                IEditor editor = context.getService(getPluginConfig().getString(IEditorManager.EDITOR_ID),IEditor.class);
                 closing = true;
                 editor.close();
                 browser.browse(new JcrNodeModel(((WorkflowDescriptorModel)EditingReviewedActionsWorkflowPlugin.this.getModel()).getNode()));
+                return null;
             }
         });
     }
-*/}
+
     public boolean hasError() {
         if (!validated) {
             validate();
