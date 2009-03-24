@@ -100,6 +100,13 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
     }
 
     public void detach() {
+        for (Map.Entry<JcrNodeModel, JcrNodeModel> entry : lastReferences.entrySet()) {
+            entry.getKey().detach();
+            entry.getValue().detach();
+        }
+        for (JcrNodeModel model : editors.keySet()) {
+            model.detach();
+        }
     }
 
     public IObservable getObservable() {
@@ -327,7 +334,7 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
                                     }
                                 }
                             } catch (RepositoryException ex) {
-                                log.error(ex.getMessage());
+                                log.error(ex.getMessage(), ex);
                             }
                             if (target != null) {
                                 modelService.setModel(new JcrNodeModel(target));

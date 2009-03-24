@@ -16,11 +16,14 @@
 package org.hippoecm.frontend.model;
 
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.observation.EventIterator;
+import javax.jcr.observation.EventListener;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
@@ -28,8 +31,10 @@ import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.FacetSearchObserver;
 import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -53,6 +58,7 @@ public class JcrSessionModel extends LoadableDetachableModel {
     private ValueMap credentials;
     private transient ClassLoader classLoader = null;
     private transient WorkflowManager workflowManager = null;
+    private transient FacetSearchObserver facetSearchObserver = null;
 
     public JcrSessionModel(ValueMap credentials) {
         this.credentials = credentials;
@@ -121,6 +127,13 @@ public class JcrSessionModel extends LoadableDetachableModel {
         return workflowManager;
     }
 
+    public FacetSearchObserver getFacetSearchObserver() {
+        if (facetSearchObserver == null) {
+            facetSearchObserver = new FacetSearchObserver(getSession());
+        }
+        return facetSearchObserver;
+    }
+    
     @Override
     protected Object load() {
         javax.jcr.Session result = null;

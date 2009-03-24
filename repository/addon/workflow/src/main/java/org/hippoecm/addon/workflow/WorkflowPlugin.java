@@ -70,5 +70,7 @@ public class WorkflowPlugin extends AbstractWorkflowPlugin {
         MenuHierarchy menu = buildMenu();
         menu.restructure();
         addOrReplace(new MenuBar("menu", menu));
+
+        redraw();
     }
 }

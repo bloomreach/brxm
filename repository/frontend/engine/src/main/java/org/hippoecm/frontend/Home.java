@@ -47,6 +47,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     private PluginContext context;
     private IRenderService root;
     private DialogService dialogService;
+    private ObservableRegistry obRegistry;
     private IPluginConfigService pluginConfigService;
 
     public Home() {
@@ -63,7 +64,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         pluginConfigService = configFactory.getPluginConfigService();
         context.registerService(pluginConfigService, IPluginConfigService.class.getName());
 
-        ObservableRegistry obRegistry = new ObservableRegistry(context, null);
+        obRegistry = new ObservableRegistry(context, null);
         obRegistry.startObservation();
 
         dialogService = new DialogService();
@@ -97,6 +98,9 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     }
 
     void update() {
+        // objects may be invalid after refresh, so reacquire them when needed
+        detach();
+
         // process JCR events
         JcrObservationManager.getInstance().processEvents();
 

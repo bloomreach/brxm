@@ -65,12 +65,22 @@ public class CachedTreeModel extends JcrTreeModel implements IObserver {
     // translate the jcr event into a tree model event
     protected TreeModelEvent newTreeModelEvent(Event event) throws RepositoryException {
         JcrNodeModel nodeModel = new JcrNodeModel(event.getPath());
-        TreePath parentPath = lookup(nodeModel.getParentModel());
-        if (parentPath != null) {
-            TreeNode parentNode = (TreeNode) parentPath.getLastPathComponent();
-            if ((parentNode instanceof IJcrTreeNode)
-                    && ((IJcrTreeNode) parentNode).getNodeModel().equals(nodeModel.getParentModel())) {
-                return new TreeModelEvent(this, parentPath);
+        if (event.getType() != 0) {
+            TreePath parentPath = lookup(nodeModel.getParentModel());
+            if (parentPath != null) {
+                TreeNode parentNode = (TreeNode) parentPath.getLastPathComponent();
+                if ((parentNode instanceof IJcrTreeNode)
+                        && ((IJcrTreeNode) parentNode).getNodeModel().equals(nodeModel.getParentModel())) {
+                    return new TreeModelEvent(this, parentPath);
+                }
+            }
+        } else {
+            TreePath nodePath = lookup(nodeModel);
+            if (nodePath != null) {
+                TreeNode treeNode = (TreeNode) nodePath.getLastPathComponent();
+                if ((treeNode instanceof IJcrTreeNode) && ((IJcrTreeNode) treeNode).getNodeModel().equals(nodeModel)) {
+                    return new TreeModelEvent(this, nodePath);
+                }
             }
         }
         return null;

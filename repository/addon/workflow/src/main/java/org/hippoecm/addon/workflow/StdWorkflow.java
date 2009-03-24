@@ -16,19 +16,19 @@
 package org.hippoecm.addon.workflow;
 
 import java.rmi.RemoteException;
-import javax.jcr.Node;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -92,10 +92,12 @@ public abstract class StdWorkflow extends ActionDescription {
     
     public static abstract class Compatibility extends StdWorkflow {
         RenderPlugin enclosingPlugin;
+        IPluginContext pluginContext;
 
-        public Compatibility(String id, String name, RenderPlugin enclosingPlugin) {
+        public Compatibility(String id, String name, RenderPlugin enclosingPlugin, IPluginContext context) {
             super(id, name);
             this.enclosingPlugin = enclosingPlugin;
+            this.pluginContext = context;
         }
 
         protected abstract void execute(Workflow wf) throws Exception;
@@ -109,6 +111,7 @@ public abstract class StdWorkflow extends ActionDescription {
                 WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
                 Workflow workflow = manager.getWorkflow(descriptor);
                 execute(workflow);
+                pluginContext.getService(Home.class.getName(), Home.class).detach();
                 session.refresh(false);
             } catch (WorkflowException ex) {
                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());

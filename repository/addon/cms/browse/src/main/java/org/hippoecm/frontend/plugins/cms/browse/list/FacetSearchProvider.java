@@ -73,39 +73,42 @@ public class FacetSearchProvider extends SortableDataProvider implements IObserv
         if (entries == null) {
             Map<String, Node> primaryNodes = new HashMap<String, Node>();
             Node node = model.getNode();
-            try {
-                NodeIterator subNodes = node.getNode(HippoNodeType.HIPPO_RESULTSET).getNodes();
-                while (subNodes.hasNext()) {
-                    Node subNode = subNodes.nextNode();
-                    if (subNode == null || !(subNode instanceof HippoNode)) {
-                        continue;
-                    }
-                    try {
-                        Node canonicalNode = ((HippoNode) subNode).getCanonicalNode();
-                        if (canonicalNode == null) {
-                            // no physical equivalent exists
+            // workaround: node may disappear without notification
+            if (node != null) {
+                try {
+                    NodeIterator subNodes = node.getNode(HippoNodeType.HIPPO_RESULTSET).getNodes();
+                    while (subNodes.hasNext()) {
+                        Node subNode = subNodes.nextNode();
+                        if (subNode == null || !(subNode instanceof HippoNode)) {
                             continue;
                         }
-                        if (canonicalNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                            Node parentNode = canonicalNode.getParent();
-                            if (parentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                if (primaryNodes.containsKey(parentNode.getUUID())) {
-                                    Node currentNode = primaryNodes.get(parentNode.getUUID());
-                                    if (subNode.getIndex() < currentNode.getIndex()) {
+                        try {
+                            Node canonicalNode = ((HippoNode) subNode).getCanonicalNode();
+                            if (canonicalNode == null) {
+                                // no physical equivalent exists
+                                continue;
+                            }
+                            if (canonicalNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                                Node parentNode = canonicalNode.getParent();
+                                if (parentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                    if (primaryNodes.containsKey(parentNode.getUUID())) {
+                                        Node currentNode = primaryNodes.get(parentNode.getUUID());
+                                        if (subNode.getIndex() < currentNode.getIndex()) {
+                                            primaryNodes.put(parentNode.getUUID(), subNode);
+                                        }
+                                    } else {
                                         primaryNodes.put(parentNode.getUUID(), subNode);
                                     }
-                                } else {
-                                    primaryNodes.put(parentNode.getUUID(), subNode);
                                 }
                             }
+                        } catch (ItemNotFoundException ex) {
+                            // physical item no longer exists
+                            continue;
                         }
-                    } catch (ItemNotFoundException ex) {
-                        // physical item no longer exists
-                        continue;
                     }
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
                 }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
             }
             entries = new LinkedList<JcrNodeModel>();
             for (Node subNode : primaryNodes.values()) {
@@ -115,7 +118,7 @@ public class FacetSearchProvider extends SortableDataProvider implements IObserv
     }
 
     // impl IDataProvider
-    
+
     public Iterator<IModel> iterator(int first, int count) {
         load();
         List<IModel> displayedList = new ArrayList<IModel>(entries);
@@ -159,19 +162,24 @@ public class FacetSearchProvider extends SortableDataProvider implements IObserv
     }
 
     public void startObservation() {
-        // simply forward any events on the resultset node to our listeners
-        try {
-            resultSetModel = new JcrNodeModel(model.getNode().getNode(HippoNodeType.HIPPO_RESULTSET));
-            resultSetModel.setObservationContext(obContext);
-            resultSetModel.startObservation();
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+        // workaround: facetsearch does not generate events, so the node may disappear at any time
+        Node node = model.getNode();
+        if (node != null) {
+            // simply forward any events on the resultset node to our listeners
+            try {
+                resultSetModel = new JcrNodeModel(node.getNode(HippoNodeType.HIPPO_RESULTSET));
+                resultSetModel.setObservationContext(obContext);
+                resultSetModel.startObservation();
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
         }
     }
 
     public void stopObservation() {
         if (resultSetModel != null) {
             resultSetModel.stopObservation();
+            resultSetModel = null;
         }
     }
 

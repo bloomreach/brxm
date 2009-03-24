@@ -47,7 +47,6 @@ import org.apache.wicket.markup.html.tree.BaseTree;
 import org.apache.wicket.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.html.tree.ITreeStateListener;
-import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.string.AppendingStringBuffer;
@@ -184,7 +183,7 @@ public abstract class AbstractTree extends Panel implements ITreeStateListener, 
 		 */
 		protected final boolean isRenderChildren()
 		{
-			return getFlag(FLAG_RENDER_CHILDREN);
+			return getFlag(FLAG_RENDER_CHILDREN) && !AbstractTree.this.getFlag(FLAG_RENDERING);
 		}
 
 		/**
@@ -233,7 +232,6 @@ public abstract class AbstractTree extends Panel implements ITreeStateListener, 
 							}
 						}
 					});
-					//
 				}
 			}
 		}
@@ -275,31 +273,6 @@ public abstract class AbstractTree extends Panel implements ITreeStateListener, 
 			setFlag(FLAG_RENDER_CHILDREN, value);
 		}
 
-		protected void onDetach()
-		{
-			super.onDetach();
-			Object object = getModelObject();
-			if (object instanceof IDetachable)
-			{
-				((IDetachable)object).detach();
-			}
-
-			if (isRenderChildren())
-			{
-				// visit every child
-				visitItemChildren(this, new IItemCallback()
-				{
-					public void visitItem(TreeItem item)
-					{
-						item.detach();
-					}
-				});
-			}
-
-			// children are rendered, clear the flag
-			setRenderChildren(false);
-		}
-
 		protected void onBeforeRender()
 		{
 			onBeforeRenderInternal();
@@ -331,6 +304,7 @@ public abstract class AbstractTree extends Panel implements ITreeStateListener, 
 						item.afterRender();
 					}
 				});
+	            setFlag(FLAG_RENDER_CHILDREN, false);
 			}
 		}
 	}
@@ -449,6 +423,8 @@ public abstract class AbstractTree extends Panel implements ITreeStateListener, 
 
 	/** comma separated list of ids of elements to be deleted. */
 	private final AppendingStringBuffer deleteIds = new AppendingStringBuffer();
+
+	private final static int FLAG_RENDERING = 0x2000000;
 
 	/**
 	 * whether the whole tree is dirty (so the whole tree needs to be refreshed).
@@ -891,7 +867,7 @@ public abstract class AbstractTree extends Panel implements ITreeStateListener, 
 		target.addComponent(component);
 	}
 
-	public void onTargetRespond(AjaxRequestTarget target)
+    public void onTargetRespond(AjaxRequestTarget target)
 	{
 		// check whether the model hasn't changed
 		checkModel();
@@ -987,12 +963,12 @@ public abstract class AbstractTree extends Panel implements ITreeStateListener, 
 				}
 			}
 
-			// clear dirty flags
-			updated();
+	        // clear dirty flags
+	        updated();
 		}
 	}
-	
-	/**
+
+    /**
 	 * Updates the changed portions of the tree using given AjaxRequestTarget. Call this method if
 	 * you modified the tree model during an ajax request target and you want to partially update
 	 * the component on page. Make sure that the tree model has fired the proper listener functions.

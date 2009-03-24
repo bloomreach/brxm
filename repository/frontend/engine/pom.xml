@@ -141,18 +141,6 @@
         </includes>
       </resource>
     </resources>
-    <testResources>
-      <testResource>
-        <filtering>false</filtering>
-        <directory>${basedir}/test/java</directory>
-        <includes>
-          <include>**</include>
-        </includes>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </testResource>
-    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

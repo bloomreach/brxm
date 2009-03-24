@@ -29,6 +29,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,15 +77,23 @@ public class StateIconAttributeModifier extends AbstractNodeAttributeModifier {
             if (!loaded) {
                 try {
                     Node node = nodeModel.getNode();
-                    if (node != null && node.hasNode(node.getName())) {
-                        Node canonicalNode = node.getNode(node.getName());
-                        if (canonicalNode.hasProperty("hippostd:stateSummary")) {
-                            cssClass = PREFIX + canonicalNode.getProperty("hippostd:stateSummary").getString() + SUFFIX;
+                    if (node != null) {
+                        Node document = null;
+                        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            document = node.getNode(node.getName());
+                        } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                            document = node;
                         }
-                        IModel stateModel = new JcrPropertyValueModel(new JcrPropertyModel(canonicalNode
-                                .getProperty("hippostd:stateSummary")));
-                        summary = (String) new TypeTranslator(new JcrNodeTypeModel("hippostd:publishableSummary"))
-                                .getValueName("hippostd:stateSummary", stateModel).getObject();
+                        if (document != null) {
+                            if (document.isNodeType("hippostd:publishableSummary")) {
+                                cssClass = PREFIX + document.getProperty("hippostd:stateSummary").getString() + SUFFIX;
+                                IModel stateModel = new JcrPropertyValueModel(new JcrPropertyModel(document
+                                        .getProperty("hippostd:stateSummary")));
+                                summary = (String) new TypeTranslator(new JcrNodeTypeModel(
+                                        "hippostd:publishableSummary")).getValueName("hippostd:stateSummary",
+                                        stateModel).getObject();
+                            }
+                        }
                     }
                 } catch (RepositoryException ex) {
                     log.error("Unable to obtain state properties", ex);

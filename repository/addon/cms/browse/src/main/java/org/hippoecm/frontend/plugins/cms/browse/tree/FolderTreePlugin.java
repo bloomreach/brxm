@@ -24,6 +24,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.addon.workflow.ContextWorkflowPlugin;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -107,6 +108,12 @@ public class FolderTreePlugin extends RenderPlugin implements ContextMenuManager
         });
 
         onModelChanged();
+    }
+
+    @Override
+    public void render(PluginRequestTarget target) {
+        super.render(target);
+        tree.updateTree();
     }
 
     @Override
