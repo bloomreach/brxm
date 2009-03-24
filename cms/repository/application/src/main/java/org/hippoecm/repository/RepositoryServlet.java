@@ -66,31 +66,32 @@ import org.slf4j.LoggerFactory;
 import sun.misc.BASE64Decoder;
 
 public class RepositoryServlet extends HttpServlet {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
-    protected final Logger log = LoggerFactory.getLogger(HippoRepository.class);
+    @SuppressWarnings("unused")
+    private static final String SVN_ID = "$Id$";
+    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(HippoRepository.class);
 
     /** Parameter name of the repository storage directory */
-    public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
+    public static final String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
 
     /** Parameter name of the binging address */
-    public final static String REPOSITORY_BINDING_PARAM = "repository-address";
+    public static final String REPOSITORY_BINDING_PARAM = "repository-address";
 
     /** Parameter name of the repository config file */
-    public final static String REPOSITORY_CONFIG_PARAM = "repository-config";
+    public static final String REPOSITORY_CONFIG_PARAM = "repository-config";
 
     /** Default repository storage directory */
-    public final static String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
+    public static final String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
 
     /** Default binding address for server */
-    public final static String DEFAULT_REPOSITORY_BINDING = "rmi://localhost:1099/hipporepository";
+    public static final String DEFAULT_REPOSITORY_BINDING = "rmi://localhost:1099/hipporepository";
 
     /** Default config file */
-    public final static String DEFAULT_REPOSITORY_CONFIG = "repository.xml";
+    public static final String DEFAULT_REPOSITORY_CONFIG = "repository.xml";
 
-    /** System property for overriding the repostiory config file */
-    public final static String SYSTEM_SERVLETCONFIG_PROPERTY = "repo.servletconfig";
+    /** System property for overriding the repository config file */
+    public static final String SYSTEM_SERVLETCONFIG_PROPERTY = "repo.servletconfig";
 
     /** JNDI context to which to bind the repository. */
     private Context ctx;
@@ -274,24 +275,27 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"");
             writer.println("    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
             writer.println("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
-            writer.println("<head><title>Hippo Repository Console</title>");
-            writer.println("<style type=\"text/css\">");
-            writer.println(" table.params {font-size:small}");
-            writer.println("</style>");
+            writer.println("<head>");
+            writer.println("  <title>Hippo Repository Console</title>");
+            writer.println("  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+            writer.println("  <style type=\"text/css\">");
+            writer.println("    table.params {font-size:small}");
+            writer.println("    td {text-align: left}");
+            writer.println("    th {text-align: left}");
+            writer.println("  </style>");
             writer.println("</head>");
             writer.println("<body>");
             writer.println("  <h2>Hippo Repository Console</h2>");
             writer.println("  <h3>Request parameters</h3>");
-            writer
-                    .println("    <table style=\"params\" summary=\"request parameters\"><tr><th>name</th><th>value</th></tr>");
-            writer.println("    <tr><td>servlet path</td><td>: <code>" + req.getServletPath() + "</code></td></tr>");
-            writer.println("    <tr><td>request uri</td><td>: <code>" + req.getRequestURI() + "</code></td></tr>");
-            writer.println("    <tr><td>relative path</td><td>: <code>" + path + "</code></td></tr>");
+            writer.println("    <table style=\"params\" summary=\"request parameters\">");
+            writer.println("      <tr><th>name</th><th>value</th></tr>");
+            writer.println("      <tr><td>servlet path : </td><td><code>" + req.getServletPath() + "</code></td></tr>");
+            writer.println("      <tr><td>request uri : </td><td><code>" + req.getRequestURI() + "</code></td></tr>");
+            writer.println("      <tr><td>relative path : </td><td><code>" + path + "</code></td></tr>");
             writer.println("    </table>");
-
             writer.println("  <h3>Login information</h3>");
-            writer.println("    <table style=\"params\" summary=\"login parameters\"><tr>");
-            writer.println("    <tr><th>logged in as:</th><td>" + session.getUserID() + "</code></td></tr>");
+            writer.println("    <table style=\"params\" summary=\"login parameters\">");
+            writer.println("      <tr><th>logged in as : </th><td><code>" + session.getUserID() + "</code></td></tr>");
             writer.println("    </table>");
             writer.println("  <h3>Referenced node</h3>");
 
