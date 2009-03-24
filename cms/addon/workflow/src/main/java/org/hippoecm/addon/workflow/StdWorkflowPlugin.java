@@ -48,7 +48,7 @@ class StdWorkflowPlugin extends Panel {
                 for (Method method : interfaces[i].getDeclaredMethods()) {
                     StdWorkflow wf = new StdWorkflow("id", method.getName()) {
                         @Override
-                        protected void execute() {
+                        protected void invoke() {
                             try {
                                 WorkflowDescriptor descriptor = (WorkflowDescriptor) StdWorkflowPlugin.this.getModelObject();
                                 Session session = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();

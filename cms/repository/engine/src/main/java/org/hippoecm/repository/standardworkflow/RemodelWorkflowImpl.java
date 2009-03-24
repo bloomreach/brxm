@@ -16,7 +16,9 @@
 package org.hippoecm.repository.standardworkflow;
 
 import java.io.StringReader;
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Map;
 import java.util.HashMap;
 
 import javax.jcr.NamespaceException;
@@ -53,6 +55,10 @@ public class RemodelWorkflowImpl implements RepositoryWorkflow, InternalWorkflow
             this.subject = rootSession.getRootNode();
         else
             this.subject = rootSession.getRootNode().getNode(subject.getPath().substring(1));
+    }
+
+    public Map<String,Serializable> hints() {
+        return null;
     }
 
     public void createNamespace(String prefix, String namespace) throws WorkflowException, MappingException,

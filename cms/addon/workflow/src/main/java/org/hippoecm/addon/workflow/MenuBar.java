@@ -24,15 +24,16 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
+import org.hippoecm.frontend.plugin.ContextMenu;
 
 class MenuBar extends Panel implements MenuComponent {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    List<MenuButton> buttons;
+    List<ContextMenu> buttons;
     public MenuBar(String id, MenuHierarchy list) {
         super(id);
-        buttons = new LinkedList<MenuButton>();
+        buttons = new LinkedList<ContextMenu>();
         add(new DataView("list", new ListDataProvider(list.list(this))) {
             public void populateItem(final Item item) {
                 Component button = (Component)item.getModelObject();
@@ -43,8 +44,8 @@ class MenuBar extends Panel implements MenuComponent {
             }
         });
     }
-    public void collapse(MenuButton current, AjaxRequestTarget target) {
-        for(MenuButton button : buttons) {
+    public void collapse(ContextMenu current, AjaxRequestTarget target) {
+        for(ContextMenu button : buttons) {
             if(button != current) {
                 button.collapse(target);
             }

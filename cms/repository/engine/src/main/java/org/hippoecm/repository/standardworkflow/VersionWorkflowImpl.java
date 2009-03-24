@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Map;
@@ -50,6 +51,10 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
     public VersionWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
         this.subject = subject;
         this.userSession = userSession;
+    }
+
+    public Map<String,Serializable> hints() {
+        return new TreeMap<String,Serializable>();
     }
 
     private boolean isSimilar(Node node) throws RepositoryException {

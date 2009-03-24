@@ -67,7 +67,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
     private Component locked;
 
     public BasicReviewedActionsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        super(context, config);}/*
 
         add(new Label("caption", caption));
 
@@ -314,4 +314,4 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             log.info(ex.getClass().getName() + ": " + ex.getMessage());
         }
     }
-}
+*/}

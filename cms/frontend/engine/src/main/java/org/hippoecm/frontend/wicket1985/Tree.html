@@ -15,12 +15,15 @@
    limitations under the License.
 -->
 <wicket:panel>
-<div class="hippo-tree">
-<div class="wicket-tree">
-	<div wicket:id="i"><div class="a_">		
-		<span wicket:id="indent"></span><a wicket:id="link"><span wicket:id="image"/></a>
-       	<a wicket:id="nodeLink"><span class="icon" wicket:id="icon"></span><span wicket:id="label"></span></a>       	
-	</div></div>
-</div>
-</div>
+  <div class="hippo-tree">
+    <div class="wicket-tree">
+      <div wicket:id="i" width="100%">
+        <div class="a_">
+          <span wicket:id="indent"></span><a wicket:id="link"><span wicket:id="image"/></a>
+          <a wicket:id="nodeLink" style="width: 160px"><span class="icon" wicket:id="icon"></span><span wicket:id="label"></span></a>
+        </div>
+        <span wicket:id="contextContent" style="background: #f3f3f3 url('images/dropdownmenuback.png') repeat-y top left; position: relative; top: -4px; left: -88px; z-index: 10000; width: 80px"></span><span wicket:id="contextLink"><span wicket:id="menuimage" class="contexticon">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>
+      </div>
+    </div>
+  </div>
 </wicket:panel>

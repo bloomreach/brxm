@@ -15,11 +15,13 @@
  */
 package org.hippoecm.repository.gallery.impl;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -45,6 +47,10 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
     public GalleryWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
         this.subject = subject;
         this.rootSession = rootSession;
+    }
+
+    public Map<String,Serializable> hints() {
+        return null;
     }
 
     public List<String> getGalleryTypes() throws RemoteException, RepositoryException {

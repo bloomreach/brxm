@@ -15,7 +15,10 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -40,20 +43,9 @@ public class NullWorkflowImpl implements NullWorkflow, InternalWorkflow {
     Document document;
 
     public NullWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RepositoryException {
-        document = new Document(subject.getUUID());
     }
 
-    public Document obtainEditableInstance()
-            throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        return document;
-    }
-
-    public void commitEditableInstance()
-            throws WorkflowException, MappingException, RepositoryException, RemoteException {
-    }
-
-    public void disposeEditableInstance()
-            throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        throw new WorkflowException("Document type does not allow for reverting changes");
+    public Map<String,Serializable> hints() {
+        return new TreeMap<String,Serializable>();
     }
 }

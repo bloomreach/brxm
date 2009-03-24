@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,7 +75,29 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         this.rootSession = rootSession;
     }
 
+    public Map<String,Serializable> hints() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Map<String,Serializable> info = new TreeMap<String,Serializable>();
+        info.put("add", new Boolean(true));
+        info.put("list", new Boolean(false));
+        info.put("archive", new Boolean(true));
+        info.put("delete", new Boolean(true));
+        info.put("rename", new Boolean(true));
+        info.put("copy", new Boolean(true));
+        info.put("duplicate", new Boolean(true));
+        info.put("move", new Boolean(true));
+        info.put("reorder", new Boolean(subject.getPrimaryNodeType().hasOrderableChildNodes()));
+        info.put("prototypes", (Serializable) prototypes());
+        return info;
+    }
+
+    /**
+     * @deprecated
+     */
     public Map<String, Set<String>> list() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        return prototypes();
+    }
+
+    protected Map<String, Set<String>> prototypes() throws RepositoryException {
         Map<String, Set<String>> types = new TreeMap<String, Set<String>>();
         try {
             QueryManager qmgr = rootSession.getWorkspace().getQueryManager();

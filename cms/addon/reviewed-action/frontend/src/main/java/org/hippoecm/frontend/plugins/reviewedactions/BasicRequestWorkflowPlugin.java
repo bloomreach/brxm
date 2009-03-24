@@ -49,7 +49,7 @@ public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
     private boolean cancelable = true;
 
     public BasicRequestWorkflowPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        super(context, config);}/*
 
         onModelChanged();
 
@@ -119,4 +119,4 @@ public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
             log.info(ex.getClass().getName() + ": " + ex.getMessage());
         }
     }
-}
+*/}

@@ -15,7 +15,10 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -80,6 +83,10 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
         } catch (RepositoryException ex) {
             return null;
         }
+    }
+
+    public Map<String,Serializable> hints() {
+        return null;
     }
 
     public Document obtainEditableInstance()

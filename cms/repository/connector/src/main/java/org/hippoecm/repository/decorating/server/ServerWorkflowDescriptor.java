@@ -15,8 +15,10 @@
  */
 package org.hippoecm.repository.decorating.server;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -44,6 +46,10 @@ public class ServerWorkflowDescriptor extends UnicastRemoteObject implements Rem
 
     public String getAttribute(String name) throws RepositoryException, RemoteException {
         return descriptor.getAttribute(name);
+    }
+
+    public Map<String,Serializable> hints() throws RepositoryException, RemoteException {
+        return descriptor.hints();
     }
 
     public String[] getInterfaces() throws ClassNotFoundException, RepositoryException, RemoteException {

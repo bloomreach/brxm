@@ -34,9 +34,8 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 
-abstract class StdWorkflow extends ActionDescription {
+public abstract class StdWorkflow extends ActionDescription {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -44,7 +43,7 @@ abstract class StdWorkflow extends ActionDescription {
     
     private String name;
 
-    StdWorkflow(String id, String name) {
+    public StdWorkflow(String id, String name) {
         super(id);
         this.name = name;
 
@@ -55,7 +54,7 @@ abstract class StdWorkflow extends ActionDescription {
                 add(link = new MenuLink("text") {
                     @Override
                     public void onClick() {
-                        execute();
+                        invoke();
                     }
                 });
                 link.add(new Label("label", getTitle()));
@@ -89,7 +88,7 @@ abstract class StdWorkflow extends ActionDescription {
         return new ResourceReference(getClass(), "workflow-16.png");
     }
 
-    protected abstract void execute();
+    protected abstract void invoke();
     
     public static abstract class Compatibility extends StdWorkflow {
         RenderPlugin enclosingPlugin;
@@ -101,7 +100,7 @@ abstract class StdWorkflow extends ActionDescription {
 
         protected abstract void execute(Workflow wf) throws Exception;
 
-        protected void execute() {
+        protected void invoke() {
             try {
                 WorkflowDescriptor descriptor = (WorkflowDescriptor)enclosingPlugin.getModelObject();
                 Session session = ((UserSession)getSession()).getJcrSession();

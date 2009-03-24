@@ -39,6 +39,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.lang.EnumeratedType;
 
+import org.hippoecm.frontend.plugin.ContextMenu;
+import org.hippoecm.frontend.plugin.ContextMenuManager;
 
 /**
  * Tree class that contains convenient functions related to presentation of the tree, which includes
@@ -136,6 +138,10 @@ public abstract class DefaultAbstractTree extends AbstractTree
 	/** Reference to the icon of tree item (not a folder) */
 	private static final ResourceReference ITEM = new ResourceReference(DefaultAbstractTree.class,
 		"res/item.gif");
+
+    /** Reference to the icon for context menus */
+    private static final ResourceReference MENU = new ResourceReference(DefaultAbstractTree.class,
+        "res/menu.png");
 
 	/** The link type, default is {@link LinkType#AJAX ajax}. */
 	private LinkType linkType = LinkType.AJAX;
@@ -244,6 +250,11 @@ public abstract class DefaultAbstractTree extends AbstractTree
 	protected ResourceReference getItem()
 	{
 		return ITEM;
+	}
+
+      	protected ResourceReference getMenuIcon(TreeNode node)
+	{
+		return MENU;
 	}
 
 	/**
@@ -533,6 +544,71 @@ public abstract class DefaultAbstractTree extends AbstractTree
 		};
 
 	}
+
+        protected Component newMenuIcon(MarkupContainer parent, String id, final TreeNode node)
+	{
+		return new WebMarkupContainer(id)
+		{
+			private static final long serialVersionUID = 1L;
+
+			protected void onComponentTag(ComponentTag tag)
+			{
+				super.onComponentTag(tag);
+				tag.put("style", "background-image: url('" +
+					RequestCycle.get().urlFor(getMenuIcon(node)) + "')");
+			}
+		};
+
+	}
+
+	protected MarkupContainer newContextContent(MarkupContainer parent, String id, final TreeNode node)
+	{
+                return new WebMarkupContainer(id);
+        }
+
+        protected MarkupContainer newContextLink(final MarkupContainer parent, String id, final TreeNode node, MarkupContainer content)
+	{
+                AjaxLink link = new ContextLink(id, content, parent) {
+			public void onClick(AjaxRequestTarget target)
+			{
+                                // It was a agreed decision that the node being operated upon was not to be selected
+				// getTreeState().selectNode(node, !getTreeState().isNodeSelected(node));
+                                updateTree(target);
+                                content.setVisible(true);
+                                active = true;
+                                target.addComponent(parent);
+                                ContextMenuManager menuManager = (ContextMenuManager) findParent(ContextMenuManager.class);
+                                if (menuManager != null) {
+                                        menuManager.collapse(this, target);
+                                        menuManager.addContextMenu(this);
+                                }
+			}
+                };
+                setOutputMarkupId(true);
+                content.setOutputMarkupId(true);
+                content.setVisible(false);
+                return link;
+        }
+
+        public static abstract class ContextLink extends AjaxLink implements ContextMenu {
+                MarkupContainer content;
+                MarkupContainer parent;
+                boolean active = false;
+                public ContextLink(String id, MarkupContainer content, MarkupContainer parent) {
+                        super(id);
+                        this.content = content;
+                        this.parent = parent;
+                }
+
+                public void collapse(AjaxRequestTarget target) {
+                        if(active) {
+                                active = false;
+                                return;
+                        }
+                        content.setVisible(false);
+                        target.addComponent(parent);
+                }
+        }
 
 	/**
 	 * Creates a link that can be used to select / deselect the specified node.

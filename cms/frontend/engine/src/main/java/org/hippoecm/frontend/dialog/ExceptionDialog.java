@@ -32,6 +32,11 @@ public class ExceptionDialog extends AbstractDialog {
         add(new Label("message", exception.getLocalizedMessage()));
     }
 
+    public ExceptionDialog(String message) {
+        cancel.setVisible(false);
+        add(new Label("message", message));
+    }
+
     public IModel getTitle() {
         return new Model("exception");
     }

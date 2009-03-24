@@ -42,7 +42,7 @@ import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow.TypeUpdat
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RemodelDialog extends CompatibilityWorkflowPlugin.Dialog {
+public class RemodelDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -51,20 +51,20 @@ public class RemodelDialog extends CompatibilityWorkflowPlugin.Dialog {
     private static final Logger log = LoggerFactory.getLogger(RemodelDialog.class);
 
     private RemodelWizard wizard;
-    
-    private CompatibilityWorkflowPlugin plugin;
 
-    public RemodelDialog(CompatibilityWorkflowPlugin plugin) {
-        plugin . super();
-        this.plugin = plugin;
+    WorkflowDescriptorModel model;
+
+    public RemodelDialog(CompatibilityWorkflowPlugin.WorkflowAction action, WorkflowDescriptorModel model) {
+        action . super();
+        this.model = model;
 
         try {
-        if (plugin.getModel() == null || ((WorkflowDescriptorModel) plugin.getModel()).getNode() == null) {
-            add(new Label("wizard"));
-        } else {
-            wizard = new RemodelWizard("wizard");
-            add(wizard);
-        }
+            if (model == null || model.getNode() == null) {
+                add(new Label("wizard"));
+            } else {
+                wizard = new RemodelWizard("wizard");
+                add(wizard);
+            }
         } catch(RepositoryException ex) {
             add(new Label("wizard"));
         }
@@ -87,13 +87,11 @@ public class RemodelDialog extends CompatibilityWorkflowPlugin.Dialog {
         onOk();
     }
 
-    @Override
-    protected String execute() {
+    protected String execute2() {
         try {
         JcrSessionModel sessionModel = ((UserSession) Session.get()).getJcrSessionModel();
 
-        WorkflowDescriptorModel wflModel = (WorkflowDescriptorModel) plugin.getModel();
-        Node node = wflModel.getNode();
+        Node node = model.getNode();
         String namespace = node.getName();
 
         CndSerializer serializer = new CndSerializer(sessionModel, namespace);
@@ -120,7 +118,7 @@ public class RemodelDialog extends CompatibilityWorkflowPlugin.Dialog {
         sessionModel.getSession().save();
 
         WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-        TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) manager.getWorkflow((WorkflowDescriptor) wflModel.getObject());
+        TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) manager.getWorkflow((WorkflowDescriptor)model.getObject());
         if (workflow != null) {
             log.info("remodelling namespace " + namespace);
             try {

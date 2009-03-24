@@ -51,7 +51,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
     private IModel caption = new StringResourceModel("unknown", this, null);
 
     public DefaultWorkflowPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        super(context, config);}/*
 
         add(new Label("caption", caption));
 
@@ -131,4 +131,5 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             log.error(ex.getMessage());
         }
     }
+*/
 }

@@ -16,6 +16,8 @@
 package org.hippoecm.repository.impl;
 
 import java.lang.reflect.Array;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +33,7 @@ import javax.jcr.ValueFormatException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowException;
 
 final class WorkflowDescriptorImpl implements WorkflowDescriptor {
     @SuppressWarnings("unused")
@@ -41,6 +44,7 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
     protected String displayName;
     protected Map<String, String> attributes;
     protected String serviceName;
+    protected Map<String, Serializable> hints;
 
     WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node, Node item) throws RepositoryException {
         this.category = category;
@@ -66,6 +70,14 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
             WorkflowManagerImpl.log.error("Workflow specification corrupt on node " + nodeAbsPath);
             throw new RepositoryException("workflow specification corrupt", ex);
         }
+
+        try {
+            hints = manager.getWorkflow(this).hints();
+        } catch(WorkflowException ex) {
+            throw new RepositoryException("Workflow hints corruption", ex);
+        } catch(RemoteException ex) {
+            throw new RepositoryException("Workflow hints corruption", ex);
+        }
     }
 
     public String getDisplayName() {
@@ -85,6 +97,10 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
             }
         }
         return interfaces.toArray((Class<Workflow>[]) Array.newInstance(Class.class, interfaces.size()));
+    }
+
+    public Map<String,Serializable> hints() {
+        return hints;
     }
 
     public String toString() {

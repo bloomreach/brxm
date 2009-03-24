@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository.api;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import javax.jcr.RepositoryException;
 
 public interface WorkflowDescriptor {
@@ -39,4 +42,6 @@ public interface WorkflowDescriptor {
      * @returns A String value, can be null.
      */
     public String getAttribute(String name) throws RepositoryException;
+
+    public Map<String,Serializable> hints() throws RepositoryException;
 }

@@ -124,6 +124,12 @@ public class TabsPlugin extends RenderPlugin implements ContextMenuManager {
         activeContextMenu = activeMenu;
     }
 
+    public void collapse(ContextMenu current, AjaxRequestTarget target) {
+        if(activeContextMenu != null && current != activeContextMenu) {
+            activeContextMenu.collapse(target);
+        }
+    }
+
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);

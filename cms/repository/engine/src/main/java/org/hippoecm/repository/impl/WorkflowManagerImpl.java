@@ -500,9 +500,11 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     if (returnObject instanceof Document) {
                         returnObject = new Document(((Document)returnObject).getIdentity());
                     }
-                    EventLoggerImpl eventLogger = new EventLoggerImpl(rootSession);
-                    eventLogger.logWorkflowStep(session.getUserID(), upstream.getClass().getName(),
-                            targetMethod.getName(), args, returnObject, path);
+                    if(!targetMethod.getName().equals("hints")) {
+                        EventLoggerImpl eventLogger = new EventLoggerImpl(rootSession);
+                        eventLogger.logWorkflowStep(session.getUserID(), upstream.getClass().getName(),
+                                                    targetMethod.getName(), args, returnObject, path);
+                    }
 
                     while (!invocationChain.isEmpty()) {
                         WorkflowInvocationImpl current = (WorkflowInvocationImpl) invocationChain.remove(0);

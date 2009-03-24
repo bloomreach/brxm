@@ -34,7 +34,10 @@ abstract class MenuLink extends AjaxLink {
 
     @Override
     public void onClick(AjaxRequestTarget target) {
-        ((ContextMenu)findParent(ContextMenu.class)).collapse(target);
+        ContextMenu parent = ((ContextMenu)findParent(ContextMenu.class));
+        if(parent != null) {
+            parent.collapse(target);
+        }
         onClick();
     }
 

@@ -18,14 +18,20 @@ package org.hippoecm.frontend.plugins.cms.browse.tree;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.tree.ITreeState;
+import org.hippoecm.addon.workflow.ContextWorkflowPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.tree.CachedTreeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
+import org.hippoecm.frontend.plugin.ContextMenu;
+import org.hippoecm.frontend.plugin.ContextMenuManager;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
@@ -35,7 +41,7 @@ import org.hippoecm.frontend.widgets.JcrTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FolderTreePlugin extends RenderPlugin {
+public class FolderTreePlugin extends RenderPlugin implements ContextMenuManager {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -46,7 +52,7 @@ public class FolderTreePlugin extends RenderPlugin {
     protected JcrTreeNode rootNode;
     private JcrNodeModel rootModel;
 
-    public FolderTreePlugin(IPluginContext context, IPluginConfig config) {
+    public FolderTreePlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         String startingPath = config.getString("path", "/");
@@ -62,6 +68,15 @@ public class FolderTreePlugin extends RenderPlugin {
         context.registerService(treeModel, IObserver.class.getName());
         tree = new CmsJcrTree("tree", treeModel) {
             private static final long serialVersionUID = 1L;
+
+            @Override
+            protected MarkupContainer newContextContent(MarkupContainer parent, String id, final TreeNode node) {
+                ContextWorkflowPlugin content = new ContextWorkflowPlugin(context, config.getPluginConfig("workflow.options"));
+                content.bind(FolderTreePlugin.this, id);
+                JcrNodeModel nodeModel = ((IJcrTreeNode) node).getNodeModel();
+                content.setModel(nodeModel);
+                return content;
+            }
 
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
@@ -82,6 +97,14 @@ public class FolderTreePlugin extends RenderPlugin {
         add(tree);
 
         tree.setRootLess(config.getBoolean("rootless"));
+
+        add(new AjaxEventBehavior("onclick") {
+            public void onEvent(AjaxRequestTarget target) {
+                if(activeContextMenu != null) {
+                    activeContextMenu.collapse(target);
+                }
+            }
+        });
 
         onModelChanged();
     }
@@ -113,4 +136,15 @@ public class FolderTreePlugin extends RenderPlugin {
         }
     }
 
+    private ContextMenu activeContextMenu;
+
+    public void addContextMenu(ContextMenu menu) {
+        activeContextMenu = menu;
+    }
+    
+    public void collapse(ContextMenu current, AjaxRequestTarget target) {
+        if(activeContextMenu != null && current != activeContextMenu) {
+            activeContextMenu.collapse(target);
+        }
+    }
 }
