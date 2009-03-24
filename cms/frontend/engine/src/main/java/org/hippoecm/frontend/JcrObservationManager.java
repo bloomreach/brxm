@@ -28,8 +28,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
@@ -45,6 +47,8 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,11 +77,15 @@ public class JcrObservationManager implements ObservationManager {
             String name;
 
             NodeEvent(String name, int type) {
+                this.name = name;
                 this.type = type;
+                if (type != 0 && name == null) {
+                    throw new IllegalArgumentException("Name is mandatory when type of event is known");
+                }
             }
 
             public String getPath() throws RepositoryException {
-                if (name != null) {
+                if (type != 0) {
                     return path + "/" + name;
                 } else {
                     return path;
@@ -118,7 +126,7 @@ public class JcrObservationManager implements ObservationManager {
                 JcrPropertyModel propertyModel = new JcrPropertyModel(property);
                 if (property.getDefinition().isMultiple()) {
                     List<Object> values = new ArrayList<Object>(propertyModel.size());
-                    Iterator iter = propertyModel.iterator(0, propertyModel.size());
+                    Iterator<?> iter = propertyModel.iterator(0, propertyModel.size());
                     while (iter.hasNext()) {
                         values.add(propertyModel.model(iter.next()).getObject());
                     }
@@ -177,7 +185,6 @@ public class JcrObservationManager implements ObservationManager {
     }
 
     private class JcrListener extends WeakReference<EventListener> implements EventListener {
-        Node root;
         String[] nodeTypes;
         boolean isDeep;
         String path;
@@ -185,6 +192,7 @@ public class JcrObservationManager implements ObservationManager {
         Map<String, NodeCache> pending;
         List<Event> events;
         ObservationManager obMgr;
+        FacetSearchObserver fso;
         WeakReference<UserSession> sessionRef;
 
         JcrListener(UserSession userSession, EventListener upstream) {
@@ -212,23 +220,28 @@ public class JcrObservationManager implements ObservationManager {
             this.isDeep = isDeep;
             this.nodeTypes = nodeTypes;
 
-            Session session = sessionRef.get().getJcrSession();
-            if ("/".equals(absPath)) {
-                root = session.getRootNode();
-            } else {
-                root = session.getRootNode().getNode(absPath.substring(1));
-            }
+            Session session = getSession().getJcrSession();
             pending = new HashMap<String, NodeCache>();
 
             if (session != null) {
                 obMgr = session.getWorkspace().getObservationManager();
                 obMgr.addEventListener(this, eventTypes, absPath, isDeep, uuid, nodeTypes, noLocal);
+
+                // listen to facetsearches
+                if (listenToFacetSearch()) {
+                    fso = getSession().getJcrSessionModel().getFacetSearchObserver();
+                    fso.addListener(this, absPath);
+                }
             } else {
                 log.error("No jcr session bound to wicket session");
             }
         }
 
         void dispose() {
+            if (fso != null) {
+                fso.removeListener(this);
+                fso = null;
+            }
             if (obMgr != null) {
                 try {
                     obMgr.removeEventListener(this);
@@ -238,13 +251,67 @@ public class JcrObservationManager implements ObservationManager {
                 obMgr = null;
             }
             events.clear();
-            root = null;
             nodeTypes = null;
             pending = null;
         }
 
         UserSession getSession() {
             return sessionRef.get();
+        }
+
+        Node getRoot() throws PathNotFoundException, RepositoryException {
+            Session session = getSession().getJcrSession();
+            if ("/".equals(path)) {
+                return session.getRootNode();
+            } else {
+                return session.getRootNode().getNode(path.substring(1));
+            }
+        }
+        
+        boolean listenToFacetSearch() {
+            // subscribe when listening to deep tree structures;
+            // there will/might be facetsearches in there.
+            if (isDeep) {
+                if (nodeTypes == null) {
+                    return true;
+                }
+                for (String type : nodeTypes) {
+                    if (type.equals(HippoNodeType.NT_DOCUMENT)) {
+                        return true;
+                    }
+                }
+            }
+
+            // subscribe when target has a facetsearch as an ancestor
+            try {
+                Node node = getRoot();
+                while (node.getDepth() > 0) {
+                    if (node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
+                        return true;
+                    }
+                    node = node.getParent();
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+            return false;
+        }
+
+        boolean isVirtual(Node node) throws RepositoryException {
+            if (node instanceof HippoNode) {
+                try {
+                    Node canonical = ((HippoNode) node).getCanonicalNode();
+                    if (canonical == null) {
+                        return true;
+                    }
+                    if (!canonical.isSame(node)) {
+                        return true;
+                    }
+                } catch (ItemNotFoundException ex) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         void processPending(NodeIterator iter, List<Node> nodes) throws RepositoryException {
@@ -270,54 +337,65 @@ public class JcrObservationManager implements ObservationManager {
                 log.debug("Listener " + this + " is no longer registerd");
                 return;
             }
+
+            // process pending changes
             try {
-                List<Node> nodes = new LinkedList<Node>();
-                if (nodeTypes == null) {
-                    if (root.isModified()) {
-                        nodes.add(root);
-                    }
-                    NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null);
-                    processPending(iter, nodes);
-                } else {
-                    if (root.isModified()) {
-                        for (String type : nodeTypes) {
-                            if (root.isNodeType(type)) {
-                                nodes.add(root);
-                                break;
+                Node root = getRoot();
+                if (!isVirtual(root)) {
+                    List<Node> nodes = new LinkedList<Node>();
+                    if (nodeTypes == null) {
+                        if (root.isModified()) {
+                            nodes.add(root);
+                        }
+                        NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null);
+                        processPending(iter, nodes);
+                    } else {
+                        if (root.isModified()) {
+                            for (String type : nodeTypes) {
+                                if (root.isNodeType(type)) {
+                                    nodes.add(root);
+                                    break;
+                                }
                             }
                         }
-                    }
-                    for (String type : nodeTypes) {
-                        NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, type);
-                        processPending(iter, nodes);
-                    }
-                }
-
-                List<String> paths = new LinkedList<String>();
-                for (Node node : nodes) {
-                    String path;
-                    path = node.getPath();
-                    paths.add(path);
-                    if (pending.containsKey(path)) {
-                        Iterator<Event> iter = pending.get(path).update();
-                        while (iter.hasNext()) {
-                            events.add(iter.next());
+                        for (String type : nodeTypes) {
+                            NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, type);
+                            processPending(iter, nodes);
                         }
-                    } else {
-                        NodeCache cache = new NodeCache(node);
-                        pending.put(path, cache);
-                        events.add(cache.new NodeEvent(null, 0));
                     }
-                }
 
-                for (String path : new ArrayList<String>(pending.keySet())) {
-                    if (!paths.contains(path)) {
-                        NodeCache cache = pending.remove(path);
-                        events.add(cache.new NodeEvent(null, 0));
+                    List<String> paths = new LinkedList<String>();
+                    for (Node node : nodes) {
+                        String path;
+                        path = node.getPath();
+                        paths.add(path);
+                        if (pending.containsKey(path)) {
+                            Iterator<Event> iter = pending.get(path).update();
+                            while (iter.hasNext()) {
+                                events.add(iter.next());
+                            }
+                        } else {
+                            NodeCache cache = new NodeCache(node);
+                            pending.put(path, cache);
+                            events.add(cache.new NodeEvent(null, 0));
+                        }
+                    }
+
+                    for (String path : new ArrayList<String>(pending.keySet())) {
+                        if (!paths.contains(path)) {
+                            NodeCache cache = pending.remove(path);
+                            events.add(cache.new NodeEvent(null, 0));
+                        }
                     }
                 }
+            } catch (PathNotFoundException ex) {
+                log.warn("Root node no longer exists: " + ex.getMessage());
+                dispose();
+                return;
             } catch (RepositoryException ex) {
                 log.error("Failed to parse pending changes", ex);
+                dispose();
+                return;
             }
 
             final Iterator<Event> upstream = events.iterator();
@@ -356,7 +434,11 @@ public class JcrObservationManager implements ObservationManager {
                 }
 
             };
-            get().onEvent(iter);
+            try {
+                get().onEvent(iter);
+            } catch (RuntimeException ex) {
+                log.error("Error occured when processing event", ex);
+            }
         }
 
         @Override
@@ -406,6 +488,8 @@ public class JcrObservationManager implements ObservationManager {
         if (listeners.containsKey(listener)) {
             JcrListener realListener = listeners.remove(listener);
             realListener.dispose();
+        } else {
+            log.info("Listener was not registered");
         }
     }
 
@@ -416,7 +500,7 @@ public class JcrObservationManager implements ObservationManager {
         if (session != null) {
             try {
                 session.getJcrSession().refresh(true);
-            }  catch (RepositoryException ex) {
+            } catch (RepositoryException ex) {
                 log.error("failed to refresh the session", ex);
                 return;
             }

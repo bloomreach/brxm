@@ -218,7 +218,6 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
     }
 
     public void onEvent(IEvent event) {
-        getModel().detach();
         modelChanged();
     }
 

@@ -41,6 +41,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.repository.TestCase;
+import org.hippoecm.repository.Utilities;
+import org.hippoecm.repository.api.HippoNode;
 import org.junit.Test;
 
 public class ObservationTest extends TestCase {
@@ -177,6 +179,7 @@ public class ObservationTest extends TestCase {
 
         // in-session event
         JcrObservationManager.getInstance().processEvents();
+        System.err.println("number of events: " + events.size());
         assertTrue(events.size() == 1);
 
         // shouldn't receive new event on next processing
@@ -306,6 +309,63 @@ public class ObservationTest extends TestCase {
         JcrObservationManager.getInstance().processEvents();
 
         assertTrue(copy.count == 1);
+    }
+
+    @Test
+    /**
+     * test whether events are received on facet search nodes
+     */
+    public void testFacetSearchEvent() throws Exception {
+        Node root = session.getRootNode();
+        Node test = root.addNode("test", "nt:unstructured");
+
+        Node source = test.addNode("source", "nt:unstructured");
+        source.addMixin("mix:referenceable");
+        session.save();
+
+        Node sink = test.addNode("sink", "nt:unstructured");
+        Node search = sink.addNode("search", "hippo:facetsearch");
+        search.setProperty("hippo:facets", new String[] { "facet" });
+        search.setProperty("hippo:queryname", "test");
+        search.setProperty("hippo:docbase", source.getUUID());
+        session.save();
+
+        final List<IEvent> events = new LinkedList<IEvent>();
+        JcrEventListener listener = new JcrEventListener(new IObservationContext() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Page getPage() {
+                return home;
+            }
+
+            @Override
+            public void notifyObservers(IEvent event) {
+                events.add(event);
+            }
+
+        }, Event.NODE_ADDED | Event.NODE_REMOVED, "/test/sink", true, null, null);
+        listener.start();
+
+        Node xyz = source.addNode("xyz", "frontendtest:document");
+        xyz.addMixin("hippo:harddocument");
+        xyz.setProperty("facet", "xyz");
+        session.refresh(true);
+        session.save();
+        session.refresh(false);
+
+        // wait for index
+        Thread.sleep(300);
+
+        // event should have been received
+        JcrObservationManager.getInstance().processEvents();
+        assertTrue(events.size() == 1);
+
+        // basic facetsearch assertion
+        Node result = sink.getNode("search/xyz/hippo:resultset/xyz");
+        assertTrue(((HippoNode) result).getCanonicalNode().isSame(xyz));
+
+        session.save();
     }
 
 }

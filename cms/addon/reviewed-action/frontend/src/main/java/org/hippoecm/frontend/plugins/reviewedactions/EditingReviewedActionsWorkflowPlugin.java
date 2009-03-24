@@ -201,8 +201,9 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
         add(new WorkflowAction("done", new StringResourceModel("done", this, null, "Done").getString(), null) {
             @Override
             public String execute(Workflow wf) throws Exception {
-                IBrowseService browser = context.getService("browser.id", IBrowseService.class);
-                IEditor editor = context.getService(getPluginConfig().getString(IEditorManager.EDITOR_ID),IEditor.class);
+                IPluginConfig config = getPluginConfig();
+                IBrowseService browser = context.getService(config.getString("browser.id"), IBrowseService.class);
+                IEditor editor = context.getService(config.getString(IEditorManager.EDITOR_ID),IEditor.class);
 
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();

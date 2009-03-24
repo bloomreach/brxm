@@ -69,7 +69,7 @@ public abstract class JcrTree extends Tree {
             Node node = ((IJcrTreeNode) treeNode).getNodeModel().getNode();
             if (node != null) {
                 try {
-                    if (node instanceof HippoNode) {
+                    if ((node instanceof HippoNode) && !node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
                         HippoNode hippoNode = (HippoNode) node;
                         result = hippoNode.getDisplayName();
                         if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {

@@ -93,7 +93,6 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
                     super.addComponent(component);
                     break;
                 } else if (updates.contains(parent)) {
-                    component.detach();
                     break;
                 }
                 parent = parent.getParent();

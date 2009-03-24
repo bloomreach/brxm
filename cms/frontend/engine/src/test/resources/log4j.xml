@@ -45,6 +45,11 @@
     <appender-ref ref="console"/>
   </category>
   
+  <category additivity="true" name="org.hippoecm.repository">
+    <level value="warn"/>
+    <appender-ref ref="root"/>
+  </category>
+  
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>

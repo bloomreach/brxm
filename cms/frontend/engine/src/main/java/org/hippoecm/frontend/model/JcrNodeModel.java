@@ -111,40 +111,14 @@ public class JcrNodeModel extends ItemModelWrapper implements IObservable {
 
     // implement IObservable
 
-    protected String getObservablePath() {
-        Node node = getNode();
-        if (node != null) {
-            try {
-                if (!(node instanceof HippoNode)) {
-                    return node.getPath();
-                }
-
-                HippoNode hippoNode = (HippoNode) node;
-                Node canonical = hippoNode.getCanonicalNode();
-                if (canonical != null) {
-                    return canonical.getPath();
-                }
-            } catch (RepositoryException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-        return null;
-    }
-
     public void setObservationContext(IObservationContext context) {
         this.context = context;
     }
 
     public void startObservation() {
         if (itemModel.getObject() != null) {
-            String path = getObservablePath();
-            if (path != null) {
-                listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
-                        | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, path, false, null, null);
-            } else {
-                // virtual tree
-                listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED, "/", true, null, null);
-            }
+            listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
+                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, getItemModel().getPath(), false, null, null);
             listener.start();
         } else {
             log.debug("skipping observation for null node");
