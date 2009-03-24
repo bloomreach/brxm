@@ -64,8 +64,8 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
     public FullReviewedActionsWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new StdWorkflow.Compatibility("edit", "edit", this) {
-            protected void execute(Workflow workflow) throws Exception {
+        add(new WorkflowAction("edit", "edit", null) {
+            protected String execute(Workflow workflow) throws Exception {
                 FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow)workflow;
                 Document docRef = wf.obtainEditableInstance();
                 Session session = ((UserSession)getSession()).getJcrSession();
@@ -75,32 +75,17 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 if (editorMgr != null) {
                     editorMgr.openEditor(new JcrNodeModel(docNode));
                 } else {
-                    System.err.println("No editor found to edit " + docNode.getPath());
+                    return "No editor found to edit " + docNode.getPath();
                 }
+                return null;
             }
         });
         
-        add(new StdWorkflow("delete", "delete") {
-            protected void invoke() {
-                try {
-                    WorkflowDescriptor descriptor = (WorkflowDescriptor) FullReviewedActionsWorkflowPlugin.this.getModelObject();
-                    Session session = ((UserSession) getSession()).getJcrSession();
-                    session.refresh(true);
-                    session.save();
-                    WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
-                    DefaultWorkflow workflow = (DefaultWorkflow) manager.getWorkflow(descriptor);
-                    workflow.delete();
-                    session.refresh(false);
-                } catch(WorkflowException ex) {
-                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                    ex.printStackTrace(System.err);
-                } catch(RemoteException ex) {
-                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                    ex.printStackTrace(System.err);
-                } catch(RepositoryException ex) {
-                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                    ex.printStackTrace(System.err);
-                }
+        add(new WorkflowAction("delete", "delete", null) {
+            protected String execute(Workflow workflow) throws Exception {
+                FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow)workflow;
+                wf.delete();
+                return null;
             }
         });
 
@@ -118,7 +103,6 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
         add(new StdWorkflow("move", "move") {
             protected void invoke() {
                 context.getService(IDialogService.class.getName(), IDialogService.class).show(new AbstractDialog() {
-
                     public IModel getTitle() {
                         return new Model("Sure");
                     }
