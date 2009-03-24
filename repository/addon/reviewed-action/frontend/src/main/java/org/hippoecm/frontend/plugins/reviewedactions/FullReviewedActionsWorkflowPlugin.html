@@ -1,5 +1,5 @@
  <!--
-     * Copyright 2007 Hippo
+  * Copyright 2009 Hippo
      *
      * Licensed under the Apache License, Version 2.0 (the  "License");
      * you may not use this file except in compliance with the License.
@@ -15,53 +15,12 @@
  -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <ul class="hippo-toolbar-section">
-      <li>
-        <a class="edit-16" wicket:id="edit-dialog">
-          <span wicket:id="edit-dialog-label"/>
-        </a>
-      </li>
-      <li>
-        <a class="publish_ico" wicket:id="publish-dialog">
-          <span wicket:id="publish-dialog-label"/>
-        </a>
-      </li>
-      <li>
-        <a class="depublish_ico" wicket:id="dePublish-dialog">
-          <span wicket:id="dePublish-dialog-label"/>
-        </a>
-      </li>
-      <li>
-        <span class="publish-schedule-16" wicket:id="schedule-publish-dialog"/>
-      </li>
-      <li>
-        <span class="depublish-schedule-16" wicket:id="schedule-depublish-dialog"/>
-      </li>
-      <li>
-        <span class="delete-16" wicket:id="delete-dialog"/>
-      </li>
-      <li>
-        <span class="rename-16" wicket:id="rename-dialog"/>
-      </li>
-      <li>
-        <span class="copy-16" wicket:id="copy-dialog"/>
-      </li>
-      <li>
-        <span class="move-16" wicket:id="move-dialog"/>
-      </li>
-    </ul>
-    <ul class="hippo-toolbar-section">
-      <wicket:enclosure child="locked">
-        <li class="hippo-toolbar-textitem-locked document-lock-16">
-          <span title="locked message here" wicket:message="title:locked-message" wicket:id="locked"/>
-        </li>
-      </wicket:enclosure>
-      <li class="hippo-toolbar-textitem-caption">
-        <span wicket:id="caption"/>
-      </li>
-      <li class="hippo-toolbar-textitem-status">
-        <span wicket:id="status"/>
-      </li>
-    </ul>
+    <div wicket:id="edit">[WORKFLOW ITEM GOES HERE]</div>
+    <div wicket:id="delete">[WORKFLOW ITEM GOES HERE]</div>
+    <div wicket:id="rename">[WORKFLOW ITEM GOES HERE]</div>
+    <div wicket:id="copy">[WORKFLOW ITEM GOES HERE]</div>
+    <div wicket:id="move">[WORKFLOW ITEM GOES HERE]</div>
+    <div wicket:id="publish">[WORKFLOW ITEM GOES HERE]</div>
+    <div wicket:id="depublish">[WORKFLOW ITEM GOES HERE]</div>
   </wicket:panel>
 </html>
