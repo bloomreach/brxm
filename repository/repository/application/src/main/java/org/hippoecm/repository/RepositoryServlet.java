@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
@@ -63,7 +64,7 @@ import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sun.misc.BASE64Decoder;
+import org.apache.jackrabbit.util.Base64;
 
 public class RepositoryServlet extends HttpServlet {
 
@@ -235,7 +236,9 @@ public class RepositoryServlet extends HttpServlet {
         String username = "admin", password = "admin";
         String authhead = req.getHeader("Authorization");
         if (authhead != null) {
-            String userpass = new String(new BASE64Decoder().decodeBuffer(authhead.substring(6)));
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Base64.decode(authhead.substring(6), out);
+            String userpass = new String(out.toByteArray(), "UTF-8");
             username = userpass.substring(0, userpass.indexOf(":"));
             password = userpass.substring(userpass.indexOf(":") + 1);
         } else {
