@@ -84,9 +84,13 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         try {
-                            group.addMembership(user.getUsername());
-                            info(getString("group-member-added", model));
-                            localList.removeAll();
+                            if (group.getMembers().contains(user.getUsername())) {
+                                info(getString("group-member-already-member", model));
+                            } else {
+                                group.addMembership(user.getUsername());
+                                info(getString("group-member-added", model));
+                                localList.removeAll();
+                            }
                         } catch (RepositoryException e) {
                             error(getString("group-member-add-failed", model));
                             log.error("Failed to add member", e);

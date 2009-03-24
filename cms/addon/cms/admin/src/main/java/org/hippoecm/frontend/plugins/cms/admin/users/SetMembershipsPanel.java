@@ -70,9 +70,13 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 try {
-                    selectedGroup.addMembership(user.getUsername());
-                    info(getString("user-membership-added", new DetachableGroup(selectedGroup)));
-                    localList.removeAll();
+                    if (selectedGroup.getMembers().contains(user.getUsername())) {
+                        info(getString("user-membership-already-member", new DetachableGroup(selectedGroup)));
+                    } else {
+                        selectedGroup.addMembership(user.getUsername());
+                        info(getString("user-membership-added", new DetachableGroup(selectedGroup)));
+                        localList.removeAll();
+                    }
                 } catch (RepositoryException e) {
                     error(getString("user-membership-add-failed", new DetachableGroup(selectedGroup)));
                     log.error("Failed to add memberships", e);
