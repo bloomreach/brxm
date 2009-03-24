@@ -32,6 +32,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.ocm.HippoStdNode;
 import org.hippoecm.hst.ocm.HippoStdNodeIterator;
 import org.hippoecm.hst.ocm.impl.HippoStdNodeIteratorImpl;
+import org.hippoecm.hst.ocm.query.exception.ScopeException;
 import org.hippoecm.hst.ocm.query.impl.HstCtxWhereFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +60,13 @@ public class HstQuery {
     }
     
 
-    public void setScope(HippoStdNode hippoStdNode) {
+    public void setScope(HippoStdNode hippoStdNode) throws ScopeException {
+      if(hippoStdNode == null) {
+          throw new ScopeException("Cannot create a search for the scope when the hippoStdNode is null");
+      }
+      if(hippoStdNode.getNode() == null) {
+          throw new ScopeException("Cannot create a search for the scope when the jcrNode in hippoStdNode is null");
+      }
       setScope(hippoStdNode.getNode());
     }
 
@@ -91,8 +98,11 @@ public class HstQuery {
         if( hippoStdFilter.getFilter() instanceof FilterImpl) {
             FilterImpl filter = (FilterImpl)hippoStdFilter.getFilter();
             
-            if(hstCtxWhereFilter.getJcrExpression() != null) {
+            if(hstCtxWhereFilter != null && hstCtxWhereFilter.getJcrExpression() != null) {
                 filter.addJCRExpression(hstCtxWhereFilter.getJcrExpression());
+            } else {
+                log.warn("Not allowed to have a HstQuery with an empty hstCtxWhereFilter. Return an empty HippoStdNodeIterator");
+                return new EmptyHippoStdNodeIterator();
             }
             
             query.append("//element(*, " + this.getNodeType(filter)+ ")") ;
@@ -189,6 +199,39 @@ public class HstQuery {
         }
         return classDescriptor.getJcrName(fieldAttribute);
             
+    }
+    
+    class EmptyHippoStdNodeIterator implements HippoStdNodeIterator {
+
+        public long getPosition() {
+            return 0;
+        }
+
+        public long getSize() {
+            return 0;
+        }
+
+        public HippoStdNode nextHippoStdNode() {
+            return null;
+        }
+
+        public void skip(int skipNum) {
+            
+        }
+
+        public boolean hasNext() {
+            return false;
+        }
+
+        public Object next() {
+            return null;
+        }
+
+        public void remove() {
+            
+        }
+
+    
     }
 
 }

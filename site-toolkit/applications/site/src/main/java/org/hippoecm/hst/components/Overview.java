@@ -27,6 +27,7 @@ import org.hippoecm.hst.ocm.HippoStdNodeIterator;
 import org.hippoecm.hst.ocm.NewsPage;
 import org.hippoecm.hst.ocm.query.HippoStdFilter;
 import org.hippoecm.hst.ocm.query.HstQuery;
+import org.hippoecm.hst.ocm.query.exception.ScopeException;
 
 public class Overview extends GenericResourceServingHstComponent {
     
@@ -37,12 +38,16 @@ public class Overview extends GenericResourceServingHstComponent {
         
         HippoStdNode hippoStdNode = this.getContentNode(request);
         
-//        if(hippoStdNode == null) {
-//            hippoStdNode = this.getSiteContentBaseNode(request);
-//        }
+        if(hippoStdNode == null) {
+            hippoStdNode = this.getSiteContentBaseNode(request);
+        }
 //        
         HstQuery query = this.getHstQuery(request);
-        query.setScope(hippoStdNode);
+        try {
+            query.setScope(hippoStdNode);
+        } catch (ScopeException e) {
+           // e.printStackTrace();
+        }
         HippoStdFilter filter = query.createFilter(NewsPage.class);
         filter.addContains("title", "News");
         query.setFilter(filter);
