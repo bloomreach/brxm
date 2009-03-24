@@ -55,6 +55,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
             final IModel model) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
+        addFeedbackPanel();
         
         this.model = model;
         final User user = (User) model.getObject();
@@ -116,7 +117,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 context.getService(IDialogService.class.getName(), IDialogService.class).show(
                         new ConfirmDeleteDialog(model, this) {
                             private static final long serialVersionUID = 1L;
@@ -124,6 +125,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
                             @Override
                             protected void onOk() {
                                 deleteUser(model);
+                                target.addComponent(getFeedbackPanel());
                             }
 
                             @Override

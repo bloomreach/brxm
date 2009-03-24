@@ -35,15 +35,10 @@ public class AdminPerspective extends Perspective {
         super(context, config);
         setOutputMarkupId(true);
 
-        // add feedback panel to show errors
-        FeedbackPanel feedback = new FeedbackPanel("feedback");
-        feedback.setOutputMarkupId(true);
-        add(feedback);
-
-        BreadCrumbBar breadCrumbBar = new AdminBreadCrumbBar("breadCrumbBar");
+        final BreadCrumbBar breadCrumbBar = new AdminBreadCrumbBar("breadCrumbBar");
         add(breadCrumbBar);
 
-        AdminPanel adminPanel = new AdminPanel("panel", context, breadCrumbBar);
+        final AdminPanel adminPanel = new AdminPanel("panel", context, breadCrumbBar);
         add(adminPanel);
 
         breadCrumbBar.setActive(adminPanel);
@@ -69,5 +64,5 @@ public class AdminPerspective extends Perspective {
     public void showDialog(IDialogService.Dialog dialog) {
         getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(dialog);
     }
-
+    
 }

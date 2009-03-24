@@ -15,7 +15,7 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:panel>
+  <wicket:extend>
       <h2 wicket:id="group-members-label" />
     <table class="hippo-controlpanel-table-nested hippo-list-details">
         <tr wicket:id="group-members">
@@ -25,5 +25,5 @@
       </table>
       <h3><wicket:message key="group-users-label"/></h3>
       <table class="hippo-controlpanel-table-default hippo-list-details" wicket:id="table">[table]</table>
-  </wicket:panel>
+  </wicket:extend>
 </html>

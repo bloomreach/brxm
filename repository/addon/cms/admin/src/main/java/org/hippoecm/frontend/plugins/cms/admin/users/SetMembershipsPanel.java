@@ -56,6 +56,8 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
             final IModel model) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
+        addFeedbackPanel();
+        
         this.model = model;
         final User user = (User) model.getObject();
 
@@ -71,11 +73,12 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
                     selectedGroup.addMembership(user.getUsername());
                     info(getString("user-membership-added", new DetachableGroup(selectedGroup)));
                     localList.removeAll();
-                    target.addComponent(SetMembershipsPanel.this);
                 } catch (RepositoryException e) {
                     error(getString("user-membership-add-failed", new DetachableGroup(selectedGroup)));
                     log.error("Failed to add memberships", e);
                 }
+                target.addComponent(SetMembershipsPanel.this);
+                target.addComponent(getFeedbackPanel());
             }
 
         };
@@ -132,11 +135,12 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
                         model.getGroup().removeMembership(user.getUsername());
                         info(getString("user-membership-removed", model));
                         localList.removeAll();
-                        target.addComponent(SetMembershipsPanel.this);
                     } catch (RepositoryException e) {
                         error(getString("user-membership-remove-failed", model));
                         log.error("Failed to remove memberships", e);
                     }
+                    target.addComponent(SetMembershipsPanel.this);
+                    target.addComponent(getFeedbackPanel());
                 }
             });
         }

@@ -59,6 +59,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
             final IModel model) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
+        addFeedbackPanel();
         this.model = model;
         this.domain = (Domain) model.getObject();
 
@@ -80,6 +81,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
                     error(getString("permissions-group-add-failed", model));
                     log.error("Failed to add permission", e);
                 }
+                target.addComponent(getFeedbackPanel());
             }
 
         };
@@ -139,6 +141,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
                         error(getString("permissions-group-remove-failed", model));
                         log.error("Failed to revoke permission", e);
                     }
+                    target.addComponent(getFeedbackPanel());
                 }
             });
         }
