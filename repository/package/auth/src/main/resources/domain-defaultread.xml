@@ -225,11 +225,11 @@
             </sv:property>
         </sv:node>
     </sv:node>
-    <sv:node sv:name="hippo-propertyreference">
+    <sv:node sv:name="hippo-propertyreferences">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:domainrule</sv:value>
         </sv:property>
-        <sv:node sv:name="type-hippo-propertyreference">
+        <sv:node sv:name="type-hippo-propertyreferences">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:facetrule</sv:value>
             </sv:property>
@@ -241,6 +241,28 @@
             </sv:property>
             <sv:property sv:name="hippo:value" sv:type="String">
                 <sv:value>hippo:propertyreferences</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:equals" sv:type="Boolean">
+                <sv:value>true</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+    <sv:node sv:name="hippo-propertyreference">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:domainrule</sv:value>
+        </sv:property>
+        <sv:node sv:name="nodetype-hippo-propertyreference">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:facetrule</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:facet" sv:type="String">
+                <sv:value>nodetype</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:type" sv:type="String">
+                <sv:value>Name</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:value" sv:type="String">
+                <sv:value>hippo:propertyreference</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:equals" sv:type="Boolean">
                 <sv:value>true</sv:value>
@@ -307,6 +329,28 @@
             </sv:property>
             <sv:property sv:name="hippo:value" sv:type="String">
                 <sv:value>hippostd:translations</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:equals" sv:type="Boolean">
+                <sv:value>true</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+    <sv:node sv:name="hippostd-templates">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:domainrule</sv:value>
+        </sv:property>
+        <sv:node sv:name="type-hippostd-templates">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:facetrule</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:facet" sv:type="String">
+                <sv:value>jcr:primaryType</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:type" sv:type="String">
+                <sv:value>Name</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:value" sv:type="String">
+                <sv:value>hippostd:templates</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:equals" sv:type="Boolean">
                 <sv:value>true</sv:value>
