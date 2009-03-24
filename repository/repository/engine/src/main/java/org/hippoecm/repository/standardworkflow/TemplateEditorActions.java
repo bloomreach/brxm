@@ -15,7 +15,9 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -53,6 +55,10 @@ public class TemplateEditorActions implements EditmodelWorkflow, InternalWorkflo
     public TemplateEditorActions(Session userSession, Session rootSession, Node subject) throws RemoteException {
         this.rootSession = rootSession;
         this.subject = subject;
+    }
+
+    public Map<String,Serializable> hints() {
+        return null;
     }
 
     public String edit() throws WorkflowException, MappingException, RepositoryException {

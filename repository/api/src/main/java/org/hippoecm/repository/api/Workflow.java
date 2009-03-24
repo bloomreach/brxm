@@ -17,6 +17,10 @@ package org.hippoecm.repository.api;
 
 import java.io.Serializable;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.util.Map;
+
+import javax.jcr.RepositoryException;
 
 /**
  * Implementors of this interface should never return subclasses of the
@@ -27,4 +31,6 @@ import java.rmi.Remote;
 
 public interface Workflow extends Remote, Serializable {
     final static String SVN_ID = "$Id$";
+
+    public Map<String,Serializable> hints() throws WorkflowException, RemoteException, RepositoryException;
 }

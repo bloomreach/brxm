@@ -27,13 +27,11 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.widgets.Pinger;
 
-public class RootPlugin extends RenderPlugin implements ContextMenuManager {
+public class RootPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    private ContextMenu activeContextMenu;
 
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -47,17 +45,5 @@ public class RootPlugin extends RenderPlugin implements ContextMenuManager {
             // unregister: don't repaint root plugin when model changes.
             context.unregisterService(this, modelId);
         }
-
-        add(new AjaxEventBehavior("onclick") {
-            public void onEvent(AjaxRequestTarget target) {
-                if(activeContextMenu != null) {
-                    activeContextMenu.collapse(target);
-                }
-            }
-        });
-    }
-
-    public void addContextMenu(ContextMenu activeMenu) {
-        activeContextMenu = activeMenu;
     }
 }

@@ -24,29 +24,15 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.Pinger;
 
-public class RootPlugin extends RenderPlugin implements ContextMenuManager {
+public class RootPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private ContextMenu activeContextMenu;
-
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         add(new Pinger("pinger"));
-
-        add(new AjaxEventBehavior("onclick") {
-            public void onEvent(AjaxRequestTarget target) {
-                if(activeContextMenu != null) {
-                    activeContextMenu.collapse(target);
-                }
-            }
-        });
-    }
-
-    public void addContextMenu(ContextMenu activeMenu) {
-        activeContextMenu = activeMenu;
     }
 }

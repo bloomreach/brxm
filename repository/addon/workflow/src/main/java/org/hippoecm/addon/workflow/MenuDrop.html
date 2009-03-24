@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2008 Hippo
+  * Copyright 2009 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -14,29 +14,11 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>
-    <table class="hippo-window-form">
-      <tr>
-        <td><wicket:message key="name-label">Name</wicket:message></td>
-        <td>
-          <input type="text" wicket:id="name"/>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <span wicket:id="typelabel"/>
-        </td>
-        <td>
-          <select class="hippo-form-select" wicket:id="prototype"/>
-        </td>
-      </tr>
-      <tr>
-        <td>&nbsp;</td>
-        <td>
-          <span wicket:id="notypes"/>
-          <br/>
-        </td>
-      </tr>
-    </table>
-  </wicket:extend>
+    <wicket:panel>
+        <ul class="hippo-toolbar-menu-item">
+                <li wicket:id="list">
+                    <span wicket:id="item">[WORKFLOW ACTION]</span>
+                </li>
+        </ul>
+    </wicket:panel>
 </html>

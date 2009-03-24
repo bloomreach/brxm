@@ -15,8 +15,12 @@
  */
 package org.hippoecm.frontend.plugin;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+
 public interface ContextMenuManager {
     final static String SVN_ID = "$Id$";
 
     public void addContextMenu(ContextMenu activeMenu);
+
+    public void collapse(ContextMenu current, AjaxRequestTarget target);
 }

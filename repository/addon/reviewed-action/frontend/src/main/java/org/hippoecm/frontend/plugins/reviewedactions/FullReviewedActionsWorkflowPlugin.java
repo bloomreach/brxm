@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,43 +16,36 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.rmi.RemoteException;
-import java.util.Date;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
-import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.IDialogFactory;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
-import org.hippoecm.frontend.i18n.types.TypeTranslator;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 
 public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -68,8 +61,131 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
     private boolean pendingRequest = false;
     private Component locked;
 
-    public FullReviewedActionsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+    public FullReviewedActionsWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        add(new StdWorkflow.Compatibility("edit", "edit", this) {
+            protected void execute(Workflow workflow) throws Exception {
+                FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow)workflow;
+                Document docRef = wf.obtainEditableInstance();
+                Session session = ((UserSession)getSession()).getJcrSession();
+                session.refresh(false);
+                Node docNode = session.getNodeByUUID(docRef.getIdentity());
+                IEditorManager editorMgr = getPluginContext().getService(getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
+                if (editorMgr != null) {
+                    editorMgr.openEditor(new JcrNodeModel(docNode));
+                } else {
+                    System.err.println("No editor found to edit " + docNode.getPath());
+                }
+            }
+        });
+        
+        add(new StdWorkflow("delete", "delete") {
+            protected void invoke() {
+                try {
+                    WorkflowDescriptor descriptor = (WorkflowDescriptor) FullReviewedActionsWorkflowPlugin.this.getModelObject();
+                    Session session = ((UserSession) getSession()).getJcrSession();
+                    session.refresh(true);
+                    session.save();
+                    WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
+                    DefaultWorkflow workflow = (DefaultWorkflow) manager.getWorkflow(descriptor);
+                    workflow.delete();
+                    session.refresh(false);
+                } catch(WorkflowException ex) {
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                    ex.printStackTrace(System.err);
+                } catch(RemoteException ex) {
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                    ex.printStackTrace(System.err);
+                } catch(RepositoryException ex) {
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                    ex.printStackTrace(System.err);
+                }
+            }
+        });
+
+        add(new StdWorkflow("copy", "copy") {
+            protected void invoke() {
+                context.getService(IDialogService.class.getName(), IDialogService.class).show(new AbstractDialog() {
+
+                    public IModel getTitle() {
+                        return new Model("Sure");
+                    }
+                });
+            }
+        });
+
+        add(new StdWorkflow("move", "move") {
+            protected void invoke() {
+                context.getService(IDialogService.class.getName(), IDialogService.class).show(new AbstractDialog() {
+
+                    public IModel getTitle() {
+                        return new Model("Sure");
+                    }
+                });
+            }
+        });
+
+        add(new StdWorkflow("rename", "rename") {
+            protected void invoke() {
+                context.getService(IDialogService.class.getName(), IDialogService.class).show(new AbstractDialog() {
+
+                    public IModel getTitle() {
+                        return new Model("Sure");
+                    }
+                });
+            }
+        });
+
+        add(new StdWorkflow("publish", "publish") {
+            protected void invoke() {
+                try {
+                    WorkflowDescriptor descriptor = (WorkflowDescriptor) FullReviewedActionsWorkflowPlugin.this.getModelObject();
+                    Session session = ((UserSession) getSession()).getJcrSession();
+                    session.refresh(true);
+                    session.save();
+                    WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
+                    FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) manager.getWorkflow(descriptor);
+                    workflow.publish();
+                    session.refresh(false);
+                } catch(WorkflowException ex) {
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                    ex.printStackTrace(System.err);
+                } catch(RemoteException ex) {
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                    ex.printStackTrace(System.err);
+                } catch(RepositoryException ex) {
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                    ex.printStackTrace(System.err);
+                }
+            }
+        });
+
+        add(new StdWorkflow("depublish", "depublish") {
+            protected void invoke() {
+                try {
+                    WorkflowDescriptor descriptor = (WorkflowDescriptor) FullReviewedActionsWorkflowPlugin.this.getModelObject();
+                    Session session = ((UserSession) getSession()).getJcrSession();
+                    session.refresh(true);
+                    session.save();
+                    WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
+                    FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) manager.getWorkflow(descriptor);
+                    workflow.depublish();
+                    session.refresh(false);
+                } catch(WorkflowException ex) {
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                    ex.printStackTrace(System.err);
+                } catch(RemoteException ex) {
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                    ex.printStackTrace(System.err);
+                } catch(RepositoryException ex) {
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                    ex.printStackTrace(System.err);
+                }
+            }
+        });
+
+}/*
 
         add(new Label("caption", caption));
 
@@ -370,4 +486,4 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
         });
     }
-}
+*/}

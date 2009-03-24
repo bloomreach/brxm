@@ -15,8 +15,12 @@
  */
 package org.hippoecm.repository.ext;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
@@ -39,5 +43,24 @@ public abstract class WorkflowImpl implements Remote, Workflow
 
     final protected WorkflowContext getWorkflowContext() {
         return context;
+    }
+
+    public Map<String,Serializable> hints() {
+        return hints(this);
+    }
+
+    static Map<String,Serializable> hints(Workflow workflow) {
+        Map<String,Serializable> map = new TreeMap<String,Serializable>();
+        for(Class cls : workflow.getClass().getInterfaces()) {
+            if(Workflow.class.isAssignableFrom(cls)) {
+                for(Method method : cls.getDeclaredMethods()) {
+                    String methodName = method.getName();
+                    if(methodName.equals("hints")) {
+                        map.put(methodName, new Boolean(true));
+                    }
+                }
+            }
+        }
+        return map;
     }
 }

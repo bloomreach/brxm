@@ -76,6 +76,24 @@ class MenuHierarchy {
                 put(action);
             }
         }
+        if(submenus.containsKey("threepane")) {
+            MenuHierarchy submenu = submenus.get("editing");
+            for(ActionDescription action : submenu.items) {
+                put(action);
+            }
+        }
+    }
+
+    public void flatten() {
+        Map<String, MenuHierarchy> submenus = this.submenus;
+        List<ActionDescription> items = this.items;
+        this.submenus = new LinkedHashMap<String, MenuHierarchy>();
+        this.items = new LinkedList<ActionDescription>();
+        for(MenuHierarchy submenu : submenus.values()) {
+            for(ActionDescription action : submenu.items) {
+                put(action);
+            }
+        }
     }
 
     List<Component> list(MenuComponent context) {

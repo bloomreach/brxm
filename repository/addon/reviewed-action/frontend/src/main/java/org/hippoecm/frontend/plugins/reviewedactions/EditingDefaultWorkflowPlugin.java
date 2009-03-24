@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
@@ -40,7 +39,7 @@ public class EditingDefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
     private static Logger log = LoggerFactory.getLogger(EditingDefaultWorkflowPlugin.class);
 
     public EditingDefaultWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        super(context, config);}/*
 
         IEditor editor = context.getService(getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditor.class);
         context.registerService(new IEditorFilter() {
@@ -72,5 +71,5 @@ public class EditingDefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
     }
-
+*/
 }

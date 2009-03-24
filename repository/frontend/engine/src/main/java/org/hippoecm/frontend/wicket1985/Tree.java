@@ -103,6 +103,12 @@ public class Tree extends DefaultAbstractTree
 				return renderNode(node);
 			}
 		}));
+                
+                MarkupContainer contextContent = newContextContent(item, "contextContent", node);
+                item.add(contextContent);
+                MarkupContainer contextLink = newContextLink(item, "contextLink", node, contextContent);
+                item.add(contextLink);
+                contextLink.add(newMenuIcon(contextLink, "menuimage", node));
 
 		// do distinguish between selected and unselected rows we add an
 		// behavior

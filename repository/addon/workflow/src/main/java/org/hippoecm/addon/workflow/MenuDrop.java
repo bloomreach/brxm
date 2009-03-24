@@ -15,45 +15,20 @@
  */
 package org.hippoecm.addon.workflow;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 
-class MenuList extends Panel implements MenuComponent {
+class MenuDrop extends Panel implements MenuComponent {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    MenuList(String id, ActionDescription wf, MenuHierarchy menu) {
+    MenuDrop(String id, ActionDescription wf, MenuHierarchy menu) {
         super(id);
-        /*if (wf != null) {
-            Component fragment = wf.get("text");
-            if (fragment instanceof ActionDescription.ActionDisplay) {
-                ((ActionDescription.ActionDisplay)fragment).substantiate();
-                add(fragment);
-            } else if (fragment instanceof Fragment) {
-                add(fragment);
-            } else {
-                // wf.setVisible(true);
-            }
-
-            fragment = wf.get("icon");
-            if (fragment instanceof ActionDescription.ActionDisplay) {
-                ((ActionDescription.ActionDisplay)fragment).substantiate();
-                add(fragment);
-            } else if (fragment instanceof Fragment) {
-                add(fragment);
-            }
-        } else {
-            Label label = new Label("text");
-            label.setVisible(false);
-            add(label);
-            Image image = new Image("icon");
-            image.setVisible(false);
-            add(image);
-        }*/
         add(new DataView("list", new ListDataProvider(menu.list(this))) {
             public void populateItem(final Item item) {
                 MenuItem menuItem = (MenuItem)item.getModelObject();

@@ -99,36 +99,24 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
                     }
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
-                    showException(ex);
                 }
                 return null;
             }
 
         }, context.getReference(editor).getServiceId());
 
-        addWorkflowAction("save", new StringResourceModel("save", this, null), new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-
+        add(new WorkflowAction("save", new StringResourceModel("save", this, null)) {
             @Override
-            public void execute(Workflow workflow) throws Exception {
+            protected String execute(Workflow workflow) throws Exception {
                 doSave();
-            }
-
-        });
-        AjaxLink link = new AjaxLink("revert") {
-            private static final long serialVersionUID = 1L;
-
+                return null;
+            }});
+        add(new WorkflowAction("revert", new StringResourceModel("revert", this, null)) {
             @Override
-            public void onClick(AjaxRequestTarget target) {
-                try {
-                    doRevert();
-                } catch (Exception ex) {
-                    showException(ex);
-                }
-            }
-        };
-        link.add(new Label("revert-label", new StringResourceModel("revert", this, null)));
-        add(link);
+            protected String execute(Workflow workflow) throws Exception {
+                doRevert();
+                return null;
+            }});
     }
 
     void doSave() throws Exception {

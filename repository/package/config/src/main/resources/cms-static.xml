@@ -898,10 +898,10 @@
         <sv:value>id=navigator-top,body=navigator-top-body,height=25px,resize=false</sv:value>
       </sv:property>
       <sv:property sv:name="left" sv:type="String">
-        <sv:value>id=navigator-left,body=navigator-left-body,resize=true,scroll=true,minWidth=150,width=200,gutter=0px 0px 0px 0px</sv:value>
+        <sv:value>id=navigator-left,body=navigator-left-body,width=200,zindex=2</sv:value>
       </sv:property>
       <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=navigator-center,body=navigator-center-body,minWidth=200,width=250,scroll=true,gutter=0px 0px 0px 0px</sv:value>
+        <sv:value>id=navigator-center,body=navigator-center-body,width=250</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -1178,6 +1178,9 @@
       <sv:property sv:name="editor.id" sv:type="String">
         <sv:value>service.edit</sv:value>
       </sv:property>
+      <sv:property sv:name="browser.id" sv:type="String">
+        <sv:value>service.browse</sv:value>
+      </sv:property>
       <sv:property sv:name="wicket.behavior" sv:type="String">
         <sv:value>service.behavior.editor.tabs.center</sv:value>
       </sv:property>
@@ -1194,6 +1197,9 @@
       </sv:property>
       <sv:property sv:name="editor.id" sv:type="String">
         <sv:value>service.edit</sv:value>
+      </sv:property>
+      <sv:property sv:name="browser.id" sv:type="String">
+        <sv:value>service.browse</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

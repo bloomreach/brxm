@@ -16,8 +16,10 @@
 package org.hippoecm.repository.decorating.client;
 
 import java.lang.reflect.Array;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -48,6 +50,14 @@ public class ClientWorkflowDescriptor extends UnicastRemoteObject implements Wor
     public String getAttribute(String name) throws RepositoryException {
         try {
             return remote.getAttribute(name);
+        } catch (RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
+    }
+
+    public Map<String,Serializable> hints() throws RepositoryException {
+        try {
+            return remote.hints();
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }

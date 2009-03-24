@@ -15,7 +15,10 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -53,6 +56,10 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
     public EditmodelWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
         this.rootSession = rootSession;
         this.subject = subject;
+    }
+
+    public Map<String,Serializable> hints() {
+        return new TreeMap<String,Serializable>();
     }
 
     public String edit() throws WorkflowException, MappingException, RepositoryException {

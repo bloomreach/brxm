@@ -1,5 +1,5 @@
-<!--
-  * Copyright 2008 Hippo
+.<!--
+  * Copyright 2009 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -14,10 +14,8 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-    <wicket:panel>
-        <ul class="hippo-toolbar-section">
-          <li class="hippo-global-hideme"><h3><span wicket:id="foldername"></span>&nbsp;folder</h3></li>
-          <li class="hippo-global-alignright"><select wicket:id="items">[ items ]</select></li>
-        </ul>
-    </wicket:panel>
+  <wicket:panel>
+    <ul wicket:id="view"><li wicket:id="id"></li></ul>
+    <span wicket:id="menu"/>
+  </wicket:panel>
 </html>

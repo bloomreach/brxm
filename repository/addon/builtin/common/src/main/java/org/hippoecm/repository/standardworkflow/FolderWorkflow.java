@@ -39,11 +39,7 @@ public interface FolderWorkflow extends Workflow {
 
     /**
      *
-     * @return
-     * @throws WorkflowException
-     * @throws MappingException
-     * @throws RepositoryException
-     * @throws RemoteException
+     * @deprecated
      */
     public Map<String,Set<String>> list()
       throws WorkflowException, MappingException, RepositoryException, RemoteException;

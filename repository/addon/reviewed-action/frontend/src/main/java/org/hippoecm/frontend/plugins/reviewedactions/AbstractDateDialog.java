@@ -28,7 +28,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.frontend.widgets.AjaxDateTimeField;
 
-public abstract class AbstractDateDialog extends CompatibilityWorkflowPlugin.Dialog {
+public abstract class AbstractDateDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -38,8 +38,8 @@ public abstract class AbstractDateDialog extends CompatibilityWorkflowPlugin.Dia
 
     protected Button now;
 
-    public AbstractDateDialog(CompatibilityWorkflowPlugin workflowPlugin, IModel question, Date date) {
-        workflowPlugin . super();
+    public AbstractDateDialog(CompatibilityWorkflowPlugin.WorkflowAction action, IModel question, Date date) {
+        action . super();
         this.date = date;
 
         add(new Label("question", question));

@@ -15,8 +15,11 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -64,6 +67,10 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
 
     public EventLoggerImpl(Session rootSession) throws RemoteException, RepositoryException {
         this(rootSession, rootSession, (rootSession.getRootNode().hasNode("hippo:log") ? rootSession.getRootNode().getNode("hippo:log") : null));
+    }
+
+    public Map<String,Serializable> hints() {
+        return new TreeMap<String,Serializable>();
     }
 
     public void logWorkflowStep(String who, String className, String methodName, Object[] args, Object returnObject, String documentPath) {

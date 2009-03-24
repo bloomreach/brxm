@@ -15,8 +15,10 @@
  */
 package org.hippoecm.repository.decorating.remote;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -28,6 +30,8 @@ public interface RemoteWorkflowDescriptor extends Remote {
     public String getDisplayName() throws RepositoryException, RemoteException;
 
     public String getAttribute(String name) throws RepositoryException, RemoteException;
+
+    public Map<String,Serializable> hints() throws RepositoryException, RemoteException;
 
     public Workflow getWorkflow() throws RepositoryException, RemoteException;
 

@@ -62,6 +62,7 @@ public abstract class JcrTree extends Tree {
 
     protected abstract void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode);
 
+    @Override
     public String renderNode(TreeNode treeNode) {
         String result = "unknown";
         if (treeNode instanceof IJcrTreeNode) {

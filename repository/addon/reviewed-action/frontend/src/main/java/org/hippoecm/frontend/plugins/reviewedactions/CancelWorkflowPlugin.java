@@ -48,7 +48,7 @@ public class CancelWorkflowPlugin extends CompatibilityWorkflowPlugin {
     private Date schedule = null;
 
     public CancelWorkflowPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        super(context, config);}/*
 
         onModelChanged();
 
@@ -125,4 +125,4 @@ public class CancelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             log.info(ex.getClass().getName() + ": " + ex.getMessage());
         }
     }
-}
+*/}

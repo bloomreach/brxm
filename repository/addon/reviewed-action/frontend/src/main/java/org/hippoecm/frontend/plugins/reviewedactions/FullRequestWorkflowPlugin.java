@@ -45,7 +45,7 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
     private Date schedule = null;
 
     public FullRequestWorkflowPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        super(context, config);}/*
 
         onModelChanged();
 
@@ -125,4 +125,4 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
             // unknown, maybe there are legit reasons for this, so don't emit a warning
         }
     }
-}
+*/}

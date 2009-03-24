@@ -24,16 +24,16 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ReorderDialog extends CompatibilityWorkflowPlugin.Dialog {
+public class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -42,16 +42,16 @@ public class ReorderDialog extends CompatibilityWorkflowPlugin.Dialog {
     private static final Logger log = LoggerFactory.getLogger(ReorderDialog.class);
 
     private ReorderPanel panel;
-    private CompatibilityWorkflowPlugin plugin;
+    WorkflowDescriptorModel model;
 
-    public ReorderDialog(CompatibilityWorkflowPlugin plugin) {
-        plugin . super();
-        this.plugin = plugin;
+    public ReorderDialog(CompatibilityWorkflowPlugin.WorkflowAction action, IPluginConfig pluginConfig, WorkflowDescriptorModel model) {
+        action . super();
+        this.model = model;
 
         String name;
         try {
-            JcrNodeModel folderModel = new JcrNodeModel(((WorkflowDescriptorModel) plugin.getModel()).getNode());
-            panel = new ReorderPanel("reorder-panel", folderModel, new DocumentListFilter(plugin.getPluginConfig()));
+            JcrNodeModel folderModel = new JcrNodeModel(model.getNode());
+            panel = new ReorderPanel("reorder-panel", folderModel, new DocumentListFilter(pluginConfig));
             add(panel);
             name = folderModel.getNode().getName();
         } catch (RepositoryException e) {
@@ -65,16 +65,14 @@ public class ReorderDialog extends CompatibilityWorkflowPlugin.Dialog {
         return new StringResourceModel("reorder", this, null);
     }
 
-    @Override
-    protected String execute() {
+    protected String execute2() {
         try {
             WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-            FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow((WorkflowDescriptor) plugin.getModelObject());
+            FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow((WorkflowDescriptor) model.getObject());
             workflow.reorder(panel.getMapping());
             return null;
         } catch(Exception ex) {
             return ex.getClass().getName()+": "+ex.getMessage();
         }
     }
-
 }

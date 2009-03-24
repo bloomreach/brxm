@@ -72,7 +72,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
         } else {
             log.warn("No validator id {} defined", IValidateService.VALIDATE_ID);
         }
-
+/*
         final IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
         context.registerService(new IEditorFilter() {
             private static final long serialVersionUID = 1L;
@@ -202,17 +202,16 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 ((UserSession) Session.get()).getJcrSession().refresh(true);
 
                 IBrowseService browser = context.getService("browser.id", IBrowseService.class);
-                browser.browse(new JcrNodeModel(((WorkflowDescriptorModel) EditingReviewedActionsWorkflowPlugin.this
-                        .getModel()).getNode()));
+                browser.browse(new JcrNodeModel(((WorkflowDescriptorModel) EditingReviewedActionsWorkflowPlugin.this.getModel()).getNode()));
 
-                IEditor editor = context.getService(getPluginConfig().getString(IEditorManager.EDITOR_ID),
-                        IEditor.class);
+                IEditor editor = context.getService(getPluginConfig().getString(IEditorManager.EDITOR_ID),IEditor.class);
                 closing = true;
                 editor.close();
+                browser.browse(new JcrNodeModel(((WorkflowDescriptorModel)EditingReviewedActionsWorkflowPlugin.this.getModel()).getNode()));
             }
         });
     }
-
+*/}
     public boolean hasError() {
         if (!validated) {
             validate();
