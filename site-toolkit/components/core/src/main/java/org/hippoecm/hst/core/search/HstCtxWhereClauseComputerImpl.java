@@ -50,7 +50,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             else if (canonical.isSame(node)){
                 // either the site content root node (hst:content) or just a physical node.
                 if(node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                   String scopeUUID = "'"+node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString()+"'";
+                   String scopeUUID = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                    facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("'");
                    getFacetSelectClauses(hstRequestContext.getSession(), hnode, facetSelectClauses , false);
                 } else {
