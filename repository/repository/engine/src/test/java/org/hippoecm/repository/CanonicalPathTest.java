@@ -77,6 +77,13 @@ public class CanonicalPathTest extends TestCase {
     }
 
     /*
+     * Basic test on the root node: see HREPTWO-2342
+     */
+    @Test public void testRootNode() throws RepositoryException {
+        ((HippoNode) session.getRootNode()).getCanonicalNode();
+    }
+    
+    /*
      * A virtual node in facetsearch which is not a mirror of a hippo document returns null
      * for getCanonicalNode()
      */
