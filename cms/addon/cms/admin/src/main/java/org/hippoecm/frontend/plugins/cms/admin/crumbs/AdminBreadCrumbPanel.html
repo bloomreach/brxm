@@ -1,4 +1,3 @@
-  <?xml version="1.0" encoding="UTF-8"?>
 <!--
   * Copyright 2008 Hippo
   *
@@ -14,13 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>
-    <h2>Things you can do</h2>
-    <ul class="hippo-controlpanel-options">
-      <li><a href="#" wicket:id="create-user"><wicket:message key="user-create"/></a></li>
-      <li>Or click on a username to edit one</li>
-    </ul>
-    <table class="hippo-controlpanel-table-default hippo-list-details" cellspacing="0" wicket:id="table">[table]</table>
-  </wicket:extend>
-</html>
+<wicket:panel>
+  <div wicket:id="feedback" class="hippo-feedback" />
+  <wicket:child />
+</wicket:panel>

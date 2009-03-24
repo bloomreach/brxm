@@ -17,11 +17,14 @@ package org.hippoecm.frontend.plugins.cms.admin.crumbs;
 
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 
 public abstract class AdminBreadCrumbPanel extends BreadCrumbPanel implements IAdminParticipant {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
+    
+    private FeedbackPanel feedback;
     
     public AdminBreadCrumbPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
@@ -30,5 +33,21 @@ public abstract class AdminBreadCrumbPanel extends BreadCrumbPanel implements IA
     public String getTitle() {
         return (String) getTitle(this).getObject();
     }
- 
+
+    /**
+     * Call this method to add a default feedback panel
+     */
+    public void addFeedbackPanel() {
+        feedback = new FeedbackPanel("feedback");
+        feedback.setOutputMarkupId(true);
+        add(feedback);
+    }
+    
+    /**
+     * get the feedback panel, might be null
+     * @return the feedback panel or null if not set
+     */
+    public FeedbackPanel getFeedbackPanel() {
+        return feedback;
+    }
 }

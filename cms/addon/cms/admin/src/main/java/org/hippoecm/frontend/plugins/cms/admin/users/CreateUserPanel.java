@@ -26,6 +26,7 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.PasswordTextField;
@@ -58,10 +59,8 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
     public CreateUserPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-
-
-        // title
-//        add(new Label("title", new StringResourceModel("user-create-title", userModel)));
+        
+        addFeedbackPanel();
 
         // add form with markup id setter so it can be updated via ajax
         form = new Form("form", new CompoundPropertyModel(userModel));
@@ -88,13 +87,12 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
 
         final PasswordTextField password = new PasswordTextField("password", new Model(""));
         password.setResetPassword(false);
-        password.add(StringValidator.minimumLength(4));
+        password.add(new PasswordStrengthValidator());
         form.add(password);
 
         final PasswordTextField passwordCheck = new PasswordTextField("password-check");
         passwordCheck.setModel(password.getModel());
         passwordCheck.setResetPassword(false);
-        passwordCheck.add(StringValidator.minimumLength(4));
         form.add(passwordCheck);
 
         form.add(new EqualPasswordInputValidator(password, passwordCheck));
@@ -119,10 +117,16 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
                 } catch (RepositoryException e) {
                     Session.get().warn(getString("user-create-failed", userModel));
                     log.error("Unable to create user '" + username + "' : ", e);
+                    target.addComponent(getFeedbackPanel());
                 }
             }
+            
+            @Override
+            protected void onError(AjaxRequestTarget target, Form form) {
+                target.addComponent(getFeedbackPanel());
+            }
         });
-
+        
         // add a button that can be used to submit the form via ajax
         form.add(new AjaxButton("cancel-button") {
             private static final long serialVersionUID = 1L;
@@ -153,6 +157,25 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
         }
     }
 
+
+    class PasswordStrengthValidator extends StringValidator {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        protected void onValidate(IValidatable validatable) {
+            String password = (String) validatable.getValue();
+            // currently only check length
+            if (password.length() < 4) {
+                error(validatable);
+            }
+        }
+
+        @Override
+        protected String resourceKey() {
+            return "PasswordStrength.invalid";
+        }
+    }
+    
     public IModel getTitle(Component component) {
         return new StringResourceModel("user-create", component, null);
     }

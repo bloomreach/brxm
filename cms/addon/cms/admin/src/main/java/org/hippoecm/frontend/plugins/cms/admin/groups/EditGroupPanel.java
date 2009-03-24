@@ -50,6 +50,7 @@ public class EditGroupPanel extends AdminBreadCrumbPanel {
             final IModel model) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
+        addFeedbackPanel();
         
         this.model = model;
 
@@ -81,6 +82,7 @@ public class EditGroupPanel extends AdminBreadCrumbPanel {
                 } catch (RepositoryException e) {
                     Session.get().warn(getString("group-save-failed", model));
                     log.error("Unable to save group '" + groupname + "' : ", e);
+                    target.addComponent(getFeedbackPanel());
                 }
             }
         });
