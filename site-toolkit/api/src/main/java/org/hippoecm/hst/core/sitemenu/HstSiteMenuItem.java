@@ -37,6 +37,26 @@ public interface HstSiteMenuItem extends Serializable{
     List<HstSiteMenuItem> getChildMenuItems();
     
     /**
+     * Returns the currently selected sitemenu items. It makes sense to have only a single sitemenu item selected, but as 
+     * multiple sitemenu items <i>could</i> point to the same selected sitemap item, it can happen that multiple sitemenu items
+     * are selected. It is up to the implementation how to handle this
+     * @return the currently selected sitemenu items. 
+     */
+    List<HstSiteMenuItem> getSelectedSiteMenuItems();
+    
+    /**
+     * 
+     * @return parent <code>HstSiteMenuItem</code> or <code>null</code> if it is a root item 
+     */
+    HstSiteMenuItem getParentItem();
+    
+    /**
+     * 
+     * @return the container <code>HstSiteMenu</code> of this <code>HstSiteMenuItem</code>
+     */
+    HstSiteMenu getHstSiteMenu();
+    
+    /**
      * 
      * @return a HstLink that contains a link for this SiteMenuItem
      */

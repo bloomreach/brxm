@@ -58,5 +58,5 @@ public interface HstSiteMenusConfiguration extends Serializable{
      * @return All matching <code>HstSiteMenuItemConfiguration</code>'s for the hstSiteMapItemId and an empty list if none matches. 
      * Preferrably return an unmodifiable list such that clients cannot modify configuration
      */
-    List<HstSiteMenuItemConfiguration> getItemBySiteMapItemId(String hstSiteMapItemId);
+    List<HstSiteMenuItemConfiguration> getItemsBySiteMapItemId(String hstSiteMapItemId);
 }

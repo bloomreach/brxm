@@ -36,13 +36,9 @@ public interface HstSiteMenus extends Serializable{
     /**
      * 
      * @param name the name of the {@link HstSiteMenu}
-     * @return the {@link HstSiteMenu} having the correct name
+     * @return the {@link HstSiteMenu} having the corresponding name and <code>null</code> if none matches
      */
     HstSiteMenu getSiteMenu(String name);
- 
-    /**
-     * 
-     * @return the currently selected sitemenu
-     */
-    HstSiteMenu getSelectedSiteMenu();
+
+    
 }

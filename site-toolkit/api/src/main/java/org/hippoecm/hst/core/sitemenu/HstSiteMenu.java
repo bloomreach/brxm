@@ -31,19 +31,28 @@ public interface HstSiteMenu extends Serializable{
     String getName();
     
     /**
-     * Based on the request, the implementation should be able to indicate whether this SiteMenu is selected (highlighted) or not
+     * Based on the request, the implementation should be able to indicate whether this HstSiteMenu has a selected HstSiteMenuItem
      * 
-     * @return <code>true</code> when the current SiteMenu is selected
+     * @return <code>true</code> when a HstSiteMenuItem in this HstSiteMenu container is selected
      */
     boolean isSelected();
     
     /**
-     * @return the currently selected sitemenu item
+     * Returns the currently selected sitemenu items. It makes sense to have only a single sitemenu item selected, but as 
+     * multiple sitemenu items <i>could</i> point to the same selected sitemap item, it can happen that multiple sitemenu items
+     * are selected. It is up to the implementation how to handle this
+     * @return the currently selected sitemenu items. 
      */
-    HstSiteMenuItem getSelectedSiteMenuItem();
+    List<HstSiteMenuItem> getSelectedSiteMenuItems();
     
     /**
      * @return returns all direct child {@link HstSiteMenuItem}'s of this SiteMenu
      */
     List<HstSiteMenuItem> getSiteMenuItems();
+    
+    /**
+     * 
+     * @return the <code>HstSiteMenus</code> container for this HstSiteMenu
+     */
+    HstSiteMenus getHstSiteMenus();
 }
