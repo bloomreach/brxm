@@ -49,7 +49,6 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
-import javax.naming.Context;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -92,9 +91,6 @@ public class RepositoryServlet extends HttpServlet {
 
     /** System property for overriding the repository config file */
     public static final String SYSTEM_SERVLETCONFIG_PROPERTY = "repo.servletconfig";
-
-    /** JNDI context to which to bind the repository. */
-    private Context ctx;
 
     /** RMI registry to which to bind the repository. */
     private Registry registry;
@@ -246,7 +242,7 @@ public class RepositoryServlet extends HttpServlet {
              *   password = null;  a problem is that we don't have a password then
              * but this only works if we fully configured a security realm for this.
              */
-            if (req.getAuthType() != req.BASIC_AUTH) {
+            if (req.getAuthType() != HttpServletRequest.BASIC_AUTH) {
                 res.setHeader("WWW-Authenticate", "Basic realm=\"Repository\"");
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
                 return;
@@ -500,7 +496,6 @@ public class RepositoryServlet extends HttpServlet {
                         writer.println("No nodes have a reference to '" +n.getPath() + "'");
                     }
                 }
-
             }
         } catch (LoginException ex) {
             res.setHeader("WWW-Authenticate", "Basic realm=\"Repository\"");
