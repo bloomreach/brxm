@@ -37,21 +37,23 @@ public class HstSiteMenusImpl implements HstSiteMenus{
         // find currently selected hstSiteMenuItemConfiguration's
         HstSiteMapItem selectedSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
         HstSiteMenusConfiguration siteMenusConfiguration = selectedSiteMapItem.getHstSiteMap().getSite().getSiteMenusConfiguration();
-        List<HstSiteMenuItemConfiguration> selectedSiteMenuItemConfigurations =  siteMenusConfiguration.getItemsBySiteMapItemId(selectedSiteMapItem.getId());
-    
-        /*
-         * if no selected SiteMenuItems can be found for the selectedSiteMapItem, look for the first parent sitemap item that has an
-         * assiociated HstSiteMenuItemConfiguration: this is then the SiteMenuItem that must be set to selected
-         */ 
+        if(siteMenusConfiguration != null) {
+            List<HstSiteMenuItemConfiguration> selectedSiteMenuItemConfigurations =  siteMenusConfiguration.getItemsBySiteMapItemId(selectedSiteMapItem.getId());
         
-        while(selectedSiteMenuItemConfigurations.isEmpty() && selectedSiteMapItem.getParentItem() != null) {
-            selectedSiteMapItem = selectedSiteMapItem.getParentItem();
-            selectedSiteMenuItemConfigurations =  siteMenusConfiguration.getItemsBySiteMapItemId(selectedSiteMapItem.getId());
-        }
-        
-        for(HstSiteMenuConfiguration siteMenuConfiguration : siteMenusConfiguration.getSiteMenuConfigurations().values()) {
-            HstSiteMenuImpl siteMenu = new HstSiteMenuImpl(this, siteMenuConfiguration, selectedSiteMenuItemConfigurations);
-            siteMenus.put(siteMenu.getName(), siteMenu);
+            /*
+             * if no selected SiteMenuItems can be found for the selectedSiteMapItem, look for the first parent sitemap item that has an
+             * assiociated HstSiteMenuItemConfiguration: this is then the SiteMenuItem that must be set to selected
+             */ 
+            
+            while(selectedSiteMenuItemConfigurations.isEmpty() && selectedSiteMapItem.getParentItem() != null) {
+                selectedSiteMapItem = selectedSiteMapItem.getParentItem();
+                selectedSiteMenuItemConfigurations =  siteMenusConfiguration.getItemsBySiteMapItemId(selectedSiteMapItem.getId());
+            }
+            
+            for(HstSiteMenuConfiguration siteMenuConfiguration : siteMenusConfiguration.getSiteMenuConfigurations().values()) {
+                HstSiteMenuImpl siteMenu = new HstSiteMenuImpl(this, siteMenuConfiguration, selectedSiteMenuItemConfigurations);
+                siteMenus.put(siteMenu.getName(), siteMenu);
+            }
         }
     }
 
