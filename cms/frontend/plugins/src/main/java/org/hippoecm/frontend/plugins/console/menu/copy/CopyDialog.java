@@ -56,8 +56,10 @@ public class CopyDialog extends LookupDialog {
         setSelectedNode(model);
         try {
             if (model.getParentModel() != null) {
+                setSelectedNode(model.getParentModel());
+                
                 add(new Label("source", model.getNode().getPath()));
-
+                
                 target = StringUtils.substringBeforeLast(model.getNode().getPath(), "/") + "/";
                 targetLabel = new Label("target", new PropertyModel(this, "target"));
                 targetLabel.setOutputMarkupId(true);
