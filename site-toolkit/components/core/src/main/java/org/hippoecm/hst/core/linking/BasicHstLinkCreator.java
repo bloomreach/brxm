@@ -15,8 +15,10 @@
  */
 package org.hippoecm.hst.core.linking;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSiteService;
@@ -33,6 +35,24 @@ public class BasicHstLinkCreator implements HstLinkCreator {
 
     private static final Logger log = LoggerFactory.getLogger(BasicHstLinkCreator.class);
 
+   
+    /**
+     * If the uuid points to a node that is of type hippo:document and it is below a hippo:handle, we will
+     * rewrite the link wrt hippo:handle, because a handle is the umbrella of a document.
+     * 
+     * If the uuid cannot be found, we return null
+     */
+    public HstLink create(String uuid, Session session, ResolvedSiteMapItem resolvedSiteMapItem) {
+        try {
+            Node node = session.getNodeByUUID(uuid);
+            return create(node, resolvedSiteMapItem);
+        } catch (ItemNotFoundException e) {
+            log.warn("Node with uuid '{}' cannot be found. Cannot create a HstLink, return null", uuid);
+        } catch (RepositoryException e) {
+            log.warn("RepositoryException Cannot create a HstLink, return null", uuid);
+        } 
+        return null;
+    }
    
     /**
      * If the node is of type hippo:document and it is below a hippo:handle, we will
@@ -181,5 +201,6 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         }
         return path.toString();
     }
+
 
 }

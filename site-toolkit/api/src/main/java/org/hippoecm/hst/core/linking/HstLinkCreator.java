@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.linking;
 
 import javax.jcr.Node;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -36,8 +37,19 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
  */
 public interface HstLinkCreator {
 
+
     /**
-     * Rewrite a jcr Node to a HstLink wrt its current HstSiteMapItem
+     * Rewrite a jcr uuid to a HstLink wrt its current ResolvedSiteMapItem. 
+     * @param uuid the uuid of the node that must be used to link to
+     * @param session jcr session 
+     * @param resolvedSiteMapItem
+     * @return an <code>HstLink</code> instance or <code>null<code> 
+     */
+    HstLink create(String uuid, Session session, ResolvedSiteMapItem resolvedSiteMapItem);
+    
+    
+    /**
+     * Rewrite a jcr Node to a HstLink wrt its current ResolvedSiteMapItem
      * @param node
      * @param resolvedSiteMapItem
      * @return HstLink 
@@ -48,7 +60,7 @@ public interface HstLinkCreator {
      * For creating a link from a HstSiteMapItem to a HstSiteMapItem with toSiteMapItemId within the same Site
      * @param toSiteMapItemId
      * @param resolvedSiteMapItem
-     * @return HstLink
+     * @return an <code>HstLink</code> instance or <code>null<code> 
      */
     HstLink create(String toSiteMapItemId, ResolvedSiteMapItem resolvedSiteMapItem);
     
