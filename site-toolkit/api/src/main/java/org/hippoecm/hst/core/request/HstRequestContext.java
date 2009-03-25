@@ -27,6 +27,7 @@ import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
+import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
 /**
  * HstRequestContext provides repository content context
@@ -88,6 +89,12 @@ public interface HstRequestContext {
      * @return HstLinkCreator
      */
     HstLinkCreator getHstLinkCreator();
+    
+    /**
+     * 
+     * @return the HstSiteMenus
+     */
+    HstSiteMenus getHstSiteMenus();
     
     /**
      * Returns a {@link HstCtxWhereClauseComputer} instance that can compute a filter (context where clause) for searching 
