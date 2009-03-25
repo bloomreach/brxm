@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractValve implements Valve
 {
     protected final static Logger log = LoggerFactory.getLogger(AbstractValve.class);
+    
+    protected ContainerConfiguration containerConfiguration;
     protected Map<String, HstSitesManager> sitesManagers;
     protected DomainMappings domainMappings;
     protected HstSiteMapMatcher siteMapMatcher;
@@ -27,6 +29,14 @@ public abstract class AbstractValve implements Valve
     protected HstLinkCreator linkCreator;
     protected HstSiteMenusManager siteMenusManager;
     protected HstCtxWhereClauseComputer ctxWhereClauseComputer;
+    
+    public ContainerConfiguration getContainerConfiguration() {
+        return this.containerConfiguration;
+    }
+    
+    public void setContainerConfiguration(ContainerConfiguration containerConfiguration) {
+        this.containerConfiguration = containerConfiguration;
+    }
     
     public HstSitesManager getSitesManager(String name) {
         return sitesManagers.get(name);

@@ -53,4 +53,10 @@ public interface ComponentManager
      */
     void close();
     
+    /**
+     * Returns the container configuration
+     * @return
+     */
+    ContainerConfiguration getContainerConfiguration();
+    
 }

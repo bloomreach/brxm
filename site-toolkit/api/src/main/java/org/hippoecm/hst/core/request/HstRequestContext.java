@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
@@ -122,5 +123,11 @@ public interface HstRequestContext {
      * Enumerates the attribute names
      */
     Enumeration<String> getAttributeNames();
+    
+    /**
+     * Returns the container configuration
+     * @return
+     */
+    ContainerConfiguration getContainerConfiguration();
     
 }

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.jcr.LoginException;
 import javax.jcr.Session;
@@ -32,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.ConfigurationFactory;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -147,11 +145,10 @@ public class HstSiteConfigServlet extends HttpServlet {
     
     protected synchronized void doInit(ServletConfig config) {
 
-        Properties initProperties = ConfigurationConverter.getProperties(this.configuration);
-        
         try {
+            log.info(INIT_START_MSG);
             log.info("HSTSiteServlet attempting to create the Component manager...");
-            this.componentManager = new SpringComponentManager(initProperties);
+            this.componentManager = new SpringComponentManager(this.configuration);
             log.info("HSTSiteServlet attempting to start the Component Manager...");
             this.componentManager.initialize();
             this.componentManager.start();

@@ -21,6 +21,7 @@ import javax.servlet.ServletRequest;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
 public class InitializationValve extends AbstractValve
 {
@@ -34,6 +35,7 @@ public class InitializationValve extends AbstractValve
     public void invoke(ValveContext context) throws ContainerException
     {
         HstRequestContext requestContext = getRequestContextComponent().create();
+        ((HstRequestContextImpl) requestContext).setContainerConfiguration(getContainerConfiguration());
         ServletRequest servletRequest = context.getServletRequest();
         servletRequest.setAttribute(HstRequestContext.class.getName(), requestContext);
         

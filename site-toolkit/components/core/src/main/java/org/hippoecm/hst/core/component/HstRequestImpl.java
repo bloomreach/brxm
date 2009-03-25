@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.component;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -28,11 +30,16 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.collections.collection.CompositeCollection;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequest {
-
+    
+    public static final String CONTAINER_ATTR_NAME_PREFIXES_PROP_KEY = HstRequest.class.getName() + ".containerAttributeNamePrefixes"; 
+    
+    private static String [] CONTAINER_ATTR_NAME_PREFIXES = null;
+    
     protected HstRequestContext requestContext;
     protected Map<String, Map<String, Object>> namespaceParametersMap = new HashMap<String, Map<String, Object>>();
     protected Map<String, Map<String, Object>> namespaceAttributesMap = new HashMap<String, Map<String, Object>>();
@@ -132,6 +139,10 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
 
     @Override
     public String getParameter(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("parameter name cannot be null.");
+        }
+        
         Object value = getParameterMap().get(name);
 
         if (value == null) {
@@ -152,6 +163,10 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
 
     @Override
     public String[] getParameterValues(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("parameter name cannot be null.");
+        }
+        
         Object value = getParameterMap().get(name);
         
         if (value == null) {
@@ -175,9 +190,13 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     
     @Override
     public Object getAttribute(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("attribute name cannot be null.");
+        }
+        
         Object value = null;
         
-        if (name.startsWith("javax.")) {
+        if (isContainerAttributeName(name)) {
             value = super.getAttribute(name);
         } else {
             value = getAttributeMap().get(name);
@@ -192,19 +211,26 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
 
     @Override
     public void setAttribute(String name, Object value) {
-        if (name.startsWith("javax.")) {
+        if (name == null) {
+            throw new IllegalArgumentException("attribute name cannot be null.");
+        }
+        
+        if (value == null) {
+            removeAttribute(name);
+        } else if (isContainerAttributeName(name)) {
             super.setAttribute(name, value);
         } else {
             getAttributeMap().put(name, value);
-            // Set attribute into the servlet request as well
-            // because some containers set their specific attributes for later use.
-            super.setAttribute(name, value);
         }
     }
 
     @Override
     public void removeAttribute(String name) {
-        if (name.startsWith("javax.")) {
+        if (name == null) {
+            throw new IllegalArgumentException("attribute name cannot be null.");
+        }
+        
+        if (isContainerAttributeName(name)) {
             super.removeAttribute(name);
         } else {
             Object value = getAttributeMap().remove(name);
@@ -230,7 +256,6 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     }
 
     protected String getReferenceNamespacePath(String referencePath) {
-        // TODO: find the reference name of the current request context by both absolute namespace and relative namespace.
         return referencePath;
     }
     
@@ -239,4 +264,31 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         return prefix;
     }
 
+    protected boolean isContainerAttributeName(String attrName) {
+        boolean containerAttrName = false;
+        
+        if (CONTAINER_ATTR_NAME_PREFIXES == null) {
+            synchronized (HstRequestImpl.class) {
+                if (CONTAINER_ATTR_NAME_PREFIXES == null) {
+                    ArrayList containerAttrNamePrefixes = new ArrayList(Arrays.asList("javax."));
+                    ContainerConfiguration containerConfiguration = this.requestContext.getContainerConfiguration();
+                    
+                    if (containerConfiguration != null) {
+                        containerAttrNamePrefixes.addAll(this.requestContext.getContainerConfiguration().getList(CONTAINER_ATTR_NAME_PREFIXES_PROP_KEY));
+                    }
+                    
+                    CONTAINER_ATTR_NAME_PREFIXES = (String []) containerAttrNamePrefixes.toArray(new String[0]);
+                }
+            }
+        }
+        
+        for (String prefix : CONTAINER_ATTR_NAME_PREFIXES) {
+            if (attrName.startsWith(prefix)) {
+                containerAttrName = true;
+                break;
+            }
+        }
+        
+        return containerAttrName;
+    }
 }

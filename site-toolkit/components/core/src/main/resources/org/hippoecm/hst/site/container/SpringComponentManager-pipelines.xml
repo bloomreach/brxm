@@ -29,6 +29,7 @@
   </bean>
 
   <bean id="abstractValve" abstract="true">
+    <property name="containerConfiguration" ref="containerConfiguration" />
     <property name="sitesManagers">
       <map>
         <entry key="/preview" value-ref="org.hippoecm.hst.configuration.HstSitesManager.preview" />

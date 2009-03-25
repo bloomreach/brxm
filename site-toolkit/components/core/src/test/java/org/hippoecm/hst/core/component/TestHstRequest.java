@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.component;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.Enumeration;
 import java.util.SortedSet;
@@ -24,6 +25,9 @@ import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.ContainerConfigurationImpl;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstComponentWindowImpl;
 import org.hippoecm.hst.core.container.HstContainerURLImpl;
@@ -43,7 +47,11 @@ public class TestHstRequest extends AbstractSpringTestCase {
         super.setUp();
         
         this.servletRequest = getComponent(HttpServletRequest.class.getName());
+        PropertiesConfiguration configuration = new PropertiesConfiguration();
+        configuration.setProperty(HstRequestImpl.CONTAINER_ATTR_NAME_PREFIXES_PROP_KEY, "COM.iiibbbmmm., com.sssuuunnn.");
+        ContainerConfiguration containerConfiguration = new ContainerConfigurationImpl(configuration);
         this.requestContext = new HstRequestContextImpl(null);
+        this.requestContext.setContainerConfiguration(containerConfiguration);
         HstURLFactory urlFactory = getComponent(HstURLFactory.class.getName());
         this.requestContext.setURLFactory(urlFactory);
         HstContainerURLImpl baseURL = new HstContainerURLImpl();
@@ -90,7 +98,7 @@ public class TestHstRequest extends AbstractSpringTestCase {
         assertEquals("something", hstRequestForBodyWindow.getAttribute("javax.portlet.request"));
         
         SortedSet servletRequestAttrs = getSortedAttributeNames(this.servletRequest);
-        assertEquals("servletRequest attributes size is not 4: " + servletRequestAttrs, 4, servletRequestAttrs.size());
+        assertEquals("servletRequest attributes size is not 3: " + servletRequestAttrs, 3, servletRequestAttrs.size());
         
         SortedSet rootRequestAttrs = getSortedAttributeNames(hstRequestForRootWindow);
         assertEquals("rootRequestAttrs attributes size is not 4: " + rootRequestAttrs, 4, rootRequestAttrs.size());
@@ -101,6 +109,9 @@ public class TestHstRequest extends AbstractSpringTestCase {
         SortedSet bodyRequestAttrs = getSortedAttributeNames(hstRequestForBodyWindow);
         assertEquals("bodyRequestAttrs attributes size is not 4: " + bodyRequestAttrs, 4, bodyRequestAttrs.size());
         
+        // Remove an attribute from bodyWindow
+        hstRequestForBodyWindow.removeAttribute("name");
+        assertNull("The name attribute of body window request is still available!", hstRequestForBodyWindow.getAttribute("name"));
     }
     
     private SortedSet getSortedAttributeNames(HttpServletRequest request) {

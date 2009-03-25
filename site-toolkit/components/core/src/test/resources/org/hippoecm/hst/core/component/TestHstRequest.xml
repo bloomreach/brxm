@@ -24,7 +24,7 @@
 
   <bean id="org.hippoecm.hst.core.component.HstURLFactory"
         class="org.hippoecm.hst.core.component.HstURLFactoryImpl">
-    <property name="urlProvider" ref="org.hippoecm.hst.core.container.HstContainerURLProvider" />
+    <property name="servletUrlProvider" ref="org.hippoecm.hst.core.container.HstContainerURLProvider" />
   </bean>
   
   <bean id="javax.servlet.ServletContext"

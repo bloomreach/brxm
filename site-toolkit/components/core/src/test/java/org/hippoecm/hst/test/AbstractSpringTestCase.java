@@ -43,7 +43,7 @@ public abstract class AbstractSpringTestCase
     @Before
     public void setUp() throws Exception {
         this.componentManager = new SpringComponentManager();
-        ((SpringComponentManager) this.componentManager).setConfigurations(getConfigurations());
+        ((SpringComponentManager) this.componentManager).setConfigurationResources(getConfigurations());
         
         this.componentManager.initialize();
         this.componentManager.start();

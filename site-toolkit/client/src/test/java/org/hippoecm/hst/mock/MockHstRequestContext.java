@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -41,6 +42,7 @@ public class MockHstRequestContext implements HstRequestContext {
     protected HstLinkCreator linkCreator;
     protected HstCtxWhereClauseComputer ctxWhereClauseComputer;
     protected Credentials defaultCredentials;
+    protected ContainerConfiguration containerConfiguration;
 
     public Object getAttribute(String name) {
         return this.attributes.get(name);
@@ -116,6 +118,14 @@ public class MockHstRequestContext implements HstRequestContext {
         } else {
             this.attributes.put(name, value);
         }
+    }
+
+    public ContainerConfiguration getContainerConfiguration() {
+        return this.containerConfiguration;
+    }
+    
+    public void setContainerConfiguration(ContainerConfiguration containerConfiguration) {
+        this.containerConfiguration = containerConfiguration;
     }
 
 }

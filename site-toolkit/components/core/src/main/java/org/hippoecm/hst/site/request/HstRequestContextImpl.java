@@ -30,13 +30,13 @@ import javax.jcr.Session;
 import org.apache.commons.collections.iterators.IteratorEnumeration;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
-import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 
 public class HstRequestContextImpl implements HstRequestContext {
 
@@ -51,6 +51,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected HstSiteMenus siteMenus;
     protected HstCtxWhereClauseComputer ctxWhereClauseComputer;
     protected Map<String, Object> attributes;
+    protected ContainerConfiguration containerConfiguration;
 
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
@@ -182,6 +183,14 @@ public class HstRequestContextImpl implements HstRequestContext {
         }
         
         this.attributes.put(name, object);
+    }
+
+    public ContainerConfiguration getContainerConfiguration() {
+        return this.containerConfiguration;
+    }
+    
+    public void setContainerConfiguration(ContainerConfiguration containerConfiguration) {
+        this.containerConfiguration = containerConfiguration;
     }
     
 }
