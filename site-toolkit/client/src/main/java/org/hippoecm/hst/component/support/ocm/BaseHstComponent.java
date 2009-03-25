@@ -115,7 +115,7 @@ public class BaseHstComponent extends GenericHstComponent {
         
         HstQuery hQuery = (HstQuery)requestContext.getAttribute(QUERY_REQUEST_CONTEXT_ATTR_NAME);
         if(hQuery == null) {
-            hQuery = new HstQuery(this.ocmMapper, ocm, request);
+            hQuery = new HstQuery(this.ocmMapper, ocm, request, Thread.currentThread().getContextClassLoader());
             requestContext.setAttribute(QUERY_REQUEST_CONTEXT_ATTR_NAME, hQuery);
         }
         return hQuery;

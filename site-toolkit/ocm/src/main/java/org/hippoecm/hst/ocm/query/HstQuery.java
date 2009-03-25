@@ -52,13 +52,18 @@ public class HstQuery {
     private final static String ORDER_BY_STRING =  "order by ";
     
     private String orderByExpression = "";
+    private ClassLoader classLoader;
     
     public HstQuery(Mapper mapper, ObjectContentManager ocm ,HstRequest request){
+        this(mapper, ocm, request, null);
+    }
+    
+    public HstQuery(Mapper mapper, ObjectContentManager ocm ,HstRequest request, ClassLoader classLoader){
         this.ocm = ocm;
         this.mapper = mapper;
         this.request = request;
+        this.classLoader = classLoader;
     }
-    
 
     public void setScope(HippoStdNode hippoStdNode) throws ScopeException {
       if(hippoStdNode == null) {
@@ -74,6 +79,17 @@ public class HstQuery {
         this.hstCtxWhereFilter = new HstCtxWhereFilter(this.request.getRequestContext(), node);
     }
     
+    public HippoStdFilter createFilter(String fullQName) {
+
+        try {
+            Class clazz = (classLoader != null ? classLoader.loadClass(fullQName) : Class.forName(fullQName));
+            return this.createFilter(clazz);
+        } catch (ClassNotFoundException e) {
+            // log error
+            return null;
+        }
+    }
+        
     public HippoStdFilter createFilter(Class clazz) {
         Filter filter = ocm.getQueryManager().createFilter(clazz);
         classDescriptor = mapper.getClassDescriptorByClass(filter.getFilterClass());
