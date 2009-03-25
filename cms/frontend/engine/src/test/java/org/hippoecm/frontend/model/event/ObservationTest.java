@@ -41,7 +41,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.repository.TestCase;
-import org.hippoecm.repository.Utilities;
 import org.hippoecm.repository.api.HippoNode;
 import org.junit.Test;
 
@@ -334,12 +333,10 @@ public class ObservationTest extends TestCase {
         JcrEventListener listener = new JcrEventListener(new IObservationContext() {
             private static final long serialVersionUID = 1L;
 
-            @Override
             public Page getPage() {
                 return home;
             }
 
-            @Override
             public void notifyObservers(IEvent event) {
                 events.add(event);
             }
