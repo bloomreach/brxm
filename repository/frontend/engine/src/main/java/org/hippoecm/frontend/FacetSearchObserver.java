@@ -117,7 +117,6 @@ public class FacetSearchObserver implements EventListener {
         }
     }
 
-    @Override
     public void onEvent(EventIterator events) {
         try {
             ObservationManager obMgr = session.getWorkspace().getObservationManager();
@@ -174,22 +173,18 @@ public class FacetSearchObserver implements EventListener {
             this.fsNodePath = path;
         }
 
-        @Override
         public void onEvent(EventIterator events) {
             List<Event> base = new ArrayList<Event>(1);
             base.add(new Event() {
 
-                @Override
                 public String getPath() throws RepositoryException {
                     return fsNodePath;
                 }
 
-                @Override
                 public int getType() {
                     return 0;
                 }
 
-                @Override
                 public String getUserID() {
                     return "FacetSearchObserver";
                 }
@@ -201,36 +196,29 @@ public class FacetSearchObserver implements EventListener {
                     final Iterator<Event> baseIter = base.iterator();
                     listener.listener.onEvent(new EventIterator() {
 
-                        @Override
                         public Event nextEvent() {
                             return baseIter.next();
                         }
 
-                        @Override
                         public long getPosition() {
                             return 0;
                         }
 
-                        @Override
                         public long getSize() {
                             return -1;
                         }
 
-                        @Override
                         public void skip(long skipNum) {
                         }
 
-                        @Override
                         public boolean hasNext() {
                             return baseIter.hasNext();
                         }
 
-                        @Override
                         public Object next() {
                             return nextEvent();
                         }
 
-                        @Override
                         public void remove() {
                             throw new UnsupportedOperationException("EventIterator is immutable");
                         }
