@@ -37,6 +37,7 @@ public interface HstCtxWhereClauseComputer {
      * @param hstRequestContext the current <code>HstRequestContext</code>
      * @return the string containing the xpath where clause (without the enclosing '[' and ']') or <code>null</code> when it cannot 
      * compute one
+     * @throws HstContextWhereClauseException 
      */
-    public String getCtxWhereClause(Node node, HstRequestContext hstRequestContext);
+    public String getCtxWhereClause(Node node, HstRequestContext hstRequestContext) throws HstContextWhereClauseException;
 }

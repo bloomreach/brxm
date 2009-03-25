@@ -30,7 +30,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
 
     public final static Logger log = LoggerFactory.getLogger(HstCtxWhereClauseComputerImpl.class.getName()); 
     
-    public String getCtxWhereClause(Node node, HstRequestContext hstRequestContext) {
+    public String getCtxWhereClause(Node node, HstRequestContext hstRequestContext) throws HstContextWhereClauseException{
         StringBuffer facetSelectClauses = new StringBuffer();
         String path = null;
         try {
@@ -45,6 +45,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             
             if(canonical == null) {
                 log.warn("Cannot compute a ctx where clause for a node that does not have a physical equivalence: '{}'. Return", node.getPath());
+                
                 return null;
             }
             else if (canonical.isSame(node)){
@@ -67,6 +68,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             }
         } catch (RepositoryException e) {
            log.warn("Unable to get Context where clause: '{}'", e);
+           throw new HstContextWhereClauseException("Unable to get Context where clause", e);
         }
         
         if(facetSelectClauses.length() == 0) {
@@ -78,7 +80,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
         return facetSelectClauses.toString();
     }
     
-    private void getFacetSelectClauses(Session jcrSession, HippoNode node, StringBuffer facetSelectClauses, boolean traversUp){
+    private void getFacetSelectClauses(Session jcrSession, HippoNode node, StringBuffer facetSelectClauses, boolean traversUp) throws HstContextWhereClauseException{
         try {
             if(node == null || node.isSame(jcrSession.getRootNode())) {
                 return;
@@ -110,7 +112,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                     }
                 } else {
                     log.warn("Skipping invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
-                    return;
+                    throw new HstContextWhereClauseException("Skipping invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
                 }
             }
             
@@ -132,7 +134,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             }
         } catch (RepositoryException e) {
             log.warn("RepositoryException while trying to resolve facetselect clauses. Return null");
-            return;
+            throw new HstContextWhereClauseException("RepositoryException while trying to resolve facetselect clauses. Return null", e);
         }
         
     }

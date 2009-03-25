@@ -15,16 +15,16 @@
  */
 package org.hippoecm.hst.ocm.query.exception;
 
-public class ScopeException extends QueryException {
+public class QueryException extends Exception{
 
-    private static final long serialVersionUID = 1L;
     
-    public ScopeException(String message, Throwable th) {
-        super(message, th);
-    }
+    private static final long serialVersionUID = 1L;
 
-    public ScopeException(String message){
+    public QueryException(String message){
         super(message);
     }
-
+    public QueryException(String message, Throwable th){
+        super(message, th);
+    }
+    
 }

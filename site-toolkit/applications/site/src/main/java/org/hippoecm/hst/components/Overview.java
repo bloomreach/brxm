@@ -27,7 +27,7 @@ import org.hippoecm.hst.ocm.HippoStdNodeIterator;
 import org.hippoecm.hst.ocm.NewsPage;
 import org.hippoecm.hst.ocm.query.HippoStdFilter;
 import org.hippoecm.hst.ocm.query.HstQuery;
-import org.hippoecm.hst.ocm.query.exception.ScopeException;
+import org.hippoecm.hst.ocm.query.exception.QueryException;
 
 public class Overview extends GenericResourceServingHstComponent {
     
@@ -35,6 +35,7 @@ public class Overview extends GenericResourceServingHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
         
+       // System.out.println(this.getParameters(request));
         
         HippoStdNode hippoStdNode = this.getContentNode(request);
         
@@ -43,22 +44,25 @@ public class Overview extends GenericResourceServingHstComponent {
         }
 //        
         HstQuery query = this.getHstQuery(request);
-        try {
-            query.setScope(hippoStdNode);
-        } catch (ScopeException e) {
-           // e.printStackTrace();
-        }
-        HippoStdFilter filter = query.createFilter(NewsPage.class);
-        filter.addContains("title", "News");
-        query.setFilter(filter);
         
-        query.addOrderByDescending("date");
-        
-        HippoStdNodeIterator it = query.execute();
-        
-        while(it.hasNext()) {
-            NewsPage p = (NewsPage)it.nextHippoStdNode();
-        }
+       
+            try {
+                query.setScope(hippoStdNode);
+                HippoStdFilter filter = query.createFilter(Overview.class);
+                filter.addContains("title", "News");
+                query.setFilter(filter);
+                query.addOrderByDescending("date");
+                
+                HippoStdNodeIterator it = query.execute();
+                
+                while(it.hasNext()) {
+                    NewsPage p = (NewsPage)it.nextHippoStdNode();
+                }
+            }catch (QueryException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+           
        
       
         if(hippoStdNode == null) {

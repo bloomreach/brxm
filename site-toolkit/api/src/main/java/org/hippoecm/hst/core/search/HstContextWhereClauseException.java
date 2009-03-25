@@ -13,18 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.ocm.query.exception;
+package org.hippoecm.hst.core.search;
 
-public class ScopeException extends QueryException {
+public class HstContextWhereClauseException extends Exception{
 
     private static final long serialVersionUID = 1L;
-    
-    public ScopeException(String message, Throwable th) {
-        super(message, th);
-    }
 
-    public ScopeException(String message){
+    public HstContextWhereClauseException(String message) {
         super(message);
     }
-
+    
+    public HstContextWhereClauseException(String message, Throwable th) {
+        super(message, th);
+    }
 }

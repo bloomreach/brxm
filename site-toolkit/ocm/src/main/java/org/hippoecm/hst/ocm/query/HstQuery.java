@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.QueryResult;
 
+import org.apache.jackrabbit.ocm.exception.IncorrectPersistentClassException;
 import org.apache.jackrabbit.ocm.exception.ObjectContentManagerException;
 import org.apache.jackrabbit.ocm.manager.ManagerConstant;
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
@@ -32,6 +33,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.ocm.HippoStdNode;
 import org.hippoecm.hst.ocm.HippoStdNodeIterator;
 import org.hippoecm.hst.ocm.impl.HippoStdNodeIteratorImpl;
+import org.hippoecm.hst.ocm.query.exception.FilterException;
 import org.hippoecm.hst.ocm.query.exception.ScopeException;
 import org.hippoecm.hst.ocm.query.impl.HstCtxWhereFilter;
 import org.slf4j.Logger;
@@ -75,25 +77,31 @@ public class HstQuery {
       setScope(hippoStdNode.getNode());
     }
 
-    public void setScope(Node node) {
-        this.hstCtxWhereFilter = new HstCtxWhereFilter(this.request.getRequestContext(), node);
+    public void setScope(Node node) throws ScopeException{
+        try {
+            this.hstCtxWhereFilter = new HstCtxWhereFilter(this.request.getRequestContext(), node);
+        } catch (FilterException e) {
+            throw new ScopeException("Cannot create scope because ctx where filter failed");
+        }
     }
     
-    public HippoStdFilter createFilter(String fullQName) {
-
+    public HippoStdFilter createFilter(String fullQName) throws FilterException{
         try {
             Class clazz = (classLoader != null ? classLoader.loadClass(fullQName) : Class.forName(fullQName));
             return this.createFilter(clazz);
         } catch (ClassNotFoundException e) {
-            // log error
-            return null;
+            throw new FilterException("Could not create Filter: " + e.getMessage(), e);
         }
     }
         
-    public HippoStdFilter createFilter(Class clazz) {
-        Filter filter = ocm.getQueryManager().createFilter(clazz);
-        classDescriptor = mapper.getClassDescriptorByClass(filter.getFilterClass());
-        return  new HippoStdFilter(filter);
+    public HippoStdFilter createFilter(Class clazz) throws FilterException{
+        try {
+            Filter filter = ocm.getQueryManager().createFilter(clazz);
+            classDescriptor = mapper.getClassDescriptorByClass(filter.getFilterClass());
+            return  new HippoStdFilter(filter);
+        } catch (IncorrectPersistentClassException e) {
+            throw new FilterException("Could not create Filter: " + e.getMessage() , e);
+        }
     }
 
     
@@ -106,7 +114,8 @@ public class HstQuery {
         StringBuffer query = new StringBuffer();
         if(hippoStdFilter.getFilter() == null) {
             if(hstCtxWhereFilter.getJcrExpression() == null) {
-                query.append("//(element, hippo:document)");
+                log.warn("Not allowed to have a HstQuery with an empty hstCtxWhereFilter. Return an empty HippoStdNodeIterator");
+                return new EmptyHippoStdNodeIterator();
             } else {
                 query.append("//(element, hippo:document)[" + hstCtxWhereFilter.getJcrExpression() +"]");
             }
