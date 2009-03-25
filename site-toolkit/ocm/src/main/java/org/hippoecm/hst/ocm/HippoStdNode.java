@@ -19,10 +19,12 @@ import java.util.Collections;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
+import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +94,37 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
         }
         
         return properties;
+    }
+    
+    public HippoStdNode getHippoStdNode(String relPath){
+        if(relPath == null) {
+            log.warn("Cannot get HippoStdNode for a relative path that is null.");
+            return null;
+        }
+        if(!relPath.equals(PathUtils.normalizePath(relPath))) {
+            log.warn("Relative path does end or start with a slash. Removing leading and trailing slashes");
+            relPath = PathUtils.normalizePath(relPath);
+        }
+        if(this.getNode() == null) {
+            log.warn("Node is detached. Cannot get document with relative path '{}'", relPath);
+            return null;
+        }
+        Session session = null;
+        try {
+            session = getNode().getSession();
+        } catch (RepositoryException e) {
+            log.warn("Node's session is available. Cannot get document with relative path '{}'", relPath);
+            return null;
+        }
+        String absPath = this.getPath() + "/" + relPath;
+        Object o = getSimpleObjectConverter().getObject(session, absPath);
+        if(o instanceof HippoStdNode) {
+            return (HippoStdNode)o;
+        } else {
+            log.warn("Cannot return a HippoStdNode for location '{}'. Return null", absPath);
+            return null;
+        }
+        
     }
     
 

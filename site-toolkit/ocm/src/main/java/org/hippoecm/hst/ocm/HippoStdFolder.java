@@ -93,29 +93,6 @@ public class HippoStdFolder extends HippoStdNode {
         return getDocuments().size();
     }
     
-    public HippoStdDocument getDocument(String relPath){
-        if(relPath == null) {
-            log.warn("Cannot get HippoStdDocument for a relative path that is null.");
-            return null;
-        }
-        if(!relPath.equals(PathUtils.normalizePath(relPath))) {
-            log.warn("Relative path does end or start with a slash. Removing leading and trailing slashes");
-            relPath = PathUtils.normalizePath(relPath);
-        }
-        if(this.getNode() == null) {
-            log.warn("Node is detached. Cannot get document with relative path '{}'", relPath);
-            return null;
-        }
-        Session session = null;
-        try {
-            session = getNode().getSession();
-        } catch (RepositoryException e) {
-            log.warn("Node's session is available. Cannot get document with relative path '{}'", relPath);
-            return null;
-        }
-        String absPath = this.getPath() + "/" + relPath;
-        return (HippoStdDocument) getSimpleObjectConverter().getObject(session, absPath);
-    }
     
     public List<HippoStdDocument> getDocuments() {
         if (this.childDocuments == null) {
