@@ -48,7 +48,7 @@ public class Overview extends GenericResourceServingHstComponent {
        
             try {
                 query.setScope(hippoStdNode);
-                HippoStdFilter filter = query.createFilter(Overview.class);
+                HippoStdFilter filter = query.createFilter(NewsPage.class);
                 filter.addContains("title", "News");
                 query.setFilter(filter);
                 query.addOrderByDescending("date");
