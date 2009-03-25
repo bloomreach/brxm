@@ -48,6 +48,8 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     
     private List<HstComponentConfigurationService> orderedListConfigs = new ArrayList<HstComponentConfigurationService>();
     
+    private HstComponentConfiguration parent;
+    
     private String id;
     
     private String name;
@@ -82,17 +84,18 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     }
 
     
-    public HstComponentConfigurationService(Node jcrNode, String configurationRootNodePath) throws ServiceException {
+    public HstComponentConfigurationService(Node jcrNode, HstComponentConfiguration parent,  String configurationRootNodePath) throws ServiceException {
         super(jcrNode);
         if(!getValueProvider().getPath().startsWith(configurationRootNodePath)) {
             throw new ServiceException("Node path of the component cannot start without the global components path. Skip Component");
         }
         
+        this.parent = parent;
         
         this.configurationRootNodePath = configurationRootNodePath;
         // id is the relative path wrt configuration components path
         this.id = getValueProvider().getPath().substring(configurationRootNodePath.length()+1);
-       
+        
         if (getValueProvider().isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
             this.name = getValueProvider().getName();
             this.referenceName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCENAME);
@@ -136,7 +139,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                         usedChildReferenceNames.add(child.getProperty(Configuration.COMPONENT_PROPERTY_REFERECENCENAME).getString());
                     }
                     try {
-                        HstComponentConfigurationService componentConfiguration = new HstComponentConfigurationService(child, configurationRootNodePath);
+                        HstComponentConfigurationService componentConfiguration = new HstComponentConfigurationService(child, this, configurationRootNodePath);
                         componentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
                         
                         // we also need an ordered list
@@ -216,36 +219,37 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     }
 
 
-    private HstComponentConfigurationService deepCopy(String newId, HstComponentConfigurationService child, List<HstComponentConfiguration> populated, Map<String, HstComponentConfiguration> rootComponentConfigurations){
+    private HstComponentConfigurationService deepMerge(HstComponentConfigurationService parent, String newId, HstComponentConfigurationService child, List<HstComponentConfiguration> populated, Map<String, HstComponentConfiguration> rootComponentConfigurations){
         if(child.getReferenceComponent() != null) {
             // populate child component if not yet happened
             child.populateComponentReferences(rootComponentConfigurations, populated);
         }
-        HstComponentConfigurationService copy = new HstComponentConfigurationService(newId);
-        copy.componentClassName = child.componentClassName;
-        copy.configurationRootNodePath = child.configurationRootNodePath;
-        copy.hstTemplate = child.hstTemplate;
-        copy.name = child.name;
-        copy.propertyMap = child.propertyMap;
-        copy.referenceName = child.referenceName;
-        copy.renderPath = child.renderPath;
-        copy.referenceComponent = child.referenceComponent;
-        copy.serveResourcePath = child.serveResourcePath;
-        copy.parameters = child.parameters;
+        HstComponentConfigurationService merge = new HstComponentConfigurationService(newId);
+        merge.parent = parent;
+        merge.componentClassName = child.componentClassName;
+        merge.configurationRootNodePath = child.configurationRootNodePath;
+        merge.hstTemplate = child.hstTemplate;
+        merge.name = child.name;
+        merge.propertyMap = child.propertyMap;
+        merge.referenceName = child.referenceName;
+        merge.renderPath = child.renderPath;
+        merge.referenceComponent = child.referenceComponent;
+        merge.serveResourcePath = child.serveResourcePath;
+        merge.parameters = child.parameters;
         List<String> copyToList = new ArrayList<String>();
         Collections.copy(copyToList, child.usedChildReferenceNames);
-        copy.usedChildReferenceNames = copyToList;
+        merge.usedChildReferenceNames = copyToList;
         for(HstComponentConfigurationService descendant : child.orderedListConfigs) {
-            String descId = copy.id + descendant.id;
-            HstComponentConfigurationService copyDescendant = deepCopy(descId,descendant, populated, rootComponentConfigurations);
-            copy.componentConfigurations.put(copyDescendant.id, copyDescendant);
-            copy.orderedListConfigs.add(copyDescendant);
+            String descId = merge.id + descendant.id;
+            HstComponentConfigurationService copyDescendant = deepMerge(merge,descId,descendant, populated, rootComponentConfigurations);
+            merge.componentConfigurations.put(copyDescendant.id, copyDescendant);
+            merge.orderedListConfigs.add(copyDescendant);
             // do not need them by name for copies
         }
-        return copy;
+        return merge;
     }
     
-    public void populateComponentReferences(Map<String, HstComponentConfiguration> rootComponentConfigurations, List<HstComponentConfiguration> populated) {
+    protected void populateComponentReferences(Map<String, HstComponentConfiguration> rootComponentConfigurations, List<HstComponentConfiguration> populated) {
         if(populated.contains(this)) {
             return;
         }
@@ -290,19 +294,19 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                  // now we need to copy all the descendant components from the referenced component to this component.
                  // Note this has to be a copy!! 
                  
-                 for(HstComponentConfigurationService childToCopy : referencedComp.orderedListConfigs){
-                     if(childToCopy.getReferenceComponent() != null) {
+                 for(HstComponentConfigurationService childToMerge : referencedComp.orderedListConfigs){
+                     if(childToMerge.getReferenceComponent() != null) {
                          // populate child component if not yet happened
-                         childToCopy.populateComponentReferences(rootComponentConfigurations, populated);
+                         childToMerge.populateComponentReferences(rootComponentConfigurations, populated);
                          // after population, add it
-                         addDeepCopy(childToCopy, populated, rootComponentConfigurations);
+                         addDeepMerge(childToMerge, populated, rootComponentConfigurations);
                      }
-                     if(this.childConfByName.get(childToCopy.name) != null){
+                     if(this.childConfByName.get(childToMerge.name) != null){
                          // we have an overlay again because we have a component with the same name
-                         this.childConfByName.get(childToCopy.name).populateComponentReferences(rootComponentConfigurations, populated);
+                         this.childConfByName.get(childToMerge.name).populateComponentReferences(rootComponentConfigurations, populated);
                      } else {
                          // make a copy of the child
-                         addDeepCopy(childToCopy, populated,rootComponentConfigurations);
+                         addDeepMerge(childToMerge, populated,rootComponentConfigurations);
                      } 
                  }
                   
@@ -312,19 +316,18 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         }
     }
     
-    private void addDeepCopy(HstComponentConfigurationService childToCopy, List<HstComponentConfiguration> populated, Map<String, HstComponentConfiguration> rootComponentConfigurations) {
+    private void addDeepMerge(HstComponentConfigurationService childToCopy, List<HstComponentConfiguration> populated, Map<String, HstComponentConfiguration> rootComponentConfigurations) {
         
         String newId = this.id + "-" + childToCopy.id;
-        HstComponentConfigurationService copy = this.deepCopy(newId, childToCopy, populated, rootComponentConfigurations);
+        HstComponentConfigurationService copy = this.deepMerge(this, newId, childToCopy, populated, rootComponentConfigurations);
         this.componentConfigurations.put(copy.getId(), copy);
         this.orderedListConfigs.add(copy);
         
         
     }
 
-
     
-    public void setRenderPath(Map<String, String> templateRenderMap) {
+    protected void setRenderPath(Map<String, String> templateRenderMap) {
         String templateRenderPath = templateRenderMap.get(this.getHstTemplate());
         if(templateRenderPath == null) {
             log.warn("Cannot find renderpath for component '{}'", this.getId());
@@ -335,7 +338,17 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         }
     }
     
-    public void autocreateReferenceNames() {
+    protected void inheritParameters(){
+        // before traversing child components add the parameters from the parent, and if already present, override them
+        if(this.parent != null && this.parent.getParameters() != null) {
+            this.parameters.putAll(this.parent.getParameters());
+        }
+        for(HstComponentConfigurationService child :  orderedListConfigs) {
+            child.inheritParameters();
+        }
+    }
+    
+    protected void autocreateReferenceNames() {
         
         for(HstComponentConfigurationService child :  orderedListConfigs) {
             child.autocreateReferenceNames();

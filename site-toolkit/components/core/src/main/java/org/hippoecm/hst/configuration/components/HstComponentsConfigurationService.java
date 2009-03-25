@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 
 public class HstComponentsConfigurationService extends AbstractJCRService implements HstComponentsConfiguration, Service{
 
+    private static final long serialVersionUID = 1L;
+
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentsConfigurationService.class);
     
     /*
@@ -75,7 +77,22 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
             populateRootComponentConfigurations(child);
         }
         
-        // to avoid circular population, hold a list of already populated configs
+        /*
+         * The component tree needs to be enhanced, for 
+         * 1: merging referenced components,
+         * 2: autocreating missing referenceNames
+         * 3: setting renderpaths for each component
+         * 4: Adding parameters from parent components to child components and override them when they already are present
+         */
+        enhanceComponentTree(templateRenderMap);
+        
+       
+        
+    }
+     
+    
+    private void enhanceComponentTree(Map<String, String> templateRenderMap) {
+        // merging referenced components:  to avoid circular population, hold a list of already populated configs
         List<HstComponentConfiguration> populated = new ArrayList<HstComponentConfiguration>();
         for(HstComponentConfiguration child: rootComponentConfigurations.values()){
             if(!populated.contains(child)) {
@@ -83,17 +100,22 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
             }
         }
         
-        
+        //  autocreating missing referenceNames
         for(HstComponentConfiguration child: childComponents) {
             autocreateReferenceNames(child);
         }
       
+        // setting renderpaths for each component
         for(HstComponentConfiguration child: childComponents){
             ((HstComponentConfigurationService)child).setRenderPath(templateRenderMap);
         }
         
+        // adding parameters from parent components to child components and override them in a child when they already are present
+        for(HstComponentConfiguration child: childComponents){
+            ((HstComponentConfigurationService)child).inheritParameters();
+        }
     }
-     
+
     public Service[] getChildServices() {
         return childComponents.toArray(new Service[rootComponentConfigurations.size()]);
     }
@@ -143,7 +165,7 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
                     usedReferenceNames.add(child.getProperty(Configuration.COMPONENT_PROPERTY_REFERECENCENAME).getString());
                 }
                 try {
-                    HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child, configurationNodePath);
+                    HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child, null ,configurationNodePath);
                     childComponents.add(componentConfiguration);
                     log.debug("Added component service with key '{}'",componentConfiguration.getId());
                 } catch (ServiceException e) {
