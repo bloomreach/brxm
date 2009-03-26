@@ -84,7 +84,12 @@ public class HstHtmlTag extends TagSupport {
         }
         
         StringBuilder url = new StringBuilder();
-
+        
+        if(node == null || node.getContent() == null ) {
+            log.warn("Node or content is null. Return");
+            return EVAL_PAGE;
+        }
+            
         String html = node.getContent();
        
         if(node.getNode() instanceof HippoNode) {
