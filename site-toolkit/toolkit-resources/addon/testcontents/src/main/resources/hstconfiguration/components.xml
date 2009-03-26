@@ -59,7 +59,21 @@
             <sv:value>org.hippoecm.hst.components.Detail</sv:value>
         </sv:property>
     </sv:node>
-    
+
+
+    <sv:node sv:name="leftmenu">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:template" sv:type="String">
+            <sv:value>leftmenu</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentclassname" sv:type="String">
+            <sv:value>org.hippoecm.hst.components.LeftMenu</sv:value>
+        </sv:property>
+    </sv:node>
+
+
     <sv:node sv:name="twopaneoverview">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>

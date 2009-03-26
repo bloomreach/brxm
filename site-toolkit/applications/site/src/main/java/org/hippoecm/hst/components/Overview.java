@@ -42,10 +42,10 @@ public class Overview extends GenericResourceServingHstComponent {
         if(hippoStdNode == null) {
             hippoStdNode = this.getSiteContentBaseNode(request);
         }
-//        
+        //  
+        
         HstQuery query = this.getHstQuery(request);
         
-       
             try {
                 query.setScope(hippoStdNode);
                 HippoStdFilter filter = query.createFilter(NewsPage.class);

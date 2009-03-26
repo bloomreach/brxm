@@ -12,37 +12,19 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License. --%>
+
 <%@ page language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
-<%
-System.out.println("Console out from webpage.jsp");
-%>
-
-<html>
-<head>
-
-<!-- include header -->
-<hst:include ref="header" />
-
-<hst:head-contributions />
-
-</head>
-<body>
-
-<h1>The new Hst</h1>
-
-
-<div class="page">
-    <div style="float:left">
-        <hst:include ref="leftmenu" />
-    </div>
-    <div style="float:left">
-        <hst:include ref="body" />
-    </div>
+<div style="border:1px solid">
+    <h1>My menu : ${menu.name}</h1>
+    <ul>
+    <c:forEach var="item" items="${menu.siteMenuItems}">
+        <li>
+            ${item.name}
+        </li>
+    </c:forEach>
+    </ul>
 </div>
-
-</body>
-</html>
