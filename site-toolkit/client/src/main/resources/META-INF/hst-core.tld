@@ -197,6 +197,66 @@
     </tag>
     
     <tag>
+        <name>attribute</name>
+        <tag-class>org.hippoecm.hst.tag.HstAttributeTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>
+            This tag can be used only inside a element tag to set an attribute
+            for the DOM element created by the containing element tag.
+            The attribute value can be set by the value attribute, but
+            it can be set by the text content of this tag also.
+            If the value attribute of this tag is not set, this tag will look for
+            the body text content to set the value of this attribute.
+            If the value attribute is not set at all, then it will remove
+            the attribute by the name.
+        </description>
+        <attribute>
+            <name>name</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>The attribute name for the element</description>
+        </attribute>
+        <attribute>
+            <name>value</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>The attribute value for the element</description>
+        </attribute>
+    </tag>
+    
+    <tag>
+        <name>element</name>
+        <tag-class>org.hippoecm.hst.tag.HstElementTag</tag-class>
+        <tei-class>org.hippoecm.hst.tag.HstElementTag$TEI</tei-class>
+        <body-content>JSP</body-content>
+        <description>
+            This tag can be used to create DOM Element to create head contribution element.
+            If you create a DOM Element via this tag and pass the variable to a head-contribution
+            tag, then the head-contribution element does not need to parse the text content to create
+            the head contribution DOM element. So, this tag provides an optimized way to create
+            a head-contribution element.
+            This tag can contain zero, one or more attribute tags to set attributes.
+            Also, this tag can contain text content to set the text content of the DOM element.
+        </description>
+        <attribute>
+            <name>var</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>The variable name of the created DOM element</description>
+        </attribute>
+        <attribute>
+            <name>name</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>The tag name of the created DOM element</description>
+        </attribute>
+    </tag>
+    
+    <tag>
         <name>head-contribution</name>
         <tag-class>org.hippoecm.hst.tag.HeadContributionTag</tag-class>
         <body-content>JSP</body-content>
@@ -220,6 +280,19 @@
                 the container will include the HEAD element only once.
                 If the component does not provide keyHint attribute, the container will make
                 a keyHint automatically by stringifying the included HEAD element by this tag.
+            </description>
+        </attribute>
+        <attribute>
+            <name>element</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>org.w3c.dom.Element</type>
+            <description>
+                For more optimized way to create and use DOM element, this tag supports
+                setting a DOM element by element attribute.
+                If this attribute is set, then the head-contribution tag will not try to 
+                parse the body content to create a DOM element.
+                Instead, it will use the passed DOM element by this attribute.
             </description>
         </attribute>
     </tag>

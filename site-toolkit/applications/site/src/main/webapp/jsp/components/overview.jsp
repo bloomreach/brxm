@@ -19,6 +19,16 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
 
+<hst:element var="myFortuneTeller" name="script">
+<hst:attribute name="type" value="text/javascript" />
+var answers = new Array("Without a doubt", "Yes!", "Probably so", "It isn't likely", "it's possible", "Absolutely", "Not a chance", "Ask again", "No", "I doubt it", "No Way" );
+function fortune() {
+  return answers[Math.round( (answers.length - 1) * Math.random())];
+}
+</hst:element>
+
+<hst:head-contribution keyHint="myFortuneTeller" element="${myFortuneTeller}" />
+
 <div>
     <h1>My overview page</h1>
     <div style="border:1px black solid; width:400px;">
@@ -80,4 +90,13 @@
         
     </div>
 
+    <div>
+      <h3>Bonus: Fortune Teller</h3>
+      <form>
+        Your question: <input type="text" name="question" size="40" />
+        <input type="button" value="Tell" onclick="this.form.answer.value = fortune(); return false;" />
+        <br/>
+        Your fortune teller says: <input type="text" name="answer" size="40" />
+      </form>
+    </div>
    

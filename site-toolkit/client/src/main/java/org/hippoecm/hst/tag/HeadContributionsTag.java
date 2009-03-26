@@ -35,6 +35,10 @@ public class HeadContributionsTag extends TagSupport {
     private static final long serialVersionUID = 1L;
     private OutputFormat outputFormat = OutputFormat.createPrettyPrint();
     
+    public HeadContributionsTag() {
+        this.outputFormat.setExpandEmptyElements(true);
+    }
+    
     public void setXhtml(boolean xhtml) {
         this.outputFormat.setXHTML(xhtml);
     }

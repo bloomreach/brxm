@@ -297,7 +297,15 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     }
 
     public Element createElement(String tagName) {
-        return new DOMElement(tagName);
+        return new DOMElement(tagName) {
+            private static final long serialVersionUID = 1L;
+            public void setTextContent(String textContent) {
+                setText(textContent);
+            }
+            public String getTextContent() {
+                return getText();
+            }
+        };
     }
     
     public void addHeadElement(Element element, String keyHint) {

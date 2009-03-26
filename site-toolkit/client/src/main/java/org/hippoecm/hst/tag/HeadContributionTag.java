@@ -34,6 +34,8 @@ public class HeadContributionTag extends BodyTagSupport {
     
     protected String keyHint;
     
+    protected org.w3c.dom.Element element;
+    
     public int doEndTag() throws JspException {
         HstResponse hstResponse = null;
 
@@ -49,39 +51,48 @@ public class HeadContributionTag extends BodyTagSupport {
             return SKIP_BODY;
         }
         
-        Reader reader = null;
-        
-        try {
-            String xmlText = "";
-
-            if (bodyContent != null && bodyContent.getString() != null) {
-                xmlText = bodyContent.getString().trim();
-            }
+        if (this.element == null) {
+            Reader reader = null;
             
-            if (this.keyHint == null) {
-                this.keyHint = xmlText;
-
-                if (hstResponse.containsHeadElement(this.keyHint)) {
-                    return SKIP_BODY;
+            try {
+                String xmlText = "";
+    
+                if (bodyContent != null && bodyContent.getString() != null) {
+                    xmlText = bodyContent.getString().trim();
                 }
+                
+                if (this.keyHint == null) {
+                    this.keyHint = xmlText;
+    
+                    if (hstResponse.containsHeadElement(this.keyHint)) {
+                        return SKIP_BODY;
+                    }
+                }
+    
+                DOMDocumentFactory factory = new DOMDocumentFactory();
+                SAXReader saxReader = new SAXReader(factory);
+                reader = new StringReader(xmlText);
+                Document doc = saxReader.read(reader);
+                Element elem = doc.getRootElement();
+                
+                element = (org.w3c.dom.Element) elem;
+            } catch (DocumentException ex) {
+                throw new JspException(ex);
+            } catch (Exception ex) {
+                throw new JspException(ex);
+            } finally {
+                if (reader != null) try { reader.close(); } catch (Exception ce) { }
             }
-
-            DOMDocumentFactory factory = new DOMDocumentFactory();
-            SAXReader saxReader = new SAXReader(factory);
-            reader = new StringReader(xmlText);
-            Document doc = saxReader.read(reader);
-            Element elem = doc.getRootElement();
-
-            hstResponse.addHeadElement((org.w3c.dom.Element) elem, this.keyHint);
-
-            return EVAL_PAGE;
-        } catch (DocumentException ex) {
-            throw new JspException(ex);
-        } catch (Exception ex) {
-            throw new JspException(ex);
-        } finally {
-            if (reader != null) try { reader.close(); } catch (Exception ce) { }
         }
+        
+        if (element != null) {
+            hstResponse.addHeadElement(element, this.keyHint);
+        }
+        
+        keyHint = null;
+        element = null;
+        
+        return EVAL_PAGE;
     }
     
     public void setKeyHint(String keyHint) {
@@ -90,6 +101,14 @@ public class HeadContributionTag extends BodyTagSupport {
     
     public String getKeyHint() {
         return this.keyHint;
+    }
+    
+    public void setElement(org.w3c.dom.Element element) {
+        this.element = element;
+    }
+    
+    public org.w3c.dom.Element getElement() {
+        return this.element;
     }
 
 }
