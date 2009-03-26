@@ -63,7 +63,7 @@ public class Action extends GenericResourceServingHstComponent {
 
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        
+       
         if (ServletFileUpload.isMultipartContent(request)) {
             try {
                 DiskFileItemFactory factory = new DiskFileItemFactory();

@@ -18,26 +18,35 @@ package org.hippoecm.hst.core.sitemenu;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HstSiteMenuItemImpl implements HstSiteMenuItem {
 
     private static final long serialVersionUID = 1L;
-
+    private static final Logger log = LoggerFactory.getLogger(HstSiteMenuItemImpl.class);
+    
     private HstSiteMenu hstSiteMenu;
     private String name;
     private boolean selected;
     private List<HstSiteMenuItem> hstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
     private List<HstSiteMenuItem> selectedHstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
     private HstSiteMenuItem parent;
+    private HstLinkCreator linkCreator;
+    private HstSiteMapItem siteMapItem;
     
-    public HstSiteMenuItemImpl(HstSiteMenu hstSiteMenu, HstSiteMenuItem parent, HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration, List<HstSiteMenuItemConfiguration> selectedSiteMenuItemConfigurations) {
+    public HstSiteMenuItemImpl(HstSiteMenu hstSiteMenu, HstSiteMenuItem parent, HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration, List<HstSiteMenuItemConfiguration> selectedSiteMenuItemConfigurations, HstLinkCreator hstLinkCreator) {
         this.hstSiteMenu = hstSiteMenu;
         this.parent = parent;
+        this.siteMapItem = hstSiteMenuItemConfiguration.getHstSiteMapItem();
+        this.linkCreator = hstLinkCreator;
         this.name = hstSiteMenuItemConfiguration.getName();
         for(HstSiteMenuItemConfiguration childItemConfiguration : hstSiteMenuItemConfiguration.getChildItemConfigurations()) {
-            hstSiteMenuItems.add(new HstSiteMenuItemImpl(hstSiteMenu, this, childItemConfiguration, selectedSiteMenuItemConfigurations));
+            hstSiteMenuItems.add(new HstSiteMenuItemImpl(hstSiteMenu, this, childItemConfiguration, selectedSiteMenuItemConfigurations, hstLinkCreator));
         }
         
         if(selectedSiteMenuItemConfigurations.contains(hstSiteMenuItemConfiguration)) {
@@ -57,7 +66,10 @@ public class HstSiteMenuItemImpl implements HstSiteMenuItem {
     }
 
     public HstLink getHstLink() {
-        return null;
+        if(siteMapItem == null) {
+            log.warn("Cannot create a link for HstSiteMenuItem because no valid hstSiteMapItem is referenced");
+        }
+        return linkCreator.create(siteMapItem);
     }
 
     public String getName() {

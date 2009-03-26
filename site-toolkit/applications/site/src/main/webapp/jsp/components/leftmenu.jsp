@@ -23,7 +23,31 @@
     <ul>
     <c:forEach var="item" items="${menu.siteMenuItems}">
         <li>
-            ${item.name}
+            <c:choose >
+                <c:when test="${item.selected}">
+                    <b>${item.name}</b>
+                    <ul>
+                    <c:forEach var="subitem" items="${item.childMenuItems}">
+                        <li>
+                            <hst:link var="link" link="${subitem.hstLink}"/>
+                            <a href="${link}">
+                            ${subitem.name}
+                            </a>
+                            <c:if test="${subitem.selected}">
+                                <b>${subitem.name}</b>
+                            </c:if>
+                        </li>
+                    </c:forEach>
+                    </ul>
+                </c:when>
+                <c:otherwise>
+                    <hst:link var="link" link="${item.hstLink}"/>
+                    <a href="${link}">
+                        ${item.name}
+                    </a>
+                </c:otherwise>
+            </c:choose>
+            
         </li>
     </c:forEach>
     </ul>

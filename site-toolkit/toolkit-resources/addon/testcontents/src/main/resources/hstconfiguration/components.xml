@@ -61,6 +61,19 @@
     </sv:node>
 
 
+    <sv:node sv:name="contactform">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:template" sv:type="String">
+            <sv:value>contact</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentclassname" sv:type="String">
+            <sv:value>org.hippoecm.hst.components.Contact</sv:value>
+        </sv:property>
+    </sv:node>
+    
+
     <sv:node sv:name="leftmenu">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>

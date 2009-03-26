@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstSiteMenuImpl implements HstSiteMenu {
 
@@ -32,11 +33,11 @@ public class HstSiteMenuImpl implements HstSiteMenu {
     private boolean selected;
     
 
-    public HstSiteMenuImpl(HstSiteMenus hstSiteMenus, HstSiteMenuConfiguration siteMenuConfiguration, List<HstSiteMenuItemConfiguration> selectedSiteMenuItemConfigurations) {
+    public HstSiteMenuImpl(HstSiteMenus hstSiteMenus, HstSiteMenuConfiguration siteMenuConfiguration, List<HstSiteMenuItemConfiguration> selectedSiteMenuItemConfigurations, HstRequestContext hstRequestContext) {
         this.hstSiteMenus = hstSiteMenus;
         this.name = siteMenuConfiguration.getName();
         for(HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration : siteMenuConfiguration.getSiteMenuConfigurationItems()) {
-            hstSiteMenuItems.add(new HstSiteMenuItemImpl(this, null, hstSiteMenuItemConfiguration, selectedSiteMenuItemConfigurations));
+            hstSiteMenuItems.add(new HstSiteMenuItemImpl(this, null, hstSiteMenuItemConfiguration, selectedSiteMenuItemConfigurations, hstRequestContext.getHstLinkCreator()));
         }
     }
 

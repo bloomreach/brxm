@@ -136,7 +136,7 @@
                 <sv:value>Products/SomeProduct</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>pages/productpage</sv:value>
+                <sv:value>hst:pages/productpage</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
@@ -148,7 +148,16 @@
             <sv:value>Solutions</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>pages/solutionsview</sv:value>
+            <sv:value>hst:pages/solutionsview</sv:value>
+        </sv:property>
+    </sv:node>
+    
+    <sv:node sv:name="contact">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+            <sv:value>hst:pages/contactpage</sv:value>
         </sv:property>
     </sv:node>
     

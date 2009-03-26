@@ -51,7 +51,7 @@ public class HstSiteMenusImpl implements HstSiteMenus{
             }
             
             for(HstSiteMenuConfiguration siteMenuConfiguration : siteMenusConfiguration.getSiteMenuConfigurations().values()) {
-                HstSiteMenuImpl siteMenu = new HstSiteMenuImpl(this, siteMenuConfiguration, selectedSiteMenuItemConfigurations);
+                HstSiteMenuImpl siteMenu = new HstSiteMenuImpl(this, siteMenuConfiguration, selectedSiteMenuItemConfigurations, hstRequestContext);
                 siteMenus.put(siteMenu.getName(), siteMenu);
             }
         }
