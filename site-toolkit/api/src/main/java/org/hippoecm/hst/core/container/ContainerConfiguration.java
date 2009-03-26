@@ -139,4 +139,10 @@ public interface ContainerConfiguration {
      */
     Iterator getKeys();
     
+    /**
+     * Checks if the container is running under development mode
+     * @return
+     */
+    boolean isDevelopmentMode();
+    
 }

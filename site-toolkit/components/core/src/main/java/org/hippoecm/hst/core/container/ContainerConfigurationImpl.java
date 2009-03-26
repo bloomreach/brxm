@@ -31,89 +31,76 @@ import org.apache.commons.configuration.Configuration;
 public class ContainerConfigurationImpl implements ContainerConfiguration {
 
     protected Configuration configuration;
-    
-    public ContainerConfigurationImpl(Configuration configuration)
-    {
+
+    public ContainerConfigurationImpl(Configuration configuration) {
         this.configuration = configuration;
     }
-    
-    public boolean getBoolean(String key, boolean defaultValue)
-    {
+
+    public boolean getBoolean(String key, boolean defaultValue) {
         return configuration.getBoolean(key, defaultValue);
     }
 
-    public boolean getBoolean(String key)
-    {
+    public boolean getBoolean(String key) {
         return configuration.getBoolean(key);
     }
 
-    public double getDouble(String key, double defaultValue)
-    {
+    public double getDouble(String key, double defaultValue) {
         return configuration.getDouble(key, defaultValue);
     }
 
-    public double getDouble(String key)
-    {
+    public double getDouble(String key) {
         return configuration.getDouble(key);
     }
 
-    public float getFloat(String key, float defaultValue)
-    {
+    public float getFloat(String key, float defaultValue) {
         return configuration.getFloat(key, defaultValue);
     }
 
-    public float getFloat(String key)
-    {
+    public float getFloat(String key) {
         return configuration.getFloat(key);
     }
 
-    public int getInt(String key, int defaultValue)
-    {
-        return configuration.getInt(key, defaultValue);        
+    public int getInt(String key, int defaultValue) {
+        return configuration.getInt(key, defaultValue);
     }
 
-    public int getInt(String key)
-    {
-        return configuration.getInt(key);        
+    public int getInt(String key) {
+        return configuration.getInt(key);
     }
 
-    public List getList(String key)
-    {
+    public List getList(String key) {
         return configuration.getList(key);
     }
 
-    public long getLong(String key, long defaultValue)
-    {
-        return configuration.getLong(key, defaultValue);        
+    public long getLong(String key, long defaultValue) {
+        return configuration.getLong(key, defaultValue);
     }
 
-    public long getLong(String key)
-    {
-        return configuration.getLong(key);        
+    public long getLong(String key) {
+        return configuration.getLong(key);
     }
 
-    public String getString(String key, String defaultValue)
-    {
-        return configuration.getString(key, defaultValue);        
+    public String getString(String key, String defaultValue) {
+        return configuration.getString(key, defaultValue);
     }
 
-    public String getString(String key)
-    {
-        return configuration.getString(key);        
+    public String getString(String key) {
+        return configuration.getString(key);
     }
 
-    public String[] getStringArray(String key)
-    {
-        return configuration.getStringArray(key);                
+    public String[] getStringArray(String key) {
+        return configuration.getStringArray(key);
     }
-    
-    public Iterator getKeys()
-    {
+
+    public Iterator getKeys() {
         return configuration.getKeys();
     }
-    
-    public void setProperty(String key, Object value)
-    {
+
+    public boolean isDevelopmentMode() {
+        return getBoolean("development.mode", false);
+    }
+
+    public void setProperty(String key, Object value) {
         configuration.setProperty(key, value);
     }
 
