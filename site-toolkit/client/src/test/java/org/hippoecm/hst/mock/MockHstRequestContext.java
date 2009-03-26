@@ -62,10 +62,6 @@ public class MockHstRequestContext implements HstRequestContext {
         return this.contextNamespace;
     }
     
-    public Credentials getDefaultCredentials() {
-        return this.defaultCredentials;
-    }
-    
     public void setDefaultCredentials(Credentials defaultCredentials) {
         this.defaultCredentials = defaultCredentials;
     }

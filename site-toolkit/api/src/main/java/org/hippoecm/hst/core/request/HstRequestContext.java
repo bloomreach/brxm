@@ -48,13 +48,6 @@ public interface HstRequestContext {
     Session getSession() throws LoginException, RepositoryException;
     
     /**
-     * Returns the default credentials for the repository
-     * 
-     * @return the default credentials
-     */
-    Credentials getDefaultCredentials();
-    
-    /**
      * Returns the {@link ResolvedSiteMapItem} for this request
      * @return the resolvedSiteMapItem for this request
      */

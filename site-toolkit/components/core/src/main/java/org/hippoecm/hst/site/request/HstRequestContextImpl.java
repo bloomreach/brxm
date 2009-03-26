@@ -80,10 +80,6 @@ public class HstRequestContextImpl implements HstRequestContext {
         return this.session;
     }
 
-    public Credentials getDefaultCredentials() {
-        return this.defaultCredentials;
-    }
-    
     public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem) {
         this.resolvedSiteMapItem = resolvedSiteMapItem;
     }
