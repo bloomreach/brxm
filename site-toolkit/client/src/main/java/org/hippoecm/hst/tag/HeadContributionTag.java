@@ -86,6 +86,10 @@ public class HeadContributionTag extends BodyTagSupport {
         }
         
         if (element != null) {
+            if (this.keyHint == null) {
+                this.keyHint = new StringBuilder().append(element.getTextContent()).toString();
+            }
+            
             hstResponse.addHeadElement(element, this.keyHint);
         }
         
