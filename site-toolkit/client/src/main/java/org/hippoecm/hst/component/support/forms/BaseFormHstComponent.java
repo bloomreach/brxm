@@ -26,6 +26,7 @@ import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 
 import org.apache.jackrabbit.uuid.UUID;
@@ -33,6 +34,7 @@ import org.hippoecm.hst.component.support.ocm.BaseHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +50,11 @@ public class BaseFormHstComponent extends BaseHstComponent{
     public final static String HST_PARAMETERVALUES = "hst:parametervalues";
     public final static String HST_CREATIONTIME =  "hst:creationtime";
     public final static String HST_PREDECESSOR =  "hst:predecessor";
+
+    public final static String DEFAULT_WRITABLE_USERNAME_PROPERTY = "writable.repository.user.name";
+    public final static String DEFAULT_WRITABLE_PASSWORD_PROPERTY = "writable.repository.password";
     
-    
-    
+   
     
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
@@ -131,6 +135,24 @@ public class BaseFormHstComponent extends BaseHstComponent{
             try {
                 // TODO impersonate session!! see HSTTWO-434
                 Session session = request.getRequestContext().getSession();
+
+                String writableUserProperty = getWritableUserName();
+                String writablePasswordProperty = getWritablePassword();
+                ContainerConfiguration config = request.getRequestContext().getContainerConfiguration();
+
+                String username = config.getString(writableUserProperty);
+                String password = config.getString(writablePasswordProperty);
+                if(username == null || password == null) {
+                    log.error("Cannot retrieve a writable user for '{}' and '{}'",writableUserProperty, writablePasswordProperty);
+                    return;
+                }
+                try {
+                    session = session.impersonate(new SimpleCredentials(username, password.toCharArray()));
+                } catch (RepositoryException e){
+                    log.error("Cannot impersonate a session with '{}' and '{}'", username, password);
+                    return;
+                }
+                    
                 Node rootNode = session.getRootNode();
                 Node formData = null;
                 if(!rootNode.hasNode(getFormDataNodeName())) {
@@ -166,12 +188,30 @@ public class BaseFormHstComponent extends BaseHstComponent{
                     storeFormResult.populateResult(postedFormDataNode);
                 }
             } catch (LoginException e) {
-                new HstComponentException("LoginExceptionExeption during storing form data: ", e);
+               throw new HstComponentException("LoginExceptionExeption during storing form data: ", e);
             } catch (RepositoryException e) {
-                new HstComponentException("RepositoryException during storing form data: ", e);
+               throw new HstComponentException("RepositoryException during storing form data: ", e);
             }
     }
     
+    /**
+     * If you have a different property for you writable user instead of the default {@link #DEFAULT_WRITABLE_PASSWORD_PROPERTY}, then override
+     * this method
+     * @return the property name of the password of a writable user
+     */
+    protected String getWritablePassword() {
+        return DEFAULT_WRITABLE_PASSWORD_PROPERTY;
+    }
+
+    /**
+     * If you have a different property for you writable user instead of the default {@link #DEFAULT_WRITABLE_USERNAME_PROPERTY}, then override
+     * this method
+     * @return the property name of the username of a writable user
+     */
+    protected String getWritableUserName() {
+        return DEFAULT_WRITABLE_USERNAME_PROPERTY;
+    }
+
     /**
      * Override this method if you need a different location for storing form data
      * @return default repository location for stored nodes
