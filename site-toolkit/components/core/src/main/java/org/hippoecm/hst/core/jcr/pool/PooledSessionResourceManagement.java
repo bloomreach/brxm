@@ -74,9 +74,11 @@ public class PooledSessionResourceManagement implements ResourceLifecycleManagem
     
     public void disposeAllResources() {
         Set<Session> sessions = tlPooledSessions.get();
-        
         if (sessions != null) {
-            for (Session session : sessions) {
+            // do not iterate through the Set because this will lead to concurrent modification exceptions
+            Session[] sessionArray = sessions.toArray(new Session[sessions.size()]);
+            
+            for (Session session : sessionArray) {
                 this.poolingRepository.returnSession((Session) session);
             }
             
