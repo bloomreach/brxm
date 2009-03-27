@@ -153,7 +153,7 @@ public class BaseFormHstComponent extends BaseHstComponent{
     
     protected void persistFormMap(HstRequest request, HstResponse response, FormMap formMap, StoreFormResult storeFormResult) throws HstComponentException { 
             try {
-                // TODO impersonate session!!
+                // TODO impersonate session!! see HSTTWO-434
                 Session session = request.getRequestContext().getSession();
                 Node rootNode = session.getRootNode();
                 Node formData = null;
