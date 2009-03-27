@@ -28,19 +28,19 @@ public class Contact extends BaseFormHstComponent {
     
     static Logger log = LoggerFactory.getLogger(Contact.class);
     
+    private static String[] formFields = {"name","email","textarea"};
+    
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         FormMap formMap = new FormMap();
         super.populate(request, formMap);
         request.setAttribute("form", formMap);
-       
     }
 
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
         super.doAction(request, response);
-        String[] fields = {"name","email","textarea"};
-        FormMap formMap = new FormMap(request, fields);
+        FormMap formMap = new FormMap(request, formFields);
         
         if(request.getParameter("prev") != null && request.getParameter("previous") != null) {
             response.setRenderParameter(DEFAULT_UUID_NAME, request.getParameter("previous"));
