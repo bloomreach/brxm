@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.component.support.forms;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -31,12 +30,9 @@ import javax.jcr.Value;
 
 import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.hst.component.support.ocm.BaseHstComponent;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,34 +59,6 @@ public class BaseFormHstComponent extends BaseHstComponent{
         response.setRenderParameter(DEFAULT_UUID_NAME, (String)null);
     }
 
-    /**
-     * 
-     * Facility method for sending a redirect to a SiteMapItemId.  
-     * 
-     * @param request the HstRequest
-     * @param response the HstResponse
-     * @param redirectToSiteMapItemId the sitemap item id to redirect to
-     */
-    // TODO make sure the DomainMapping/Hosting is used to know whether to include the context path & servletpath HSTTWO-431
-    public void sendRedirect(HstRequest request, HstResponse response, String redirectToSiteMapItemId) {
-        HstLinkCreator linkCreator = request.getRequestContext().getHstLinkCreator();
-        HstSiteMap siteMap = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap();
-        HstLink link = linkCreator.create(siteMap.getSiteMapItemById(redirectToSiteMapItemId));
-
-        StringBuffer url = new StringBuffer();
-        for (String elem : link.getPathElements()) {
-            String enc = response.encodeURL(elem);
-            url.append("/").append(enc);
-        }
-
-        url.insert(0, request.getContextPath() + request.getServletPath());
-        try {
-            response.sendRedirect(url.toString());
-        } catch (IOException e) {
-            throw new HstComponentException("Could not redirect. ",e);
-        }
-    }
-    
     /**
      * This method tries to repopulate an earlier posted form that was stored in the repository.
      * 

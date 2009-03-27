@@ -37,9 +37,13 @@ import org.apache.jackrabbit.ocm.manager.objectconverter.impl.ProxyManagerImpl;
 import org.apache.jackrabbit.ocm.mapper.Mapper;
 import org.apache.jackrabbit.ocm.query.QueryManager;
 import org.apache.jackrabbit.ocm.query.impl.QueryManagerImpl;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -89,6 +93,35 @@ public class BaseHstComponent extends GenericHstComponent {
     protected  Map<String,String> getParameters(HstRequest request){
         return this.getComponentConfiguration().getParameters(request.getRequestContext().getResolvedSiteMapItem());
     }
+    
+    /**
+     * 
+     * Facility method for sending a redirect to a SiteMapItemId.  
+     * 
+     * @param request the HstRequest
+     * @param response the HstResponse
+     * @param redirectToSiteMapItemId the sitemap item id to redirect to
+     */
+    // TODO make sure the DomainMapping/Hosting is used to know whether to include the context path & servletpath HSTTWO-431
+    public void sendRedirect(HstRequest request, HstResponse response, String redirectToSiteMapItemId) {
+        HstLinkCreator linkCreator = request.getRequestContext().getHstLinkCreator();
+        HstSiteMap siteMap = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap();
+        HstLink link = linkCreator.create(siteMap.getSiteMapItemById(redirectToSiteMapItemId));
+
+        StringBuffer url = new StringBuffer();
+        for (String elem : link.getPathElements()) {
+            String enc = response.encodeURL(elem);
+            url.append("/").append(enc);
+        }
+
+        url.insert(0, request.getContextPath() + request.getServletPath());
+        try {
+            response.sendRedirect(url.toString());
+        } catch (IOException e) {
+            throw new HstComponentException("Could not redirect. ",e);
+        }
+    }
+    
     
     protected HippoStdNode getContentNode(HstRequest request) {
         ResolvedSiteMapItem resolvedSitemapItem = request.getRequestContext().getResolvedSiteMapItem();
