@@ -13,24 +13,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.components;
+package org.hippoecm.hst.component.support.forms;
 
-import org.hippoecm.hst.core.component.HstComponentException;
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
-public class LeftMenu extends GenericResourceServingHstComponent {
-    
-    
-    @Override
-    public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-        super.doBeforeRender(request, response);
-        
-        request.setAttribute("menu",request.getRequestContext().getHstSiteMenus().getSiteMenu("main"));
+/**
+ * This class can be used to store the result of persisting the data.
+ *
+ */
+public class StoreFormResult {
+
+    private String uuid;
+
+    public void populateResult(Node postedFormDataNode) throws RepositoryException {
+        this.uuid = postedFormDataNode.getUUID();
     }
 
- 
+    public String getUuid() {
+        return this.uuid;
+    }
 }
-
-
-  

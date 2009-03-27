@@ -97,3 +97,8 @@
 - hst:binarylocations (string) multiple 
 + * (hst:domainmapping) 
 
+[hst:formdata] 
+- hst:creationtime (date) mandatory
+- hst:parameternames (string) multiple
+- hst:parametervalues (string) multiple
+

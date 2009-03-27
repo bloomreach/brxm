@@ -21,18 +21,30 @@
 
 <div>
 
-    <form method="POST" action="<hst:actionURL/>">
-      <input type="radio" name="sort" value="ascending" checked="true" />Ascending
-      <input type="radio" name="sort" value="descending" />Descending
-      <input type="submit" />
+    <form method="POST" name="myform" action="<hst:actionURL/>">
+    <br/>
+    <table>
+        <tr>
+            <td>Name</td>
+            <td><input type="text" name="name" value="${form.value['name']}" /></td>
+            <td><font style="color:red">${form.message['name']}</font></td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td><input type="text" name="email" value="${form.value['email']}"/></td>
+            <td><font style="color:red">${form.message['email']}</font></td>
+        </tr>
+        <tr>
+            <td>Text</td>
+            <td><textarea name="textarea">${form.value['textarea']}</textarea></td>
+            <td><font style="color:red">${form.message['textarea']}</font></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="send"/></td>
+        </tr>
+    </table>
     </form>
     
-    <div>
-        <form method="POST" enctype="multipart/form-data" action="<hst:actionURL/>">
-          Caption: <input type="text" name="caption" value="caption" />
-          File: <input type="file" name="file" />
-          <input type="submit" />
-        </form>
-    </div>
 
 </div>

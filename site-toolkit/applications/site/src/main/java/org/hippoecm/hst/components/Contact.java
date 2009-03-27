@@ -15,21 +15,53 @@
  */
 package org.hippoecm.hst.components;
 
-import org.hippoecm.hst.component.support.ocm.BaseHstComponent;
+import org.hippoecm.hst.component.support.forms.BaseFormHstComponent;
+import org.hippoecm.hst.component.support.forms.FormMap;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class Contact extends BaseHstComponent {
+public class Contact extends BaseFormHstComponent {
     
+    static Logger log = LoggerFactory.getLogger(Contact.class);
     
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-   
-     
+        FormMap formMap = new FormMap();
+        super.populate(request, formMap);
+        request.setAttribute("form", formMap);
     }
 
-
+    @Override
+    public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
+        super.doAction(request, response);
+        String[] fields = {"name","email","textarea"};
+        FormMap formMap = new FormMap(request, fields);
+        
+        // Do a really simple validation: 
+        if(formMap.getField("email") != null && formMap.getField("email").contains("@")) {
+            // succes
+            
+            // do your business logic
+            
+            // possible do a redirect to a thankyou page: do not use directly response.sendRedirect;
+            HstSiteMapItem item = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getChild("thankyou");
+            if(item != null) {
+                this.sendRedirect(request, response, item.getId());
+            } else {
+                log.warn("Cannot redirect because siteMapItem not found. ");
+            }
+           
+        } else {
+            // validation failed. Persist form map, and add possible error messages to the formMap
+            formMap.addMessage("email", "Email address must contain '@'");
+            persistFormMap(request, response, formMap, null);
+        }
+    }
+    
 }
 
 
