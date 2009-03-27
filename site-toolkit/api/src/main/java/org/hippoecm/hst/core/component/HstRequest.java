@@ -45,13 +45,20 @@ public interface HstRequest extends HttpServletRequest {
     Map<String, Object> getParameterMap();
     
     /**
-     * Returns the parameter map of the specified reference path component window.
-     * If the request type is in the action lifecycle, the referencePath parameter will be just ignored
+     * The reference namespace of the component window.
+     * 
+     * @return the reference namespace of the component window
+     */
+    String getReferenceNamespace();
+    
+    /**
+     * Returns the parameter map of the specified reference namespace component window.
+     * If the request type is in the action lifecycle, the reference namespace parameter will be just ignored
      * and the operation will be equivalent to {@link #getParameterMap()}.
-     * @param referencePath
+     * @param referenceNamespace
      * @return
      */
-    Map<String, Object> getParameterMap(String referencePath);
+    Map<String, Object> getParameterMap(String referenceNamespace);
     
     /**
      * Returns the attribute map of this component window.
@@ -60,10 +67,10 @@ public interface HstRequest extends HttpServletRequest {
     Map<String, Object> getAttributeMap();
     
     /**
-     * Returns the attribute map of the specified reference path component window.
+     * Returns the attribute map of the specified reference namespace component window.
      * @return
      */
-    Map<String, Object> getAttributeMap(String referencePath);
+    Map<String, Object> getAttributeMap(String referenceNamespace);
     
     /**
      * Returns the resource ID which was set by the resource HST URL.

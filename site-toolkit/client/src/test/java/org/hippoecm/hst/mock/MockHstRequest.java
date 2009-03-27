@@ -29,6 +29,7 @@ public class MockHstRequest extends MockHttpServletRequest implements HstRequest
     protected Map<String, Map<String, Object>> parameterMap = new HashMap<String, Map<String, Object>>();
     protected HstRequestContext requestContext;
     protected String resourceId;
+    protected String referenceNamespace;
     
     public void setReferencePath(String referencePath) {
         this.referencePath = referencePath;
@@ -68,6 +69,14 @@ public class MockHstRequest extends MockHttpServletRequest implements HstRequest
 
     public String getResourceID() {
         return this.resourceId;
+    }
+
+    public String getReferenceNamespace() {
+        return this.referenceNamespace;
+    }
+    
+    public void setReferenceNamespace(String referenceNamespace) {
+        this.referenceNamespace =referenceNamespace;
     }
     
 }

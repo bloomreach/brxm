@@ -112,6 +112,10 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         return getAttributeMap(referenceNamespace);
     }
     
+    public String getReferenceNamespace() {
+        return this.componentWindow.getReferenceNamespace();
+    }
+    
     public Map<String, Object> getAttributeMap(String referencePath) {
         String namespace = getReferenceNamespacePath(referencePath);
         String prefix = getFullNamespacePrefix(namespace);
@@ -291,4 +295,5 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         
         return containerAttrName;
     }
+
 }
