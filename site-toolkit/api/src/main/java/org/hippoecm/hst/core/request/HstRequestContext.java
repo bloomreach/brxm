@@ -17,7 +17,6 @@ package org.hippoecm.hst.core.request;
 
 import java.util.Enumeration;
 
-import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
