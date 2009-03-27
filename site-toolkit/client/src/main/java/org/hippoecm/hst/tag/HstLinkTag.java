@@ -134,11 +134,12 @@ public class HstLinkTag extends TagSupport {
         
         String urlString = null;
         
+        
         if (this.path == null && response instanceof HstResponse) {
             urlString = ((HstResponse) response).createNavigationalURL(url.toString()).toString();
         } else {
-            // only add the current servletpath for HstLink and not for HSTTWO-378
-            // static links
+            // TODO make sure the DomainMapping/Hosting is used to know whether to include the context path & servletpath HSTTWO-431
+            // only add the current servletpath for HstLink and not for static links HSTTWO-378
             if (this.link != null) {
                 url.insert(0, request.getContextPath() + request.getServletPath());
             } else {
