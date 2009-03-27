@@ -101,4 +101,5 @@
 - hst:creationtime (date) mandatory
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
+- hst:predecessor (string)
 
