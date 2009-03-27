@@ -33,6 +33,7 @@ public class Contact extends BaseFormHstComponent {
         FormMap formMap = new FormMap();
         super.populate(request, formMap);
         request.setAttribute("form", formMap);
+       
     }
 
     @Override
@@ -41,9 +42,12 @@ public class Contact extends BaseFormHstComponent {
         String[] fields = {"name","email","textarea"};
         FormMap formMap = new FormMap(request, fields);
         
+        if(request.getParameter("prev") != null && request.getParameter("previous") != null) {
+            response.setRenderParameter(DEFAULT_UUID_NAME, request.getParameter("previous"));
+        }
         // Do a really simple validation: 
         if(formMap.getField("email") != null && formMap.getField("email").contains("@")) {
-            // succes
+            // success
             
             // do your business logic
             
@@ -58,7 +62,7 @@ public class Contact extends BaseFormHstComponent {
         } else {
             // validation failed. Persist form map, and add possible error messages to the formMap
             formMap.addMessage("email", "Email address must contain '@'");
-            persistFormMap(request, response, formMap, null);
+            super.persistFormMap(request, response, formMap, null);
         }
     }
     

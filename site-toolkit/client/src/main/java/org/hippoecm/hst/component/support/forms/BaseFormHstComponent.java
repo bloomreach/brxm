@@ -44,13 +44,14 @@ public class BaseFormHstComponent extends BaseHstComponent{
 
     static Logger log = LoggerFactory.getLogger(BaseFormHstComponent.class);
     
-    private final static String DEFAULT_UUID_NAME = "u_u_i_d";
-    private final static String DEFAULT_STORED_FORMS_LOCATION = "formdata";
-    private final static String DEFAULT_FORMDATA_TYPE = "hst:formdata";
+    public final static String DEFAULT_UUID_NAME = "u_u_i_d";
+    public final static String DEFAULT_STORED_FORMS_LOCATION = "formdata";
+    public final static String DEFAULT_FORMDATA_TYPE = "hst:formdata";
 
-    private final static String HST_PARAMETERNAMES = "hst:parameternames";
-    private final static String HST_PARAMETERVALUES = "hst:parametervalues";
-    private final static String HST_CREATIONTIME =  "hst:creationtime";
+    public final static String HST_PARAMETERNAMES = "hst:parameternames";
+    public final static String HST_PARAMETERVALUES = "hst:parametervalues";
+    public final static String HST_CREATIONTIME =  "hst:creationtime";
+    public final static String HST_PREDECESSOR =  "hst:predecessor";
     
     
     
@@ -59,8 +60,7 @@ public class BaseFormHstComponent extends BaseHstComponent{
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
         super.doAction(request, response);
         // remove the uuid from the renderparameter again
-        response.setRenderParameter(getUUIDName(), (String)null);
-        
+        response.setRenderParameter(DEFAULT_UUID_NAME, (String)null);
     }
 
     /**
@@ -99,13 +99,13 @@ public class BaseFormHstComponent extends BaseHstComponent{
      * @param request the current hstRequest
      * @param formMap the formMap that will be populated
      */
-    protected void populate(HstRequest request,FormMap formMap){
+    protected void populate(HstRequest request, FormMap formMap){
         if(formMap == null) {
             log.warn("FormMap is null so can not be populated");
             return;
         }
-        if(request.getParameter(getUUIDName()) != null) {
-            String uuid = request.getParameter(getUUIDName());
+        if(request.getParameter(DEFAULT_UUID_NAME) != null) {
+            String uuid = request.getParameter(DEFAULT_UUID_NAME);
             try {
                 // check whether it is a valid uuid. Although uuidObj is not used afterwards, keep it here for parsing the uuid, if it fails
                 // an IllegalArgumentException is thrown
@@ -113,18 +113,25 @@ public class BaseFormHstComponent extends BaseHstComponent{
                 UUID uuidObj = UUID.fromString(uuid);
                 Session session = request.getRequestContext().getSession();
                 Node persistedFormData = session.getNodeByUUID(uuid);
-                Value[] names =  persistedFormData.getProperty(HST_PARAMETERNAMES).getValues();
-                Value[] values =  persistedFormData.getProperty(HST_PARAMETERVALUES).getValues();
-                if(names.length != values.length) {
-                    log.warn("Ambiguous stored formfields because there are unequal names & values. Return unpopulated map");
-                    return;
-                } else {
-                    for(int i = 0 ; i < names.length ; i ++ ){
-                        formMap.addFormField(names[i].getString(), values[i].getString());
-                    }
-                    log.debug("Succesfully repopulated formerly persisted form");
-                    return;
+                
+                if(persistedFormData.hasProperty(HST_PREDECESSOR)) {
+                    formMap.setPrevious(persistedFormData.getProperty(HST_PREDECESSOR).getString());
                 }
+                if(persistedFormData.hasProperty(HST_PARAMETERNAMES) && persistedFormData.hasProperty(HST_PARAMETERVALUES)) {
+                    Value[] names =  persistedFormData.getProperty(HST_PARAMETERNAMES).getValues();
+                    Value[] values =  persistedFormData.getProperty(HST_PARAMETERVALUES).getValues();
+                    if(names.length != values.length) {
+                        log.warn("Ambiguous stored formfields because there are unequal names & values. Return unpopulated map");
+                        return;
+                    } else {
+                        for(int i = 0 ; i < names.length ; i ++ ){
+                            formMap.addFormField(names[i].getString(), values[i].getString());
+                        }
+                        log.debug("Succesfully repopulated formerly persisted form");
+                       
+                    }
+                }
+                return;
             } catch(IllegalArgumentException e){
                 log.warn("Not a valid uuid. Return");
             } catch (LoginException e) {
@@ -152,6 +159,7 @@ public class BaseFormHstComponent extends BaseHstComponent{
      */
     
     protected void persistFormMap(HstRequest request, HstResponse response, FormMap formMap, StoreFormResult storeFormResult) throws HstComponentException { 
+            
             try {
                 // TODO impersonate session!! see HSTTWO-434
                 Session session = request.getRequestContext().getSession();
@@ -167,6 +175,12 @@ public class BaseFormHstComponent extends BaseHstComponent{
                 Node randomNode = createRandomNode(formData);
                 Node postedFormDataNode = randomNode.addNode("tick_"+System.currentTimeMillis(), getFormDataNodeType() );
                 postedFormDataNode.setProperty(HST_CREATIONTIME, Calendar.getInstance());
+                // if there is a previously stored node of this form, set this uuid as predecessor
+                // TODO the  colon ':' is configurable, so must not be hardcode here
+                if(request.getParameter(request.getReferenceNamespace()+":"+DEFAULT_UUID_NAME) != null) {
+                    postedFormDataNode.setProperty(HST_PREDECESSOR, request.getParameter(request.getReferenceNamespace()+":"+DEFAULT_UUID_NAME));
+                }
+
                 postedFormDataNode.addMixin("mix:referenceable");
                 List<String> names = new ArrayList<String>();
                 List<String> values = new ArrayList<String>();
@@ -179,7 +193,7 @@ public class BaseFormHstComponent extends BaseHstComponent{
                 postedFormDataNode.setProperty(HST_PARAMETERNAMES, names.toArray(new String[names.size()]));
                 postedFormDataNode.setProperty(HST_PARAMETERVALUES, values.toArray(new String[values.size()]));
                 rootNode.save();
-                response.setRenderParameter(getUUIDName(), postedFormDataNode.getUUID());
+                response.setRenderParameter(DEFAULT_UUID_NAME, postedFormDataNode.getUUID());
                 if(storeFormResult != null) {
                     storeFormResult.populateResult(postedFormDataNode);
                 }
@@ -206,13 +220,6 @@ public class BaseFormHstComponent extends BaseHstComponent{
         return DEFAULT_FORMDATA_TYPE;
     }
     
-    /**
-     * override this method if you want a different uuid name as request parameter
-     * @return default uuid name
-     */
-    protected String getUUIDName(){
-        return DEFAULT_UUID_NAME;
-    }
     
     private void addInitialStructure(Node formData) throws RepositoryException {
         char a = 'a';

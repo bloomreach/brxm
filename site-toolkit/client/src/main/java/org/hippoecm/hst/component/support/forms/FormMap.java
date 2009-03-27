@@ -32,6 +32,7 @@ public class FormMap {
     
     private Map<String,String> formMap = new HashMap<String,String>();
     private Map<String,String> messages = null;
+    private String predecessorUUID = null;
     
     
     public FormMap(){
@@ -57,6 +58,10 @@ public class FormMap {
         formMap.put(getMessageKeyPrefix()+name, value);
     }
     
+    public void setPrevious(String uuid) {
+        this.predecessorUUID = uuid;
+    }
+    
     public String getField(String name) {
         return formMap.get(name);
     }
@@ -77,6 +82,10 @@ public class FormMap {
             }
         }
         return messages;
+    }
+    
+    public String getPrevious(){
+        return this.predecessorUUID;
     }
     
     public Map<String,String> getFormMap(){

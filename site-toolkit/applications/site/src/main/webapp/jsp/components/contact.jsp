@@ -22,6 +22,7 @@
 <div>
 
     <form method="POST" name="myform" action="<hst:actionURL/>">
+    <input type="hidden" name="previous" value="${form.previous}"/>
     <br/>
     <table>
         <tr>
@@ -40,7 +41,11 @@
             <td><font style="color:red">${form.message['textarea']}</font></td>
         </tr>
         <tr>
-            <td></td>
+            <td>
+                <c:if test="${form.previous != null}">
+                  <input type="submit" name="prev" value="prev"/>
+                </c:if>
+            </td>
             <td><input type="submit" value="send"/></td>
         </tr>
     </table>
