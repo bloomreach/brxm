@@ -330,7 +330,7 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
 
     public void setRenderParameter(String key, String value) {
         if (value == null) {
-            setRenderParameter(key, (String []) null);
+            setRenderParameter(key, new String[0]);
         } else {
             setRenderParameter(key, new String [] { value });
         }
