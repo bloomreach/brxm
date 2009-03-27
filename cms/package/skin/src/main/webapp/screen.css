@@ -341,8 +341,6 @@ padding-right: 9px;
 
 /* Toolbar */
 /* ================================================ */ 
-.contexticon:{width:19px}
-.contexticon:hover{background-position: 0px -21px; }
 .hippo-toolbar{padding: 7px; margin-left: 5px;}
 .hippo-toolbar .hippo-toolbar-section {display: block; float: left; color: #666666; padding-top: 0px; margin-right: 15px; background: url("images/devider.png") no-repeat 5px right;}
 .hippo-toolbar .hippo-toolbar-section li{margin-right: 15px; float: left;}
@@ -355,6 +353,16 @@ padding-right: 9px;
 .hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-caption span,
 .hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-status span{padding-left: 5px; color: black}
 
+body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-single
+{background: transparent;}
+
+body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-single:hover{
+border: 1px solid #afafaf;
+background: #fff6e0;
+}
+
+/* Dropdown menu */
+/* ================================================ */ 
 .hippo-toolbar-menu-item{
 background: #f3f3f3 url("images/dropdownmenuback.png") repeat-y top left;
 padding: 1px;
@@ -362,49 +370,34 @@ border: 1px solid #afafaf;
 position: absolute;
 top: 3px;
 left: 0px;
+width: 156px;
 }
 
-.hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button{
+/* override from wicket styles */
+li a.hippo-toolbar-section-button{
 width: 90px; display: block; height: 17px; padding-left: 24px; padding-top: 3px;
 border: 1px solid #cccccc;
 background: url("images/hippo-toolbar-menu-item.png") no-repeat right -20px;
 cursor: pointer;
+clear: left;
 }
-
-.hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button:hover{
-border: 1px solid #afafaf;
+li a.hippo-toolbar-section-button:hover{ border: 1px solid #afafaf;
 background: url("images/hippo-toolbar-menu-item.png") no-repeat top right; color: black
 }
 
-body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-single
-{
-background: transparent;
-}
-body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-single:hover{
-border: 1px solid #afafaf;
-background: #fff6e0;
-}
+.hippo-toolbar-menu-item-button{display: block; float: none; border: 1px solid transparent; padding: 2px; width: 150px;}
 
+/* override the default text-decoration: underline */
+.hippo-root .hippo-toolbar-menu-item-button:hover{background: #fff6e0; border: 1px solid #afafaf; text-decoration: none}
 
+.hippo-toolbar-menu-item li{display: block; clear:left; margin-right: 0px}
 
-.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-menu-item-button{
-display: block; float: none; border: 1px solid transparent; padding: 5px }
+.hippo-toolbar-menu-item-button-icon{display: block; float: left; margin-right: 11px; }
 
-.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-menu-item-button:hover{background: #fff6e0; border: 1px solid #afafaf;}
+.hippo-toolbar-section li.icon-16{padding-left: 0px; background-position: 5px 7px}
+.hippo-toolbar-section span.icon-16{display: block; height: 16px; width: 16px}
 
-.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-menu-item li{display: block; float: none; margin-right: 0px}
-
-.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-menu-item .hippo-toolbar-menu-item-button-icon{display: block; float: left; margin-right: 11px; }
-
-.hippo-toolbar .hippo-toolbar-section li.icon-16{padding-left: 0px; background-position: 5px 7px}
-.hippo-toolbar .hippo-toolbar-section span.icon-16{display: block; height: 16px; width: 16px}
-
-.hippo-toolbar .hippo-toolbar-section li.icon-16 div{position: relative}
-
-
-/* Toolbar Temp */
-/* ================================================ */
-
+.hippo-toolbar-section li.icon-16 div{position: relative}
 
 /* Default feedback */
 /* ================================================ */
@@ -598,12 +591,6 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 .hippo-tree div.wicket-tree div.row, 
 .hippo-tree div.wicket-tree div.row-selected{padding-top: 2px; padding-bottom: 2px;}
 
-/* set the hippo color styling */
-
-/* styling for the folder drop dowm */
-/*
-.hippo-tree div.wicket-tree div.row-selected {background: #fedc89 url("images/controls/folderdropdownicon.png") no-repeat right 2px;}
-*/
 
 .hippo-tree div.wicket-tree div.row-selected {background: #fedc89}
 .hippo-tree div.wicket-tree div.row a,
@@ -654,6 +641,24 @@ font-weight: bold;
 .hippo-accordion-unit h2 a.focus{background-position: 0px -24px}
 .hippo-accordion-unit h2 a.focus:hover{background-position: 0px -48px}
 .hippo-accordion-unit h2 a.focus:active{background-position: 0px -72px}
+
+/* Hippo tree addition */
+
+.hippo-tree-dropdown-icon-container{float: right; display: block;}
+.hippo-tree-dropdown-icon {display: block; width: 18px; height: 18px; float: right; margin-right: 4px;}
+.hippo-tree-dropdown-icon:hover {background-position: 0px 19px;}
+.hippo-tree-dropdown{position: relative}
+.hippo-tree-dropdown .hippo-toolbar-menu-item{}
+.hippo-root div.row-selected .hippo-tree-dropdown a{background: none}
+
+/*
+.hippo-global-highlight li, 
+.hippo-global-highlight li a span, 
+.hippo-global-highlight li, 
+.hippo-root table tr.selected td, .hippo-root table tr.selected td, .hippo-root div.row-selected a, .hippo-root table tr.row-selected, .hippo-root table tr.selected td a, .hippo-global-highlight a {screen.css (regel 66)
+background:#FEDC89 none repeat scroll 0 0;
+}
+*/
 
 /* Document Preview Plugin */
 /* ================================================ */
