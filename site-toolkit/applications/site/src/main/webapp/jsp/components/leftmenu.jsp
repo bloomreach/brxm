@@ -26,19 +26,6 @@
             <c:choose >
                 <c:when test="${item.selected}">
                     <b>${item.name}</b>
-                    <ul>
-                    <c:forEach var="subitem" items="${item.childMenuItems}">
-                        <li>
-                            <hst:link var="link" link="${subitem.hstLink}"/>
-                            <a href="${link}">
-                            ${subitem.name}
-                            </a>
-                            <c:if test="${subitem.selected}">
-                                <b>${subitem.name}</b>
-                            </c:if>
-                        </li>
-                    </c:forEach>
-                    </ul>
                 </c:when>
                 <c:otherwise>
                     <hst:link var="link" link="${item.hstLink}"/>
@@ -47,7 +34,25 @@
                     </a>
                 </c:otherwise>
             </c:choose>
-            
+            <ul>
+                <c:forEach var="subitem" items="${item.expandedSiteMenuItems}">
+                    <c:choose >
+                    <c:when test="${subitem.selected}">
+                        <li>
+                        <b>${subitem.name}</b>
+                        </li>
+                    </c:when>
+                    <c:otherwise>
+                        <hst:link var="link" link="${subitem.hstLink}"/>
+                        <li>
+                        <a href="${link}">
+                            ${subitem.name}
+                        </a>
+                        </li>
+                    </c:otherwise>
+                    </c:choose>
+                </c:forEach>
+            </ul>
         </li>
     </c:forEach>
     </ul>

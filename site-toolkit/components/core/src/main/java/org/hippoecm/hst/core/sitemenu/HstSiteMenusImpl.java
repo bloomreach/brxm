@@ -16,15 +16,12 @@
 package org.hippoecm.hst.core.sitemenu;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
-import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 public class HstSiteMenusImpl implements HstSiteMenus{
 
@@ -32,26 +29,15 @@ public class HstSiteMenusImpl implements HstSiteMenus{
     private Map<String, HstSiteMenu> siteMenus = new HashMap<String, HstSiteMenu>(); 
    
     
-    public HstSiteMenusImpl(ResolvedSiteMapItem resolvedSiteMapItem, HstRequestContext hstRequestContext) {
+    public HstSiteMenusImpl(HstRequestContext hstRequestContext) {
     
         // find currently selected hstSiteMenuItemConfiguration's
-        HstSiteMapItem selectedSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
+        HstSiteMapItem selectedSiteMapItem = hstRequestContext.getResolvedSiteMapItem().getHstSiteMapItem();
         HstSiteMenusConfiguration siteMenusConfiguration = selectedSiteMapItem.getHstSiteMap().getSite().getSiteMenusConfiguration();
         if(siteMenusConfiguration != null) {
-            List<HstSiteMenuItemConfiguration> selectedSiteMenuItemConfigurations =  siteMenusConfiguration.getItemsBySiteMapItemId(selectedSiteMapItem.getId());
-        
-            /*
-             * if no selected SiteMenuItems can be found for the selectedSiteMapItem, look for the first parent sitemap item that has an
-             * assiociated HstSiteMenuItemConfiguration: this is then the SiteMenuItem that must be set to selected
-             */ 
-            
-            while(selectedSiteMenuItemConfigurations.isEmpty() && selectedSiteMapItem.getParentItem() != null) {
-                selectedSiteMapItem = selectedSiteMapItem.getParentItem();
-                selectedSiteMenuItemConfigurations =  siteMenusConfiguration.getItemsBySiteMapItemId(selectedSiteMapItem.getId());
-            }
-            
+          
             for(HstSiteMenuConfiguration siteMenuConfiguration : siteMenusConfiguration.getSiteMenuConfigurations().values()) {
-                HstSiteMenuImpl siteMenu = new HstSiteMenuImpl(this, siteMenuConfiguration, selectedSiteMenuItemConfigurations, hstRequestContext);
+                HstSiteMenuImpl siteMenu = new HstSiteMenuImpl(this, siteMenuConfiguration, hstRequestContext);
                 siteMenus.put(siteMenu.getName(), siteMenu);
             }
         }

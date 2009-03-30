@@ -37,12 +37,10 @@ public interface HstSiteMenuItem extends Serializable{
     List<HstSiteMenuItem> getChildMenuItems();
     
     /**
-     * Returns the currently selected sitemenu items. It makes sense to have only a single sitemenu item selected, but as 
-     * multiple sitemenu items <i>could</i> point to the same selected sitemap item, it can happen that multiple sitemenu items
-     * are selected. It is up to the implementation how to handle this
-     * @return the currently selected sitemenu items. 
+     * Returns the currently expanded sitemenu items. 
+     * @return the currently expanded sitemenu items. 
      */
-    List<HstSiteMenuItem> getSelectedSiteMenuItems();
+    List<HstSiteMenuItem> getExpandedSiteMenuItems();
     
     /**
      * 
@@ -66,4 +64,10 @@ public interface HstSiteMenuItem extends Serializable{
      * @return <code>true</code> is the SiteMenuItem is selected
      */
     boolean isSelected();
+    
+    /**
+     * A sitemenu item is expanded if one of its descendants is selected
+     * @return <code>true</code> is the SiteMenuItem is expanded
+     */
+    boolean isExpanded();
 }

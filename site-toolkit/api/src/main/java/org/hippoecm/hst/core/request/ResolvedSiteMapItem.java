@@ -44,6 +44,12 @@ public interface ResolvedSiteMapItem {
     String getRelativeContentPath();
     
     /**
+     * Returns a relative path wrt servlet path to the SiteMapItem that was matched
+     * @return the matched path to this <code>ResolvedSiteMapItem</code>, relative to the servletpath
+     */
+    String getPathInfo();
+    
+    /**
      * Returns a property from the HstSiteMapItem configuration but should have replaced possible property placeholders. If a property 
      * placeholder cannot be resolved, the implementation can return <code>null</code>. 
      * 

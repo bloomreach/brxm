@@ -16,11 +16,9 @@
 package org.hippoecm.hst.configuration.sitemenu;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstSite;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 /**
  * Implementations should return an unmodifiable map for {@link #getSiteMenuConfiguration()} because clients should not
@@ -49,14 +47,5 @@ public interface HstSiteMenusConfiguration extends Serializable{
      * @return the {@link SiteMenuConfiguration} with this name and <code>null</code> if does not exist 
      */
     HstSiteMenuConfiguration getSiteMenuConfiguration(String name);
-    
-    /**
-     * Returns all the matching <code>HstSiteMenuItemConfiguration</code>'s for hstSiteMapItemId. Multiple <code>HstSiteMenuItemConfiguration</code>'s 
-     * can link to the same {@link HstSiteMapItem}, and it is up to the implementation how to handle this. If no <code>HstSiteMenuItemConfiguration</code>
-     * at all matches, a empty list must be returned
-     * @param hstSiteMapItemId the id of the {@link HstSiteMapItem} returned by {@link HstSiteMapItem#getId()} 
-     * @return All matching <code>HstSiteMenuItemConfiguration</code>'s for the hstSiteMapItemId and an empty list if none matches. 
-     * Preferrably return an unmodifiable list such that clients cannot modify configuration
-     */
-    List<HstSiteMenuItemConfiguration> getItemsBySiteMapItemId(String hstSiteMapItemId);
+ 
 }

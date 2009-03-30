@@ -25,7 +25,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.Configuration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,36 +39,25 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     private HstSiteMenuItemConfiguration parent;
     private String name;
     private List<HstSiteMenuItemConfiguration> childItems = new ArrayList<HstSiteMenuItemConfiguration>();
-    private HstSiteMap hstSiteMap;
-    private HstSiteMapItem hstSiteMapItem;
+    private String siteMapItemPath;
     
     public HstSiteMenuItemConfigurationService(Node siteMenuItem, HstSiteMenuItemConfiguration parent, HstSiteMenuConfiguration hstSiteMenuConfiguration) throws ServiceException {
         this.parent = parent;
         this.hstSiteMenuConfiguration = hstSiteMenuConfiguration;
-        this.hstSiteMap = hstSiteMenuConfiguration.getSiteMenusConfiguration().getSite().getSiteMap();
+        HstSiteMap hstSiteMap = hstSiteMenuConfiguration.getSiteMenusConfiguration().getSite().getSiteMap();
         try {
             this.name = siteMenuItem.getName();
-            init(siteMenuItem);
+            init(siteMenuItem, hstSiteMap);
         } catch (RepositoryException e) {
             throw new ServiceException("Repository Exception occured '" + e.getMessage() + "'");
         }
-        // if there is a hstSiteMapItem found, let's add this HstSiteMenuItemConfiguration to the Map in HstSiteMenusConfiguration
-        if(this.hstSiteMapItem != null) {
-            HstSiteMenusConfigurationService siteMenusConfiguration =  (HstSiteMenusConfigurationService)hstSiteMenuConfiguration.getSiteMenusConfiguration();
-            siteMenusConfiguration.addHstSiteMenuItem(hstSiteMapItem.getId(), this);
-        }
     }
 
-    private void init(Node siteMenuItem) throws ServiceException{
+    private void init(Node siteMenuItem, HstSiteMap hstSiteMap) throws ServiceException{
         try {
             if(siteMenuItem.hasProperty(Configuration.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)) {
-               String siteMapItemId = siteMenuItem.getProperty(Configuration.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM).getString();
-               HstSiteMapItem siteMapItem = hstSiteMap.getSiteMapItemById(siteMapItemId);
-               if(siteMapItem == null) {
-                   log.warn("HstSiteMenuItemConfiguration cannot be used for linking because associated HstSiteMapItem '{}' cannot be resolved", siteMapItemId);  
-               } else {
-                   this.hstSiteMapItem = siteMapItem;
-               }
+               // siteMapItemPath can be an exact path to a sitemap item, but can also be a path to a sitemap item containing wildcards.
+               this.siteMapItemPath = siteMenuItem.getProperty(Configuration.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM).getString();
                NodeIterator siteMenuIt = siteMenuItem.getNodes();
                while(siteMenuIt.hasNext()){
                    Node childSiteMenuItem = siteMenuIt.nextNode();
@@ -104,8 +92,8 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
         return this.hstSiteMenuConfiguration;
     }
 
-    public HstSiteMapItem getHstSiteMapItem() {
-        return this.hstSiteMapItem;
+    public String getSiteMapItemPath() {
+        return this.siteMapItemPath;
     }
 
 }

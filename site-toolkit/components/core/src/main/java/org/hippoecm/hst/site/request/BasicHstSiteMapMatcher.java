@@ -53,7 +53,6 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
     }
     
     public ResolvedSiteMapItem match(String pathInfo, HstSite hstSite) {
-       
         String key = hstSite.getContentPath() + "_" + pathInfo;
         ResolvedSiteMapItem cached = cache.get(key);
         if(cached != null) {
@@ -90,7 +89,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
                     log.warn("Did not find a matching sitemap item at all. Return the catch all sitemap item (the ** matcher) ");
                     // The ** has the value of the entire pathInfo
                     params.put("1", pathInfo);
-                    ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(hstSiteMapItemAny, params);
+                    ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(hstSiteMapItemAny, params, pathInfo);
                     cache.put(key, r);
                     return r;
                 }
@@ -116,7 +115,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             log.debug("Params for resolved sitemap item: '{}'", params);
         }
         
-        ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(matchedSiteMapItem, params);
+        ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(matchedSiteMapItem, params, pathInfo);
         cache.put(key, r);
         return r;
     
@@ -231,6 +230,10 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         }
 
         public HstSiteMenus getSiteMenus() {
+            return null;
+        }
+        
+        public String getPathInfo() {
             return null;
         }
 

@@ -29,15 +29,15 @@ public class HstSiteMenuImpl implements HstSiteMenu {
     private String name;
     private HstSiteMenus hstSiteMenus;
     private List<HstSiteMenuItem> hstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
-    private List<HstSiteMenuItem> selectedHstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
-    private boolean selected;
+    private List<HstSiteMenuItem> expandedHstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
+    private boolean expanded;
     
 
-    public HstSiteMenuImpl(HstSiteMenus hstSiteMenus, HstSiteMenuConfiguration siteMenuConfiguration, List<HstSiteMenuItemConfiguration> selectedSiteMenuItemConfigurations, HstRequestContext hstRequestContext) {
+    public HstSiteMenuImpl(HstSiteMenus hstSiteMenus, HstSiteMenuConfiguration siteMenuConfiguration, HstRequestContext hstRequestContext) {
         this.hstSiteMenus = hstSiteMenus;
         this.name = siteMenuConfiguration.getName();
         for(HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration : siteMenuConfiguration.getSiteMenuConfigurationItems()) {
-            hstSiteMenuItems.add(new HstSiteMenuItemImpl(this, null, hstSiteMenuItemConfiguration, selectedSiteMenuItemConfigurations, hstRequestContext.getHstLinkCreator()));
+            hstSiteMenuItems.add(new HstSiteMenuItemImpl(this, null, hstSiteMenuItemConfiguration , hstRequestContext));
         }
     }
 
@@ -49,23 +49,23 @@ public class HstSiteMenuImpl implements HstSiteMenu {
         return hstSiteMenuItems;
     }
 
-    public boolean isSelected() {
-        return selected;
+    public boolean isExpanded() {
+        return expanded;
     }
     
     public HstSiteMenus getHstSiteMenus() {
         return this.hstSiteMenus;
     }
 
-    public List<HstSiteMenuItem> getSelectedSiteMenuItems() {
-        return selectedHstSiteMenuItems;
+    public List<HstSiteMenuItem> getExpandedSiteMenuItems() {
+        return expandedHstSiteMenuItems;
     }
     
     
-    public void addSelectedSiteMenuItem(HstSiteMenuItem siteMenuItem){
-        this.selected = true;
-        if(!selectedHstSiteMenuItems.contains(siteMenuItem)) {
-            selectedHstSiteMenuItems.add(siteMenuItem);
+    public void addExpandedSiteMenuItem(HstSiteMenuItem siteMenuItem){
+        this.expanded = true;
+        if(!expandedHstSiteMenuItems.contains(siteMenuItem)) {
+            expandedHstSiteMenuItems.add(siteMenuItem);
         }
     }
 

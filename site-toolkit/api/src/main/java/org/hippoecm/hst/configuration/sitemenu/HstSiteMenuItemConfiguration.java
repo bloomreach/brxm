@@ -18,9 +18,6 @@ package org.hippoecm.hst.configuration.sitemenu;
 import java.io.Serializable;
 import java.util.List;
 
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.service.ServiceException;
-
 /**
  * Implementations should return an unmodifiable map for {@link #getSiteMenuItemConfigurations()} because clients should not
  * be able to modify the configuration
@@ -32,6 +29,13 @@ public interface HstSiteMenuItemConfiguration extends Serializable{
      * @return the name of this SiteMenuItem
      */
     String getName();
+    
+    /**
+     * The sitemapitem path can point to a sitemap item that contains wildcards. The sitemapitem path can be for example 'news/2009/may', and
+     * the sitemap item which is resolved as the link to this sitemenu item might be 'news/'*'/'*'' 
+     * @return the sitemap path that should be able to resolve the link for this sitemenu configuration item
+     */
+    String getSiteMapItemPath();
     
     /**
      * @return the container <code>HstSiteMenuConfiguration</code> of this <code>HstSiteMenuItemConfiguration</code>
@@ -51,12 +55,5 @@ public interface HstSiteMenuItemConfiguration extends Serializable{
      */
     HstSiteMenuItemConfiguration getParentItemConfiguration();
     
-    /**
-     * If there is a HstSiteMapItem associated with this HstSiteMenuItemConfiguration, it can be accessed by this method. 
-     * If no HstSiteMapItem is associated, there is no possible link to this HstSiteMenuItemConfiguration. This might be for 
-     * non-linkeable HstSiteMapItem's only meant for holding child HstSiteMapItem's which are linkeable
-     * @return the <code>{@link HstSiteMapItem}</code> this SiteMenuItemConfiguration points to or <code>null</code>. 
-     */
-    HstSiteMapItem getHstSiteMapItem();
-    
+   
 }

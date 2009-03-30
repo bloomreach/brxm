@@ -100,17 +100,6 @@ public class HstSiteMenusConfigurationService implements HstSiteMenusConfigurati
     public HstSiteMenuConfiguration getSiteMenuConfiguration(String name) {
         return this.hstSiteMenuConfigurations.get(name);
     }
-    
-    public List<HstSiteMenuItemConfiguration> getItemsBySiteMapItemId(String hstSiteMapItemId) {
-        List<HstSiteMenuItemConfiguration> siteMenuItems = hstSiteMenuItemsBySiteMapId.get(hstSiteMapItemId);
-        if(siteMenuItems == null) {
-            // return empty list
-            log.debug("No SiteMenuItemConfiguration associated with hstSiteMapItemId '{}'. Return empty list.", hstSiteMapItemId);
-            return new ArrayList<HstSiteMenuItemConfiguration>();
-        } else {
-            return Collections.unmodifiableList(siteMenuItems);
-        }
-        
-    }
+
 
 }

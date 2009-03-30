@@ -16,18 +16,16 @@
 package org.hippoecm.hst.core.sitemenu;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HstSiteMenusManagerImpl implements HstSiteMenusManager{
 
-    private static final Logger log = LoggerFactory.getLogger(HstSiteMenusManagerImpl.class);
     
     public HstSiteMenusManagerImpl() {     
     }
     
     public HstSiteMenus getSiteMenus(HstRequestContext hstRequestContext){
-       return new HstSiteMenusImpl(hstRequestContext.getResolvedSiteMapItem(), hstRequestContext);
+        
+       return new HstSiteMenusImpl(hstRequestContext);
       
     }
 }

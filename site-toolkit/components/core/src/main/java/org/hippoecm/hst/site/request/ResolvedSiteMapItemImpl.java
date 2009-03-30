@@ -24,6 +24,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.hippoecm.hst.core.util.PropertyParser;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +35,11 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
     private Properties resolvedParameters;
     private String relativeContentPath;
     private HstComponentConfiguration hstComponentConfiguration;
+    private String pathInfo;
     
-    public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params) {
+    public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params, String pathInfo) {
        HstSite hstSite = hstSiteMapItem.getHstSiteMap().getSite();
+       this.pathInfo = PathUtils.normalizePath(pathInfo);
        this.hstSiteMapItem = hstSiteMapItem;
        if(hstSiteMapItem.getComponentConfigurationId() == null) {
            log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the sitemap item '{}' does not have a component configuration id.", hstSiteMapItem.getId());
@@ -85,6 +88,10 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
 
     public String getRelativeContentPath() {
         return relativeContentPath;
+    }
+
+    public String getPathInfo() {
+        return this.pathInfo;
     }
 
 }
