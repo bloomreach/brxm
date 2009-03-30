@@ -360,6 +360,11 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
 border: 1px solid #000000;
 }
 
+div.navigator-left > div {
+  overflow: visible ! important;
+}
+
+
 /* Dropdown menu */
 /* ================================================ */ 
 .hippo-toolbar-menu-item{
@@ -577,6 +582,8 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 /* overriding standard wicket tree styling */
 /* remove the margin and set the hippo-tree wrapping div up as a scrollpane */
 .hippo-tree {overflow: hidden; width: 200px; height: 350px; z-index: 1;}
+.hippo-tree {overflow: visible;}
+
 /* remove margins */
 .hippo-tree div.wicket-tree{margin: 0px; border: none;}
 /* make sure the first folder level in the tree doens't have a left padding */
