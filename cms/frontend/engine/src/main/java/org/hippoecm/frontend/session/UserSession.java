@@ -30,6 +30,7 @@ import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.IPlugin;
@@ -119,7 +120,7 @@ public class UserSession extends WebSession {
     public Object getMarkupId(Component component) {
         String markupId = null;
         for (Component ancestor=component.getParent(); ancestor!=null && markupId==null; ancestor=ancestor.getParent()) {
-            if (ancestor instanceof IPlugin) {
+            if (ancestor instanceof IPlugin || ancestor instanceof Home) {
                 markupId = ancestor.getMarkupId(true);
                 break;
             }
