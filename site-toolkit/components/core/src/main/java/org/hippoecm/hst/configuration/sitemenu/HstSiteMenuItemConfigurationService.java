@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.Configuration;
@@ -68,6 +69,16 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
                    log.warn("HstSiteMenuItemConfiguration cannot be used for linking because associated HstSiteMapItem '{}' cannot be resolved", siteMapItemId);  
                } else {
                    this.hstSiteMapItem = siteMapItem;
+               }
+               NodeIterator siteMenuIt = siteMenuItem.getNodes();
+               while(siteMenuIt.hasNext()){
+                   Node childSiteMenuItem = siteMenuIt.nextNode();
+                   if(childSiteMenuItem == null) {
+                       continue;
+                   }
+                   
+                   HstSiteMenuItemConfiguration child = new HstSiteMenuItemConfigurationService(childSiteMenuItem, this, this.hstSiteMenuConfiguration);
+                   childItems.add(child);
                }
             } else {
                log.info("HstSiteMenuItemConfiguration cannot be used for linking because no associated HstSiteMapItem present"); 

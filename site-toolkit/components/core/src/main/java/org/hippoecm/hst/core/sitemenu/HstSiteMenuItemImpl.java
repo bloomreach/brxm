@@ -68,6 +68,7 @@ public class HstSiteMenuItemImpl implements HstSiteMenuItem {
     public HstLink getHstLink() {
         if(siteMapItem == null) {
             log.warn("Cannot create a link for HstSiteMenuItem because no valid hstSiteMapItem is referenced");
+            return null;
         }
         return linkCreator.create(siteMapItem);
     }
