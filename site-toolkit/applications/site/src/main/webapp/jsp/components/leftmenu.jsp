@@ -51,6 +51,25 @@
                         </li>
                     </c:otherwise>
                     </c:choose>
+                        <ul>
+                        <c:forEach var="subsubitem" items="${subitem.expandedSiteMenuItems}">
+                            <c:choose >
+                            <c:when test="${subsubitem.selected}">
+                                <li>
+                                <b>${subsubitem.name}</b>
+                                </li>
+                            </c:when>
+                            <c:otherwise>
+                                <hst:link var="link" link="${subsubitem.hstLink}"/>
+                                <li>
+                                <a href="${link}">
+                                    ${subsubitem.name}
+                                </a>
+                                </li>
+                            </c:otherwise>
+                            </c:choose>
+                        </c:forEach>
+                        </ul>
                 </c:forEach>
             </ul>
         </li>
