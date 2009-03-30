@@ -27,6 +27,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.provider.jcr.JCRUtilities;
+import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,6 +154,12 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         return new HstLinkImpl(path, hstSiteMap.getSite());
     }
 
+
+    public HstLink create(String siteMapPath, HstSite hstSite) {
+        return new HstLinkImpl(PathUtils.normalizePath(siteMapPath), hstSite);
+    }
+
+    
     public HstLink create(HstSiteMapItem toHstSiteMapItem) {
         return new HstLinkImpl(getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite());
     }
@@ -172,7 +179,6 @@ public class BasicHstLinkCreator implements HstLinkCreator {
     }
 
     /**
-     * The wildcards are translated to parameters like ${1}/${2}
      * @param siteMapItem
      * @return String representation of the path
      */

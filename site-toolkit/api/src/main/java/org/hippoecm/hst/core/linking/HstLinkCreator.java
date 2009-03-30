@@ -73,6 +73,13 @@ public interface HstLinkCreator {
      */
     HstLink create(HstSiteMapItem toHstSiteMapItem);
     
+    /**
+     * Regardless the current context, create a HstLink to the siteMapPath that you use as argument. 
+     * @param siteMapPath the path to the sitemap item
+     * @param hstSite the HstSite the siteMapPath should be in
+     * @return an <code>HstLink</code> instance or <code>null<code> 
+     */
+    HstLink create(String siteMapPath, HstSite hstSite);
     
     /**
      * create a link to a HstSiteMapItem with id <code>toSiteMapItemId</code> that belongs to <code>HstSite</code> hstSite.
