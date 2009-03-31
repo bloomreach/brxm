@@ -72,11 +72,29 @@
     <resources>
       <resource>
         <filtering>false</filtering>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
         <directory>${basedir}/src/main/java</directory>
         <includes>
           <include>**/*.html</include>
+          <include>**/*.js</include>
           <include>**/*.css</include>
+          <include>**/*.png</include>
+          <include>**/*.gif</include>
           <include>**/*.properties</include>
+        </includes>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*.cnd</include>
+          <include>**/*.xml</include>
         </includes>
       </resource>
     </resources>

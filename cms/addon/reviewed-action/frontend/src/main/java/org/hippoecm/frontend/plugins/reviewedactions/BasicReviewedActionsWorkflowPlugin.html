@@ -15,32 +15,12 @@
  -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-      <ul class="hippo-toolbar-section">    
-      <li>
-          <a class="edit-16" wicket:id="edit-dialog"><span wicket:id="edit-dialog-label"></span></a>
-        </li>
-        <li>
-          <a class="reqpublish_ico" wicket:id="requestPublication-dialog"><span wicket:id="requestPublication-dialog-label"></span></a>
-        </li>
-        <li>
-          <a class="reqdepublish_ico" wicket:id="requestDePublication-dialog"><span wicket:id="requestDePublication-dialog-label"></span></a>
-        </li>
-        <li>
-          <a class="reqdelete_ico" wicket:id="requestDeletion-dialog"><span wicket:id="requestDeletion-dialog-label"></span></a>
-        </li>
-        <li>
-          <span class="reqschedpublish_ico" wicket:id="schedule-publish-dialog"></span>
-        </li>
-        <li>
-          <span class="reqscheddepublish_ico" wicket:id="schedule-depublish-dialog"></span>
-        </li>
-      </ul>
-   <ul class="hippo-toolbar-section">
-	<wicket:enclosure child="locked">
-	  <li class="hippo-toolbar-textitem-locked document-lock-16"><span wicket:id="locked"></span></li>
-	</wicket:enclosure>
-     <li class="hippo-toolbar-textitem-caption"><span wicket:id="caption"></span></li>
-     <li class="hippo-toolbar-textitem-status"><span wicket:id="status"></span></li>
-      </ul>
+    <div wicket:id="info">[INFO]</div>
+    <div wicket:id="edit">[EDIT]</div>
+    <div wicket:id="requestPublication">[PUBLISH]</div>
+    <div wicket:id="requestDepublication">[DEPUBLISH]</div>
+    <div wicket:id="requestDeletion">[DELETE]</div>
+    <div wicket:id="schedulePublish">[SCHEDPUBLISH]</div>
+    <div wicket:id="scheduleDepublish">[SCHEDDEPUBLISH]</div>
   </wicket:panel>
 </html>

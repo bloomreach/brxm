@@ -46,15 +46,15 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             throw new WorkflowException("cannot delete document with pending depublication request");
         if(current3 != null)
             throw new WorkflowException("cannot delete document with pending delete request");
-        if(published != null)
+        if(publishedDocument != null)
             throw new WorkflowException("cannot delete published document");
-        if(draft != null)
+        if(draftDocument != null)
             throw new WorkflowException("cannot delete document being edited");
         doDelete();
     }
 
     public void doDelete() throws WorkflowException {
-        unpublished = draft = null;
+        unpublishedDocument = draftDocument = null;
     }
 
     public void copy(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
@@ -65,15 +65,15 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             throw new WorkflowException("cannot copy document with pending depublication request");
         if(current3 != null)
             throw new WorkflowException("cannot copy document with pending delete request");
-        if(published != null)
+        if(publishedDocument != null)
             throw new WorkflowException("cannot copy published document");
-        if(draft != null)
+        if(draftDocument != null)
             throw new WorkflowException("cannot copy document being edited");
 
-        Document folder = getWorkflowContext().getDocument("embedded", unpublished.getIdentity());
+        Document folder = getWorkflowContext().getDocument("embedded", unpublishedDocument.getIdentity());
         Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
         if(workflow instanceof FolderWorkflow)
-            ((FolderWorkflow)workflow).copy(unpublished, destination, newName);
+            ((FolderWorkflow)workflow).copy(unpublishedDocument, destination, newName);
         else
             throw new WorkflowException("cannot copy document which is not contained in a folder");
     }
@@ -86,15 +86,15 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             throw new WorkflowException("cannot move document with pending depublication request");
         if(current3 != null)
             throw new WorkflowException("cannot move document with pending delete request");
-        if(published != null)
+        if(publishedDocument != null)
             throw new WorkflowException("cannot move published document");
-        if(draft != null)
+        if(draftDocument != null)
             throw new WorkflowException("cannot move document being edited");
 
-        Document folder = getWorkflowContext().getDocument("embedded", unpublished.getIdentity());
+        Document folder = getWorkflowContext().getDocument("embedded", unpublishedDocument.getIdentity());
         Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
         if(workflow instanceof FolderWorkflow)
-            ((FolderWorkflow)workflow).move(unpublished, destination, newName);
+            ((FolderWorkflow)workflow).move(unpublishedDocument, destination, newName);
         else
             throw new WorkflowException("cannot move document which is not contained in a folder");
     }
@@ -107,19 +107,19 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             throw new WorkflowException("cannot rename document with pending depublication request");
         if(current3 != null)
             throw new WorkflowException("cannot rename document with pending delete request");
-        if(published != null)
+        if(publishedDocument != null)
             throw new WorkflowException("cannot rename published document");
-        if(draft != null)
+        if(draftDocument != null)
             throw new WorkflowException("cannot rename document being edited");
         // doDepublish();
-        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", unpublished);
+        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", unpublishedDocument);
         defaultWorkflow.rename(newName);
     }
 
     public void publish() throws WorkflowException, MappingException {
         ReviewedActionsWorkflowImpl.log.info("publication on document ");
-        if(unpublished == null) {
-            if(published == null) {
+        if(unpublishedDocument == null) {
+            if(publishedDocument == null) {
                 throw new WorkflowException("No unpublished version of document available for publication");
             } else {
                 throw new WorkflowException("Document has already been published");
@@ -133,10 +133,10 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     }
 
     public void doPublish() throws WorkflowException, MappingException {
-        published = null;
-        unpublished.setState(PublishableDocument.PUBLISHED);
+        publishedDocument = null;
+        unpublishedDocument.setState(PublishableDocument.PUBLISHED);
         try {
-            VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublished);
+            VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
             versionWorkflow.version();
         } catch(MappingException ex) {
             ReviewedActionsWorkflowImpl.log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
@@ -160,13 +160,13 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
 
     void doDepublish() throws WorkflowException {
         try {
-            if(unpublished == null) {
-                unpublished = (PublishableDocument) published.clone();
-                unpublished.state = PublishableDocument.UNPUBLISHED;
+            if(unpublishedDocument == null) {
+                unpublishedDocument = (PublishableDocument) publishedDocument.clone();
+                unpublishedDocument.state = PublishableDocument.UNPUBLISHED;
             }
-            published = null;
+            publishedDocument = null;
             try {
-                VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublished);
+                VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
                 versionWorkflow.version();
             } catch(MappingException ex) {
                 ReviewedActionsWorkflowImpl.log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);

@@ -22,10 +22,11 @@
     </class>
     <class name="BasicReviewedActionsWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
-      <field name="username" column="hippostd:holder"/>
-      <field name="draft" column="../{.}[hippostd:state='draft']"/>
-      <field name="unpublished" column="../{.}[hippostd:state='unpublished']"/>
-      <field name="published" column="../{.}[hippostd:state='published']"/>
+      <field name="userIdentity" column="hippostd:holder"/>
+      <field name="state" column="hippostd:state"/>
+      <field name="draftDocument" column="../{.}[hippostd:state='draft']"/>
+      <field name="unpublishedDocument" column="../{.}[hippostd:state='unpublished']"/>
+      <field name="publishedDocument" column="../{.}[hippostd:state='published']"/>
       <field name="current" column="../hippo:request[type='publish']"/>
       <field name="current2" column="../hippo:request[type='depublish']"/>
       <field name="current3" column="../hippo:request[type='delete']"/>

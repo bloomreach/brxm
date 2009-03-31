@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.rmi.RemoteException;
-import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -39,7 +38,6 @@ import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.OnCloseDialog;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IBrowseService;

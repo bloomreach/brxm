@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2009 Hippo
+  * Copyright 2007 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -14,12 +14,16 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:panel>
-    <div wicket:id="info">[INFO]</div>
-    <div wicket:id="delete">[DELETE]</div>
-    <div wicket:id="rename">[RENAME]</div>
-    <ul wicket:id="new">
-      <li><div wicket:id="id">[NEW]</div></li>
-    </ul>
-  </wicket:panel>
+  <wicket:extend>
+    <table class="hippo-window-form">
+      <tr>
+        <td>
+          <span wicket:id="question">Date:</span>
+        </td>
+        <td>
+          <span wicket:id="value"/>
+        </td>
+      </tr>
+    </table>
+  </wicket:extend>
 </html>

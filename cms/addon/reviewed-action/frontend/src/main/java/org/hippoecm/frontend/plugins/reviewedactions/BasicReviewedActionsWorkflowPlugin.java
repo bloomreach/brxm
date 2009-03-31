@@ -15,42 +15,39 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import java.beans.Visibility;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Date;
+import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.basic.Label;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.IDialogFactory;
-import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -58,260 +55,182 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
+    private static Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
 
-    private IModel caption = new StringResourceModel("unknown", this, null);
-    private String stateSummary = "UNKNOWN";
-    private boolean isLocked = false;
-    private boolean pendingRequest = false;
-    private Component locked;
+    public String stateSummary = "UNKNOWN";
 
-    public BasicReviewedActionsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);}/*
+    WorkflowAction editAction;
+    WorkflowAction publishAction;
+    WorkflowAction depublishAction;
+    WorkflowAction deleteAction;
+    WorkflowAction schedulePublishAction;
+    WorkflowAction scheduleDepublishAction;
 
-        add(new Label("caption", caption));
+    public BasicReviewedActionsWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
+        super(context, config);
 
-        TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel("hippostd:publishableSummary"));
-        add(new Label("status", translator.getValueName("hippostd:stateSummary", new PropertyModel(this, "stateSummary"))));
-
-        add(locked = new org.apache.wicket.markup.html.WebMarkupContainer("locked"));
-
-        onModelChanged();
-
-        addWorkflowAction("edit-dialog", new StringResourceModel("edit", this, null), new Visibility() {
-            private static final long serialVersionUID = 1L;
-            public boolean isVisible() {
-                return !isLocked && !pendingRequest;
-            }
-        }, new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-            // Workaround for HREPTWO-1328
+        final TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel("hippostd:publishableSummary"));
+        add(new StdWorkflow("info", "info") {
             @Override
-            public void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
-                Node handleNode = handleModel.getNode();
-                handleNode.getSession().refresh(false);
+            protected IModel getTitle() {
+                return translator.getValueName("hippostd:stateSummary", new PropertyModel(BasicReviewedActionsWorkflowPlugin.this, "stateSummary"));
             }
             @Override
-            public void execute(Workflow wf) throws Exception {
+            protected void invoke() {
+            }
+        });
+
+        add(editAction = new WorkflowAction("edit", new StringResourceModel("edit", this, null).getString(), null) {
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "edit-16.png");
+            }
+            @Override
+            protected String execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
                 ((UserSession) getSession()).getJcrSession().refresh(true);
                 Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
-                IEditorManager viewer = getPluginContext().getService(
+                IEditorManager editorMgr = getPluginContext().getService(
                         getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
-                if (viewer != null) {
-                    viewer.openEditor(new JcrNodeModel(docNode));
+                if (editorMgr != null) {
+                    editorMgr.openEditor(new JcrNodeModel(docNode));
                 } else {
                     log.warn("No editor found to edit {}", docNode.getPath());
                 }
+                return null;
             }
         });
 
-        addWorkflowAction("requestPublication-dialog", new StringResourceModel("request-publication", this, null), new Visibility() {
-            private static final long serialVersionUID = 1L;
-            public boolean isVisible() {
-                // HREPTWO-2021
-                // return !(stateSummary.equals("review") || stateSummary.equals("live")) && !pendingRequest;
-                return false;
-            }
-        }, new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-            // Workaround for HREPTWO-1328
+        add(publishAction = new WorkflowAction("requestPublication", new StringResourceModel("request-publication", this, null).getString(), null) {
             @Override
-            public void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
-                Node handleNode = handleModel.getNode();
-                handleNode.getSession().refresh(false);
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "workflow-requestpublish-16.png");
             }
             @Override
-            public void execute(Workflow wf) throws Exception {
+            protected String execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.requestPublication();
+                return null;
             }
         });
 
-        addWorkflowAction("requestDePublication-dialog", new StringResourceModel("request-depublication", this, null), new Visibility() {
-            private static final long serialVersionUID = 1L;
-
-            public boolean isVisible() {
-                // HREPTWO-2021
-                // return !(stateSummary.equals("review") || stateSummary.equals("new")) && !pendingRequest;
-                return false;
-            }
-        }, new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-            // Workaround for HREPTWO-1328
+        add(depublishAction = new WorkflowAction("requestDepublication", new StringResourceModel("request-depublication", this, null).getString(), null) {
             @Override
-            public void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
-                Node handleNode = handleModel.getNode();
-                handleNode.getSession().refresh(false);
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "workflow-requestunpublish-16.png");
             }
             @Override
-            public void execute(Workflow wf) throws Exception {
+            protected String execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.requestDepublication();
+                return null;
             }
         });
 
-        addWorkflowAction("requestDeletion-dialog", new StringResourceModel("request-delete", this, null), new Visibility() {
-            private static final long serialVersionUID = 1L;
-
-            public boolean isVisible() {
-                return !(stateSummary.equals("review") || stateSummary.equals("live")) && !pendingRequest;
-            }
-        }, new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-            // Workaround for HREPTWO-1328
+        add(deleteAction = new WorkflowAction("requestDeletion", new StringResourceModel("request-delete", this, null).getString(), null) {
             @Override
-            public void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
-                Node handleNode = handleModel.getNode();
-                handleNode.getSession().refresh(false);
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "workflow-requestdelete-16.png");
             }
             @Override
-            public void execute(Workflow wf) throws Exception {
+            protected String execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.requestDeletion();
+                return null;
             }
         });
 
-        IModel schedulePublishLabel = new StringResourceModel("schedule-publish-label", this, null);
-        final StringResourceModel schedulePublishTitle = new StringResourceModel("schedule-publish-title", this, null);
-        final StringResourceModel schedulePublishText = new StringResourceModel("schedule-publish-text", this, null);
-        addWorkflowDialog("schedule-publish-dialog", schedulePublishLabel, new Visibility() {
-            private static final long serialVersionUID = 1L;
-
-            public boolean isVisible() {
-                return !(stateSummary.equals("review") || stateSummary.equals("live")) && !pendingRequest;
-
-            }}, new IDialogFactory() {
-                    private static final long serialVersionUID = 1L;
-
-            public IDialogService.Dialog createDialog() {
-
-                return new AbstractDateDialog(BasicReviewedActionsWorkflowPlugin.this, schedulePublishText, new Date()) {
-                    private static final long serialVersionUID = 1L;
-
+        add(schedulePublishAction = new WorkflowAction("schedulePublish", new StringResourceModel("schedule-publish-label", this, null).getString(), null) {
+            public Date date = new Date();
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "publish-schedule-16.png");
+            }
+            @Override
+            protected Dialog createRequestDialog() {
+                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-publish-text", BasicReviewedActionsWorkflowPlugin.this, null)) {
                     @Override
-                    protected String execute() {
-                        try {
-                        BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow();
-                        if (date != null) {
-                            workflow.requestPublication(date);
-                        } else {
-                            workflow.requestPublication();
-                        }
-                        return null;
-                        } catch(MappingException ex) {
-                            return ex.getClass().getName()+": "+ex.getMessage();
-                        } catch(RepositoryException ex) {
-                            return ex.getClass().getName()+": "+ex.getMessage();
-                        } catch(WorkflowException ex) {
-                            return ex.getClass().getName()+": "+ex.getMessage();
-                        } catch(RemoteException ex) {
-                            return ex.getClass().getName()+": "+ex.getMessage();
-                        }
-                    }
-
                     public IModel getTitle() {
-                        return schedulePublishTitle;
-                    }
-                };
+                        return new StringResourceModel("schedule-publish-title", BasicReviewedActionsWorkflowPlugin.this, null);
+                    }};
+            }
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow)wf;
+                if (date != null) {
+                    workflow.requestPublication(date);
+                } else {
+                    workflow.requestPublication();
+                }
+                return null;
             }
         });
 
-        IModel scheduleDePublishLabel = new StringResourceModel("schedule-depublish-label", this, null);
-        final StringResourceModel scheduleDePublishTitle = new StringResourceModel("schedule-depublish-title", this, null);
-        final StringResourceModel scheduleDePublishText = new StringResourceModel("schedule-depublish-text", this, null);
-        addWorkflowDialog("schedule-depublish-dialog", scheduleDePublishLabel, new Visibility() {
-            private static final long serialVersionUID = 1L;
-
-            public boolean isVisible() {
-                return !(stateSummary.equals("review") || stateSummary.equals("new")) && !pendingRequest;
-
-            }}, new IDialogFactory() {
-                    private static final long serialVersionUID = 1L;
-
-            public AbstractDialog createDialog() {
-
-                return new AbstractDateDialog(BasicReviewedActionsWorkflowPlugin.this, scheduleDePublishText, new Date()) {
-                    private static final long serialVersionUID = 1L;
-
+        add(scheduleDepublishAction = new WorkflowAction("scheduleDepublish", new StringResourceModel("schedule-depublish-label", this, null).getString(), null) {
+            public Date date = new Date();
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "unpublish-scheduled-16.png");
+            }
+            @Override
+            protected Dialog createRequestDialog() {
+                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-depublish-text", BasicReviewedActionsWorkflowPlugin.this, null)) {
                     @Override
-                    protected String execute() {
-                        try {
-                        BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow();
-                        if (date != null) {
-                            workflow.requestDepublication(date);
-                        } else {
-                            workflow.requestDepublication();
-                        }
-                        return null;
-                        } catch(MappingException ex) {
-                            return ex.getClass().getName()+": "+ex.getMessage();
-                        } catch(RepositoryException ex) {
-                            return ex.getClass().getName()+": "+ex.getMessage();
-                        } catch(WorkflowException ex) {
-                            return ex.getClass().getName()+": "+ex.getMessage();
-                        } catch(RemoteException ex) {
-                            return ex.getClass().getName()+": "+ex.getMessage();
-                        }
-                    }
-
                     public IModel getTitle() {
-                        return scheduleDePublishTitle;
-                    }
-                };
+                        return new StringResourceModel("schedule-depublish-title", BasicReviewedActionsWorkflowPlugin.this, null);
+                    }};
+            }
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow)wf;
+                if (date != null) {
+                    workflow.requestDepublication(date);
+                } else {
+                    workflow.requestDepublication();
+                }
+                return null;
             }
         });
+
+        onModelChanged();
     }
 
-    // FIXME: same implementation as in FullviewedActionsWorkflowPlugin
     @Override
-    public void onModelChanged() {
+    protected void onModelChanged() {
         super.onModelChanged();
-
-        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getModel();
         try {
-            JcrNodeModel nodeModel = new JcrNodeModel(model.getNode());
-            caption = new NodeTranslator(nodeModel).getNodeName();
-
-            Node node = nodeModel.getNode();
-            Node child = null;
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                pendingRequest = false;
-                for (NodeIterator iter = node.getNodes("hippo:request"); iter.hasNext(); ) {
-                    Node request = iter.nextNode();
-                        if(request.isNodeType(HippoNodeType.NT_REQUEST)) {
-                            if(!request.hasProperty("type") || !request.getProperty("type").getString().equals("rejected")) {
-                                pendingRequest = true;
-                            }
-                        }
+            WorkflowManager manager = ((UserSession)org.apache.wicket.Session.get()).getWorkflowManager();
+            WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getModel();
+            WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor)getModelObject();
+            if(workflowDescriptor != null) {
+                Node documentNode = workflowDescriptorModel.getNode();
+                if(documentNode != null && documentNode.hasProperty("hippostd:stateSummary")) {
+                    stateSummary = documentNode.getProperty("hippostd:stateSummary").getString();
                 }
-                for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext(); ) {
-                    child = iter.nextNode();
-                    if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                        node = child;
-                        if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").getString().equals("draft")) {
-                            break;
-                        }
-                    } else {
-                        child = null;
-                    }
+                Workflow workflow = manager.getWorkflow(workflowDescriptor);
+                Map<String, Serializable> info = workflow.hints();
+                if (info.containsKey("obtainEditableInstanceobtainEditableInstance") && info.get("obtainEditableInstanceobtainEditableInstance") instanceof Boolean && !((Boolean)info.get("obtainEditableInstanceobtainEditableInstance")).booleanValue()) {
+                     editAction.setVisible(false);
                 }
-            }
-            if (child != null && child.hasProperty("hippostd:stateSummary")) {
-                stateSummary = node.getProperty("hippostd:stateSummary").getString();
-            }
-            isLocked = false;
-            locked.setVisible(isLocked);
-            if (child != null && child.hasProperty("hippostd:state") &&
-                child.getProperty("hippostd:state").getString().equals("draft") && child.hasProperty("hippostd:holder") &&
-                !child.getProperty("hippostd:holder").getString().equals(child.getSession().getUserID())) {
-                isLocked = true;
-                locked.setVisible(isLocked);
+                if (info.containsKey("publish") && info.get("publish") instanceof Boolean && !((Boolean)info.get("publish")).booleanValue()) {
+                   publishAction.setVisible(false);
+                    schedulePublishAction.setVisible(false);
+                }
+                if (info.containsKey("depublish") && info.get("depublish") instanceof Boolean && !((Boolean)info.get("depublish")).booleanValue()) {
+                    depublishAction.setVisible(false);
+                    scheduleDepublishAction.setVisible(false);
+                }
+                if (info.containsKey("delete") && info.get("delete") instanceof Boolean && !((Boolean)info.get("delete")).booleanValue()) {
+                    deleteAction.setVisible(false);
+                }
             }
         } catch (RepositoryException ex) {
-            // status unknown, maybe there are legit reasons for this, so don't emit a warning
-            log.info(ex.getClass().getName() + ": " + ex.getMessage());
+            log.error(ex.getMessage(), ex);
+        } catch (WorkflowException ex) {
+            log.error(ex.getMessage(), ex);
+        } catch (RemoteException ex) {
+            log.error(ex.getMessage(), ex);
         }
     }
-*/}
+}
