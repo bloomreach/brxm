@@ -15,12 +15,12 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.HashMap;
 
 import javax.jcr.RepositoryException;
 
@@ -36,50 +36,105 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
     private static final long serialVersionUID = 1L;
 
-    protected String username;
+    protected String state;
+    protected String userIdentity;
     protected PublicationRequest current;
     protected PublicationRequest current2;
     protected PublicationRequest current3;
-    protected PublishableDocument published;
-    protected PublishableDocument unpublished;
-    protected PublishableDocument draft;
+    protected PublishableDocument publishedDocument;
+    protected PublishableDocument unpublishedDocument;
+    protected PublishableDocument draftDocument;
+
+    @Override
+    public Map<String,Serializable> hints()  {
+        Map<String,Serializable> info = super.hints();
+        boolean editable;
+	boolean publishable = false;
+	boolean depublishable = false;
+        boolean deleteable = false;
+        boolean locked = false;
+        boolean pendingRequest;
+        if(current != null || current2 != null || current3 != null) {
+            pendingRequest = true;
+        } else {
+            pendingRequest = false;
+        }
+        if(PublishableDocument.DRAFT.equals(state)) {
+            locked = true;
+            editable = draftDocument.username.equals(super.getWorkflowContext().getUserIdentity());
+	    depublishable = false;
+	    publishable = false;
+        } else if(PublishableDocument.PUBLISHED.equals(state)) {
+	    if(draftDocument != null || unpublishedDocument != null) {
+                editable = false;
+            } else if(pendingRequest) {
+                editable = false;
+            } else {
+                editable = true;
+            }
+	    if(draftDocument == null && !pendingRequest) {
+                depublishable = true;
+            }
+        } else if(PublishableDocument.UNPUBLISHED.equals(state)) {
+	    if(draftDocument != null) {
+                editable = false;
+            } else if(pendingRequest) {
+                editable = false;
+            } else {
+                editable = true;
+            }
+	    if(draftDocument == null && !pendingRequest) {
+                publishable = true;
+            }
+            if(draftDocument == null && publishedDocument == null) {
+                deleteable = true;   
+            }
+        } else {
+	    editable = false;
+	}
+        info.put("obtainEditableInstanceobtainEditableInstance", editable);
+        info.put("publish", publishable);
+        info.put("depublish", depublishable);
+        info.put("delete", deleteable);
+        return info;
+    }
 
     public BasicReviewedActionsWorkflowImpl() throws RemoteException {
     }
 
     public Document obtainEditableInstance() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("obtain editable instance on document ");
-        if(draft == null) {
+        if(draftDocument == null) {
             try {
-                if(unpublished != null) {
-                    draft = (PublishableDocument) unpublished.clone();
+                if(unpublishedDocument != null) {
+                    draftDocument = (PublishableDocument) unpublishedDocument.clone();
                 } else {
-                    draft = (PublishableDocument) published.clone();
+                    draftDocument = (PublishableDocument) publishedDocument.clone();
                 }
-                draft.state = PublishableDocument.DRAFT;
-                draft.setOwner(getWorkflowContext().getUserIdentity());
-                if(unpublished != null) {
-                    unpublished.setOwner(getWorkflowContext().getUserIdentity());
+                draftDocument.state = PublishableDocument.DRAFT;
+                draftDocument.setOwner(getWorkflowContext().getUserIdentity());
+                if(unpublishedDocument != null) {
+                    unpublishedDocument.setOwner(getWorkflowContext().getUserIdentity());
                 }
-                if(published != null) {
-                    published.setOwner(getWorkflowContext().getUserIdentity());
+                if(publishedDocument != null) {
+                    publishedDocument.setOwner(getWorkflowContext().getUserIdentity());
                 }
-                username = getWorkflowContext().getUserIdentity();
+                userIdentity = getWorkflowContext().getUserIdentity();
             } catch(CloneNotSupportedException ex) {
                 throw new WorkflowException("document is not a publishable document");
             }
         } else {
-            if(draft.username != null && !getWorkflowContext().getUserIdentity().equals(draft.username))
+            if(draftDocument.username != null && !getWorkflowContext().getUserIdentity().equals(draftDocument.username))
                 throw new WorkflowException("document already being edited");
         }
-        return draft;
+        return draftDocument;
     }
 
     public void commitEditableInstance() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("commit editable instance of document ");
-        if(draft != null) {
-            unpublished = null;
-            draft.setState(PublishableDocument.UNPUBLISHED);
+        if(draftDocument != null) {
+            unpublishedDocument = null;
+            draftDocument.setState(PublishableDocument.UNPUBLISHED);
         } else {
             throw new WorkflowException("no draft version of publication");
         }
@@ -87,13 +142,13 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
     public void disposeEditableInstance() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("dispose editable instance on document ");
-        draft = null;
+        draftDocument = null;
     }
 
     public void requestDeletion() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("deletion request on document ");
         if(current == null) {
-            current = new PublicationRequest(PublicationRequest.DELETE, unpublished, getWorkflowContext().getUserIdentity());
+            current = new PublicationRequest(PublicationRequest.DELETE, unpublishedDocument, getWorkflowContext().getUserIdentity());
         } else {
             throw new WorkflowException("request deletion failure");
         }
@@ -102,7 +157,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     public void requestPublication() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("publication request on document ");
         if(current == null) {
-            current = new PublicationRequest(PublicationRequest.PUBLISH, unpublished, getWorkflowContext().getUserIdentity());
+            current = new PublicationRequest(PublicationRequest.PUBLISH, unpublishedDocument, getWorkflowContext().getUserIdentity());
         } else {
             throw new WorkflowException("publication request already pending");
         }
@@ -111,7 +166,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     public void requestDepublication() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("depublication request on document ");
         if(current == null) {
-            current = new PublicationRequest(PublicationRequest.DEPUBLISH, published, getWorkflowContext().getUserIdentity());
+            current = new PublicationRequest(PublicationRequest.DEPUBLISH, publishedDocument, getWorkflowContext().getUserIdentity());
         } else {
             throw new WorkflowException("publication request already pending");
         }
@@ -130,7 +185,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     public void requestPublication(Date publicationDate) throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("publication request on document ");
         if(current == null) {
-            current = new PublicationRequest(PublicationRequest.SCHEDPUBLISH, unpublished, getWorkflowContext().getUserIdentity(), publicationDate);
+            current = new PublicationRequest(PublicationRequest.SCHEDPUBLISH, unpublishedDocument, getWorkflowContext().getUserIdentity(), publicationDate);
         } else {
             throw new WorkflowException("publication request already pending");
         }
@@ -144,7 +199,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     public void requestDepublication(Date depublicationDate) throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("depublication request on document ");
         if(current == null) {
-            current = new PublicationRequest(PublicationRequest.SCHEDDEPUBLISH, published, getWorkflowContext().getUserIdentity(), depublicationDate);
+            current = new PublicationRequest(PublicationRequest.SCHEDDEPUBLISH, publishedDocument, getWorkflowContext().getUserIdentity(), depublicationDate);
         } else {
             throw new WorkflowException("publication request already pending");
         }
@@ -152,7 +207,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
     PublishableDocument getRejectedDocument() throws WorkflowException {
         try {
-            PublishableDocument rejected = (PublishableDocument) unpublished.clone();
+            PublishableDocument rejected = (PublishableDocument) unpublishedDocument.clone();
             rejected.setState(PublishableDocument.STALE);
             return rejected;
         } catch(CloneNotSupportedException ex) {
@@ -161,13 +216,13 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     }
 
     public void restore(Calendar historic) throws WorkflowException {
-        if(unpublished != null || published == null) {
+        if(unpublishedDocument != null || publishedDocument == null) {
             throw new WorkflowException("Unable to retrieve historic version of document when document not in live state");
         }
         try {
             Map replacements = new TreeMap(); // note not to use JDK1.5 types here, BCEL does not support them
             replacements.put("./hippostd:state", new String[] { "unpublished" });
-            VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", published);
+            VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", publishedDocument);
             versionWorkflow.restore(historic, replacements);
         } catch(MappingException ex) {
             throw new WorkflowException("Restore historic document failed");

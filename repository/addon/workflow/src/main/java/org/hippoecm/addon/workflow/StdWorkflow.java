@@ -23,6 +23,7 @@ import javax.jcr.Session;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -80,7 +81,7 @@ public abstract class StdWorkflow extends ActionDescription {
         return name;
     }
 
-    protected StringResourceModel getTitle() {
+    protected IModel getTitle() {
         return new StringResourceModel(getName(), this, null, getName());
     }
 

@@ -208,7 +208,7 @@ public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implement
             }
         }
 
-        public abstract class NameDialog extends WorkflowDialog {
+        public class NameDialog extends WorkflowDialog {
 
             @SuppressWarnings("unused")
             private final static String SVN_ID = "$Id: AbstractNameDialog.java 15465 2008-12-19 15:50:41Z jtietema $";
@@ -216,12 +216,11 @@ public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implement
             protected String name;
             private IModel title;
 
-            public NameDialog(IModel title, IModel question, String name) {
+            public NameDialog(IModel title, IModel question, PropertyModel nameModel) {
                 super();
-                this.name = name;
                 this.title = title;
                 add(new Label("question", question));
-                add(new TextFieldWidget("value", new PropertyModel(this, "name")));
+                add(new TextFieldWidget("value", nameModel));
             }
 
             public IModel getTitle() {
@@ -229,20 +228,17 @@ public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implement
             }
         }
 
-        public abstract class DestinationDialog extends WorkflowDialog {
+        public class DestinationDialog extends WorkflowDialog {
 
-            protected JcrNodeModel destination;
-            protected String name;
             private IModel title;
             private IRenderService dialogRenderer;
             private IClusterControl control;
 
-            public DestinationDialog(IModel title, IModel question) {
+            public DestinationDialog(IModel title, IModel question, PropertyModel nameModel, final JcrNodeModel destination) {
                 super();
                 this.title = title;
-                this.destination = null;
                 add(new Label("question", question));
-                add(new TextFieldWidget("name", new PropertyModel(this, "name")));
+                add(new TextFieldWidget("name", nameModel));
 
                 IPluginContext context = CompatibilityWorkflowPlugin.this.getPluginContext();
                 IPluginConfig config = CompatibilityWorkflowPlugin.this.getPluginConfig();
@@ -258,9 +254,8 @@ public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implement
 
                     @Override
                     public void setModel(IModel model) {
-                        DestinationDialog.this.destination = null;
                         if (model != null && model instanceof JcrNodeModel && ((JcrNodeModel) model).getNode() != null) {
-                            destination = (JcrNodeModel) model;
+                            destination.setObject(model.getObject());
                         }
                         super.setModel(model);
                     }
@@ -293,28 +288,19 @@ public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implement
             public IModel getTitle() {
                 return title;
             }
-
-            @Override
-            public void onDetach() {
-                if (destination != null) {
-                    destination.detach();
-                }
-                super.onDetach();
-            }
         }
 
-        public abstract class DateDialog extends WorkflowDialog {
+        public class DateDialog extends WorkflowDialog {
 
-            protected Date date;
             protected Button now;
 
-            public DateDialog(IModel question, Date date) {
+            public DateDialog(IModel question) {
                 super();
-                this.date = date;
+                final PropertyModel dateModel = new PropertyModel(WorkflowAction.this, "date");
 
                 add(new Label("question", question));
 
-                add(new AjaxDateTimeField("value", new PropertyModel(this, "date")));
+                add(new AjaxDateTimeField("value", dateModel));
 
                 now = new AjaxButton(getButtonId(), this) {
 
@@ -322,7 +308,7 @@ public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implement
 
                     @Override
                     public void onSubmit(AjaxRequestTarget target, Form form) {
-                        DateDialog.this.date = null;
+                        dateModel.setObject(null);
                         onOk();
                         if (!hasError()) {
                             closeDialog();

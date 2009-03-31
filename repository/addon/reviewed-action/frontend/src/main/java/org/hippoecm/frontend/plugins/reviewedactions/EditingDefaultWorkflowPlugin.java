@@ -39,37 +39,30 @@ public class EditingDefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
     private static Logger log = LoggerFactory.getLogger(EditingDefaultWorkflowPlugin.class);
 
     public EditingDefaultWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
-        super(context, config);}/*
+        super(context, config);
 
         IEditor editor = context.getService(getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditor.class);
         context.registerService(new IEditorFilter() {
-            private static final long serialVersionUID = 1L;
-
             public void postClose(Object object) {
                 // nothing to do
             }
-
             public Object preClose() {
                 try {
                     ((WorkflowDescriptorModel) getModel()).getNode().save();
                     return new Object();
                 } catch (RepositoryException ex) {
                     log.info(ex.getMessage());
-                    showException(ex);
                 }
                 return null;
             }
-
         }, context.getReference(editor).getServiceId());
 
-        addWorkflowAction("save", new StringResourceModel("save", this, null), new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-
+        add(new WorkflowAction("save", new StringResourceModel("save", this, null, "Save").getString(), null) {
             @Override
-            public void execute(Workflow wf) throws Exception {
+            protected String execute(Workflow wf) throws Exception {
                 ((WorkflowDescriptorModel) getModel()).getNode().save();
+                return null;
             }
         });
     }
-*/
 }

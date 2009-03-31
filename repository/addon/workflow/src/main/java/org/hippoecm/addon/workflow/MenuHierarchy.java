@@ -51,7 +51,12 @@ class MenuHierarchy {
         if(submenus.containsKey("default")) {
             MenuHierarchy submenu = submenus.get("default");
             for(ActionDescription action : submenu.items) {
-                if(action.getId().equals("edit")) {
+                if(!action.isVisible()) {
+                    continue;
+                }
+                if(action.getId().equals("info")) {
+                    put(action);
+                } else if(action.getId().equals("edit")) {
                     put(action);
                 } else if(action.getId().equals("delete")) {
                     put(new String[] { "document" }, action);
@@ -61,9 +66,7 @@ class MenuHierarchy {
                     put(new String[] { "document" }, action);
                 } else if(action.getId().equals("rename")) {
                     put(new String[] { "document" }, action);
-                } else if(action.getId().equals("publish")) {
-                    put(new String[] { "publication" }, action);
-                } else if(action.getId().equals("depublish")) {
+                } else if(action.getId().toLowerCase().contains("publi")) {
                     put(new String[] { "publication" }, action);
                 } else {
                     put(new String[] { "miscelleneous" }, action);
