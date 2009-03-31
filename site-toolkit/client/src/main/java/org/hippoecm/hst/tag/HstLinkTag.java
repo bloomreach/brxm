@@ -134,7 +134,6 @@ public class HstLinkTag extends TagSupport {
         
         String urlString = null;
         
-        
         if (this.path == null && response instanceof HstResponse) {
             urlString = ((HstResponse) response).createNavigationalURL(url.toString()).toString();
         } else {
@@ -149,6 +148,12 @@ public class HstLinkTag extends TagSupport {
             urlString = url.toString();
         }
     
+        String customParams =  getCustomParameters(request, response);
+        if(customParams != null) {
+            urlString += customParams;
+        }
+        
+        
         if (var == null) {
             try {               
                 JspWriter writer = pageContext.getOut();
@@ -185,6 +190,18 @@ public class HstLinkTag extends TagSupport {
     }
     
     
+    /**
+     * If you want in your application to append some queryString to urls, you can implement this method. Make sure that
+     * if there are parameters, you should return a String starting with a <code>?</code>
+     * 
+     * @param request
+     * @param response
+     * @return a queryString to add to the link
+     */
+    protected String getCustomParameters(HttpServletRequest request, HttpServletResponse response) {
+        return null;
+    }
+
 
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#release()
