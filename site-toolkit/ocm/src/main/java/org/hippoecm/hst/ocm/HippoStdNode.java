@@ -15,8 +15,10 @@
  */
 package org.hippoecm.hst.ocm;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -24,7 +26,9 @@ import javax.jcr.Session;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
+import org.hippoecm.hst.util.NOOPELMap;
 import org.hippoecm.hst.util.PathUtils;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +38,7 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
     private static Logger log = LoggerFactory.getLogger(HippoStdFolder.class);
     
     protected String path;
+    private String equalsComparatorId;
     
     private transient SimpleObjectConverter simpleObjectConverter;
     private JCRValueProvider valueProvider;
@@ -150,6 +155,69 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
         }
         
         return this.parentFolder;
+    }
+    
+    
+    /**
+     * A convenience method capable of comparing to HippoStdNode instances for you for the underlying jcr node. 
+     * 
+     * When the nodes being compared have the same canonical node (physical equivalence) the get(Object o) returns true.
+     * In expression language, for example jsp, you can use to compare as follows:
+     * 
+     * <code>${mydocument.equalComparator[otherdocument]}</code>
+     * 
+     * this only returns true when mydocument and otherdocument have the same canonical node
+     * 
+     * @return a ComparatorMap in which you can compare HippoStdNode's via the get(Object o)
+     */
+    public Map<Object,Object> getEqualComparator() {
+        return new ComparatorMap();
+    }
+    
+    public class ComparatorMap extends NOOPELMap {
+        public Object get(Object compare) {
+            if(! (compare instanceof HippoStdNode)) {
+                return false;
+            }
+            
+            HippoStdNode compareNode = (HippoStdNode)compare;  
+            if(compareNode.equalsComparatorId == null) {
+               HippoNode node = (HippoNode)compareNode.getNode();
+               compareNode.equalsComparatorId = fetchComparatorId(node);
+               if(compareNode.equalsComparatorId == null) {
+                   log.warn("Cannot compare detached node or nodes having no physical referenceable node");
+                   return false;
+               }
+            }
+            if(HippoStdNode.this.equalsComparatorId == null) {
+                HippoNode node = (HippoNode)HippoStdNode.this.getNode();
+                HippoStdNode.this.equalsComparatorId = fetchComparatorId(node);
+                if(HippoStdNode.this.equalsComparatorId == null) {
+                    log.warn("Cannot compare detached node or nodes having no physical referenceable node");
+                    return false;
+                }
+            }
+            if(compareNode.equalsComparatorId != null && HippoStdNode.this.equalsComparatorId != null ) {
+                return compareNode.equalsComparatorId.equals(HippoStdNode.this.equalsComparatorId);
+            }
+            return false;
+        }
+
+        private String fetchComparatorId(HippoNode node) {
+            if(node == null) {
+                return null;
+            }
+            try {
+                if (node.hasProperty(HippoNodeType.HIPPO_UUID)) {
+                   return  node.getProperty(HippoNodeType.HIPPO_UUID).getString();
+                } else if (node.isNodeType("mix:referenceable")) {
+                   return node.getUUID();
+                }
+            } catch (RepositoryException e) {
+                log.warn("RepositoryException while comparing HippoStdNodes. Return false");
+            }
+            return null;
+        }       
     }
     
 }
