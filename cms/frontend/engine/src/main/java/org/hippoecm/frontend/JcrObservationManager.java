@@ -267,7 +267,7 @@ public class JcrObservationManager implements ObservationManager {
                 return session.getRootNode().getNode(path.substring(1));
             }
         }
-        
+
         boolean listenToFacetSearch() {
             // subscribe when listening to deep tree structures;
             // there will/might be facetsearches in there.
@@ -341,6 +341,10 @@ public class JcrObservationManager implements ObservationManager {
             // process pending changes
             try {
                 Node root = getRoot();
+                if (events.size() > 0) {
+                    root.refresh(true);
+                }
+
                 if (!isVirtual(root)) {
                     List<Node> nodes = new LinkedList<Node>();
                     if (nodeTypes == null) {
@@ -498,13 +502,6 @@ public class JcrObservationManager implements ObservationManager {
 
         UserSession session = (UserSession) org.apache.wicket.Session.get();
         if (session != null) {
-            try {
-                session.getJcrSession().refresh(true);
-            } catch (RepositoryException ex) {
-                log.error("failed to refresh the session", ex);
-                return;
-            }
-
             // copy set of listeners; don't synchronize on map while notifying observers
             // as it may need to be modified as a result of the event.
             Set<Map.Entry<EventListener, JcrListener>> set;

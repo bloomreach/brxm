@@ -27,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.Repository;
 import javax.jcr.observation.Event;
 
 import org.apache.wicket.Page;
@@ -238,6 +239,27 @@ public class ObservationTest extends TestCase {
         assertTrue(events.size() == 1);
 
         session.save();
+    }
+
+
+    @Test
+    public void testInterSessionCommunication() throws Exception {
+        Node root = session.getRootNode();
+        List<IEvent> events = new LinkedList<IEvent>();
+        IObserver observer = new TestObserver(new JcrNodeModel(root), events);
+        context.registerService(observer, IObserver.class.getName());
+
+        javax.jcr.Session other = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        Node otherTestNode = other.getRootNode().addNode("test", "nt:unstructured");
+        other.save();
+
+        Thread.sleep(500);
+
+        JcrObservationManager.getInstance().processEvents();
+        assertTrue(events.size() == 1);
+
+        Node testNode = root.getNode("test");
+        assertTrue(testNode.isSame(otherTestNode));
     }
 
     @Test
