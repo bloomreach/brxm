@@ -15,10 +15,8 @@
  */
 package org.hippoecm.hst.ocm;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
