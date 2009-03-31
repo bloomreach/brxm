@@ -157,9 +157,19 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
         return this.parentFolder;
     }
     
+    /**
+     * A convenience method capable of comparing two HippoStdNode instances for you for the underlying jcr node. 
+     * 
+     * When the nodes being compared have the same canonical node (physical equivalence) this method returns true.
+     * @param compare the object to compare to
+     * @return <code>true</code> if the object compared has the same canonical node
+     */
+    public boolean equalCompare(Object compare){
+        return (Boolean)new ComparatorMap().get(compare);
+    }
     
     /**
-     * A convenience method capable of comparing to HippoStdNode instances for you for the underlying jcr node. 
+     * A convenience method capable of comparing two HippoStdNode instances for you for the underlying jcr node. 
      * 
      * When the nodes being compared have the same canonical node (physical equivalence) the get(Object o) returns true.
      * In expression language, for example jsp, you can use to compare as follows:
