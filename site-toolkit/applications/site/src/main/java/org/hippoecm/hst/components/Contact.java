@@ -44,6 +44,7 @@ public class Contact extends BaseFormHstComponent {
         
         if(request.getParameter("prev") != null && request.getParameter("previous") != null) {
             response.setRenderParameter(DEFAULT_UUID_NAME, request.getParameter("previous"));
+            return;
         }
         // Do a really simple validation: 
         if(formMap.getField("email") != null && formMap.getField("email").contains("@")) {
