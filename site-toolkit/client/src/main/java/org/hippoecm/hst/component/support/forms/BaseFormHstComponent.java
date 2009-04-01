@@ -131,11 +131,9 @@ public class BaseFormHstComponent extends BaseHstComponent{
      */
     
     protected void persistFormMap(HstRequest request, HstResponse response, FormMap formMap, StoreFormResult storeFormResult) throws HstComponentException { 
-            
+            Session impersonated = null;
             try {
-                // TODO impersonate session!! see HSTTWO-434
                 Session session = request.getRequestContext().getSession();
-
                 String writableUserProperty = getWritableUserName();
                 String writablePasswordProperty = getWritablePassword();
                 ContainerConfiguration config = request.getRequestContext().getContainerConfiguration();
@@ -147,13 +145,13 @@ public class BaseFormHstComponent extends BaseHstComponent{
                     return;
                 }
                 try {
-                    session = session.impersonate(new SimpleCredentials(username, password.toCharArray()));
+                    impersonated = session.impersonate(new SimpleCredentials(username, password.toCharArray()));
                 } catch (RepositoryException e){
                     log.error("Cannot impersonate a session with '{}' and '{}'", username, password);
                     return;
                 }
                     
-                Node rootNode = session.getRootNode();
+                Node rootNode = impersonated.getRootNode();
                 Node formData = null;
                 if(!rootNode.hasNode(getFormDataNodeName())) {
                     formData = rootNode.addNode(getFormDataNodeName(), "nt:unstructured");
@@ -191,6 +189,10 @@ public class BaseFormHstComponent extends BaseHstComponent{
                throw new HstComponentException("LoginExceptionExeption during storing form data: ", e);
             } catch (RepositoryException e) {
                throw new HstComponentException("RepositoryException during storing form data: ", e);
+            } finally {
+                if(impersonated != null) {
+                    impersonated.logout();
+                }
             }
     }
     
