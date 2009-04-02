@@ -23,6 +23,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.console.menu.check.CheckInOutDialog;
 import org.hippoecm.frontend.plugins.console.menu.cnd.CndExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.cnd.CndImportDialog;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentExportDialog;
@@ -96,7 +97,7 @@ public class MenuPlugin extends RenderPlugin {
                 return new ContentExportDialog(MenuPlugin.this);
             }
         };
-        add(new DialogLink("content-export-dialog", new Model("Export Node"), dialogFactory, dialogService));
+        add(new DialogLink("content-export-dialog", new Model("XML Export"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -105,7 +106,7 @@ public class MenuPlugin extends RenderPlugin {
                 return new ContentImportDialog(MenuPlugin.this);
             }
         };
-        add(new DialogLink("content-import-dialog", new Model("Import Node"), dialogFactory, dialogService));
+        add(new DialogLink("content-import-dialog", new Model("XML Import"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -169,6 +170,15 @@ public class MenuPlugin extends RenderPlugin {
             }
         };
         add(new DialogLink("namespace-dialog", new Model("Add Namespace"), dialogFactory, dialogService));
+
+        dialogFactory = new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
+
+            public AbstractDialog createDialog() {
+                return new CheckInOutDialog(MenuPlugin.this);
+            }
+        };
+        add(new DialogLink("check-inout-dialog", new Model("Check In/Out"), dialogFactory, dialogService));
 
         sorter = new Sorter("sorter-panel");
         add(sorter);
