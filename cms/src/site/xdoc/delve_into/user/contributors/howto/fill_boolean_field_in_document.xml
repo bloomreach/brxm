@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -33,27 +33,27 @@ ________________________________________________________________________________
     leftpx=450;
     bottompx=480;
    </script>
-   <div class='group'> 
+   <div class='group'>
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/contribs/fill_boolean_field.png" alt='Fill boolean screenshot'/> 
-    </div></div> 
+     <img src="../../../../images/screenshots/cms_M9/contribs/fill_boolean_field.png" alt='Fill boolean screenshot'/>
+    </div></div>
      <p>
         This document contains two <a href='../concepts/boolean.html'>boolean</a> inputfields,
         'Indoors?' and 'Recurring?'. They stand for yes/no questions. 
         The first was answered with 'no' by not checking that box, the second with
-        'yes' by checking that box. 
+        'yes' by checking that box.
      </p>
   </div>
 
    <p>
      Ensure that in some way you have <a href='./set_edit_mode.html'>set the document in</a>
-     <a href='../concepts/edit_mode'>edit mode</a>.  
-    Below the caption of a boolean field, check the checkbox to answer 'yes'. 
+     <a href='../concepts/edit_mode.html'>edit mode</a>.
+    Below the caption of a boolean field, check the checkbox to answer 'yes'.
     If you leave the checkbox unchecked, it means
-    'no'. Clicking the checkbox checks and unchecks the checkbox alternately.      
+    'no'. Clicking the checkbox checks and unchecks the checkbox alternately.
    </p>
    <p>
-     <a href='./learn_meaning_of_inputfield.html'>Ensure 
+     <a href='./learn_meaning_of_inputfield.html'>Ensure
       that you know the meaning of the boolean inputfield</a> and answer the
       question it stands for correctly!
    </p>
@@ -64,16 +64,16 @@ ________________________________________________________________________________
      <li><a href='./fill_date_field_in_document.html'>Fill a date field in a document</a>.</li>
      <li><a href='./fill_string_field_in_document.html'>Fill a string field in a document</a>.</li>
      <li><a href='./save_document.html'>Save the changes to the document</a>.</li>
-    </ul>       
+    </ul>
    </subsection>
 
    <subsection name='Alternative'>
     <ul>
      <li><a href='./index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>
-    </ul>       
+    </ul>
    </subsection>
 
   </section>
  </body>
-</document>        
+</document>
