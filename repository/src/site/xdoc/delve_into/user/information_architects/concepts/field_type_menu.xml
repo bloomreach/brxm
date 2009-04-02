@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+____________________________________________________________________________________________
+
+-->
+ <document>
+  <properties>
+    <title>field type menu</title>
+  </properties>
+
+  <body>
+    <section name="string">
+      <span class="shortdesc">What is a field type menu</span>
+
+      <p>A field type menu
+         occurs in the <span href='./concepts/document_type_editor.html'>document type editor</span>.
+         In the field type menu a field type can be selected, which results in a new field of
+         that type being added at the end of the
+         <a href='./concepts/documenttype.html'>document type</a> being edited.
+     </p>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Glossary.</a></li>
+     <li><a href='../howto/index.html'>Howto list.</a></li>
+    </ul>
+   </subsection>
+   </section>
+  </body>
+ </document>
+

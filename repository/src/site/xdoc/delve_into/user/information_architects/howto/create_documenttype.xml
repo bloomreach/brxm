@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -47,7 +47,7 @@ ________________________________________________________________________________
 
    <p>
     To add a documenttype to a <a href='../concepts/namespace.html'>namespace</a>, select the
-    <a href='../concepts/namespace_folder.html'>folder</a> for that namespace
+    <a href='../concepts/namespaces_folder.html'>folder</a> for that namespace
     as the <a href='../concepts/current_folder.html'>current folder</a> and
     select 'create new type' in the <a href='../concepts/folder_action_menu.html'>folder action menu</a>.
     A dialog window appears.

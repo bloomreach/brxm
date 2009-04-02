@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -46,7 +46,7 @@ ________________________________________________________________________________
    <p>
     Ensure that you have the document type in <a href='../concepts/edit_mode.html'>edit mode</a>.
     In the <a href='../concepts/field_type_menu.html'>field type menu</a>,
-    choose 'String'. A new <a href='../concepts/string_field.html'>string field</a>
+    choose 'String'. A new <a href='../concepts/string.html'>string</a> field
     appears as part of the document type.
     The <a href='../concepts/field_properties_overview.html'>field properties overview</a>
     of the new field also appears. Define at least the following properties:
