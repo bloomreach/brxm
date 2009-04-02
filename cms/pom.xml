@@ -143,6 +143,11 @@
     <url>http://issues.onehippo.org/browse/HREPTWO</url>
   </issueManagement>
 
+  <ciManagement>
+    <system>Hudson</system>
+    <url>http://hudson.onehippo.org/</url>
+  </ciManagement>
+
   <inceptionYear>2007</inceptionYear>
 
   <developers>
