@@ -190,7 +190,6 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
                 versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
             }
             try {
-                versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
                 versionWorkflow.version();
             } catch(MappingException ex) {
                 ReviewedActionsWorkflowImpl.log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);

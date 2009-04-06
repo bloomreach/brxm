@@ -76,6 +76,14 @@ public class FailingWorkflowTest extends TestCase {
 
         build(session, content);
         session.save();
+
+	Node workflowsNode = session.getRootNode().getNode("hippo:configuration/hippo:workflows/default");
+	Node wfNode = workflowsNode.getNode("reviewedactions");
+	if(wfNode.hasProperty("hippo:privileges")) {
+	    wfNode.getProperty("hippo:privileges").remove();
+        }
+
+        session.save();
     }
 
     @After
@@ -96,8 +104,10 @@ public class FailingWorkflowTest extends TestCase {
         WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
         Node handle = session.getRootNode().getNode("test/folder/document");
         Node document = handle.getNode(handle.getName());
-        WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor("default", document);
-        Workflow workflowInterface = manager.getWorkflow(workflowDescriptor);
+System.err.println("BERRY "+document.getPath());
+        // WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor("default", document);
+        // Workflow workflowInterface = manager.getWorkflow(workflowDescriptor);
+        Workflow workflowInterface = manager.getWorkflow("default", document);
         assertTrue(workflowInterface instanceof FullReviewedActionsWorkflow);
         FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) workflowInterface;
         try {
@@ -108,16 +118,18 @@ public class FailingWorkflowTest extends TestCase {
         }
 
         document = handle.getNode(handle.getName());
-        workflowDescriptor = manager.getWorkflowDescriptor("default", document);
-        workflowInterface = manager.getWorkflow(workflowDescriptor);
+        // workflowDescriptor = manager.getWorkflowDescriptor("default", document);
+        // workflowInterface = manager.getWorkflow(workflowDescriptor);
+        workflowInterface = manager.getWorkflow("default", document);
         assertTrue(workflowInterface instanceof FullReviewedActionsWorkflow);
         workflow = (FullReviewedActionsWorkflow) workflowInterface;
 
         workflow.depublish();
 
         document = handle.getNode(handle.getName());
-        workflowDescriptor = manager.getWorkflowDescriptor("default", document);
-        workflowInterface = manager.getWorkflow(workflowDescriptor);
+        // workflowDescriptor = manager.getWorkflowDescriptor("default", document);
+        // workflowInterface = manager.getWorkflow(workflowDescriptor);
+        workflowInterface = manager.getWorkflow("default", document);
         assertTrue(workflowInterface instanceof FullReviewedActionsWorkflow);
         workflow = (FullReviewedActionsWorkflow) workflowInterface;
         workflow.rename("succeed");
