@@ -50,6 +50,8 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.version.VersionException;
 
+import javax.jdo.JDOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -330,10 +332,13 @@ public class WorkflowManagerImpl implements WorkflowManager {
                                 throw new RepositoryException("no valid constructor found in standards plugin");
                             }
                         } catch (IllegalAccessException ex) {
+                            log.debug("no access to standards plugin", ex);
                             throw new RepositoryException("no access to standards plugin", ex);
                         } catch (InstantiationException ex) {
+                            log.debug("standards plugin invalid", ex);
                             throw new RepositoryException("standards plugin invalid", ex);
                         } catch (InvocationTargetException ex) {
+                            log.debug("standards plugin invalid", ex);
                             throw new RepositoryException("standards plugin invalid", ex);
                         }
                     } else {
@@ -388,16 +393,20 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         try {
                             UnicastRemoteObject.exportObject(workflow, 0);
                         } catch (RemoteException ex) {
+                            log.debug("Problem creating workflow proxy", ex);
                             throw new RepositoryException("Problem creating workflow proxy", ex);
                         }
                     } catch (NoSuchMethodException ex) {
+                        log.debug("Impossible situation creating workflow proxy", ex);
                         throw new RepositoryException("Impossible situation creating workflow proxy", ex);
                     } catch (InstantiationException ex) {
                         log.error("Unable to create proxy for workflow");
                         throw new RepositoryException("Unable to create proxy for workflow", ex);
                     } catch (IllegalAccessException ex) {
+                        log.debug("Impossible situation creating workflow proxy", ex);
                         throw new RepositoryException("Impossible situation creating workflow proxy", ex);
                     } catch (InvocationTargetException ex) {
+                        log.debug("Impossible situation creating workflow proxy", ex);
                         throw new RepositoryException("Impossible situation creating workflow proxy", ex);
                     }
 
@@ -446,15 +455,19 @@ public class WorkflowManagerImpl implements WorkflowManager {
                             newInstance(new Object[] {handler});
 
                 } catch (ClassNotFoundException ex) {
+                    log.debug("Unable to locate workflow class", ex);
                     throw new RepositoryException("Unable to locate workflow class", ex);
                 } catch (NoSuchMethodException ex) {
+                    log.debug("Impossible situation creating workflow proxy", ex);
                     throw new RepositoryException("Impossible situation creating workflow proxy", ex);
                 } catch (InstantiationException ex) {
                     log.error("Unable to create proxy for workflow");
                     throw new RepositoryException("Unable to create proxy for workflow", ex);
                 } catch (IllegalAccessException ex) {
+                    log.debug("Impossible situation creating workflow proxy", ex);
                     throw new RepositoryException("Impossible situation creating workflow proxy", ex);
                 } catch (InvocationTargetException ex) {
+                    log.debug("Impossible situation creating workflow proxy", ex);
                     throw new RepositoryException("Impossible situation creating workflow proxy", ex);
                 }
 
@@ -505,7 +518,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         eventLogger.logWorkflowStep(session.getUserID(), upstream.getClass().getName(),
                                                     targetMethod.getName(), args, returnObject, path);
                     }
-
                     while (!invocationChain.isEmpty()) {
                         WorkflowInvocationImpl current = (WorkflowInvocationImpl) invocationChain.remove(0);
                         invocationIndex = invocationChain.listIterator();
@@ -514,11 +526,33 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 }
 
                 return returnObject;
+            } catch (RepositoryException ex) {
+                rootSession.refresh(false);
+                throw returnException = ex;
+            } catch (RemoteException ex) {
+                rootSession.refresh(false);
+                throw returnException = ex;
             } catch (NoSuchMethodException ex) {
+                rootSession.refresh(false);
                 throw returnException = new RepositoryException("Impossible failure for workflow proxy", ex);
+            } catch (JDOException ex) {
+                rootSession.refresh(false);
+                if(ex.getCause() != null)
+                    throw returnException = ex.getCause();
+                Throwable[] nestedExceptions = ex.getNestedExceptions();
+                if(nestedExceptions != null) {
+                    for(Throwable nestedException : nestedExceptions) {
+                        if(nestedException instanceof RepositoryException) {
+                            throw returnException = nestedException;
+                        }
+                    }
+                }
+                throw returnException = new RepositoryException("Internal failure for workflow proxy", ex);
             } catch (IllegalAccessException ex) {
+                rootSession.refresh(false);
                 throw returnException = new RepositoryException("Impossible failure for workflow proxy", ex);
             } catch (InvocationTargetException ex) {
+                rootSession.refresh(false);
                 log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
                 throw returnException = ex.getCause();
             } finally {
@@ -658,6 +692,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 }
                 output.writeObject(arguments);
             } catch(RepositoryException ex) {
+                log.debug("not serializable", ex);
                 throw new IOException("not serializable");
             }
         }
@@ -671,7 +706,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             workflowSubject = null;
         }
 
-        public Object invoke(Session session) throws RepositoryException {
+        public Object invoke(Session session) throws RepositoryException, WorkflowException {
             workflowSubjectNode = session.getNodeByUUID(workflowSubjectNode.getUUID());
             WorkflowManager workflowManager = new WorkflowManagerImpl(session, session);
             Workflow workflow = workflowManager.getWorkflow(category, workflowSubjectNode);
@@ -694,13 +729,27 @@ public class WorkflowManagerImpl implements WorkflowManager {
             try {
                 return method.invoke(workflow, arguments);
             } catch(IllegalAccessException ex) {
+                log.debug(ex.getMessage(), ex);
                 throw new RepositoryException(ex.getMessage(), ex);
             } catch(InvocationTargetException ex) {
-                throw new RepositoryException(ex.getMessage(), ex);
+                Throwable cause = ex.getCause();
+                if (cause instanceof WorkflowException) {
+                    throw (WorkflowException) cause;
+                } else if (cause instanceof MappingException) {
+                    throw (MappingException) cause;
+                } else if (cause instanceof RepositoryException) {
+                    throw (RepositoryException) cause;
+                } else if (cause != null) {
+                    log.debug(cause.getMessage(), cause);
+                    throw new RepositoryException(cause.getMessage(), cause);
+                } else {
+                    log.debug(ex.getMessage(), ex);
+                    throw new RepositoryException(ex.getMessage(), ex);
+                }
             }
         }
 
-        Object invoke(WorkflowManagerImpl manager) throws RepositoryException {
+        Object invoke(WorkflowManagerImpl manager) throws RepositoryException, WorkflowException {
             try {
                 Workflow workflow = null; // compiler does not detect properly there is no path where this not set
                 String classname;
@@ -746,12 +795,16 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         }
                     }
                 } catch (IllegalAccessException ex) {
+                    log.debug("no access to standards plugin", ex);
                     throw new RepositoryException("no access to standards plugin", ex);
                 } catch (ClassNotFoundException ex) {
+                    log.debug("standards plugin missing", ex);
                     throw new RepositoryException("standards plugin missing", ex);
                 } catch (InstantiationException ex) {
+                    log.debug("standards plugin invalid", ex);
                     throw new RepositoryException("standards plugin invalid", ex);
                 } catch (InvocationTargetException ex) {
+                    log.debug("standards plugin invalid", ex);
                     throw new RepositoryException("standards plugin invalid", ex);
                 }
 
@@ -765,10 +818,25 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     return returnObject;
                 }
             } catch (InvocationTargetException ex) {
-                throw new RepositoryException("standards plugin invalid", ex);
+                Throwable cause = ex.getCause();
+                if (cause instanceof WorkflowException) {
+                    throw (WorkflowException) cause;
+                } else if (cause instanceof MappingException) {
+                    throw (MappingException) cause;
+                } else if (cause instanceof RepositoryException) {
+                    throw (RepositoryException) cause;
+                } else if (cause != null) {
+                    log.debug(cause.getMessage(), cause);
+                    throw new RepositoryException(cause.getMessage(), cause);
+                } else {
+                    log.debug(ex.getMessage(), ex);
+                    throw new RepositoryException(ex.getMessage(), ex);
+                }
             } catch (NoSuchMethodException ex) {
+                log.debug("standards plugin invalid", ex);
                 throw new RepositoryException("standards plugin invalid", ex);
             } catch (IllegalAccessException ex) {
+                log.debug("no access to standards plugin", ex);
                 throw new RepositoryException("no access to standards plugin", ex);
             } catch (PathNotFoundException ex) {
                 log.error("Workflow specification corrupt on node "+workflowNode.getPath());
@@ -777,22 +845,31 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 log.error("Workflow specification corrupt on node "+workflowNode.getPath());
                 throw new RepositoryException("workflow specification corrupt", ex);
             } catch (NoSuchNodeTypeException ex) {
+                log.debug(ex.getMessage(), ex);
                 throw ex;
             } catch (LockException ex) {
+                log.debug(ex.getMessage(), ex);
                 throw ex;
             } catch (VersionException ex) {
+                log.debug(ex.getMessage(), ex);
                 throw ex;
             } catch (ConstraintViolationException ex) {
+                log.debug(ex.getMessage(), ex);
                 throw ex;
             } catch (AccessDeniedException ex) {
+                log.debug(ex.getMessage(), ex);
                 throw ex;
             } catch (ItemNotFoundException ex) {
+                log.debug(ex.getMessage(), ex);
                 throw ex;
             } catch (UnsupportedRepositoryOperationException ex) {
+                log.debug(ex.getMessage(), ex);
                 throw ex;
             } catch (ItemExistsException ex) {
+                log.debug(ex.getMessage(), ex);
                 throw ex;
             } catch (InvalidItemStateException ex) {
+                log.debug(ex.getMessage(), ex);
                 throw ex;
             }
         }
@@ -827,6 +904,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 Node node = subject.getSession().getNodeByUUID(uuid);
                 return new WorkflowContextImpl(workflowDefinition, node);
             }
+            log.debug("No context defined for class "+(specification!=null?specification.getClass().getName():"none"));
             throw new MappingException("No context defined for class "+(specification!=null?specification.getClass().getName():"none"));
         }
 

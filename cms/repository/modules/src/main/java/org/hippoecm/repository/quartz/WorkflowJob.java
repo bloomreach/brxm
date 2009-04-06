@@ -27,6 +27,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import org.hippoecm.repository.ext.WorkflowInvocation;
+import org.hippoecm.repository.api.WorkflowException;
 
 public class WorkflowJob implements Job {
     @SuppressWarnings("unused")
@@ -46,6 +47,8 @@ public class WorkflowJob implements Job {
                 invocation.invoke(session);
                 session.save();
             }
+        } catch (WorkflowException ex) {
+            throw new JobExecutionException(ex.getClass().getName() + ": " + ex.getMessage());
         } catch (RepositoryException ex) {
             throw new JobExecutionException(ex.getClass().getName() + ": " + ex.getMessage());
         }

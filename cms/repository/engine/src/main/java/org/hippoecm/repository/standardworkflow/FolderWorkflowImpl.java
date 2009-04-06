@@ -18,6 +18,7 @@ package org.hippoecm.repository.standardworkflow;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     private static final long serialVersionUID = 1L;
 
     private final Session userSession;
+    private final Session rootSession;
     private final WorkflowContext workflowContext;
     private final Node subject;
 
@@ -71,6 +73,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         this.workflowContext = context;
         this.subject = subject;
         this.userSession = userSession;
+        this.rootSession = rootSession;
     }
 
     public Map<String,Serializable> hints() throws WorkflowException, MappingException, RepositoryException, RemoteException {
@@ -189,9 +192,14 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             if (prototypeNode.getName().equals("hippo:prototype")) {
                 String documentType = prototypeNode.getPrimaryNodeType().getName();
                 if (documentType.equals(template)) {
-                    // create handle ourselves
-                    result = target.addNode(name, "hippo:handle");
-                    result.addMixin("hippo:hardhandle");
+                    // create handle ourselves, if not already exists
+                    if(!target.hasNode(name) || !target.getNode(name).isNodeType(HippoNodeType.NT_HANDLE) ||
+                                                 target.getNode(name).hasNode(name)) {
+                        result = target.addNode(name, "hippo:handle");
+                        result.addMixin("hippo:hardhandle");
+                    } else {
+                        result = target.getNode(name);
+                    }
                     renames.put("./_name", new String[] { name });
                     result = copy(prototypeNode, result, renames, ".");
                     break;
@@ -248,13 +256,16 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (folder.hasNode(name)) {
             Node offspring = folder.getNode(name);
             if (atticPath != null) {
+                if (offspring.isNodeType(HippoNodeType.NT_DOCUMENT) && offspring.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    offspring = offspring.getParent();
+                }
                 if (subject.getPath().equals(atticPath)) {
                     offspring.remove();
                     folder.save();
                 } else {
                     if (userSession.getRootNode().hasNode(atticPath.substring(1))) {
-                        userSession.getWorkspace().move(folder.getPath() + "/" + offspring.getName(),
-                                                        atticPath + "/" + offspring.getName());
+                        rootSession.getWorkspace().move(folder.getPath() + "/" + offspring.getName(),
+                                                        atticPath + "/" + atticName(atticPath, offspring.getName(), true));
                     } else {
                         throw new WorkflowException("Attic " + atticPath + " for archivation does not exist");
                     }
@@ -263,6 +274,59 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 throw new WorkflowException("No attic for archivation defined");
             }
         }
+    }
+
+    public void archive(Document document) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        String atticPath = null;
+        RepositoryMap config = workflowContext.getWorkflowConfiguration();
+        if(config.exists() && config.containsKey("attic") && config.get("attic") instanceof String) {
+            atticPath = (String) config.get("attic");
+        }
+        String path = subject.getPath().substring(1);
+        Node folderNode = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
+        Node documentNode = rootSession.getNodeByUUID(document.getIdentity());
+        if (documentNode.getPath().startsWith(folderNode.getPath()+"/")) {
+            if (atticPath != null) {
+            if (documentNode.isNodeType(HippoNodeType.NT_DOCUMENT) && documentNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                documentNode = documentNode.getParent();
+            }
+            if (subject.getPath().equals(atticPath)) {
+                documentNode.remove();
+                folderNode.save();
+            } else {
+                rootSession.getWorkspace().move(documentNode.getPath(), atticPath + "/" + atticName(atticPath, documentNode.getName(), true));
+            }
+            } else {
+                throw new WorkflowException("No attic for archivation defined");
+            }
+        }
+    }
+
+    private String atticName(String atticPath, String documentName, boolean createPath) throws RepositoryException {
+        Calendar now = Calendar.getInstance();
+        String year = Integer.toString(now.get(Calendar.YEAR));
+        String month = Integer.toString(now.get(Calendar.MONTH) + 1);
+        String day = Integer.toString(now.get(Calendar.DAY_OF_MONTH));
+        if(createPath) {
+            Node destination, attic = rootSession.getRootNode().getNode(atticPath.substring(1));
+            if(!attic.hasNode(year)) {
+                destination = attic.addNode(year, "nt:unstructured");
+            } else {
+                destination = attic.getNode(year);
+            }
+            if(!destination.hasNode(month)) {
+                destination = destination.addNode(month, "nt:unstructured");
+            } else {
+                destination = destination.getNode(month);
+            }
+            if(!destination.hasNode(day)) {
+                destination = destination.addNode(day, "nt:unstructured");
+            } else {
+                destination = destination.getNode(day);
+            }
+            attic.save();
+        }
+        return year + "/" + month + "/" + day + "/" + documentName;
     }
 
     public void reorder(List<String> newOrder) throws WorkflowException, MappingException, RepositoryException, RemoteException {
@@ -285,6 +349,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
         if (folder.hasNode(name)) {
             Node offspring = folder.getNode(name);
+            if (offspring.isNodeType(HippoNodeType.NT_DOCUMENT) && offspring.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                offspring = offspring.getParent();
+            }
             offspring.remove();
             folder.save();
         }
@@ -295,6 +362,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Node folderNode = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
         Node documentNode = userSession.getNodeByUUID(document.getIdentity());
         if (documentNode.getPath().startsWith(folderNode.getPath()+"/")) {
+            if (documentNode.isNodeType(HippoNodeType.NT_DOCUMENT) && documentNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                documentNode = documentNode.getParent();
+            }
             documentNode.remove();
             folderNode.save();
         }

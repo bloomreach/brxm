@@ -112,6 +112,15 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
             throw new WorkflowException("cannot delete document which is not contained in a folder");
     }
 
+    public void archive() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
+        Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
+        if(workflow instanceof FolderWorkflow)
+            ((FolderWorkflow)workflow).archive(document);
+        else
+            throw new WorkflowException("cannot delete document which is not contained in a folder");
+    }
+
     public void rename(String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
         Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);

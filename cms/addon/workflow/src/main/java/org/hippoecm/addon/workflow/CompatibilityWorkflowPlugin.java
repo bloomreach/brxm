@@ -139,20 +139,31 @@ public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implement
             } catch (RepositoryException ex) {
                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
-                return ex.getClass().getName() + ": " + ex.getMessage();
+		error(ex);
+                return "";
             } catch (WorkflowException ex) {
                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
-                return ex.getClass().getName() + ": " + ex.getMessage();
+		error(ex);
+                return "";
             } catch (RemoteException ex) {
                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
-                return ex.getClass().getName() + ": " + ex.getMessage();
+		error(ex);
+                return "";
             } catch (Exception ex) {
                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
-                return ex.getClass().getName() + ": " + ex.getMessage();
-            }
+		error(ex);
+                return "";
+            } finally {
+		/*
+                IJcrService jcrService = plugin.getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
+                if (jcrService != null) {
+                    jcrService.flush(handle);
+                }
+		*/
+	    }
             return null;
         }
 
@@ -190,7 +201,7 @@ public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implement
             @Override
             protected void onOk() {
                 String errorMessage = execute();
-                if (errorMessage != null) {
+                if (errorMessage != null && !errorMessage.equals("")) {
                     error(errorMessage);
                 }
             }

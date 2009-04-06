@@ -85,6 +85,17 @@ public interface FolderWorkflow extends Workflow {
 
     /**
      *
+     * @param offspring
+     * @throws WorkflowException
+     * @throws MappingException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
+    public void archive(Document offspring)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     *
      * @param relPath the relative path from the parent folder (including the index number)
      * @throws WorkflowException
      * @throws MappingException
