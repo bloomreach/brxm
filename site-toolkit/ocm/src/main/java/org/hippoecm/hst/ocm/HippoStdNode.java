@@ -35,7 +35,6 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
 
     private static Logger log = LoggerFactory.getLogger(HippoStdFolder.class);
     
-    protected String path;
     private String equalsComparatorId;
     
     private transient SimpleObjectConverter simpleObjectConverter;
@@ -66,17 +65,13 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
         this.simpleObjectConverter = simpleObjectConverter;
     }
 
-    // TODO replace below with getPath from valueprovider?
-    @Field(path = true)
     public String getPath() {
-        return this.path;
+       if(this.valueProvider != null) {
+           return this.valueProvider.getPath();
+       }
+       return null;
     }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    
     public String getName() {
         String name = "";
 
