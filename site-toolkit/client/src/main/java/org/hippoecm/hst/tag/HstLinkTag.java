@@ -140,8 +140,7 @@ public class HstLinkTag extends TagSupport {
             // TODO make sure the DomainMapping/Hosting is used to know whether to include the context path & servletpath HSTTWO-431
             // only add the current servletpath for HstLink and not for static links HSTTWO-378
             
-            // TODO do not have the hardcoded check for /binaries, see HSTTWO-454
-            if (this.link != null && this.link.getPath() != null && !this.link.getPath().startsWith("/binaries")) {
+            if (this.link != null) {
                 url.insert(0, request.getContextPath() + request.getServletPath());
             } else {
                 url.insert(0, request.getContextPath());
