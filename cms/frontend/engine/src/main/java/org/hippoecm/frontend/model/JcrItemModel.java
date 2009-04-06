@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 import javax.jcr.Item;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -39,27 +40,34 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     static final Logger log = LoggerFactory.getLogger(JcrItemModel.class);
 
-    protected String path;
+    private String uuid;
+    private String path;
 
     // constructors
 
     public JcrItemModel(Item item) {
         super(item);
-        if (item != null) {
-            try {
-                this.path = item.getPath();
-            } catch (RepositoryException ex) {
-                log.error("Unable to get item path", ex);
-            }
-        }
+        path = null;
+        uuid = null;
     }
 
     public JcrItemModel(String path) {
         super();
         this.path = path;
+        load();
     }
 
     public String getPath() {
+        if (path == null && isAttached()) {
+            Item item = (Item) getObject();
+            if (item != null) {
+                try {
+                    path = item.getPath();
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
+                }
+            }
+        }
         return path;
     }
 
@@ -115,10 +123,23 @@ public class JcrItemModel extends LoadableDetachableModel {
     @Override
     protected Object load() {
         Item result = null;
-        if (path != null) {
+        if (uuid != null) {
+            try {
+                UserSession sessionProvider = (UserSession) Session.get();
+                result = sessionProvider.getJcrSession().getNodeByUUID(uuid);
+            } catch (RepositoryException e) {
+                log.warn("failed to load " + e.getMessage());
+            }
+        } else if (path != null) {
             try {
                 UserSession sessionProvider = (UserSession) Session.get();
                 result = sessionProvider.getJcrSession().getItem(path);
+                if(result != null && result.isNode()) {
+                    Node node = (Node) result;
+                    if (node.isNodeType("mix:referenceable")) {
+                        uuid = node.getUUID();
+                    }
+                }
             } catch (RepositoryException e) {
                 log.warn("failed to load " + e.getMessage());
             }
@@ -130,14 +151,29 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     @Override
     public void detach() {
-        if (isAttached() && path != null) {
+        if (isAttached()) {
             Item item = (Item) getObject();
-            if (item != null) {
+            if (item != null && path == null) {
                 try {
-                    if (!path.equals(item.getPath())) {
-                        super.detach();
-                        throw new RuntimeException(
-                                "JcrItemModel path is different from Item path.  Model should no longer be used");
+                    if(item.isNode()) {
+                        Node node = (Node)item;
+                        if(node.isNodeType("mix:referenceable")) {
+                            uuid = node.getUUID();
+                        }
+                    }
+                    path = item.getPath();
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
+                }
+            } else {
+                UserSession sessionProvider = (UserSession) Session.get();
+                try {
+                    item = sessionProvider.getJcrSession().getItem(path);
+                    if(item.isNode()) {
+                        Node node = (Node)item;
+                        if(node.isNodeType("mix:referenceable")) {
+                            uuid = node.getUUID();
+                        }
                     }
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
