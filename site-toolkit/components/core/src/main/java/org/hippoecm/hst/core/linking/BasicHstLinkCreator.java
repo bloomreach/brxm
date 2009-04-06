@@ -70,12 +70,16 @@ public class BasicHstLinkCreator implements HstLinkCreator {
             } else if (!canonical.isSame(node)) {
                 log.debug("Trying to create link for the canonical equivalence of the node. ('{}' --> '{}')", node.getPath(), canonical.getPath());
                 node = canonical;
+            } else if(node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                Node deref = JCRUtilities.getDeref(node);
+                if(deref != null) {
+                    log.debug("Node was a facetselect. Creating link for the dereferenced node.");
+                    node = deref;
+                }
             } else {
                 log.debug("Node was not virtual");
             }
 
-            
-            
             if(node.isNodeType(HippoNodeType.NT_DOCUMENT) && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                 node = node.getParent();
             }

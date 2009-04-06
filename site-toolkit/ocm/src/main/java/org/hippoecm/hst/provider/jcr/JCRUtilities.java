@@ -15,10 +15,13 @@
  */
 package org.hippoecm.hst.provider.jcr;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,5 +45,38 @@ public class JCRUtilities {
             }
         } 
         return n;
+    }
+
+
+    /**
+     * 
+     * @param facetSelectNode
+     * @return the dereferenced node or <code>null</code> when no dereferenced node can be found
+     */
+    public static Node getDeref(Node facetSelectNode) {
+        
+        try {
+            if(!facetSelectNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                log.debug("Cannot deref a node that is not of type {}. Return null", HippoNodeType.NT_FACETSELECT);
+                return null;
+            }
+            // HippoNodeType.HIPPO_DOCBASE is a mandatory property so no need to test if exists
+            String docBaseUUID = facetSelectNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+            
+            // test whether docBaseUUID can be parsed as a uuid
+            try {
+                UUID.fromString(docBaseUUID);
+            } catch(IllegalArgumentException e) {
+                log.warn("Docbase cannot be parsed to a valid uuid. Return null");
+                return null;
+            }
+            return facetSelectNode.getSession().getNodeByUUID(docBaseUUID);
+        } catch (ItemNotFoundException e) {
+            log.error("ItemNotFoundException, cannot return deferenced node because docbase uuid cannot be found. Return null");
+        } catch (RepositoryException e) {
+            log.error("RepositoryException, cannot return deferenced node: {}", e);
+        }
+        
+        return null;
     }
 }
