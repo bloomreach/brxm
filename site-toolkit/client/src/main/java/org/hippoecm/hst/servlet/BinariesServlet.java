@@ -121,7 +121,17 @@ public class BinariesServlet extends HttpServlet {
             }
 
             Node node = (Node) item;
-
+            
+            if(node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                try {
+                node = node.getNode(node.getName());
+                } catch(ItemNotFoundException e) {
+                    log.warn("Cannot return binary for a handle with no hippo document. Return");
+                    response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+                    return;
+                }
+            }
+            
             if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                 try {
                     Item resource = node.getPrimaryItem();
