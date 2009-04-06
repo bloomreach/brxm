@@ -122,7 +122,7 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         HstSiteService hstSite = (HstSiteService)hstSiteMap.getSite(); 
         
         // TODO make this configurable behavior instead of hardcoded. Also it should work for subsite galleries, see HSTTWO-454
-        if(path.startsWith("/content/gallery")) {
+        if(path.startsWith("/content/gallery") || path.startsWith("/content/assets")) {
             log.debug("Binary path, return hstLink prefixing this path with '/binaries'");
             return new HstLinkImpl("binaries"+path, hstSite);
         }
