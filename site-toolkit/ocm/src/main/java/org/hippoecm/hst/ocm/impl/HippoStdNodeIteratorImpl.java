@@ -1,5 +1,6 @@
 package org.hippoecm.hst.ocm.impl;
 
+import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
@@ -32,7 +33,12 @@ public class HippoStdNodeIteratorImpl implements HippoStdNodeIterator{
 
     public HippoStdNode nextHippoStdNode() {
         try {
-            return (HippoStdNode)ocm.getObject(nodeIterator.nextNode().getPath());
+            Node n = nodeIterator.nextNode();
+            if(n != null) {
+                return (HippoStdNode)ocm.getObject(n.getPath());
+            } else {
+                log.warn("Node in node iterator is null. Cannot return a HippoStdNode");
+            }
         } catch (ObjectContentManagerException e) {
             log.warn("ObjectContentManagerException. Return null : {}" , e);
         } catch (RepositoryException e) {
