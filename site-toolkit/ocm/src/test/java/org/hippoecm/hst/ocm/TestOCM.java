@@ -415,7 +415,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         
         // insert a collection...
         HippoStdFolder trainingCollection = new HippoStdFolder();
-        trainingCollection.setPath("/content/gettingstarted/pagecontent/Training");
+        
         ocm.insert(trainingCollection);
         ocm.save();
         
@@ -424,8 +424,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         assertNotNull(trainingCollectionAdded);
         assertNotNull(trainingCollectionAdded.getNode());
         System.out.println("node: " + trainingCollectionAdded.getNode());
-        System.out.println("path: " + trainingCollectionAdded.getPath());
-        
+       
         // delete the node added.
         ocm.remove(trainingCollectionAdded);
         ocm.save();
