@@ -111,9 +111,21 @@ public class BasicHstLinkCreator implements HstLinkCreator {
      * and not used
      */
     private HstLink create(String path, ResolvedSiteMapItem resolvedSiteMapItem, boolean representsDocument) {
-     // Try to see if we can create a link within the HstSite where this HstSiteMapItem belongs to
+        
+        if(path == null) {
+            log.warn("Cannot create HstLink for path null");
+            return null;
+        }
+        
+        // Try to see if we can create a link within the HstSite where this HstSiteMapItem belongs to
         HstSiteMap hstSiteMap = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap();
-        HstSiteService hstSite = (HstSiteService)hstSiteMap.getSite();
+        HstSiteService hstSite = (HstSiteService)hstSiteMap.getSite(); 
+        
+        // TODO make this configurable behavior instead of hardcoded. Also it should work for subsite galleries, see HSTTWO-454
+        if(path.startsWith("/content/gallery")) {
+            log.debug("Binary path, return hstLink prefixing this path with '/binaries'");
+            return new HstLinkImpl("/binaries"+path, hstSite);
+        }
         
         if(hstSite.getLocationMapTree() instanceof BasicLocationMapTree) {
             if(path.startsWith(((BasicLocationMapTree)hstSite.getLocationMapTree()).getCanonicalSiteContentPath())) {
