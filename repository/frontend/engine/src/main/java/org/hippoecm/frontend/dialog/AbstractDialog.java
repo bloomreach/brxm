@@ -15,7 +15,13 @@
  */
 package org.hippoecm.frontend.dialog;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -26,8 +32,11 @@ import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxIndicatorAware;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.WicketAjaxIndicatorAppender;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.FeedbackMessagesModel;
 import org.apache.wicket.markup.DefaultMarkupCacheKeyProvider;
 import org.apache.wicket.markup.DefaultMarkupResourceStreamProvider;
 import org.apache.wicket.markup.IMarkupCacheKeyProvider;
@@ -35,6 +44,7 @@ import org.apache.wicket.markup.IMarkupResourceStreamProvider;
 import org.apache.wicket.markup.MarkupException;
 import org.apache.wicket.markup.MarkupNotFoundException;
 import org.apache.wicket.markup.MarkupStream;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -46,6 +56,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.string.AppendingStringBuffer;
 import org.apache.wicket.util.value.IValueMap;
@@ -123,6 +134,91 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         this(null);
     }
 
+    protected class ExceptionFeedbackPanel extends FeedbackPanel {
+
+        boolean expanded;
+
+        protected ExceptionFeedbackPanel(String id) {
+            super(id);
+            setOutputMarkupId(true);
+            expanded = false;
+        }
+
+        protected class ExceptionLabel extends Panel {
+
+            private WebMarkupContainer details;
+            private AjaxLink link;
+
+            protected ExceptionLabel(String id, IModel model, Exception ex, boolean escape) {
+                super(id);
+                setOutputMarkupId(true);
+                add(link = new AjaxLink("message") {
+                        public void onClick(final AjaxRequestTarget target) {
+                            // the following does not work as the list is re-created
+                            //   details.setVisible(!details.isVisible());
+                            //   target.addComponent(details);
+                            // so instead here we remember the previous state in the parent
+                            expanded = !expanded;
+                            target.addComponent(ExceptionFeedbackPanel.this);
+                        }
+                    });
+                Label label;
+                link.add(label = new Label("label", model));
+                label.setEscapeModelStrings(escape);
+                add(details = new WebMarkupContainer("details"));
+                details.setVisible(expanded); // use workaround iso: details.setVisible(false);
+                details.setOutputMarkupId(true);
+                if (ex != null) {
+                    ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+                    ex.printStackTrace(new PrintStream(ostream));
+                    details.add(new Label("exceptionClass", ex.getClass().getName()));
+                    details.add(new Label("exceptionMessage", ex.getLocalizedMessage()));
+                    details.add(new Label("exceptionTrace", ostream.toString()));
+                } else {
+                    details.add(new Label("exceptionClass"));
+                    details.add(new Label("exceptionMessage"));
+                    details.add(new Label("exceptionTrace"));
+                }
+            }
+        }
+
+        @Override
+        protected Component newMessageDisplayComponent(String id, FeedbackMessage message) {
+            Serializable serializable = message.getMessage();
+            if (serializable instanceof Exception) {
+                Exception ex = (Exception) serializable;
+                Map<String, String> details = new HashMap<String, String>();
+                details.put("type", ex.getClass().getName());
+                details.put("message", ex.getMessage());
+                ExceptionLabel label = new ExceptionLabel(id, new StringResourceModel("exception,${type},${message}", AbstractDialog.this, new Model((Serializable) details), ex.getLocalizedMessage()), ex, ExceptionFeedbackPanel.this.getEscapeModelStrings());
+                return label;
+            } else {
+                Label label = new Label(id);
+                label.setModel(new Model(serializable == null ? "" : serializable.toString()));
+                label.setEscapeModelStrings(ExceptionFeedbackPanel.this.getEscapeModelStrings());
+                return label;
+            }
+        }
+
+        @Override
+        protected FeedbackMessagesModel newFeedbackMessagesModel() {
+            return new FeedbackMessagesModel(this) {
+                private List messages;
+                @Override
+                protected List processMessages(final List messages) {
+                    this.messages = messages;
+                    return messages;
+                }
+                @Override
+                public void detach() {
+                    if (messages == null || messages.size() == 0) {
+                        super.detach();
+                    }
+                }
+            };
+        }
+    }
+
     public AbstractDialog(IModel model) {
         super("form", model);
 
@@ -131,7 +227,7 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         container = new Container(IDialogService.DIALOG_WICKET_ID);
         container.add(this);
 
-        feedback = new FeedbackPanel("feedback");
+        feedback = new ExceptionFeedbackPanel("feedback");
         feedback.setOutputMarkupId(true);
         add(feedback);
 
@@ -186,6 +282,10 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
                 return RequestCycle.get().urlFor(AJAX_LOADER_GIF);
             }
         });
+    }
+
+    protected FeedbackPanel newFeedbackPanel(String id) {
+        return new ExceptionFeedbackPanel(id);
     }
 
     public String getAjaxIndicatorMarkupId() {

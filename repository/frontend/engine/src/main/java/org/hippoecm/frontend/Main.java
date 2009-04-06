@@ -232,6 +232,8 @@ public class Main extends WebApplication {
             // don't show exception page
             getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_NO_EXCEPTION_PAGE);
         }
+        
+        resourceSettings.setLocalizer(new StagedLocalizer());
     }
 
     @Override
