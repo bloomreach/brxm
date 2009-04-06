@@ -28,6 +28,8 @@ public interface DefaultWorkflow extends Workflow {
 
     public void delete()
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public void archive()
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
     public void rename(String newName)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

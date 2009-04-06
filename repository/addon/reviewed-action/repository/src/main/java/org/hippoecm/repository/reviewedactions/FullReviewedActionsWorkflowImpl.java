@@ -54,7 +54,28 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     }
 
     public void doDelete() throws WorkflowException {
-        unpublishedDocument = draftDocument = null;
+        /* Previous behaviour was to let the handle exists, and only delete all variants.  This is still the best option
+         * especially when there are multiple language variants.  Then the document should remain existing.  For now,
+         * that behaviour which was implemented with just:
+         *    unpublished = draft = null;
+         * is removed and we will archive the document.
+         */
+        try {
+            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", unpublishedDocument);
+            defaultWorkflow.archive();
+        } catch(MappingException ex) {
+            ReviewedActionsWorkflowImpl.log.warn("invalid default workflow, falling back in behaviour", ex);
+            unpublishedDocument = draftDocument = null;
+        } catch(WorkflowException ex) {
+            ReviewedActionsWorkflowImpl.log.warn("no default workflow for published documents, falling back in behaviour", ex);
+            unpublishedDocument = draftDocument = null;
+        } catch(RepositoryException ex) {
+            ReviewedActionsWorkflowImpl.log.warn("exception trying to archive document, falling back in behaviour", ex);
+            unpublishedDocument = draftDocument = null;
+        } catch(RemoteException ex) {
+            ReviewedActionsWorkflowImpl.log.warn("exception trying to archive document, falling back in behaviour", ex);
+            unpublishedDocument = draftDocument = null;
+        }
     }
 
     public void copy(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
@@ -107,7 +128,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             throw new WorkflowException("cannot rename document with pending depublication request");
         if(current3 != null)
             throw new WorkflowException("cannot rename document with pending delete request");
-        if(publishedDocument != null)
+        if(publishedDocument != null || unpublishedDocument == null)
             throw new WorkflowException("cannot rename published document");
         if(draftDocument != null)
             throw new WorkflowException("cannot rename document being edited");
@@ -160,13 +181,16 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
 
     void doDepublish() throws WorkflowException {
         try {
+            VersionWorkflow versionWorkflow;
             if(unpublishedDocument == null) {
-                unpublishedDocument = (PublishableDocument) publishedDocument.clone();
-                unpublishedDocument.state = PublishableDocument.UNPUBLISHED;
+                publishedDocument.state = PublishableDocument.UNPUBLISHED;
+                versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", publishedDocument);
+            } else {
+                publishedDocument = null;
+                versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
             }
-            publishedDocument = null;
             try {
-                VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
+                versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
                 versionWorkflow.version();
             } catch(MappingException ex) {
                 ReviewedActionsWorkflowImpl.log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
@@ -178,9 +202,12 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
                 ReviewedActionsWorkflowImpl.log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
                 throw new WorkflowException("Versioning of published document failed");
             }
-        } catch(CloneNotSupportedException ex) {
+        } catch(MappingException ex) {
             ReviewedActionsWorkflowImpl.log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw new WorkflowException("document is not a publishable document");
+            throw new WorkflowException("Versioning of published document failed");
+        } catch(RepositoryException ex) {
+            ReviewedActionsWorkflowImpl.log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            throw new WorkflowException("Versioning of published document failed");
         }
     }
 

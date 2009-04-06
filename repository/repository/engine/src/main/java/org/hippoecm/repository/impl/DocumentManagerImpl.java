@@ -158,6 +158,7 @@ public class DocumentManagerImpl implements DocumentManager {
                 if(e instanceof RepositoryException) {
                     RepositoryException exception = (RepositoryException) e;
                     log.error(exception.getClass().getName()+": "+exception.getMessage(), exception);
+                    throw exception;
                 } else {
                     throw ex;
                 }
