@@ -79,6 +79,9 @@ class FieldManagerImpl extends AbstractFieldManager {
         HierarchyResolver.Entry last = new HierarchyResolver.Entry();
         node = (Node)((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getItem(node, field, false, last);
         if (node == null && last.node != null) {
+            if(!last.node.isCheckedOut()) {
+                last.node.checkout();
+            }
             if (nodetype != null) {
                 node = last.node.addNode(last.relPath, nodetype);
             } else {
@@ -107,19 +110,41 @@ class FieldManagerImpl extends AbstractFieldManager {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
                 Property property =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
-                if (property == null)
+                if (property == null) {
+                    if(!last.node.isCheckedOut()) {
+                        last.node.checkout();
+                    }
                     property = last.node.setProperty(last.relPath, value);
-                else
+                } else {
+                    if(!property.getParent().isCheckedOut()) {
+                        property.getParent().checkout();
+                    }
                     property.setValue(value);
+                }
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex, value);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex, value);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex, value);
             }
         }
@@ -140,14 +165,29 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Node node = oid.getNode(session);
                 value =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field).getBoolean();
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
@@ -172,19 +212,41 @@ class FieldManagerImpl extends AbstractFieldManager {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
                 Property property =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
-                if (property == null)
+                if (property == null) {
+                    if(!last.node.isCheckedOut()) {
+                        last.node.checkout();
+                    }
                     property = last.node.setProperty(last.relPath, value);
-                else
+                } else {
+                    if(!property.getParent().isCheckedOut()) {
+                        property.getParent().checkout();
+                    }
                     property.setValue(value);
+                }
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex, value);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex, value);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex, value);
             }
         }
@@ -204,14 +266,29 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Node node = oid.getNode(session);
                 value =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field).getString().charAt(0);
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
@@ -236,19 +313,41 @@ class FieldManagerImpl extends AbstractFieldManager {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
                 Property property =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
-                if (property == null)
+                if (property == null) {
+                    if(!last.node.isCheckedOut()) {
+                        last.node.checkout();
+                    }
                     property = last.node.setProperty(last.relPath, value);
-                else
+                } else {
+                    if(!property.getParent().isCheckedOut()) {
+                        property.getParent().checkout();
+                    }
                     property.setValue(value);
+                }
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex, value);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex, value);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex, value);
             }
         }
@@ -268,14 +367,29 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Node node = oid.getNode(session);
                 value = (short)((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field).getLong();
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
@@ -300,19 +414,41 @@ class FieldManagerImpl extends AbstractFieldManager {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
                 Property property =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
-                if (property == null)
+                if (property == null) {
+                    if(!last.node.isCheckedOut()) {
+                        last.node.checkout();
+                    }
                     property = last.node.setProperty(last.relPath, value);
-                else
+                } else {
+                    if(!property.getParent().isCheckedOut()) {
+                        property.getParent().checkout();
+                    }
                     property.setValue(value);
+                }
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex, value);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex, value);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex, value);
             }
         }
@@ -332,14 +468,29 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Node node = oid.getNode(session);
                 value = (int)((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field).getLong();
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
@@ -364,19 +515,41 @@ class FieldManagerImpl extends AbstractFieldManager {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
                 Property property =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
-                if (property == null)
+                if (property == null) {
+                    if(!last.node.isCheckedOut()) {
+                        last.node.checkout();
+                    }
                     property = last.node.setProperty(last.relPath, value);
-                else
+                } else {
+                    if(!property.getParent().isCheckedOut()) {
+                        property.getParent().checkout();
+                    }
                     property.setValue(value);
+                }
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex, value);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex, value);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex, value);
             }
         }
@@ -396,14 +569,29 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Node node = oid.getNode(session);
                 value =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field).getLong();
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
@@ -428,19 +616,41 @@ class FieldManagerImpl extends AbstractFieldManager {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
                 Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
-                if (property == null)
+                if (property == null) {
+                    if(!last.node.isCheckedOut()) {
+                        last.node.checkout();
+                    }
                     property = last.node.setProperty(last.relPath, value);
-                else
+                } else {
+                    if(!property.getParent().isCheckedOut()) {
+                        property.getParent().checkout();
+                    }
                     property.setValue(value);
+                }
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex, value);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex, value);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex, value);
             }
         }
@@ -460,14 +670,29 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Node node = oid.getNode(session);
                 value = (float) ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field).getDouble();
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
@@ -492,19 +717,41 @@ class FieldManagerImpl extends AbstractFieldManager {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
                 Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
-                if (property == null)
+                if (property == null) {
+                    if(!last.node.isCheckedOut()) {
+                        last.node.checkout();
+                    }
                     property = last.node.setProperty(last.relPath, value);
-                else
+                } else {
+                    if(!property.getParent().isCheckedOut()) {
+                        property.getParent().checkout();
+                    }
                     property.setValue(value);
+                }
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex, value);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex, value);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex, value);
             }
         }
@@ -524,14 +771,29 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Node node = oid.getNode(session);
                 value = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field).getDouble();
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
@@ -556,19 +818,41 @@ class FieldManagerImpl extends AbstractFieldManager {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
                 Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
-                if (property == null)
+                if (property == null) {
+                    if(!last.node.isCheckedOut()) {
+                        last.node.checkout();
+                    }
                     property = last.node.setProperty(last.relPath, value);
-                else
+                } else {
+                    if(!property.getParent().isCheckedOut()) {
+                        property.getParent().checkout();
+                    }
                     property.setValue(value);
+                }
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex, value);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex, value);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex, value);
             }
         }
@@ -597,14 +881,29 @@ class FieldManagerImpl extends AbstractFieldManager {
                 else
                     value = null;
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
@@ -631,6 +930,9 @@ class FieldManagerImpl extends AbstractFieldManager {
             try {
                 Node removal = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, field);
                 if(removal != null) {
+                    if(!removal.getParent().isCheckedOut()) {
+                        removal.getParent().checkout();
+                    }
                     DerivedDataEngine.removal(removal);
                     removal.remove();
                 }
@@ -639,8 +941,14 @@ class FieldManagerImpl extends AbstractFieldManager {
                     log.debug("node already deleted: " + ex.getMessage());
                 }
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
             return;
@@ -661,11 +969,17 @@ class FieldManagerImpl extends AbstractFieldManager {
                     HierarchyResolver.Entry last = new HierarchyResolver.Entry();
                     child = (Node) ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getItem(node, field, false, last);
                     if (child != null) {
+                        if(!child.getParent().isCheckedOut()) {
+                            child.getParent().checkout();
+                        }
                         DerivedDataEngine.removal(child);
                         child.remove();
                     }
                     Document document = (Document) value;
                     child = node.getSession().getNodeByUUID(document.isCloned().getIdentity());
+                    if(!last.node.isCheckedOut()) {
+                        last.node.checkout();
+                    }
                     child = ((HippoSession)node.getSession()).copy(child, last.node.getPath() + "/" + last.relPath);
                     if(log.isDebugEnabled()) {
                         log.debug("copying \"" + field + "\" from cloned");
@@ -692,16 +1006,34 @@ class FieldManagerImpl extends AbstractFieldManager {
                     throw new JPOXDataStoreException("ItemExistsException", ex);
                 }
             } catch (UnsupportedRepositoryOperationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("UnsupportedRepositoryOperationException", ex);
             } catch (PathNotFoundException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("PathNotFoundException", ex);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex, value);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex, value);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex, value);
             }
         }
@@ -728,14 +1060,29 @@ class FieldManagerImpl extends AbstractFieldManager {
                     value = pcSM.getObject();
                 }
             } catch (ValueFormatException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("VersionException", ex);
             } catch (ConstraintViolationException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("ConstraintViolationException", ex);
             } catch (LockException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("LockException", ex);
             } catch (RepositoryException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("failed", ex);
+                }
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }

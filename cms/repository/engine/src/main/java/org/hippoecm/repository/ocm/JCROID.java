@@ -50,8 +50,14 @@ public class JCROID implements OID {
             this.node = node;
             this.classname = classname;
         } catch (UnsupportedRepositoryOperationException ex) {
+            if(log.isDebugEnabled()) {
+                log.debug("failed", ex);
+            }
             throw new JPOXDataStoreException("node has no uuid");
         } catch (RepositoryException ex) {
+            if(log.isDebugEnabled()) {
+                log.debug("failed", ex);
+            }
             throw new JPOXDataStoreException(ex.getMessage(), ex);
         }
     }
@@ -70,16 +76,34 @@ public class JCROID implements OID {
         try {
             node = session.getNodeByUUID(key);
         } catch (ItemNotFoundException ex) {
+            if(log.isDebugEnabled()) {
+                log.debug("failed", ex);
+            }
             log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (ValueFormatException ex) {
+            if(log.isDebugEnabled()) {
+                log.debug("failed", ex);
+            }
             log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (VersionException ex) {
+            if(log.isDebugEnabled()) {
+                log.debug("failed", ex);
+            }
             log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (ConstraintViolationException ex) {
+            if(log.isDebugEnabled()) {
+                log.debug("failed", ex);
+            }
             log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (LockException ex) {
+            if(log.isDebugEnabled()) {
+                log.debug("failed", ex);
+            }
             log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (RepositoryException ex) {
+            if(log.isDebugEnabled()) {
+                log.debug("failed", ex);
+            }
             log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         }
         return node;

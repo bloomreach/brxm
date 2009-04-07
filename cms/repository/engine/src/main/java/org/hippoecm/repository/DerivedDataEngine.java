@@ -377,6 +377,9 @@ public class DerivedDataEngine {
                                             Value[] values = parameters.get(propName);
                                             if(values != null && values.length >= 1) {
                                                     try {
+                                                        if(!targetModifiedNode.isCheckedOut()) {
+                                                            targetModifiedNode.checkout();
+                                                        }
                                                         targetModifiedNode.setProperty(targetModifiedPropertyPath, values[0]);
                                                         if(logger.isDebugEnabled()) {
                                                             sb.append(values[0].getString());
@@ -404,6 +407,9 @@ public class DerivedDataEngine {
                                                 sb.append(" }");
                                             }
                                             try {
+                                                if(!targetModifiedNode.isCheckedOut()) {
+                                                    targetModifiedNode.checkout();
+                                                }
                                                 targetModifiedNode.setProperty(targetModifiedPropertyPath, values);
                                                 if(logger.isDebugEnabled()) {
                                                     sb.append(" created");
@@ -470,6 +476,9 @@ public class DerivedDataEngine {
                     changed = true;
                 if(changed) {
                     try {
+                        if(!modified.isCheckedOut()) {
+                            modified.checkout();
+                        }
                         modified.setProperty(HippoNodeType.HIPPO_RELATED, dependenciesValues);
                     } catch(ItemNotFoundException ex) {
                         logger.info("write error on modified node "+modified.getPath(), ex);
