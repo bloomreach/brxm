@@ -68,7 +68,25 @@
       <sv:node sv:name="filters">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>        <sv:node sv:name="showFolderType">
+        </sv:property>
+        <!-- Normally in the quickstart the attic resides in /content/attic,
+             which isn't accessible from the CMS.  In case you want to start your
+             documents browser from /content, you need this.  In addition, you
+             need this entry if you want to move locate the attic in
+             /content/documents/attic, and change the path below accordingly.
+        <sv:node sv:name="hideAttic">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:pluginconfig</sv:value>
+          </sv:property>
+          <sv:property sv:name="path" sv:type="String">
+            <sv:value>/content/attic</sv:value>
+          </sv:property>
+          <sv:property sv:name="display" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+        </sv:node>
+        -->
+        <sv:node sv:name="showFolderType">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
