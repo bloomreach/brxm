@@ -72,7 +72,10 @@ public class DerivedDataEngine {
     }
 
     public void save(Node node) throws VersionException, LockException, ConstraintViolationException, RepositoryException {
-        long start = System.currentTimeMillis();
+        long start = 0;
+        if(logger.isDebugEnabled()) {
+            start = System.currentTimeMillis();
+        }
         try {
             ValueFactory valueFactory = session.getValueFactory();
 
@@ -99,6 +102,10 @@ public class DerivedDataEngine {
             try {
                 for(NodeIterator iter = session.pendingChanges(node,"mix:referenceable"); iter.hasNext(); ) {
                     Node modified = iter.nextNode();
+                    if(modified == null) {
+                        logger.error("Unable to access node that was changed by own session");
+                        continue;
+                    }
                     if(logger.isDebugEnabled()) {
                         logger.debug("Derived engine found modified referenceable node " + modified.getPath() +
                                      " with " + modified.getReferences().getSize() + " references");
@@ -127,6 +134,10 @@ public class DerivedDataEngine {
             try {
                 for(NodeIterator iter = session.pendingChanges(node,HippoNodeType.NT_DERIVED); iter.hasNext(); ) {
                     Node modified = iter.nextNode();
+                    if(modified == null) {
+                        logger.error("Unable to access node that was changed by own session");
+                        continue;
+                    }
                     if(logger.isDebugEnabled())
                         logger.debug("Derived engine found "+modified.getPath()+" "+(modified.isNodeType("mix:referenceable")?modified.getUUID():"")+" with derived mixin");
                     recomputeSet.add(modified);
@@ -155,9 +166,12 @@ public class DerivedDataEngine {
                 }
                 SortedSet<String> dependencies = new TreeSet<String>();
 
-                for(NodeIterator funcIter = derivatesFolder.getNodes();
-                    funcIter.hasNext(); ) {
+                for(NodeIterator funcIter = derivatesFolder.getNodes(); funcIter.hasNext(); ) {
                     Node function = funcIter.nextNode();
+                    if(function == null) {
+                        logger.error("unable to access all derived data functions");
+                        continue;
+                    }
                     try {
                         String nodetypeName = function.getProperty(HippoNodeType.HIPPO_NODETYPE).getString();
                         if(modified.isNodeType(nodetypeName)) {
@@ -180,6 +194,10 @@ public class DerivedDataEngine {
                              */
                             for(NodeIterator propDefIter = function.getNode("hippo:accessed").getNodes(); propDefIter.hasNext(); ) {
                                 Node propDef = propDefIter.nextNode();
+                                if(propDef == null) {
+                                    logger.error("unable to access derived data accessed property definition");
+                                    continue;
+                                }
                                 String propName = propDef.getName();
                                 if(propDef.isNodeType("hippo:builtinpropertyreference")) {
                                     String builtinFunction = propDef.getProperty("hippo:method").getString();
@@ -251,8 +269,12 @@ public class DerivedDataEngine {
                             /* Use the definition of the derived properties to set the
                              * properties computed by the function.
                              */
-                            for(NodeIterator propDefIter=function.getNode(HippoNodeType.NT_DERIVED).getNodes();propDefIter.hasNext();) {
+                            for(NodeIterator propDefIter = function.getNode(HippoNodeType.NT_DERIVED).getNodes(); propDefIter.hasNext(); ) {
                                 Node propDef = propDefIter.nextNode();
+                                if(propDef == null) {
+                                    logger.error("unable to access derived data derived property definition");
+                                    continue;
+                                }
                                 String propName = propDef.getName();
                                 if(propDef.isNodeType("hippo:relativepropertyreference")) {
                                     String propertyPath = propDef.getProperty("hippo:relPath").getString();
@@ -488,8 +510,9 @@ public class DerivedDataEngine {
         } catch(ConstraintViolationException ex) {
             logger.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } finally {
-            if(logger.isDebugEnabled())
+            if(logger.isDebugEnabled()) {
                 logger.debug("Derived engine done in " + (System.currentTimeMillis() - start) + " ms");
+            }
         }
     }
 
