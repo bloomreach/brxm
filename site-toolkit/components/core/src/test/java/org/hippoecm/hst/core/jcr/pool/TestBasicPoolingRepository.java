@@ -124,29 +124,6 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
     }
     
     @Test
-    public void testReadOnlyBasicPoolingRepository() throws Exception {
-        Repository repository = this.readOnlyPoolingRepository;
-
-        Session session = null;
-
-        try {
-            session = repository.login();
-            Node node = session.getRootNode();
-            assertNotNull("The root node is null.", node);
-
-            try {
-                session.save();
-                fail("Oh, the session is not readonly!");
-            } catch (UnsupportedOperationException uoe) {
-                // well done.
-            }
-        } finally {
-            if (session != null)
-                session.logout();
-        }
-    }
-
-    @Test
     public void testSessionLifeCycleManagementPerThread() throws Exception {
 
         final Repository repository = poolingRepository;

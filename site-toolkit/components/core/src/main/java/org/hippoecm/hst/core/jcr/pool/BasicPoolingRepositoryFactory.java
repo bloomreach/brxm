@@ -79,8 +79,6 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
                 poolingRepository.setDefaultCredentialsUserID(value);
             } else if (type.equals("defaultCredentialsPassword")) {
                 poolingRepository.setDefaultCredentialsPassword(value.toCharArray());
-            } else if (type.equals("readOnly")) {
-                poolingRepository.setReadOnly(Boolean.parseBoolean(value));
             } else if (type.equals("sessionLifecycleManageable") && Boolean.parseBoolean(value)) {
                 poolingRepository.setResourceLifecycleManagement(new PooledSessionResourceManagement());
             } else if (type.equals("maxActive")) {

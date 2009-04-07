@@ -50,7 +50,6 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     protected String defaultCredentialsUserID;
     protected char [] defaultCredentailsPassword;
     
-    protected boolean readOnly;
     protected boolean refreshOnPassivate = true;
     protected boolean keepChangesOnRefresh = false;
     protected ResourceLifecycleManagement pooledSessionLifecycleManagement;
@@ -133,14 +132,6 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         return this.sessionDecorator;
     }
     
-    public void setReadOnly(boolean readOnly) {
-        this.readOnly = readOnly;
-    }
-    
-    public boolean getReadOnly() {
-        return this.readOnly;
-    }
-
     public void setResourceLifecycleManagement(ResourceLifecycleManagement pooledSessionLifecycleManagement) {
         this.pooledSessionLifecycleManagement = pooledSessionLifecycleManagement;
         
@@ -377,7 +368,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
             setDefaultCredentials(new SimpleCredentials(getDefaultCredentialsUserID(), getDefaultCredentialsPassword()));
         }
         
-        setSessionDecorator(this.readOnly ? new ReadOnlyPooledSessionDecoratorProxyFactoryImpl() : new PooledSessionDecoratorProxyFactoryImpl());
+        setSessionDecorator(new PooledSessionDecoratorProxyFactoryImpl());
         
         if (getResourceLifecycleManagement() == null) {
             setResourceLifecycleManagement(new PooledSessionResourceManagement());

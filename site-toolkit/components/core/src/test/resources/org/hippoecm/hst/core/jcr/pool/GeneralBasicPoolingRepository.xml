@@ -38,7 +38,6 @@
     <property name="repositoryAddress" value="${test.default.repository.address}" />
     <property name="defaultCredentialsUserID" value="${test.default.repository.user.name}" />
     <property name="defaultCredentialsPassword" value="${test.default.repository.password}" />
-    <property name="readOnly" value="false" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="25" />
     <property name="maxIdle" value="5" />
@@ -59,7 +58,6 @@
     <property name="repositoryAddress" value="${test.default.repository.address}" />
     <property name="defaultCredentialsUserID" value="${test.default.repository.user.name}" />
     <property name="defaultCredentialsPassword" value="${test.default.repository.password}" />
-    <property name="readOnly" value="true" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="25" />
     <property name="maxIdle" value="5" />

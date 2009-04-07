@@ -45,7 +45,6 @@
     <property name="repositoryAddress" value="${default.repository.address}" />
     <property name="defaultCredentialsUserID" value="${default.repository.user.name}" />
     <property name="defaultCredentialsPassword" value="${default.repository.password}" />
-    <property name="readOnly" value="false" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="250" />
     <property name="maxIdle" value="5" />
@@ -66,7 +65,6 @@
     <property name="repositoryAddress" value="${writable.repository.address}" />
     <property name="defaultCredentialsUserID" value="${writable.repository.user.name}" />
     <property name="defaultCredentialsPassword" value="${writable.repository.password}" />
-    <property name="readOnly" value="false" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="250" />
     <property name="maxIdle" value="5" />
