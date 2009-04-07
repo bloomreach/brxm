@@ -72,9 +72,9 @@ public class TestHstRequest extends AbstractSpringTestCase {
         HstComponentWindow headWindow = new HstComponentWindowImpl("head", "h", "h", null, null, null, rootWindow);
         HstComponentWindow bodyWindow = new HstComponentWindowImpl("body", "b", "b", null, null, null, rootWindow);
         
-        HstRequest hstRequestForRootWindow = new HstRequestImpl(this.servletRequest, this.requestContext, rootWindow);
-        HstRequest hstRequestForHeadWindow = new HstRequestImpl(this.servletRequest, this.requestContext, headWindow);
-        HstRequest hstRequestForBodyWindow = new HstRequestImpl(this.servletRequest, this.requestContext, bodyWindow);
+        HstRequest hstRequestForRootWindow = new HstRequestImpl(this.servletRequest, this.requestContext, rootWindow, HstRequest.RENDER_PHASE);
+        HstRequest hstRequestForHeadWindow = new HstRequestImpl(this.servletRequest, this.requestContext, headWindow, HstRequest.RENDER_PHASE);
+        HstRequest hstRequestForBodyWindow = new HstRequestImpl(this.servletRequest, this.requestContext, bodyWindow, HstRequest.RENDER_PHASE);
         
         assertNotNull(this.servletRequest.getAttribute(HstRequestContext.class.getName()));
         assertNotNull(hstRequestForRootWindow.getAttribute(HstRequestContext.class.getName()));

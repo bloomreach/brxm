@@ -32,6 +32,21 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public interface HstRequest extends HttpServletRequest {
     
     /**
+     * String identifier for the HST action lifecycle phase.
+     */
+    public static final String ACTION_PHASE = "ACTION_PHASE";
+    
+    /**
+     * String identifier for the HST render lifecycle phase.
+     */
+    public static final String RENDER_PHASE = "RENDER_PHASE";
+    
+    /**
+     * String identifier for the HST resource serving lifecycle phase.
+     */
+    public static final String RESOURCE_PHASE = "RESOURCE_PHASE";
+      
+    /**
      * Returns the current request context
      * @return
      */
@@ -77,5 +92,13 @@ public interface HstRequest extends HttpServletRequest {
      * @return
      */
     String getResourceID();
+    
+    /**
+     * Returns the lifecycle phase of the current HST request.
+     * 
+     * @see {@link #ACTION_PHASE}, {@link #RENDER_PHASE}, and {@link #RESOURCE_PHASE}. 
+     * @return
+     */
+    String getLifecyclePhase();
     
 }

@@ -30,6 +30,7 @@ public class MockHstRequest extends MockHttpServletRequest implements HstRequest
     protected HstRequestContext requestContext;
     protected String resourceId;
     protected String referenceNamespace;
+    protected String lifecyclePhase;
     
     public void setReferencePath(String referencePath) {
         this.referencePath = referencePath;
@@ -77,6 +78,14 @@ public class MockHstRequest extends MockHttpServletRequest implements HstRequest
     
     public void setReferenceNamespace(String referenceNamespace) {
         this.referenceNamespace =referenceNamespace;
+    }
+
+    public String getLifecyclePhase() {
+        return this.lifecyclePhase;
+    }
+    
+    public void setLifecyclePhase(String lifecyclePhase) {
+        this.lifecyclePhase = lifecyclePhase;
     }
     
 }

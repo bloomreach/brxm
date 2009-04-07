@@ -40,7 +40,7 @@ public class ResourceServingValve extends AbstractValve {
             HstComponentWindow window = findResourceServingWindow(context.getRootComponentWindow(), baseURL.getResourceWindowReferenceNamespace());
             
             if (window != null) {
-                HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
+                HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.RESOURCE_PHASE);
                 HstResponse response = new HstResourceResponseImpl((HttpServletResponse) servletResponse, window);
                 
                 HstComponentInvoker invoker = getComponentInvoker();

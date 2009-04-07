@@ -57,7 +57,7 @@ public class ActionValve extends AbstractValve
                     responseState = new HstServletResponseState((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
                 }
                 
-                HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
+                HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.ACTION_PHASE);
                 HstResponseImpl response = new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, window, responseState, null);
                 ((HstComponentWindowImpl) window).setResponseState(responseState);
 

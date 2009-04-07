@@ -40,14 +40,16 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     
     private static String [] CONTAINER_ATTR_NAME_PREFIXES = null;
     
+    protected String lifecyclePhase;
     protected HstRequestContext requestContext;
     protected Map<String, Map<String, Object>> namespaceParametersMap = new HashMap<String, Map<String, Object>>();
     protected Map<String, Map<String, Object>> namespaceAttributesMap = new HashMap<String, Map<String, Object>>();
     protected HstComponentWindow componentWindow;
     protected String parameterNameComponentSeparator;
     
-    public HstRequestImpl(HttpServletRequest servletRequest, HstRequestContext requestContext, HstComponentWindow componentWindow) {
+    public HstRequestImpl(HttpServletRequest servletRequest, HstRequestContext requestContext, HstComponentWindow componentWindow, String lifecyclePhase) {
         super(servletRequest);
+        this.lifecyclePhase = lifecyclePhase;
         this.requestContext = requestContext;
         this.componentWindow = componentWindow;
         this.parameterNameComponentSeparator = requestContext.getURLFactory().getServletUrlProvider().getParameterNameComponentSeparator();
@@ -294,6 +296,10 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         }
         
         return containerAttrName;
+    }
+
+    public String getLifecyclePhase() {
+        return this.lifecyclePhase;
     }
 
 }

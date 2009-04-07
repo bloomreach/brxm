@@ -111,7 +111,7 @@ public class AggregationValve extends AbstractValve {
             final Map<HstComponentWindow, HstResponse> responseMap,
             HstResponse topComponentHstResponse) {
 
-        HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window);
+        HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.RENDER_PHASE);
         HstResponseState responseState = new HstServletResponseState((HttpServletRequest) servletRequest,
                 (HttpServletResponse) servletResponse);
         HstResponse response = new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, window,
