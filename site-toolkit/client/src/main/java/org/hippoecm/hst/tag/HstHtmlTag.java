@@ -30,7 +30,7 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.hippoecm.hst.ocm.HippoStdHtml;
+import org.hippoecm.hst.jackrabbit.ocm.HippoStdHtml;
 import org.hippoecm.hst.utils.SimpleHmlStringParser;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;

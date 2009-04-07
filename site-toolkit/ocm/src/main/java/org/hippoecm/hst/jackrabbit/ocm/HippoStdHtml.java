@@ -13,32 +13,36 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.ocm;
+package org.hippoecm.hst.jackrabbit.ocm;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
+import org.hippoecm.hst.ocm.NodeAware;
 
-@Node(jcrType="gettingstarted:comment", discriminator=false)
-public class TextPageComment extends HippoStdNode {
-
-    protected String name;
-    protected String comment;
+@Deprecated
+@Node(jcrType="hippostd:html", discriminator=false)
+public class HippoStdHtml implements NodeAware{
     
-    @Field(jcrName="gettingstarted:name")
-    public String getName() {
-        return this.name;
-    }
+    private String content; 
+    private javax.jcr.Node node;
     
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getComment() {
-        return this.comment;
+    public void setNode(javax.jcr.Node node) {
+        this.node = node;
     }
     
-    public void setComment(String comment) {
-        this.comment = comment;
+    public javax.jcr.Node getNode(){
+       return this.node;
     }
+    
+    
+    @Field(jcrName="hippostd:content")
+    public String getContent() {
+        return this.content;
+    }
+    
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    
 }

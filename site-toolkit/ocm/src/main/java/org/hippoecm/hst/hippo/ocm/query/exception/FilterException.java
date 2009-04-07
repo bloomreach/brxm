@@ -13,32 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.ocm;
+package org.hippoecm.hst.hippo.ocm.query.exception;
 
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument;
-
-public class GeneralPage extends HippoStdDocument {
-
-    protected String title;
-    protected String summary;
-
-
-    @Field(jcrName="testproject:title")
-    public String getTitle() {
-        return this.title;
-    }
+public class FilterException extends QueryException{
     
-    public void setTitle(String title) {
-        this.title = title;
+    private static final long serialVersionUID = 1L;
+
+    public FilterException(String message, Throwable th) {
+        super(message, th);
     }
-    @Field(jcrName="testproject:summary")
-    public String getSummary() {
-        return this.summary;
-    }
-    
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public FilterException(String message) {
+        super(message);
     }
     
 }

@@ -13,32 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.ocm;
+package org.hippoecm.hst.jackrabbit.ocm;
 
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
 
-@Node(jcrType="gettingstarted:comment", discriminator=false)
-public class TextPageComment extends HippoStdNode {
+@Deprecated
+@Node(jcrType="hippo:facetselect", discriminator=false)
+public class HippoStdFacetSelect extends HippoStdFolder{
 
-    protected String name;
-    protected String comment;
-    
-    @Field(jcrName="gettingstarted:name")
-    public String getName() {
-        return this.name;
-    }
-    
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getComment() {
-        return this.comment;
-    }
-    
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
 }

@@ -18,7 +18,7 @@ package org.hippoecm.hst.components;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.ocm.HippoStdNode;
+import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
 
 public class Detail extends GenericResourceServingHstComponent {
     

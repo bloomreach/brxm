@@ -20,14 +20,14 @@ import java.util.List;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.ocm.HippoStdDocument;
-import org.hippoecm.hst.ocm.HippoStdFolder;
-import org.hippoecm.hst.ocm.HippoStdNode;
-import org.hippoecm.hst.ocm.HippoStdNodeIterator;
+import org.hippoecm.hst.hippo.ocm.query.exception.QueryException;
+import org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument;
+import org.hippoecm.hst.jackrabbit.ocm.HippoStdFolder;
+import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
+import org.hippoecm.hst.jackrabbit.ocm.HippoStdNodeIterator;
+import org.hippoecm.hst.jackrabbit.ocm.query.HippoStdFilter;
+import org.hippoecm.hst.jackrabbit.ocm.query.HstQuery;
 import org.hippoecm.hst.ocm.NewsPage;
-import org.hippoecm.hst.ocm.query.HippoStdFilter;
-import org.hippoecm.hst.ocm.query.HstQuery;
-import org.hippoecm.hst.ocm.query.exception.QueryException;
 
 public class Overview extends GenericResourceServingHstComponent {
     

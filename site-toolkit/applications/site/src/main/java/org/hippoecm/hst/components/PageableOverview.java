@@ -21,8 +21,8 @@ import java.util.List;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.ocm.HippoStdFolder;
-import org.hippoecm.hst.ocm.HippoStdNode;
+import org.hippoecm.hst.jackrabbit.ocm.HippoStdFolder;
+import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
 
 public class PageableOverview extends GenericResourceServingHstComponent {
     

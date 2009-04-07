@@ -20,13 +20,14 @@ import java.util.Calendar;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.hippoecm.hst.jackrabbit.ocm.HippoStdHtml;
 
 @Node(jcrType="testproject:newspage", discriminator=false)
 public class NewsPage extends GeneralPage {
     
     private Calendar date; 
     private HippoStdHtml html;
-    
+
     @Field(jcrName="testproject:date")
     public Calendar getDate() {
         return this.date;

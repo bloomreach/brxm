@@ -13,24 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.component.support.ocm;
+package org.hippoecm.hst.hippo.ocm.query.exception;
 
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument;
+public class ScopeException extends QueryException {
 
-@Node(jcrType="gettingstarted:textpage")
-public class TextPage extends HippoStdDocument {
-
-    protected String title;
-
-    @Field(jcrName="gettingstarted:title")
-    public String getTitle() {
-        return this.title;
-    }
+    private static final long serialVersionUID = 1L;
     
-    public void setTitle(String title) {
-        this.title = title;
+    public ScopeException(String message, Throwable th) {
+        super(message, th);
     }
-    
+
+    public ScopeException(String message){
+        super(message);
+    }
+
 }

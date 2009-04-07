@@ -18,6 +18,7 @@ package org.hippoecm.hst.components;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
 
 public class LeftMenu extends GenericResourceServingHstComponent {
     
@@ -27,6 +28,8 @@ public class LeftMenu extends GenericResourceServingHstComponent {
         super.doBeforeRender(request, response);
         
         request.setAttribute("menu",request.getRequestContext().getHstSiteMenus().getSiteMenu("main"));
+        
+        
     }
 
  

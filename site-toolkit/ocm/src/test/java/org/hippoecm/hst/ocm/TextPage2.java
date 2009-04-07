@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument;
 
 @Node(jcrType="gettingstarted:textpage", discriminator=false)
 public class TextPage2 extends HippoStdDocument {

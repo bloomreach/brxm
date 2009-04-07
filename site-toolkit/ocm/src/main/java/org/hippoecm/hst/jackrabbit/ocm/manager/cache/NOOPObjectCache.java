@@ -13,32 +13,30 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.ocm;
+package org.hippoecm.hst.jackrabbit.ocm.manager.cache;
 
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument;
+import org.apache.jackrabbit.ocm.manager.cache.ObjectCache;
 
-public class GeneralPage extends HippoStdDocument {
-
-    protected String title;
-    protected String summary;
-
-
-    @Field(jcrName="testproject:title")
-    public String getTitle() {
-        return this.title;
-    }
+/**
+ * NOOP ObjectCache
+ * 
+ * @version $Id$
+ */
+@Deprecated
+public class NOOPObjectCache implements ObjectCache {
     
-    public void setTitle(String title) {
-        this.title = title;
+    public void cache(String path, Object object) {
     }
-    @Field(jcrName="testproject:summary")
-    public String getSummary() {
-        return this.summary;
+
+    public void clear() {
     }
-    
-    public void setSummary(String summary) {
-        this.summary = summary;
+
+    public boolean isCached(String path) {
+        return false;
     }
-    
+
+    public Object getObject(String path) {
+        return null;
+    }
+
 }
