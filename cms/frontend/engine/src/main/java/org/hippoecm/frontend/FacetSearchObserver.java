@@ -40,6 +40,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FacetSearchObserver implements EventListener {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: $";
 
     static final Logger log = LoggerFactory.getLogger(FacetSearchObserver.class);
 
