@@ -342,6 +342,8 @@ public class RepositoryMapImpl extends AbstractMap implements RepositoryMap {
                         return nodeIterator.getSize();*/
                         } else if (name.equals("_index")) {
                             return new Integer(index);
+                        } else if(relPath == null && !name.startsWith("_") && node.hasProperty(name)) {
+                            found = node.getProperty(name);
                         } else {
                             return null;
                         }
@@ -363,7 +365,7 @@ public class RepositoryMapImpl extends AbstractMap implements RepositoryMap {
                         case PropertyType.REFERENCE:
                             return new RepositoryMapImpl(property.getNode());
                         case PropertyType.PATH:
-                            return property.getPath();
+                            return property.getString();
                         case PropertyType.UNDEFINED:
                         default:
                             return property.getString();

@@ -65,6 +65,14 @@
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Shortcut workflow on folders</sv:value>
     </sv:property>
+    <sv:node sv:name="hippo:config">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>nt:unstructured</sv:value>
+      </sv:property>
+      <sv:property sv:name="attic" sv:type="Path">
+        <sv:value>/content/attic</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:types</sv:value>
@@ -90,6 +98,14 @@
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Shortcut workflow on directories</sv:value>
     </sv:property>
+    <sv:node sv:name="hippo:config">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>nt:unstructured</sv:value>
+      </sv:property>
+      <sv:property sv:name="attic" sv:type="Path">
+        <sv:value>/content/attic</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:types</sv:value>

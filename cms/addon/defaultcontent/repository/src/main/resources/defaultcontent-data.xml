@@ -388,7 +388,10 @@
   </sv:node>
   <sv:node sv:name="attic">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>nt:unstructured</sv:value>
+      <sv:value>hippostd:folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:harddocument</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
