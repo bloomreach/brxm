@@ -152,31 +152,38 @@ public class JcrItemModel extends LoadableDetachableModel {
     @Override
     public void detach() {
         if (isAttached()) {
-            Item item = (Item) getObject();
-            if (item != null && path == null) {
-                try {
-                    if(item.isNode()) {
-                        Node node = (Node)item;
-                        if(node.isNodeType("mix:referenceable")) {
-                            uuid = node.getUUID();
+            // if we have a uuid we're done
+            if (uuid == null) {
+                if (path != null) {
+                    // we have a path but not a uuid, try to find the uuid if possible
+                    UserSession sessionProvider = (UserSession) Session.get();
+                    try {
+                        Item item = sessionProvider.getJcrSession().getItem(path);
+                        if (item != null && item.isNode()) {
+                            Node node = (Node) item;
+                            if (node.isNodeType("mix:referenceable")) {
+                                uuid = node.getUUID();
+                            }
+                        }
+                    } catch (RepositoryException ex) {
+                        log.error(ex.getMessage());
+                    }
+                } else {
+                    // we have neither a uuid nor a path, try the get the uuid, else get the path from the item
+                    Item item = (Item) getObject();
+                    if (item != null) {
+                        try {
+                            if (item.isNode()) {
+                                Node node = (Node) item;
+                                if (node.isNodeType("mix:referenceable")) {
+                                    uuid = node.getUUID();
+                                }
+                            }
+                            path = item.getPath();
+                        } catch (RepositoryException ex) {
+                            log.error(ex.getMessage());
                         }
                     }
-                    path = item.getPath();
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
-                }
-            } else {
-                UserSession sessionProvider = (UserSession) Session.get();
-                try {
-                    item = sessionProvider.getJcrSession().getItem(path);
-                    if(item.isNode()) {
-                        Node node = (Node)item;
-                        if(node.isNodeType("mix:referenceable")) {
-                            uuid = node.getUUID();
-                        }
-                    }
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
                 }
             }
         }
