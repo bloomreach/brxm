@@ -49,10 +49,11 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     public Map<String,Serializable> hints()  {
         Map<String,Serializable> info = super.hints();
         boolean editable;
-	boolean publishable = false;
-	boolean depublishable = false;
+        boolean publishable = false;
+        boolean depublishable = false;
         boolean deleteable = false;
         boolean locked = false;
+	boolean status = false;
         boolean pendingRequest;
         if(current != null || current2 != null || current3 != null) {
             pendingRequest = true;
@@ -62,40 +63,48 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         if(PublishableDocument.DRAFT.equals(state)) {
             locked = true;
             editable = draftDocument.username.equals(super.getWorkflowContext().getUserIdentity());
-	    depublishable = false;
-	    publishable = false;
+            depublishable = false;
+            publishable = false;
+	    status = true;
         } else if(PublishableDocument.PUBLISHED.equals(state)) {
-	    if(draftDocument != null || unpublishedDocument != null) {
+            if(draftDocument == null && unpublishedDocument == null) {
+	        status = true;
+	    }
+            if(draftDocument != null || unpublishedDocument != null) {
                 editable = false;
             } else if(pendingRequest) {
                 editable = false;
             } else {
                 editable = true;
             }
-	    if(draftDocument == null && !pendingRequest) {
+            if(draftDocument == null && !pendingRequest) {
                 depublishable = true;
             }
         } else if(PublishableDocument.UNPUBLISHED.equals(state)) {
-	    if(draftDocument != null) {
+	    if(draftDocument == null) {
+	        status = true;
+	    }
+            if(draftDocument != null) {
                 editable = false;
             } else if(pendingRequest) {
                 editable = false;
             } else {
                 editable = true;
             }
-	    if(draftDocument == null && !pendingRequest) {
+            if(draftDocument == null && !pendingRequest) {
                 publishable = true;
             }
             if(draftDocument == null && publishedDocument == null) {
                 deleteable = true;   
             }
         } else {
-	    editable = false;
-	}
+            editable = false;
+        }
         info.put("obtainEditableInstanceobtainEditableInstance", editable);
         info.put("publish", publishable);
         info.put("depublish", depublishable);
         info.put("delete", deleteable);
+	info.put("status", status);
         return info;
     }
 

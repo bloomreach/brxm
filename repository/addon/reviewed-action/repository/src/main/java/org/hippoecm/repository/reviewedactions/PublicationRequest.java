@@ -57,6 +57,10 @@ public class PublicationRequest extends Document {
         return type;
     }
 
+    String getOwner() {
+        return username;
+    }
+
     Date getScheduledDate() {
         return new Date(reqdate);
     }

@@ -83,5 +83,4 @@ public class ReorderDataProvider extends SortableDataProvider {
         }
         return newOrder;
     }
-
 }

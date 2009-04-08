@@ -15,8 +15,10 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
+import java.util.Map;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.MappingException;
@@ -31,6 +33,21 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
     protected FullReviewedActionsWorkflowImpl publishedWorkflow;
     protected FullReviewedActionsWorkflowImpl unpublishedWorkflow;
     protected FullReviewedActionsWorkflowImpl draftWorkflow;
+
+    @Override
+    public Map<String,Serializable> hints()  {
+        Map<String,Serializable> info = super.hints();
+        if(PublicationRequest.REJECTED.equals(request.getType())) {
+            info.put("acceptRequest", new Boolean(false));
+            info.put("rejectRequest", new Boolean(false));
+            info.put("cancelRequest", new Boolean(true));
+        } else {
+            info.put("acceptRequest", new Boolean(false));
+            info.put("rejectRequest", new Boolean(false));
+            info.put("cancelRequest", new Boolean(true));
+        }
+        return info;
+    }
 
     public FullRequestWorkflowImpl() throws RemoteException {
     }

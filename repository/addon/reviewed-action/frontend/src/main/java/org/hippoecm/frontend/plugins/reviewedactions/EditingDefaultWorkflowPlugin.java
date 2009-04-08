@@ -18,17 +18,18 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.StringResourceModel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.repository.api.Workflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EditingDefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")

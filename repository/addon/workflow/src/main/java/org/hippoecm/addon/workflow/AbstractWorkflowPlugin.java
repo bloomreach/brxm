@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 
+import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Workspace;
@@ -72,11 +73,10 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
         }
     }
 
-    MenuHierarchy buildMenu() {
+    MenuHierarchy buildMenu(Set<Node> nodeSet) {
         final MenuHierarchy menu = new MenuHierarchy();
         List<Panel> list = new LinkedList<Panel>();
-        if (getModel() instanceof JcrNodeModel) {
-            Node documentNode = ((JcrNodeModel) getModel()).getNode();
+        for(Node documentNode : nodeSet) {
             if (documentNode != null) {
                 try {
                     Workspace workspace = documentNode.getSession().getWorkspace();
@@ -148,7 +148,7 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
                 }
             }
         }
-        
+
         addOrReplace(view = new AbstractView("view", new ListDataProvider(list)) {
             @Override
             protected void populateItem(Item item) {
