@@ -15,8 +15,10 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Date;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -38,6 +40,14 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     public FullReviewedActionsWorkflowImpl() throws RemoteException {
     }
 
+    @Override
+    public Map<String,Serializable> hints()  {
+        Map<String,Serializable> info = super.hints();
+        info.put("rename", info.get("delete"));
+        info.put("move", info.get("delete"));
+        info.put("copy", info.get("delete"));
+        return info;
+    }
     public void delete() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("deletion on document ");
         if(current != null)

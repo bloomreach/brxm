@@ -61,10 +61,14 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
     public String stateSummary = "UNKNOWN";
 
+    StdWorkflow infoAction;
     WorkflowAction editAction;
     WorkflowAction publishAction;
     WorkflowAction depublishAction;
     WorkflowAction deleteAction;
+    WorkflowAction renameAction;
+    WorkflowAction copyAction;
+    WorkflowAction moveAction;
     WorkflowAction schedulePublishAction;
     WorkflowAction scheduleDepublishAction;
 
@@ -72,7 +76,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
         super(context, config);
 
         final TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel("hippostd:publishableSummary"));
-        add(new StdWorkflow("info", "info") {
+        add(infoAction = new StdWorkflow("info", "info") {
             @Override
             protected IModel getTitle() {
                 return translator.getValueName("hippostd:stateSummary", new PropertyModel(FullReviewedActionsWorkflowPlugin.this, "stateSummary"));
@@ -202,7 +206,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
         });
 
-        add(new WorkflowAction("move", new StringResourceModel("move-label", this, null)) {
+        add(moveAction = new WorkflowAction("move", new StringResourceModel("move-label", this, null)) {
             public String name;
             public JcrNodeModel destination;
             @Override
@@ -222,7 +226,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
         });
 
-        add(new WorkflowAction("rename", new StringResourceModel("rename-label", this, null)) {
+        add(renameAction = new WorkflowAction("rename", new StringResourceModel("rename-label", this, null)) {
             public String name;
             @Override
             protected ResourceReference getIcon() {
@@ -241,7 +245,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
         });
 
-        add(new WorkflowAction("copy", new StringResourceModel("copy-label", this, null)) {
+        add(copyAction = new WorkflowAction("copy", new StringResourceModel("copy-label", this, null)) {
             public String name;
             public JcrNodeModel destination;
             @Override
@@ -291,6 +295,18 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 }
                 if (info.containsKey("delete") && info.get("delete") instanceof Boolean && !((Boolean)info.get("delete")).booleanValue()) {
                     deleteAction.setVisible(false);
+                }
+                if (info.containsKey("rename") && info.get("rename") instanceof Boolean && !((Boolean)info.get("rename")).booleanValue()) {
+                    renameAction.setVisible(false);
+                }
+                if (info.containsKey("move") && info.get("move") instanceof Boolean && !((Boolean)info.get("move")).booleanValue()) {
+                    moveAction.setVisible(false);
+                }
+                if (info.containsKey("copy") && info.get("copy") instanceof Boolean && !((Boolean)info.get("copy")).booleanValue()) {
+                    copyAction.setVisible(false);
+                }
+                if (info.containsKey("status") && info.get("status") instanceof Boolean && !((Boolean)info.get("status")).booleanValue()) {
+                    infoAction.setVisible(false);
                 }
             }
         } catch (RepositoryException ex) {

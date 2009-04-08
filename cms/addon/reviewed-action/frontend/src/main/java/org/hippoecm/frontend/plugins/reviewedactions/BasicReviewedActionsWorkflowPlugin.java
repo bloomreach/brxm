@@ -59,6 +59,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
 
     public String stateSummary = "UNKNOWN";
 
+    StdWorkflow infoAction;
     WorkflowAction editAction;
     WorkflowAction publishAction;
     WorkflowAction depublishAction;
@@ -70,7 +71,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
         super(context, config);
 
         final TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel("hippostd:publishableSummary"));
-        add(new StdWorkflow("info", "info") {
+        add(infoAction = new StdWorkflow("info", "info") {
             @Override
             protected IModel getTitle() {
                 return translator.getValueName("hippostd:stateSummary", new PropertyModel(BasicReviewedActionsWorkflowPlugin.this, "stateSummary"));
@@ -223,6 +224,9 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
                 }
                 if (info.containsKey("delete") && info.get("delete") instanceof Boolean && !((Boolean)info.get("delete")).booleanValue()) {
                     deleteAction.setVisible(false);
+                }
+                if (info.containsKey("status") && info.get("status") instanceof Boolean && !((Boolean)info.get("status")).booleanValue()) {
+                    infoAction.setVisible(false);
                 }
             }
         } catch (RepositoryException ex) {
