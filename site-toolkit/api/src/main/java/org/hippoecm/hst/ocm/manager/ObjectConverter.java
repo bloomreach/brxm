@@ -13,20 +13,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.ocm;
+package org.hippoecm.hst.ocm.manager;
+
+import javax.jcr.Node;
+import javax.jcr.Session;
+
+import org.hippoecm.hst.ocm.ObjectContentManagerException;
 
 /**
- * Interface to be implemented by beans that wish to be aware of the object converter.
- * 
+ * Convert any kind of beans into JCR nodes & properties.
+ * <P>
+ * This interface mimics Jackrabbit's one, but this is provided
+ * to support more lightweight OCM in HST.
+ * </P>
+ *
  * @version $Id$
  */
-public interface SimpleObjectConverterAware {
-
-    /**
-     * Callback that supplies the object converter.
-     * 
-     * @param simpleObjectConverter
-     */
-    void setSimpleObjectConverter(SimpleObjectConverter simpleObjectConverter);
+public interface ObjectConverter
+{
+    
+    public Object getObject(Session session, String path) throws ObjectContentManagerException;
+    
+    public Object getObject(Node node) throws ObjectContentManagerException;
     
 }

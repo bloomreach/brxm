@@ -13,20 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.ocm;
+package org.hippoecm.hst.ocm.manager;
 
 /**
  * Interface to be implemented by beans that wish to be aware of the object converter.
  * 
  * @version $Id$
  */
-public interface SimpleObjectConverterAware {
+public interface ObjectConverterAware {
 
     /**
      * Callback that supplies the object converter.
      * 
-     * @param simpleObjectConverter
+     * @param objectConverter
      */
-    void setSimpleObjectConverter(SimpleObjectConverter simpleObjectConverter);
+    void setObjectConverter(ObjectConverter objectConverter);
     
 }
