@@ -23,6 +23,8 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -64,7 +66,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  */
 public class SpringBridgeHstComponent extends GenericHstComponent {
     
-    protected String delegatedBeanNameParamName = "spring-delegated-bean-param-name";
+    protected String delegatedBeanNameParamName = "spring-delegated-bean";
     protected HstComponent delegatedBean;
     
     public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
@@ -98,11 +100,31 @@ public class SpringBridgeHstComponent extends GenericHstComponent {
         return (String)this.getComponentConfiguration().getParameter(name, request.getRequestContext().getResolvedSiteMapItem());
     }
     
-    protected HstComponent getDelegatedBean(HstRequest request) {
+    protected HstComponent getDelegatedBean(HstRequest request) throws HstComponentException {
         if (delegatedBean == null) {
             String beanName = getParameter(delegatedBeanNameParamName, request);
+            
+            if (beanName == null) {
+                throw new HstComponentException("The name of delegated spring bean is null.");
+            }
+            
             ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(getServletConfig().getServletContext());
-            delegatedBean = (HstComponent) applicationContext.getBean(beanName);
+            
+            if (applicationContext == null) {
+                throw new HstComponentException("Cannot find the spring web application context");
+            }
+            
+            try {
+                delegatedBean = (HstComponent) applicationContext.getBean(beanName);
+            } catch (NoSuchBeanDefinitionException e) {
+                throw new HstComponentException("There's no bean definition with the specified name: " + beanName, e);
+            } catch (BeansException e) {
+                throw new HstComponentException("The bean cannot be obtained: " + beanName, e);
+            }
+            
+            if (delegatedBean == null) {
+                throw new HstComponentException("Cannot find delegated spring HstComponent bean: " + beanName);
+            }            
         }
         
         return delegatedBean;

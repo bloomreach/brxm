@@ -73,6 +73,24 @@
         </sv:property>
     </sv:node>
     
+     <sv:node sv:name="contactspringform">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:template" sv:type="String">
+            <sv:value>contactspring</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentclassname" sv:type="String">
+            <sv:value>org.hippoecm.hst.component.support.spring.SpringBridgeHstComponent</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:parameternames" sv:type="String">
+            <sv:value>spring-delegated-bean</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:parametervalues" sv:type="String">
+            <sv:value>contactBean</sv:value>
+        </sv:property>
+    </sv:node>
+    
 
     <sv:node sv:name="leftmenu">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
