@@ -279,7 +279,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public void archive(Document document) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String atticPath = null;
         RepositoryMap config = workflowContext.getWorkflowConfiguration();
-        if(config.exists() && config.containsKey("attic") && config.get("attic") instanceof String) {
+        if(config.exists() && config.get("attic") instanceof String) {
             atticPath = (String) config.get("attic");
         }
         String path = subject.getPath().substring(1);
