@@ -104,7 +104,6 @@ public class FailingWorkflowTest extends TestCase {
         WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
         Node handle = session.getRootNode().getNode("test/folder/document");
         Node document = handle.getNode(handle.getName());
-System.err.println("BERRY "+document.getPath());
         // WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor("default", document);
         // Workflow workflowInterface = manager.getWorkflow(workflowDescriptor);
         Workflow workflowInterface = manager.getWorkflow("default", document);
