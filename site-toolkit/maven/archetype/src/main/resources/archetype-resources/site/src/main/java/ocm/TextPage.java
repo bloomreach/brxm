@@ -7,7 +7,7 @@ package ${package}.ocm;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.hippoecm.hst.ocm.HippoStdHtml;
+import org.hippoecm.hst.jackrabbit.ocm.HippoStdHtml;
 
 @Node(jcrType="${rootArtifactId.replace($hyphen,$empty)}:textpage", discriminator=false)
 public class TextPage extends GeneralPage{

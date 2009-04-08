@@ -7,8 +7,8 @@ import org.hippoecm.hst.component.support.ocm.BaseHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.ocm.HippoStdFolder;
-import org.hippoecm.hst.ocm.HippoStdNode;
+import org.hippoecm.hst.jackrabbit.ocm.HippoStdFolder;
+import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
