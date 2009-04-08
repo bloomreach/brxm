@@ -123,6 +123,11 @@ public class WorkflowChainingTest extends TestCase {
         Thread.sleep(delay*1000L/2);
         assertEquals(0, ChainingImpl.result.size());
         Thread.sleep((delay+10)*1000L);
+        for(int i=0; i<120; i++) {
+            if(ChainingImpl.result.size() > 0)
+                break;
+            Thread.sleep(1000L);
+        }
         assertEquals(1, ChainingImpl.result.size());
     }
 }
