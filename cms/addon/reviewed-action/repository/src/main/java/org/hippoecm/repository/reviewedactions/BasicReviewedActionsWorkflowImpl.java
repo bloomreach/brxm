@@ -53,7 +53,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         boolean depublishable = false;
         boolean deleteable = false;
         boolean locked = false;
-	boolean status = false;
+        boolean status = false;
         boolean pendingRequest;
         if(current != null || current2 != null || current3 != null) {
             pendingRequest = true;
@@ -65,11 +65,11 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             editable = draftDocument.username.equals(super.getWorkflowContext().getUserIdentity());
             depublishable = false;
             publishable = false;
-	    status = true;
+            status = true;
         } else if(PublishableDocument.PUBLISHED.equals(state)) {
             if(draftDocument == null && unpublishedDocument == null) {
-	        status = true;
-	    }
+                status = true;
+            }
             if(draftDocument != null || unpublishedDocument != null) {
                 editable = false;
             } else if(pendingRequest) {
@@ -81,9 +81,9 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 depublishable = true;
             }
         } else if(PublishableDocument.UNPUBLISHED.equals(state)) {
-	    if(draftDocument == null) {
-	        status = true;
-	    }
+            if(draftDocument == null) {
+                status = true;
+            }
             if(draftDocument != null) {
                 editable = false;
             } else if(pendingRequest) {
@@ -104,7 +104,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         info.put("publish", publishable);
         info.put("depublish", depublishable);
         info.put("delete", deleteable);
-	info.put("status", status);
+        info.put("status", status);
         return info;
     }
 
