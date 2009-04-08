@@ -77,10 +77,10 @@ public class FailingWorkflowTest extends TestCase {
         build(session, content);
         session.save();
 
-	Node workflowsNode = session.getRootNode().getNode("hippo:configuration/hippo:workflows/default");
-	Node wfNode = workflowsNode.getNode("reviewedactions");
-	if(wfNode.hasProperty("hippo:privileges")) {
-	    wfNode.getProperty("hippo:privileges").remove();
+        Node workflowsNode = session.getRootNode().getNode("hippo:configuration/hippo:workflows/default");
+        Node wfNode = workflowsNode.getNode("reviewedactions");
+        if(wfNode.hasProperty("hippo:privileges")) {
+            wfNode.getProperty("hippo:privileges").remove();
         }
 
         session.save();
