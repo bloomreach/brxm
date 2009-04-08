@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.linking;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -28,9 +27,6 @@ import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.service.ServiceFactory;
-import org.hippoecm.hst.service.ServiceNamespace;
-import org.hippoecm.hst.service.UnderlyingServiceAware;
 import org.hippoecm.hst.site.request.BasicHstSiteMapMatcher;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Test;
@@ -41,79 +37,74 @@ import org.junit.Test;
  *
  */
 
-public class SimpleLinks extends AbstractSpringTestCase{
-    
-        private static final String TESTPROJECT_NAME = "testproject";
-        
-        private static final String TESTPROJECT_EXISTING_VIRTUALHANDLE= "/testpreview/testproject/hst:content/Products/SomeProduct";
-        private static final String TESTPROJECT_EXISTING_VIRTUALDOCUMENT = "/testpreview/testproject/hst:content/Products/SomeProduct/SomeProduct";
-        private static final String TESTPROJECT_EXISTING_VIRTUALHANDLE2 = "/testpreview/testproject/hst:content/Products/HippoCMS";
-        
-         
-        private HstSitesManager hstSitesManager;
-        private HstLinkCreator hstLinkCreator;
-        private HstSiteMapMatcher hstSiteMapMatcher;
-        private HstSite hstSite;
-        private ResolvedSiteMapItem res;
-        private Session session;
-        
-        @Override
-        public void setUp() throws Exception{
-            super.setUp();
-            this.hstSitesManager = getComponent(HstSitesManager.class.getName());
-            this.hstLinkCreator = getComponent(HstLinkCreator.class.getName());
-            this.hstSiteMapMatcher = new BasicHstSiteMapMatcher();
-            this.hstSite = this.hstSitesManager.getSites().getSite(TESTPROJECT_NAME);
-            this.res = hstSiteMapMatcher.match("news/2009", hstSite);
-            
-            Repository repository = (Repository) getComponent(Repository.class.getName());
-            this.session = repository.login();
-        }
-        
-        /**
-         * Test with no sitemap items involved having a wildcard, or thus with no 'hst:relativecontentpath' containing ${1} kind of
-         * parameters
-         */
-        @Test
-        public void testLinkToSiteMapItemId() {
-            
-            HstLink hstLink = hstLinkCreator.create("products", res);
-            assertEquals("The path of the hstLink should be 'products'", "products", hstLink.getPath());
-            assertEquals("The site name of the link should be '"+TESTPROJECT_NAME+"'",TESTPROJECT_NAME, hstLink.getHstSite().getName());
+public class SimpleLinks extends AbstractSpringTestCase {
 
-        }
-        
-       /**
-         * Test with no sitemap items involved having a wildcard, or thus with no 'hst:relativecontentpath' containing ${1} kind of
-         * parameters
-         */
-        @Test
-        public void testLinkCreateOfNode() throws RepositoryException{
-            
-                Node someProductHandle = (Node)session.getItem(TESTPROJECT_EXISTING_VIRTUALHANDLE);
-                Node someProductDocument = (Node)session.getItem(TESTPROJECT_EXISTING_VIRTUALDOCUMENT);
-                Node hippoCMSHandle = (Node)session.getItem(TESTPROJECT_EXISTING_VIRTUALHANDLE2);
-                
-                // a link creation to a handle
-                HstLink hstLink = hstLinkCreator.create(someProductHandle, res);
-                assertEquals("The getPath of the HstLink must be equal to 'products/someproduct' but was '"+hstLink.getPath()+"' ","products/someproduct", hstLink.getPath());
-                
-                // a link creation to a document below the handle should result in the same link 
-                hstLink = hstLinkCreator.create(someProductDocument, res);
-                assertEquals("The getPath of the HstLink must be equal to 'products/someproduct' but was '"+hstLink.getPath()+"' ", "products/someproduct", hstLink.getPath());
-                
-                // The sitemap item that matches returns a path 'products'. HippoCMS is part of the nodepath
-                // that is not represented within the sitemap relativeContentLocation, so must return null.
-                hstLink = hstLinkCreator.create(hippoCMSHandle, res);
-                assertNull("The path for '/testpreview/testproject/hst:content/Products/HippoCMS' cannot be translated",hstLink);
-           
-            
-        }
-       
+    private static final String TESTPROJECT_NAME = "testproject";
 
-       @ServiceNamespace(prefix = "testproject")
-       public interface TestPage extends UnderlyingServiceAware{
-           String getTitle();
-       }
-       
+    private static final String TESTPROJECT_EXISTING_VIRTUALHANDLE = "/testpreview/testproject/hst:content/Products/SomeProduct";
+    private static final String TESTPROJECT_EXISTING_VIRTUALDOCUMENT = "/testpreview/testproject/hst:content/Products/SomeProduct/SomeProduct";
+    private static final String TESTPROJECT_EXISTING_VIRTUALHANDLE2 = "/testpreview/testproject/hst:content/Products/HippoCMS";
+
+    private HstSitesManager hstSitesManager;
+    private HstLinkCreator hstLinkCreator;
+    private HstSiteMapMatcher hstSiteMapMatcher;
+    private HstSite hstSite;
+    private ResolvedSiteMapItem res;
+    private Session session;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        this.hstSitesManager = getComponent(HstSitesManager.class.getName());
+        this.hstLinkCreator = getComponent(HstLinkCreator.class.getName());
+        this.hstSiteMapMatcher = new BasicHstSiteMapMatcher();
+        this.hstSite = this.hstSitesManager.getSites().getSite(TESTPROJECT_NAME);
+        this.res = hstSiteMapMatcher.match("news/2009", hstSite);
+
+        Repository repository = (Repository) getComponent(Repository.class.getName());
+        this.session = repository.login();
+    }
+
+    /**
+     * Test with no sitemap items involved having a wildcard, or thus with no 'hst:relativecontentpath' containing ${1} kind of
+     * parameters
+     */
+    @Test
+    public void testLinkToSiteMapItemId() {
+
+        HstLink hstLink = hstLinkCreator.create("products", res);
+        assertEquals("The path of the hstLink should be 'products'", "products", hstLink.getPath());
+        assertEquals("The site name of the link should be '" + TESTPROJECT_NAME + "'", TESTPROJECT_NAME, hstLink
+                .getHstSite().getName());
+
+    }
+
+    /**
+      * Test with no sitemap items involved having a wildcard, or thus with no 'hst:relativecontentpath' containing ${1} kind of
+      * parameters
+      */
+    @Test
+    public void testLinkCreateOfNode() throws RepositoryException {
+
+        Node someProductHandle = (Node) session.getItem(TESTPROJECT_EXISTING_VIRTUALHANDLE);
+        Node someProductDocument = (Node) session.getItem(TESTPROJECT_EXISTING_VIRTUALDOCUMENT);
+        Node hippoCMSHandle = (Node) session.getItem(TESTPROJECT_EXISTING_VIRTUALHANDLE2);
+
+        // a link creation to a handle
+        HstLink hstLink = hstLinkCreator.create(someProductHandle, res);
+        assertEquals("The getPath of the HstLink must be equal to 'products/someproduct' but was '" + hstLink.getPath()
+                + "' ", "products/someproduct", hstLink.getPath());
+
+        // a link creation to a document below the handle should result in the same link 
+        hstLink = hstLinkCreator.create(someProductDocument, res);
+        assertEquals("The getPath of the HstLink must be equal to 'products/someproduct' but was '" + hstLink.getPath()
+                + "' ", "products/someproduct", hstLink.getPath());
+
+        // The sitemap item that matches returns a path 'products'. HippoCMS is part of the nodepath
+        // that is not represented within the sitemap relativeContentLocation, so must return null.
+        hstLink = hstLinkCreator.create(hippoCMSHandle, res);
+        assertNull("The path for '/testpreview/testproject/hst:content/Products/HippoCMS' cannot be translated",
+                hstLink);
+
+    }
 }

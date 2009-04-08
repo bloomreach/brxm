@@ -20,15 +20,30 @@ import java.util.Set;
 import org.apache.commons.proxy.Interceptor;
 import org.apache.commons.proxy.Invocation;
 import org.apache.commons.proxy.Invoker;
+import org.hippoecm.hst.ocm.Node;
 import org.hippoecm.hst.service.ServiceBeanAccessProvider;
-import org.hippoecm.hst.service.ServiceNamespace;
 
+/**
+ * Utility class to create proxies.
+ * 
+ * @version $Id$
+ */
 public class ProxyUtils
 {
     private ProxyUtils()
     {
     }
     
+    /**
+     * Creates and returns a dynamic proxy which throws {@link java.lang.UnsupportedOperationException}
+     * for some operations.
+     * This can be useful if you create a proxy with some methods unsupported. 
+     * 
+     * @param target the proxied target object
+     * @param unsupportedMethodNames
+     * @param proxyInterfaces the interfaces the created proxy should implement
+     * @return
+     */
     public static Object createdUnsupportableProxyObject(Object target, final Set<String> unsupportedMethodNames, Class ... proxyInterfaces) {
         ProxyFactory factory = new ProxyFactory();
         
@@ -47,38 +62,56 @@ public class ProxyUtils
         return factory.createInterceptorProxy(target.getClass().getClassLoader(), target, interceptor, proxyInterfaces);
     }
     
-    public static Object createBeanAccessProviderProxy(final ServiceBeanAccessProvider provider, Class ... proxyInterfaces) {
+    /**
+     * Creates and returns a dynamic proxy which invokes the underlying service bean access provider.
+     * 
+     * @param provider the underlying service bean access provider
+     * @param proxyInterfacesOrDelegateeClass the interfaces the proxy should implement or delegatee class which may implement interface(s).
+     * @return
+     */
+    public static Object createBeanAccessProviderProxy(final ServiceBeanAccessProvider provider, Class ... proxyInterfacesOrDelegateeClass) {
         ProxyFactory factory = new ProxyFactory();
-        String defaultNamespacePrefix = findServiceNamespacePrefix(proxyInterfaces);
-        Invoker invoker = new NamespacedBeanMethodInvoker(provider, defaultNamespacePrefix);
+        String primaryJcrType = findPrimaryJcrType(proxyInterfacesOrDelegateeClass);
+        Invoker invoker = new NamespacedBeanMethodInvoker(provider, primaryJcrType);
+        Class [] proxyInterfaces = null;
+        
+        if (proxyInterfacesOrDelegateeClass.length == 1 && !proxyInterfacesOrDelegateeClass[0].isInterface())
+        {
+            proxyInterfaces = proxyInterfacesOrDelegateeClass[0].getInterfaces();
+        }
+        else
+        {
+            proxyInterfaces = proxyInterfacesOrDelegateeClass;
+        }
+        
         return factory.createInvokerProxy(proxyInterfaces[0].getClassLoader(), invoker, proxyInterfaces);
     }
     
-    private static String findServiceNamespacePrefix(Class [] proxyInterfaces) {
-        String prefix = null;
+    private static String findPrimaryJcrType(Class [] proxyInterfaces) {
+        String primaryJcrType = null;
         
         for (Class proxyInterface : proxyInterfaces) {
-            if (proxyInterface.isAnnotationPresent(ServiceNamespace.class)) {
-                prefix = ((ServiceNamespace) proxyInterface.getAnnotation(ServiceNamespace.class)).prefix();
+            if (proxyInterface.isAnnotationPresent(Node.class)) {
+                primaryJcrType = ((Node) proxyInterface.getAnnotation(Node.class)).jcrType();
                 break;
             }
         }
         
-        if (prefix == null) {
+        if (primaryJcrType == null) {
             for (Class proxyInterface : proxyInterfaces) {
                 Class [] extendingInterfaces = proxyInterface.getInterfaces();
                 
                 if (extendingInterfaces.length > 0) {
-                    prefix = findServiceNamespacePrefix(extendingInterfaces);
+                    primaryJcrType = findPrimaryJcrType(extendingInterfaces);
                     
-                    if (prefix != null) {
+                    if (primaryJcrType != null) {
                         break;
                     }
                 }
             }
         }
         
-        return prefix;
+        return primaryJcrType;
     }
     
 }

@@ -13,26 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.service;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Target;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+package org.hippoecm.hst.service.jcr;
 
 
-/**
- * Allows for the annotation of a Java class so mapping through simple java interface to a JCR node.
- * 
- * @version $Id$
- */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Inherited
-public @interface ServiceNamespace {
-    String prefix();
-    String uri() default "";
+public class TextPageImpl extends HippoStdImpl implements TextPage {
+    
+    private static final long serialVersionUID = 1L;
+
+    public String getTitle() {
+        return getProperty("testproject:title");
+    }
+    
+    public String getSummary() {
+        return getProperty("testproject:summary");
+    }
+     
 }

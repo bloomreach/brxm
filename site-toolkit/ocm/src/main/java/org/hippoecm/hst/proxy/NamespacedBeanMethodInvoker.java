@@ -19,51 +19,63 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import org.apache.commons.proxy.Invoker;
+import org.hippoecm.hst.ocm.Node;
 import org.hippoecm.hst.service.ServiceBeanAccessProvider;
-import org.hippoecm.hst.service.ServiceNamespace;
 
 public class NamespacedBeanMethodInvoker implements Invoker, Serializable {
     
     private static final long serialVersionUID = 1L;
     
     private ServiceBeanAccessProvider provider;
-    private String defaultNamespacePrefix;
+    private String primaryJcrType;
+    private String namespacePrefix;
     
-    public NamespacedBeanMethodInvoker(final ServiceBeanAccessProvider provider, String defaultNamespacePrefix) {
+    public NamespacedBeanMethodInvoker(final ServiceBeanAccessProvider provider, String primaryJcrType) {
         this.provider = provider;
-        this.defaultNamespacePrefix = defaultNamespacePrefix;
+        this.primaryJcrType = primaryJcrType;
+        int offset = primaryJcrType.indexOf(':');
+        this.namespacePrefix = (offset != -1 ? primaryJcrType.substring(0, offset) : primaryJcrType);
     }
     
     public Object invoke(Object proxy, Method method, Object [] args) throws Throwable {
-        String namespacePrefix = getNamespacePrefix(method);
+        String overridenPrimaryJcrType = getOverridenPrimaryJcrType(method);
+        String overridenNamespacePrefix = null;
+        
+        if (this.primaryJcrType.equals(overridenPrimaryJcrType)) {
+            overridenNamespacePrefix = this.namespacePrefix;
+        } else {
+            int offset = overridenPrimaryJcrType.indexOf(';');
+            overridenNamespacePrefix = (offset != -1 ? overridenPrimaryJcrType.substring(0, offset) : overridenPrimaryJcrType);
+        }
+        
         String methodName = method.getName();
         Class [] paramTypes = method.getParameterTypes();
         Class returnType = method.getReturnType();
         
         if (methodName.startsWith("get") && paramTypes.length == 0) {
             String propName = getCamelString(methodName.substring(3));
-            return provider.getProperty(namespacePrefix, propName, returnType, method);
+            return provider.getProperty(overridenNamespacePrefix, propName, returnType, method);
         } else if (methodName.startsWith("is") && paramTypes.length == 0 && (returnType == boolean.class || returnType == Boolean.class)) {
             String propName = getCamelString(methodName.substring(2));
-            return provider.getProperty(namespacePrefix, propName, returnType, method);
+            return provider.getProperty(overridenNamespacePrefix, propName, returnType, method);
         } else if (methodName.startsWith("set") && paramTypes.length == 1) {
             String propName = getCamelString(methodName.substring(3));
-            return provider.setProperty(namespacePrefix, propName, args[0], returnType, method);
+            return provider.setProperty(overridenNamespacePrefix, propName, args[0], returnType, method);
         } else {
-            return provider.invoke(namespacePrefix, methodName, args, returnType, method);
+            return provider.invoke(overridenNamespacePrefix, methodName, args, returnType, method);
         }
     }
     
-    private String getNamespacePrefix(Method method) {
-        String namespacePrefix = this.defaultNamespacePrefix;
+    private String getOverridenPrimaryJcrType(Method method) {
+        String overridenPrimaryJcrType = this.primaryJcrType;
         
-        if (method.isAnnotationPresent(ServiceNamespace.class)) {
-            namespacePrefix = method.getAnnotation(ServiceNamespace.class).prefix();
-        } else if (method.getDeclaringClass().isAnnotationPresent(ServiceNamespace.class)) {
-            namespacePrefix = method.getDeclaringClass().getAnnotation(ServiceNamespace.class).prefix();
+        if (method.isAnnotationPresent(Node.class)) {
+            overridenPrimaryJcrType = method.getAnnotation(Node.class).jcrType();
+        } else if (method.getDeclaringClass().isAnnotationPresent(Node.class)) {
+            overridenPrimaryJcrType = method.getDeclaringClass().getAnnotation(Node.class).jcrType();
         }
         
-        return namespacePrefix;
+        return overridenPrimaryJcrType;
     }
     
     private static String getCamelString(String s) {

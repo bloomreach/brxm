@@ -17,6 +17,7 @@ package org.hippoecm.hst.service.jcr;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 
@@ -83,4 +84,29 @@ public class TestJCRServiceBean extends AbstractOCMSpringTestCase {
         System.out.println("The underlying service: " + underlyingService);
     }
         
+    @Test
+    public void testServiceBeanProxyWithClass() throws Exception {
+        Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
+        Node node = (Node)session.getItem(TESTPROJECT_EXISTING_VIRTUALNODE);
+        TextPage t = ServiceFactory.create(node, TextPageImpl.class);
+        
+        assertTrue("the returned class is not implementation delegatee class.", t instanceof TextPageImpl);
+        assertNotNull("title property is null!", t.getTitle());
+        System.out.println(t.getTitle());
+        
+        assertNotNull("summary property is null!", t.getSummary());
+        System.out.println(t.getSummary());
+        
+        byte [] bytes = SerializationUtils.serialize((Serializable) t);
+        TextPage t2 = (TextPage) SerializationUtils.deserialize(bytes);
+        
+        assertEquals("The title property of the deserialized one is different from the original.", 
+                t.getTitle(), t2.getTitle());
+        assertEquals("The summary property of the deserialized one is different from the original.", 
+                t.getSummary(), t2.getSummary());
+        
+        Service underlyingService = t.getUnderlyingService();
+        assertNotNull("The underlying service is null!", underlyingService);
+        System.out.println("The underlying service: " + underlyingService);
+    }
 }

@@ -19,32 +19,54 @@ import javax.jcr.Node;
 
 import org.hippoecm.hst.proxy.ProxyUtils;
 
+/**
+ * Factory util class to create lightweight JCR Node mapped POJO.
+ * 
+ * @version $Id$
+ */
 public class ServiceFactory {
     
-    public static <T> T create(Node n, Class ... proxyInterfaces) {
-        
+    /**
+     * Create and returns a lightweight JCR Node mapped POJO.
+     * <P>
+     * If the <CODE>proxyInterfacesOrDelegateeClass</CODE> argument is array of interfaces, then
+     * this method will create a proxy instance implementing those interfaces after setting
+     * a underlying {@link org.hippoecm.hst.service.Service} object for the proxy.
+     * </P>
+     * <P>
+     * If the <CODE>proxyInterfacesOrDelegateeClass</CODE> argument is one-length array and
+     * its own element is an instantiable delegatee class, then this method will instantiate the class after setting
+     * a underlying {@link org.hippoecm.hst.service.Service} object.
+     * </P> 
+     * 
+     * @param <T>
+     * @param node JCR Node
+     * @param proxyInterfacesOrDelegateeClass interfaces should implement or delegatee class which may implement interface(s).
+     * @return proxy object or delegatee object
+     * @throws Exception
+     */
+    public static <T> T create(Node node, Class ... proxyInterfacesOrDelegateeClass) throws Exception {
         T proxy = null;
         
-        Service s = new AbstractJCRService(n) {
+        Service service = new AbstractJCRService(node) {
+            private static final long serialVersionUID = 1L;
+
             public Service[] getChildServices() {
                 return null;
             }
-            
         };
-        
-        try {
-            proxy = (T) ProxyUtils.createBeanAccessProviderProxy(new ServiceBeanAccessProviderImpl(s), proxyInterfaces);
 
-            if (proxy instanceof UnderlyingServiceAware) {
-                ((UnderlyingServiceAware) proxy).setUnderlyingService(s);
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+        if (proxyInterfacesOrDelegateeClass.length == 1 && !proxyInterfacesOrDelegateeClass[0].isInterface()) {
+            proxy = (T) proxyInterfacesOrDelegateeClass[0].newInstance();
+        } else {
+            proxy = (T) ProxyUtils.createBeanAccessProviderProxy(new ServiceBeanAccessProviderImpl(service), proxyInterfacesOrDelegateeClass);
+        }
+        
+        if (proxy instanceof UnderlyingServiceAware) {
+            ((UnderlyingServiceAware) proxy).setUnderlyingService(service);
         }
         
         return proxy;
-        
     }
+    
 }

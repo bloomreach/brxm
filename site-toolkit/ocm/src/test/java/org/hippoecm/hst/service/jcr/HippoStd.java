@@ -15,10 +15,12 @@
  */
 package org.hippoecm.hst.service.jcr;
 
-import org.hippoecm.hst.service.UnderlyingServiceAware;
-import org.hippoecm.hst.service.ServiceNamespace;
+import java.io.Serializable;
 
-@ServiceNamespace(prefix = "hippostd")
-public interface HippoStd extends UnderlyingServiceAware {
+import org.hippoecm.hst.ocm.Node;
+import org.hippoecm.hst.service.UnderlyingServiceAware;
+
+@Node(jcrType="hippostd:document")
+public interface HippoStd extends UnderlyingServiceAware, Serializable {
     public String getState();
 }

@@ -13,21 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.ocm;
+package org.hippoecm.hst.jackrabbit.ocm;
 
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdHtml;
 
-@Node(jcrType="gettingstarted:textpage", discriminator=false)
+@Node(jcrType="testproject:textpage", discriminator=false)
 public class TextPage1 extends HippoStdDocument {
 
     protected String title;
     protected HippoStdHtml html;
 
-    @Field(jcrName="gettingstarted:title")
+    @Field(jcrName="testproject:title")
     public String getTitle() {
         return this.title;
     }
@@ -36,7 +34,7 @@ public class TextPage1 extends HippoStdDocument {
         this.title = title;
     }
 
-    @Bean(jcrName="gettingstarted:body")
+    @Bean(jcrName="testproject:body")
     public HippoStdHtml getHtml() {
         return this.html;
     }

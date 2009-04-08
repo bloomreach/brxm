@@ -13,16 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.ocm;
+package org.hippoecm.hst.jackrabbit.ocm;
 
 import java.util.List;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument;
 
-@Node(jcrType="gettingstarted:textpage", discriminator=false)
+@Node(jcrType="testproject:textpage", discriminator=false)
 public class TextPage2 extends HippoStdDocument {
 
     protected String title;

@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.hippoecm.hst.ocm.NodeAware;
 import org.hippoecm.hst.ocm.SimpleObjectConverter;
 import org.hippoecm.hst.ocm.SimpleObjectConverterAware;
@@ -68,6 +69,7 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
         this.simpleObjectConverter = simpleObjectConverter;
     }
 
+    @Field(path=true)
     public String getPath() {
        if(this.valueProvider != null) {
            return this.valueProvider.getPath();
@@ -75,6 +77,10 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
        return null;
     }
 
+    public void setPath(String path) {
+        // no-op. just for jackrabbit ocm mapping.
+    }
+    
     public String getName() {
         String name = "";
 

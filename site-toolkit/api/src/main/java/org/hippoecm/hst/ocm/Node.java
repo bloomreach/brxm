@@ -13,14 +13,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.service.jcr;
+package org.hippoecm.hst.ocm;
 
-import org.hippoecm.hst.ocm.Node;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Node(jcrType="testproject:textpage")
-public interface TextPage extends HippoStd{
-    
-    public String getTitle();
-    public String getSummary();
-     
+/**
+ * Allows for the annotation of a Java class so mapping through simple java interface or delegatee class to a JCR node.
+ * 
+ * @version $Id$
+ */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Inherited
+public @interface Node {
+    String jcrType();
 }

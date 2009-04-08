@@ -16,25 +16,25 @@
 -->
 <jackrabbit-ocm>
   
-  <class-descriptor jcrType="gettingstarted:textpage" jcrSuperType="hippo:document" className="org.hippoecm.hst.ocm.TextPage1">
+  <class-descriptor jcrType="testproject:textpage" jcrSuperType="hippo:document" className="org.hippoecm.hst.jackrabbit.ocm.TextPage1">
     <field-descriptor fieldName="path" path="true" />
     <field-descriptor fieldName="stateSummary" jcrName="hippostd:stateSummary" />
     <field-descriptor fieldName="state" jcrName="hippostd:state" />
     <field-descriptor fieldName="title" jcrName="gettingstarted:title" />
   </class-descriptor>
   
-  <class-descriptor jcrType="hippo:html" className="org.hippoecm.hst.ocm.HippoStdHtml">
+  <class-descriptor jcrType="hippo:html" className="org.hippoecm.hst.jackrabbit.ocm.HippoStdHtml">
     <field-descriptor fieldName="path" path="true" />
     <field-descriptor fieldName="content" jcrName="hippostd:content" />
   </class-descriptor>
   
-  <class-descriptor jcrType="hippo:document" className="org.hippoecm.hst.ocm.HippoStdDocument">
+  <class-descriptor jcrType="hippo:document" className="org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument">
     <field-descriptor fieldName="path" path="true" />
     <field-descriptor fieldName="stateSummary" jcrName="hippostd:stateSummary" />
     <field-descriptor fieldName="state" jcrName="hippostd:state" />
   </class-descriptor>
   
-  <class-descriptor jcrType="hippostd:folder" className="org.hippoecm.hst.ocm.HippoStdFolder">
+  <class-descriptor jcrType="hippostd:folder" className="org.hippoecm.hst.jackrabbit.ocm.HippoStdFolder">
     <field-descriptor fieldName="path" path="true" />
   </class-descriptor>
   
