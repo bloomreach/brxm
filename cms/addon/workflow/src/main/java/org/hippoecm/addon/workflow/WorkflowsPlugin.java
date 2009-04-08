@@ -18,6 +18,9 @@ package org.hippoecm.addon.workflow;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -26,8 +29,9 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.repository.api.HippoNodeType;
 
-public class WorkflowPlugin extends AbstractWorkflowPlugin {
+public class WorkflowsPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -35,7 +39,7 @@ public class WorkflowPlugin extends AbstractWorkflowPlugin {
 
     private final IModelReference modelReference;
 
-    public WorkflowPlugin(IPluginContext context, IPluginConfig config) {
+    public WorkflowsPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         if (config.getString(RenderService.MODEL_ID) != null) {
@@ -71,13 +75,28 @@ public class WorkflowPlugin extends AbstractWorkflowPlugin {
     protected void onModelChanged() {
         super.onModelChanged();
         Set<Node> nodeSet = new LinkedHashSet<Node>();
-        if(getModel() instanceof JcrNodeModel) {
-            Node node = ((JcrNodeModel)getModel()).getNode();
-            if(node != null) {
-                nodeSet.add(node);
+        MenuHierarchy menu = null;
+        try {
+            if (getModel() instanceof JcrNodeModel) {
+                Node node = ((JcrNodeModel)getModel()).getNode();
+                if (node != null) {
+                    if (node.isNodeType(HippoNodeType.NT_DOCUMENT) && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                        Node handle = node.getParent();
+                        for (NodeIterator iter = handle.getNodes(); iter.hasNext();) {
+                            node = iter.nextNode();
+                            if (node != null) {
+                                nodeSet.add(node);
+                            }
+                        }
+                    } else {
+                        nodeSet.add(node);
+                    }
+                }
             }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage(), ex);
         }
-        MenuHierarchy menu = buildMenu(nodeSet);
+        menu = buildMenu(nodeSet);
         menu.restructure();
         addOrReplace(new MenuBar("menu", menu));
 

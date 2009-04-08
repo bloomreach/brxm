@@ -15,9 +15,11 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Date;
 
+import java.util.Map;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
@@ -32,6 +34,19 @@ public class BasicRequestWorkflowImpl extends WorkflowImpl implements BasicReque
     protected PublishableDocument document;
 
     public BasicRequestWorkflowImpl() throws RemoteException {
+    }
+
+    @Override
+    public Map<String,Serializable> hints()  {
+        Map<String,Serializable> info = super.hints();
+        if(request.getOwner() != null) {
+            if(request.getOwner().equals(getWorkflowContext().getUserIdentity())) {
+                info.put("cancelRequest", new Boolean(true));
+            } else {
+                info.put("cancelRequest", new Boolean(false));
+            }
+        }
+        return info;
     }
 
     public void cancelRequest() throws WorkflowException, MappingException, RepositoryException {

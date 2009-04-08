@@ -16,7 +16,6 @@
 package org.hippoecm.addon.workflow;
 
 import java.rmi.RemoteException;
-import java.util.Date;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
@@ -31,11 +30,11 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+
 import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -139,31 +138,31 @@ public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implement
             } catch (RepositoryException ex) {
                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
-		error(ex);
+                error(ex);
                 return "";
             } catch (WorkflowException ex) {
                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
-		error(ex);
+                error(ex);
                 return "";
             } catch (RemoteException ex) {
                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
-		error(ex);
+                error(ex);
                 return "";
             } catch (Exception ex) {
                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
-		error(ex);
+                error(ex);
                 return "";
             } finally {
-		/*
+                /*
                 IJcrService jcrService = plugin.getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
                 if (jcrService != null) {
                     jcrService.flush(handle);
                 }
-		*/
-	    }
+                */
+            }
             return null;
         }
 

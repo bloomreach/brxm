@@ -45,7 +45,6 @@ class MenuHierarchy {
 
     public void restructure() {
         Map<String, MenuHierarchy> submenus = this.submenus;
-        List<ActionDescription> items = this.items;
         this.submenus = new LinkedHashMap<String, MenuHierarchy>();
         this.items = new LinkedList<ActionDescription>();
         if(submenus.containsKey("default")) {

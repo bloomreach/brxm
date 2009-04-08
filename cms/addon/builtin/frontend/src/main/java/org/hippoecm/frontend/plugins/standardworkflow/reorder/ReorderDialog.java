@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow.reorder;
 
+import java.util.List;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
@@ -43,10 +44,12 @@ public class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.Wo
 
     private ReorderPanel panel;
     WorkflowDescriptorModel model;
+    List<String> mapping;
 
-    public ReorderDialog(CompatibilityWorkflowPlugin.WorkflowAction action, IPluginConfig pluginConfig, WorkflowDescriptorModel model) {
+    public ReorderDialog(CompatibilityWorkflowPlugin.WorkflowAction action, IPluginConfig pluginConfig, WorkflowDescriptorModel model, List<String> mapping) {
         action . super();
         this.model = model;
+        this.mapping = mapping;
 
         String name;
         try {
@@ -60,19 +63,17 @@ public class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.Wo
         }
         add(new Label("message", new StringResourceModel("reorder-message", this, null, new Object[] { name })));
     }
-    
+
+    @Override
     public IModel getTitle() {
         return new StringResourceModel("reorder", this, null);
     }
-
-    protected String execute2() {
-        try {
-            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-            FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow((WorkflowDescriptor) model.getObject());
-            workflow.reorder(panel.getMapping());
-            return null;
-        } catch(Exception ex) {
-            return ex.getClass().getName()+": "+ex.getMessage();
-        }
+    
+    // FIXME
+    @Override
+    protected void onOk() {
+        super.onOk();
+        mapping.clear();
+        mapping.addAll(panel.getMapping());
     }
 }

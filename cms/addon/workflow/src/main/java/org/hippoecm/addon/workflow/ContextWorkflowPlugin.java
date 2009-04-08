@@ -15,8 +15,14 @@
  */
 package org.hippoecm.addon.workflow;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+import javax.jcr.Node;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
+
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
@@ -45,7 +51,14 @@ public class ContextWorkflowPlugin extends AbstractWorkflowPlugin {
     }
 
     private void populate() {
-        MenuHierarchy menu = buildMenu();
+        Set<Node> nodeSet = new LinkedHashSet<Node>();
+        if(getModel() instanceof JcrNodeModel) {
+            Node node = ((JcrNodeModel)getModel()).getNode();
+            if(node != null) {
+                nodeSet.add(node);
+            }
+        }
+        MenuHierarchy menu = buildMenu(nodeSet);
         menu.flatten();
         MenuDrop dropdown = new MenuDrop("menu", null, menu);
         addOrReplace(dropdown);
