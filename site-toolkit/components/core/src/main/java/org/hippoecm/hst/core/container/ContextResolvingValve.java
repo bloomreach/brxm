@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.core.domain.DomainMapping;
+import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
@@ -34,14 +34,14 @@ public class ContextResolvingValve extends AbstractValve
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
         HstContainerURL baseURL = requestContext.getBaseURL();
         
-        String domainName = servletRequest.getServerName();
-        DomainMapping domainMapping = this.domainMappings.findDomainMapping(domainName);
+        String hostName = servletRequest.getServerName();
+        VirtualHost virtualHost = this.virtualHosts.findVirtualHost(hostName);
         
-        if (domainMapping == null) {
-            throw new ContainerException("No domain mapping for " + domainName);
+        if (virtualHost == null) {
+            throw new ContainerException("No host mapping for " + hostName);
         }
 
-        String siteName = domainMapping.getSiteName();
+        String siteName = virtualHost.getSiteName();
         HstSite hstSite = getSitesManager(servletRequest.getServletPath()).getSites().getSite(siteName);
         
         if (hstSite == null) {

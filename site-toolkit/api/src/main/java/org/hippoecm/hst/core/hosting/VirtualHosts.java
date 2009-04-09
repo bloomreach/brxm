@@ -13,24 +13,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.domain;
+package org.hippoecm.hst.core.hosting;
 
-public class DomainMappingImpl implements DomainMapping {
-    
-    protected String domainName;
-    protected String siteName;
-    
-    public DomainMappingImpl(String domainName, String siteName) {
-        this.domainName = domainName;
-        this.siteName = siteName;
-    }
+import java.util.List;
 
-    public String getDomainName() {
-        return this.domainName;
-    }
-    
-    public String getSiteName() {
-        return this.siteName;
-    }
+/**
+ * The container interface for {@link VirtualHost}
+ * 
+ */
+public interface VirtualHosts {
 
+    /**
+     * Returns the list of {@link VirtualHost} instances.
+     * 
+     * @return
+     */
+    List<VirtualHost> getVirtualHosts();
+    
+    /**
+     * Returns the proper @{link VirtualHost} for the hostName.
+     * 
+     * @param hostname
+     * @return
+     */
+    VirtualHost findVirtualHost(String hostName);
+    
 }

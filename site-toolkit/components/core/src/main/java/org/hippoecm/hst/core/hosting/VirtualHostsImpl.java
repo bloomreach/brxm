@@ -13,42 +13,45 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.domain;
+package org.hippoecm.hst.core.hosting;
 
 import java.util.List;
 
-public class DomainMappingsImpl implements DomainMappings {
+import org.hippoecm.hst.core.hosting.VirtualHost;
+import org.hippoecm.hst.core.hosting.VirtualHosts;
+
+public class VirtualHostsImpl implements VirtualHosts {
     
-    protected List<DomainMapping> domainMappings;
+    protected List<VirtualHost> virtualHosts;
     protected String defaultSiteName;
 
-    public DomainMappingsImpl(List<DomainMapping> domainMappings) {
-        this.domainMappings = domainMappings;
+    public VirtualHostsImpl(List<VirtualHost> virtualHosts) {
+        this.virtualHosts = virtualHosts;
     }
     
     public void setDefaultSiteName(String defaultSiteName) {
         this.defaultSiteName = defaultSiteName;
     }
     
-    public List<DomainMapping> getDomainMappings() {
-        return this.domainMappings;
+    public List<VirtualHost> getVirtualHosts() {
+        return this.virtualHosts;
     }
 
-    public DomainMapping findDomainMapping(String domainName) {
-        DomainMapping domainMapping = null;
+    public VirtualHost findVirtualHost(String hostName) {
+        VirtualHost virtualHost = null;
         
-        for (DomainMapping mapping : this.domainMappings) {
-            if (mapping.getDomainName().equals(domainName)) {
-                domainMapping = mapping;
+        for (VirtualHost host : this.virtualHosts) {
+            if (host.getHostName().equals(hostName)) {
+                virtualHost = host;
                 break;
             }
         }
         
-        if (domainMapping == null && this.defaultSiteName != null) {
-            domainMapping = new DomainMappingImpl(domainName, this.defaultSiteName);
+        if (virtualHost == null && this.defaultSiteName != null) {
+            virtualHost = new VirtualHostImpl(hostName, this.defaultSiteName);
         }
         
-        return domainMapping;
+        return virtualHost;
     }
 
 }

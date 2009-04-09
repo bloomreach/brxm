@@ -29,10 +29,10 @@
     <property name="sitesContentPath" value="${live.sites.config.node.path}" />
   </bean>
     
-  <bean id="org.hippoecm.hst.core.domain.DomainMappings" class="org.hippoecm.hst.core.domain.DomainMappingsImpl">
+  <bean id="org.hippoecm.hst.core.hosting.VirtualHosts" class="org.hippoecm.hst.core.hosting.VirtualHostsImpl">
     <constructor-arg>
       <list>
-        <bean class="org.hippoecm.hst.core.domain.DomainMappingImpl">
+        <bean class="org.hippoecm.hst.core.hosting.VirtualHostImpl">
           <constructor-arg value="preview.myproject.hippoecm.org" />
           <constructor-arg value="myproject" />
         </bean>

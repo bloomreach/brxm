@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.core.component.HstURLFactory;
-import org.hippoecm.hst.core.domain.DomainMappings;
+import org.hippoecm.hst.core.hosting.VirtualHosts;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -19,7 +19,7 @@ public abstract class AbstractValve implements Valve
     
     protected ContainerConfiguration containerConfiguration;
     protected Map<String, HstSitesManager> sitesManagers;
-    protected DomainMappings domainMappings;
+    protected VirtualHosts virtualHosts;
     protected HstSiteMapMatcher siteMapMatcher;
     protected HstRequestContextComponent requestContextComponent;
     protected HstComponentFactory componentFactory;
@@ -46,12 +46,12 @@ public abstract class AbstractValve implements Valve
         this.sitesManagers = sitesManagers;
     }
 
-    public DomainMappings getDomainMappings() {
-        return domainMappings;
+    public VirtualHosts getVirtualHosts() {
+        return virtualHosts;
     }
 
-    public void setDomainMappings(DomainMappings domainMappings) {
-        this.domainMappings = domainMappings;
+    public void setVirtualHosts(VirtualHosts virtualHosts) {
+        this.virtualHosts = virtualHosts;
     }
 
     public HstSiteMapMatcher getSiteMapMatcher() {

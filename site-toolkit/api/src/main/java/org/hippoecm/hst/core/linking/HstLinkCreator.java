@@ -83,7 +83,7 @@ public interface HstLinkCreator {
     
     /**
      * create a link to a HstSiteMapItem with id <code>toSiteMapItemId</code> that belongs to <code>HstSite</code> hstSite.
-     * Note that the HstSite can be a different one then the current, possibly resulting in a cross-domain link. 
+     * Note that the HstSite can be a different one then the current, possibly resulting in a cross-domain (host) link. 
      * A <code>HstLink</code> can only be created unambiguous if the <code>HstSiteMapItem</code> belonging to toSiteMapItemId does not
      * contain any ancestor including itself with a wildcard. 
      * If a wildcard is encountered, this method can return <code>null</code>, though this is up to the implementation
