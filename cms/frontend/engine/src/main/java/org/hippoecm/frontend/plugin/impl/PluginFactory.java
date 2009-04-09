@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.wicket.Application;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.IMarkupCacheKeyProvider;
 import org.apache.wicket.markup.IMarkupResourceStreamProvider;
@@ -81,6 +82,9 @@ public class PluginFactory implements IClusterable {
                 }
 
             } catch (InvocationTargetException e) {
+                if(e.getTargetException() instanceof RestartResponseException) {
+                    throw (RestartResponseException) e.getTargetException();
+                }
                 message = e.getTargetException().getClass().getName() + ": " + e.getTargetException().getMessage();
                 log.error(message, e);
             } catch (Exception e) {
