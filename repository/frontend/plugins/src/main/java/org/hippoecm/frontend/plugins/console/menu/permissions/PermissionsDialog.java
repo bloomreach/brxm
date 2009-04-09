@@ -55,7 +55,25 @@ public class PermissionsDialog extends AbstractDialog {
     public static final String[] JCR_ACTIONS = new String[] { READ_ACTION, REMOVE_ACTION, ADD_NODE_ACTION,
             SET_PROPERTY_ACTION };
 
+    /**
+     * Predefined jcr privileges
+     */
+    public static final String READ_PRIVILEGE = "jcr:read";
+    public static final String WRITE_PRIVILEGE = "jcr:write";
+    public static final String ALL_PRIVILEGE= "jcr:all";
+    public static final String SET_PROPERTIES_PRIVILEGE = "jcr:setProperties";
+    public static final String ADD_CHILD_PRIVILEGE = "jcr:addChildNodes";
+    public static final String REMOVE_CHILD_PRIVILEGE= "jcr:removeChildNodes";
+    
+    /**
+     * Predefined hippo privileges
+     */
+    public static final String AUTHOR_PRIVILEGE = "hippo:author";
+    public static final String EDITOR_PRIVILEGE = "hippo:editor";
 
+    public static final String[] JCR_PRIVILEGES = new String[] { READ_PRIVILEGE, WRITE_PRIVILEGE, ALL_PRIVILEGE,
+        SET_PROPERTIES_PRIVILEGE, ADD_CHILD_PRIVILEGE, REMOVE_CHILD_PRIVILEGE, AUTHOR_PRIVILEGE, EDITOR_PRIVILEGE };
+    
     static final Logger log = LoggerFactory.getLogger(PermissionsDialog.class);
 
     public PermissionsDialog(MenuPlugin plugin, IPluginContext context) {
@@ -65,15 +83,15 @@ public class PermissionsDialog extends AbstractDialog {
         final Label usernameLabel = new Label("username", "Unknown");
         final Label membershipsLabel = new Label("memberships", "None");
         final Label allActionsLabel = new Label("all-actions", "None");
-        final Label allRolesLabel = new Label("all-roles", "None");
+        final Label allPrivilegesLabel = new Label("all-privileges", "None");
         final Label actionsLabel = new Label("actions", "None");
-        final Label rolesLabel = new Label("roles", "None");
+        final Label privilegesLabel = new Label("privileges", "None");
         add(usernameLabel);
         add(membershipsLabel);
         add(allActionsLabel);
-        add(allRolesLabel);
+        add(allPrivilegesLabel);
         add(actionsLabel);
-        add(rolesLabel);
+        add(privilegesLabel);
         try {
             Node subject = nodeModel.getNode();
 
@@ -82,17 +100,16 @@ public class PermissionsDialog extends AbstractDialog {
                     .impersonate(new SimpleCredentials("workflowuser", new char[] {}));
 
             String userID = subject.getSession().getUserID();
-            String[] allRoles = getRoles(privSession);
             String[] memberships = getMemberships(privSession, userID);
             String[] actions = getAllowedActions(subject, JCR_ACTIONS);
-            String[] roles = getAllowedActions(subject, allRoles);
+            String[] roles = getAllowedActions(subject, JCR_PRIVILEGES);
 
             usernameLabel.setModel(new Model(userID));
             membershipsLabel.setModel(new Model(StringUtils.join(memberships, ", ")));
             allActionsLabel.setModel(new Model(StringUtils.join(JCR_ACTIONS, ", ")));
-            allRolesLabel.setModel(new Model(StringUtils.join(allRoles, ", ")));
+            allPrivilegesLabel.setModel(new Model(StringUtils.join(JCR_PRIVILEGES, ", ")));
             actionsLabel.setModel(new Model(StringUtils.join(actions, ", ")));
-            rolesLabel.setModel(new Model(StringUtils.join(roles, ", ")));
+            privilegesLabel.setModel(new Model(StringUtils.join(roles, ", ")));
 
         } catch (RepositoryException ex) {
             actionsLabel.setModel(new Model(ex.getClass().getName() + ": " + ex.getMessage()));
