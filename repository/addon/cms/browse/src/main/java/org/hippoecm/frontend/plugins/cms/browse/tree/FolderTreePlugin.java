@@ -72,7 +72,8 @@ public class FolderTreePlugin extends RenderPlugin implements ContextMenuManager
 
             @Override
             protected MarkupContainer newContextContent(MarkupContainer parent, String id, final TreeNode node) {
-                ContextWorkflowPlugin content = new ContextWorkflowPlugin(context, config.getPluginConfig("workflow.options"));
+                ContextWorkflowPlugin content = new ContextWorkflowPlugin(context, config
+                        .getPluginConfig("workflow.options"));
                 content.bind(FolderTreePlugin.this, id);
                 JcrNodeModel nodeModel = ((IJcrTreeNode) node).getNodeModel();
                 content.setModel(nodeModel);
@@ -101,7 +102,7 @@ public class FolderTreePlugin extends RenderPlugin implements ContextMenuManager
 
         add(new AjaxEventBehavior("onclick") {
             public void onEvent(AjaxRequestTarget target) {
-                if(activeContextMenu != null) {
+                if (activeContextMenu != null) {
                     activeContextMenu.collapse(target);
                 }
             }
@@ -137,7 +138,7 @@ public class FolderTreePlugin extends RenderPlugin implements ContextMenuManager
                     treeState.expandNode(treeNode);
                 }
             }
-    
+
             treeState.selectNode((TreeNode) treePath.getLastPathComponent(), true);
             redraw();
         }
@@ -148,9 +149,9 @@ public class FolderTreePlugin extends RenderPlugin implements ContextMenuManager
     public void addContextMenu(ContextMenu menu) {
         activeContextMenu = menu;
     }
-    
+
     public void collapse(ContextMenu current, AjaxRequestTarget target) {
-        if(activeContextMenu != null && current != activeContextMenu) {
+        if (activeContextMenu != null && current != activeContextMenu) {
             activeContextMenu.collapse(target);
         }
     }

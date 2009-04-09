@@ -15,11 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
-import org.apache.wicket.ajax.AjaxEventBehavior;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.ContextMenu;
-import org.hippoecm.frontend.plugin.ContextMenuManager;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.Pinger;

@@ -41,7 +41,7 @@ public class NodeTranslator extends NodeModelWrapper {
 
     private static final long serialVersionUID = 1L;
 
-    private LoadableDetachableModel name;
+    private NodeNameModel name;
     private transient TreeMap<String, Property> properties;
 
     public NodeTranslator(JcrNodeModel nodeModel) {
@@ -72,7 +72,7 @@ public class NodeTranslator extends NodeModelWrapper {
     @Override
     public void detach() {
         super.detach();
-        name.detach();
+        name.innerDetach();
         properties = null;
     }
 
@@ -112,6 +112,15 @@ public class NodeTranslator extends NodeModelWrapper {
             return name;
         }
 
+        void innerDetach() {
+            super.onDetach();
+        }
+        
+        @Override
+        public void onDetach() {
+            NodeTranslator.this.detach();
+        }
+        
     }
 
     private class Property implements IDetachable {
@@ -150,6 +159,7 @@ public class NodeTranslator extends NodeModelWrapper {
                         entry.getValue().onDetachProperty();
                     }
                 }
+                nodeModel.detach();
                 attached = false;
             }
         }
