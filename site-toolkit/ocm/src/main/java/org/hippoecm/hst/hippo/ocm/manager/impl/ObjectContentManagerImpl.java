@@ -15,10 +15,9 @@
  */
 package org.hippoecm.hst.hippo.ocm.manager.impl;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
 
 import org.hippoecm.hst.ocm.ObjectContentManagerException;
 import org.hippoecm.hst.ocm.manager.ObjectContentManager;
@@ -37,42 +36,19 @@ public class ObjectContentManagerImpl implements ObjectContentManager {
     public Object getObject(String path) throws ObjectContentManagerException {
         return this.objectConverter.getObject(this.session, path);
     }
-
+    
+    public Object getObjectByUuid(String uuid) throws ObjectContentManagerException {
+        try {
+            Node node = session.getNodeByUUID(uuid);
+            Object object = objectConverter.getObject(node);
+            return object;
+        } catch (RepositoryException e) {
+            throw new ObjectContentManagerException("Impossible to get the object with uuid : " + uuid, e);
+        }
+    }
+    
     public Session getSession() {
         return this.session;
-    }
-
-    public void save() throws ObjectContentManagerException {
-        try {
-            this.session.save();
-        } catch (NoSuchNodeTypeException nsnte) {
-            throw new ObjectContentManagerException(
-                    "Cannot persist current session changes. An unknown node type was used.", nsnte);
-        } catch (LockException le) {
-            throw new ObjectContentManagerException(
-                    "Cannot persist current session changes. Violation of a lock detected", le);
-        } catch (RepositoryException e) {
-            throw new ObjectContentManagerException("Cannot persist current session changes.", e);
-        }
-    }
-
-    /**
-    *
-    * @see org.apache.jackrabbit.ocm.manager.ObjectContentManager#logout()
-    */
-    public void logout() throws ObjectContentManagerException {
-        try {
-            this.session.save();
-            this.session.logout();
-        } catch (NoSuchNodeTypeException nsnte) {
-            throw new ObjectContentManagerException(
-                    "Cannot persist current session changes. An unknown node type was used.", nsnte);
-        } catch (LockException le) {
-            throw new ObjectContentManagerException(
-                    "Cannot persist current session changes. Violation of a lock detected", le);
-        } catch (RepositoryException e) {
-            throw new ObjectContentManagerException("Cannot persist current session changes.", e);
-        }
     }
 
 }

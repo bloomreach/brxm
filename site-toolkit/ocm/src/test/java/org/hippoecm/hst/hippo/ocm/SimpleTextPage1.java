@@ -17,12 +17,12 @@ package org.hippoecm.hst.hippo.ocm;
 
 import java.util.Map;
 
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument;
+import org.hippoecm.hst.ocm.Node;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.UnderlyingServiceAware;
 
-@Node(jcrType="testproject:textpage", discriminator=false)
+@Node(jcrType="testproject:textpage")
 public class SimpleTextPage1 extends HippoStdDocument implements UnderlyingServiceAware {
 
     // the following two properties might be defined in the base class for convenience.

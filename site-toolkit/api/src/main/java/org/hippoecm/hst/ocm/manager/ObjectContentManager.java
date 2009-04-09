@@ -44,14 +44,17 @@ public interface ObjectContentManager {
     public Object getObject(String path) throws ObjectContentManagerException;
 
     /**
-     * Save all modifications made by the object content manager
+     * Get an object from the JCR repository
+     *
+     * @param the
+     *            object uuid
+     * @return the object found or null
      *
      * @throws ObjectContentManagerException
-     *             when it is not possible to save all pending operation into
-     *             the JCR repo
+     *             when it is not possible to retrieve the object
      */
-    public void save() throws ObjectContentManagerException;
-
+    public Object getObjectByUuid(String uuid) throws ObjectContentManagerException;
+    
     /**
      * This method returns the JCR session. The JCR session could be used to
      * make some JCR specific calls.
@@ -59,13 +62,5 @@ public interface ObjectContentManager {
      * @return the associated JCR session
      */
     public Session getSession();
-    
-    /**
-     * Close the session
-     *
-     * @throws ObjectContentManagerException
-     *             when it is not possible to logout
-     */
-    public void logout() throws ObjectContentManagerException;
     
 }

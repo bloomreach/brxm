@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.hippo.ocm.manager.impl;
 
-import java.util.Map;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -27,14 +27,18 @@ import org.hippoecm.hst.ocm.ObjectContentManagerException;
 import org.hippoecm.hst.ocm.manager.ObjectConverter;
 import org.hippoecm.hst.ocm.manager.ObjectConverterAware;
 import org.hippoecm.hst.service.ServiceFactory;
+import org.hippoecm.hst.util.DefaultKeyValue;
+import org.hippoecm.hst.util.KeyValue;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class ObjectConverterImpl implements ObjectConverter {
     
-    protected Map<String, Class[]> jcrPrimaryNodeTypeClassMapping;
+    protected List<KeyValue<String, Class[]>> jcrPrimaryNodeTypeClassPairs;
+    protected String [] fallBackJcrPrimaryNodeTypes;
     
-    public ObjectConverterImpl(Map<String, Class[]> jcrPrimaryNodeTypeClassMapping) {
-        this.jcrPrimaryNodeTypeClassMapping = jcrPrimaryNodeTypeClassMapping;
+    public ObjectConverterImpl(List<KeyValue<String, Class[]>> jcrPrimaryNodeTypeClassPairs, String [] fallBackJcrPrimaryNodeTypes) {
+        this.jcrPrimaryNodeTypeClassPairs = jcrPrimaryNodeTypeClassPairs;
+        this.fallBackJcrPrimaryNodeTypes = fallBackJcrPrimaryNodeTypes;
     }
 
     public Object getObject(Session session, String path) throws ObjectContentManagerException {
@@ -77,7 +81,24 @@ public class ObjectConverterImpl implements ObjectConverter {
         
         try {
             String jcrPrimaryNodeType = node.getPrimaryNodeType().getName();
-            Class [] proxyInterfacesOrDelegateeClass = this.jcrPrimaryNodeTypeClassMapping.get(jcrPrimaryNodeType);
+            Class [] proxyInterfacesOrDelegateeClass = null;
+            KeyValue<String, Class[]> jcrPrimaryNodeTypePair = new DefaultKeyValue<String, Class[]>(jcrPrimaryNodeType, null, true);
+            int offset = this.jcrPrimaryNodeTypeClassPairs.indexOf(jcrPrimaryNodeTypePair);
+            
+            if (offset != -1) {
+                KeyValue<String, Class[]> pair = this.jcrPrimaryNodeTypeClassPairs.get(offset);
+                proxyInterfacesOrDelegateeClass = pair.getValue();
+            } else if (this.fallBackJcrPrimaryNodeTypes != null) {
+                for (String fallBackJcrPrimaryNodeType : this.fallBackJcrPrimaryNodeTypes) {
+                    offset = this.jcrPrimaryNodeTypeClassPairs.indexOf(new DefaultKeyValue<String, Class[]>(fallBackJcrPrimaryNodeType, null, true));
+                    
+                    if (offset != -1) {
+                        KeyValue<String, Class[]> pair = this.jcrPrimaryNodeTypeClassPairs.get(offset);
+                        proxyInterfacesOrDelegateeClass = pair.getValue();
+                        break;
+                    }
+                }
+            }
             
             if (proxyInterfacesOrDelegateeClass != null) {
                 return ServiceFactory.create(node, proxyInterfacesOrDelegateeClass);
