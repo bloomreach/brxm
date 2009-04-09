@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?><archetype-descriptor name="template">
-  <fileSets>
-    <fileSet filtered="true" encoding="UTF-8">
-      <directory>presentation</directory>
-      <includes>
-        <include>**/*.txt</include>
-      </includes>
-    </fileSet>
-  </fileSets>
   <modules>
     <module id="${rootArtifactId}-content" dir="content" name="${rootArtifactId}-content">
       <fileSets>
