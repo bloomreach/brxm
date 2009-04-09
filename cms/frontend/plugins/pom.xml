@@ -35,6 +35,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
       <version>2.05.01-SNAPSHOT</version>
@@ -57,10 +61,6 @@
       <groupId>easymock</groupId>
       <artifactId>easymock</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

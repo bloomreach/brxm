@@ -62,28 +62,31 @@ public class LogoutPlugin extends RenderPlugin {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                UserSession userSession = (UserSession) getSession();
-                try {
-                    Session session = userSession.getJcrSession();
-                    if (session != null) {
-                        session.save();
-                    }
-                } catch (RepositoryException e) {
-                    log.error(e.getMessage());
-                }
-                try {
-                    if(userSession.getRootNode().hasNode("hippo:log")) {
-                        Workflow workflow = ((HippoWorkspace)userSession.getJcrSession().getWorkspace()).getWorkflowManager().getWorkflow("internal", userSession.getRootNode().getNode("hippo:log"));
-                        if(workflow instanceof EventLoggerWorkflow) {
-                            ((EventLoggerWorkflow)workflow).logEvent(userSession.getJcrSession().getUserID(), "Repository", "logout");
-                        }
-                    }
-                } catch(RemoteException ex) {
-                } catch(RepositoryException ex) {
-                }
-                userSession.logout();
+                LogoutPlugin.this.logout();
             }
         });
     }
 
+    protected void logout() {
+        UserSession userSession = (UserSession)getSession();
+        try {
+            Session session = userSession.getJcrSession();
+            if (session != null) {
+                session.save();
+            }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+        try {
+            if (userSession.getRootNode().hasNode("hippo:log")) {
+                Workflow workflow = ((HippoWorkspace)userSession.getJcrSession().getWorkspace()).getWorkflowManager().getWorkflow("internal", userSession.getRootNode().getNode("hippo:log"));
+                if (workflow instanceof EventLoggerWorkflow) {
+                    ((EventLoggerWorkflow)workflow).logEvent(userSession.getJcrSession().getUserID(), "Repository", "logout");
+                }
+            }
+        } catch (RemoteException ex) {
+        } catch (RepositoryException ex) {
+        }
+        userSession.logout();
+    }
 }

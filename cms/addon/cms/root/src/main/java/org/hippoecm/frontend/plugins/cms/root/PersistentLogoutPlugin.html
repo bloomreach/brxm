@@ -15,10 +15,13 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-  <span class="hippo-logout-username" wicket:id="username"> </span> 
+    <span class="hippo-logout-username" wicket:id="username"> </span> 
     <ul class="hippo-logout">
       <li>
         <a href="#" wicket:id="logout-link"><wicket:message key="logout-label"/></a>  
+      </li>
+      <li>
+        <a href="#" wicket:id="logout-force-link"><wicket:message key="logout-force-label"/></a>  
       </li>
     </ul>
   </wicket:panel>
