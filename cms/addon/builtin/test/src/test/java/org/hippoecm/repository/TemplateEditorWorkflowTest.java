@@ -48,7 +48,8 @@ public class TemplateEditorWorkflowTest extends TestCase {
         "<hippotest3='http://www.hippoecm.org/test2/1.0'>\n" +
         "\n" +
         "[hippotest3:test] > hippo:document\n" +
-        "- hippotest3:first (string) mandatory\n";
+        "- hippotest3:first (string) mandatory\n" +
+        "+ hippotest3:node\n";
     String cnd2 =
         "<rep='internal'>\n" +
         "<jcr='http://www.jcp.org/jcr/1.0'>\n" +
@@ -58,7 +59,8 @@ public class TemplateEditorWorkflowTest extends TestCase {
         "<hippotest3='http://www.hippoecm.org/test2/1.1'>\n" +
         "\n" +
         "[hippotest3:test] > hippo:document\n" +
-        "- hippotest3:second (string)\n";
+        "- hippotest3:second (string)\n" +
+        "+ hippotest3:node\n";
 
     @Before
     public void setUp() throws Exception {
@@ -149,11 +151,17 @@ public class TemplateEditorWorkflowTest extends TestCase {
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
 
         {
-            Node node = session.getRootNode().getNode("test").addNode("testing", "hippotest3:test");
+            Node handle = session.getRootNode().getNode("test").addNode("testing", "hippo:handle");
+            handle.addMixin("hippo:hardhandle");
+            Node node = handle.addNode("testing", "hippotest3:test");
+            node.addMixin("hippo:harddocument");
             node.setProperty("hippotest3:first", "foobar");
+            node.addNode("hippotest3:node", "nt:unstructured");
             session.save();
+            node.checkin();
+            handle.checkin();
 
-            node = session.getRootNode().getNode("test").getNode("testing");
+            node = session.getRootNode().getNode("test").getNode("testing").getNode("testing");
             assertEquals("hippotest3:test", node.getPrimaryNodeType().getName());
         }
 
@@ -167,7 +175,7 @@ public class TemplateEditorWorkflowTest extends TestCase {
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
 
         {
-            Node node = session.getRootNode().getNode("test").getNode("testing");
+            Node node = session.getRootNode().getNode("test").getNode("testing").getNode("testing");
             assertEquals("hippotest3:test", node.getPrimaryNodeType().getName());
             //assertFalse(node.hasProperty("hippotest3:first"));
             //assertFalse(node.hasProperty("hippotest3:second"));
