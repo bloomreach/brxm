@@ -15,13 +15,28 @@
  */
 package org.hippoecm.repository.decorating.spi;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.WeakHashMap;
+
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Workspace;
+import javax.jcr.observation.EventListener;
+import javax.jcr.observation.EventListenerIterator;
+import javax.jcr.observation.ObservationManager;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
@@ -31,7 +46,6 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
-
 import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.decorating.DocumentManagerDecorator;
 import org.hippoecm.repository.decorating.WorkflowManagerDecorator;
@@ -40,9 +54,11 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    static WeakHashMap<Session, Set<EventListenerRegistration>> listeners = new WeakHashMap<Session, Set<EventListenerRegistration>>();
+
     HippoSession remoteSession = null;
     HippoWorkspace remoteWorkspace = null;
-    HierarchyResolver remoteHierarchyResolver = null;;
+    HierarchyResolver remoteHierarchyResolver = null;
 
     protected WorkspaceDecorator(DecoratorFactory factory, Session session, Workspace workspace) {
         super(factory, session, workspace);
@@ -60,7 +76,7 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
                     return session;
                 }
                 public Document getDocument(String category, String identifier) throws RepositoryException {
-                    return remoteWorkspace.getDocumentManager().getDocument(category, identifier);
+                    return (Document) wrap(remoteWorkspace.getDocumentManager().getDocument(category, identifier));
                 }
             };
     }
@@ -73,15 +89,64 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
                 }
                 public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException {
                     WorkflowManager remoteWorkflowManager = remoteWorkspace.getWorkflowManager();
-                    return remoteWorkflowManager.getWorkflow(descriptor);
+                    return (Workflow) wrap(remoteWorkflowManager.getWorkflow(descriptor));
                 }
                 public Workflow getWorkflow(String category, Node item) throws RepositoryException {
                     WorkflowManager remoteWorkflowManager = remoteWorkspace.getWorkflowManager();
-                    return remoteWorkflowManager.getWorkflow(category, remoteSession.getRootNode().getNode(item.getPath().substring(1)));
+                    return (Workflow) wrap(remoteWorkflowManager.getWorkflow(category, remoteSession.getRootNode().getNode(item.getPath().substring(1))));
                 }
-            };
+
+        };
     }
 
+    @Override
+    public ObservationManager getObservationManager() throws UnsupportedRepositoryOperationException,
+            RepositoryException {
+        final ObservationManager spiObMgr = super.getObservationManager();
+        return new ObservationManager() {
+
+            public void addEventListener(EventListener listener, int eventTypes, String absPath, boolean isDeep,
+                    String[] uuid, String[] nodeTypeName, boolean noLocal) throws RepositoryException {
+                if (!noLocal) {
+                    EventListenerRegistration registration = new EventListenerRegistration(listener,
+                            eventTypes, absPath, isDeep, uuid, nodeTypeName);
+                    synchronized (listeners) {
+                        if (!listeners.containsKey(session)) {
+                            listeners.put(session, new HashSet<EventListenerRegistration>());
+                        }
+                        listeners.get(session).add(registration);
+                    }
+                }
+                spiObMgr.addEventListener(listener, eventTypes, absPath, isDeep, uuid, nodeTypeName, noLocal);
+            }
+
+            public EventListenerIterator getRegisteredEventListeners() throws RepositoryException {
+                return spiObMgr.getRegisteredEventListeners();
+            }
+
+            public void removeEventListener(EventListener listener) throws RepositoryException {
+                synchronized (listeners) {
+                    Set<EventListenerRegistration> registered = listeners.get(session);
+                    if (registered != null) {
+                        for (Iterator<EventListenerRegistration> iter = registered.iterator(); iter.hasNext(); ) {
+                            EventListenerRegistration registration = iter.next();
+                            if (registration.listener == listener) {
+                                iter.remove();
+                                if (registered.size() == 0) {
+                                    listeners.remove(session);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+                spiObMgr.removeEventListener(listener);
+            }
+            
+        };
+    }
+    
+    
     public HierarchyResolver getHierarchyResolver() throws RepositoryException {
         return new HierarchyResolver() {
                 public Item getItem(Node ancestor, String path, boolean isProperty, Entry last) throws InvalidItemStateException, RepositoryException {
@@ -126,6 +191,92 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
                 }
             };
     }
+
+    private Object wrap(final Object object) throws RepositoryException{
+        Class[] interfaces = object.getClass().getInterfaces();
+        InvocationHandler handler = new InvocationHandler() {
+
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                ObservationManager obMgr = remoteWorkspace.getObservationManager();
+                List<EventListenerRegistration> roList = new ArrayList<EventListenerRegistration>();
+                synchronized (listeners) {
+                    if (listeners.containsKey(session)) {
+                        roList.addAll(listeners.get(session));
+                    }
+                }
+
+                List<EventListener> registered = new ArrayList<EventListener>(roList.size());
+                for (EventListenerRegistration registration : roList) {
+                    try {
+                        obMgr.addEventListener(registration.listener, registration.eventTypes,
+                                registration.absPath, registration.isDeep, registration.uuid,
+                                registration.nodeTypeName, false);
+                        registered.add(registration.listener);
+                    } catch (RepositoryException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+
+                Object result;
+                try {
+                    result = method.invoke(object, args);
+                } finally {
+                    for (EventListener listener : registered) {
+                        try {
+                            obMgr.removeEventListener(listener);
+                        } catch (RepositoryException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+                return result;
+            }
+            
+        };
+        Class proxyClass = Proxy.getProxyClass(object.getClass().getClassLoader(), interfaces);
+        try {
+            return proxyClass.getConstructor(new Class[] {InvocationHandler.class}).
+                    newInstance(new Object[] {handler});
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            throw new RepositoryException(e);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            throw new RepositoryException(e);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            throw new RepositoryException(e);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+            throw new RepositoryException(e);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            throw new RepositoryException(e);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            throw new RepositoryException(e);
+        }
+    }
+
+    class EventListenerRegistration {
+        EventListener listener;
+        int eventTypes;
+        String absPath;
+        boolean isDeep;
+        String[] uuid;
+        String[] nodeTypeName;
+
+        public EventListenerRegistration(EventListener listener, int eventTypes, String absPath, boolean isDeep,
+                String[] uuid, String[] nodeTypeName) {
+            this.listener = listener;
+            this.eventTypes = eventTypes;
+            this.absPath = absPath;
+            this.isDeep = isDeep;
+            this.uuid = uuid;
+            this.nodeTypeName = nodeTypeName;
+        }
+    }
+
 }
 
 

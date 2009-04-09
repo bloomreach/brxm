@@ -15,25 +15,34 @@
  */
 package org.hippoecm.repository.impl;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.WeakHashMap;
+
 import javax.jcr.AccessDeniedException;
 import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Workspace;
+import javax.jcr.observation.EventIterator;
+import javax.jcr.observation.EventListener;
+import javax.jcr.observation.EventListenerIterator;
+import javax.jcr.observation.ObservationManager;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.apache.jackrabbit.core.observation.SynchronousEventListener;
 import org.hippoecm.repository.HierarchyResolverImpl;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-
 import org.hippoecm.repository.decorating.DecoratorFactory;
+import org.hippoecm.repository.jackrabbit.RepositoryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple workspace decorator.
@@ -43,6 +52,8 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     private final static String SVN_ID = "$Id$";
 
     protected final static Logger logger = LoggerFactory.getLogger(WorkspaceDecorator.class);
+
+    static WeakHashMap<Session, Set<EventListenerDecorator>> listeners = new WeakHashMap<Session, Set<EventListenerDecorator>>();
 
     /** The underlying workspace instance. */
     protected final Workspace workspace;
@@ -113,4 +124,61 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     public HierarchyResolver getHierarchyResolver() throws RepositoryException {
         return new HierarchyResolverImpl();
     }
+
+    @Override
+    public ObservationManager getObservationManager() throws UnsupportedRepositoryOperationException,
+            RepositoryException {
+        final ObservationManager upstream = super.getObservationManager();
+        return new ObservationManager() {
+
+            public void addEventListener(EventListener listener, int eventTypes, String absPath, boolean isDeep,
+                    String[] uuid, String[] nodeTypeName, boolean noLocal) throws RepositoryException {
+                EventListenerDecorator decorator = new EventListenerDecorator(listener);
+                synchronized (listeners) {
+                    if (!listeners.containsKey(session)) {
+                        listeners.put(session, new HashSet<EventListenerDecorator>());
+                    }
+                    listeners.get(session).add(decorator);
+                }
+                upstream.addEventListener(decorator, eventTypes, absPath, isDeep, uuid, nodeTypeName, noLocal);
+            }
+
+            public EventListenerIterator getRegisteredEventListeners() throws RepositoryException {
+                return upstream.getRegisteredEventListeners();
+            }
+
+            public void removeEventListener(EventListener listener) throws RepositoryException {
+                synchronized (listeners) {
+                    Set<EventListenerDecorator> registered = listeners.get(session);
+                    if (registered != null) {
+                        for (Iterator<EventListenerDecorator> iter = registered.iterator(); iter.hasNext(); ) {
+                            EventListenerDecorator decorator = iter.next();
+                            if (decorator.listener == listener) {
+                                iter.remove();
+                                upstream.removeEventListener(decorator);
+                                if (registered.size() == 0) {
+                                    listeners.remove(session);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            
+        };
+    }
+
+    static class EventListenerDecorator implements SynchronousEventListener {
+        EventListener listener;
+
+        public EventListenerDecorator(EventListener listener) {
+            this.listener = listener;
+        }
+
+        public void onEvent(EventIterator events) {
+            listener.onEvent(events);
+        }
+    }
+
 }
