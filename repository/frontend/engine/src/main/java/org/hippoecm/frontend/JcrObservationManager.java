@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import javax.jcr.ItemNotFoundException;
@@ -331,6 +332,23 @@ public class JcrObservationManager implements ObservationManager {
             }
         }
 
+        synchronized void refresh(Set<String> paths) {
+            try {
+                if (events.size() > 0) {
+                    for (Event event : events) {
+                        int type = event.getType();
+                        String path = event.getPath();
+                        if (type == Event.NODE_ADDED || type == Event.NODE_REMOVED) {
+                            path = path.substring(0, path.lastIndexOf('/'));
+                        }
+                        paths.add(path);
+                    }
+                }
+            } catch (RepositoryException ex) {
+
+            }
+        }
+
         synchronized void process() {
             // listeners can be invoked after they have been removed
             if (obMgr == null) {
@@ -508,6 +526,46 @@ public class JcrObservationManager implements ObservationManager {
             synchronized (listeners) {
                 set = new HashSet<Map.Entry<EventListener, JcrListener>>(listeners.entrySet());
             }
+
+            // create set of paths that need to be refreshed
+            Set<String> paths = new TreeSet<String>();
+            for (Map.Entry<EventListener, JcrListener> entry : set) {
+                JcrListener listener = entry.getValue();
+                if (listener.getSession() == session) {
+                    listener.refresh(paths);
+                }
+            }
+
+            try {
+                if (paths.contains("")) {
+                    session.getRootNode().refresh(true);
+                } else {
+                    // filter out descendants
+                    Iterator<String> pathIter = paths.iterator();
+                    while (pathIter.hasNext()) {
+                        String[] ancestors = pathIter.next().split("/");
+                        StringBuilder compound = new StringBuilder("/");
+                        for (int i = 1; i < ancestors.length; i++) {
+                            compound.append(ancestors[i]);
+                            if (paths.contains(compound.toString())) {
+                                pathIter.remove();
+                                break;
+                            }
+                            compound.append('/');
+                        }
+                    }
+
+                    // do the refresh
+                    for (String path : paths) {
+                        session.getRootNode().getNode(path).refresh(true);
+                    }
+                }
+            } catch (PathNotFoundException ex) {
+                log.error("Could not find path for event", ex);
+            } catch (RepositoryException ex) {
+                log.error("Failed to refresh session", ex);
+            }
+
             for (Map.Entry<EventListener, JcrListener> entry : set) {
                 JcrListener listener = entry.getValue();
                 if (listener.getSession() == session) {
