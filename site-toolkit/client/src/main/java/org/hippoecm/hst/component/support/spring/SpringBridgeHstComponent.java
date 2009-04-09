@@ -24,15 +24,16 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  * A bridge component which delegates all invocation to a bean managed by the spring IoC.
  * <p>
  * By default, the delegated bean's name should be configured in the component configuration
- * with the parameter name, 'spring-delegated-bean-param-name'.
+ * parameter value with the parameter name, 'spring-delegated-bean-param-name'.
  * This bridge component will retrieve the bean from the spring web application context by the
  * bean name.
  * If you want to change the default parameter name, then you can achieve that 
@@ -61,12 +62,29 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * With the above setting, you need to set the parameters with name, 'my-bean-param' in the
  * component configurations in the repository.
  * </p>
+ * <p>
+ * If the root web application context has hierarchical child bean factories and one of the
+ * child bean factories has defined a bean you need, then you can set the bean name component
+ * configuration parameter with context path prefix like the following example:
+ * <br/>
+ * <CODE>com.mycompany.myapp::contactBean</CODE>
+ * <br/>
+ * In the above example, 'com.mycompany.myapp' is the name of the child bean factory name,
+ * and 'contactBean' is the bean name of the child bean factory.
+ * The the bean factory paths can be multiple to represent the hierarchy
+ * like 'com.mycompany.myapp::crm::contactBean'.
+ * <br/>
+ * The separator for hierarchical bean factory path can be changed by setting the servlet
+ * init parameter, 'spring-context-name-separator-param-name'.
+ * </p>
  * 
  * @version $Id$
  */
 public class SpringBridgeHstComponent extends GenericHstComponent {
     
     protected String delegatedBeanNameParamName = "spring-delegated-bean";
+    protected String contextNameSeparator = "::";
+    
     protected HstComponent delegatedBean;
     
     public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
@@ -76,6 +94,12 @@ public class SpringBridgeHstComponent extends GenericHstComponent {
         
         if (param != null) {
             delegatedBeanNameParamName = param;
+        }
+        
+        param = servletConfig.getInitParameter("spring-context-name-separator-param-name");
+        
+        if (param != null) {
+            contextNameSeparator = param;
         }
     }
 
@@ -108,14 +132,49 @@ public class SpringBridgeHstComponent extends GenericHstComponent {
                 throw new HstComponentException("The name of delegated spring bean is null.");
             }
             
-            ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(getServletConfig().getServletContext());
+            String [] contextNames = null;
             
-            if (applicationContext == null) {
-                throw new HstComponentException("Cannot find the spring web application context");
+            if (beanName.contains(this.contextNameSeparator)) {
+                String [] tempArray = beanName.split(this.contextNameSeparator);
+                
+                if (tempArray.length > 1) {
+                    contextNames = new String[tempArray.length - 1];
+                    
+                    for (int i = 0; i < tempArray.length - 1; i++) {
+                        contextNames[i] = tempArray[i];
+                    }
+                    
+                    beanName = tempArray[tempArray.length - 1];
+                }
+            }
+            
+            WebApplicationContext rootWebAppContext = WebApplicationContextUtils.getWebApplicationContext(getServletConfig().getServletContext());
+
+            if (rootWebAppContext == null) {
+                throw new HstComponentException("Cannot find the root web application context.");
+            }
+            
+            BeanFactory beanFactory = rootWebAppContext;
+            
+            String contextName = null;
+            
+            try {
+                if (contextNames != null) {
+                    for (int i = 0; i < contextNames.length; i++) {
+                        contextName = contextNames[i];
+                        beanFactory = (BeanFactory) beanFactory.getBean(contextName);
+                    }
+                }
+            } catch (NoSuchBeanDefinitionException e) {
+                throw new HstComponentException("There's no beanFactory definition with the specified name: " + contextName, e);
+            } catch (BeansException e) {
+                throw new HstComponentException("The beanFactory cannot be obtained: " + contextName, e);
+            } catch (ClassCastException e) {
+                throw new HstComponentException("The bean is not an instance of beanFactory: " + contextName, e);
             }
             
             try {
-                delegatedBean = (HstComponent) applicationContext.getBean(beanName);
+                delegatedBean = (HstComponent) beanFactory.getBean(beanName);
             } catch (NoSuchBeanDefinitionException e) {
                 throw new HstComponentException("There's no bean definition with the specified name: " + beanName, e);
             } catch (BeansException e) {
