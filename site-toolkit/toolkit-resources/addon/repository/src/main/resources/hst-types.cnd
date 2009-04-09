@@ -26,13 +26,13 @@
 + * (hst:template)
 
 [hst:component] orderable
-- hst:template (string) 
-- hst:componentclassname (string) 
-- hst:serveresourcepath(string) 
-- hst:referencename (string) 
-- hst:referencecomponent(string) 
+- hst:template (string)
+- hst:componentclassname (string)
+- hst:serveresourcepath(string)
+- hst:referencename (string)
+- hst:referencecomponent(string)
 - hst:parameternames (string) multiple
-- hst:parametervalues (string) multiple 
+- hst:parametervalues (string) multiple
 + * (hst:component)
 
 
@@ -44,7 +44,7 @@
 
 [hst:sitemapitem]
 - hst:value
-- hst:relativecontentpath (string) 
+- hst:relativecontentpath (string)
 - hst:componentconfigurationid (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
@@ -62,24 +62,17 @@
 + * (hst:sitemenuitem)
 
 [hst:sitemenus]
-+ * (hst:sitemenu) 
++ * (hst:sitemenu)
 
 
-[hst:configuration] > hippo:document, hippostd:publishable, hippostd:publishableSummary, hippostd:languageable
+[hst:configuration] > hippo:document, hippostd:publishable,
+hippostd:publishableSummary, hippostd:languageable
 + hst:components (hst:components) = hst:components
-+ hst:pages (hst:pages) = hst:pages 
-+ hst:sitemap (hst:sitemap) = hst:sitemap  
++ hst:pages (hst:pages) = hst:pages
++ hst:sitemap (hst:sitemap) = hst:sitemap
 + hst:templates (hst:templates) = hst:templates
 + hst:sitemenus (hst:sitemenus) = hst:sitemenus
 
-
-[hst:redirectmapping]
-- hst:redirect (string) mandatory
-
-[hst:domainmapping]
-+ * (hst:domainmapping)
-+ * (hst:redirectmapping)
-- hst:repositorypath (string) multiple 
 
 [hst:site]
 + hst:content (hippo:facetselect) mandatory
@@ -88,18 +81,28 @@
 [hst:sites]
 + * (hst:site) = hst:site
 
+
 [hst:primarydomain] mixin
 
-[hst:hostconfig]
-- hst:showport (boolean)
-- hst:port (long)  
-- hst:showcontextpath (boolean)
-- hst:binarylocations (string) multiple 
-+ * (hst:domainmapping) 
+[hst:redirectdomain] mixin
+- hst:redirect (string)
 
-[hst:formdata] 
+[hst:virtualhost]
++ * (hst:virtualhost)
+- hst:mapping (string) multiple
+- hst:port (long)
+- hst:showcontextpath (boolean)
+- hst:showport(boolean)
+
+[hst:virtualhosts]
+- hst:port (long)
+- hst:showcontextpath (boolean)
+- hst:showport(boolean)
++ * (hst:virtualhost)
+
+
+[hst:formdata]
 - hst:creationtime (date) mandatory
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:predecessor (string)
-
