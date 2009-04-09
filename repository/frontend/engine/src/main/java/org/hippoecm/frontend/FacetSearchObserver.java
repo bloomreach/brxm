@@ -156,7 +156,7 @@ public class FacetSearchObserver implements EventListener {
     private FacetSearchListener addFacetSearchListener(ObservationManager mgr, String docbase, Node node)
             throws RepositoryException {
         FacetSearchListener listener = new FacetSearchListener(node.getPath());
-        mgr.addEventListener(listener, Event.NODE_ADDED | Event.NODE_REMOVED, docbase, true, null,
+        mgr.addEventListener(listener, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_CHANGED, docbase, true, null,
                 null, false);
         return listener;
     }
