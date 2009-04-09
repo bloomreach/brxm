@@ -40,8 +40,6 @@ public class HstContainerServlet extends HttpServlet {
     
     public static final String CONTEXT_NAMESPACE_INIT_PARAM = "hstContextNamespace";
 
-    public static final String CONSOLE_LOGGER = "console";
-
     protected HstContainerConfig requestContainerConfig;
     
     protected String contextNamespace;
