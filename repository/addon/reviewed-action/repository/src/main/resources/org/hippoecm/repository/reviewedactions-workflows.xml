@@ -30,6 +30,7 @@
     </sv:property>
     <sv:property sv:name="hippo:privileges" sv:type="String">
       <sv:value>hippo:editor</sv:value>
+      <sv:value>hippo:admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl</sv:value>
@@ -80,6 +81,7 @@
     </sv:property>
     <sv:property sv:name="hippo:privileges" sv:type="String">
       <sv:value>hippo:editor</sv:value>
+      <sv:value>hippo:admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hipposched:job</sv:value>
@@ -186,6 +188,7 @@
     </sv:property>
     <sv:property sv:name="hippo:privileges" sv:type="String">
       <sv:value>hippo:editor</sv:value>
+      <sv:value>hippo:admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.reviewedactions.FullRequestWorkflowImpl</sv:value>
