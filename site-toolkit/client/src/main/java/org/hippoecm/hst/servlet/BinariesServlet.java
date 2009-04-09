@@ -36,11 +36,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.domain.DomainMapping;
-import org.hippoecm.hst.core.domain.DomainMappings;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -59,7 +56,6 @@ public class BinariesServlet extends HttpServlet {
     protected Repository repository;
     protected Credentials defaultCredentials;
     
-    protected DomainMappings domainMappings;
     protected HstSitesManager hstSitesManager;
     
     protected String baseBinariesContentPath = DEFAULT_BASE_BINARIES_CONTENT_PATH;
