@@ -571,6 +571,7 @@ public class Remodeling {
         if (node.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
             if (!node.isCheckedOut()) {
                 checkin = true;
+                node.checkout();
             }
         }
 
@@ -579,9 +580,6 @@ public class Remodeling {
             visit(node, target);
             node.remove();
         } else {
-            if (checkin) {
-                target.checkout();
-            }
             LinkedList<Node> toRename = new LinkedList<Node>();
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();
@@ -613,11 +611,11 @@ public class Remodeling {
                 child = node.getNode(newName + "[" + index + "]");
                 traverse(child, false, child);
             }
-        }
 
-        if (checkin) {
-            target.getSession().save();
-            target.checkin();
+            if (checkin) {
+                node.getSession().save();
+                node.checkin();
+            }
         }
     }
 
