@@ -56,7 +56,13 @@ public class PersistentLoginPlugin extends LoginPlugin {
     
     private static final Logger log = LoggerFactory.getLogger(LoginPlugin.class);
 
-    private static boolean usePlainTextPassword = true;
+    /**
+     * This boolean determins whether the cookie is to store a plain password, this way, there never needs to be a successful
+     * login to the repository and authentication is against the normal password in the repository.  Without plain passwords,
+     * the passkey needs to be generated first, a first login to a clean repository is needed to let this plugin generate this
+     * passkey.
+     */
+    private static boolean usePlainTextPassword = false;
 
     public PersistentLoginPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -64,6 +70,9 @@ public class PersistentLoginPlugin extends LoginPlugin {
 
     @Override
     protected LoginPlugin.SignInForm createSignInForm(String id) {
+        if(PersistentLoginPlugin.this.getPluginConfig().containsKey("usePlainTextPassword")) {
+            usePlainTextPassword = PersistentLoginPlugin.this.getPluginConfig().getBoolean("usePlainTextPassword");
+        }
         Cookie[] cookies = ((WebRequest)RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
         if(cookies != null) {
             for (int i = 0; i < cookies.length; i++) {
@@ -109,7 +118,6 @@ public class PersistentLoginPlugin extends LoginPlugin {
                     }
                 }
                 try {
-                    System.err.println("BERRY login using username "+username+" and password "+password);
                     result = repository.login(username, password.toCharArray());
                     credentials.put("password", password);
                     if (result.getRootNode().hasNode("hippo:log")) {
@@ -121,7 +129,7 @@ public class PersistentLoginPlugin extends LoginPlugin {
                     UserSession userSession = (UserSession)getSession();
                     userSession.setJcrSessionModel(new JcrSessionModel(credentials));
                     userSession.getJcrSession();
-                    setResponsePage(new Home());
+                    throw new RestartResponseException(Home.class);
                 } catch (LoginException ex) {
                     // deliberately ignored
                 } catch (RepositoryException ex) {
