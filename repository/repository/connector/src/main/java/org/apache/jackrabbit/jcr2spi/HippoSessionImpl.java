@@ -164,14 +164,16 @@ public class HippoSessionImpl extends SessionImpl implements NamespaceResolver, 
         Set<Node> nodes = new LinkedHashSet<Node>();
         for(Iterator iter = affected.iterator(); iter.hasNext(); ) {
             ItemState state = (ItemState) iter.next();
+            boolean propChange = false;
             if(!state.isNode()) {
                 state = state.getParent();
+                propChange = true;
             }
             Node candidate = (Node) itemManager.getItem(state.getHierarchyEntry());
             if(nodeType != null && !candidate.isNodeType(nodeType))
                 continue;
             try {
-                if(node != null && (node.isSame(candidate) || node.isSame(node.getParent())))
+                if(!propChange && node != null && (node.isSame(candidate) || node.isSame(node.getParent())))
                     continue;
             } catch (ItemNotFoundException infe) {
                 // ignore root node

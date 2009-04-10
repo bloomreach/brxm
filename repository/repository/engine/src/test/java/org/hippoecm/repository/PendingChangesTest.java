@@ -74,6 +74,19 @@ public class PendingChangesTest extends TestCase {
         changes = root.pendingChanges();
         assertFalse(changes.hasNext());
 
+        root.setProperty("prop", "test");
+        assertTrue(root.isModified());
+        changes = root.pendingChanges();
+        assertTrue(changes.hasNext());
+        changes = ((HippoSession)session).pendingChanges();
+        for(paths.clear(); changes.hasNext(); ) {
+            paths.add(changes.nextNode().getPath());
+        }
+        assertEquals(1, paths.size());
+        assertTrue(paths.contains("/test"));
+
+        session.save();
+
         root.addNode("test0","nt:unstructured");
         node = root.addNode("test1","nt:unstructured");
         root.addNode("test2","nt:unstructured");
