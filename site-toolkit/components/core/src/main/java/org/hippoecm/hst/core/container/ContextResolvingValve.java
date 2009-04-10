@@ -34,13 +34,19 @@ public class ContextResolvingValve extends AbstractValve
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
         HstContainerURL baseURL = requestContext.getBaseURL();
         
-        String hostName = servletRequest.getServerName();
-        VirtualHost virtualHost = this.virtualHosts.findVirtualHost(hostName);
+        VirtualHost virtualHost;
         
-        if (virtualHost == null) {
-            throw new ContainerException("No host mapping for " + hostName);
+        if(requestContext.getVirtualHost() != null) {
+            virtualHost = requestContext.getVirtualHost();
+        } else {
+            String hostName = servletRequest.getServerName();
+            virtualHost = this.virtualHostsManager.getVirtualHosts().findVirtualHost(hostName);   
+            ((HstRequestContextImpl)requestContext).setVirtualHost(virtualHost);
+            if (virtualHost == null) {
+                throw new ContainerException("No host mapping for " + hostName);
+            }
         }
-
+        
         String siteName = virtualHost.getSiteName();
         HstSite hstSite = getSitesManager(servletRequest.getServletPath()).getSites().getSite(siteName);
         

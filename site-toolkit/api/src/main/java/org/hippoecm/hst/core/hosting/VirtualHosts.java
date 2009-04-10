@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.core.hosting;
 
-import java.util.List;
 
 /**
  * The container interface for {@link VirtualHost}
@@ -23,13 +22,6 @@ import java.util.List;
  */
 public interface VirtualHosts {
 
-    /**
-     * Returns the list of {@link VirtualHost} instances.
-     * 
-     * @return
-     */
-    List<VirtualHost> getVirtualHosts();
-    
     /**
      * Returns the proper @{link VirtualHost} for the hostName.
      * 

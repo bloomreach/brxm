@@ -28,18 +28,12 @@
     <property name="credentials" ref="javax.jcr.Credentials.default" />
     <property name="sitesContentPath" value="${live.repository.entry.path}" />
   </bean>
-    
-  <bean id="org.hippoecm.hst.core.hosting.VirtualHosts" class="org.hippoecm.hst.core.hosting.VirtualHostsImpl">
-    <constructor-arg>
-      <list>
-        <bean class="org.hippoecm.hst.core.hosting.VirtualHostImpl">
-          <constructor-arg value="preview.myproject.hippoecm.org" />
-          <constructor-arg value="myproject" />
-        </bean>
-      </list>
-    </constructor-arg>
+  
+  <bean id="org.hippoecm.hst.core.hosting.VirtualHostsManager" class="org.hippoecm.hst.core.hosting.VirtualHostsManagerImpl">
+    <property name="repository" ref="javax.jcr.Repository" />
+    <property name="credentials" ref="javax.jcr.Credentials.default" />
     <property name="defaultSiteName" value="${default.sites.name}" />
-  </bean>
+  </bean>  
   
   <bean id="org.hippoecm.hst.core.request.HstSiteMapMatcher" class="org.hippoecm.hst.site.request.BasicHstSiteMapMatcher">
   </bean>

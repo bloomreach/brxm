@@ -19,10 +19,10 @@
     
     <import resource="classpath:/org/hippoecm/hst/core/jcr/pool/GeneralMultiplePoolingRepository.xml" />
     
-    <bean id="org.hippoecm.hst.configuration.HstSitesManager" class="org.hippoecm.hst.configuration.HstSitesManagerImpl">
-      <property name="repository" ref="javax.jcr.Repository" />
-      <property name="sitesContentPath" value="testpreview" />
-      <property name="credentials" ref="javax.jcr.Credentials.default" />
+    <bean id="org.hippoecm.hst.core.hosting.VirtualHostsManager" class="org.hippoecm.hst.core.hosting.VirtualHostsManagerImpl">
+        <constructor-arg value="testproject"/>
+        <property name="repository" ref="javax.jcr.Repository" />
+        <property name="credentials" ref="javax.jcr.Credentials.default" />  
     </bean>  
     
 </beans>

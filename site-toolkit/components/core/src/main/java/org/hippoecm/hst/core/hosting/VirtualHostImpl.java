@@ -19,12 +19,14 @@ import org.hippoecm.hst.core.hosting.VirtualHost;
 
 public class VirtualHostImpl implements VirtualHost {
     
-    protected String hostName;
-    protected String siteName;
+    private String hostName;
+    private String siteName;
+    private VirtualHosts virtualHosts;
     
-    public VirtualHostImpl(String hostName, String siteName) {
+    public VirtualHostImpl(VirtualHosts virtualHosts, String hostName, String siteName) {
         this.hostName = hostName;
         this.siteName = siteName;
+        this.virtualHosts = virtualHosts;
     }
 
     public String getHostName() {
@@ -33,6 +35,10 @@ public class VirtualHostImpl implements VirtualHost {
     
     public String getSiteName() {
         return this.siteName;
+    }
+
+    public VirtualHosts getVirtualHosts() {
+        return this.virtualHosts;
     }
 
 }

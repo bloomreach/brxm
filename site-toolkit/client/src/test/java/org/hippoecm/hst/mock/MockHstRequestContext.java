@@ -26,6 +26,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -132,6 +133,10 @@ public class MockHstRequestContext implements HstRequestContext {
     
     public void setContainerConfiguration(ContainerConfiguration containerConfiguration) {
         this.containerConfiguration = containerConfiguration;
+    }
+
+    public VirtualHost getVirtualHost() {
+        return null;
     }
 
 }

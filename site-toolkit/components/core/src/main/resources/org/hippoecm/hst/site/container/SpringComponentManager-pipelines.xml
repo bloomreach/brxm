@@ -36,7 +36,7 @@
         <entry key="${live.servlet.path}" value-ref="org.hippoecm.hst.configuration.HstSitesManager.live" />
       </map>
     </property>
-    <property name="virtualHosts" ref="org.hippoecm.hst.core.hosting.VirtualHosts" />
+    <property name="virtualHostsManager" ref="org.hippoecm.hst.core.hosting.VirtualHostsManager" />
     <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
     <property name="requestContextComponent" ref="org.hippoecm.hst.core.request.HstRequestContextComponent" />
     <property name="componentFactory" ref="org.hippoecm.hst.core.container.HstComponentFactory" />

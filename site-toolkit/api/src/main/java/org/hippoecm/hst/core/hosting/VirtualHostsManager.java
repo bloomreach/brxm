@@ -15,30 +15,17 @@
  */
 package org.hippoecm.hst.core.hosting;
 
-/**
- * VirtualHost which holds the mapping between host (server name) and site name.
- * 
- */
-public interface VirtualHost {
+
+public interface VirtualHostsManager {
 
     /**
-     * Returns the host name.
-     * 
-     * @return
-     */
-    String getHostName();
-    
-    /**
-     * Returns the site name for the host.
-     * 
-     * @return
-     */
-    String getSiteName();
-    
-    /**
-     * 
-     * @return the <code>VirtualHosts</code> container of this <code>VirtualHost</code>
+     * @return the <code>VirtualHosts</code> managed by this VirtualHostsManager
      */
     VirtualHosts getVirtualHosts();
     
+    /**
+     * Invalidates this VirtualHostsManager. Typically this invalidate is called after a received event indicating that for example
+     * the backing hosts configuration has been changed.
+     */
+    void invalidate(String path);
 }

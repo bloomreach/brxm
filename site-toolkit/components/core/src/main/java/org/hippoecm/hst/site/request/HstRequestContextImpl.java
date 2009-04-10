@@ -32,6 +32,7 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -43,6 +44,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected Repository repository;
     protected Session session;
     protected Credentials defaultCredentials;
+    protected VirtualHost virtualHost;
     protected ResolvedSiteMapItem resolvedSiteMapItem;
     protected HstURLFactory urlFactory;
     protected HstContainerURL baseURL;
@@ -52,6 +54,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected HstCtxWhereClauseComputer ctxWhereClauseComputer;
     protected Map<String, Object> attributes;
     protected ContainerConfiguration containerConfiguration;
+    
 
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
@@ -79,7 +82,15 @@ public class HstRequestContextImpl implements HstRequestContext {
         
         return this.session;
     }
-
+    
+    public void setVirtualHost(VirtualHost virtualHost) {
+        this.virtualHost = virtualHost;
+    }
+    
+    public VirtualHost getVirtualHost(){
+        return this.virtualHost;
+    }
+    
     public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem) {
         this.resolvedSiteMapItem = resolvedSiteMapItem;
     }
@@ -188,5 +199,6 @@ public class HstRequestContextImpl implements HstRequestContext {
     public void setContainerConfiguration(ContainerConfiguration containerConfiguration) {
         this.containerConfiguration = containerConfiguration;
     }
+
     
 }

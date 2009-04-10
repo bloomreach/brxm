@@ -17,6 +17,8 @@ package org.hippoecm.hst.core.hosting;
 
 import java.util.List;
 
+import javax.jcr.Session;
+
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.hosting.VirtualHosts;
 
@@ -25,30 +27,22 @@ public class VirtualHostsImpl implements VirtualHosts {
     protected List<VirtualHost> virtualHosts;
     protected String defaultSiteName;
 
-    public VirtualHostsImpl(List<VirtualHost> virtualHosts) {
-        this.virtualHosts = virtualHosts;
-    }
-    
-    public void setDefaultSiteName(String defaultSiteName) {
+    public VirtualHostsImpl(String defaultSiteName, Session session) {
         this.defaultSiteName = defaultSiteName;
     }
     
-    public List<VirtualHost> getVirtualHosts() {
-        return this.virtualHosts;
-    }
-
     public VirtualHost findVirtualHost(String hostName) {
         VirtualHost virtualHost = null;
-        
-        for (VirtualHost host : this.virtualHosts) {
-            if (host.getHostName().equals(hostName)) {
-                virtualHost = host;
-                break;
+        if(virtualHosts != null) {
+            for (VirtualHost host : this.virtualHosts) {
+                if (host.getHostName().equals(hostName)) {
+                    virtualHost = host;
+                    return virtualHost;
+                }
             }
         }
-        
         if (virtualHost == null && this.defaultSiteName != null) {
-            virtualHost = new VirtualHostImpl(hostName, this.defaultSiteName);
+            virtualHost = new VirtualHostImpl(this, hostName, this.defaultSiteName);
         }
         
         return virtualHost;

@@ -15,30 +15,24 @@
  */
 package org.hippoecm.hst.core.hosting;
 
-/**
- * VirtualHost which holds the mapping between host (server name) and site name.
- * 
- */
-public interface VirtualHost {
+import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.junit.Test;
 
-    /**
-     * Returns the host name.
-     * 
-     * @return
-     */
-    String getHostName();
-    
-    /**
-     * Returns the site name for the host.
-     * 
-     * @return
-     */
-    String getSiteName();
-    
-    /**
-     * 
-     * @return the <code>VirtualHosts</code> container of this <code>VirtualHost</code>
-     */
-    VirtualHosts getVirtualHosts();
-    
+public class TestVirtualHosting extends AbstractSpringTestCase {
+
+        private VirtualHostsManager virtualHostsManager;
+
+        @Override
+        public void setUp() throws Exception {
+            super.setUp();
+            this.virtualHostsManager = getComponent(VirtualHostsManager.class.getName());
+        }
+
+     
+        @Test
+        public void testHosts(){
+             
+        }
+        
+         
 }

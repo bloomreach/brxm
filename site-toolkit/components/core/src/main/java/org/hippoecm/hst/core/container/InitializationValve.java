@@ -20,6 +20,7 @@ import java.util.List;
 import javax.servlet.ServletRequest;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
+import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
@@ -38,6 +39,12 @@ public class InitializationValve extends AbstractValve
         ((HstRequestContextImpl) requestContext).setContainerConfiguration(getContainerConfiguration());
         ServletRequest servletRequest = context.getServletRequest();
         servletRequest.setAttribute(HstRequestContext.class.getName(), requestContext);
+        
+        // if there is a VirtualHost on the request, it is set on the HstRequestContext.
+        Object virtualHost;
+        if( (virtualHost = servletRequest.getAttribute(VirtualHost.class.getName())) != null && virtualHost instanceof VirtualHost  ) {
+            ((HstRequestContextImpl)requestContext).setVirtualHost((VirtualHost) virtualHost);
+        }
         
         if (this.resourceLifecycleManagements != null) {
             for (ResourceLifecycleManagement resourceLifecycleManagement : this.resourceLifecycleManagements) {
