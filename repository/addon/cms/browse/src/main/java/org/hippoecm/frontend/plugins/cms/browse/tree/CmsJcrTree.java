@@ -88,20 +88,7 @@ public abstract class CmsJcrTree extends JcrTree {
     @Override
     public String renderNode(TreeNode treeNode) {
         JcrNodeModel nodeModel = ((IJcrTreeNode) treeNode).getNodeModel();
-        String result = (String) new NodeTranslator(nodeModel).getNodeName().getObject();
-        Node node = nodeModel.getNode();
-        if (node != null) {
-            try {
-                if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
-                    result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
-                }
-            } catch (ValueFormatException e) {
-                // ignore the hippo count if not of type long
-            } catch (RepositoryException e) {
-                result = e.getMessage();
-            }
-        }
-        return result;
+        return (String) new NodeTranslator(nodeModel).getNodeName().getObject();
     }
 
 }
