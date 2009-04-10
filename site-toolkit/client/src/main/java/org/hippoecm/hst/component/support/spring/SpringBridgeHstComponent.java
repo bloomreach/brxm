@@ -87,6 +87,7 @@ public class SpringBridgeHstComponent extends GenericHstComponent {
     
     protected HstComponent delegatedBean;
     
+    @Override
     public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
         super.init(servletConfig, componentConfig);
         
@@ -103,19 +104,27 @@ public class SpringBridgeHstComponent extends GenericHstComponent {
         }
     }
 
+    @Override
     public void destroy() throws HstComponentException {
+        if (delegatedBean != null) {
+            delegatedBean.destroy();
+            delegatedBean = null;
+        }
+
         super.destroy();
-        delegatedBean = null;
     }
     
+    @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
         getDelegatedBean(request).doAction(request, response);
     }
 
+    @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         getDelegatedBean(request).doBeforeRender(request, response);
     }
 
+    @Override
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
         getDelegatedBean(request).doBeforeServeResource(request, response);
     }
@@ -183,7 +192,9 @@ public class SpringBridgeHstComponent extends GenericHstComponent {
             
             if (delegatedBean == null) {
                 throw new HstComponentException("Cannot find delegated spring HstComponent bean: " + beanName);
-            }            
+            }
+
+            delegatedBean.init(getServletConfig(), getComponentConfiguration());
         }
         
         return delegatedBean;
