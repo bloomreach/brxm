@@ -30,12 +30,22 @@ class MenuAction extends Panel implements ContextMenu {
     public MenuAction(String id, final ActionDescription wf) {
         super(id);
 
+        MenuLink link;
+        add(link = new MenuLink("link") {
+            @Override
+            public void onClick() {
+                if (wf instanceof StdWorkflow) {
+                    ((StdWorkflow)wf).invoke();
+                }
+            }
+        });
+
         Component fragment = wf.getFragment("text");
         if (fragment instanceof ActionDescription.ActionDisplay) {
             ((ActionDescription.ActionDisplay)fragment).substantiate();
-            add(fragment);
+            link.add(fragment);
         } else if (fragment instanceof Fragment) {
-            add(fragment);
+            link.add(fragment);
         } else {
             // wf.setVisible(true);
         }
@@ -43,9 +53,9 @@ class MenuAction extends Panel implements ContextMenu {
         fragment = wf.getFragment("icon");
         if (fragment instanceof ActionDescription.ActionDisplay) {
             ((ActionDescription.ActionDisplay)fragment).substantiate();
-            add(fragment);
+            link.add(fragment);
         } else if (fragment instanceof Fragment) {
-            add(fragment);
+            link.add(fragment);
         }
     }
     

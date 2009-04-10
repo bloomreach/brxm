@@ -378,14 +378,14 @@ width: 156px;
 }
 
 /* override from wicket styles */
-li a.hippo-toolbar-section-button{
+.hippo-toolbar-section-button{
 width: 90px; display: block; height: 17px; padding-left: 24px; padding-top: 1px;
 border: 1px solid #e3e3e3;
 background: url("images/hippo-toolbar-menu-item.png") no-repeat right -20px;
 cursor: pointer;
 clear: left;
 }
-li a.hippo-toolbar-section-button:hover{ border: 1px solid #000000;
+.hippo-toolbar-section-button:hover{ border: 1px solid #000000;
 color: black
 }
 /* background: url("images/hippo-toolbar-menu-item.png") no-repeat top right;  */
@@ -403,6 +403,11 @@ color: black
 .hippo-toolbar-section span.icon-16{display: block; height: 16px; width: 16px}
 
 .hippo-toolbar-section li.icon-16 div{position: relative}
+
+.menu-action{padding-left: 8px; padding-top: 1px; background-image: none; border: 1px solid #e3e3e3; display: block; cursor: pointer; width:100px; height: 17px;}
+.menu-action:hover{border: 1px solid #000000;background-color: #fff6e0;}
+.menu-action-text{width: 90px; height: 17px; vertical-align: top; padding-top: 0px; margin-top: 0px; clip-rect(0px,0px,15px,100px);}
+.menu-action-icon{padding-top: 0px;}
 
 /* Default feedback */
 /* ================================================ */
