@@ -1,6 +1,6 @@
 /*
  * Menu: Connect projects from different sources
- * Script-Path: /hippo-ecm/tools/eclipse/monkey/convertDependencies.gm
+ * Script-Path: /hippo-ecm-tools-eclipse/monkey/convertDependencies.gm
  * Kudos: Wander Grevink(onehippo.com)
  * License: Apache 2.0
  * Job: WorkspaceJob
