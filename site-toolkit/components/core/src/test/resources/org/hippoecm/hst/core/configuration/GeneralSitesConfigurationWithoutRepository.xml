@@ -26,7 +26,7 @@
         </bean>
       </list>
     </constructor-arg>
-    <property name="defaultSiteName" value="${default.sites.default.site.name}" />
+    <property name="defaultSiteName" value="${default.sites.name}" />
   </bean>
   
   <bean id="org.hippoecm.hst.core.request.HstSiteMapMatcher" class="org.hippoecm.hst.site.request.BasicHstSiteMapMatcher">

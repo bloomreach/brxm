@@ -32,8 +32,8 @@
     <property name="containerConfiguration" ref="containerConfiguration" />
     <property name="sitesManagers">
       <map>
-        <entry key="/preview" value-ref="org.hippoecm.hst.configuration.HstSitesManager.preview" />
-        <entry key="/live" value-ref="org.hippoecm.hst.configuration.HstSitesManager.live" />
+        <entry key="${preview.servlet.path}" value-ref="org.hippoecm.hst.configuration.HstSitesManager.preview" />
+        <entry key="${live.servlet.path}" value-ref="org.hippoecm.hst.configuration.HstSitesManager.live" />
       </map>
     </property>
     <property name="virtualHosts" ref="org.hippoecm.hst.core.hosting.VirtualHosts" />
