@@ -950,7 +950,7 @@ public abstract class AbstractTree extends Panel implements ITreeStateListener, 
 				TreeItem parent = item.getParentItem();
 				boolean found = false;
 				while (parent != null) {
-				    if (dirtyItems.contains(parent)) {
+				    if (parent.isRenderChildren()) {
 				        found = true;
 				        item.setRenderChildren(false);
 				        break;

@@ -21,7 +21,6 @@ import javax.swing.tree.TreePath;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.addon.workflow.ContextWorkflowPlugin;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -101,6 +100,9 @@ public class FolderTreePlugin extends RenderPlugin implements ContextMenuManager
         tree.setRootLess(config.getBoolean("rootless"));
 
         add(new AjaxEventBehavior("onclick") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
             public void onEvent(AjaxRequestTarget target) {
                 if (activeContextMenu != null) {
                     activeContextMenu.collapse(target);
