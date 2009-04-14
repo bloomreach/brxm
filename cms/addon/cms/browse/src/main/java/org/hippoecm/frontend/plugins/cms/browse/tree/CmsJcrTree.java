@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
@@ -29,7 +26,6 @@ import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.widgets.JcrTree;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +44,7 @@ public abstract class CmsJcrTree extends JcrTree {
         return new WebMarkupContainer(id) {
             private static final long serialVersionUID = 1L;
 
+            @Override
             protected void onComponentTag(ComponentTag tag) {
                 super.onComponentTag(tag);
                 tag.put("class", getCss(node));
