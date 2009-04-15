@@ -26,6 +26,10 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -80,11 +84,12 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * 
  * @version $Id$
  */
-public class SpringBridgeHstComponent extends GenericHstComponent {
+public class SpringBridgeHstComponent extends GenericHstComponent implements ApplicationListener {
     
     protected String delegatedBeanNameParamName = "spring-delegated-bean";
     protected String contextNameSeparator = "::";
     
+    protected AbstractApplicationContext delegatedBeanApplicationContext;
     protected HstComponent delegatedBean;
     
     @Override
@@ -106,6 +111,8 @@ public class SpringBridgeHstComponent extends GenericHstComponent {
 
     @Override
     public void destroy() throws HstComponentException {
+        this.delegatedBeanApplicationContext = null;
+        
         if (delegatedBean != null) {
             delegatedBean.destroy();
             delegatedBean = null;
@@ -195,9 +202,28 @@ public class SpringBridgeHstComponent extends GenericHstComponent {
             }
 
             delegatedBean.init(getServletConfig(), getComponentConfiguration());
+            
+            if (beanFactory instanceof AbstractApplicationContext) {
+                delegatedBeanApplicationContext = (AbstractApplicationContext) beanFactory;
+                
+                if (!delegatedBeanApplicationContext.getApplicationListeners().contains(this)) {
+                    delegatedBeanApplicationContext.addApplicationListener(this);
+                }
+            }
         }
         
         return delegatedBean;
+    }
+
+    public void onApplicationEvent(ApplicationEvent event) {
+        if (event instanceof ContextClosedEvent) {
+            this.delegatedBeanApplicationContext = null;
+            
+            if (delegatedBean != null) {
+                delegatedBean.destroy();
+                delegatedBean = null;
+            }
+        }
     }
     
 }
