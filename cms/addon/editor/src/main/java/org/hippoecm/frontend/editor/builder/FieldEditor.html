@@ -16,8 +16,12 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
     <div class="hippo-editor-field hippo-editor-template-field-edit">
-      <label class="hippo-editor-field-title" for="text"><wicket:message key="path"/></label>
-      <input type="text" wicket:id="path" size="20"/>
+      <div class="hippo-editor-field-title">
+        <label class="hippo-editor-field-title" for="text"><wicket:message key="path"/></label>
+      </div>
+      <div class="hippo-editor-field-subfield">
+        <input type="text" wicket:id="path" size="20"/>
+      </div>
       <table>
         <tr>
           <td>
