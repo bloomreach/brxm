@@ -70,7 +70,8 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
             } else {
                 session = this.repository.login(this.credentials);
             }
-            if(session.itemExists(virtualHostsPath)) {
+            
+            if(virtualHostsPath != null && virtualHostsPath.startsWith("/") && session.itemExists(virtualHostsPath)) {
                 Item item = session.getItem(virtualHostsPath);
                 if(!item.isNode()) {
                     log.error("Failed to retrieve virtual hosts configuration because '{}' is not pointing to a node but a property", virtualHostsPath);
@@ -83,7 +84,7 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
                 }
                 this.virtualHosts = new VirtualHostsService(virtualHostsNode);
             } else {
-                log.debug("No virtualhosts configured at {}. Use the default site for any request regardless the hostname.", virtualHostsPath);
+                log.debug("No correct virtualhosts configured at {}. Use the default site for any request regardless the hostname.", virtualHostsPath);
                 this.virtualHosts = new VirtualHostsService(defaultSiteName);
             }
         } catch (RepositoryException e) {
