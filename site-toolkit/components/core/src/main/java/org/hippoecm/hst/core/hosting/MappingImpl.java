@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 public class MappingImpl implements Mapping{
     
-    private static final Logger log = LoggerFactory.getLogger(MappingImpl.class);
     private final static String WILDCARD = "*";
     private final static String PROPERTYHOLDER = "${1}";
     

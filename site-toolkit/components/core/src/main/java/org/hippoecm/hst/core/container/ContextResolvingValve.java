@@ -19,12 +19,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.core.hosting.Mapping;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
-import org.hippoecm.hst.site.request.MatchedMappingImpl;
 
 public class ContextResolvingValve extends AbstractValve
 {
