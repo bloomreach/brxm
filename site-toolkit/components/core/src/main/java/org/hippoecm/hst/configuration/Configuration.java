@@ -29,6 +29,8 @@ public class Configuration {
     public final static String NODETYPE_HST_SITEMENUS = "hst:sitemenus";
     public final static String NODETYPE_HST_SITEMENU = "hst:sitemenu";
     public final static String NODETYPE_HST_SITEMENUITEM = "hst:sitemenuitem";
+    public final static String NODETYPE_HST_VIRTUALHOSTS = "hst:virtualhosts";
+    public final static String NODETYPE_HST_VIRTUALHOST = "hst:virtualhost";
 
     public final static String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
     public final static String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";
@@ -55,7 +57,18 @@ public class Configuration {
 
     public final static String SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM =  "hst:referencesitemapitem";
     public final static String SITEMENUITEM_PROPERTY_FOLDERSONLY =  "hst:foldersonly";
-    
+
+    public final static String VIRTUALHOSTS_PROPERTY_SHOWPORT = "hst:showport";
+    public final static String VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS = "hst:prefixexclusions";
+    public final static String VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS = "hst:suffixexclusions";
+    public final static String VIRTUALHOSTS_PROPERTY_PORT = "hst:port";
+    public final static String VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
+
+    public final static String VIRTUALHOST_PROPERTY_SHOWPORT = "hst:showport";
+    public final static String VIRTUALHOST_PROPERTY_PORT = "hst:port";
+    public final static String VIRTUALHOST_PROPERTY_SITENAME = "hst:sitename";
+    public final static String VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
+    public final static String VIRTUALHOST_PROPERTY_MAPPING = "hst:mapping";
    
     public final static String NODEPATH_HST_CONFIGURATION = "hst:configuration/hst:configuration";
     public final static String NODENAME_HST_CONTENTNODE = "hst:content";

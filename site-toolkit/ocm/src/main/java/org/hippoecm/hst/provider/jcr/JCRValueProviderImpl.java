@@ -160,7 +160,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             return o;
         }
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
-            return null;
+            return new String[0];
         }
         
         loadProperty(propertyName,PropertyType.STRING, true);
@@ -174,11 +174,16 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             return o;
         }
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
-            return null;
+            return new Double(0);
         }
         
         loadProperty(propertyName,PropertyType.DOUBLE, false);
-        return this.propertyMap.getDoubles().get(propertyName);
+        
+        o = this.propertyMap.getDoubles().get(propertyName);
+        if(o == null) {
+           return new Double(0); 
+        } 
+        return o;
     }
 
     public Double[] getDoubles(String propertyName) {
@@ -187,7 +192,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             return o;
         }
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
-            return null;
+            return new Double[0];
         }
         
         loadProperty(propertyName,PropertyType.DOUBLE, true);
@@ -199,15 +204,19 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         Long o = this.propertyMap.getLongs().get(propertyName);
         if(o != null) {
             return (Long)o;
-        }
+        } 
         
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
-            return null;
+            return new Long(0);
         }
         
         loadProperty(propertyName,PropertyType.LONG, false);
         
-        return this.propertyMap.getLongs().get(propertyName);
+        o = this.propertyMap.getLongs().get(propertyName);
+        if(o == null) {
+           return new Long(0); 
+        } 
+        return o;
     }
 
     public Long[] getLongs(String propertyName) {
@@ -216,7 +225,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             return o;
         }
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
-            return null;
+            return new Long[0];
         }
         
         loadProperty(propertyName,PropertyType.LONG, true);
@@ -260,12 +269,16 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             return o;
         }
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
-            return null;
+            return false;
         }
         
         loadProperty(propertyName,PropertyType.BOOLEAN, false);
         
-        return this.propertyMap.getBooleans().get(propertyName);
+        o = this.propertyMap.getBooleans().get(propertyName);
+        if(o == null) {
+           return false; 
+        } 
+        return o;
     }
 
     public Boolean[] getBooleans(String propertyName) {
@@ -274,7 +287,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             return o;
         }
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
-            return null;
+            return new Boolean[0];
         }
         loadProperty(propertyName,PropertyType.BOOLEAN, true);
         return this.propertyMap.getBooleanArrays().get(propertyName);

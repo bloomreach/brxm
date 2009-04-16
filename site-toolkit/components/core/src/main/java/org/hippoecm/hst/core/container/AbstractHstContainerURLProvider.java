@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.core.util.HttpUtils;
 import org.hippoecm.hst.core.util.Path;
 import org.slf4j.Logger;
@@ -101,8 +102,28 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
             HstContainerURL baseURL = requestContext.getBaseURL();
             
             if (baseURL != null) {
-                contextPath = baseURL.getContextPath();
-                servletPath = baseURL.getServletPath();
+                if(requestContext.getMatchedMapping() != null) {
+                    MatchedMapping matchedMapping = requestContext.getMatchedMapping();
+                    
+                    if(matchedMapping.isURIMapped() && matchedMapping.getMapping() != null) {
+                        // TODO check the virtual host whether to include the contextpath
+                        contextPath = baseURL.getContextPath();
+                        // as the external url is mapped, get the external 'fake' servletpath
+                        servletPath = matchedMapping.getMapping().getUriPrefix();
+                        if(servletPath == null) {
+                            servletPath = "";
+                        }
+                        if(servletPath.endsWith("/")) {
+                            servletPath = servletPath.substring(0, servletPath.length() -1 );
+                        }
+                    } else {
+                        contextPath = baseURL.getContextPath();
+                        servletPath = baseURL.getServletPath();
+                    }
+                } else {
+                    contextPath = baseURL.getContextPath();
+                    servletPath = baseURL.getServletPath();
+                }
             }
         }
         

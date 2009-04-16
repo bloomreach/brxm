@@ -81,7 +81,6 @@ hippostd:publishableSummary, hippostd:languageable
 [hst:sites]
 + * (hst:site) = hst:site
 
-
 [hst:primarydomain] mixin
 
 [hst:redirectdomain] mixin
@@ -90,6 +89,7 @@ hippostd:publishableSummary, hippostd:languageable
 [hst:virtualhost]
 + * (hst:virtualhost)
 - hst:mapping (string) multiple
+- hst:sitename (string)
 - hst:port (long)
 - hst:showcontextpath (boolean)
 - hst:showport(boolean)
@@ -98,6 +98,8 @@ hippostd:publishableSummary, hippostd:languageable
 - hst:port (long)
 - hst:showcontextpath (boolean)
 - hst:showport(boolean)
+- hst:prefixexclusions (string) multiple
+- hst:suffixexclusions (string) multiple
 + * (hst:virtualhost)
 
 

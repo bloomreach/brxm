@@ -39,12 +39,16 @@ public abstract class AbstractJCRService implements JCRService, Serializable {
     
     public void closeValueProvider(boolean closeChildServices) {
         if(closeChildServices) {
-            for(Service s : getChildServices()) {
-                if (s != null)
-                    s.closeValueProvider(closeChildServices);
+            if(getChildServices() != null) {
+                for(Service s : getChildServices()) {
+                    if (s != null)
+                        s.closeValueProvider(closeChildServices);
+                }
             }
         }
-        this.valueProvider.detach();
+        if(this.valueProvider != null) {
+            this.valueProvider.detach();
+        }
     }
 
 }

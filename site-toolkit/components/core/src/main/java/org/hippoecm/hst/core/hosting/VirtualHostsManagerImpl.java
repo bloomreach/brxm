@@ -16,23 +16,29 @@
 package org.hippoecm.hst.core.hosting;
 
 import javax.jcr.Credentials;
+import javax.jcr.Item;
+import javax.jcr.Node;
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VirtualHostsManagerImpl implements VirtualHostsManager{
 
-    static Logger log = LoggerFactory.getLogger(VirtualHostsManagerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(VirtualHostsManagerImpl.class);
     
     protected Repository repository;
     protected Credentials credentials;
     protected VirtualHosts virtualHosts;
     private String defaultSiteName;
+    private String virtualHostsPath;
     
-    public VirtualHostsManagerImpl(String defaultSiteName) {
+    public VirtualHostsManagerImpl(String defaultSiteName, String virtualHostsPath) {
         this.defaultSiteName = defaultSiteName;
+        this.virtualHostsPath = virtualHostsPath;
     }
     
     public void setRepository(Repository repository) {
@@ -64,12 +70,27 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
             } else {
                 session = this.repository.login(this.credentials);
             }
-            this.virtualHosts = new VirtualHostsImpl(defaultSiteName, session);
-        } catch (Exception e) {
+            if(session.itemExists(virtualHostsPath)) {
+                Item item = session.getItem(virtualHostsPath);
+                if(!item.isNode()) {
+                    log.error("Failed to retrieve virtual hosts configuration because '{}' is not pointing to a node but a property", virtualHostsPath);
+                    return;
+                }
+                Node virtualHostsNode = (Node)item;
+                if(!virtualHostsNode.isNodeType(Configuration.NODETYPE_HST_VIRTUALHOSTS)) {
+                    log.error("Failed to retrieve virtual hosts configuration because '{}' is not pointing to a node of type '{}'", virtualHostsPath, Configuration.NODETYPE_HST_VIRTUALHOSTS);
+                    return;
+                }
+                this.virtualHosts = new VirtualHostsService(virtualHostsNode);
+            } else {
+                log.debug("No virtualhosts configured at {}. Use the default site for any request regardless the hostname.", virtualHostsPath);
+                this.virtualHosts = new VirtualHostsService(defaultSiteName);
+            }
+        } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve virtual hosts configuration: {}, {}", e.getMessage(), e);
+                log.error("Failed to retrieve virtual hosts configuration: {}, {}", e.getMessage(), e);
             } else if (log.isWarnEnabled()) {
-                log.warn("Failed to retrieve site configuration: {}", e.getMessage());
+                log.error("Failed to retrieve site configuration: {}", e.getMessage());
             }
         } finally {
             if (session != null) {

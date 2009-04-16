@@ -10,8 +10,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.hosting.VirtualHostsManager;
+import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,29 +45,28 @@ public class HstVirtualHostsFilter implements Filter {
                 return;
             }
             
+            VirtualHostsManager virtualHostManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
+            if(virtualHostManager.getVirtualHosts().isExcluded(req.getRequestURI())) {
+                chain.doFilter(request, response);
+                return;
+            }
+            
             if (request.getAttribute(FILTER_DONE_KEY) == null) {
                 request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
                 
-                String currentRequestURI = req.getRequestURI().substring(req.getContextPath().length());
+                String pathInfo = req.getRequestURI().substring(req.getContextPath().length());
                 
+                MatchedMapping matchedMapping = virtualHostManager.getVirtualHosts().findMapping(req.getServerName(), pathInfo);
                 
-                VirtualHostsManager virtualHostManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
-            
-                //virtualHostManager.getVirtualHosts().findVirtualHost(req.getServerName(), req.getRequestURI());
-                VirtualHost virtualHost = virtualHostManager.getVirtualHosts().findVirtualHost(req.getServerName());
-                
-                if(virtualHost != null) {
+                 if(matchedMapping != null) {
                     /*
-                     * put the matched VirtualHost temporarily on the request, as we do not yet have a HstRequestContext. When the
-                     * HstRequestContext is created, and there is a VirtualHost on the request, we put it on the HstRequestContext.
+                     * put the matched Mapping temporarily on the request, as we do not yet have a HstRequestContext. When the
+                     * HstRequestContext is created, and there is a Mapping on the request, we put it on the HstRequestContext.
                      */  
-                    request.setAttribute(VirtualHost.class.getName(), virtualHost);
-                    if(false) {
-                    	// TODO does not yet work, hence if(false)
-                        filterConfig.getServletContext().getRequestDispatcher("/preview"+currentRequestURI).forward(request, response);
-                    } else {
-                        chain.doFilter(request, response);
-                    }
+                    request.setAttribute(MatchedMapping.class.getName(), matchedMapping);
+                    String mappedPath = matchedMapping.mapToInternalURI(pathInfo);
+                    filterConfig.getServletContext().getRequestDispatcher(mappedPath).forward(request, response);
+                   
                 } else {
                     chain.doFilter(request, response);
                 }

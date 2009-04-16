@@ -22,23 +22,32 @@ package org.hippoecm.hst.core.hosting;
 public interface VirtualHost {
 
     /**
-     * Returns the host name.
+     * Returns the site name for the host if one is configured. If there is no siteName configured, the siteName must be part of the requestUri.
      * 
-     * @return
-     */
-    String getHostName();
-    
-    /**
-     * Returns the site name for the host.
-     * 
-     * @return
+     * @return the siteName belonging to this virtual host, or <code>null</code>
      */
     String getSiteName();
+    
+    /**
+     * 
+     * @param name the name segment of the hostname
+     * @return the child <code>VirtualHost</code> or <code>null</code> if none found
+     */
+    VirtualHost getChildHost(String name);
+    
+    
+    /**
+     * 
+     * @param pathInfo
+     * @return return the best <code>{@link Mapping}</code> within this VirtualHost for the pathInfo
+     */
+    Mapping getMapping(String pathInfo);
     
     /**
      * 
      * @return the <code>VirtualHosts</code> container of this <code>VirtualHost</code>
      */
     VirtualHosts getVirtualHosts();
+    
     
 }

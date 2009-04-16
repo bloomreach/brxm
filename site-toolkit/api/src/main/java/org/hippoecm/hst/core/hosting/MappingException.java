@@ -15,30 +15,11 @@
  */
 package org.hippoecm.hst.core.hosting;
 
-import org.hippoecm.hst.core.hosting.VirtualHost;
+public class MappingException extends Exception{
 
-public class VirtualHostImpl implements VirtualHost {
-    
-    private String hostName;
-    private String siteName;
-    private VirtualHosts virtualHosts;
-    
-    public VirtualHostImpl(VirtualHosts virtualHosts, String hostName, String siteName) {
-        this.hostName = hostName;
-        this.siteName = siteName;
-        this.virtualHosts = virtualHosts;
-    }
+    private static final long serialVersionUID = 1L;
 
-    public String getHostName() {
-        return this.hostName;
+    public MappingException(String msg) {
+        super(msg);
     }
-    
-    public String getSiteName() {
-        return this.siteName;
-    }
-
-    public VirtualHosts getVirtualHosts() {
-        return this.virtualHosts;
-    }
-
 }

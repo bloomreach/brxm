@@ -19,10 +19,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.core.hosting.VirtualHost;
+import org.hippoecm.hst.core.hosting.Mapping;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
+import org.hippoecm.hst.site.request.MatchedMappingImpl;
 
 public class ContextResolvingValve extends AbstractValve
 {
@@ -34,20 +36,23 @@ public class ContextResolvingValve extends AbstractValve
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
         HstContainerURL baseURL = requestContext.getBaseURL();
         
-        VirtualHost virtualHost;
-        
-        if(requestContext.getVirtualHost() != null) {
-            virtualHost = requestContext.getVirtualHost();
+        MatchedMapping matchedMapping;
+        if(requestContext.getMatchedMapping() != null) {
+            matchedMapping = requestContext.getMatchedMapping();
         } else {
             String hostName = servletRequest.getServerName();
-            virtualHost = this.virtualHostsManager.getVirtualHosts().findVirtualHost(hostName);   
-            ((HstRequestContextImpl)requestContext).setVirtualHost(virtualHost);
-            if (virtualHost == null) {
+            matchedMapping = this.virtualHostsManager.getVirtualHosts().findMapping(hostName, baseURL.getServletPath() + baseURL.getPathInfo());   
+            ((HstRequestContextImpl)requestContext).setMatchedMapping(matchedMapping);
+            if (matchedMapping == null) {
                 throw new ContainerException("No host mapping for " + hostName);
             }
         }
         
-        String siteName = virtualHost.getSiteName();
+        String siteName = matchedMapping.getSiteName();
+        if(siteName == null || "".equals(siteName)) {
+            throw new ContainerException("No siteName found for matchedMapping. Configure one in your virtual hosting.");
+        }
+        
         HstSite hstSite = getSitesManager(servletRequest.getServletPath()).getSites().getSite(siteName);
         
         if (hstSite == null) {

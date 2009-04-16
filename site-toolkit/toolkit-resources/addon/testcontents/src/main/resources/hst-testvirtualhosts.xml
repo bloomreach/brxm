@@ -27,14 +27,24 @@
     <sv:property sv:name="hst:showcontextpath" sv:type="Boolean">
         <sv:value>true</sv:value>
     </sv:property>
+    <sv:property sv:name="hst:prefixexclusions" sv:type="String">
+        <sv:value>/binaries/</sv:value>
+        <sv:value>/staticresource/</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:suffixexclusions" sv:type="String">
+        <sv:value>.pdf</sv:value>
+    </sv:property>
     
     <sv:node sv:name="127.0.0.1">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:virtualhost</sv:value>
         </sv:property>
         <sv:property sv:name="hst:mapping" sv:type="String">
-            <sv:value>/preview/* --> /testpreview/${1}</sv:value>
-            <sv:value>/* --> /testlive/${1}</sv:value>
+            <sv:value>/preview/* --> /preview/${1}</sv:value>
+            <sv:value>/* --> /live/${1}</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:sitename" sv:type="String">
+            <sv:value>testproject</sv:value>
         </sv:property>
     </sv:node>
     
@@ -43,8 +53,11 @@
             <sv:value>hst:virtualhost</sv:value>
         </sv:property>
         <sv:property sv:name="hst:mapping" sv:type="String">
-            <sv:value>/preview/* --> /testpreview/${1}</sv:value>
-            <sv:value>/* --> /testlive/${1}</sv:value>
+            <sv:value>/preview/* --> /preview/${1}</sv:value>
+            <sv:value>/* --> /live/${1}</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:sitename" sv:type="String">
+            <sv:value>testproject</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>

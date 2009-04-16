@@ -24,7 +24,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.hosting.VirtualHost;
+import org.hippoecm.hst.core.hosting.Mapping;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
@@ -63,11 +63,11 @@ public interface HstRequestContext {
     String getContextNamespace();
     
     /**
-     * the <code>{@link VirtualHost}</code> that belongs to this <code>HstRequestContext</code> or <code>null</code> when there is no
-     * VirtualHost set. 
-     * @return the <code>{@link VirtualHost}</code> that belongs to this <code>HstRequestContext</code> or <code>null</code>
+     * the <code>{@link MatchedMapping}</code> that belongs to this <code>HstRequestContext</code> or <code>null</code> when there is no
+     * MatchedMapping set. 
+     * @return the <code>{@link MatchedMapping}</code> that belongs to this <code>HstRequestContext</code> or <code>null</code>
      */ 
-    VirtualHost getVirtualHost();
+    MatchedMapping getMatchedMapping();
     
     /**
      * Returns the base container URL ({@link HstContainerURL} ) of the current request lifecycle.

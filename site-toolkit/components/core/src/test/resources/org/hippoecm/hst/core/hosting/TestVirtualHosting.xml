@@ -21,6 +21,7 @@
     
     <bean id="org.hippoecm.hst.core.hosting.VirtualHostsManager" class="org.hippoecm.hst.core.hosting.VirtualHostsManagerImpl">
         <constructor-arg value="testproject"/>
+        <constructor-arg value="/hst:testvirtualhosts"/>
         <property name="repository" ref="javax.jcr.Repository" />
         <property name="credentials" ref="javax.jcr.Credentials.default" />  
     </bean>  

@@ -44,11 +44,22 @@
   <listener>
     <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
   </listener>
-  
+
   <!-- Bootstrap listener to start up root web application context. -->
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
+  
+  <filter>
+    <filter-name>HstVirtualHostsFilter</filter-name>
+    <filter-class>org.hippoecm.hst.container.HstVirtualHostsFilter</filter-class>    
+  </filter>
+  
+  <filter-mapping>
+    <filter-name>HstVirtualHostsFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
   
   <servlet>
     <servlet-name>HstSiteConfigServlet</servlet-name>
@@ -71,6 +82,7 @@
     -->
     <load-on-startup>2</load-on-startup>
   </servlet>
+  
   
   <servlet>
     <servlet-name>BinariesServlet</servlet-name>
@@ -96,10 +108,12 @@
     <url-pattern>/preview/*</url-pattern>
   </servlet-mapping>
 
+
   <servlet-mapping>
     <servlet-name>HstContainerServlet</servlet-name>
     <url-pattern>/live/*</url-pattern>
   </servlet-mapping>
+
 
   <servlet-mapping>
     <servlet-name>BinariesServlet</servlet-name>
@@ -110,7 +124,7 @@
     <servlet-name>StaticResourceServlet</servlet-name>
     <url-pattern>/staticresource/*</url-pattern>
   </servlet-mapping>
-  
+
   <servlet-mapping>
     <servlet-name>springapp</servlet-name>
     <url-pattern>*.do</url-pattern>

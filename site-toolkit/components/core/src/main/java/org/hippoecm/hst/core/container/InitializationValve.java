@@ -20,8 +20,8 @@ import java.util.List;
 import javax.servlet.ServletRequest;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
-import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
 public class InitializationValve extends AbstractValve
@@ -40,10 +40,10 @@ public class InitializationValve extends AbstractValve
         ServletRequest servletRequest = context.getServletRequest();
         servletRequest.setAttribute(HstRequestContext.class.getName(), requestContext);
         
-        // if there is a VirtualHost on the request, it is set on the HstRequestContext.
-        Object virtualHost;
-        if( (virtualHost = servletRequest.getAttribute(VirtualHost.class.getName())) != null && virtualHost instanceof VirtualHost  ) {
-            ((HstRequestContextImpl)requestContext).setVirtualHost((VirtualHost) virtualHost);
+        // if there is a Mapping on the request, it is set on the HstRequestContext.
+        Object mapping;
+        if( (mapping = servletRequest.getAttribute(MatchedMapping.class.getName())) != null && mapping instanceof MatchedMapping  ) {
+            ((HstRequestContextImpl)requestContext).setMatchedMapping((MatchedMapping) mapping);
         }
         
         if (this.resourceLifecycleManagements != null) {

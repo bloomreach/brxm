@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.hosting;
 
+import org.hippoecm.hst.core.request.MatchedMapping;
+
 
 /**
  * The container interface for {@link VirtualHost}
@@ -23,11 +25,22 @@ package org.hippoecm.hst.core.hosting;
 public interface VirtualHosts {
 
     /**
-     * Returns the proper @{link VirtualHost} for the hostName.
+     * Typically, some paths we do not want to be handle by the hst framework request processing. Typically, this would
+     * be for example paths starting with /binaries/, or paths ending with some extension, like .pdf
      * 
-     * @param hostname
-     * @return
+     * When a path must be excluded, this method return true.
+     * 
+     * @param pathInfo
+     * @return true when the path must be excluded for matching to a host. 
      */
-    VirtualHost findVirtualHost(String hostName);
+    boolean isExcluded(String pathInfo);
     
+    /**
+     * 
+     * @param hostName
+     * @param pathInfo
+     * @return the <code>MatchedMapping</code> or <code>null</code>
+     */
+    MatchedMapping findMapping(String hostName,String pathInfo);
+  
 }
