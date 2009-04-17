@@ -36,7 +36,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestSimpleOCM extends AbstractBeanSpringTestCase {
+public class TestSimpleBean extends AbstractBeanSpringTestCase {
 
     protected Object repository;
     protected Credentials defaultCredentials;
