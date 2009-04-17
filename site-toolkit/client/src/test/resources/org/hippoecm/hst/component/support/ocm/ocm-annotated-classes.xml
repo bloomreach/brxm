@@ -17,7 +17,7 @@
 <jackrabbit-ocm>
   
   <annotated-class>org.hippoecm.hst.component.support.ocm.TextPage</annotated-class>
-  <annotated-class>org.hippoecm.hst.ocm.HippoStdDocument</annotated-class>
-  <annotated-class>org.hippoecm.hst.ocm.HippoStdCollection</annotated-class>
+  <annotated-class>org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument</annotated-class>
+  <annotated-class>org.hippoecm.hst.jackrabbit.ocm.HippoStdCollection</annotated-class>
   
 </jackrabbit-ocm>
