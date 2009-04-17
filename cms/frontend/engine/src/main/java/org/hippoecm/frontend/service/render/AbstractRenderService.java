@@ -364,7 +364,7 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
         private final List<IRenderService> list;
         protected String extension;
 
-        ExtensionPoint(String extension) {
+        protected ExtensionPoint(String extension) {
             super(IRenderService.class);
             this.extension = extension;
             this.list = new LinkedList<IRenderService>();

@@ -68,8 +68,6 @@ margin: 2px;
 .hippo-global-highlight li, 
 .hippo-root table tr.selected td, 
 .hippo-root table tr.selected td,
-.hippo-root div.row-selected a,
-.hippo-root table tr.row-selected,
 .hippo-root table tr.selected td a,
 .hippo-global-highlight a 
 {background: #fedc89}
@@ -599,12 +597,16 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 .hippo-tree div.wicket-tree div.row, 
 .hippo-tree div.wicket-tree div.row-selected{overflow: visible; width: auto; white-space: nowrap}
 
+
 /* set row height to a little higher for better clickability */
 .hippo-tree div.wicket-tree div.row, 
 .hippo-tree div.wicket-tree div.row-selected{padding-top: 2px; padding-bottom: 2px;}
 
 
-.hippo-tree div.wicket-tree div.row-selected {background: #fedc89}
+.hippo-tree div.wicket-tree div.row{background-image: url("images/controls/folderdropdownicon.png"); background-repeat:no-repeat; background-position: 0px 0px; }
+.hippo-tree div.wicket-tree div.row:hover{background-position: -200px 0px;}
+.hippo-tree div.wicket-tree div.row-selected {background-image: url("images/controls/folderdropdownicon.png"); background-position: 0px -20px;}
+.hippo-tree div.wicket-tree div.row-selected:hover{background-position: -200px -20px;}
 .hippo-tree div.wicket-tree div.row a,
 .hippo-tree div.wicket-tree div.row-selected a {font-weight: normal; color: black;}
 
@@ -661,16 +663,6 @@ font-weight: bold;
 .hippo-tree-dropdown-icon:hover {background-position: 0px 19px;}
 .hippo-tree-dropdown{position: relative}
 .hippo-tree-dropdown .hippo-toolbar-menu-item{}
-.hippo-root div.row-selected .hippo-tree-dropdown a{background: none}
-
-/*
-.hippo-global-highlight li, 
-.hippo-global-highlight li a span, 
-.hippo-global-highlight li, 
-.hippo-root table tr.selected td, .hippo-root table tr.selected td, .hippo-root div.row-selected a, .hippo-root table tr.row-selected, .hippo-root table tr.selected td a, .hippo-global-highlight a {screen.css (regel 66)
-background:#FEDC89 none repeat scroll 0 0;
-}
-*/
 
 /* Document Preview Plugin */
 /* ================================================ */

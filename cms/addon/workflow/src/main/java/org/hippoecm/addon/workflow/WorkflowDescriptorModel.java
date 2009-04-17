@@ -26,7 +26,7 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 
-public class WorkflowDescriptorModel extends LoadableDetachableModel {
+public class WorkflowDescriptorModel<T> extends LoadableDetachableModel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -79,5 +79,10 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel {
         } else {
             return null;
         }
+    }
+    
+    @Override
+    public T getObject() {
+        return (T) super.getObject();
     }
 }

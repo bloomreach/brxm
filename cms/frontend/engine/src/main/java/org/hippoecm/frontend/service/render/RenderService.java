@@ -75,6 +75,5 @@ public class RenderService extends AbstractRenderService {
             redraw();
             super.onRemoveService(service, name);
         }
-
     }
 }

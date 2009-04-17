@@ -41,14 +41,17 @@
   YAHOO.hippo.AjaxIndicator.prototype = {
     elementId: null,
     calls: 0,
+    timerID: 0,
     
     getElement: function() {
         return Dom.get(this.elementId);
     },
     
     show: function() {
+        if(this.calls == 0) {
+            timerID = self.setTimeout("document.body.style.cursor = 'wait';", 750);
+        }
         this.calls++;
-        this.setCursor(window, 'wait');
         Dom.setStyle(this.getElement(), 'display', 'block');
     },
     
@@ -57,7 +60,8 @@
             this.calls--;
         } 
         if (this.calls == 0) {
-            this.setCursor(window, 'default');
+            self.clearTimeout(timerID);
+            document.body.style.cursor = 'default';
             Dom.setStyle(this.getElement(),'display', 'none');
         }  
     },
