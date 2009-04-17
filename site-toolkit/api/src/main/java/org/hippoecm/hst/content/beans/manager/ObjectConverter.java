@@ -32,8 +32,10 @@ import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 public interface ObjectConverter
 {
     
-    public Object getObject(Session session, String path) throws ObjectBeanManagerException;
+    Object getObject(Session session, String path) throws ObjectBeanManagerException;
     
-    public Object getObject(Node node) throws ObjectBeanManagerException;
+    Object getObject(Node node) throws ObjectBeanManagerException;
+
+    Object getObject(Node node, String relPath) throws ObjectBeanManagerException;
     
 }
