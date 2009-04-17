@@ -57,6 +57,11 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-content-beans</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-ocm</artifactId>
       <version>${pom.version}</version>
     </dependency>

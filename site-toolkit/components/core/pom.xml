@@ -129,15 +129,10 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-connector</artifactId>
     </dependency>
-    
-    <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-ocm</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-ocm</artifactId>
+      <artifactId>hst-content-beans</artifactId>
       <version>${pom.version}</version>
     </dependency>
     
