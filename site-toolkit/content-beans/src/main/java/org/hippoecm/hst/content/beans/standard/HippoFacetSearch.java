@@ -18,6 +18,6 @@ package org.hippoecm.hst.content.beans.standard;
 import org.hippoecm.hst.content.beans.Node;
 
 @Node(jcrType="hippo:facetsearch")
-public class HippoFacetSearch extends HippoItem{
+public class HippoFacetSearch extends HippoFolder{
 
 }

@@ -27,6 +27,13 @@ public interface JCRValueProvider extends ValueProvider{
      * @return the jcr node 
      */
     public Node getJcrNode();
+    
+    /**
+     * returns the parent {@link Node} of this value provider or <code>null</code> when the node is detached.
+     * If the node is the jcr rootNode, <code>null</code> will be returned
+     * @return the parent Node or <code>null</code> if the node is null or there is no parent
+     */
+    public Node getParentJcrNode();
 
     /**
      * Method for detaching the jcr node. After calling this method, the jcr node is not available anymore

@@ -92,7 +92,10 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
         Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
 
-        HippoItem folder = (HippoItem) obm.getObject("/testcontent/testproject/Products");
+        HippoFolder folder = (HippoFolder) obm.getObject("/testcontent/testproject/Products");
+        
+        System.out.println(folder.getFolders().size());
+        
         SimpleTextPage productsPage =  (SimpleTextPage)obm.getObject("/testcontent/testproject/Products/SomeProduct");
         SimpleTextPage productsPage2 = (SimpleTextPage) obm.getObject("/testcontent/testproject/Products/SomeProduct/SomeProduct");
 

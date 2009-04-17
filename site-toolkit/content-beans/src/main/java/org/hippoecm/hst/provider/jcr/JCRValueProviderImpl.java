@@ -81,6 +81,22 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         return this.jcrNode;
     }
     
+    public Node getParentJcrNode(){
+        if(this.jcrNode == null) {
+            log.warn("Cannot get parent node when node is detached");
+            return null;
+        }
+        try {
+            if(this.jcrNode.isSame(jcrNode.getSession().getRootNode())) {
+                log.warn("Cannot get parent node for the jcr rootNode");
+                return null;
+            } 
+            return this.jcrNode.getParent();
+        } catch(RepositoryException e ) {
+            log.error("Repository Exception {}", e);
+            return null;
+        }
+    }
    
     public void detach(){
         if(this.nodePath != null) {

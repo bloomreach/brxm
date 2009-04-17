@@ -37,9 +37,8 @@ public class HippoItem implements NodeAware, ObjectConverterAware{
 
     private static Logger log = LoggerFactory.getLogger(HippoItem.class);
     
-    private transient Node node;
-    private String canonicalId;
-    
+    protected String canonicalId;
+    protected transient Node node;
     protected JCRValueProvider valueProvider;
     protected transient ObjectConverter objectConverter;
     
@@ -88,6 +87,16 @@ public class HippoItem implements NodeAware, ObjectConverterAware{
             return this.objectConverter.getObject(node, relPath);
         } catch (ObjectBeanManagerException e) {
             log.warn("Cannot get Object at relPath '{}' for '{}'", relPath, this.getPath());
+            return null;
+        } 
+    }
+    
+    public Object getParentObject(){
+        try {
+            Node parentNode = valueProvider.getParentJcrNode();
+            return this.objectConverter.getObject(parentNode);
+        } catch (ObjectBeanManagerException e) {
+            log.warn("Failed to get parent object for '{}'", this.getPath());
             return null;
         } 
     }

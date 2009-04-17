@@ -20,4 +20,9 @@ import org.hippoecm.hst.content.beans.Node;
 @Node(jcrType="hippo:document")
 public class HippoDocument extends HippoItem{
 
+
+    public HippoHtml getHippoHtml(String relPath) {
+        Object o = getObject(relPath);
+        return (o instanceof HippoHtml) ? (HippoHtml)o : null;
+    }
 }

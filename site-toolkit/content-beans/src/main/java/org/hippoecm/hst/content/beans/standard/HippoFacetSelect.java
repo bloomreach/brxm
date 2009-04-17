@@ -18,6 +18,6 @@ package org.hippoecm.hst.content.beans.standard;
 import org.hippoecm.hst.content.beans.Node;
 
 @Node(jcrType="hippo:facetselect")
-public class HippoFacetSelect extends HippoItem{
+public class HippoFacetSelect extends HippoFolder{
 
 }

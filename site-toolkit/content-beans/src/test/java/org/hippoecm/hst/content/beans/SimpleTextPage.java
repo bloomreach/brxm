@@ -28,8 +28,7 @@ public class SimpleTextPage extends HippoDocument {
     }
     
     public HippoHtml getBody(){
-        Object o = getObject("testproject:body");
-        return (o instanceof HippoHtml) ? (HippoHtml)o : null;
+        return getHippoHtml("testproject:body");
     }
     
 }
