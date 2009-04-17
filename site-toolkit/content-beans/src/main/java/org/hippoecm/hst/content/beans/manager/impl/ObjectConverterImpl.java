@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.hippo.ocm.manager.impl;
+package org.hippoecm.hst.content.beans.manager.impl;
 
 import java.util.List;
 
@@ -22,10 +22,10 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.ocm.NodeAware;
-import org.hippoecm.hst.ocm.ObjectContentManagerException;
-import org.hippoecm.hst.ocm.manager.ObjectConverter;
-import org.hippoecm.hst.ocm.manager.ObjectConverterAware;
+import org.hippoecm.hst.content.beans.NodeAware;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.manager.ObjectConverterAware;
 import org.hippoecm.hst.service.ServiceFactory;
 import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.KeyValue;
@@ -41,7 +41,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         this.fallBackJcrPrimaryNodeTypes = fallBackJcrPrimaryNodeTypes;
     }
 
-    public Object getObject(Session session, String path) throws ObjectContentManagerException {
+    public Object getObject(Session session, String path) throws ObjectBeanManagerException {
         Object object = null;
         
         try {
@@ -68,15 +68,15 @@ public class ObjectConverterImpl implements ObjectConverter {
             }
         } catch (PathNotFoundException pnfe) {
             // HINT should never get here
-            throw new ObjectContentManagerException("Impossible to get the object at " + path, pnfe);
+            throw new ObjectBeanManagerException("Impossible to get the object at " + path, pnfe);
         } catch (RepositoryException re) {
-            throw new ObjectContentManagerException("Impossible to get the object at " + path, re);
+            throw new ObjectBeanManagerException("Impossible to get the object at " + path, re);
         }
         
         return object;
     }
 
-    public Object getObject(Node node) throws ObjectContentManagerException {
+    public Object getObject(Node node) throws ObjectBeanManagerException {
         Object object = null;
         
         try {
@@ -104,9 +104,9 @@ public class ObjectConverterImpl implements ObjectConverter {
                 return ServiceFactory.create(node, proxyInterfacesOrDelegateeClass);
             }
         } catch (RepositoryException e) {
-            throw new ObjectContentManagerException("Impossible to get the object from the repository", e);
+            throw new ObjectBeanManagerException("Impossible to get the object from the repository", e);
         } catch (Exception e) {
-            throw new ObjectContentManagerException("Impossible to convert the node", e);
+            throw new ObjectBeanManagerException("Impossible to convert the node", e);
         }
         
         return null;

@@ -29,13 +29,13 @@ import org.apache.jackrabbit.ocm.mapper.Mapper;
 import org.apache.jackrabbit.ocm.mapper.model.ClassDescriptor;
 import org.apache.jackrabbit.ocm.query.Filter;
 import org.apache.jackrabbit.ocm.query.impl.FilterImpl;
+import org.hippoecm.hst.content.beans.query.FilterException;
+import org.hippoecm.hst.content.beans.query.ScopeException;
 import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.hippo.ocm.query.exception.FilterException;
-import org.hippoecm.hst.hippo.ocm.query.exception.ScopeException;
-import org.hippoecm.hst.hippo.ocm.query.impl.HstCtxWhereFilter;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdNodeIterator;
 import org.hippoecm.hst.jackrabbit.ocm.impl.HippoStdNodeIteratorImpl;
+import org.hippoecm.hst.query.filter.HstCtxWhereFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 @Deprecated

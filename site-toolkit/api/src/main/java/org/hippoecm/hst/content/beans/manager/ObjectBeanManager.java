@@ -13,23 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.ocm.manager;
+package org.hippoecm.hst.content.beans.manager;
 
 import javax.jcr.Session;
 
-import org.hippoecm.hst.ocm.ObjectContentManagerException;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 
 /**
  * The object content manager encapsulates a JCR session. This is the main
  * component used to manage objects into the JCR repository.
  * <P>
  * This interface mimics Jackrabbit's one, but this is provided
- * to support more lightweight OCM in HST.
+ * to support more lightweight beans in HST.
  * </P>
  * 
  * @version $Id$
  */
-public interface ObjectContentManager {
+public interface ObjectBeanManager {
 
     /**
      * Get an object from the JCR repository
@@ -38,10 +38,10 @@ public interface ObjectContentManager {
      *            the object path
      * @return the object found or null
      *
-     * @throws ObjectContentManagerException
+     * @throws ObjectBeanManagerException
      *             when it is not possible to retrieve the object
      */
-    public Object getObject(String path) throws ObjectContentManagerException;
+    public Object getObject(String path) throws ObjectBeanManagerException;
 
     /**
      * Get an object from the JCR repository
@@ -50,10 +50,10 @@ public interface ObjectContentManager {
      *            object uuid
      * @return the object found or null
      *
-     * @throws ObjectContentManagerException
+     * @throws ObjectBeanManagerException
      *             when it is not possible to retrieve the object
      */
-    public Object getObjectByUuid(String uuid) throws ObjectContentManagerException;
+    public Object getObjectByUuid(String uuid) throws ObjectBeanManagerException;
     
     /**
      * This method returns the JCR session. The JCR session could be used to

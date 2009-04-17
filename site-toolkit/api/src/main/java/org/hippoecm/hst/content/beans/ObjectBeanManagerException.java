@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.ocm;
+package org.hippoecm.hst.content.beans;
 
 /**
  * The <CODE>ObjectContentManagerException</CODE> class defines a general exception
@@ -22,14 +22,14 @@ package org.hippoecm.hst.ocm;
  * 
  * @version $Id$
  */
-public class ObjectContentManagerException extends Exception {
+public class ObjectBeanManagerException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new ObjectContentManagerException exception.
      */
-    public ObjectContentManagerException() {
+    public ObjectBeanManagerException() {
         super();
     }
 
@@ -39,7 +39,7 @@ public class ObjectContentManagerException extends Exception {
      * @param   message
      *          the exception message
      */
-    public ObjectContentManagerException(String message) {
+    public ObjectBeanManagerException(String message) {
         super(message);
     }
 
@@ -49,7 +49,7 @@ public class ObjectContentManagerException extends Exception {
      * @param   nested
      *          the nested exception
      */
-    public ObjectContentManagerException(Throwable nested) {
+    public ObjectBeanManagerException(Throwable nested) {
         super(nested);
     }
 
@@ -67,7 +67,7 @@ public class ObjectContentManagerException extends Exception {
      * @param   nested
      *          the nested exception
      */
-    public ObjectContentManagerException(String msg, Throwable nested) {
+    public ObjectBeanManagerException(String msg, Throwable nested) {
         super(msg, nested);
     }
 

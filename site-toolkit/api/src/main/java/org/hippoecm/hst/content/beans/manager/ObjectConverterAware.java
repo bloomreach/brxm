@@ -13,24 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.ocm;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.hippoecm.hst.content.beans.manager;
 
 /**
- * Allows for the annotation of a Java class so mapping through simple java interface or delegatee class to a JCR node.
+ * Interface to be implemented by beans that wish to be aware of the object converter.
  * 
  * @version $Id$
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Inherited
-public @interface Node {
-    String jcrType();
+public interface ObjectConverterAware {
+
+    /**
+     * Callback that supplies the object converter.
+     * 
+     * @param objectConverter
+     */
+    void setObjectConverter(ObjectConverter objectConverter);
+    
 }

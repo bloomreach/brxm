@@ -1,10 +1,10 @@
-package org.hippoecm.hst.hippo.ocm.query.impl;
+package org.hippoecm.hst.query.filter;
 
 import javax.jcr.Node;
 
+import org.hippoecm.hst.content.beans.query.FilterException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.search.HstContextWhereClauseException;
-import org.hippoecm.hst.hippo.ocm.query.exception.FilterException;
 
 public class HstCtxWhereFilter {
     

@@ -13,37 +13,37 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.hippo.ocm.manager.impl;
+package org.hippoecm.hst.content.beans.manager.impl;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.ocm.ObjectContentManagerException;
-import org.hippoecm.hst.ocm.manager.ObjectContentManager;
-import org.hippoecm.hst.ocm.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 
-public class ObjectContentManagerImpl implements ObjectContentManager {
+public class ObjectBeanManagerImpl implements ObjectBeanManager {
 
     protected Session session;
     protected ObjectConverter objectConverter;
 
-    public ObjectContentManagerImpl(Session session, ObjectConverter objectConverter) {
+    public ObjectBeanManagerImpl(Session session, ObjectConverter objectConverter) {
         this.session = session;
         this.objectConverter = objectConverter;
     }
 
-    public Object getObject(String path) throws ObjectContentManagerException {
+    public Object getObject(String path) throws ObjectBeanManagerException {
         return this.objectConverter.getObject(this.session, path);
     }
     
-    public Object getObjectByUuid(String uuid) throws ObjectContentManagerException {
+    public Object getObjectByUuid(String uuid) throws ObjectBeanManagerException {
         try {
             Node node = session.getNodeByUUID(uuid);
             Object object = objectConverter.getObject(node);
             return object;
         } catch (RepositoryException e) {
-            throw new ObjectContentManagerException("Impossible to get the object with uuid : " + uuid, e);
+            throw new ObjectBeanManagerException("Impossible to get the object with uuid : " + uuid, e);
         }
     }
     

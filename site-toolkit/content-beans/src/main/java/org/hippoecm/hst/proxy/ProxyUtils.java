@@ -20,7 +20,7 @@ import java.util.Set;
 import org.apache.commons.proxy.Interceptor;
 import org.apache.commons.proxy.Invocation;
 import org.apache.commons.proxy.Invoker;
-import org.hippoecm.hst.ocm.Node;
+import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.service.ServiceBeanAccessProvider;
 
 /**

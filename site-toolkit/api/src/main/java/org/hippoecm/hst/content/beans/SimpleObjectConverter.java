@@ -13,18 +13,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.hippo.ocm.query.exception;
+package org.hippoecm.hst.content.beans;
 
-public class QueryException extends Exception{
+import javax.jcr.Session;
 
-    
-    private static final long serialVersionUID = 1L;
+/**
+ * SimpleObjectConverter which is responsible for basic Object-JCR Node mapping.
+ * 
+ * @version $Id$
+ */
+public interface SimpleObjectConverter {
 
-    public QueryException(String message){
-        super(message);
-    }
-    public QueryException(String message, Throwable th){
-        super(message, th);
-    }
+    /**
+     * Returns a mapped object for the JCR node indicated by the path.
+     * 
+     * @param session
+     * @param path
+     * @return
+     */
+    Object getObject(Session session, String path);
     
 }

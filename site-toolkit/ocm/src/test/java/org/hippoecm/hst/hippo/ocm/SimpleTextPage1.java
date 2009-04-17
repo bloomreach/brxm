@@ -17,8 +17,8 @@ package org.hippoecm.hst.hippo.ocm;
 
 import java.util.Map;
 
+import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument;
-import org.hippoecm.hst.ocm.Node;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.UnderlyingServiceAware;
 

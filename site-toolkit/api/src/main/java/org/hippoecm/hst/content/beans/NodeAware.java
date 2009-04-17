@@ -1,4 +1,4 @@
-package org.hippoecm.hst.ocm;
+package org.hippoecm.hst.content.beans;
 
 import javax.jcr.Node;
 

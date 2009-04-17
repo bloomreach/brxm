@@ -13,24 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.ocm;
-
-import javax.jcr.Session;
+package org.hippoecm.hst.content.beans;
 
 /**
- * SimpleObjectConverter which is responsible for basic Object-JCR Node mapping.
+ * Interface to be implemented by beans that wish to be aware of the object converter.
  * 
  * @version $Id$
  */
-public interface SimpleObjectConverter {
+public interface SimpleObjectConverterAware {
 
     /**
-     * Returns a mapped object for the JCR node indicated by the path.
+     * Callback that supplies the object converter.
      * 
-     * @param session
-     * @param path
-     * @return
+     * @param simpleObjectConverter
      */
-    Object getObject(Session session, String path);
+    void setSimpleObjectConverter(SimpleObjectConverter simpleObjectConverter);
     
 }

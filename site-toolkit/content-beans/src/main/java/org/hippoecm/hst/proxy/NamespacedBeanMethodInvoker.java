@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import org.apache.commons.proxy.Invoker;
-import org.hippoecm.hst.ocm.Node;
+import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.service.ServiceBeanAccessProvider;
 
 public class NamespacedBeanMethodInvoker implements Invoker, Serializable {

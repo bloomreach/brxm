@@ -13,27 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.ocm.manager;
+package org.hippoecm.hst.content.beans.query;
 
-import javax.jcr.Node;
-import javax.jcr.Session;
-
-import org.hippoecm.hst.ocm.ObjectContentManagerException;
-
-/**
- * Convert any kind of beans into JCR nodes & properties.
- * <P>
- * This interface mimics Jackrabbit's one, but this is provided
- * to support more lightweight OCM in HST.
- * </P>
- *
- * @version $Id$
- */
-public interface ObjectConverter
-{
+public class FilterException extends QueryException{
     
-    public Object getObject(Session session, String path) throws ObjectContentManagerException;
-    
-    public Object getObject(Node node) throws ObjectContentManagerException;
+    private static final long serialVersionUID = 1L;
+
+    public FilterException(String message, Throwable th) {
+        super(message, th);
+    }
+    public FilterException(String message) {
+        super(message);
+    }
     
 }

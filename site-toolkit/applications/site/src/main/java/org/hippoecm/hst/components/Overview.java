@@ -17,10 +17,12 @@ package org.hippoecm.hst.components;
 
 import java.util.List;
 
+import javax.jcr.RepositoryException;
+
+import org.hippoecm.hst.content.beans.query.QueryException;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.hippo.ocm.query.exception.QueryException;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdFolder;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
@@ -45,18 +47,20 @@ public class Overview extends GenericResourceServingHstComponent {
         //  
         
         HstQuery query = this.getHstQuery(request);
-        
+        HippoStdNode hippoStdNode2 = this.getSiteContentBaseNode(request);
             try {
-                query.setScope(hippoStdNode);
+                query.setScope(hippoStdNode2);
+                
                 HippoStdFilter filter = query.createFilter(NewsPage.class);
-                filter.addContains("title", "News");
+                //filter.addContains("title", "News");
                 query.setFilter(filter);
-                query.addOrderByDescending("date");
+                //query.addOrderByDescending("date");
                 
                 HippoStdNodeIterator it = query.execute();
                 
                 while(it.hasNext()) {
                     NewsPage p = (NewsPage)it.nextHippoStdNode();
+                    System.out.println(p);
                 }
             }catch (QueryException e) {
                 // TODO Auto-generated catch block

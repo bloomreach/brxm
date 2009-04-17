@@ -17,7 +17,7 @@ package org.hippoecm.hst.service.jcr;
 
 import java.io.Serializable;
 
-import org.hippoecm.hst.ocm.Node;
+import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.service.UnderlyingServiceAware;
 
 @Node(jcrType="hippostd:document")

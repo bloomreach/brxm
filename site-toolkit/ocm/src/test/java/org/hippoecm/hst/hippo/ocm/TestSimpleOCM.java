@@ -25,14 +25,14 @@ import javax.jcr.Session;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.collections.list.TreeList;
-import org.hippoecm.hst.hippo.ocm.manager.impl.ObjectContentManagerImpl;
-import org.hippoecm.hst.hippo.ocm.manager.impl.ObjectConverterImpl;
+import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.manager.impl.ObjectBeanManagerImpl;
+import org.hippoecm.hst.content.beans.manager.impl.ObjectConverterImpl;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdFolder;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdHtml;
-import org.hippoecm.hst.ocm.Node;
-import org.hippoecm.hst.ocm.manager.ObjectContentManager;
-import org.hippoecm.hst.ocm.manager.ObjectConverter;
 import org.hippoecm.hst.test.AbstractOCMSpringTestCase;
 import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.KeyValue;
@@ -75,7 +75,7 @@ public class TestSimpleOCM extends AbstractOCMSpringTestCase {
         ObjectConverter objectConverter = new ObjectConverterImpl(jcrPrimaryNodeTypeClassPairs, fallBackJcrPrimaryNodeTypes);
         
         Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
-        ObjectContentManager ocm = new ObjectContentManagerImpl(session, objectConverter);
+        ObjectBeanManager ocm = new ObjectBeanManagerImpl(session, objectConverter);
         
         SimpleTextPage1 productsPage = (SimpleTextPage1) ocm.getObject("/testcontent/testproject/Products/SomeProduct");
         assertNotNull(productsPage);

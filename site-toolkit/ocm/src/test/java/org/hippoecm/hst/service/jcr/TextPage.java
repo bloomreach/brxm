@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.service.jcr;
 
-import org.hippoecm.hst.ocm.Node;
+import org.hippoecm.hst.content.beans.Node;
 
 @Node(jcrType="testproject:textpage")
 public interface TextPage extends HippoStd{

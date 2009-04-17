@@ -17,7 +17,7 @@ package org.hippoecm.hst.jackrabbit.ocm;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.hippoecm.hst.ocm.NodeAware;
+import org.hippoecm.hst.content.beans.NodeAware;
 
 @Deprecated
 @Node(jcrType="hippostd:html", discriminator=false)

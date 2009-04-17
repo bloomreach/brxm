@@ -22,9 +22,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.hippoecm.hst.ocm.NodeAware;
-import org.hippoecm.hst.ocm.SimpleObjectConverter;
-import org.hippoecm.hst.ocm.SimpleObjectConverterAware;
+import org.hippoecm.hst.content.beans.NodeAware;
+import org.hippoecm.hst.content.beans.SimpleObjectConverter;
+import org.hippoecm.hst.content.beans.SimpleObjectConverterAware;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.hst.util.NOOPELMap;
