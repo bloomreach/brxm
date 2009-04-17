@@ -75,7 +75,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * <br/>
  * In the above example, 'com.mycompany.myapp' is the name of the child bean factory name,
  * and 'contactBean' is the bean name of the child bean factory.
- * The the bean factory paths can be multiple to represent the hierarchy
+ * The bean factory paths can be multiple to represent the hierarchy
  * like 'com.mycompany.myapp::crm::contactBean'.
  * <br/>
  * The separator for hierarchical bean factory path can be changed by setting the servlet
