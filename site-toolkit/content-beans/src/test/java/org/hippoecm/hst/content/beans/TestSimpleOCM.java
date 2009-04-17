@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.hippo.ocm;
+package org.hippoecm.hst.content.beans;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -25,22 +25,18 @@ import javax.jcr.Session;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.collections.list.TreeList;
-import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.AbstractBeanSpringTestCase;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.manager.impl.ObjectBeanManagerImpl;
-import org.hippoecm.hst.content.beans.manager.impl.ObjectConverterImpl;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdFolder;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdHtml;
-import org.hippoecm.hst.test.AbstractOCMSpringTestCase;
+import org.hippoecm.hst.content.beans.manager.ObjectConverterImpl;
 import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.KeyValue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestSimpleOCM extends AbstractOCMSpringTestCase {
+public class TestSimpleOCM extends AbstractBeanSpringTestCase {
 
     protected Object repository;
     protected Credentials defaultCredentials;

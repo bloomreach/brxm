@@ -28,14 +28,14 @@ import javax.jcr.Session;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.SerializationUtils;
+import org.hippoecm.hst.AbstractBeanSpringTestCase;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceFactory;
-import org.hippoecm.hst.test.AbstractOCMSpringTestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestJCRServiceBean extends AbstractOCMSpringTestCase {
+public class TestJCRServiceBean extends AbstractBeanSpringTestCase {
     
     private static final String TESTPROJECT_EXISTING_VIRTUALNODE = "/testpreview/testproject/hst:content/Products/SomeProduct/SomeProduct";
 
