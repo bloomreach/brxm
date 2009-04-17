@@ -62,11 +62,6 @@
      <scope>runtime</scope>
      <version>${dollar}{taglibs.version}</version>
    </dependency>
-	<dependency>
-		<groupId>org.onehippo.forge.simpleEmail</groupId>
-		<artifactId>SimpleEmail</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</dependency>      
   <dependency>
     <groupId>xml-apis</groupId>
     <artifactId>xml-apis</artifactId>
