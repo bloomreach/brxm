@@ -24,14 +24,15 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.manager.ObjectConverterAware;
 import org.hippoecm.hst.service.ServiceFactory;
 import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.KeyValue;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.LoggerFactory;
 
 public class ObjectConverterImpl implements ObjectConverter {
+    
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(ObjectConverterImpl.class);
     
     protected List<KeyValue<String, Class[]>> jcrPrimaryNodeTypeClassPairs;
     protected String [] fallBackJcrPrimaryNodeTypes;
@@ -45,6 +46,10 @@ public class ObjectConverterImpl implements ObjectConverter {
         Object object = null;
         
         try {
+            if(path == null || !path.startsWith("/")) {
+                log.warn("Illegal argument for '{}' : not an absolute path", path);
+                return null;
+            }
             if (!session.itemExists(path)) {
                 return null;
             }
@@ -54,17 +59,14 @@ public class ObjectConverterImpl implements ObjectConverter {
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 // if its a handle, we want the child node. If the child node is not present,
                 // this node can be ignored
-                object = getObject(session, path + "/" + node.getName());
+                if(node.hasNode(node.getName())) {
+                    return getObject(node.getNode(node.getName()));
+                } else {
+                    return null;
+                }
             } else {
                 object = getObject(node);
                 
-                if (object instanceof NodeAware) {
-                    ((NodeAware) object).setNode(node);
-                }
-                
-                if (object instanceof ObjectConverterAware) {
-                    ((ObjectConverterAware) object).setObjectConverter(this);
-                }
             }
         } catch (PathNotFoundException pnfe) {
             // HINT should never get here
@@ -76,11 +78,32 @@ public class ObjectConverterImpl implements ObjectConverter {
         return object;
     }
 
+    public Object getObject(Node node, String relPath) throws ObjectBeanManagerException {
+        if(relPath == null || relPath.startsWith("/")) {
+            log.warn("'{}' is not a valid relative path. Return null.", relPath);
+            return null;
+        }
+        if(node == null) {
+            log.warn("Node is null. Cannot get document with relative path '{}'", relPath);
+            return null;
+        }
+        Session session = null;
+        try {
+            session = node.getSession();
+            String absPath = node.getPath() + "/" + relPath;
+            return this.getObject(session, absPath);
+        } catch (RepositoryException e) {
+            log.warn("Node's session is available. Cannot get document with relative path '{}'", relPath);
+            return null;
+        }
+    }
+    
     public Object getObject(Node node) throws ObjectBeanManagerException {
         Object object = null;
-        
+        String jcrPrimaryNodeType;
+        String path;
         try {
-            String jcrPrimaryNodeType = node.getPrimaryNodeType().getName();
+            jcrPrimaryNodeType = node.getPrimaryNodeType().getName();
             Class [] proxyInterfacesOrDelegateeClass = null;
             KeyValue<String, Class[]> jcrPrimaryNodeTypePair = new DefaultKeyValue<String, Class[]>(jcrPrimaryNodeType, null, true);
             int offset = this.jcrPrimaryNodeTypeClassPairs.indexOf(jcrPrimaryNodeTypePair);
@@ -90,8 +113,11 @@ public class ObjectConverterImpl implements ObjectConverter {
                 proxyInterfacesOrDelegateeClass = pair.getValue();
             } else if (this.fallBackJcrPrimaryNodeTypes != null) {
                 for (String fallBackJcrPrimaryNodeType : this.fallBackJcrPrimaryNodeTypes) {
-                    offset = this.jcrPrimaryNodeTypeClassPairs.indexOf(new DefaultKeyValue<String, Class[]>(fallBackJcrPrimaryNodeType, null, true));
                     
+                    if(!node.isNodeType(fallBackJcrPrimaryNodeType)) {
+                        continue;
+                    }
+                    offset = this.jcrPrimaryNodeTypeClassPairs.indexOf(new DefaultKeyValue<String, Class[]>(fallBackJcrPrimaryNodeType, null, true));
                     if (offset != -1) {
                         KeyValue<String, Class[]> pair = this.jcrPrimaryNodeTypeClassPairs.get(offset);
                         proxyInterfacesOrDelegateeClass = pair.getValue();
@@ -101,14 +127,22 @@ public class ObjectConverterImpl implements ObjectConverter {
             }
             
             if (proxyInterfacesOrDelegateeClass != null) {
-                return ServiceFactory.create(node, proxyInterfacesOrDelegateeClass);
+                object = ServiceFactory.create(node, proxyInterfacesOrDelegateeClass);
+                if (object instanceof NodeAware) {
+                    ((NodeAware) object).setNode(node);
+                }
+                if (object instanceof ObjectConverterAware) {
+                    ((ObjectConverterAware) object).setObjectConverter(this);
+                }
+                return object;
             }
+            path = node.getPath();
         } catch (RepositoryException e) {
             throw new ObjectBeanManagerException("Impossible to get the object from the repository", e);
         } catch (Exception e) {
             throw new ObjectBeanManagerException("Impossible to convert the node", e);
         }
-        
+        log.warn("No Descriptor found for node type '{}'. Cannot return a Bean for '{}'.", path , jcrPrimaryNodeType);
         return null;
     }
 

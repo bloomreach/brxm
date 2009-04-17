@@ -34,7 +34,8 @@ public class ObjectBeanManagerImpl implements ObjectBeanManager {
     }
 
     public Object getObject(String path) throws ObjectBeanManagerException {
-        return this.objectConverter.getObject(this.session, path);
+        Object o = this.objectConverter.getObject(this.session, path);
+        return o; 
     }
     
     public Object getObjectByUuid(String uuid) throws ObjectBeanManagerException {

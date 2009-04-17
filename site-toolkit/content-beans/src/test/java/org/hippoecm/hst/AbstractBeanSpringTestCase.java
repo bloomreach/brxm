@@ -35,7 +35,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * <p>
- * AbstractOCMSpringTestCase
+ * AbstractBeanSpringTestCase
  * </p>
  * 
  * @version $Id$

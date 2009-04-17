@@ -17,7 +17,7 @@ package org.hippoecm.hst.content.beans.standard;
 
 import org.hippoecm.hst.content.beans.Node;
 
-@Node(jcrType="hippo:document")
-public class HippoDocument extends HippoItem{
+@Node(jcrType="hippo:facetselect")
+public class HippoFacetSelect extends HippoItem{
 
 }

@@ -13,18 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.content.beans;
+package org.hippoecm.hst.content.beans.standard;
 
-import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.content.beans.Node;
 
-@Node(jcrType="testproject:textpage")
-public class SimpleTextPage1 extends HippoDocument {
-    
-    protected String title;
+@Node(jcrType="hippo:facetsearch")
+public class HippoFacetSearch extends HippoItem{
 
-    public String getTitle() {
-        return getProperty("testproject:title");
-    }
-
-    
 }

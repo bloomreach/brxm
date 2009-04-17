@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.content.beans;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -30,6 +32,14 @@ import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.ObjectConverterImpl;
+import org.hippoecm.hst.content.beans.standard.HippoDirectory;
+import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.content.beans.standard.HippoFacetSearch;
+import org.hippoecm.hst.content.beans.standard.HippoFacetSelect;
+import org.hippoecm.hst.content.beans.standard.HippoFixedDirectory;
+import org.hippoecm.hst.content.beans.standard.HippoFolder;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.content.beans.standard.HippoItem;
 import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.KeyValue;
 import org.junit.After;
@@ -63,23 +73,39 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
         
         // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
         List<KeyValue<String, Class[]>> jcrPrimaryNodeTypeClassPairs = new TreeList();
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, SimpleTextPage1.class);
+
+
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, SimpleTextPage.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDocument.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFolder.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSearch.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSelect.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDirectory.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFixedDirectory.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoHtml.class);
         
         // builds a fallback jcrPrimaryNodeType array.
-        String [] fallBackJcrPrimaryNodeTypes = new String [] { "hippo:document" };
+        String [] fallBackJcrPrimaryNodeTypes = new String [] {"hippo:document"};
         
         ObjectConverter objectConverter = new ObjectConverterImpl(jcrPrimaryNodeTypeClassPairs, fallBackJcrPrimaryNodeTypes);
         
         Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
-        ObjectBeanManager ocm = new ObjectBeanManagerImpl(session, objectConverter);
+        ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
+
+        HippoItem folder = (HippoItem) obm.getObject("/testcontent/testproject/Products");
+        SimpleTextPage productsPage =  (SimpleTextPage)obm.getObject("/testcontent/testproject/Products/SomeProduct");
+        SimpleTextPage productsPage2 = (SimpleTextPage) obm.getObject("/testcontent/testproject/Products/SomeProduct/SomeProduct");
+
+        assertTrue("Handle and Document should return true for equalCompare ", productsPage.equalCompare(productsPage2));
+        assertFalse("Folder and Document should return false for equalCompare ",folder.equalCompare(productsPage2));
         
-        SimpleTextPage1 productsPage = (SimpleTextPage1) ocm.getObject("/testcontent/testproject/Products/SomeProduct");
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
         
         System.out.println("node: " + productsPage.getNode());
         System.out.println("path: " + productsPage.getPath());
         System.out.println("title: " + productsPage.getTitle());
+        System.out.println("body: " + productsPage.getBody().getContent());
         
         session.logout();
     }
