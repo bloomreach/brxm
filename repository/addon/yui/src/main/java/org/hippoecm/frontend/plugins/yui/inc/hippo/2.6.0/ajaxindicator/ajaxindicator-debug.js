@@ -41,6 +41,7 @@
   YAHOO.hippo.AjaxIndicator.prototype = {
     elementId: null,
     calls: 0,
+    timerID: 0,
     
     getElement: function() {
         YAHOO.log('Trying to find ajax indicator element[' + this.elementId + ']', 'info', 'AjaxIndicator');
@@ -48,10 +49,12 @@
     },
     
     show: function() {
+        if(this.calls == 0) {
+            timerID = self.setTimeout("document.body.style.cursor = 'wait';", 300);
+        }
         this.calls++;
-        this.setCursor(window, 'wait');
         Dom.setStyle(this.getElement(), 'display', 'block');
-        YAHOO.log('Show ajax indicator element[' + this.elementId + ']', 'info', 'AjaxIndicator');
+        YAHOO.log('Activate ajax indicator element[' + this.elementId + ']', 'info', 'AjaxIndicator');
     },
     
     hide: function() {
@@ -59,8 +62,9 @@
             this.calls--;
         } 
         if (this.calls == 0) {
+            self.clearTimeout(timerID);
             YAHOO.log('Hide ajax indicator element[' + this.elementId + ']', 'info', 'AjaxIndicator');
-            this.setCursor(window, 'default');
+            document.body.style.cursor = 'default';
             Dom.setStyle(this.getElement(),'display', 'none');
         }  
     },

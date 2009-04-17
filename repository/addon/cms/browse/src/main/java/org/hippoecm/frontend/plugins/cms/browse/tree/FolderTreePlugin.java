@@ -18,10 +18,14 @@ package org.hippoecm.frontend.plugins.cms.browse.tree;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.tree.ITreeState;
+
 import org.hippoecm.addon.workflow.ContextWorkflowPlugin;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -30,18 +34,14 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.tree.CachedTreeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
-import org.hippoecm.frontend.plugin.ContextMenu;
-import org.hippoecm.frontend.plugin.ContextMenuManager;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.FolderTreeNode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.JcrTree;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class FolderTreePlugin extends RenderPlugin implements ContextMenuManager {
+public class FolderTreePlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -99,17 +99,6 @@ public class FolderTreePlugin extends RenderPlugin implements ContextMenuManager
 
         tree.setRootLess(config.getBoolean("rootless"));
 
-        add(new AjaxEventBehavior("onclick") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onEvent(AjaxRequestTarget target) {
-                if (activeContextMenu != null) {
-                    activeContextMenu.collapse(target);
-                }
-            }
-        });
-
         onModelChanged();
     }
 
@@ -143,18 +132,6 @@ public class FolderTreePlugin extends RenderPlugin implements ContextMenuManager
 
             treeState.selectNode((TreeNode) treePath.getLastPathComponent(), true);
             redraw();
-        }
-    }
-
-    private ContextMenu activeContextMenu;
-
-    public void addContextMenu(ContextMenu menu) {
-        activeContextMenu = menu;
-    }
-
-    public void collapse(ContextMenu current, AjaxRequestTarget target) {
-        if (activeContextMenu != null && current != activeContextMenu) {
-            activeContextMenu.collapse(target);
         }
     }
 }

@@ -44,6 +44,7 @@ class MenuBar extends Panel implements MenuComponent {
             }
         });
     }
+
     public void collapse(ContextMenu current, AjaxRequestTarget target) {
         for(ContextMenu button : buttons) {
             if(button != current) {

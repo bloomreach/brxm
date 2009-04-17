@@ -15,13 +15,11 @@
  */
 package org.hippoecm.addon.workflow;
 
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.string.AppendingStringBuffer;
 
 import org.hippoecm.frontend.plugin.ContextMenu;
 import org.hippoecm.frontend.plugin.ContextMenuManager;
@@ -33,9 +31,9 @@ class MenuButton extends Panel implements ContextMenu {
     private static final long serialVersionUID = 1L;
 
     private Panel content;
-    private AjaxLink link;
+    private AbstractLink link;
     private boolean pinned;
-    private boolean active=false;
+    private int activeCount = 0;
     private String name;
     
     MenuButton(String id, String name, final MenuHierarchy menu) {
@@ -46,45 +44,46 @@ class MenuButton extends Panel implements ContextMenu {
         content.setOutputMarkupId(true);
         content.setVisible(false);
         pinned = false;
-        add(link = new AjaxLink("link") {
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    pinned = !pinned;
-                    content.setVisible(pinned);
-                    target.addComponent(content);
-                    target.addComponent(MenuButton.this);
-                    if(content.isVisible()) {
-                        active = true;
-                        final MenuBar bar = (MenuBar) findParent(MenuBar.class);
+        add(link = new DualAjaxLink("link") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                pinned = !pinned;
+                content.setVisible(pinned);
+                target.addComponent(content);
+                target.addComponent(MenuButton.this);
+                ContextMenuManager manager = (ContextMenuManager)findParent(ContextMenuManager.class);
+                if (manager != null) {
+                    activeCount = 2;
+                    manager.collapse(MenuButton.this, target);
+                    manager.addContextMenu(MenuButton.this);
+                } else {
+                    if (content.isVisible()) {
+                        activeCount = 1;
+                        final MenuBar bar = (MenuBar)findParent(MenuBar.class);
                         bar.collapse(MenuButton.this, target);
-                        ((ContextMenuManager) findParent(ContextMenuManager.class)).addContextMenu(MenuButton.this);
                     }
                 }
-            });
-            link.add(new AjaxEventBehavior("oncontextmenu") {
-                public void onEvent(AjaxRequestTarget target) {
-                    pinned = !pinned;
-                    content.setVisible(pinned);
-                    target.addComponent(content);
-                    target.addComponent(MenuButton.this);
-                    if(content.isVisible()) {
-                        active = true;
-                        final MenuBar bar = (MenuBar) findParent(MenuBar.class);
-                        bar.collapse(MenuButton.this, target);
-                        ((ContextMenuManager) findParent(ContextMenuManager.class)).addContextMenu(MenuButton.this);
-                    }
+            }
+            @Override
+            public void onRightClick(AjaxRequestTarget target) {
+                pinned = !pinned;
+                content.setVisible(pinned);
+                target.addComponent(content);
+                target.addComponent(MenuButton.this);
+                if (content.isVisible()) {
+                    activeCount = 1;
+                    final MenuBar bar = (MenuBar)findParent(MenuBar.class);
+                    bar.collapse(MenuButton.this, target);
+                    ((ContextMenuManager)findParent(ContextMenuManager.class)).addContextMenu(MenuButton.this);
                 }
-                @Override
-                protected CharSequence getEventHandler() {
-                    return new AppendingStringBuffer(super.getEventHandler()).append("; return false;");
-                }
-            });
+            }
+        });
         link.add(new Label("label",new StringResourceModel(name,MenuButton.this,null,name)));
     }
 
     public void collapse(AjaxRequestTarget target) {
-        if(active) {
-            active = false;
+        if(activeCount > 0) {
+            --activeCount;
             return;
         }
         pinned = false;

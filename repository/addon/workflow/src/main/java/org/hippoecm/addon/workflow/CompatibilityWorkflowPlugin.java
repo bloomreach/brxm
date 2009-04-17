@@ -61,7 +61,7 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 
-public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implements IActivator {
+public abstract class CompatibilityWorkflowPlugin<T> extends RenderPlugin implements IActivator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: AbstractWorkflowPlugin.java 16815 2009-03-11 16:09:10Z fvlankvelt $";
 
@@ -122,10 +122,10 @@ public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implement
         }
 
         protected String execute() {
-            return execute((WorkflowDescriptorModel) CompatibilityWorkflowPlugin.this.getModel());
+            return execute((WorkflowDescriptorModel<T>) CompatibilityWorkflowPlugin.this.getModel());
         }
 
-        protected String execute(WorkflowDescriptorModel model) {
+        protected String execute(WorkflowDescriptorModel<T> model) {
             try {
                 WorkflowDescriptor descriptor = (WorkflowDescriptor) model.getObject();
                 WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
@@ -214,7 +214,7 @@ public abstract class CompatibilityWorkflowPlugin extends RenderPlugin implement
              * the action to be performed when the dialog's ok button is clicked.
              */
             protected final String execute() {
-                return WorkflowAction.this.execute((WorkflowDescriptorModel) CompatibilityWorkflowPlugin.this.getModel());
+                return WorkflowAction.this.execute((WorkflowDescriptorModel<T>) CompatibilityWorkflowPlugin.this.getModel());
             }
         }
 
