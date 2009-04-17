@@ -22,8 +22,8 @@
     <version>2.03.02-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Site Toolkit Commons</name>
-  <description>Hippo Site Toolkit Commons</description>
+  <name>Hippo Site Toolkit OCM</name>
+  <description>Hippo Site Toolkit OCM</description>
   <groupId>org.onehippo.ecm.hst</groupId>
   <artifactId>hst-ocm</artifactId>
   <packaging>jar</packaging>
@@ -80,6 +80,13 @@
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-commons</artifactId>
+      <version>${pom.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-content-beans</artifactId>
       <version>${pom.version}</version>
       <scope>provided</scope>
     </dependency>
