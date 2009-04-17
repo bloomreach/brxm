@@ -15,18 +15,52 @@
  */
 package org.hippoecm.frontend.service.render;
 
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.apache.wicket.Component;
+
+import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.service.IRenderService;
 
 public class RenderPlugin extends RenderService implements IPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+    
+    private Map<String, IClusterControl> childPlugins = new TreeMap<String,IClusterControl>();
+    long childPluginCounter = 0L;
 
     public RenderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
 
+    protected Component newPlugin(String id, IPluginConfig config) {
+        IPluginContext pluginContext = getPluginContext();
+        JavaClusterConfig childClusterConfig = new JavaClusterConfig();
+        IPluginConfig childPluginConfig = new JavaPluginConfig(config);
+
+        String serviceId = getPluginContext().getReference(this).getServiceId() + "." + "id" + (++childPluginCounter);
+        childPluginConfig.put(RenderService.WICKET_ID, serviceId);
+        childClusterConfig.addPlugin(childPluginConfig);
+
+        IClusterControl pluginControl = childPlugins.get(id);
+        if (pluginControl != null) {
+            pluginControl.stop();
+        }
+        
+        pluginControl = pluginContext.newCluster(childClusterConfig, null);
+        pluginControl.start();
+        childPlugins.put(id, pluginControl);
+        
+        IRenderService renderservice = pluginContext.getService(serviceId, IRenderService.class);
+        renderservice.bind(this, id);
+        return renderservice.getComponent();
+    }
 }
