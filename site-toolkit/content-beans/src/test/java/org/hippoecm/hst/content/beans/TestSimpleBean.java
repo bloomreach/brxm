@@ -94,6 +94,7 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
 
         HippoFolder folder = (HippoFolder) obm.getObject("/testcontent/testproject/Products");
+        
      
         Object o = obm.getObject("/testcontent/testproject/Products/SomeProduct");
         assertTrue(" Object should be an instance of SimpleTextPage and not SimpleTextPageCopy, because SimpleTextPage is added first", o instanceof SimpleTextPage);

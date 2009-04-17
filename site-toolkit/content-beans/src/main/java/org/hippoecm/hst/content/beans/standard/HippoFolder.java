@@ -29,10 +29,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Node(jcrType="hippostd:folder")
-public class HippoFolder extends HippoItem implements Comparable<HippoFolder>{
+public class HippoFolder extends HippoItem {
     private static Logger log = LoggerFactory.getLogger(HippoFolder.class);
     
     public List<HippoFolder> getFolders(){
+         return this.getFolders(false);
+    }
+    
+    public List<HippoFolder> getFolders(boolean sorted){
         if(this.node == null) {
             log.warn("Cannot get documents because node is null");
             return null;
@@ -48,8 +52,9 @@ public class HippoFolder extends HippoItem implements Comparable<HippoFolder>{
                     hippoFolders.add(hippoFolder);
                 }
             }
-            Collections.sort(hippoFolders);
-            
+            if(sorted) {
+                Collections.sort(hippoFolders);
+            }
             return hippoFolders;
         } catch (RepositoryException e) {
             log.warn("Repository Exception : {}", e);
@@ -58,6 +63,10 @@ public class HippoFolder extends HippoItem implements Comparable<HippoFolder>{
     }
     
     public List<HippoDocument> getDocuments() {
+        return getDocuments(false);
+    }
+    
+    public List<HippoDocument> getDocuments(boolean sorted) {
         if(this.node == null) {
             log.warn("Cannot get documents because node is null");
             return null;
@@ -73,7 +82,9 @@ public class HippoFolder extends HippoItem implements Comparable<HippoFolder>{
                     hippoDocuments.add(hippoDocument);
                 }
             }
-            Collections.sort(hippoDocuments);
+            if(sorted) {
+                Collections.sort(hippoDocuments);
+            }
             return hippoDocuments;
         } catch (RepositoryException e) {
             log.warn("Repository Exception : {}", e);
@@ -119,8 +130,4 @@ public class HippoFolder extends HippoItem implements Comparable<HippoFolder>{
     }
 
     
-    // if you need some ordered List, extend HippoDocument and override this method
-    public int compareTo(HippoFolder hippoFolder) {
-        return 0;
-    }
 }

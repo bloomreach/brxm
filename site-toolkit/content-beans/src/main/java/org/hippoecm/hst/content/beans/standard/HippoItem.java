@@ -33,7 +33,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HippoItem implements NodeAware, ObjectConverterAware{
+public class HippoItem implements NodeAware, ObjectConverterAware, Comparable<HippoItem>{
 
     private static Logger log = LoggerFactory.getLogger(HippoItem.class);
     
@@ -178,5 +178,30 @@ public class HippoItem implements NodeAware, ObjectConverterAware{
         }       
     }
     
+    /**
+     *  The standard HippoItem has a natural ordering based on node name.
+     *  if you need ordering on a different basis, override this method
+     */
+    
+    public int compareTo(HippoItem hippoItem) {
+        // if hippoFolder == null, a NPE will be thrown which is fine because the arg is not allowed to be null.
+        if(this.getName() == null) {
+            // should not be possible
+            return -1;
+        }
+        if(hippoItem.getName() == null) {
+         // should not be possible
+            return 1;
+        }
+        if(this.getName().equals(hippoItem.getName())) {
+            if(this.equals(hippoItem)) {
+                return 0;
+            }
+            // do not return 0, because then this.equals(hippoFolder) should also be true
+            return 1;
+        }
+        return this.getName().compareTo(hippoItem.getName());
+        
+    }
 
 }

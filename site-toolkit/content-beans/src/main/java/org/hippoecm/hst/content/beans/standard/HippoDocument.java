@@ -18,7 +18,7 @@ package org.hippoecm.hst.content.beans.standard;
 import org.hippoecm.hst.content.beans.Node;
 
 @Node(jcrType="hippo:document")
-public class HippoDocument extends HippoItem implements Comparable<HippoDocument>{
+public class HippoDocument extends HippoItem{
 
 
     public HippoHtml getHippoHtml(String relPath) {
@@ -26,8 +26,4 @@ public class HippoDocument extends HippoItem implements Comparable<HippoDocument
         return (o instanceof HippoHtml) ? (HippoHtml)o : null;
     }
 
-    // if you need some ordered List, extend HippoDocument and override this method
-    public int compareTo(HippoDocument hippoDocument) {
-        return 0;
-    }
 }
