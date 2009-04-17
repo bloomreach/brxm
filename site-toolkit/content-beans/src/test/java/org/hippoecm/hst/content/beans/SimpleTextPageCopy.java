@@ -13,21 +13,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.content.beans.standard;
+package org.hippoecm.hst.content.beans;
 
-import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
-@Node(jcrType="hippo:document")
-public class HippoDocument extends HippoItem implements Comparable<HippoDocument>{
+@Node(jcrType="testproject:textpage")
+public class SimpleTextPageCopy extends HippoDocument {
+    
+    protected String title;
 
-
-    public HippoHtml getHippoHtml(String relPath) {
-        Object o = getObject(relPath);
-        return (o instanceof HippoHtml) ? (HippoHtml)o : null;
+    public String getTitle() {
+        return getProperty("testproject:title");
     }
-
-    // if you need some ordered List, extend HippoDocument and override this method
-    public int compareTo(HippoDocument hippoDocument) {
-        return 0;
+    
+    public HippoHtml getBody(){
+        return getHippoHtml("testproject:body");
     }
+    
 }

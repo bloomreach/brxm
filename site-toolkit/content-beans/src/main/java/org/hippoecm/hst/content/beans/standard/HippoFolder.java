@@ -17,7 +17,6 @@ package org.hippoecm.hst.content.beans.standard;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.jcr.NodeIterator;
@@ -30,14 +29,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Node(jcrType="hippostd:folder")
-public class HippoFolder extends HippoItem{
+public class HippoFolder extends HippoItem implements Comparable<HippoFolder>{
     private static Logger log = LoggerFactory.getLogger(HippoFolder.class);
     
-    
     public List<HippoFolder> getFolders(){
-        return this.getFolders(null);
-    }
-    public List<HippoFolder> getFolders(Comparator<HippoFolder> comparator){
         if(this.node == null) {
             log.warn("Cannot get documents because node is null");
             return null;
@@ -53,9 +48,8 @@ public class HippoFolder extends HippoItem{
                     hippoFolders.add(hippoFolder);
                 }
             }
-            if(comparator != null) {
-                Collections.sort(hippoFolders, comparator);
-            }
+            Collections.sort(hippoFolders);
+            
             return hippoFolders;
         } catch (RepositoryException e) {
             log.warn("Repository Exception : {}", e);
@@ -63,11 +57,7 @@ public class HippoFolder extends HippoItem{
         }
     }
     
-    public List<HippoDocument> getDocuments(){
-        return this.getDocuments(null);
-        
-    }
-    public List<HippoDocument> getDocuments(Comparator<HippoDocument> comparator) {
+    public List<HippoDocument> getDocuments() {
         if(this.node == null) {
             log.warn("Cannot get documents because node is null");
             return null;
@@ -83,9 +73,7 @@ public class HippoFolder extends HippoItem{
                     hippoDocuments.add(hippoDocument);
                 }
             }
-            if(comparator != null) {
-                Collections.sort(hippoDocuments, comparator);
-            }
+            Collections.sort(hippoDocuments);
             return hippoDocuments;
         } catch (RepositoryException e) {
             log.warn("Repository Exception : {}", e);
@@ -128,5 +116,11 @@ public class HippoFolder extends HippoItem{
             e.printStackTrace();
         }
         return null;
+    }
+
+    
+    // if you need some ordered List, extend HippoDocument and override this method
+    public int compareTo(HippoFolder hippoFolder) {
+        return 0;
     }
 }

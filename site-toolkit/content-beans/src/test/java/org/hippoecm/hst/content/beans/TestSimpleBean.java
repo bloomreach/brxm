@@ -76,6 +76,7 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
 
 
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, SimpleTextPage.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, SimpleTextPageCopy.class);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDocument.class);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFolder.class);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSearch.class);
@@ -93,8 +94,9 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
 
         HippoFolder folder = (HippoFolder) obm.getObject("/testcontent/testproject/Products");
-        
-        System.out.println(folder.getFolders().size());
+     
+        Object o = obm.getObject("/testcontent/testproject/Products/SomeProduct");
+        assertTrue(" Object should be an instance of SimpleTextPage and not SimpleTextPageCopy, because SimpleTextPage is added first", o instanceof SimpleTextPage);
         
         SimpleTextPage productsPage =  (SimpleTextPage)obm.getObject("/testcontent/testproject/Products/SomeProduct");
         SimpleTextPage productsPage2 = (SimpleTextPage) obm.getObject("/testcontent/testproject/Products/SomeProduct/SomeProduct");
