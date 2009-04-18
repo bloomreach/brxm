@@ -21,11 +21,11 @@
     <version>2.05.01-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo ECM editor addon</name>
-  <description>Hippo ECM editor addon</description>
-  <groupId>org.hippoecm</groupId>
+  <name>Editor addon</name>
+  <description>Hippo ECM editor addons</description>
   <artifactId>hippo-ecm-addon-editor</artifactId>
-  <packaging>jar</packaging>
+  <groupId>org.hippoecm</groupId>
+  <packaging>pom</packaging>
 
   <scm>
     <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/editor</connection>
@@ -33,66 +33,14 @@
     <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/editor</url>
   </scm>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.05.01-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>2.05.01-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
-      <version>2.05.01-SNAPSHOT</version>
-    </dependency>
-  </dependencies>
+  <modules>
+    <module>common</module>
+    <module>repository</module>
+    <module>frontend</module>
+    <module>test</module>
+  </modules>
 
   <build>
-    <defaultGoal>package</defaultGoal>
     <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
-    <resources>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/java</directory>
-        <includes>
-          <include>**/*.html</include>
-          <include>**/*.css</include>
-          <include>**/*.png</include>
-          <include>**/*.gif</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/resources</directory>
-        <includes>
-          <include>**/*.cnd</include>
-          <include>**/*.xml</include>
-        </includes>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkMode>always</forkMode>
-          <workingDirectory>${project.build.directory}</workingDirectory>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-   </plugins>
   </build>
-
 </project>

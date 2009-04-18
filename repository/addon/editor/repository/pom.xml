@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  Copyright 2007-2008 Hippo.
+ 
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+       http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+--><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.hippoecm</groupId>
+    <artifactId>hippo-ecm-addon</artifactId>
+    <version>2.05.01-SNAPSHOT</version>
+  </parent>
+
+  <name>Hippo ECM editor repository addon</name>
+  <description>Hippo ECM editor repository addon</description>
+  <groupId>org.hippoecm</groupId>
+  <artifactId>hippo-ecm-addon-editor-repository</artifactId>
+  <packaging>jar</packaging>
+
+  <scm>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/editor/repository</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/editor/repository</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/editor/repository</url>
+  </scm>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-editor-common</artifactId>
+      <version>2.05.01-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-builtin-common</artifactId>
+      <version>2.05.01-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo2-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jpox</groupId>
+      <artifactId>jpox-core</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>jpox-maven-plugin</artifactId>
+          <dependencies>
+            <dependency>
+              <groupId>jpox</groupId>
+              <artifactId>jpox</artifactId>
+              <version>1.2.0</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>javax.resource</groupId>
+                  <artifactId>jta</artifactId>
+                </exclusion>
+                <exclusion>
+                  <groupId>javax.resource</groupId>
+                  <artifactId>connector</artifactId>
+                </exclusion>
+              </exclusions>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <plugin>
+          <groupId>jpox</groupId>
+          <artifactId>jpox-maven-plugin</artifactId>
+          <dependencies>
+            <dependency>
+              <groupId>bcel</groupId>
+              <artifactId>bcel</artifactId>
+              <version>5.2</version>
+            </dependency>
+         </dependencies>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*.cnd</include>
+          <include>**/*.xml</include>
+          <include>**/package.jdo</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <additionalBuildcommands>
+            <buildCommand>
+              <name>org.jpox.ide.eclipse.enhancerbuilder</name>
+            </buildCommand>
+          </additionalBuildcommands>
+          <additionalProjectnatures>
+            <projectnature>org.jpox.ide.eclipse.projectnature</projectnature>
+          </additionalProjectnatures>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>always</forkMode>
+          <workingDirectory>${project.build.directory}</workingDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>jpox</groupId>
+        <artifactId>jpox-maven-plugin</artifactId>
+        <version>1.2.0-beta-2</version>
+        <configuration>
+          <!-- log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration -->
+          <verbose>false</verbose>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals><goal>enhance</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
+   </plugins>
+  </build>
+
+</project>

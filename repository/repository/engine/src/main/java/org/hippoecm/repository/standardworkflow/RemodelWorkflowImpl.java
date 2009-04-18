@@ -24,21 +24,12 @@ import java.util.Map;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.VersionException;
 
-import org.apache.jackrabbit.core.NamespaceRegistryImpl;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
-import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow.TypeUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +71,7 @@ public class RemodelWorkflowImpl implements RepositoryWorkflow, InternalWorkflow
     {
          try {
             StringReader istream = new StringReader(cnd);
-            Remodeling.remodel(session, prefix, istream, "", new HashMap<String,TypeUpdate>());
+            Remodeling.remodel(session, prefix, istream, "", new HashMap());
         } catch (NamespaceException ex) {
             throw new RepositoryException(ex);
         }

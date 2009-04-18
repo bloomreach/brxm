@@ -16,6 +16,7 @@
 package org.hippoecm.repository.standardworkflow;
 
 import java.io.Reader;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -58,8 +59,6 @@ import org.apache.jackrabbit.value.ReferenceValue;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow.FieldIdentifier;
-import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow.TypeUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +68,68 @@ public class Remodeling {
 
     protected final static Logger log = LoggerFactory.getLogger(Remodeling.class);
 
+    private static class TypeUpdate implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        public String newName;
+
+        public String prototype;
+
+        public Map<FieldIdentifier, FieldIdentifier> renames;
+    }
+
+    private static class FieldIdentifier implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        public String path;
+
+        public String type;
+
+        @Override
+        public boolean equals(Object object) {
+            if (object != null) {
+                if (object instanceof FieldIdentifier) {
+                    FieldIdentifier id = (FieldIdentifier) object;
+                    return id.path.equals(path) && id.type.equals(type);
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return (path.hashCode() * type.hashCode()) % 1001;
+        }
+    }
+
+    private static Map<String, TypeUpdate> convertCargo(Object cargo) {
+        Map<String, TypeUpdate> updates = new HashMap<String, TypeUpdate>();
+        for (Map.Entry<String, Object> entry : ((Map<String, Object>) cargo).entrySet()) {
+            Map<String, Object> value = (Map<String, Object>) entry.getValue();
+            TypeUpdate update = new TypeUpdate();
+            update.newName = (String) value.get("newName");
+            update.prototype = (String) value.get("prototype");
+            update.renames = new HashMap<FieldIdentifier, FieldIdentifier>();
+            
+            Map<Map<String, String>, Map<String, String>> origRenames =
+                (Map<Map<String, String>, Map<String, String>>) value.get("renames");
+            for (Map.Entry<Map<String, String>, Map<String, String>> rename : origRenames.entrySet()) {
+                FieldIdentifier src = new FieldIdentifier();
+                src.path = rename.getKey().get("path");
+                src.type = rename.getKey().get("type");
+
+                FieldIdentifier dest = new FieldIdentifier();
+                dest.path = rename.getValue().get("path");
+                dest.type = rename.getValue().get("type");
+                
+                update.renames.put(src, dest);
+            }
+
+            updates.put(entry.getKey(), update);
+        }
+        return updates;
+    }
+    
     /** The prefix of the namespace which has been changed
      */
     private String newPrefix;
@@ -110,7 +171,7 @@ public class Remodeling {
             throws RepositoryException {
         this.session = session;
         this.newPrefix = newPrefix;
-        this.updates = (Map<String,TypeUpdate>) contentUpdaterCargo;
+        this.updates = convertCargo(contentUpdaterCargo);
 
         conversion = new HashMap<NodeType, NodeType>();
 

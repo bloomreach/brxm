@@ -20,14 +20,13 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Session;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-
+import org.apache.wicket.validation.validator.PatternValidator;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
@@ -44,6 +43,8 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
@@ -55,6 +56,8 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
     public EditmodelWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         add(new WorkflowAction("edit", new StringResourceModel("edit", this, null)) {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public String execute(Workflow workflow) throws Exception {
                 EditmodelWorkflow emWorkflow = (EditmodelWorkflow) workflow;
@@ -87,11 +90,15 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
         });
 
         add(new WorkflowAction("copy", new StringResourceModel("copy", this, null)) {
-            public String name;
+            private static final long serialVersionUID = 1L;
+
+            String name;
+
             @Override
             protected Dialog createRequestDialog() {
                 return new CopyModelDialog(this);
             }
+
             @Override
             protected String execute(Workflow wf) {
                 try {
@@ -134,18 +141,28 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
     }
 
     public class CopyModelDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
+        private static final long serialVersionUID = 1L;
+
         public CopyModelDialog(CompatibilityWorkflowPlugin.WorkflowAction action) {
             action.super();
             WorkflowDescriptorModel workflowModel = (WorkflowDescriptorModel) EditmodelWorkflowPlugin.this.getModel();
-            ok.setEnabled(false);
             PropertyModel model = new PropertyModel(action, "name");
             try {
                 model.setObject(workflowModel.getNode().getName());
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
-            add(new TextFieldWidget("name", model));
+            MarkupContainer widget = new TextFieldWidget("name", model);
+            ((FormComponent) widget.get("widget")).add(new PatternValidator("[a-z]+"));
+            add(widget);
         }
+
+        @Override
+        protected void onOk() {
+            super.onOk();
+        }
+
+        @Override
         public IModel getTitle() {
             return new StringResourceModel("copy-model", this, null);
         }

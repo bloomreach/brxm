@@ -53,9 +53,11 @@
       <version>2.05.01-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- use frontend nodetypes -->
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-editor</artifactId>
+      <artifactId>hippo-ecm-frontend-engine</artifactId>
       <version>2.05.01-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
