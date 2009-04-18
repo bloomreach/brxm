@@ -16,6 +16,7 @@
 package org.hippoecm.addon.workflow;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -69,6 +70,7 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
                 log.debug(new String(sb));
             }
         } else {
+            categories = new String[] {};
             log.warn("No categories ({}) defined", CATEGORIES);
         }
     }

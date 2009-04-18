@@ -137,6 +137,9 @@ class LocalHippoRepository extends HippoRepositoryImpl {
     /** Listener for changes under /hippo:configuration/hippo:initialize node */
     private EventListener listener;
 
+    /** Thread to react to these changes */
+    private Thread initThread;
+    
     List<DaemonModule> daemonModules = new LinkedList<DaemonModule>();
 
     protected LocalHippoRepository() throws RepositoryException {
@@ -409,8 +412,23 @@ class LocalHippoRepository extends HippoRepositoryImpl {
              */
             ObservationManager obMgr = rootSession.getWorkspace().getObservationManager();
             listener = new EventListener() {
-                public void onEvent(EventIterator events) {
-                    refresh();
+                public synchronized void onEvent(EventIterator events) {
+                    notifyAll();
+                }
+            };
+            initThread = new Thread() {
+                @Override
+                public void run() {
+                    while (true) {
+                        synchronized (listener) {
+                            try {
+                                listener.wait();
+                            } catch (InterruptedException ex) {
+                                break;
+                            }
+                        }
+                        refresh();
+                    }
                 }
             };
             obMgr.addEventListener(listener, Event.NODE_ADDED | Event.PROPERTY_ADDED, "/"
@@ -852,6 +870,8 @@ class LocalHippoRepository extends HippoRepositoryImpl {
         }
 
         if (listener != null) {
+            initThread.interrupt();
+
             try {
                 Session rootSession =  ((LocalRepositoryImpl)jackrabbitRepository).getRootSession(null);
                 Workspace workspace = rootSession.getWorkspace();
