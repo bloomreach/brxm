@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.edit;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -48,7 +50,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, IDetachable {
+public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, IRefreshable, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -94,6 +96,8 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
             modelReference = null;
             log.warn("No model defined ({})", RenderService.MODEL_ID);
         }
+
+        context.registerService(this, IRefreshable.class.getName());
 
         // register editor
         context.registerService(this, config.getString("editor.id"));
@@ -295,6 +299,42 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
         }
     }
 
+    // validate existence of all open documents
+    public void refresh() {
+        Iterator<Map.Entry<JcrNodeModel, CmsEditor>> iter = editors.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<JcrNodeModel, CmsEditor> entry = iter.next();
+            if (!entry.getKey().getItemModel().exists()) {
+                try {
+                    entry.getValue().close();
+                    iter.remove();
+                } catch (EditorException ex) {
+                    log.warn("failed to close editor for non-existing document");
+                }
+            }
+        }
+
+        for(Iterator<JcrNodeModel> pendingIter = pending.iterator(); pendingIter.hasNext();) {
+            JcrNodeModel model = pendingIter.next();
+            if (!model.getItemModel().exists()) {
+                pendingIter.remove();
+            }
+        }
+
+        JcrNodeModel nodeModel = (JcrNodeModel) modelReference.getModel();
+        if (nodeModel != null && !nodeModel.getItemModel().exists()) {
+            // close preview when a new document is selected
+            if (preview != null) {
+                try {
+                    preview.close();
+                    preview = null;
+                } catch (EditorException ex) {
+                    log.warn("failed to close preview");
+                }
+            }
+        }
+    }
+
     void setActiveModel(JcrNodeModel nodeModel) {
         try {
             IModelReference modelService = context.getService(config.getString(RenderService.MODEL_ID),
@@ -364,32 +404,35 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
                 active = true;
 
                 JcrNodeModel parentModel = model.getParentModel();
-                try {
-                    Node parent = parentModel.getNode();
-                    if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        // Deselect the currently selected node if it corresponds
-                        // to the editor that is being closed.
-                        JcrNodeModel selectedNodeModel = (JcrNodeModel) modelReference.getModel();
-                        Node selected = selectedNodeModel.getNode();
-                        if (selected != null && selected instanceof HippoNode) {
-                            try {
-                                Node canonical = ((HippoNode) selected).getCanonicalNode();
-                                if (canonical != null) {
-                                    if (canonical.isSame(selected) || canonical.getParent().isSame(parent)) {
-                                        modelReference.setModel(null);
+                if (parentModel.getItemModel().exists()) {
+                    try {
+                        Node parent = parentModel.getNode();
+                        if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            // Deselect the currently selected node if it corresponds
+                            // to the editor that is being closed.
+                            JcrNodeModel selectedNodeModel = (JcrNodeModel) modelReference.getModel();
+                            Node selected = selectedNodeModel.getNode();
+                            if (selected != null && selected instanceof HippoNode) {
+                                try {
+                                    Node canonical = ((HippoNode) selected).getCanonicalNode();
+                                    if (canonical != null) {
+                                        if (canonical.isSame(selected) || canonical.getParent().isSame(parent)) {
+                                            modelReference.setModel(null);
+                                        }
                                     }
+                                } catch (ItemNotFoundException ex) {
+                                    // physical item no longer exists
                                 }
-                            } catch (ItemNotFoundException ex) {
-                                // physical item no longer exists
                             }
                         }
-
-                        // cleanup lru list
-                        lastReferences.remove(parentModel);
+                    } catch (RepositoryException ex) {
+                        log.error(ex.getMessage());
                     }
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
                 }
+
+                // cleanup lru list
+                lastReferences.remove(parentModel);
+
                 active = false;
             }
 
