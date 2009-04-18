@@ -15,16 +15,17 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
-import java.io.StringReader;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.rmi.RemoteException;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.jcr.NamespaceException;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
@@ -32,19 +33,22 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
+import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
-import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow;
-import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow.FieldIdentifier;
 import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow.TypeUpdate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RemodelWorkflowImpl implements RepositoryWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
+    final static Logger log = LoggerFactory.getLogger(RemodelWorkflowImpl.class);
 
     private Session session;
     private Node subject;
@@ -61,38 +65,13 @@ public class RemodelWorkflowImpl implements RepositoryWorkflow, InternalWorkflow
         return null;
     }
 
-    public void createNamespace(String prefix, String namespace) throws WorkflowException, MappingException,
+    public void createNamespace(String prefix, String uri) throws WorkflowException, MappingException,
             RepositoryException {
         try {
-           // push new node type definition such that it will be loaded
-           Node node, base = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).getNode(HippoNodeType.INITIALIZE_PATH);
-            if (base.hasNode(prefix)) {
-                node = base.getNode(prefix);
-            } else {
-                node = base.addNode(prefix, HippoNodeType.NT_INITIALIZEITEM);
-            }
-            node.setProperty(HippoNodeType.HIPPO_NAMESPACE, namespace + "/0.0");
-            session.save();
-
-            // wait for node types to be reloaded
-            session.refresh(true);
-            while (node.hasProperty(HippoNodeType.HIPPO_NAMESPACE)) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ex) {
-                }
-                session.refresh(true);
-            }
-        } catch (ConstraintViolationException ex) {
-            throw new RepositoryException("Hippo repository configuration not in order");
-        } catch (LockException ex) {
-            throw new RepositoryException("Hippo repository configuration not in order");
-        } catch (ValueFormatException ex) {
-            throw new RepositoryException("Hippo repository configuration not in order");
-        } catch (VersionException ex) {
-            throw new RepositoryException("Hippo repository configuration not in order");
-        } catch (PathNotFoundException ex) {
-            throw new RepositoryException("Hippo repository configuration not in order");
+            NamespaceRegistry nsreg = session.getWorkspace().getNamespaceRegistry();
+            nsreg.registerNamespace(prefix, uri);
+        } catch (NamespaceException ex) {
+            log.error(ex.getMessage() + " For: " + prefix + ":" + uri);
         }
     }
 

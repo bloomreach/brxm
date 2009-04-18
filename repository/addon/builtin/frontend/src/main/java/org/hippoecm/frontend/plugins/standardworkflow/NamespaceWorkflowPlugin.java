@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
-
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -36,13 +35,18 @@ public class NamespaceWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
     public NamespaceWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
         add(new WorkflowAction("create", new StringResourceModel("create-namespace", this, null)) {
+            private static final long serialVersionUID = 1L;
+
             public String url;
             public String prefix;
+
             @Override
             protected Dialog createRequestDialog() {
                 return new NamespaceDialog(this);
             }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
                 TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) wf;
@@ -53,13 +57,17 @@ public class NamespaceWorkflowPlugin extends CompatibilityWorkflowPlugin {
     }
 
     public class NamespaceDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
+        private static final long serialVersionUID = 1L;
+
         public NamespaceDialog(CompatibilityWorkflowPlugin.WorkflowAction action) {
-            action.super( );
+            action.super();
             add(new TextFieldWidget("prefix", new PropertyModel(action, "prefix")));
             add(new TextFieldWidget("url", new PropertyModel(action, "url")));
         }
+
+        @Override
         public IModel getTitle() {
-            return new StringResourceModel("create-namespace", this, null);
+            return new StringResourceModel("create-namespace", NamespaceWorkflowPlugin.this, null);
         }
     }
 }
