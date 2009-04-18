@@ -16,9 +16,15 @@
 package org.hippoecm.repository.ocm;
 
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.ItemExistsException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -31,6 +37,7 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.jdo.spi.PersistenceCapable;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.repository.DerivedDataEngine;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HierarchyResolver;
@@ -40,6 +47,7 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.jpox.StateManager;
 import org.jpox.exceptions.JPOXDataStoreException;
 import org.jpox.metadata.AbstractClassMetaData;
+import org.jpox.metadata.AbstractPropertyMetaData;
 import org.jpox.state.StateManagerFactory;
 import org.jpox.store.fieldmanager.AbstractFieldManager;
 import org.slf4j.Logger;
@@ -96,6 +104,18 @@ class FieldManagerImpl extends AbstractFieldManager {
         return node;
     }
 
+    private void checkoutNode(Node node) throws UnsupportedRepositoryOperationException, LockException, ItemNotFoundException, AccessDeniedException, RepositoryException {
+        Node root = node.getSession().getRootNode();
+        Node versionable = node;
+        while (!versionable.isSame(root)) {
+            if (versionable.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+                versionable.checkout();
+                break;
+            }
+            versionable = versionable.getParent();
+        }
+    }
+    
     @Override
     public void storeBooleanField(int fieldNumber, boolean value) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
@@ -112,12 +132,12 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Property property =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null) {
                     if(!last.node.isCheckedOut()) {
-                        last.node.checkout();
+                        checkoutNode(last.node);
                     }
                     property = last.node.setProperty(last.relPath, value);
                 } else {
                     if(!property.getParent().isCheckedOut()) {
-                        property.getParent().checkout();
+                        checkoutNode(property.getParent());
                     }
                     property.setValue(value);
                 }
@@ -214,12 +234,12 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Property property =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null) {
                     if(!last.node.isCheckedOut()) {
-                        last.node.checkout();
+                        checkoutNode(last.node);
                     }
                     property = last.node.setProperty(last.relPath, value);
                 } else {
                     if(!property.getParent().isCheckedOut()) {
-                        property.getParent().checkout();
+                        checkoutNode(property.getParent());
                     }
                     property.setValue(value);
                 }
@@ -315,12 +335,12 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Property property =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null) {
                     if(!last.node.isCheckedOut()) {
-                        last.node.checkout();
+                        checkoutNode(last.node);
                     }
                     property = last.node.setProperty(last.relPath, value);
                 } else {
                     if(!property.getParent().isCheckedOut()) {
-                        property.getParent().checkout();
+                        checkoutNode(property.getParent());
                     }
                     property.setValue(value);
                 }
@@ -416,12 +436,12 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Property property =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null) {
                     if(!last.node.isCheckedOut()) {
-                        last.node.checkout();
+                        checkoutNode(last.node);
                     }
                     property = last.node.setProperty(last.relPath, value);
                 } else {
                     if(!property.getParent().isCheckedOut()) {
-                        property.getParent().checkout();
+                        checkoutNode(property.getParent());
                     }
                     property.setValue(value);
                 }
@@ -517,12 +537,12 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Property property =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null) {
                     if(!last.node.isCheckedOut()) {
-                        last.node.checkout();
+                        checkoutNode(last.node);
                     }
                     property = last.node.setProperty(last.relPath, value);
                 } else {
                     if(!property.getParent().isCheckedOut()) {
-                        property.getParent().checkout();
+                        checkoutNode(property.getParent());
                     }
                     property.setValue(value);
                 }
@@ -618,12 +638,12 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null) {
                     if(!last.node.isCheckedOut()) {
-                        last.node.checkout();
+                        checkoutNode(last.node);
                     }
                     property = last.node.setProperty(last.relPath, value);
                 } else {
                     if(!property.getParent().isCheckedOut()) {
-                        property.getParent().checkout();
+                        checkoutNode(property.getParent());
                     }
                     property.setValue(value);
                 }
@@ -719,12 +739,12 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null) {
                     if(!last.node.isCheckedOut()) {
-                        last.node.checkout();
+                        checkoutNode(last.node);
                     }
                     property = last.node.setProperty(last.relPath, value);
                 } else {
                     if(!property.getParent().isCheckedOut()) {
-                        property.getParent().checkout();
+                        checkoutNode(property.getParent());
                     }
                     property.setValue(value);
                 }
@@ -819,13 +839,21 @@ class FieldManagerImpl extends AbstractFieldManager {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
                 Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null) {
-                    if(!last.node.isCheckedOut()) {
-                        last.node.checkout();
+                    if ("{.}".equals(last.relPath) || "{_name}".equals(last.relPath)) {
+                        // if(!last.node.getParent().isCheckedOut()) {
+                        //     checkoutNode(last.node.getParent());
+                        // }
+                        // last.node.getSession().move(last.node.getPath(), last.node.getParent().getPath() + "/" + value);
+                        throw new JPOXDataStoreException("Node renaming is not supported");
+                    } else {
+                        if(!last.node.isCheckedOut()) {
+                            checkoutNode(last.node);
+                        }
+                        property = last.node.setProperty(last.relPath, value);
                     }
-                    property = last.node.setProperty(last.relPath, value);
                 } else {
                     if(!property.getParent().isCheckedOut()) {
-                        property.getParent().checkout();
+                        checkoutNode(property.getParent());
                     }
                     property.setValue(value);
                 }
@@ -878,8 +906,20 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field);
                 if (property != null)
                     value = property.getString();
-                else
-                    value = null;
+                else {
+                    Node ref = node;
+                    String prop = field;
+                    if (field.lastIndexOf('/') > -1) {
+                        ref = ((HippoWorkspace) node.getSession().getWorkspace()).getHierarchyResolver().getNode(node,
+                                field.substring(0, field.lastIndexOf('/')));
+                        prop = field.substring(field.lastIndexOf('/') + 1);
+                    }
+                    if ("{.}".equals(prop) || "{_name}".equals(prop)) {
+                        value = ref.getName();
+                    } else {
+                        value = null;
+                    }
+                }
             } catch (ValueFormatException ex) {
                 if(log.isDebugEnabled()) {
                     log.debug("failed", ex);
@@ -931,7 +971,7 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Node removal = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, field);
                 if(removal != null) {
                     if(!removal.getParent().isCheckedOut()) {
-                        removal.getParent().checkout();
+                        checkoutNode(removal.getParent());
                     }
                     DerivedDataEngine.removal(removal);
                     removal.remove();
