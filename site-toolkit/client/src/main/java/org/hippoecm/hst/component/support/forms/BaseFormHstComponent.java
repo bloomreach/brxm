@@ -30,7 +30,7 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 
 import org.apache.jackrabbit.uuid.UUID;
-import org.hippoecm.hst.component.support.ocm.BaseHstComponent;
+import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -55,7 +55,6 @@ public class BaseFormHstComponent extends BaseHstComponent{
     public final static String DEFAULT_WRITABLE_PASSWORD_PROPERTY = "writable.repository.password";
     
    
-    
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
         super.doAction(request, response);

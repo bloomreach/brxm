@@ -21,8 +21,8 @@ import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
-@Node(jcrType="testproject:textpage")
-public class SimpleTextPage extends HippoDocument {
+@Node(jcrType="testproject:newspage")
+public class NewsPage extends HippoDocument {
     
     protected String title;
 
