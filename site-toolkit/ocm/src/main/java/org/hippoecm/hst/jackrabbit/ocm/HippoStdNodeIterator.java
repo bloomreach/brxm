@@ -19,7 +19,6 @@ import java.util.Iterator;
 
 
 
-@Deprecated
 public interface HippoStdNodeIterator extends Iterator {
 
     /**

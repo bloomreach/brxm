@@ -18,7 +18,7 @@ package org.hippoecm.hst.jackrabbit.ocm.query.impl;
 import org.apache.jackrabbit.ocm.mapper.Mapper;
 import org.apache.jackrabbit.ocm.query.Filter;
 import org.apache.jackrabbit.ocm.query.impl.QueryImpl;
-@Deprecated
+
 public class HstQueryImpl extends QueryImpl{
 
     public HstQueryImpl(Filter filter, Mapper mapper) {

@@ -38,7 +38,7 @@ import org.hippoecm.hst.jackrabbit.ocm.HippoStdNodeIterator;
 import org.hippoecm.hst.jackrabbit.ocm.impl.HippoStdNodeIteratorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-@Deprecated
+
 public class HstOCMQuery {
 
     private static Logger log = LoggerFactory.getLogger(HstOCMQuery.class);

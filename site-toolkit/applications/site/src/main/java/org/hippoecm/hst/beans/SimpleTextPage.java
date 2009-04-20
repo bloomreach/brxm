@@ -13,29 +13,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.jackrabbit.ocm.manager.cache;
+package org.hippoecm.hst.beans;
 
-import org.apache.jackrabbit.ocm.manager.cache.ObjectCache;
+import java.util.Calendar;
 
-/**
- * HST Object cache which is expected to use HST Cache Infrastructure
- * 
- * @version $Id$
- */
-public class HstRequestObjectCacheImpl implements ObjectCache {
+import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
+
+@Node(jcrType="testproject:textpage")
+public class SimpleTextPage extends HippoDocument {
     
-    public void cache(String path, Object object) {
-    }
+    protected String title;
 
-    public void clear() {
+    public String getTitle() {
+        return getProperty("testproject:title");
     }
-
-    public boolean isCached(String path) {
-        return false;
+    
+    public Calendar getDate() {
+        return getProperty("testproject:date");
     }
-
-    public Object getObject(String path) {
-        return null;
+    
+    public HippoHtml getBody(){
+        return getHippoHtml("testproject:body");
     }
-
+    
 }

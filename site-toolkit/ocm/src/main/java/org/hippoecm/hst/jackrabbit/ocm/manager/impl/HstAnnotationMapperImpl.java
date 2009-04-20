@@ -21,7 +21,6 @@ import org.apache.jackrabbit.ocm.exception.IncorrectPersistentClassException;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.AnnotationMapperImpl;
 import org.apache.jackrabbit.ocm.mapper.model.ClassDescriptor;
 
-@Deprecated
 public class HstAnnotationMapperImpl extends AnnotationMapperImpl {
 
     protected String[] fallBackJcrNodeTypes;

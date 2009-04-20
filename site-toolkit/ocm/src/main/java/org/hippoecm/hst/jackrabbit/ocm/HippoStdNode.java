@@ -34,7 +34,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Deprecated
 public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
 
     private static Logger log = LoggerFactory.getLogger(HippoStdFolder.class);

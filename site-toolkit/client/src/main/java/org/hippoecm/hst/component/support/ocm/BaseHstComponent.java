@@ -63,6 +63,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+@Deprecated
 public class BaseHstComponent extends GenericHstComponent {
     
     private static Logger log = LoggerFactory.getLogger(BaseHstComponent.class);

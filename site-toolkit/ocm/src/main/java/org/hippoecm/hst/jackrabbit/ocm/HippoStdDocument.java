@@ -18,7 +18,6 @@ package org.hippoecm.hst.jackrabbit.ocm;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 
-@Deprecated
 @Node(jcrType="hippo:document", discriminator=false)
 public class HippoStdDocument extends HippoStdNode {
 

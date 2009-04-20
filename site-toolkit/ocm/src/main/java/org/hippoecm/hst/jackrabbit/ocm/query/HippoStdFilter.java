@@ -16,7 +16,7 @@
 package org.hippoecm.hst.jackrabbit.ocm.query;
 
 import org.apache.jackrabbit.ocm.query.Filter;
-@Deprecated
+
 public class HippoStdFilter {
 
     private Filter filter;

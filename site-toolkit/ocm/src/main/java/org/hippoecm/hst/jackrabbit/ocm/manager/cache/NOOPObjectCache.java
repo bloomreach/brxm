@@ -22,7 +22,6 @@ import org.apache.jackrabbit.ocm.manager.cache.ObjectCache;
  * 
  * @version $Id$
  */
-@Deprecated
 public class NOOPObjectCache implements ObjectCache {
     
     public void cache(String path, Object object) {

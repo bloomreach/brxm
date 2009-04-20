@@ -36,7 +36,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Deprecated
 public class HstObjectConverterImpl extends ObjectConverterImpl implements SimpleObjectConverter {
 
     private static Logger log = LoggerFactory.getLogger(HstObjectConverterImpl.class);

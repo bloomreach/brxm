@@ -27,7 +27,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Deprecated
 @Node(jcrType="hippostd:folder", discriminator=false)
 public class HippoStdFolder extends HippoStdNode {
     

@@ -24,7 +24,7 @@ import org.apache.jackrabbit.ocm.query.Filter;
 import org.apache.jackrabbit.ocm.query.impl.QueryManagerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-@Deprecated
+
 public class HstQueryManagerImpl extends QueryManagerImpl {
 
     private final static Logger log = LoggerFactory.getLogger(HstQueryManagerImpl.class);
