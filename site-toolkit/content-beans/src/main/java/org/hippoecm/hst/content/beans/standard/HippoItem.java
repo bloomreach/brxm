@@ -23,10 +23,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.manager.ObjectConverterAware;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.hst.util.NOOPELMap;
@@ -35,7 +33,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HippoItem implements HippoBean, NodeAware, ObjectConverterAware, Comparable<HippoItem>{
+public class HippoItem implements HippoBean{
 
     private static Logger log = LoggerFactory.getLogger(HippoItem.class);
     
@@ -89,48 +87,44 @@ public class HippoItem implements HippoBean, NodeAware, ObjectConverterAware, Co
         return properties;
     }
     
-    public Object getObject(String relPath) {
+    public HippoBean getBean(String relPath) {
         try {
-            return this.objectConverter.getObject(node, relPath);
+            Object o = this.objectConverter.getObject(node, relPath);
+            if(o instanceof HippoBean) {
+                return (HippoBean)o;
+            } else {
+                log.warn("Bean is not an instance of HippoBean. Return null : ", o);
+            }
+            
         } catch (ObjectBeanManagerException e) {
             log.warn("Cannot get Object at relPath '{}' for '{}'", relPath, this.getPath());
-            return null;
         } 
+        return null;
     }
     
-    public Object getParentObject(){
+    public HippoBean getParentBean(){
         try {
             Node parentNode = valueProvider.getParentJcrNode();
-            return this.objectConverter.getObject(parentNode);
+            if(parentNode == null) {
+                log.warn("Cannot return parent bean for detached bean. Return null");
+                return null;
+            } 
+            Object o = this.objectConverter.getObject(parentNode);
+            if(o instanceof HippoBean) {
+                return (HippoBean)o;
+            } else {
+                log.warn("Bean is not an instance of HippoBean. Return null : ", o);
+            }
         } catch (ObjectBeanManagerException e) {
             log.warn("Failed to get parent object for '{}'", this.getPath());
-            return null;
         } 
+        return null;
     }
     
-    /**
-     * A convenience method capable of comparing two HippoItem instances for you for the underlying jcr node. 
-     * 
-     * When the nodes being compared have the same canonical node (physical equivalence) this method returns true.
-     * @param compare the object to compare to
-     * @return <code>true</code> if the object compared has the same canonical node
-     */
     public boolean equalCompare(Object compare){
         return (Boolean)new ComparatorMap().get(compare);
     }
     
-    /**
-     * A convenience method capable of comparing two HippoItem instances for you for the underlying jcr node. 
-     * 
-     * When the nodes being compared have the same canonical node (physical equivalence) the get(Object o) returns true.
-     * In expression language, for example jsp, you can use to compare as follows:
-     * 
-     * <code>${mydocument.equalComparator[otherdocument]}</code>
-     * 
-     * this only returns true when mydocument and otherdocument have the same canonical node
-     * 
-     * @return a ComparatorMap in which you can compare HippoItem's via the get(Object o)
-     */
     public Map<Object,Object> getEqualComparator() {
         return new ComparatorMap();
     }
@@ -190,24 +184,24 @@ public class HippoItem implements HippoBean, NodeAware, ObjectConverterAware, Co
      *  if you need ordering on a different basis, override this method
      */
     
-    public int compareTo(HippoItem hippoItem) {
+    public int compareTo(HippoBean hippoBean) {
         // if hippoFolder == null, a NPE will be thrown which is fine because the arg is not allowed to be null.
         if(this.getName() == null) {
             // should not be possible
             return -1;
         }
-        if(hippoItem.getName() == null) {
+        if(hippoBean.getName() == null) {
          // should not be possible
             return 1;
         }
-        if(this.getName().equals(hippoItem.getName())) {
-            if(this.equals(hippoItem)) {
+        if(this.getName().equals(hippoBean.getName())) {
+            if(this.equals(hippoBean)) {
                 return 0;
             }
             // do not return 0, because then this.equals(hippoFolder) should also be true
             return 1;
         }
-        return this.getName().compareTo(hippoItem.getName());
+        return this.getName().compareTo(hippoBean.getName());
         
     }
 

@@ -32,14 +32,14 @@ function fortune() {
 <div>
     <h1>My overview page</h1>
     <div style="border:1px black solid; width:400px;">
-    <hst:link var="link" node="${parent}"/>
+    <hst:link var="link" hippobean="${parent}"/>
     <a href="${link}">
     PARENT : ${parent.name}      
     </a>
     
     </div>  
     <div style="border:1px black solid; width:400px;">
-    <hst:link var="link" node="${current}"/>
+    <hst:link var="link" hippobean="${current}"/>
     <a href="${link}">
     CURRENT:    ${current.name}  
     </a>
@@ -48,7 +48,7 @@ function fortune() {
     <ol >
     <c:forEach var="folder" items="${collections}">
         <li>  
-            <hst:link var="link" node="${folder}"/>
+            <hst:link var="link" hippobean="${folder}"/>
             <a href="${link}">
              ${folder.name}
              </a>
@@ -61,7 +61,7 @@ function fortune() {
     <ol >
     <c:forEach var="document" items="${documents}">
         <li >  
-        <hst:link var="link" node="${document}"/>
+        <hst:link var="link" hippobean="${document}"/>
         <a href="${link}">
         ${document.title}
         </a>

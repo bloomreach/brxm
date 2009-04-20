@@ -15,6 +15,56 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
-public interface HippoBean {
+import java.util.Map;
+
+import javax.jcr.Node;
+
+import org.hippoecm.hst.content.beans.NodeAware;
+import org.hippoecm.hst.content.beans.manager.ObjectConverterAware;
+
+public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<HippoBean> {
+
+    Node getNode();
+
+    String getName();
+
+    String getPath();
+
+    Map<String, Object> getProperties();
+
+    <T> T getProperty(String name);
+
+    /**
+     * Return a (pseudo)-map to use in expression language like jsp
+     * @return Map of all properties
+     */
+    Map<String, Object> getProperty();
+    
+    HippoBean getBean(String relPath);
+    
+    HippoBean getParentBean();
+    
+    /**
+     * A convenience method capable of comparing two HippoBean instances for you for the underlying jcr node. 
+     * 
+     * When the nodes being compared have the same canonical node (physical equivalence) this method returns true.
+     * @param compare the object to compare to
+     * @return <code>true</code> if the object compared has the same canonical node
+     */
+    boolean equalCompare(Object compare);
+    
+    /**
+     * A convenience method capable of comparing two HippoBean instances for you for the underlying jcr node. 
+     * 
+     * When the nodes being compared have the same canonical node (physical equivalence) the get(Object o) returns true.
+     * In expression language, for example jsp, you can use to compare as follows:
+     * 
+     * <code>${mydocument.equalComparator[otherdocument]}</code>
+     * 
+     * this only returns true when mydocument and otherdocument have the same canonical node
+     * 
+     * @return a ComparatorMap in which you can compare HippoBean's via the get(Object o)
+     */
+    Map<Object,Object> getEqualComparator();
 
 }

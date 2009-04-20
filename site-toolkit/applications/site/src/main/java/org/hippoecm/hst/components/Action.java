@@ -25,11 +25,11 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoFolder;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdFolder;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
 
 public class Action extends GenericResourceServingHstComponent {
     
@@ -40,20 +40,19 @@ public class Action extends GenericResourceServingHstComponent {
         
         String s = this.getParameter("foo" , request);
         
-        HippoStdNode  n = this.getContentNode(request);
+        HippoBean  n = this.getContentNode(request);
         
         if(n == null) {
             return;
         }
         
-        request.setAttribute("parent", n.getParentFolder());
+        request.setAttribute("parent", n.getParentBean());
         request.setAttribute("current",(n));
         
-        if(n instanceof HippoStdFolder) {
-            List<HippoStdFolder> collection = ((HippoStdFolder)n).getFolders();
-            request.setAttribute("collections",((HippoStdFolder)n).getFolders());
-            Object o = ((HippoStdFolder)n).getDocuments();
-            request.setAttribute("documents",((HippoStdFolder)n).getDocuments());
+        if(n instanceof HippoFolder) {
+            List<HippoFolder> collection = ((HippoFolder)n).getFolders();
+            request.setAttribute("collections",((HippoFolder)n).getFolders());
+            request.setAttribute("documents",((HippoFolder)n).getDocuments());
         }
         
         

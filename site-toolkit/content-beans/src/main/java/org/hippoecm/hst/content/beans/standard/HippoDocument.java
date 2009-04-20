@@ -36,7 +36,7 @@ public class HippoDocument extends HippoItem{
             return html;
         } else {
             initializedHtml = true;
-            html = (HippoHtml)getObject(relPath);
+            html = (HippoHtml)getBean(relPath);
             return html;
         }
     }

@@ -30,13 +30,12 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdHtml;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.utils.SimpleHmlStringParser;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Deprecated
 public class HstHtmlTag extends TagSupport {
     
 
@@ -44,7 +43,7 @@ public class HstHtmlTag extends TagSupport {
     
     private static final long serialVersionUID = 1L;
 
-    protected HippoStdHtml node;
+    protected HippoHtml hippoHtml;
 
     protected String var;
     
@@ -83,17 +82,15 @@ public class HstHtmlTag extends TagSupport {
             characterEncoding = "UTF-8";
         }
         
-        StringBuilder url = new StringBuilder();
-        
-        if(node == null || node.getContent() == null ) {
+        if(hippoHtml == null || hippoHtml.getContent() == null ) {
             log.warn("Node or content is null. Return");
             return EVAL_PAGE;
         }
             
-        String html = node.getContent();
+        String html = hippoHtml.getContent();
        
-        if(node.getNode() instanceof HippoNode) {
-            html = SimpleHmlStringParser.parse((HippoNode)node.getNode(), html, request, response);
+        if(hippoHtml.getNode() instanceof HippoNode) {
+            html = SimpleHmlStringParser.parse((HippoNode)hippoHtml.getNode(), html, request, response);
         } else {
             log.warn("Do not know how to linkrewrite for non HippoNode's");
         }
@@ -154,8 +151,8 @@ public class HstHtmlTag extends TagSupport {
         return scope;
     }
   
-    public HippoStdHtml getNode(){
-        return this.node;
+    public HippoHtml getHippohtml(){
+        return this.hippoHtml;
     }
     
     
@@ -173,8 +170,8 @@ public class HstHtmlTag extends TagSupport {
         this.scope = scope;
     }
     
-    public void setNode(HippoStdHtml node) {
-        this.node = node;
+    public void setHippohtml(HippoHtml hippoHtml) {
+        this.hippoHtml = hippoHtml;
     }
     
     

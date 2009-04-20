@@ -166,11 +166,11 @@
             <description>A string path, typically a location relative to the webapp</description>
         </attribute>
         <attribute>
-            <name>node</name>
+            <name>hippobean</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
-            <type>org.hippoecm.hst.ocm.HippoStdNode</type>
-            <description>A HippoStdNode object. This is typically one of your ocm mapped objects</description>
+            <type>org.hippoecm.hst.content.beans.standard.HippoBean</type>
+            <description>A HippoBean object. This is typically one of your bean mapped objects</description>
         </attribute>
     </tag>
     
@@ -191,8 +191,8 @@
             <name>node</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
-            <type>org.hippoecm.hst.ocm.HippoStdHtml</type>
-            <description>A HippoStdHtml object. This is typically one of your ocm mapped objects</description>
+            <type>org.hippoecm.hst.content.beans.standard.HippoHtml</type>
+            <description>A HippoHtml object. This is typically one of your bean mapped objects</description>
         </attribute>
     </tag>
     

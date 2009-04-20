@@ -15,23 +15,9 @@
  */
 package org.hippoecm.hst.beans;
 
-import java.util.Calendar;
-
 import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.content.beans.standard.HippoDocument;
-import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
 @Node(jcrType="testproject:textpage")
-public class TextPage extends HippoDocument {
-    
-    protected String title;
-
-    public String getTitle() {
-        return getProperty("testproject:title");
-    }
-    
-    public HippoHtml getBody(){
-        return getHippoHtml("testproject:body");
-    }
+public class TextPage extends GeneralPage {
     
 }

@@ -18,24 +18,17 @@ package org.hippoecm.hst.beans;
 import java.util.Calendar;
 
 import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.content.beans.standard.HippoDocument;
-import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
 @Node(jcrType="testproject:newspage")
-public class NewsPage extends HippoDocument {
-    
-    protected String title;
-
-    public String getTitle() {
-        return getProperty("testproject:title");
+public class NewsPage extends GeneralPage {
+   
+    public String getSummary() {
+        return getProperty("testproject:summary");
     }
     
     public Calendar getDate() {
         return getProperty("testproject:date");
     }
     
-    public HippoHtml getBody(){
-        return getHippoHtml("testproject:body");
-    }
     
 }

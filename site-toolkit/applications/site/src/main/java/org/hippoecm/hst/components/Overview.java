@@ -15,23 +15,14 @@
  */
 package org.hippoecm.hst.components;
 
-import java.util.List;
-
-import javax.jcr.RepositoryException;
-
-import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
+import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoFolder;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdFolder;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdNodeIterator;
-import org.hippoecm.hst.jackrabbit.ocm.query.HippoStdFilter;
-import org.hippoecm.hst.jackrabbit.ocm.query.HstOCMQuery;
-import org.hippoecm.hst.ocm.NewsPage;
 
-public class Overview extends GenericResourceServingHstComponent {
+public class Overview extends BaseHstComponent {
     
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
@@ -39,56 +30,27 @@ public class Overview extends GenericResourceServingHstComponent {
         
        // System.out.println(this.getParameters(request));
         
-        HippoStdNode hippoStdNode = this.getContentNode(request);
+        HippoBean hippoBean = this.getContentNode(request);
         
-        if(hippoStdNode == null) {
-            hippoStdNode = this.getSiteContentBaseNode(request);
+        if(hippoBean == null) {
+            hippoBean = this.getSiteContentBaseNode(request);
         }
-        //  
-        
-        HstOCMQuery query = this.getHstQuery(request);
-        HippoStdNode hippoStdNode2 = this.getSiteContentBaseNode(request);
-            try {
-                query.setScope(hippoStdNode2);
-                
-                HippoStdFilter filter = query.createFilter(NewsPage.class);
-                //filter.addContains("title", "News");
-                query.setFilter(filter);
-                //query.addOrderByDescending("date");
-                
-                HippoStdNodeIterator it = query.execute();
-                
-                while(it.hasNext()) {
-                    NewsPage p = (NewsPage)it.nextHippoStdNode();
-                    System.out.println(p);
-                }
-            }catch (QueryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-           
-       
       
-        if(hippoStdNode == null) {
+        if(hippoBean == null) {
             return;
         }
         
-        request.setAttribute("parent", hippoStdNode.getParentFolder());
-        request.setAttribute("current",hippoStdNode);
+        request.setAttribute("parent", hippoBean.getParentBean());
+        request.setAttribute("current",hippoBean);
         
-        if(hippoStdNode instanceof HippoStdFolder) {
-            request.setAttribute("collections",((HippoStdFolder)hippoStdNode).getFolders());
-            request.setAttribute("documents",setDocuments((HippoStdFolder)hippoStdNode, 0 , Integer.MAX_VALUE));
+        if(hippoBean instanceof HippoFolder) {
+            request.setAttribute("collections", ((HippoFolder)hippoBean).getFolders());
+            request.setAttribute("documents", ((HippoFolder)hippoBean).getDocuments());
         }
         
     }
 
  
- 
-    public List<HippoStdDocument> setDocuments(HippoStdFolder hippoStdCollection, int from, int to){
-        return hippoStdCollection.getDocuments(from, to);
-    }
-   
 }
 
 

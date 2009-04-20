@@ -18,11 +18,11 @@ package org.hippoecm.hst.components;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoFolder;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdFolder;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
 
 public class PageableOverview extends GenericResourceServingHstComponent {
     
@@ -50,7 +50,7 @@ public class PageableOverview extends GenericResourceServingHstComponent {
             }
         }
         
-        HippoStdNode  n = this.getContentNode(request);
+        HippoBean  n = this.getContentNode(request);
         
         if(n == null) {
             return;
@@ -60,21 +60,17 @@ public class PageableOverview extends GenericResourceServingHstComponent {
         int to  = ((currentPage) * pageSize);
         
         
-        request.setAttribute("parent", n.getParentFolder());
+        request.setAttribute("parent", n.getParentBean());
         request.setAttribute("current",(n));
         
-        if(n instanceof HippoStdFolder) {
-            request.setAttribute("collections",((HippoStdFolder)n).getFolders());
-            Object o = ((HippoStdFolder)n).getDocuments();
-           
-            request.setAttribute("documents",((HippoStdFolder)n).getDocuments(from, to));
+        if(n instanceof HippoFolder) {
+            request.setAttribute("collections",((HippoFolder)n).getFolders());
+            Object o = ((HippoFolder)n).getDocuments();
+            request.setAttribute("documents",((HippoFolder)n).getDocuments(from, to));
         }
        
-        
-        int totalItems = ((HippoStdFolder)n).getDocumentSize();
-        
+        int totalItems = ((HippoFolder)n).getDocumentSize();
         List<Page> pages = new ArrayList<Page>();
-        
         if(totalItems > pageSize) {
             int nrOfPages = totalItems/pageSize;
             int i = 0;

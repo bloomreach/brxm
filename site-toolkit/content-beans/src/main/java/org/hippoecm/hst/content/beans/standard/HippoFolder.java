@@ -31,61 +31,85 @@ import org.slf4j.LoggerFactory;
 @Node(jcrType="hippostd:folder")
 public class HippoFolder extends HippoItem {
     private static Logger log = LoggerFactory.getLogger(HippoFolder.class);
+    private List<HippoFolder> hippoFolders;
+    private List<HippoDocument> hippoDocuments;
     
     public List<HippoFolder> getFolders(){
          return this.getFolders(false);
     }
     
     public List<HippoFolder> getFolders(boolean sorted){
+        if(this.hippoFolders != null) {
+            return this.hippoFolders;
+        }
         if(this.node == null) {
             log.warn("Cannot get documents because node is null");
             return null;
         }
         try {
-            List<HippoFolder> hippoFolders = new ArrayList<HippoFolder>();
+            this.hippoFolders = new ArrayList<HippoFolder>();
             NodeIterator nodes = this.node.getNodes();
             while(nodes.hasNext()) {
                 javax.jcr.Node child = nodes.nextNode();
                 if(child == null) {continue;}
                 HippoFolder hippoFolder = getHippoFolder(child);
                 if(hippoFolder != null) {
-                    hippoFolders.add(hippoFolder);
+                    this.hippoFolders.add(hippoFolder);
                 }
             }
             if(sorted) {
-                Collections.sort(hippoFolders);
+                Collections.sort(this.hippoFolders);
             }
-            return hippoFolders;
+            return this.hippoFolders;
         } catch (RepositoryException e) {
             log.warn("Repository Exception : {}", e);
             return null;
         }
     }
     
+    public int getDocumentSize(){
+        return getDocuments().size();
+    }
+    
     public List<HippoDocument> getDocuments() {
         return getDocuments(false);
     }
     
+    public List<HippoDocument> getDocuments(int from, int to) {
+        return getDocuments(from,to,false);
+    }
+    
+    public List<HippoDocument> getDocuments(int from, int to, boolean sorted) {
+        List<HippoDocument> documents = getDocuments(sorted);
+        if(from < 0) {from = 0;}
+        if(from > documents.size()) {return new ArrayList<HippoDocument>();}
+        if(to >= documents.size()) {to = documents.size() -1;}
+        return documents.subList(from, to);
+    }
+    
     public List<HippoDocument> getDocuments(boolean sorted) {
+        if(this.hippoDocuments != null) {
+            return this.hippoDocuments;
+        }
         if(this.node == null) {
             log.warn("Cannot get documents because node is null");
             return null;
         }
         try {
-            List<HippoDocument> hippoDocuments = new ArrayList<HippoDocument>();
+            this.hippoDocuments = new ArrayList<HippoDocument>();
             NodeIterator nodes = this.node.getNodes();
             while(nodes.hasNext()) {
                 javax.jcr.Node child = nodes.nextNode();
                 if(child == null) {continue;}
                 HippoDocument hippoDocument = getHippoDocument(child);
                 if(hippoDocument != null) {
-                    hippoDocuments.add(hippoDocument);
+                    this.hippoDocuments.add(hippoDocument);
                 }
             }
             if(sorted) {
-                Collections.sort(hippoDocuments);
+                Collections.sort(this.hippoDocuments);
             }
-            return hippoDocuments;
+            return this.hippoDocuments;
         } catch (RepositoryException e) {
             log.warn("Repository Exception : {}", e);
             return null;
@@ -97,14 +121,17 @@ public class HippoFolder extends HippoItem {
         try {
             // folders inherit from HippoNodeType.NT_DOCUMENT
             if(child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                return (HippoFolder)objectConverter.getObject(child);
+                Object o  = objectConverter.getObject(child);
+                if(o instanceof HippoFolder) {
+                    return (HippoFolder)o;
+                } else {
+                    log.warn("Cannot return HippoFolder for. Return null '{}'", child.getPath());
+                }
             }
         } catch (RepositoryException e) {
-            // TODO
-            e.printStackTrace();
+            log.error("Cannot return HippoFolder. Return null : {} " , e);
         } catch (ObjectBeanManagerException e) {
-            // TODO
-            e.printStackTrace();
+            log.warn("Cannot return HippoFolder. Return null : {} " , e);
         }
         return null;
     }
@@ -113,18 +140,26 @@ public class HippoFolder extends HippoItem {
         try {
             if(child.isNodeType(HippoNodeType.NT_HANDLE)) {
                 if(child.hasNode(child.getName())) {
-                    return (HippoDocument)objectConverter.getObject(child.getNode(child.getName()));
+                    Object o  = objectConverter.getObject(child.getNode(child.getName()));
+                    if(o instanceof HippoDocument) {
+                        return (HippoDocument)o;
+                    } else {
+                        log.warn("Cannot return HippoDocument for. Return null '{}'", child.getPath());
+                    }
                 } 
                 return null;
             } else if(child.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                return (HippoDocument)objectConverter.getObject(child);
+                Object o  = (HippoDocument)objectConverter.getObject(child);
+                if(o instanceof HippoDocument) {
+                    return (HippoDocument)o;
+                } else {
+                    log.warn("Cannot return HippoDocument for. Return null '{}'", child.getPath());
+                }
             }
         } catch (RepositoryException e) {
-            // TODO
-            e.printStackTrace();
+            log.error("Cannot return HippoDocument. Return null : {} " , e);
         } catch (ObjectBeanManagerException e) {
-            // TODO
-            e.printStackTrace();
+            log.warn("Cannot return HippoDocument. Return null : {} " , e);
         }
         return null;
     }

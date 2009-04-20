@@ -15,27 +15,26 @@
  */
 package org.hippoecm.hst.components;
 
+import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
 
-public class Detail extends GenericResourceServingHstComponent {
+public class Detail extends BaseHstComponent {
     
     
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
         
-        
-        HippoStdNode  n = this.getContentNode(request);
-        
+        HippoBean  n = this.getContentNode(request);
         
         if(n == null) {
             return;
         }
         
-        request.setAttribute("parent", n.getParentFolder());
+        request.setAttribute("parent", n.getParentBean());
         request.setAttribute("document",n);
        
     }

@@ -30,11 +30,11 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public class HstLinkTag extends TagSupport {
 
     protected HstLink link;
     
-    protected HippoStdNode node;
+    protected HippoBean hippoBean;
     
     protected String path;
     
@@ -84,7 +84,7 @@ public class HstLinkTag extends TagSupport {
     @Override
     public int doEndTag() throws JspException{
         
-        if(this.link == null && this.path == null && this.node == null) {
+        if(this.link == null && this.path == null && this.hippoBean == null) {
             log.warn("Cannot get a link because no link , path or node is set");
             return EVAL_PAGE;
         }
@@ -99,8 +99,8 @@ public class HstLinkTag extends TagSupport {
         
         StringBuilder url = new StringBuilder();
 
-        if(this.node != null) {
-            if(node.getNode() == null) {
+        if(this.hippoBean != null) {
+            if(hippoBean.getNode() == null) {
                 log.warn("Cannot get a link for a detached node");
                 return EVAL_PAGE;
             }
@@ -109,7 +109,7 @@ public class HstLinkTag extends TagSupport {
                 return EVAL_PAGE;
             }
             HstRequestContext reqContext = ((HstRequest)request).getRequestContext();
-            this.link = reqContext.getHstLinkCreator().create(node.getNode(), reqContext.getResolvedSiteMapItem());
+            this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), reqContext.getResolvedSiteMapItem());
         }
         
         String[] pathElements = null;
@@ -229,8 +229,8 @@ public class HstLinkTag extends TagSupport {
         return link;
     }
     
-    public HippoStdNode getNode(){
-        return this.node;
+    public HippoBean getHippobean(){
+        return this.hippoBean;
     }
     
     public String getPath(){
@@ -245,8 +245,8 @@ public class HstLinkTag extends TagSupport {
         this.path = path;
     }
     
-    public void setNode(HippoStdNode node) {
-        this.node = node;
+    public void setHippobean(HippoBean hippoBean) {
+        this.hippoBean = hippoBean;
     }
     
     /**

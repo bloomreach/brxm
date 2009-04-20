@@ -17,7 +17,7 @@ package org.hippoecm.hst.components;
 
 import javax.servlet.ServletConfig;
 
-import org.hippoecm.hst.component.support.ocm.BaseHstComponent;
+import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;

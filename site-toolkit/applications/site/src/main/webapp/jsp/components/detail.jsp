@@ -22,7 +22,7 @@
 
     <h1>My detail page</h1>
     <div style="border:1px black solid; width:400px;">
-    <hst:link var="link" node="${parent}"/>
+    <hst:link var="link" hippobean="${parent}"/>
     <a href="${link}">
     PARENT : ${parent.name}      
     </a>
@@ -38,7 +38,7 @@
         ${document.date.time}
         
         <div style="border:1px black solid;" >
-         <hst:html node="${document.html}"/>
+         <hst:html hippohtml="${document.body}"/>
      
         </div>
      
