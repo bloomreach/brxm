@@ -57,7 +57,7 @@ import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
 import org.hippoecm.hst.jackrabbit.ocm.manager.cache.NOOPObjectCache;
 import org.hippoecm.hst.jackrabbit.ocm.manager.impl.HstAnnotationMapperImpl;
 import org.hippoecm.hst.jackrabbit.ocm.manager.impl.HstObjectConverterImpl;
-import org.hippoecm.hst.jackrabbit.ocm.query.HstQuery;
+import org.hippoecm.hst.jackrabbit.ocm.query.HstOCMQuery;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,13 +142,13 @@ public class BaseHstComponent extends GenericHstComponent {
         return (HippoStdNode) getObjectContentManager(request).getObject("/"+base);
     }
     
-    protected HstQuery getHstQuery(HstRequest request) {
+    protected HstOCMQuery getHstQuery(HstRequest request) {
         HstRequestContext requestContext = request.getRequestContext();
         ObjectContentManager ocm = getObjectContentManager(request);
         
-        HstQuery hQuery = (HstQuery)requestContext.getAttribute(QUERY_REQUEST_CONTEXT_ATTR_NAME);
+        HstOCMQuery hQuery = (HstOCMQuery)requestContext.getAttribute(QUERY_REQUEST_CONTEXT_ATTR_NAME);
         if(hQuery == null) {
-            hQuery = new HstQuery(this.ocmMapper, ocm, request, Thread.currentThread().getContextClassLoader());
+            hQuery = new HstOCMQuery(this.ocmMapper, ocm, request, Thread.currentThread().getContextClassLoader());
             requestContext.setAttribute(QUERY_REQUEST_CONTEXT_ATTR_NAME, hQuery);
         }
         return hQuery;

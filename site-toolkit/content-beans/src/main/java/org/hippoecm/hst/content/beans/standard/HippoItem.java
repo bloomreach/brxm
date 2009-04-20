@@ -18,8 +18,10 @@ package org.hippoecm.hst.content.beans.standard;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
@@ -33,14 +35,16 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HippoItem implements NodeAware, ObjectConverterAware, Comparable<HippoItem>{
+public class HippoItem implements HippoBean, NodeAware, ObjectConverterAware, Comparable<HippoItem>{
 
     private static Logger log = LoggerFactory.getLogger(HippoItem.class);
     
     protected String canonicalId;
     protected transient Node node;
+    protected String path;
     protected JCRValueProvider valueProvider;
     protected transient ObjectConverter objectConverter;
+    protected boolean detached = false;
     
 
     public void setObjectConverter(ObjectConverter objectConverter) {
@@ -61,7 +65,10 @@ public class HippoItem implements NodeAware, ObjectConverterAware, Comparable<Hi
     }
     
     public String getPath(){
-       return valueProvider.getPath();
+       if(this.path == null) {
+           this.path = valueProvider.getPath();
+       }
+       return this.path;
     }
     
     public Map<String, Object> getProperties() {
@@ -204,4 +211,35 @@ public class HippoItem implements NodeAware, ObjectConverterAware, Comparable<Hi
         
     }
 
+    /**
+     * Detach the jcr Node. Already loaded properties and variables are still available. 
+     */
+    public void detach(){
+        if(this.path == null) {
+            this.path = valueProvider.getPath();
+        }
+        this.valueProvider.detach();
+        this.node = null;
+        this.detached = true;
+    }
+    
+  /**
+   * Try to attach the jcr Node again with this session. 
+   * @param session
+   */
+    public void attach(Session session) {
+       try {
+        if(session.itemExists(this.path)) {
+            Item item = session.getItem(this.path); 
+            if(item instanceof Node) {
+                 this.valueProvider = new JCRValueProviderImpl((Node)item);
+            } else {
+                log.warn("Cannot attach an item that is not a jcr property: '{}'", this.path);
+            }
+        }
+    } catch (RepositoryException e) {
+        log.error("Repository exception while trying to attach jcr node: {}", e);
+      }
+    }
+    
 }

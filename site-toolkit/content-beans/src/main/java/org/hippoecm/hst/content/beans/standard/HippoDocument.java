@@ -15,15 +15,45 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
+import javax.jcr.Session;
+
 import org.hippoecm.hst.content.beans.Node;
 
 @Node(jcrType="hippo:document")
 public class HippoDocument extends HippoItem{
 
-
+    private HippoHtml html;
+    private boolean initializedHtml;
+    
+    /**
+     * @param relPath
+     * @return <code>HippoHtml</code> or <code>null</code> if no node exists as relPath or no node of type "hippostd:html"
+     */
     public HippoHtml getHippoHtml(String relPath) {
-        Object o = getObject(relPath);
-        return (o instanceof HippoHtml) ? (HippoHtml)o : null;
+        // you cannot check for html not being null, because getObject might return null. Therefor, use 
+        // boolean initializedHtml
+        if(initializedHtml) {
+            return html;
+        } else {
+            initializedHtml = true;
+            html = (HippoHtml)getObject(relPath);
+            return html;
+        }
     }
 
+    @Override
+    public void detach(){
+        super.detach();
+        if(this.html != null) {
+            this.html.detach();
+        }
+    }
+    
+    @Override
+    public void attach(Session session){
+        super.attach(session);
+        this.html = null;
+        this.initializedHtml = false;
+    }
+    
 }

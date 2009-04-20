@@ -165,5 +165,19 @@ public class PropertyMapImpl implements PropertyMap, Serializable {
         combined.putAll(this.strings);
         return combined;
     }
+
+    public void flush() {
+       this.availableProps.clear();
+       this.booleanArrays.clear();
+       this.booleans.clear();
+       this.calendarArrays.clear();
+       this.calendars.clear();
+       this.doubleArrays.clear();
+       this.doubles.clear();
+       this.longArrays.clear();
+       this.longs.clear();
+       this.stringArrays.clear();
+       this.strings.clear();
+    }
     
 }

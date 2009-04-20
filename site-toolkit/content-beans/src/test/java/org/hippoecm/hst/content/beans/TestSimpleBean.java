@@ -19,29 +19,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.Session;
 
 import org.apache.commons.beanutils.MethodUtils;
-import org.apache.commons.collections.list.TreeList;
 import org.hippoecm.hst.AbstractBeanSpringTestCase;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.manager.ObjectConverterImpl;
-import org.hippoecm.hst.content.beans.standard.HippoDirectory;
-import org.hippoecm.hst.content.beans.standard.HippoDocument;
-import org.hippoecm.hst.content.beans.standard.HippoFacetSearch;
-import org.hippoecm.hst.content.beans.standard.HippoFacetSelect;
-import org.hippoecm.hst.content.beans.standard.HippoFixedDirectory;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
-import org.hippoecm.hst.content.beans.standard.HippoHtml;
-import org.hippoecm.hst.content.beans.standard.HippoItem;
-import org.hippoecm.hst.util.DefaultKeyValue;
-import org.hippoecm.hst.util.KeyValue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,25 +57,8 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
 
     @Test
     public void testSimpleObjectGetting() throws Exception {
-        
-        // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
-        List<KeyValue<String, Class[]>> jcrPrimaryNodeTypeClassPairs = new TreeList();
-
-
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, SimpleTextPage.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, SimpleTextPageCopy.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDocument.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFolder.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSearch.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSelect.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDirectory.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFixedDirectory.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoHtml.class);
-        
-        // builds a fallback jcrPrimaryNodeType array.
-        String [] fallBackJcrPrimaryNodeTypes = new String [] {"hippo:document"};
-        
-        ObjectConverter objectConverter = new ObjectConverterImpl(jcrPrimaryNodeTypeClassPairs, fallBackJcrPrimaryNodeTypes);
+             
+        ObjectConverter objectConverter = getObjectConverter();
         
         Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
@@ -116,18 +86,5 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
         session.logout();
     }
     
-    private static void addJcrPrimaryNodeTypeClassPair(List<KeyValue<String, Class[]>> jcrPrimaryNodeTypeClassPairs, Class clazz) {
-        String jcrPrimaryNodeType = null;
-        
-        if (clazz.isAnnotationPresent(Node.class)) {
-            Node anno = (Node) clazz.getAnnotation(Node.class);
-            jcrPrimaryNodeType = anno.jcrType();
-        }
-        
-        if (jcrPrimaryNodeType == null) {
-            throw new IllegalArgumentException("There's no annotation for jcrType in the class: " + clazz);
-        }
-        
-        jcrPrimaryNodeTypeClassPairs.add(new DefaultKeyValue(jcrPrimaryNodeType, new Class [] { clazz }, true));
-    }
+   
 }

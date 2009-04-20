@@ -29,19 +29,19 @@ import org.apache.jackrabbit.ocm.mapper.Mapper;
 import org.apache.jackrabbit.ocm.mapper.model.ClassDescriptor;
 import org.apache.jackrabbit.ocm.query.Filter;
 import org.apache.jackrabbit.ocm.query.impl.FilterImpl;
-import org.hippoecm.hst.content.beans.query.FilterException;
-import org.hippoecm.hst.content.beans.query.ScopeException;
+import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
+import org.hippoecm.hst.content.beans.query.exceptions.ScopeException;
+import org.hippoecm.hst.content.beans.query.filter.HstCtxWhereFilter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdNodeIterator;
 import org.hippoecm.hst.jackrabbit.ocm.impl.HippoStdNodeIteratorImpl;
-import org.hippoecm.hst.query.filter.HstCtxWhereFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 @Deprecated
-public class HstQuery {
+public class HstOCMQuery {
 
-    private static Logger log = LoggerFactory.getLogger(HstQuery.class);
+    private static Logger log = LoggerFactory.getLogger(HstOCMQuery.class);
     
     private ObjectContentManager ocm;
     private HstRequest request;
@@ -56,11 +56,11 @@ public class HstQuery {
     private String orderByExpression = "";
     private ClassLoader classLoader;
     
-    public HstQuery(Mapper mapper, ObjectContentManager ocm ,HstRequest request){
+    public HstOCMQuery(Mapper mapper, ObjectContentManager ocm ,HstRequest request){
         this(mapper, ocm, request, null);
     }
     
-    public HstQuery(Mapper mapper, ObjectContentManager ocm ,HstRequest request, ClassLoader classLoader){
+    public HstOCMQuery(Mapper mapper, ObjectContentManager ocm ,HstRequest request, ClassLoader classLoader){
         this.ocm = ocm;
         this.mapper = mapper;
         this.request = request;

@@ -15,13 +15,9 @@
  */
 package org.hippoecm.hst.content.beans.manager;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
-import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 
 public class ObjectBeanManagerImpl implements ObjectBeanManager {
 
@@ -39,13 +35,7 @@ public class ObjectBeanManagerImpl implements ObjectBeanManager {
     }
     
     public Object getObjectByUuid(String uuid) throws ObjectBeanManagerException {
-        try {
-            Node node = session.getNodeByUUID(uuid);
-            Object object = objectConverter.getObject(node);
-            return object;
-        } catch (RepositoryException e) {
-            throw new ObjectBeanManagerException("Impossible to get the object with uuid : " + uuid, e);
-        }
+        return objectConverter.getObject(uuid, session);
     }
     
     public Session getSession() {

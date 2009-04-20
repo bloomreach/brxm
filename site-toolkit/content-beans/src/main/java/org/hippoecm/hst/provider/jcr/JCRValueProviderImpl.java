@@ -43,8 +43,8 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     private transient Node jcrNode;
     
     private String nodePath;
-    
     private String nodeName;
+    
     private boolean detached = false;
     private boolean isLoaded = false;
     private List<Integer> supportedPropertyTypes = new ArrayList<Integer>();
@@ -63,14 +63,6 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     
     public JCRValueProviderImpl(Node jcrNode) {
         this.jcrNode = jcrNode;
-        if(jcrNode != null) {
-            try {
-                this.nodePath = jcrNode.getPath();
-                this.nodeName = jcrNode.getName();
-            } catch (RepositoryException e) {
-                log.error("Repository Exception: {}", e.getMessage());
-            }
-        }
     }
 
     public Node getJcrNode(){
@@ -111,10 +103,34 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     }
     
     public String getName() {
+        if(this.nodeName != null) {
+            return this.nodeName;
+        }
+        if(isDetached()) {
+            return null;
+        } else if(this.jcrNode != null) {
+            try {
+                this.nodeName = jcrNode.getName();
+            } catch (RepositoryException e) {
+                log.error("Error while retrieving jcr node name {}", e);
+            }
+        }
         return this.nodeName;
     }
 
     public String getPath() {
+        if(this.nodePath != null) {
+            return this.nodePath;
+        }
+        if(isDetached()) {
+            return null;
+        } else if(this.jcrNode != null) {
+            try {
+                this.nodePath = jcrNode.getPath();
+            } catch (RepositoryException e) {
+                log.error("Error while retrieving jcr node path {}", e);
+            }
+        }
         return this.nodePath;
     }
     
@@ -485,6 +501,10 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             if (log.isWarnEnabled()) log.warn("RepositoryException: Exception for fetching property from '{}'", this.nodePath);
         }
         return ;
+    }
+
+    public void flush() {
+        this.propertyMap.flush();
     }
 
 

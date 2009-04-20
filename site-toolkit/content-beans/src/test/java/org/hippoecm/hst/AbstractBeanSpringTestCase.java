@@ -15,13 +15,29 @@
  */
 package org.hippoecm.hst;
 
+import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.collections.list.TreeList;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
+import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.SimpleTextPage;
+import org.hippoecm.hst.content.beans.SimpleTextPageCopy;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.manager.ObjectConverterImpl;
+import org.hippoecm.hst.content.beans.standard.HippoDirectory;
+import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.content.beans.standard.HippoFacetSearch;
+import org.hippoecm.hst.content.beans.standard.HippoFacetSelect;
+import org.hippoecm.hst.content.beans.standard.HippoFixedDirectory;
+import org.hippoecm.hst.content.beans.standard.HippoFolder;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.util.DefaultKeyValue;
+import org.hippoecm.hst.util.KeyValue;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
@@ -79,6 +95,43 @@ public abstract class AbstractBeanSpringTestCase
         return getComponentManager().<T>getComponent(name);
     }
     
+    protected ObjectConverter getObjectConverter() {
+        
+        // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
+        List<KeyValue<String, Class[]>> jcrPrimaryNodeTypeClassPairs = new TreeList();
+
+
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, SimpleTextPage.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, SimpleTextPageCopy.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDocument.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFolder.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSearch.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSelect.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDirectory.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFixedDirectory.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoHtml.class);
+        
+        // builds a fallback jcrPrimaryNodeType array.
+        String [] fallBackJcrPrimaryNodeTypes = new String [] {"hippo:document"};
+        
+        ObjectConverter objectConverter = new ObjectConverterImpl(jcrPrimaryNodeTypeClassPairs, fallBackJcrPrimaryNodeTypes);
+        return objectConverter;
+    }
+    
+    private static void addJcrPrimaryNodeTypeClassPair(List<KeyValue<String, Class[]>> jcrPrimaryNodeTypeClassPairs, Class clazz) {
+        String jcrPrimaryNodeType = null;
+        
+        if (clazz.isAnnotationPresent(Node.class)) {
+            Node anno = (Node) clazz.getAnnotation(Node.class);
+            jcrPrimaryNodeType = anno.jcrType();
+        }
+        
+        if (jcrPrimaryNodeType == null) {
+            throw new IllegalArgumentException("There's no annotation for jcrType in the class: " + clazz);
+        }
+        
+        jcrPrimaryNodeTypeClassPairs.add(new DefaultKeyValue(jcrPrimaryNodeType, new Class [] { clazz }, true));
+    }
     public static class SpringComponentManager implements ComponentManager, BeanPostProcessor {
         
         protected AbstractApplicationContext applicationContext;

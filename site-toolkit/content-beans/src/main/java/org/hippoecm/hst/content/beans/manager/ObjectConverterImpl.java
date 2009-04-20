@@ -17,11 +17,13 @@ package org.hippoecm.hst.content.beans.manager;
 
 import java.util.List;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.service.ServiceFactory;
@@ -98,6 +100,28 @@ public class ObjectConverterImpl implements ObjectConverter {
         }
     }
     
+    public Object getObject(String uuid, Session session) throws ObjectBeanManagerException {
+        checkUUID(uuid);
+        try {
+            Node node = session.getNodeByUUID(uuid);
+            return this.getObject(node);
+        } catch (ItemNotFoundException e) {
+            log.warn("ItemNotFoundException for uuid '{}'. Return null.", uuid);
+        } catch (RepositoryException e) {
+            log.error("RepositoryException for uuid '{}' : {}. Return null.",uuid, e);
+        }
+        return null;
+    }
+
+    public Object getObject(String uuid, Node node) throws ObjectBeanManagerException {
+        try {
+            return this.getObject(uuid, node.getSession());
+        } catch (RepositoryException e) {
+            log.error("RepositoryException {}. Return null.", e);
+        }
+        return null;
+    }
+    
     public Object getObject(Node node) throws ObjectBeanManagerException {
         Object object = null;
         String jcrPrimaryNodeType;
@@ -146,4 +170,11 @@ public class ObjectConverterImpl implements ObjectConverter {
         return null;
     }
 
+    private void checkUUID(String uuid) throws ObjectBeanManagerException{
+        try {
+            UUID uuidObj = UUID.fromString(uuid);
+        } catch (IllegalArgumentException e){
+            throw new ObjectBeanManagerException("Uuid is not parseable to a valid uuid: '"+uuid+"'");
+        }
+    }
 }
