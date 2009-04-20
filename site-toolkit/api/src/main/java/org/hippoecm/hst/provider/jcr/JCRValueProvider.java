@@ -52,5 +52,9 @@ public interface JCRValueProvider extends ValueProvider{
      */
     public boolean isNodeType(String nodeType);
     
+    /**
+     * Flushes all fetched data kept in instance variables
+     */
+    public void flush();
    
 }

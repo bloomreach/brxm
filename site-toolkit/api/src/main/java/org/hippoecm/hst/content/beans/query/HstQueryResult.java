@@ -15,15 +15,11 @@
  */
 package org.hippoecm.hst.content.beans.query;
 
-public class FilterException extends QueryException{
-    
-    private static final long serialVersionUID = 1L;
+import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 
-    public FilterException(String message, Throwable th) {
-        super(message, th);
-    }
-    public FilterException(String message) {
-        super(message);
-    }
+public interface HstQueryResult {
     
+    public int getSize();
+    
+    public HippoBeanIterator getHippoBeanIterator();
 }

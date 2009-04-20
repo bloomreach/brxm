@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.content.beans.query.QueryException;
+import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -28,7 +28,7 @@ import org.hippoecm.hst.jackrabbit.ocm.HippoStdFolder;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdNodeIterator;
 import org.hippoecm.hst.jackrabbit.ocm.query.HippoStdFilter;
-import org.hippoecm.hst.jackrabbit.ocm.query.HstQuery;
+import org.hippoecm.hst.jackrabbit.ocm.query.HstOCMQuery;
 import org.hippoecm.hst.ocm.NewsPage;
 
 public class Overview extends GenericResourceServingHstComponent {
@@ -46,7 +46,7 @@ public class Overview extends GenericResourceServingHstComponent {
         }
         //  
         
-        HstQuery query = this.getHstQuery(request);
+        HstOCMQuery query = this.getHstQuery(request);
         HippoStdNode hippoStdNode2 = this.getSiteContentBaseNode(request);
             try {
                 query.setScope(hippoStdNode2);

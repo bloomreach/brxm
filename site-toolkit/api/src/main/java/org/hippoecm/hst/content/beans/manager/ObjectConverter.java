@@ -37,5 +37,9 @@ public interface ObjectConverter
     Object getObject(Node node) throws ObjectBeanManagerException;
 
     Object getObject(Node node, String relPath) throws ObjectBeanManagerException;
+
+    Object getObject(String uuid, Session session) throws ObjectBeanManagerException;
+    
+    Object getObject(String uuid, Node node) throws ObjectBeanManagerException;
     
 }

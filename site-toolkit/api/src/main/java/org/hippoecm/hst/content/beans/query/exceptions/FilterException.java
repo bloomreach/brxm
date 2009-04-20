@@ -13,18 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.content.beans.query;
+package org.hippoecm.hst.content.beans.query.exceptions;
 
-public class ScopeException extends QueryException {
-
-    private static final long serialVersionUID = 1L;
+public class FilterException extends QueryException{
     
-    public ScopeException(String message, Throwable th) {
+    private static final long serialVersionUID = 1L;
+
+    public FilterException(String message, Throwable th) {
         super(message, th);
     }
-
-    public ScopeException(String message){
+    public FilterException(String message) {
         super(message);
     }
-
+    
 }

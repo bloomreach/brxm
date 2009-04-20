@@ -41,4 +41,6 @@ public interface PropertyMap {
     public abstract Map<String, String> getStrings();
 
     public Map<String, Object> getAllMapsCombined();
+    
+    public void flush();
 }

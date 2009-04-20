@@ -13,18 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.content.beans.query;
+package org.hippoecm.hst.content.beans.query.filter;
 
-public class QueryException extends Exception{
-
+public interface BaseFilter {
     
-    private static final long serialVersionUID = 1L;
-
-    public QueryException(String message){
-        super(message);
-    }
-    public QueryException(String message, Throwable th){
-        super(message, th);
-    }
+    String getJcrExpression();
     
+    void addAndFilter(BaseFilter filter);
+
 }
