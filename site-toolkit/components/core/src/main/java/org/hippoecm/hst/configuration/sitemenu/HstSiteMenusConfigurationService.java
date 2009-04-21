@@ -60,8 +60,6 @@ public class HstSiteMenusConfigurationService implements HstSiteMenusConfigurati
            if(siteMenu == null) {
                continue;
            }
-           System.out.println(siteMenu.getPath());
-           
            if(siteMenu.isNodeType(Configuration.NODETYPE_HST_SITEMENU)) {
                try {
                    HstSiteMenuConfiguration hstSiteMenuConfiguration = new HstSiteMenuConfigurationService(this, siteMenu);
