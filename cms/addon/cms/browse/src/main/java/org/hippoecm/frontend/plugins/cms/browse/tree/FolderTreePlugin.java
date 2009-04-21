@@ -21,12 +21,12 @@ import javax.swing.tree.TreePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.tree.ITreeState;
 
-import org.hippoecm.addon.workflow.ContextWorkflowPlugin;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
@@ -71,9 +71,7 @@ public class FolderTreePlugin extends RenderPlugin {
 
             @Override
             protected MarkupContainer newContextContent(MarkupContainer parent, String id, final TreeNode node) {
-                ContextWorkflowPlugin content = new ContextWorkflowPlugin(context, config
-                        .getPluginConfig("workflow.options"));
-                content.bind(FolderTreePlugin.this, id);
+                MarkupContainer content = (MarkupContainer) FolderTreePlugin.this.newPlugin("id", "module.workflow");
                 JcrNodeModel nodeModel = ((IJcrTreeNode) node).getNodeModel();
                 content.setModel(nodeModel);
                 return content;

@@ -34,8 +34,8 @@ public class RenderPlugin extends RenderService implements IPlugin {
 
     private static final long serialVersionUID = 1L;
     
-    private Map<String, IClusterControl> childPlugins = new TreeMap<String,IClusterControl>();
-    long childPluginCounter = 0L;
+    Map<String, IClusterControl> childPlugins = new TreeMap<String,IClusterControl>();
+    static long childPluginCounter = 0L;
 
     public RenderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -60,7 +60,20 @@ public class RenderPlugin extends RenderService implements IPlugin {
         childPlugins.put(id, pluginControl);
         
         IRenderService renderservice = pluginContext.getService(serviceId, IRenderService.class);
-        renderservice.bind(this, id);
-        return renderservice.getComponent();
+        if (renderservice != null) {
+            renderservice.bind(this, id);
+            return renderservice.getComponent();
+        } else {
+            return null;
+        }
+    }
+
+    protected Component newPlugin(String id, String name) {
+        IPluginConfig pluginConfig;
+        pluginConfig = getPluginConfig().getPluginConfig(name);
+        if (pluginConfig == null) {
+            pluginConfig = getPluginConfig().getPluginConfig("../"+name);
+        }
+        return newPlugin(id, pluginConfig);
     }
 }

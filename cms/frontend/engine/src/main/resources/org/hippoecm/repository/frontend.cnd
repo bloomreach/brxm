@@ -48,6 +48,7 @@
 + * (nt:unstructured) multiple //FIXME, needed for cms-reports.xml
 
 [frontend:workflow] > hippo:workflow
++ frontend:renderer (nt:base)
 - frontend:renderer (string)
 - * (string)
 
