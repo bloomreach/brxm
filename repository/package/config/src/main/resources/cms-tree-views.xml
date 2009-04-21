@@ -51,15 +51,26 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>true</sv:value>
       </sv:property>
-      <sv:node sv:name="workflow.options">
+      <sv:node sv:name="module.workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
+          <sv:value>frontend:plugin</sv:value>
         </sv:property>
-        <sv:property sv:name="browser.id" sv:type="String">
-          <sv:value></sv:value>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
         </sv:property>
-        <sv:property sv:name="editor.id" sv:type="String">
-          <sv:value></sv:value>
+        <sv:property sv:name="workflow.categories" sv:type="String">
+          <sv:value>threepane</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="module.addfolder">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderShortcutPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.variant" sv:type="String">
+          <sv:value>addfolder</sv:value>
         </sv:property>
         <sv:property sv:name="workflow.categories" sv:type="String">
           <sv:value>threepane</sv:value>
@@ -166,20 +177,32 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>true</sv:value>
       </sv:property>
-      <sv:node sv:name="workflow.options">
+      <sv:node sv:name="module.workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
+          <sv:value>frontend:plugin</sv:value>
         </sv:property>
-        <sv:property sv:name="browser.id" sv:type="String">
-          <sv:value></sv:value>
-        </sv:property>
-        <sv:property sv:name="editor.id" sv:type="String">
-          <sv:value></sv:value>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
         </sv:property>
         <sv:property sv:name="workflow.categories" sv:type="String">
           <sv:value>threepane</sv:value>
         </sv:property>
-      </sv:node>      <sv:node sv:name="filters">
+      </sv:node>
+      <sv:node sv:name="module.addfolder">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderShortcutPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.variant" sv:type="String">
+          <sv:value>addfolder</sv:value>
+        </sv:property>
+        <sv:property sv:name="workflow.categories" sv:type="String">
+          <sv:value>threepane</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="filters">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
@@ -285,15 +308,26 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>true</sv:value>
       </sv:property>
-      <sv:node sv:name="workflow.options">
+      <sv:node sv:name="module.workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
+          <sv:value>frontend:plugin</sv:value>
         </sv:property>
-        <sv:property sv:name="browser.id" sv:type="String">
-          <sv:value></sv:value>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
         </sv:property>
-        <sv:property sv:name="editor.id" sv:type="String">
-          <sv:value></sv:value>
+        <sv:property sv:name="workflow.categories" sv:type="String">
+          <sv:value>threepane</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="module.addfolder">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderShortcutPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.variant" sv:type="String">
+          <sv:value>addfolder</sv:value>
         </sv:property>
         <sv:property sv:name="workflow.categories" sv:type="String">
           <sv:value>threepane</sv:value>
@@ -405,15 +439,12 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>false</sv:value>
       </sv:property>
-      <sv:node sv:name="workflow.options">
+      <sv:node sv:name="module.workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
+          <sv:value>frontend:plugin</sv:value>
         </sv:property>
-        <sv:property sv:name="browser.id" sv:type="String">
-          <sv:value></sv:value>
-        </sv:property>
-        <sv:property sv:name="editor.id" sv:type="String">
-          <sv:value></sv:value>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
         </sv:property>
         <sv:property sv:name="workflow.categories" sv:type="String">
           <sv:value>threepane</sv:value>
