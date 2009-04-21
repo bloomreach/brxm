@@ -36,6 +36,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -62,8 +66,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FolderShortcutPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -91,26 +93,28 @@ public class FolderShortcutPlugin extends RenderPlugin {
         };
         add(link);
 
-        String path = config.getString("gallery.default");
+        String path = config.getString("option.location");
         if (path != null && !path.equals("")) {
             defaultDropLocation = path;
         }
 
-        try {
-            Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
-            while (defaultDropLocation.startsWith("/")) {
-                defaultDropLocation = defaultDropLocation.substring(1);
+        if (!defaultDropLocation.equals("")) {
+            try {
+                Session jcrSession = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
+                while (defaultDropLocation.startsWith("/")) {
+                    defaultDropLocation = defaultDropLocation.substring(1);
+                }
+                if (!jcrSession.getRootNode().hasNode(defaultDropLocation))
+                    defaultDropLocation = null;
+            } catch (PathNotFoundException ex) {
+                log.warn("No default drop location present");
+                defaultDropLocation = null; // force adding empty panel
+            } catch (RepositoryException ex) {
+                log.warn("Error while accessing default drop location");
+                defaultDropLocation = null; // force adding empty panel
             }
-            if (!jcrSession.getRootNode().hasNode(defaultDropLocation))
-                defaultDropLocation = null;
-        } catch (PathNotFoundException ex) {
-            log.warn("No default drop location present");
-            defaultDropLocation = null; // force adding empty panel
-        } catch (RepositoryException ex) {
-            log.warn("Error while accessing default drop location");
-            defaultDropLocation = null; // force adding empty panel
         }
-
+        
         if (defaultDropLocation == null) {
             link.setVisible(false);
         }
@@ -120,8 +124,8 @@ public class FolderShortcutPlugin extends RenderPlugin {
     @SuppressWarnings("unchecked")
     public static void select(JcrNodeModel nodeModel, IServiceReference<IBrowseService> browseServiceRef,
             IServiceReference<IEditorManager> editServiceRef) {
-        IBrowseService browser = browseServiceRef.getService();
-        IEditorManager editorMgr = editServiceRef.getService();
+        IBrowseService browser = (browseServiceRef != null ? browseServiceRef.getService() : null);
+        IEditorManager editorMgr = (editServiceRef != null ? editServiceRef.getService() : null);
         try {
             if (nodeModel.getNode() != null
                     && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) || nodeModel.getNode().isNodeType(
@@ -129,8 +133,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 if (browser != null) {
                     browser.browse(nodeModel);
                 }
-                if (!nodeModel.getNode().isNodeType("hippostd:folder")
-                        && !nodeModel.getNode().isNodeType("hippostd:directory")) {
+                if (!nodeModel.getNode().isNodeType("hippostd:folder") && !nodeModel.getNode().isNodeType("hippostd:directory")) {
                     if (editorMgr != null) {
                         JcrNodeModel editNodeModel = nodeModel;
                         Node editNodeModelNode = nodeModel.getNode();
@@ -202,7 +205,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             editServiceRef = context.getReference(context.getService(config.getString(IEditorManager.EDITOR_ID),
                     IEditorManager.class));
 
-            String workflowCategory = config.getString("gallery.workflow");
+            String workflowCategory = config.getString("workflow.categories");
             Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
             WorkflowDescriptor folderWorkflowDescriptor = null;
             try {
@@ -329,7 +332,8 @@ public class FolderShortcutPlugin extends RenderPlugin {
             if (templateCategory != null) {
                 final List<String> prototypesList = new LinkedList<String>(templates.get(templateCategory));
                 folderChoice.setChoices(prototypesList);
-                folderChoice.setChoiceRenderer(new TypeChoiceRenderer(this));
+                // FIXME: not all choices here are types, therefore the TypeChoiceRenderer will fail
+                //folderChoice.setChoiceRenderer(new TypeChoiceRenderer(this));
                 if (prototypesList.size() > 1) {
                     folderChoice.setVisible(true);
                     folderChoice.setNullValid(false);
@@ -361,6 +365,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             return new StringResourceModel("new-document-label", this, null);
         }
 
+        @Override
         protected void onOk() {
             if (name == null || "".equals(name)) {
                 error("You need to enter a name");

@@ -46,7 +46,7 @@ public class GalleryShortcutPlugin extends RenderPlugin {
         add(link);
 
         Label label = new Label("label");
-        label.setModel(new StringResourceModel(config.getString("gallery.text"), this, null));
+        label.setModel(new StringResourceModel(config.getString("option.text"), this, null));
         link.add(label);
     }
 }

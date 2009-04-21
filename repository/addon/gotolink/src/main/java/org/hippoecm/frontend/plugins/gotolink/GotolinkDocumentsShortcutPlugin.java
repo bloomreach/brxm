@@ -49,12 +49,12 @@ public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
                 IBrowseService browseService = context.getService(browserId, IBrowseService.class);
                 IBrowseService focusService = context.getService("focus.id", IBrowseService.class);
                 if (browseService != null) {
-                    browseService.browse(new JcrNodeModel(config.getString("gotolink.default","/content")));
+                    browseService.browse(new JcrNodeModel(config.getString("option.location","/content")));
                 } else {
                     log.warn("no browser service found");
                 }
                 if (focusService != null) {
-                    focusService.browse(new JcrNodeModel(config.getString("gotolink.default","/content")));
+                    focusService.browse(new JcrNodeModel(config.getString("option.location","/content")));
                 } else {
                     log.warn("no focus service found");
                 }
