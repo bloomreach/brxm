@@ -61,7 +61,7 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 
-public abstract class CompatibilityWorkflowPlugin<T> extends RenderPlugin implements IActivator {
+public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends RenderPlugin implements IActivator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: AbstractWorkflowPlugin.java 16815 2009-03-11 16:09:10Z fvlankvelt $";
 
@@ -133,7 +133,7 @@ public abstract class CompatibilityWorkflowPlugin<T> extends RenderPlugin implem
                 session.save();
                 session.refresh(true);
                 Workflow workflow = manager.getWorkflow(descriptor);
-                execute(workflow);
+                execute((T)workflow);
                 session.refresh(false);
             } catch (RepositoryException ex) {
                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
@@ -166,7 +166,7 @@ public abstract class CompatibilityWorkflowPlugin<T> extends RenderPlugin implem
             return null;
         }
 
-        protected String execute(Workflow workflow) throws Exception {
+        protected String execute(T workflow) throws Exception {
             throw new WorkflowException("unsupported operation");
         }
 
@@ -219,11 +219,7 @@ public abstract class CompatibilityWorkflowPlugin<T> extends RenderPlugin implem
         }
 
         public class NameDialog extends WorkflowDialog {
-
-            @SuppressWarnings("unused")
-            private final static String SVN_ID = "$Id: AbstractNameDialog.java 15465 2008-12-19 15:50:41Z jtietema $";
             private static final long serialVersionUID = 1L;
-            protected String name;
             private IModel title;
 
             public NameDialog(IModel title, IModel question, PropertyModel nameModel) {
