@@ -25,6 +25,6 @@
 <div>
   <h2>${symbol_dollar}{document.title}</h2>
   <p>${symbol_dollar}{document.summary}</p>
-  <p><hst:html node="${symbol_dollar}{document.html}"/></p>
+  <p><hst:html hippohtml="${symbol_dollar}{document.html}"/></p>
 </div>
 

@@ -5,22 +5,13 @@
 #set($empty = '')
 package ${package}.ocm;
 
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdHtml;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
-@Node(jcrType="${rootArtifactId.replace($hyphen,$empty)}:textpage", discriminator=false)
+@Node(jcrType="${rootArtifactId.replace($hyphen,$empty)}:textpage")
 public class TextPage extends GeneralPage{
 
-	private HippoStdHtml html;
-	
-    @Bean(jcrName="${rootArtifactId.replace($hyphen,$empty)}:body")
-    public HippoStdHtml getHtml(){
-        return html;
+    public HippoHtml getHtml(){
+        return getHippoHtml("{rootArtifactId.replace($hyphen,$empty)}:html");    
     }
-    
-    public void setHtml(HippoStdHtml html) {
-        this.html = html;
-    }
-
 }

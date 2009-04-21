@@ -3,11 +3,11 @@
 #set( $symbol_escape = '\' )
 package ${package}.hstconfiguration.components;
 
-import org.hippoecm.hst.component.support.ocm.BaseHstComponent;
+import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ public class Home extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
 
         super.doBeforeRender(request, response);
-        HippoStdNode  n = getContentNode(request);
+        HippoBean n = this.getContentNode(request);
         
         if(n == null) {
             return;

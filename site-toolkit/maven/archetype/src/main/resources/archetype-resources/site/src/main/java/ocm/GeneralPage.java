@@ -20,30 +20,15 @@
  */
 package ${package}.ocm;
 
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument;
+import org.hippoecm.hst.content.beans.standard.HippoDocument;
 
-public class GeneralPage extends HippoStdDocument {
+public class GeneralPage extends HippoDocument {
 
-    protected String title;
-    protected String summary;
-
-    @Field(jcrName="${rootArtifactId.replace($hyphen,$empty)}:title")
     public String getTitle() {
-        return this.title;
+        return getProperty("${rootArtifactId.replace($hyphen,$empty)}:title");
     }
     
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    @Field(jcrName="${rootArtifactId.replace($hyphen,$empty)}:summary")
     public String getSummary() {
-        return this.summary;
+        return getProperty("${rootArtifactId.replace($hyphen,$empty)}:summary");
     }
-    
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-    
-    
 }

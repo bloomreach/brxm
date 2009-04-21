@@ -3,7 +3,7 @@
 #set( $symbol_escape = '\' )
 package ${package}.hstconfiguration.components;
 
-import org.hippoecm.hst.component.support.ocm.BaseHstComponent;
+import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
