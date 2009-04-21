@@ -85,3 +85,8 @@ body{padding: 15px;}
 .hippo-console-editor *{font-size: 14px; margin-bottom: 4px; margin-top: 4px;}
 .hippo-console-editor strong{color:#666666}
 .hippo-console-editor sup a{color:#32629b}
+
+.hippo-tree-dropdown-icon { background-image: none; }
+.hippo-tree div.wicket-tree div.row{background-image: none; }
+.hippo-tree div.wicket-tree div.row-selected {background-image: none;}
+.hippo-tree div.wicket-tree div.row-selected a {font-weight: normal; color: black;}
