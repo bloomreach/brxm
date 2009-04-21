@@ -69,7 +69,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
-public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin {
+public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWorkflow> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -191,7 +191,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin {
                             return new FolderWorkflowDialog(this, new Model(category), category, prototypes.get(category));
                         }
                         @Override
-                        protected String execute(Workflow wf) throws Exception {
+                        protected String execute(FolderWorkflow wf) throws Exception {
                             FolderWorkflow workflow = (FolderWorkflow) wf;
                             if (prototype == null) {
                                 throw new IllegalArgumentException("You need to select a type");

@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
@@ -40,8 +43,6 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.AbstractRenderService;
 import org.hippoecm.frontend.service.render.ListRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SectionTreePlugin extends ListRenderService implements IPlugin {
     @SuppressWarnings("unused")
@@ -54,7 +55,6 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         IModel focusModel;
         boolean focussed;
         boolean selected;
-        JcrNodeModel childModel;
         AbstractRenderService.ExtensionPoint extPt;
 
         Section(String extension) {
