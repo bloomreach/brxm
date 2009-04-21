@@ -42,7 +42,8 @@ public class HippoDocument extends HippoItem{
             initializedHtml = true;
             Object o = getBean(relPath);
             if(o instanceof HippoHtml) { 
-                return (HippoHtml)html;
+                html = (HippoHtml)o;
+                return html;
             } else {
                 log.warn("Cannot get HippoHtml bean for relPath '{}' because returned bean is of a different class. Return null.", relPath);
                 return null;
