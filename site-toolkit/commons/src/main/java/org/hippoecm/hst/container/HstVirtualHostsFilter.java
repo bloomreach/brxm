@@ -45,8 +45,10 @@ public class HstVirtualHostsFilter implements Filter {
                 return;
             }
             
+            String pathInfo = req.getRequestURI().substring(req.getContextPath().length());
+            
             VirtualHostsManager virtualHostManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
-            if(virtualHostManager.getVirtualHosts().isExcluded(req.getRequestURI())) {
+            if(virtualHostManager.getVirtualHosts().isExcluded(pathInfo)) {
                 chain.doFilter(request, response);
                 return;
             }
@@ -54,7 +56,7 @@ public class HstVirtualHostsFilter implements Filter {
             if (request.getAttribute(FILTER_DONE_KEY) == null) {
                 request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
                 
-                String pathInfo = req.getRequestURI().substring(req.getContextPath().length());
+                
                 
                 MatchedMapping matchedMapping = virtualHostManager.getVirtualHosts().findMapping(req.getServerName(), pathInfo);
                 
