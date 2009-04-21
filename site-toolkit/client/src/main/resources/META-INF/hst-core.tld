@@ -188,7 +188,7 @@
             <description>The variable name of the html tag</description>
         </attribute>
         <attribute>
-            <name>node</name>
+            <name>hippohtml</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
             <type>org.hippoecm.hst.content.beans.standard.HippoHtml</type>
