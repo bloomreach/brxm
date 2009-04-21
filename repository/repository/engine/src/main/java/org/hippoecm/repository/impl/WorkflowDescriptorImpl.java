@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
@@ -58,12 +59,17 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
                 throw new RepositoryException("workflow specification corrupt", ex);
             }
 
-            attributes = new HashMap<String, String>();
-            PropertyIterator properties = node.getProperties();
-            while (properties.hasNext()) {
-                Property p = properties.nextProperty();
+            attributes = new HashMap<String,String>();
+            for (PropertyIterator attributeIter = node.getProperties(); attributeIter.hasNext(); ) {
+                Property p = attributeIter.nextProperty();
                 if (!p.getName().startsWith("hippo:")) {
                     attributes.put(p.getName(), p.getString());
+                }
+            }
+            for (NodeIterator  attributeIter = node.getNodes(); attributeIter.hasNext(); ) {
+                Node n = attributeIter.nextNode();
+                if (!n.getName().startsWith("hippo:")) {
+                    attributes.put(n.getName(), n.getPath());
                 }
             }
         } catch (ValueFormatException ex) {

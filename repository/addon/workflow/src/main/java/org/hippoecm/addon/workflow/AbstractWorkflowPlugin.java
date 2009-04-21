@@ -38,6 +38,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.AbstractView;
@@ -45,7 +46,7 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 
-public abstract class AbstractWorkflowPlugin extends RenderPlugin {
+abstract class AbstractWorkflowPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -58,7 +59,7 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
     private String[] categories;
     protected AbstractView view;
 
-    public AbstractWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+    protected AbstractWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
         if (config.get(CATEGORIES) != null) {
             categories = config.getStringArray(CATEGORIES);
@@ -93,6 +94,9 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
                                     WorkflowDescriptorModel pluginModel = new WorkflowDescriptorModel(descriptor, category, documentNode);
                                     if (pluginRenderer == null || pluginRenderer.trim().equals("")) {
                                         plugin = new StdWorkflowPlugin("item", pluginModel);
+                                    } else if(pluginRenderer.startsWith("/")) {
+                                        plugin = (Panel) this.newPlugin("id", new JcrPluginConfig(new JcrNodeModel(documentNode.getSession().getRootNode().getNode(pluginRenderer.substring(1)))));
+                                        plugin.setModel(pluginModel);
                                     } else {
                                         Class pluginClass = Class.forName(pluginRenderer);
                                         if(IPlugin.class.isAssignableFrom(pluginClass)) {
@@ -105,7 +109,7 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
                                             plugin = (Panel) pluginClass.getConstructor(new Class[]{String.class, WorkflowDescriptorModel.class}).newInstance(new Object[]{"item", pluginModel});
                                             plugin.setModel(pluginModel);
                                         } else {
-                                            plugin = new Panel("item");
+                                            plugin = new Panel("id");
                                         }
                                     }
                                     if (plugin != null) {
