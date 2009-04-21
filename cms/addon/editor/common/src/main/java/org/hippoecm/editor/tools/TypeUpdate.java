@@ -20,8 +20,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class TypeUpdate implements Serializable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public String newName;
