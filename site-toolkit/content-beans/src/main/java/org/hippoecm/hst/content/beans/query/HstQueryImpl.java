@@ -15,12 +15,16 @@
  */
 package org.hippoecm.hst.content.beans.query;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
@@ -42,6 +46,7 @@ public class HstQueryImpl implements HstQuery {
     private int offset = -1;
     private BaseFilter filter;
     private Node scope;
+    private List<String> orderByList = new ArrayList<String>();
 
     public HstQueryImpl(HstRequestContext hstRequestContext, ObjectConverter objectConverter, Node scope) {
         this.hstRequestContext = hstRequestContext;
@@ -51,11 +56,11 @@ public class HstQueryImpl implements HstQuery {
 
    
     public void addOrderByAscending(String fieldNameAttribute) {
-
+        orderByList.add("@"+fieldNameAttribute + " ascending");
     }
 
     public void addOrderByDescending(String fieldNameAttribute) {
-
+        orderByList.add("@"+fieldNameAttribute + " descending");
     }
     
     public BaseFilter getFilter() {
@@ -98,6 +103,18 @@ public class HstQueryImpl implements HstQuery {
         query.insert(0, "//*[");
         query.append("]");
         
+        if(orderByList.size() > 0) {
+            query.append(" order by ");
+            boolean first = true;
+            for(String orderBy : orderByList) {
+                if(!first) {
+                    query.append(",");
+                }
+                query.append(orderBy);
+                first = false;
+            }
+        }
+        log.debug("Query to execute is '{}'", query.toString());
         return query.toString();
     }
     
@@ -117,7 +134,10 @@ public class HstQueryImpl implements HstQuery {
             } else {
                 log.warn("Query not instanceof of HippoQuery: cannot set limit and offset");
             }
-            return new HstQueryResultImpl(this.objectConverter, jcrQuery.execute());
+            long start = System.currentTimeMillis();
+            QueryResult queryResult = jcrQuery.execute();
+            log.debug("Executing query took --({})-- ms to complete for '{}'", (System.currentTimeMillis() - start), query);
+            return new HstQueryResultImpl(this.objectConverter, queryResult);
         } catch (InvalidQueryException e) {
             throw new QueryException(e.getMessage(), e);
         } catch (LoginException e) {

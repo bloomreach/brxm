@@ -27,6 +27,10 @@ public class SimpleSearchExample {
             // do the search
             try {
                 HstQuery hstQuery = base.getQueryManager().createQuery(request.getRequestContext(), base.getSiteContentBaseNode(request));
+                
+                hstQuery.addOrderByDescending("testproject:title");
+                hstQuery.addOrderByAscending("testproject:date");
+                
                 Filter filter = new FilterImpl();
                 filter.addContains(".", query);
                 hstQuery.setFilter(filter);

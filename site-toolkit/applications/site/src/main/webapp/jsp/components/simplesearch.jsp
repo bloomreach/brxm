@@ -44,7 +44,7 @@
             <li >  
             <hst:link var="link" hippobean="${bean}"/>
             <a href="${link}">
-            ${bean.name}
+            ${bean.name} 
             </a>
             <br/>
             </li>
