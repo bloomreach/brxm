@@ -27,6 +27,7 @@
   <sv:property sv:name="hippo:paths" sv:type="String">
   </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
+    <sv:value>New Folder</sv:value>
   </sv:property>
   <sv:node sv:name="documents" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -41,7 +42,6 @@
     <sv:property sv:name="hippo:paths" sv:type="String">
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
-      <sv:value>New Document</sv:value>
       <sv:value>New Folder</sv:value>
     </sv:property>
     <sv:node sv:name="articles">

@@ -61,7 +61,7 @@ public class UploadDialog extends AbstractDialog {
     }
 
     public String getWorkflowCategory() {
-        return pluginConfig.getString("gallery.workflow", "");
+        return pluginConfig.getString("workflow.categories", "");
     }
 
     public IWizardModel getWizardModel() {
@@ -69,7 +69,7 @@ public class UploadDialog extends AbstractDialog {
     }
 
     public IModel getTitle() {
-        return new StringResourceModel(pluginConfig.getString("gallery.text", ""), this, null);
+        return new StringResourceModel(pluginConfig.getString("option.text", ""), this, null);
     }
 
     public int getThumbnailSize() {
@@ -87,7 +87,7 @@ public class UploadDialog extends AbstractDialog {
                     return (Node) modelObject;
                 }
             }
-            String location = pluginConfig.getString("gallery.default");
+            String location = pluginConfig.getString("option.location");
             if (location != null) {
                 while (location.startsWith("/")) {
                     location = location.substring(1);

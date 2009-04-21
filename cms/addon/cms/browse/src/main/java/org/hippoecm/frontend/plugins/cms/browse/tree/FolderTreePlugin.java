@@ -27,6 +27,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.tree.ITreeState;
 
+import org.hippoecm.addon.workflow.ContextWorkflowPlugin;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
@@ -71,7 +72,8 @@ public class FolderTreePlugin extends RenderPlugin {
 
             @Override
             protected MarkupContainer newContextContent(MarkupContainer parent, String id, final TreeNode node) {
-                MarkupContainer content = (MarkupContainer) FolderTreePlugin.this.newPlugin("id", "module.workflow");
+                ContextWorkflowPlugin content = new ContextWorkflowPlugin(context, config.getPluginConfig("module.workflow"));
+                content.bind(FolderTreePlugin.this, id);
                 JcrNodeModel nodeModel = ((IJcrTreeNode) node).getNodeModel();
                 content.setModel(nodeModel);
                 return content;
@@ -96,6 +98,19 @@ public class FolderTreePlugin extends RenderPlugin {
         add(tree);
 
         tree.setRootLess(config.getBoolean("rootless"));
+
+        Component addLink = null;
+        if(config.getBoolean("rootless")) {
+            addLink = this.newPlugin("id", "module.addfolder");
+            if(addLink != null) {
+                addLink.setModel(rootModel);
+            }
+        }
+        if(addLink == null) {
+            addLink = new Label("id");
+            addLink.setVisible(false);
+        }
+        add(addLink);
 
         onModelChanged();
     }
