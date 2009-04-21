@@ -15,11 +15,14 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -47,6 +50,10 @@ public class HippoItem implements HippoBean{
 
     public void setObjectConverter(ObjectConverter objectConverter) {
        this.objectConverter = objectConverter;
+    }
+    
+    public ObjectConverter getObjectConverter(){
+        return this.objectConverter;
     }
 
     public void setNode(Node node) {
@@ -91,19 +98,60 @@ public class HippoItem implements HippoBean{
         return properties;
     }
     
-    public HippoBean getBean(String relPath) {
+    public <T> T getBean(String relPath) {
         try {
             Object o = this.objectConverter.getObject(node, relPath);
-            if(o instanceof HippoBean) {
-                return (HippoBean)o;
-            } else {
-                log.warn("Bean is not an instance of HippoBean. Return null : ", o);
+            if(o == null) {
+                log.debug("Cannot get bean.");
+                return null;
             }
-            
-        } catch (ObjectBeanManagerException e) {
+            try {
+            return (T)o;
+            } catch (ClassCastException e) {
+                log.warn("Cannot get bean because cannot cast {} to the requested class. Return null.", o.getClass());  
+            }
+         }
+        catch (ObjectBeanManagerException e) {
             log.warn("Cannot get Object at relPath '{}' for '{}'", relPath, this.getPath());
         } 
         return null;
+    }
+    
+    public <T> List<T> getChildBeans(String jcrPrimaryNodeType) {
+         Class annotatedClass = this.objectConverter.getAnnotatedClassFor(jcrPrimaryNodeType);
+         if(annotatedClass == null) {
+             log.warn("Cannot get ChildBeans for jcrPrimaryNodeType '{}' because there is no annotated class for this node type. Return null");
+             return new ArrayList<T>();
+         }
+         if(this.node == null) {
+             log.warn("Cannot get ChildBeans for jcrPrimaryNodeType '{}' because the jcr node is detached. ");
+             return new ArrayList<T>();
+         }
+         
+         List<T> childBeans = new ArrayList<T>();
+         NodeIterator nodes;
+        try {
+            nodes = node.getNodes();
+            while(nodes.hasNext()) {
+                Node child = nodes.nextNode();
+                if(child == null) {continue;}
+                if(child.getPrimaryNodeType().getName().equals(jcrPrimaryNodeType)) {
+                    try {
+                        Object bean = this.objectConverter.getObject(child);
+                        if(bean != null && annotatedClass.isAssignableFrom(bean.getClass())) {
+                            childBeans.add((T)bean);
+                        }
+                    } catch (ObjectBeanManagerException e) {
+                       log.warn("Skipping bean: {}", e);
+                    }
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("RepositoryException: Cannot get ChildBeans for jcrPrimaryNodeType: {}", e);
+            return new ArrayList<T>();
+        }
+        
+        return childBeans;
     }
     
     public HippoBean getParentBean(){

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -47,7 +48,7 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * @param relPath
      * @return return the HippoBean with relative path wrt to this bean
      */
-    HippoBean getBean(String relPath);
+    <T> T getBean(String relPath);
     
     /**
      * Returns the parent bean wrt this bean. Note that this does not automatically imply
@@ -64,6 +65,12 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * @param compare the object to compare to
      * @return <code>true</code> if the object compared has the same canonical node
      */
+    
+    /**
+     * @return List<HippoBean> where the backing jcr nodes are of type jcrPrimaryNodeType
+     */
+    <T> List<T> getChildBeans(String jcrPrimaryNodeType);
+    
     boolean equalCompare(Object compare);
     
     /**

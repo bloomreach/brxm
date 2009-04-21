@@ -170,6 +170,19 @@ public class ObjectConverterImpl implements ObjectConverter {
         return null;
     }
 
+    public Class getAnnotatedClassFor(String jcrPrimaryNodeType) {
+        Class [] proxyInterfacesOrDelegateeClass = null;
+        KeyValue<String, Class[]> jcrPrimaryNodeTypePair = new DefaultKeyValue<String, Class[]>(jcrPrimaryNodeType, null, true);
+        int offset = this.jcrPrimaryNodeTypeClassPairs.indexOf(jcrPrimaryNodeTypePair);
+        
+        if (offset != -1) {
+            KeyValue<String, Class[]> pair = this.jcrPrimaryNodeTypeClassPairs.get(offset);
+            proxyInterfacesOrDelegateeClass = pair.getValue();
+            return proxyInterfacesOrDelegateeClass[0];
+        } 
+        return null;
+    }
+    
     private void checkUUID(String uuid) throws ObjectBeanManagerException{
         try {
             UUID uuidObj = UUID.fromString(uuid);

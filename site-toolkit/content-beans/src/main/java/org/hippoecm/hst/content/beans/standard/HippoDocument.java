@@ -30,13 +30,13 @@ public class HippoDocument extends HippoItem{
      * @return <code>HippoHtml</code> or <code>null</code> if no node exists as relPath or no node of type "hippostd:html"
      */
     public HippoHtml getHippoHtml(String relPath) {
-        // you cannot check for html not being null, because getObject might return null. Therefor, use 
+        // you cannot check for html not being null, because getObject might return null. Therefore, use 
         // boolean initializedHtml
         if(initializedHtml) {
             return html;
         } else {
             initializedHtml = true;
-            html = (HippoHtml)getBean(relPath);
+            html = getBean(relPath);
             return html;
         }
     }

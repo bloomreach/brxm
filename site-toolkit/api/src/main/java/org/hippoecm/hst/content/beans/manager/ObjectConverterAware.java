@@ -29,4 +29,8 @@ public interface ObjectConverterAware {
      */
     void setObjectConverter(ObjectConverter objectConverter);
     
+    /**
+     * @return the ObjectConverter
+     */
+    ObjectConverter getObjectConverter();
 }

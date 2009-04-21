@@ -42,4 +42,10 @@ public interface ObjectConverter
     
     Object getObject(String uuid, Node node) throws ObjectBeanManagerException;
     
+    /**
+     * @param jcrPrimaryNodeType
+     * @return the annotated <code>Class</code> for this jcrPrimaryNodeType or <code>null</code> if no annotated class can be found
+     */
+    Class getAnnotatedClassFor(String jcrPrimaryNodeType);
+    
 }
