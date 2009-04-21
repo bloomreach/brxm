@@ -105,11 +105,7 @@ public class HippoItem implements HippoBean{
                 log.debug("Cannot get bean.");
                 return null;
             }
-            try {
             return (T)o;
-            } catch (ClassCastException e) {
-                log.warn("Cannot get bean because cannot cast {} to the requested class. Return null.", o.getClass());  
-            }
          }
         catch (ObjectBeanManagerException e) {
             log.warn("Cannot get Object at relPath '{}' for '{}'", relPath, this.getPath());
