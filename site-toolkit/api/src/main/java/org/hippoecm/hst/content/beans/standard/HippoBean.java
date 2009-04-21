@@ -21,10 +21,13 @@ import javax.jcr.Node;
 
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.manager.ObjectConverterAware;
+import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 
 public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<HippoBean> {
 
     Node getNode();
+    
+    JCRValueProvider getValueProvider();
 
     String getName();
 
@@ -40,8 +43,18 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      */
     Map<String, Object> getProperty();
     
+    /**
+     * @param relPath
+     * @return return the HippoBean with relative path wrt to this bean
+     */
     HippoBean getBean(String relPath);
     
+    /**
+     * Returns the parent bean wrt this bean. Note that this does not automatically imply
+     * a bean with the parent jcr node of this bean. When the parent node is of type "hippo:handle",
+     * the parent of the handle must be taken
+     * @return the parent bean wrt this bean. 
+     */
     HippoBean getParentBean();
     
     /**

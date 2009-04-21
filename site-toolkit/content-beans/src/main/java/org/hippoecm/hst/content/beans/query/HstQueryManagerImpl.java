@@ -15,9 +15,11 @@
  */
 package org.hippoecm.hst.content.beans.query;
 
+import javax.jcr.Node;
+
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.query.HstQuery;
-import org.hippoecm.hst.content.beans.query.HstQueryManager;
+import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 
@@ -29,8 +31,15 @@ public class HstQueryManagerImpl implements HstQueryManager{
         this.objectConverter = objectConverter;
     }
     
-    public HstQuery createQuery(HstRequestContext hstRequestContext) {
-        return new HstQueryImpl(hstRequestContext, this.objectConverter);
+    public HstQuery createQuery(HstRequestContext hstRequestContext, Node scope) throws QueryException {
+        return new HstQueryImpl(hstRequestContext, this.objectConverter, scope);
+    }
+    
+    public HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope) throws QueryException{
+        if(scope.getNode() == null) {
+            throw new QueryException("Cannot create a query for a detached HippoBean where the jcr node is null");
+        }
+        return createQuery(hstRequestContext, scope.getNode());
     }
     
 }

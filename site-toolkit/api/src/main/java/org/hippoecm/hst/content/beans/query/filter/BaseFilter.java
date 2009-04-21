@@ -19,6 +19,4 @@ public interface BaseFilter {
     
     String getJcrExpression();
     
-    void addAndFilter(BaseFilter filter);
-
 }

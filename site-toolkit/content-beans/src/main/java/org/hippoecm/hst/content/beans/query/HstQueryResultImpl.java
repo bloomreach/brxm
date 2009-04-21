@@ -34,7 +34,7 @@ public class HstQueryResultImpl implements HstQueryResult {
         this.queryResult = queryResult;
     }
 
-    public HippoBeanIterator getHippoBeanIterator() {
+    public HippoBeanIterator getHippoBeans() {
         try {
             return new HippoBeanIteratorImpl(this.objectConverter, this.queryResult.getNodes());
         } catch (RepositoryException e) {

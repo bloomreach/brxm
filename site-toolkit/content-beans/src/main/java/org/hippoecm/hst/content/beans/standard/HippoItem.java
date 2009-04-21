@@ -58,6 +58,10 @@ public class HippoItem implements HippoBean{
         return node;
     }
     
+    public JCRValueProvider getValueProvider(){
+        return this.valueProvider;
+    }
+    
     public String getName() {
         return valueProvider.getName();
     }
@@ -109,6 +113,9 @@ public class HippoItem implements HippoBean{
                 log.warn("Cannot return parent bean for detached bean. Return null");
                 return null;
             } 
+            if(parentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                parentNode = parentNode.getParent();
+            }
             Object o = this.objectConverter.getObject(parentNode);
             if(o instanceof HippoBean) {
                 return (HippoBean)o;
@@ -116,6 +123,8 @@ public class HippoItem implements HippoBean{
                 log.warn("Bean is not an instance of HippoBean. Return null : ", o);
             }
         } catch (ObjectBeanManagerException e) {
+            log.warn("Failed to get parent object for '{}'", this.getPath());
+        }  catch (RepositoryException e) {
             log.warn("Failed to get parent object for '{}'", this.getPath());
         } 
         return null;

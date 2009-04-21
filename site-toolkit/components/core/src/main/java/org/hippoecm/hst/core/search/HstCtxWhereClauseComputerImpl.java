@@ -36,8 +36,8 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
         try {
             path = node.getPath();
             if(!(node instanceof HippoNode)) {
-                log.warn("Cannot compute a ctx where clause for a non HippoNode '{}'. Return", node.getPath());
-                return null;
+                log.warn("Cannot compute a ctx where clause for a non HippoNode '{}'", node.getPath());
+                throw new HstContextWhereClauseException("Cannot compute a ctx where clause for a non HippoNode : " + node.getPath());
             }
             
             HippoNode hnode = (HippoNode)node;
@@ -45,8 +45,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             
             if(canonical == null) {
                 log.warn("Cannot compute a ctx where clause for a node that does not have a physical equivalence: '{}'. Return", node.getPath());
-                
-                return null;
+                throw new HstContextWhereClauseException("Cannot compute a ctx where clause for a node that does not have a physical equivalence : " + node.getPath());
             }
             else if (canonical.isSame(node)){
                 // either the site content root node (hst:content) or just a physical node.
@@ -55,9 +54,10 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                    facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("'");
                    getFacetSelectClauses(hstRequestContext.getSession(), hnode, facetSelectClauses , false);
                 } else {
-                    // We are not searching in a virtual structure: return null, there is no context where
-                    log.debug("Not a search in a virtual structure. Return null for the ctx where clause");
-                    return null;
+                    // We are not searching in a virtual structure: return "" , there is no context where, and thus no filter on the search
+                    log.debug("Not a search in a virtual structure. Return \"\" for the ctx where clause");
+                    // return '' : no filter will be applied
+                    return "";
                 }
             } else {
                 // we are searching in a virtual node. Let's compute the context where clause to represent this in a physical search
@@ -73,7 +73,8 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
         
         if(facetSelectClauses.length() == 0) {
             log.warn("No ctx where clause found");
-            return null;
+            // return '' : no filter will be applied
+            return "";
         }
         facetSelectClauses.append(" and not(@jcr:primaryType='nt:frozenNode')");
         log.debug("For node '{}' the ctxWhereClause is '{}'", path , facetSelectClauses.toString());

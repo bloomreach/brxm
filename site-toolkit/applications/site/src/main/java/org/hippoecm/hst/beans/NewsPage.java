@@ -31,4 +31,6 @@ public class NewsPage extends GeneralPage {
     }
     
     
+    
+    
 }

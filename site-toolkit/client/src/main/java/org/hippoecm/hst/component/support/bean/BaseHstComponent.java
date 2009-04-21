@@ -81,15 +81,24 @@ public class BaseHstComponent extends GenericHstComponent {
         }
     }
 
-    protected String getParameter(String name, HstRequest request) {
+    public String getParameter(String name, HstRequest request) {
         return (String)this.getComponentConfiguration().getParameter(name, request.getRequestContext().getResolvedSiteMapItem());
     }
     
-    protected  Map<String,String> getParameters(HstRequest request){
+    public  Map<String,String> getParameters(HstRequest request){
         return this.getComponentConfiguration().getParameters(request.getRequestContext().getResolvedSiteMapItem());
     }
     
-    protected HippoBean getContentNode(HstRequest request) {
+    public String getPublicRequestParameter(HstRequest request, String parameterName){
+        Map<String, Object> namespaceLessParameters = request.getParameterMap("");
+        Object o = namespaceLessParameters.get(parameterName);
+        if(o instanceof String) {
+            return (String)o;
+        }
+        return null;
+    }
+    
+    public HippoBean getContentNode(HstRequest request) {
         ResolvedSiteMapItem resolvedSitemapItem = request.getRequestContext().getResolvedSiteMapItem();
         
         String base = PathUtils.normalizePath(resolvedSitemapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
@@ -107,7 +116,7 @@ public class BaseHstComponent extends GenericHstComponent {
         
     }
     
-    protected HippoBean getSiteContentBaseNode(HstRequest request) {
+    public HippoBean getSiteContentBaseNode(HstRequest request) {
         ResolvedSiteMapItem resolvedSitemapItem = request.getRequestContext().getResolvedSiteMapItem();
         String base = PathUtils.normalizePath(resolvedSitemapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
         try {
@@ -118,11 +127,11 @@ public class BaseHstComponent extends GenericHstComponent {
         return null;
     }
     
-    protected HstQueryManager getQueryManager(){
+    public HstQueryManager getQueryManager(){
        return this.queryManager;
     }
     
-    protected ObjectBeanManager getObjectBeanManager(HstRequest request) {
+    public ObjectBeanManager getObjectBeanManager(HstRequest request) {
         HstRequestContext requestContext = request.getRequestContext();
         ObjectBeanManager obm = (ObjectBeanManager) requestContext.getAttribute(BEANS_REQUEST_CONTEXT_ATTR_NAME);
         if (obm == null) {
@@ -174,7 +183,7 @@ public class BaseHstComponent extends GenericHstComponent {
         }
     }
 
-    protected ObjectConverter getObjectConverter() {
+    public ObjectConverter getObjectConverter() {
         // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
         List<KeyValue<String, Class[]>> jcrPrimaryNodeTypeClassPairs = new TreeList();
         List<Class> annotatedClasses = getAnnotatedClassNames();

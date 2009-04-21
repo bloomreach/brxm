@@ -21,5 +21,5 @@ public interface HstQueryResult {
     
     public int getSize();
     
-    public HippoBeanIterator getHippoBeanIterator();
+    public HippoBeanIterator getHippoBeans();
 }

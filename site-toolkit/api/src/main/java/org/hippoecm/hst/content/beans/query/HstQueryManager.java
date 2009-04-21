@@ -15,13 +15,26 @@
  */
 package org.hippoecm.hst.content.beans.query;
 
+import javax.jcr.Node;
+
+import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public interface HstQueryManager {
 
     /**
      * @param hstRequestContext
-     * @return a new empty <code>{@link HstQuery}</code>
+     * @param scope 
+     * @return a new <code>{@link HstQuery}</code> with scope 
      */
-    HstQuery createQuery(HstRequestContext hstRequestContext);
+    HstQuery createQuery(HstRequestContext hstRequestContext, Node scope) throws QueryException;
+    
+
+    /**
+     * @param hstRequestContext
+     * @param scope 
+     * @return a new <code>{@link HstQuery}</code> with scope 
+     */
+    HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope) throws QueryException;
 }

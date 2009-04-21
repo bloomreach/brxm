@@ -129,7 +129,7 @@ public class FilterImpl implements Filter{
     // TODO support for Long, Int, Boolean, Calendar, etc etc
     private String getStringValue(String fieldAttributeName, Object value) throws FilterException{
         if(value instanceof String) {
-            return (String)value;
+            return "'" + value + "'";
         }
         throw new FilterException("Unsupported Object type '"+value.getClass().getName()+"' to query on.");
     }

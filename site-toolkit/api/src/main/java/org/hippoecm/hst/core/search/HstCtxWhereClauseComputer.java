@@ -36,7 +36,7 @@ public interface HstCtxWhereClauseComputer {
      * @param node the <code>{@link Node}</code> below which (in other words the scope) the search is done
      * @param hstRequestContext the current <code>HstRequestContext</code>
      * @return the string containing the xpath where clause (without the enclosing '[' and ']') or <code>null</code> when it cannot 
-     * compute one
+     * compute one. If there is no where clause, for example because the node is the jcr root node, just "" should be returned
      * @throws HstContextWhereClauseException 
      */
     public String getCtxWhereClause(Node node, HstRequestContext hstRequestContext) throws HstContextWhereClauseException;

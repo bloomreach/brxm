@@ -15,24 +15,15 @@
  */
 package org.hippoecm.hst.content.beans.query;
 
-import javax.jcr.Node;
-
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.filter.BaseFilter;
 
 public interface HstQuery {
 
-   /**
-    * Sets the scope below which to search. If you do not set a scope, you will search regardless the subsite, and
-    * regardless live of preview. 
-    * @param node
-    */
-    void setScope(Node node);
-   
     void setFilter(BaseFilter filter);
-    
+
     BaseFilter getFilter();
-   
+
     /**
      * Sets the limit of search results
      * @param offset
@@ -50,14 +41,14 @@ public interface HstQuery {
      * @param fieldNameAttribute the name of the field used to sort the search result
      */
     void addOrderByAscending(String fieldNameAttribute);
-    
+
     /**
      * Order the object found (descending)
      * @param fieldNameAttribute the name of the field used to sort the search result
      */
-    
+
     void addOrderByDescending(String fieldNameAttribute);
-    
+
     /**
      * 
      * @return <code>{@link HstQueryResult}</code>

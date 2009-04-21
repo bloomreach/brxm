@@ -55,5 +55,6 @@ public class HippoDocument extends HippoItem{
         this.html = null;
         this.initializedHtml = false;
     }
+
     
 }
