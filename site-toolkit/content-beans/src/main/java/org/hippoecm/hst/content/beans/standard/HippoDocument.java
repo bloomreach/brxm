@@ -18,10 +18,14 @@ package org.hippoecm.hst.content.beans.standard;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Node(jcrType="hippo:document")
 public class HippoDocument extends HippoItem{
 
+    private static Logger log = LoggerFactory.getLogger(HippoDocument.class);
+    
     private HippoHtml html;
     private boolean initializedHtml;
     
@@ -36,8 +40,13 @@ public class HippoDocument extends HippoItem{
             return html;
         } else {
             initializedHtml = true;
-            html = getBean(relPath);
-            return html;
+            Object o = getBean(relPath);
+            if(o instanceof HippoHtml) { 
+                return (HippoHtml)html;
+            } else {
+                log.warn("Cannot get HippoHtml bean for relPath '{}' because returned bean is of a different class. Return null.", relPath);
+                return null;
+            }
         }
     }
 
