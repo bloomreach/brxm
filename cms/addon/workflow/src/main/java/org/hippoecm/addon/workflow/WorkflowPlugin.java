@@ -27,7 +27,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderService;
 
-public class WorkflowPlugin extends AbstractWorkflowPlugin {
+public final class WorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
