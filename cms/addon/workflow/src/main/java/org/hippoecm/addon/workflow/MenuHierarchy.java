@@ -93,7 +93,9 @@ class MenuHierarchy {
         this.items = new LinkedList<ActionDescription>();
         for(MenuHierarchy submenu : submenus.values()) {
             for(ActionDescription action : submenu.items) {
-                put(action);
+                if(action.isVisible()) {
+                    put(action);
+                }
             }
         }
     }

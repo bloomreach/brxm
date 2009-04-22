@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
@@ -77,6 +78,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
     private static Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
 
+    private WorkflowAction reorderAction;
+    
     public FolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
@@ -147,7 +150,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             }
         });
 
-        add(new WorkflowAction("reorder", new StringResourceModel("reorder-folder", this, null)) {
+        add(reorderAction = new WorkflowAction("reorder", new StringResourceModel("reorder-folder", this, null)) {
             public List<String> order = new LinkedList<String>();
             @Override
             protected Dialog createRequestDialog() {
@@ -181,7 +184,13 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
                 Workflow workflow = manager.getWorkflow(descriptor);
                 FolderWorkflow folderWorkflow = (FolderWorkflow) workflow;
-                final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) folderWorkflow.hints().get("prototypes");
+                Map<String,Serializable> hints = folderWorkflow.hints();
+
+                if(hints.containsKey("reorder") && hints.get("reorder") instanceof Boolean) {
+                    reorderAction.setVisible(((Boolean)hints.get("reorder")).booleanValue());
+                }
+                
+                final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
                 for (final String category : prototypes.keySet()) {
                     list.add(new WorkflowAction("id", category, new ResourceReference(getClass(), "document-new-16.png")) {
                         public String prototype;
