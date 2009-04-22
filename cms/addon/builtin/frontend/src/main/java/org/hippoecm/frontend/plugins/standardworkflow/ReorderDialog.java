@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standardworkflow.reorder;
+package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -58,7 +58,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModi
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 
-public class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
+class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -331,7 +331,7 @@ public class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.Wo
         }
     }
 
-    public ReorderDialog(CompatibilityWorkflowPlugin.WorkflowAction action, IPluginConfig pluginConfig, WorkflowDescriptorModel model, List<String> mapping) {
+    ReorderDialog(CompatibilityWorkflowPlugin.WorkflowAction action, IPluginConfig pluginConfig, WorkflowDescriptorModel model, List<String> mapping) {
         action.super();
         this.model = model;
         this.mapping = mapping;
