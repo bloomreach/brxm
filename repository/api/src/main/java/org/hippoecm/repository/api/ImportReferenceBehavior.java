@@ -21,7 +21,6 @@ package org.hippoecm.repository.api;
  * parameter in {@link HippoSession#importDereferencedXML}, and
  * {@link HippoSession#getDereferencedImportContentHandler}.
  */
-
 public interface ImportReferenceBehavior {
     final static String SVN_ID = "$Id$";
 

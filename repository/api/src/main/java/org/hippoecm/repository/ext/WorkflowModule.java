@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository.ext;
 
-import javax.jcr.RepositoryException;
-
 import org.hippoecm.repository.api.WorkflowManager;
 
 public interface WorkflowModule {
