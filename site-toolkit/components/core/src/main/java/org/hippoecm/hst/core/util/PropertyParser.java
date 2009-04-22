@@ -46,11 +46,11 @@ public class PropertyParser extends PropertyPlaceholderConfigurer {
               s = this.parseStringValue((String)o, properties, exprSet );
             } catch (BeanDefinitionStoreException e) {
               if(log.isDebugEnabled()) {
-                  log.debug("Unable to replace property expression for property '{}'. Return null : '{}'" ,name, e);
-                  return null;
+                  log.debug("Unable to replace property expression for property '{}'. Return null : '{}'" ,name, e); 
               } else if (log.isWarnEnabled()) {
                   log.warn("Unable to replace property expression for property '{}'. Return original value '{}'.",name, s);
               }
+              return null;
               
             }
             
