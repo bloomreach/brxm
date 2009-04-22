@@ -53,7 +53,7 @@ import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standardworkflow.reorder.ReorderDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.ReorderDialog;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
