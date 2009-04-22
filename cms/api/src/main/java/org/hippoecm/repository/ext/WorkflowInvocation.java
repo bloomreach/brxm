@@ -22,7 +22,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
 
 public interface WorkflowInvocation extends Externalizable {
     final static String SVN_ID = "$Id$";

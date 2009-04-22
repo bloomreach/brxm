@@ -15,14 +15,12 @@
  */
 package org.hippoecm.repository.api;
 
-
 /**
  * WARNING: this api is not yet stable!
  * The possible actions specified by the <code>mergeBehavior</code>
  * parameter in {@link HippoSession#importDereferencedXML}, and
  * {@link HippoSession#getDereferencedImportContentHandler}.
  */
-
 public interface ImportMergeBehavior {
     final static String SVN_ID = "$Id$";
 
@@ -31,5 +29,4 @@ public interface ImportMergeBehavior {
     public static final int IMPORT_MERGE_ADD_OR_SKIP = 2; // try add first else skip
     public static final int IMPORT_MERGE_ADD_OR_OVERWRITE = 3; //try add first else overwrite
     public static final int IMPORT_MERGE_THROW = 4;
-
 }
