@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.Node;
@@ -26,26 +29,27 @@ public class HippoDocument extends HippoItem{
 
     private static Logger log = LoggerFactory.getLogger(HippoDocument.class);
     
-    private HippoHtml html;
-    private boolean initializedHtml;
+    private Map<String, HippoHtmlWrapper> htmls = new HashMap<String, HippoHtmlWrapper>();
     
     /**
      * @param relPath
      * @return <code>HippoHtml</code> or <code>null</code> if no node exists as relPath or no node of type "hippostd:html"
      */
     public HippoHtml getHippoHtml(String relPath) {
-        // you cannot check for html not being null, because getObject might return null. Therefore, use 
-        // boolean initializedHtml
-        if(initializedHtml) {
-            return html;
+        HippoHtmlWrapper wrapped = htmls.get(relPath);
+        if(wrapped != null) {
+            return wrapped.html;
         } else {
-            initializedHtml = true;
             Object o = getBean(relPath);
             if(o instanceof HippoHtml) { 
-                html = (HippoHtml)o;
-                return html;
+                wrapped = new HippoHtmlWrapper((HippoHtml)o);
+                htmls.put(relPath, wrapped);
+                return wrapped.html;
             } else {
                 log.warn("Cannot get HippoHtml bean for relPath '{}' because returned bean is of a different class. Return null.", relPath);
+                // even when null, put it in the map to avoid being refetched
+                wrapped = new HippoHtmlWrapper((HippoHtml)null);
+                htmls.put(relPath, wrapped);
                 return null;
             }
         }
@@ -54,17 +58,23 @@ public class HippoDocument extends HippoItem{
     @Override
     public void detach(){
         super.detach();
-        if(this.html != null) {
-            this.html.detach();
+        for(HippoHtmlWrapper wrapperHtml : this.htmls.values()) {
+            if(wrapperHtml.html!= null) {
+                wrapperHtml.html.detach();
+            }
         }
     }
     
     @Override
     public void attach(Session session){
         super.attach(session);
-        this.html = null;
-        this.initializedHtml = false;
+        this.htmls.clear();
     }
 
-    
+    private class HippoHtmlWrapper{
+        private HippoHtml html;
+        private HippoHtmlWrapper(HippoHtml html){
+            this.html = html;
+        }
+    }
 }
