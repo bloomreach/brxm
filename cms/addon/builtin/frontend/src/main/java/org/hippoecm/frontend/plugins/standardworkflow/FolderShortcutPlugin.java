@@ -332,8 +332,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             if (templateCategory != null) {
                 final List<String> prototypesList = new LinkedList<String>(templates.get(templateCategory));
                 folderChoice.setChoices(prototypesList);
-                // FIXME: not all choices here are types, therefore the TypeChoiceRenderer will fail
-                //folderChoice.setChoiceRenderer(new TypeChoiceRenderer(this));
+                folderChoice.setChoiceRenderer(new TypeChoiceRenderer(this));
                 if (prototypesList.size() > 1) {
                     folderChoice.setVisible(true);
                     folderChoice.setNullValid(false);
@@ -399,7 +398,5 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 error(ex.getMessage());
             }
         }
-
     }
-
 }

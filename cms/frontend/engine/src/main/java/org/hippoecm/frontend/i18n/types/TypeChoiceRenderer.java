@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.hippoecm.frontend.i18n.types;
 
 import org.apache.wicket.Component;
@@ -39,12 +38,11 @@ public class TypeChoiceRenderer implements IChoiceRenderer {
         if (nodeTypeModel.getObject() != null) {
             return new TypeTranslator(nodeTypeModel).getTypeName().getObject();
         } else {
-            return new StringResourceModel(type, component, null).getString();
+            return new StringResourceModel(type, component, null, type).getString();
         }
     }
 
     public String getIdValue(Object object, int index) {
         return object.toString();
     }
-
 }
