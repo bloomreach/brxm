@@ -77,6 +77,13 @@ public class FolderTreePlugin extends RenderPlugin {
                 JcrNodeModel nodeModel = ((IJcrTreeNode) node).getNodeModel();
                 content.setModel(nodeModel);
                 return content;
+                /* FIMXE: the following section would be a better implementation, but plugins
+                   loaded this way cannot instantiate plugins themselves.
+                MarkupContainer content = (MarkupContainer) FolderTreePlugin.this.newPlugin(id, "module.workflow");
+                JcrNodeModel nodeModel = ((IJcrTreeNode) node).getNodeModel();
+                content.setModel(nodeModel);
+                return content;
+                */
             }
 
             @Override

@@ -16,7 +16,6 @@
 package org.hippoecm.addon.workflow;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -99,13 +98,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
                                         plugin.setModel(pluginModel);
                                     } else {
                                         Class pluginClass = Class.forName(pluginRenderer);
-                                        if(IPlugin.class.isAssignableFrom(pluginClass)) {
-                                            plugin = (Panel) pluginClass.getConstructor(new Class[]{IPluginContext.class, IPluginConfig.class}).newInstance(new Object[]{getPluginContext(), getPluginConfig().getPluginConfig("workflow.options")});
-                                            if(plugin instanceof IRenderService) {
-                                                ((IRenderService)plugin).bind(null, "id");
-                                            }
-                                            plugin.setModel(pluginModel);
-                                        } else if(Panel.class.isAssignableFrom(pluginClass)) {
+                                        if(Panel.class.isAssignableFrom(pluginClass)) {
                                             plugin = (Panel) pluginClass.getConstructor(new Class[]{String.class, WorkflowDescriptorModel.class}).newInstance(new Object[]{"item", pluginModel});
                                             plugin.setModel(pluginModel);
                                         } else {
