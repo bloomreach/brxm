@@ -17,7 +17,15 @@
   <wicket:extend>
     <div class="hippo-reorder">
     <span class="hippo-global-hideme" wicket:id="message"></span>
-    <span wicket:id="reorder-panel"/>
+    <span wicket:id="reorder-panel">
+      <div class="hippo-reorder-border">
+        <div class="hippo-reorder-buttons">
+            <button wicket:id="up">&#8593;</button>
+            <button wicket:id="down">&#8595;</button>
+        </div>
+        <table class="hippo-list-details" cellspacing="0" wicket:id="table" width="100%">[table]</table>
+      </div>
+    </span>
     </div>
   </wicket:extend>
 </html>

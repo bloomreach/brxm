@@ -580,7 +580,13 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 } else {
                     sb.append("<<null>>");
                 }
-                log.info(new String(sb));
+                if(method!=null && method.getName().equals("hints")) {
+                    if (log.isDebugEnabled()) {
+                        log.debug(new String(sb));
+                    }
+                } else {
+                    log.info(new String(sb));
+                }
             }
         }
 
