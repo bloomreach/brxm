@@ -440,6 +440,9 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
             if (editors.containsKey(model)) {
                 editors.remove(model);
             }
+            if(preview == editor) {
+                preview = null;
+            }
             if (pending.contains(model)) {
                 pending.remove(model);
             }

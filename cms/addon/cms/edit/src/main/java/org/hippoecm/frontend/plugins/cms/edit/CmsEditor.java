@@ -105,25 +105,27 @@ class CmsEditor implements IEditor {
     }
 
     public void close() throws EditorException {
-        List<IEditorFilter> filters = context.getServices(context.getReference(this).getServiceId(),
-                IEditorFilter.class);
-        IdentityHashMap<IEditorFilter, Object> filterContexts = new IdentityHashMap<IEditorFilter, Object>();
-        for (IEditorFilter filter : filters) {
-            Object filterContext = filter.preClose();
-            if (filterContext == null) {
-                throw new EditorException("Close operation cancelled by filter");
+        if(context.getReference(this) != null) {
+            List<IEditorFilter> filters = context.getServices(context.getReference(this).getServiceId(),
+                    IEditorFilter.class);
+            IdentityHashMap<IEditorFilter, Object> filterContexts = new IdentityHashMap<IEditorFilter, Object>();
+            for (IEditorFilter filter : filters) {
+                Object filterContext = filter.preClose();
+                if (filterContext == null) {
+                    throw new EditorException("Close operation cancelled by filter");
+                }
+                filterContexts.put(filter, filterContext);
             }
-            filterContexts.put(filter, filterContext);
-        }
 
-        String renderId = context.getReference(renderer).getServiceId();
-        context.unregisterService(focusListener, renderId);
-        context.unregisterService(this, renderId);
+            String renderId = context.getReference(renderer).getServiceId();
+            context.unregisterService(focusListener, renderId);
+            context.unregisterService(this, renderId);
 
-        cluster.stop();
-        modelService.destroy();
-        for (IEditorFilter filter : filters) {
-            filter.postClose(filterContexts.get(filter));
+            cluster.stop();
+            modelService.destroy();
+            for (IEditorFilter filter : filters) {
+                filter.postClose(filterContexts.get(filter));
+            }
         }
         context.unregisterService(this, cluster.getClusterConfig().getString("editor.id"));
         manager.unregister(this);
