@@ -36,9 +36,14 @@
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Editing publishable documents</sv:value>
     </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.reviewedactions.EditingReviewedActionsWorkflowPlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.EditingReviewedActionsWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:property sv:name="validator.id" sv:type="String">
       <sv:value>${cluster.id}.validate</sv:value>
     </sv:property>
@@ -89,9 +94,14 @@
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Modelling workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.editor.workflow.TemplateEditingWorkflowPlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.editor.workflow.TemplateEditingWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:types</sv:value>
@@ -114,9 +124,14 @@
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Default edit workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.reviewedactions.EditingDefaultWorkflowPlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.EditingDefaultWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:types</sv:value>

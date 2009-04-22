@@ -37,9 +37,14 @@
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Reviewed actions workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.reviewedactions.FullReviewedActionsWorkflowPlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.FullReviewedActionsWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:types</sv:value>
@@ -90,9 +95,14 @@
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Scheduled workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.reviewedactions.CancelWorkflowPlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.CancelWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:types</sv:value>
@@ -115,9 +125,14 @@
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Scheduled workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NullWorkflowPlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NullWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:types</sv:value>
@@ -140,9 +155,14 @@
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Author Reviewed actions workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.reviewedactions.BasicReviewedActionsWorkflowPlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.BasicReviewedActionsWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:types</sv:value>
@@ -193,9 +213,14 @@
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Reviewed requests workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.reviewedactions.FullRequestWorkflowPlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.FullRequestWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:types</sv:value>
@@ -246,9 +271,14 @@
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Author Reviewed requests workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.reviewedactions.BasicRequestWorkflowPlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.BasicRequestWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:types</sv:value>
@@ -293,12 +323,17 @@
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.EditmodelWorkflowImpl</sv:value>
     </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.EditmodelWorkflowPlugin</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Internal workflow to edit a template</sv:value>
     </sv:property>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.standardworkflow.EditmodelWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:types</sv:value>
@@ -315,12 +350,17 @@
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.editor.repository.impl.NamespaceWorkflowImpl</sv:value>
     </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Template engine workflow to create a type</sv:value>
     </sv:property>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:types</sv:value>
@@ -337,12 +377,17 @@
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.editor.repository.impl.TemplateEditorWorkflowImpl</sv:value>
     </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.editor.workflow.NamespaceWorkflowPlugin</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Template engine workflow to create a namespace</sv:value>
     </sv:property>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.editor.workflow.NamespaceWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:types</sv:value>
@@ -365,9 +410,14 @@
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Default workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.reviewedactions.DefaultWorkflowPlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.DefaultWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:types</sv:value>
