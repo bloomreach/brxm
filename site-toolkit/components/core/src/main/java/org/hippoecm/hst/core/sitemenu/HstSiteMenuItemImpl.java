@@ -62,6 +62,7 @@ public class HstSiteMenuItemImpl implements HstSiteMenuItem {
              if (siteMenuItemToMapPath.equals(currentPathInfo)) {
                 // the current HstSiteMenuItem is selected. Set it to selected, and also set all the ancestors selected
                 this.selected = true;
+                ((HstSiteMenuImpl)hstSiteMenu).setSelectedSiteMenuItem(this);
              }
              
              if(currentPathInfo.startsWith(siteMenuItemToMapPath)) {

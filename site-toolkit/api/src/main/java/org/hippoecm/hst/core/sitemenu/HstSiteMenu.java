@@ -38,9 +38,15 @@ public interface HstSiteMenu extends Serializable{
     boolean isExpanded();
     
     /**
+     * 
+     * @return the currently selected <code>HstSiteMenuItem</code> or <code>null</code> if none is selected
+     */
+    HstSiteMenuItem getSelectSiteMenuItem();
+    
+    /**
      * Returns the currently expanded sitemenu items.
      * 
-     * @return the currently expanded sitemenu items. 
+     * @return the currently expanded sitemenu items. If no expanded items are present, an empty list is returned. 
      */
     List<HstSiteMenuItem> getExpandedSiteMenuItems();
     

@@ -30,6 +30,7 @@ public class HstSiteMenuImpl implements HstSiteMenu {
     private HstSiteMenus hstSiteMenus;
     private List<HstSiteMenuItem> hstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
     private List<HstSiteMenuItem> expandedHstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
+    private HstSiteMenuItem selectedSiteMenuItem;
     private boolean expanded;
     
 
@@ -57,6 +58,14 @@ public class HstSiteMenuImpl implements HstSiteMenu {
         return this.hstSiteMenus;
     }
 
+    public HstSiteMenuItem getSelectSiteMenuItem(){
+        return selectedSiteMenuItem;
+    }
+    
+    public void setSelectedSiteMenuItem(HstSiteMenuItem selectedSiteMenuItem){
+        this.selectedSiteMenuItem = selectedSiteMenuItem;
+    }
+    
     public List<HstSiteMenuItem> getExpandedSiteMenuItems() {
         return expandedHstSiteMenuItems;
     }
