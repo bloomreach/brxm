@@ -16,10 +16,14 @@
 package org.hippoecm.repository;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 
 import org.junit.Test;
 import org.junit.Ignore;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class FacetSelectTest extends TestCase {
@@ -27,7 +31,7 @@ public class FacetSelectTest extends TestCase {
     private final static String SVN_ID = "$Id$";
 
     String[] content = new String[] {
-        "/test", "nt:unstructured",
+        "/test",              "nt:unstructured",
         "/test/docs",         "hippo:testdocument",
         "jcr:mixinTypes",     "hippo:harddocument",
         "/test/docs/doc",     "hippo:handle",
@@ -41,6 +45,11 @@ public class FacetSelectTest extends TestCase {
         "hippo:modes",        null,
         "/test/spiegel",      "hippo:testmirror",
         "hippo:docbase",      "/test/docs",
+        "hippo:values",       null,
+        "hippo:facets",       null,
+        "hippo:modes",        null,
+        "/test/notallowed",   "hippo:facetselect",
+        "hippo:docbase",      "/",
         "hippo:values",       null,
         "hippo:facets",       null,
         "hippo:modes",        null
@@ -60,5 +69,19 @@ public class FacetSelectTest extends TestCase {
         session.save();
         session.refresh(false);
         assertNotNull(traverse(session, "/test/spiegel/doc/doc"));
+    }
+
+    @Test
+    public void testNoRoot() throws Exception {
+        build(session, content);
+        session.save();
+        session.refresh(false);
+        Node mirror = traverse(session, "/test/notallowed");
+        assertNotNull(mirror);
+        assertFalse(mirror.hasNodes());
+        NodeIterator iter = mirror.getNodes();
+        while(iter.hasNext()) {
+            fail("no child nodes allowed");
+        }
     }
 }

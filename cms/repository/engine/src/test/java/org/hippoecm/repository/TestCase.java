@@ -210,8 +210,13 @@ public abstract class TestCase
                             node.setProperty(contents[i], session.getValueFactory().createValue(session.getRootNode().
                                                          getNode(contents[i+1].substring(1)).getUUID(), PropertyType.REFERENCE));
                         } else if ("hippo:docbase".equals(contents[i])) {
-                            node.setProperty(contents[i], session.getValueFactory().createValue(session.getRootNode().
-                                                         getNode(contents[i+1].substring(1)).getUUID(), PropertyType.STRING));
+                            String docbase;
+                            if(contents[i+1].substring(1).equals("")) {
+                                docbase = session.getRootNode().getUUID();
+                            } else {
+                                docbase = session.getRootNode().getNode(contents[i+1].substring(1)).getUUID();
+                            }
+                            node.setProperty(contents[i], session.getValueFactory().createValue(docbase), PropertyType.STRING);
                         } else {
                             node.setProperty(contents[i], contents[i+1]);
                         }
