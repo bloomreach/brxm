@@ -34,11 +34,9 @@ import org.apache.wicket.markup.repeater.data.ListDataProvider;
 
 import org.hippoecm.frontend.model.FrontendNodeTypes;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
-import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -95,7 +93,11 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
                                         plugin = new StdWorkflowPlugin("item", pluginModel);
                                     } else if(pluginRenderer.startsWith("/")) {
                                         plugin = (Panel) this.newPlugin("id", new JcrPluginConfig(new JcrNodeModel(documentNode.getSession().getRootNode().getNode(pluginRenderer.substring(1))), null));
-                                        plugin.setModel(pluginModel);
+                                        if(plugin != null) {
+                                            plugin.setModel(pluginModel);
+                                        } else {
+                                            log.error("No plugin found on {}",pluginRenderer);
+                                        }
                                     } else {
                                         Class pluginClass = Class.forName(pluginRenderer);
                                         if(Panel.class.isAssignableFrom(pluginClass)) {
