@@ -86,7 +86,7 @@ public class HstQueryImpl implements HstQuery {
         }
         
         StringBuilder query = new StringBuilder();
-        if("".equals(ctxWhereFilter)) {
+        if("".equals(ctxWhereFilter.getJcrExpression())) {
             // no ctxWhereFilter will be applied
         } else {
             query.append("(").append(ctxWhereFilter.getJcrExpression()).append(")");
