@@ -42,7 +42,16 @@
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.gallery.GalleryWorkflowPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="workflow.categories" sv:type="String">
+        <sv:value>shortcuts</sv:value>
+      </sv:property>
+      <sv:property sv:name="option.text" sv:type="String">
+        <sv:value>add-image-label</sv:value>
+      </sv:property>
+      <sv:property sv:name="gallery.thumbnail.size" sv:type="Long">
+        <sv:value>60</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:config">

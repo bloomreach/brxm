@@ -175,7 +175,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
         }
     }
 
-    public static class Dialog extends AbstractDialog {
+    public class Dialog extends AbstractDialog {
         @SuppressWarnings("unused")
         private final static String SVN_ID = "$Id$";
 
@@ -189,6 +189,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
         private Map<String, Set<String>> templates;
         protected final DropDownChoice folderChoice;
         protected final DropDownChoice categoryChoice;
+        protected final Label typelabel;
         private String optionSelectOnly = null;
         private boolean optionSelectFirst = false;
 
@@ -204,6 +205,8 @@ public class FolderShortcutPlugin extends RenderPlugin {
                     IBrowseService.class));
             editServiceRef = context.getReference(context.getService(config.getString(IEditorManager.EDITOR_ID),
                     IEditorManager.class));
+
+            add(typelabel = new Label("typelabel", new StringResourceModel("document-type", FolderShortcutPlugin.this, null)));
 
             String workflowCategory = config.getString("workflow.categories");
             Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
@@ -323,11 +326,14 @@ public class FolderShortcutPlugin extends RenderPlugin {
             if (templates.keySet().size() == 1) {
                 categoryChoice.setChoices(new LinkedList<String>(templates.keySet()));
                 categoryChoice.setVisible(false);
+                typelabel.setVisible(false);
             } else if (templates.keySet().size() > 1) {
                 categoryChoice.setChoices(new LinkedList<String>(templates.keySet()));
                 categoryChoice.setVisible(true);
+                typelabel.setVisible(true);
             } else {
                 categoryChoice.setVisible(false);
+                typelabel.setVisible(false);
             }
             if (templateCategory != null) {
                 final List<String> prototypesList = new LinkedList<String>(templates.get(templateCategory));

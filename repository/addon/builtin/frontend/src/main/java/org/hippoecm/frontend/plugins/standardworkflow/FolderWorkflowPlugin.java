@@ -301,6 +301,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
         private String category;
         private Set<String> prototypes;
         private IModel title;
+        private Label typelabel;
 
         public FolderWorkflowDialog(WorkflowAction action, IModel title, String category, Set<String> prototypes) {
             action.super();
@@ -315,8 +316,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             text.setRequired(true);
             add(text);
 
-            Label typelabel = new Label("typelabel", new StringResourceModel("document-type", FolderWorkflowPlugin.this, null));
-            add(typelabel);
+            add(typelabel= new Label("typelabel", new StringResourceModel("document-type", FolderWorkflowPlugin.this, null)));
 
             if (prototypes.size() > 1) {
                 final List<String> prototypesList = new LinkedList<String>(prototypes);
