@@ -28,7 +28,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.Gallery;
-import org.hippoecm.frontend.plugins.gallery.GalleryShortcutPlugin;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -43,15 +43,11 @@ public class UploadDialog extends AbstractDialog {
     private UploadWizard wizard;
     private IPluginConfig pluginConfig;
 
-    public UploadDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config) {
+    public UploadDialog(IPluginContext context, IPluginConfig config) {
         ok.setVisible(false);
         cancel.setVisible(false);
         pluginConfig = config;
-
-        setModel(plugin.getModel());
-
-        wizard = new UploadWizard("wizard", this);
-        add(wizard);
+        add(wizard = new UploadWizard("wizard", this));
     }
 
     @Override
