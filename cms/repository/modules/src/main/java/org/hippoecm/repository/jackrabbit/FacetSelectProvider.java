@@ -70,7 +70,6 @@ public class FacetSelectProvider extends HippoVirtualProvider
         if(docbase == null || docbase.length == 0 || newFacets == null || newValues == null || newModes == null) {
             return state;
         }
-System.err.println("BERRY BERRY BERRY "+docbase[0]+" "+docbase[0].endsWith("babecafebabe"));
         if(docbase[0].endsWith("babecafebabe")) {
             // one of the defined (and fixed, so string compare is fine) system areas
             return state;
