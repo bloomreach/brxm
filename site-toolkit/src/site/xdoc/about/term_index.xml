@@ -24,12 +24,21 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 172 terms</span>
+      <span class="shortdesc">Term index, 170 terms</span>
       <div class="eventable">
         <table>
           <tr>
             <th>Term</th>
             <th>(Type:) Section Title</th>
+          </tr>
+          <tr>
+            <td>
+              <a href="../index.html#&#10;________________Hippo_Site_Toolkit_2_is_being_finalized_for_release_mid-April__The_documentation&#10;________________will_be_online_at_the_time_of_the_release_&#10;____________">
+                Hippo Site Toolkit 2 is being finalized for release mid-April. The documentation
+                will be online at the time of the release.
+            </a>
+            </td>
+            <td>Welcome: What is Hippo Site Toolkit 2?</td>
           </tr>
           <tr>
             <td>
@@ -264,12 +273,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../index.html#Delve_into_Hippo_Site_Toolkit">Delve into Hippo Site Toolkit</a>
-            </td>
-            <td>Welcome: What is Hippo Site Toolkit 2?</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/quickstart.html#Deploying_in_Tomcat_6_0">Deploying in Tomcat 6.0</a>
             </td>
             <td>Quickstart</td>
@@ -279,6 +282,12 @@
               <a href="../delve_into/howto/start_project.html#Deploying_your_project_in_Tomcat">Deploying your project in Tomcat</a>
             </td>
             <td>Howto: Start a project</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../support/forums.html#Discuss_the_Hippo_Site_Toolkit_on_the_Hippo_public_forums">Discuss the Hippo Site Toolkit on the Hippo public forums</a>
+            </td>
+            <td>Public Forums</td>
           </tr>
           <tr>
             <td>
@@ -583,12 +592,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../index.html#Learn_more">Learn more</a>
-            </td>
-            <td>Welcome: What is Hippo Site Toolkit 2?</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/reference/synonyms.html#List_of_synonyms_used_in_discussions_of_the_HST_">List of synonyms used in discussions of the HST.</a>
             </td>
             <td>Synonyms</td>
@@ -625,12 +628,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/howto/start_project.html#Next_Step">Next Step</a>
-            </td>
-            <td>Howto: Start a project</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/reference/configuration/website.html#Properties_for_node_type_hst:layout">Properties for node type hst:layout</a>
             </td>
             <td>Website Configuration</td>
@@ -658,6 +655,12 @@
               <a href="../delve_into/reference/configuration/website.html#Properties_for_node_type_hst:sitemapmodule">Properties for node type hst:sitemapmodule</a>
             </td>
             <td>Website Configuration</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../support/forums.html#Public_Forums">Public Forums</a>
+            </td>
+            <td>Public Forums</td>
           </tr>
           <tr>
             <td>
@@ -784,18 +787,6 @@
               <a href="../delve_into/howto/hello_world.html#screenshot">screenshot</a>
             </td>
             <td>Howto: Hello World</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/howto/start_project.html#screenshot">screenshot</a>
-            </td>
-            <td>Howto: Start a project</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/howto/start_project.html#screenshot">screenshot</a>
-            </td>
-            <td>Howto: Start a project</td>
           </tr>
           <tr>
             <td>

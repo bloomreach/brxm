@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">116 errors and/or todos in 44 out of 44 documents (100%).</span>
+      <span class="shortdesc">116 errors and/or todos in 45 out of 45 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -39,7 +39,7 @@
      </li>
         <li>0 documents to review.
      </li>
-        <li>26 documents missing required info.
+        <li>25 documents missing required info.
      </li>
         <li>4 empty documents.
      </li>
@@ -53,10 +53,10 @@
      </li>
         <li>11 documents with bad text.
      </li>
-        <li>2 multisection documents.
+        <li>1 multisection documents.
      </li>
       </ul>
-      <subsection name="Documents with empty elements: 1">
+      <subsection name="Documents with empty elements: 2">
         <ol>
           <li>
             <a href="./delve_into/reference/configuration/website.html">website: Website Configuration</a>
@@ -66,9 +66,15 @@
               <li>&lt;td/&gt;</li>
             </ul>
           </li>
+          <li>
+            <a href="./support/forums.html">forums: Public Forums</a>
+            <ul>
+              <li>&lt;script src='../nabble.js'/&gt;</li>
+            </ul>
+          </li>
         </ol>
       </subsection>
-      <subsection name="Documents lacking some information: 26">
+      <subsection name="Documents lacking some information: 25">
         <ol>
           <li>
             <a href="./about/term_index.html">term_index: </a>
@@ -222,12 +228,6 @@
               <li>Missing section. Add &lt;section name='...'&gt;.</li>
             </ul>
           </li>
-          <li>
-            <a href="./index.html">index: What is Hippo Site Toolkit 2?</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
         </ol>
       </subsection>
       <subsection name="empty documents: 4">
@@ -357,16 +357,10 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="multisection documents: 2">
+      <subsection name="multisection documents: 1">
         <ol>
           <li>
             <a href="./delve_into/howto/hello_world.html">hello_world: Hello World</a>
-            <ul>
-              <li>Has 2 sections.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/howto/start_project.html">start_project: Start a project</a>
             <ul>
               <li>Has 2 sections.</li>
             </ul>

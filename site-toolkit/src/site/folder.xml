@@ -1,18 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!--
-  Copyright 2008 Hippo
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License. -->
 <?xml-stylesheet type="text/xsl" href="../stylesheets/folder.xsl"?>
  <folder rootpath='/home/rita/werk/hst/src/site/xdoc'>.
   <folder>about
@@ -39,10 +25,6 @@
    relpath='delve_into'
   >how_does_hst2_work</file>
    <folder>howto
-    <file ext='xml~' mimetype='text/html charset=us-ascii' note='todo'
-   fullname='delve_into/howto/advanced_search.xml~'
-   relpath='delve_into/howto'
-  >advanced_search</file>
     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/howto/facebook.xml'
    relpath='delve_into/howto'
@@ -59,29 +41,21 @@
    fullname='delve_into/howto/free_text_search.xml'
    relpath='delve_into/howto'
   >free_text_search</file>
-    <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/howto/free_text_search.xml~'
-   relpath='delve_into/howto'
-  >free_text_search</file>
     <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/howto/hello_world.xml'
    relpath='delve_into/howto'
   >hello_world</file>
-    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/howto/index.xml'
    relpath='delve_into/howto'
   >index</file>
-    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/howto/start_project.xml'
    relpath='delve_into/howto'
   >start_project</file>
    </folder>
    <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/quickstart.xml'
-   relpath='delve_into'
-  >quickstart</file>
-   <file ext='xml~' mimetype='text/html charset=us-ascii' note='todo'
-   fullname='delve_into/quickstart.xml~'
    relpath='delve_into'
   >quickstart</file>
    <folder>reference
@@ -98,10 +72,6 @@
    fullname='delve_into/reference/components/el-queries.xml'
    relpath='delve_into/reference/components'
   >el-queries</file>
-     <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/reference/components/el-queries.xml~'
-   relpath='delve_into/reference/components'
-  >el-queries</file>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/reference/components/filters.xml'
    relpath='delve_into/reference/components'
@@ -116,10 +86,6 @@
   >jsp-taglib</file>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='delve_into/reference/components/modules.xml'
-   relpath='delve_into/reference/components'
-  >modules</file>
-     <file ext='xml~' mimetype='text/html charset=us-ascii' note='todo'
-   fullname='delve_into/reference/components/modules.xml~'
    relpath='delve_into/reference/components'
   >modules</file>
      <folder>tag
@@ -207,10 +173,6 @@
    fullname='delve_into/reference/synonyms.xml'
    relpath='delve_into/reference'
   >synonyms</file>
-    <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/reference/synonyms.xml~'
-   relpath='delve_into/reference'
-  >synonyms</file>
    </folder>
   </folder>
   <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
@@ -226,17 +188,13 @@
    fullname='support/community.xml.vm'
    relpath='support'
   >community</file>
-   <file ext='xml.vm~' mimetype='text/html charset=us-ascii'
-   fullname='support/community.xml.vm~'
-   relpath='support'
-  >community</file>
    <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='support/contributing.xml.vm'
    relpath='support'
   >contributing</file>
-   <file ext='xml.vm~' mimetype='text/html charset=us-ascii'
-   fullname='support/contributing.xml.vm~'
+   <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='support/forums.xml.vm'
    relpath='support'
-  >contributing</file>
+  >forums</file>
   </folder>
  </folder>

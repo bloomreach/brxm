@@ -30,8 +30,7 @@
    
    <document ext="xml" filename="facebook" relpath="delve_into/howto">Create a Facebook<linkto_unchecked/></document><document ext="xml" filename="form" relpath="delve_into/howto">Form Handling<linkto_unchecked/></document><document ext="xml" filename="free_meta_search" relpath="delve_into/howto">Free Meta Search<linkto_unchecked/>
     <rewrite>this whole document.</rewrite></document><document ext="xml" filename="free_text_search" relpath="delve_into/howto">Free Text Search<linkto_unchecked/></document><document ext="xml" filename="hello_world" relpath="delve_into/howto">Hello World<linkto_unchecked/>
-    <multisection>Has 2 sections.</multisection></document><document ext="xml" filename="index" relpath="delve_into/howto">Howto<linkto_unchecked/></document><document ext="xml" filename="start_project" relpath="delve_into/howto">Start a project<linkto_unchecked/>
-    <multisection>Has 2 sections.</multisection></document></folder><document ext="xml" filename="quickstart" relpath="delve_into">Quickstart<linkto_unchecked/>
+    <multisection>Has 2 sections.</multisection></document><document ext="xml" filename="index" relpath="delve_into/howto">Howto<linkto_unchecked/></document><document ext="xml" filename="start_project" relpath="delve_into/howto">Start a project<linkto_unchecked/></document></folder><document ext="xml" filename="quickstart" relpath="delve_into">Quickstart<linkto_unchecked/>
     <rewrite>For CMS the quickstart package is called quickstart and this one gettingstarted, while `hst' is not part of the package name. 
              I think all quickstart packages should have `quickstart' in their name and they also all should contain the project (product) name in their name.
              Or maybe there is some other consistent and clear naming scheme.
@@ -94,9 +93,9 @@
     <empty_elem>&lt;td/&gt;</empty_elem></document><document ext="xml" filename="webxml" relpath="delve_into/reference/configuration">HST Configuration in web.xml<linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="index" relpath="delve_into/reference">Reference<linkto_unchecked/></document><document ext="xml" filename="synonyms" relpath="delve_into/reference">Synonyms<linkto_unchecked/></document></folder></folder><document ext="xml" filename="errorlist" relpath="."><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="index" relpath=".">What is Hippo Site Toolkit 2?<linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><folder>support
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="index" relpath=".">What is Hippo Site Toolkit 2?<linkto_unchecked/></document><folder>support
    
    <document ext="xml.vm" filename="community" relpath="support">Community Support<linkto_unchecked/>
-    <badtext>: Read here what issues the developers of ${product_name} have been and are<span class="bad"> current </span>ly working on.</badtext></document><document ext="xml.vm" filename="contributing" relpath="support">Contributing<linkto_unchecked/></document></folder></folder>
+    <badtext>: Read here what issues the developers of ${product_name} have been and are<span class="bad"> current </span>ly working on.</badtext></document><document ext="xml.vm" filename="contributing" relpath="support">Contributing<linkto_unchecked/></document><document ext="xml.vm" filename="forums" relpath="support">Public Forums<linkto_unchecked/>
+    <empty_elem>&lt;script src='../nabble.js'/&gt;</empty_elem></document></folder></folder>
 </document_list>

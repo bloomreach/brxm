@@ -19,7 +19,7 @@
   <name>Hippo Site Toolkit</name>
   <description>The Hippo Site Toolkit (HST) is an engine that serves content from the Hippo repository (2) on webpages, dynamically.
     The HST produces a complete, dynamic website for an organization, or several complete, dynamic websites for several suborganizations 
-    that have all their content managed in one Hippo repository.        
+    that have all their content managed in one Hippo repository.
     The functionality, views and markup of the website(s) are to be defined by the web developers with Java classes, JSP and CSS, respectively.
     The HST provides a framework of predefined Java classes, abstract Java classes and interfaces and JSP tags 
     for the web developers to work with and build on.
@@ -37,18 +37,18 @@
   </issueManagement>
 
   <properties>
-  
+
     <!-- Documentation properties (variables).
          May not contain dots as they are processed by Apache velocity.
          Can be used in xdoc files with the extension .xml.vm
     -->
-    
+
     <public_project_wiki>http://www.onehippo.org/site-toolkit/support/forums.html</public_project_wiki>
     <product_name>Hippo HST</product_name>
     <product_abr>HST</product_abr>
-    
+
     <wagon.ftp.version>1.0-alpha-6</wagon.ftp.version>
-    
+
     <servlet-api.version>2.4</servlet-api.version>
     <jsp-api.version>2.0</jsp-api.version>
     <jstl.version>1.1.2</jstl.version>
@@ -56,18 +56,18 @@
     <portlet-api.version>2.0</portlet-api.version>
     <javax.jcr.version>1.0</javax.jcr.version>
     <jta.version>1.1</jta.version>
-    
+
     <slf4j.version>1.4.3</slf4j.version>
     <log4j.version>1.2.13</log4j.version>
-    
+
     <junit.version>4.5</junit.version>
-    
+
     <dom4j.version>1.6.1</dom4j.version>
 
     <xml-apis.version>2.0.2</xml-apis.version>
     <xerces.version>2.3.0</xerces.version>
     <xalan.version>2.4.1</xalan.version>
-    
+
     <commons-lang.version>2.4</commons-lang.version>
     <commons-collections.version>3.2.1</commons-collections.version>
     <commons-codec.version>1.3</commons-codec.version>
@@ -78,23 +78,23 @@
     <commons-configuration.version>1.6</commons-configuration.version>
     <commons-proxy.version>1.0</commons-proxy.version>
     <commons-digester.version>1.8.1</commons-digester.version>
-    
+
     <spring.version>2.5.6</spring.version>
-    
+
     <jackrabbit.version>1.5.0</jackrabbit.version>
-    
+
     <hippoecm.version>2.04.00</hippoecm.version>
-    
+
   </properties>
-  
-  <!-- 
+
+  <!--
      Software configuration management (scm): where to find and how to get acces to the source repository 
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html 
   -->
   <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/ecm/site-toolkit/trunk</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/ecm/site-toolkit/trunk</developerConnection>
-    <url>https://svn.hippocms.org/repos/hippo/ecm/site-toolkit/trunk</url>
+    <url>http://svn.hippocms.org/repos/hippo/ecm/site-toolkit/trunk</url>
   </scm>
 
   <distributionManagement>
