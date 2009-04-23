@@ -105,7 +105,7 @@ public class TemplateEditorWorkflowTest extends TestCase {
         assertTrue(session.getRootNode().getNode("test").hasProperty("hippotest1:test"));
     }
 
-    @Test
+    @Ignore
     public void testTemplateEditorNamespace() throws RepositoryException, WorkflowException, RemoteException {
         Node root = session.getRootNode();
         Node node = root.getNode("hippo:namespaces");
@@ -127,7 +127,7 @@ public class TemplateEditorWorkflowTest extends TestCase {
         assertTrue(session.getRootNode().getNode("test").hasProperty("hippotest2:test"));
     }
 
-    @Test
+    @Ignore
     public void testTemplateEditorType() throws RepositoryException, WorkflowException, RemoteException {
         Node root = session.getRootNode();
         Node node = root.getNode("hippo:namespaces/hippostd");

@@ -122,14 +122,6 @@
       <version>2.05.01-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
-
-    <!-- the next dependency is a weakness in the current project structure -->
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-editor-repository</artifactId>
-      <version>2.05.01-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
