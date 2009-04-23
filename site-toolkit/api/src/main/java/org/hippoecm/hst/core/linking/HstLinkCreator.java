@@ -20,6 +20,8 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 /**
@@ -55,6 +57,24 @@ public interface HstLinkCreator {
      * @return HstLink 
      */
     HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem);
+    
+
+    /**
+     * 
+     * @param node
+     * @param hstRequestContext
+     * @return
+     */
+    HstLink create(Node node, HstRequestContext hstRequestContext);
+    
+    /**
+     * 
+     * @param bean
+     * @param hstRequestContext
+     * @return
+     */
+    HstLink create(HippoBean bean, HstRequestContext hstRequestContext);
+    
     
     /**
      * For creating a link from a HstSiteMapItem to a HstSiteMapItem with toSiteMapItemId within the same Site

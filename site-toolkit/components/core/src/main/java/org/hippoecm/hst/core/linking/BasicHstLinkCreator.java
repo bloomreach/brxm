@@ -25,6 +25,9 @@ import org.hippoecm.hst.configuration.HstSiteService;
 import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.provider.jcr.JCRUtilities;
 import org.hippoecm.hst.util.PathUtils;
@@ -55,6 +58,27 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         return null;
     }
    
+    public HstLink create(Node node, HstRequestContext hstRequestContext) {
+        return this.create(node, hstRequestContext.getResolvedSiteMapItem());
+    }
+
+    public HstLink create(HippoBean bean, HstRequestContext hstRequestContext) {
+        if(bean.getNode() == null) {
+            log.debug("Jcr node is detached from bean. Trying to create a link with the detached path.");
+            if(bean.getPath() != null) {
+                if(bean instanceof HippoDocument) {
+                    return this.create(bean.getPath(), hstRequestContext.getResolvedSiteMapItem(), true);
+                } else {
+                    return this.create(bean.getPath(), hstRequestContext.getResolvedSiteMapItem(), false);
+                }
+            } else {
+                log.warn("Cannot create link for bean. Return null");
+            }
+            return null;
+        }
+        return this.create(bean.getNode(), hstRequestContext.getResolvedSiteMapItem());
+    }
+
     /**
      * If the node is of type hippo:document and it is below a hippo:handle, we will
      * rewrite the link wrt hippo:handle, because a handle is the umbrella of a document
@@ -106,10 +130,6 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         return null;
     }
     
-    /*
-     * boolean signature is only needed to distinguish from create(String toSiteMapItemId, HstSiteMapItem currentSiteMapItem)
-     * and not used
-     */
     private HstLink create(String path, ResolvedSiteMapItem resolvedSiteMapItem, boolean representsDocument) {
         
         if(path == null) {
@@ -230,6 +250,5 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         }
         return path.toString();
     }
-
 
 }
