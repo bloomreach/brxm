@@ -33,7 +33,7 @@
         <sv:value>hippo:facetselect</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:docbase" sv:type="String">
-        <sv:value>996BCAC5-86CF-49B5-A7A3-16A74863E814</sv:value>
+        <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:facets" sv:type="String">
         <sv:value>hippostd:state</sv:value>
