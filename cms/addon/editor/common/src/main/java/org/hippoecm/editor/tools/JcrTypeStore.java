@@ -127,7 +127,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
                     type.addField(entry.getValue());
                 }
 
-                return object.getType();
+                return object.getName();
 
             } catch (WorkflowException ex) {
                 log.error(ex.getMessage());
