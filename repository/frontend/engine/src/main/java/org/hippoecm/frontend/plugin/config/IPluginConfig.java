@@ -23,9 +23,13 @@ import org.apache.wicket.util.value.IValueMap;
 public interface IPluginConfig extends IValueMap, Serializable {
     final static String SVN_ID = "$Id$";
 
-    public String getName();
-    
-    public IPluginConfig getPluginConfig(Object key);
+    String getName();
 
-    public Set<IPluginConfig> getPluginConfigSet();
+    IPluginConfig getPluginConfig(Object key);
+
+    Set<IPluginConfig> getPluginConfigSet();
+
+    void addPluginConfigListener(IPluginConfigListener listener);
+
+    void removePluginConfigListener(IPluginConfigListener listener);
 }

@@ -61,8 +61,8 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
 
         JcrSessionModel sessionModel = ((UserSession) getSession()).getJcrSessionModel();
         PluginConfigFactory configFactory = new PluginConfigFactory(sessionModel);
-        pluginConfigService = configFactory.getPluginConfigService();
-        context.registerService(pluginConfigService, IPluginConfigService.class.getName());
+        pluginConfigService = configFactory.getPluginConfigService(context);
+        context.registerService(configFactory, IPluginConfigService.class.getName());
 
         obRegistry = new ObservableRegistry(context, null);
         obRegistry.startObservation();

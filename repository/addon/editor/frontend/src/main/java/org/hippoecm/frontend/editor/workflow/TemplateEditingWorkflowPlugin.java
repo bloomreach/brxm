@@ -106,12 +106,16 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
             @Override
             protected String execute(Workflow workflow) throws Exception {
                 doSave();
+                IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
+                editor.close();
                 return null;
             }});
         add(new WorkflowAction("revert", new StringResourceModel("revert", this, null)) {
             @Override
             protected String execute(Workflow workflow) throws Exception {
                 doRevert();
+                IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
+                editor.close();
                 return null;
             }});
     }

@@ -47,7 +47,7 @@
       <sv:value>hippo:namespace</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
-      <sv:value>org.hippoecm.engine.repository.impl.TemplateEditorWorkflowImpl</sv:value>
+      <sv:value>org.hippoecm.engine.repository.impl.NamespaceWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Template engine workflow to create a type</sv:value>

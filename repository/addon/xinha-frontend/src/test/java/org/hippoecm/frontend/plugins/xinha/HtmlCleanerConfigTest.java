@@ -15,20 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.xinha;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.StringReader;
 import java.util.Map;
 
 import javax.jcr.Node;
 
 import junit.framework.Assert;
 import nl.hippo.htmlcleaner.ElementDescriptor;
-import nl.hippo.htmlcleaner.HtmlCleaner;
 import nl.hippo.htmlcleaner.HtmlCleanerTemplate;
 import nl.hippo.htmlcleaner.OutputElementDescriptor;
 
-import org.apache.wicket.util.io.IOUtils;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
@@ -60,7 +55,7 @@ public class HtmlCleanerConfigTest extends TestCase {
     protected IPluginConfig getPluginConfig() throws Exception {
         Node cleanerConfigNode = root.getNode("cleaner.config");
         JcrNodeModel nodeModel = new JcrNodeModel(cleanerConfigNode);
-        return new JcrPluginConfig(nodeModel);
+        return new JcrPluginConfig(nodeModel, null);
     }
 
     @Test

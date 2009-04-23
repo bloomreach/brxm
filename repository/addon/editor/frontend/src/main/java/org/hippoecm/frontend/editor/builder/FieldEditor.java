@@ -32,10 +32,14 @@ public class FieldEditor extends Panel {
     private static final long serialVersionUID = 1L;
 
     private ITypeDescriptor type;
+    private boolean edit;
 
-    public FieldEditor(String id, IModel model) {
+    public FieldEditor(String id, ITypeDescriptor type, IModel model, boolean edit) {
         super(id, model);
 
+        this.type = type;
+        this.edit = edit;
+        
         final IFieldDescriptor descriptor = (IFieldDescriptor) getModelObject();
         addFormField(new TextField("path", new IModel() {
             private static final long serialVersionUID = 1L;
@@ -106,7 +110,7 @@ public class FieldEditor extends Panel {
             public void setObject(Object object) {
                 Boolean bool = (Boolean) object;
                 if (bool) {
-                    type.setPrimary(descriptor.getName());
+                    FieldEditor.this.type.setPrimary(descriptor.getName());
                 }
             }
 
@@ -117,21 +121,13 @@ public class FieldEditor extends Panel {
 
             @Override
             public boolean isVisible() {
-                return type != null;
+                return FieldEditor.this.type != null;
             }
         });
     }
 
     void setType(ITypeDescriptor type) {
         this.type = type;
-    }
-
-    @Override
-    protected void onDetach() {
-        if (type != null) {
-            type.detach();
-        }
-        super.onDetach();
     }
 
     @Override
@@ -144,16 +140,19 @@ public class FieldEditor extends Panel {
      */
     protected void addFormField(FormComponent component) {
         add(component);
-        component.setOutputMarkupId(true);
-        component.add(new AjaxFormComponentUpdatingBehavior("onChange") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                FieldEditor.this.onUpdate(target);
-            }
-        });
-
+        if (edit) {
+            component.setOutputMarkupId(true);
+            component.add(new AjaxFormComponentUpdatingBehavior("onChange") {
+                private static final long serialVersionUID = 1L;
+    
+                @Override
+                protected void onUpdate(AjaxRequestTarget target) {
+                    FieldEditor.this.onUpdate(target);
+                }
+            });
+        } else {
+            component.setEnabled(false);
+        }
     }
 
     protected void onUpdate(AjaxRequestTarget target) {

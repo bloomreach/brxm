@@ -27,6 +27,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.apache.wicket.Session;
+import org.hippoecm.frontend.model.event.ListenerList;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
     private JavaFieldDescriptor primary;
     private boolean node;
     private boolean mixin;
+    private List<ITypeListener> listeners;
 
     public JavaTypeDescriptor(String name, String type) {
         this.name = name;
@@ -55,6 +57,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
         this.primary = null;
         this.node = true;
         this.mixin = false;
+        this.listeners = new ListenerList<ITypeListener>();
     }
 
     public String getName() {
@@ -81,14 +84,19 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
         return getFields().get(key);
     }
 
-    public String addField(String type) {
-        String key = UUID.randomUUID().toString();
-        fields.put(key, new JavaFieldDescriptor(type));
-        return key;
+    public void addField(IFieldDescriptor field) {
+        String name = field.getName();
+        fields.put(name, field);
+        for (ITypeListener listener : listeners) {
+            listener.fieldAdded(name);
+        }
     }
 
     public void removeField(String name) {
-        fields.remove(name);
+        IFieldDescriptor field = fields.remove(name);
+        for (ITypeListener listener : listeners) {
+            listener.fieldRemoved(name);
+        }
     }
 
     public void setPrimary(String name) {
@@ -160,6 +168,12 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
         }
     }
 
-    public void detach() {
+    public void addTypeListener(ITypeListener listener) {
+        listeners.add(listener);
     }
+
+    public void removeTypeListener(ITypeListener listener) {
+        listeners.remove(listener);
+    }
+
 }

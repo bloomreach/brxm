@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.types;
+package org.hippoecm.editor.tools;
 
 import java.util.Set;
 
@@ -22,12 +22,14 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.model.ocm.JcrObject;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrFieldDescriptor extends NodeModelWrapper implements IFieldDescriptor {
+public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -37,8 +39,9 @@ public class JcrFieldDescriptor extends NodeModelWrapper implements IFieldDescri
 
     private Set<String> excluded;
 
-    public JcrFieldDescriptor(JcrNodeModel model) {
-        super(model);
+    public JcrFieldDescriptor(JcrNodeModel model, IPluginContext context) {
+        super(model, context);
+        init();
     }
 
     public String getName() {
@@ -107,6 +110,24 @@ public class JcrFieldDescriptor extends NodeModelWrapper implements IFieldDescri
         return false;
     }
 
+    void copy(IFieldDescriptor source) {
+        setName(source.getName());
+        setType(source.getType());
+        setPath(source.getPath());
+        setExcluded(source.getExcluded());
+
+//        setBinary(source.isBinary());
+        setMandatory(source.isMandatory());
+        setMultiple(source.isMultiple());
+        setOrdered(source.isOrdered());
+        setPrimary(source.isPrimary());
+//        setProtected(source.isProtected());
+    }
+
+    void setName(String name) {
+        setString(HippoNodeType.HIPPO_NAME, name);
+    }
+    
     void setPrimary(boolean isprimary) {
         setBoolean(HippoNodeType.HIPPO_PRIMARY, isprimary);
     }
@@ -130,8 +151,8 @@ public class JcrFieldDescriptor extends NodeModelWrapper implements IFieldDescri
 
     private String getString(String path) {
         try {
-            if (nodeModel.getNode().hasProperty(path)) {
-                return nodeModel.getNode().getProperty(path).getString();
+            if (getNode().hasProperty(path)) {
+                return getNode().getProperty(path).getString();
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
@@ -141,7 +162,7 @@ public class JcrFieldDescriptor extends NodeModelWrapper implements IFieldDescri
 
     private void setString(String path, String value) {
         try {
-            nodeModel.getNode().setProperty(path, value);
+            getNode().setProperty(path, value);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -149,8 +170,8 @@ public class JcrFieldDescriptor extends NodeModelWrapper implements IFieldDescri
 
     private boolean getBoolean(String path) {
         try {
-            if (nodeModel.getNode().hasProperty(path)) {
-                return nodeModel.getNode().getProperty(path).getBoolean();
+            if (getNode().hasProperty(path)) {
+                return getNode().getProperty(path).getBoolean();
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
@@ -160,7 +181,7 @@ public class JcrFieldDescriptor extends NodeModelWrapper implements IFieldDescri
 
     private void setBoolean(String path, boolean value) {
         try {
-            nodeModel.getNode().setProperty(path, value);
+            getNode().setProperty(path, value);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }

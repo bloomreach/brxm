@@ -38,6 +38,14 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
       <version>2.05.01-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-frontend-engine</artifactId>
+      <version>2.05.01-SNAPSHOT</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -76,6 +84,13 @@
       <artifactId>junit</artifactId>
       <version>4.4</version>
       <scope>test</scope>
+    </dependency>
+
+    <!-- provided -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Testing needs a JTA implementation -->
@@ -155,6 +170,15 @@
           <scope>test</scope>
           <optional>true</optional>
         </dependency>
+        <dependency>
+          <groupId>org.hippoecm</groupId>
+          <artifactId>hippo-ecm-frontend-engine</artifactId>
+          <version>${project.version}</version>
+          <type>jar</type>
+          <classifier>tests</classifier>
+          <scope>test</scope>
+          <optional>true</optional>
+        </dependency>
       </dependencies>
     </profile>
     <profile>
@@ -173,6 +197,15 @@
             <version>${project.version}</version>
             <type>jar</type>
             <classifier>test</classifier>
+            <scope>test</scope>
+            <optional>true</optional>
+          </dependency>
+          <dependency>
+            <groupId>org.hippoecm</groupId>
+            <artifactId>hippo-ecm-frontend-engine</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>tests</classifier>
             <scope>test</scope>
             <optional>true</optional>
           </dependency>

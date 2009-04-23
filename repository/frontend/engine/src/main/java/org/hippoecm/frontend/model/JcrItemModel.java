@@ -54,7 +54,6 @@ public class JcrItemModel extends LoadableDetachableModel {
     public JcrItemModel(String path) {
         super();
         this.path = path;
-        load();
     }
 
     public String getPath() {

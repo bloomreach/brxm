@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2007 Hippo
+
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         xmlns:hippo="http://www.hippoecm.org/nt/1.2"
+         sv:name="editor">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippo:workflowcategory</sv:value>
+  </sv:property>
+  <sv:node sv:name="template-editor-namespace">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:workflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:nodetype" sv:type="String">
+      <sv:value>hippo:namespace</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:classname" sv:type="String">
+      <sv:value>org.hippoecm.editor.repository.impl.NamespaceWorkflowImpl</sv:value>
+    </sv:property>
+    <sv:property sv:name="frontend:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:display" sv:type="String">
+      <sv:value>Template engine workflow to create a type</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:types">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:types</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="template-editor-namespaces">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:workflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:nodetype" sv:type="String">
+      <sv:value>hippo:namespacefolder</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:classname" sv:type="String">
+      <sv:value>org.hippoecm.editor.repository.impl.TemplateEditorWorkflowImpl</sv:value>
+    </sv:property>
+    <sv:property sv:name="frontend:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.editor.workflow.NamespaceWorkflowPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:display" sv:type="String">
+      <sv:value>Template engine workflow to create a namespace</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:types">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:types</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>

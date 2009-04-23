@@ -16,78 +16,15 @@
 package org.hippoecm.editor.tools;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.util.collections.MiniMap;
-import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.ITypeStore;
 
-public class NamespaceUpdater {
+public final class NamespaceUpdater {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private ITypeStore currentConfig;
-    private ITypeStore draftConfig;
-
-    public NamespaceUpdater(ITypeStore current, ITypeStore draft) {
-        currentConfig = current;
-        draftConfig = draft;
-    }
-
-    public Map<String, TypeUpdate> getUpdate(String namespace) {
-        Map<String, TypeUpdate> result = new HashMap<String, TypeUpdate>();
-
-        List<ITypeDescriptor> list = draftConfig.getTypes(namespace);
-        for (ITypeDescriptor descriptor : list) {
-            if (descriptor.isNode()) {
-                String type = descriptor.getType();
-                if (type.indexOf(':') > 0) {
-                    String prefix = type.substring(0, type.indexOf(':'));
-                    if (namespace.equals(prefix)) {
-                        ITypeDescriptor current = currentConfig.getTypeDescriptor(type);
-                        if (current != null) {
-                            ITypeDescriptor draft = draftConfig.getTypeDescriptor(type);
-
-                            TypeUpdate update = new TypeConversion(currentConfig, draftConfig, current, draft)
-                                    .getTypeUpdate();
-                            result.put(type, update);
-                        }
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    private static Map<String, TypeUpdate> convertCargo(Object cargo) {
-        Map<String, TypeUpdate> updates = new HashMap<String, TypeUpdate>();
-        for (Map.Entry<String, Object> entry : ((Map<String, Object>) cargo).entrySet()) {
-            Map<String, Object> value = (Map<String, Object>) entry.getValue();
-            TypeUpdate update = new TypeUpdate();
-            update.newName = (String) value.get("newName");
-            update.prototype = (String) value.get("prototype");
-            update.renames = new HashMap<FieldIdentifier, FieldIdentifier>();
-
-            Map<Map<String, String>, Map<String, String>> origRenames = (Map<Map<String, String>, Map<String, String>>) value
-                    .get("renames");
-            for (Map.Entry<Map<String, String>, Map<String, String>> rename : origRenames.entrySet()) {
-                FieldIdentifier src = new FieldIdentifier();
-                src.path = rename.getKey().get("path");
-                src.type = rename.getKey().get("type");
-
-                FieldIdentifier dest = new FieldIdentifier();
-                dest.path = rename.getValue().get("path");
-                dest.type = rename.getValue().get("type");
-
-                update.renames.put(src, dest);
-            }
-
-            updates.put(entry.getKey(), update);
-        }
-        return updates;
-    }
-
+    @SuppressWarnings("unchecked")
     public static Object toCargo(Map<String, TypeUpdate> updates) {
         Map<String, Object> result = new HashMap<String, Object>();
         for (Map.Entry<String, TypeUpdate> entry : updates.entrySet()) {

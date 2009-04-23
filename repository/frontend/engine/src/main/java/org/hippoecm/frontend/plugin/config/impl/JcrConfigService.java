@@ -23,12 +23,14 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.IServiceFactory;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrConfigService implements IPluginConfigService {
+public class JcrConfigService implements IServiceFactory<IPluginConfigService> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -43,43 +45,64 @@ public class JcrConfigService implements IPluginConfigService {
         this.defaultKey = defaultKey;
     }
 
-    public IClusterConfig getCluster(String key) {
-        IClusterConfig cluster = null;
-        try {
-            if (model.getNode().hasNode(key)) {
-                Node clusterNode = model.getNode().getNode(key);
-                JcrNodeModel clusterNodeModel = new JcrNodeModel(clusterNode);
-                cluster = new JcrClusterConfig(clusterNodeModel);
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        return cluster;
+    public IPluginConfigService getService(IPluginContext context) {
+        return new PluginConfigService(context);
     }
 
-    public List<String> listClusters(String folder) {
-        List<String> results = new LinkedList<String>();
-        try {
-            Node node = model.getNode().getNode(folder);
-            NodeIterator iter = node.getNodes();
-            while (iter.hasNext()) {
-                Node child = iter.nextNode();
-                if (child.isNodeType("frontend:plugincluster")) {
-                    results.add(child.getName());
+    public Class<? extends IPluginConfigService> getServiceClass() {
+        return IPluginConfigService.class;
+    }
+
+    public void releaseService(IPluginContext context, IPluginConfigService service) {
+    }
+
+    private class PluginConfigService implements IPluginConfigService {
+        private static final long serialVersionUID = 1L;
+
+        private IPluginContext context;
+        
+        PluginConfigService(IPluginContext context) {
+            this.context = context;
+        }
+        
+        public IClusterConfig getCluster(String key) {
+            IClusterConfig cluster = null;
+            try {
+                if (model.getNode().hasNode(key)) {
+                    Node clusterNode = model.getNode().getNode(key);
+                    JcrNodeModel clusterNodeModel = new JcrNodeModel(clusterNode);
+                    cluster = new JcrClusterConfig(clusterNodeModel, context);
                 }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
             }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            return cluster;
         }
-        return results;
-    }
 
-    public IClusterConfig getDefaultCluster() {
-        return getCluster(defaultKey);
-    }
+        public List<String> listClusters(String folder) {
+            List<String> results = new LinkedList<String>();
+            try {
+                Node node = model.getNode().getNode(folder);
+                NodeIterator iter = node.getNodes();
+                while (iter.hasNext()) {
+                    Node child = iter.nextNode();
+                    if (child.isNodeType("frontend:plugincluster")) {
+                        results.add(child.getName());
+                    }
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+            return results;
+        }
 
-    public void detach() {
-        model.detach();
-    }
+        public IClusterConfig getDefaultCluster() {
+            return getCluster(defaultKey);
+        }
 
+        public void detach() {
+            model.detach();
+        }
+
+    }
 }

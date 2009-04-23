@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugin.impl;
 
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.IServiceFactory;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -47,6 +49,7 @@ public class PluginContext implements IPluginContext, IDetachable {
     private IPluginConfig config;
     private IPlugin plugin;
     private Map<String, List<IClusterable>> services;
+    private Map<IServiceFactory, IClusterable> instances;
     private Map<String, List<IServiceTracker<? extends IClusterable>>> listeners;
     private Map<String, ClusterControl> children;
     private PluginManager manager;
@@ -61,6 +64,7 @@ public class PluginContext implements IPluginContext, IDetachable {
         }
 
         this.services = new HashMap<String, List<IClusterable>>();
+        this.instances = new IdentityHashMap<IServiceFactory, IClusterable>();
         this.listeners = new HashMap<String, List<IServiceTracker<? extends IClusterable>>>();
         this.children = new TreeMap<String, ClusterControl>();
         this.initializing = true;
@@ -110,11 +114,44 @@ public class PluginContext implements IPluginContext, IDetachable {
     }
 
     public <T extends IClusterable> T getService(String name, Class<T> clazz) {
-        return manager.getService(name, clazz);
+        T service = manager.getService(name, clazz);
+        if (service == null) {
+            List<IServiceFactory> list = manager.getServices(name, IServiceFactory.class);
+            if (list != null && list.size() > 0) {
+                for (IServiceFactory factory : list) {
+                    if (clazz.isAssignableFrom(factory.getServiceClass())) {
+                        if (instances.containsKey(factory)) {
+                            service = (T) instances.get(factory);
+                        } else {
+                            service = (T) factory.getService(this);
+                            instances.put(factory, service);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return service;
     }
 
     public <T extends IClusterable> List<T> getServices(String name, Class<T> clazz) {
-        return manager.getServices(name, clazz);
+        List<T> result = manager.getServices(name, clazz);
+        List<IServiceFactory> list = manager.getServices(name, IServiceFactory.class);
+        if (list != null && list.size() > 0) {
+            for (IServiceFactory factory : list) {
+                if (clazz.isAssignableFrom(factory.getServiceClass())) {
+                    T service;
+                    if (instances.containsKey(factory)) {
+                        service = (T) instances.get(factory);
+                    } else {
+                        service = (T) factory.getService(this);
+                        instances.put(factory, service);
+                    }
+                    result.add(service);
+                }
+            }
+        }
+        return result;
     }
 
     public <T extends IClusterable> IServiceReference<T> getReference(T service) {
@@ -223,18 +260,32 @@ public class PluginContext implements IPluginContext, IDetachable {
                     manager.unregisterTracker(service, entry.getKey());
                 }
             }
-            listeners = new HashMap<String, List<IServiceTracker<? extends IClusterable>>>();
+            listeners.clear();
+
+            for (Map.Entry<IServiceFactory, IClusterable> entry : instances.entrySet()) {
+                entry.getKey().releaseService(this, entry.getValue());
+            }
+            instances.clear();
 
             for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
                 for (IClusterable service : entry.getValue()) {
                     manager.unregisterService(service, entry.getKey());
                 }
             }
-            services = new HashMap<String, List<IClusterable>>();
+            services.clear();
         }
     }
 
     public void detach() {
+        for (Map.Entry<IServiceFactory, IClusterable> entry : instances.entrySet()) {
+            IClusterable service = entry.getValue();
+            // FIXME: ugly!
+            // should all services be IDetachable?
+            if ((service instanceof IDetachable) && !(service instanceof IRenderService)) {
+                ((IDetachable) service).detach();
+            }
+        }
+
         for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
             for (IClusterable service : entry.getValue()) {
                 // FIXME: ugly!

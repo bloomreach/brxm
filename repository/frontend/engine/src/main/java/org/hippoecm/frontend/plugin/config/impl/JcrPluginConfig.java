@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugin.config.impl;
 import java.lang.reflect.Array;
 import java.util.AbstractList;
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,18 +31,27 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.event.ListenerList;
+import org.hippoecm.frontend.model.map.HippoMap;
+import org.hippoecm.frontend.model.map.IHippoMap;
 import org.hippoecm.frontend.model.map.JcrMap;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.IPluginConfigListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
+public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -48,16 +59,46 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
 
     private static final Logger log = LoggerFactory.getLogger(JcrPluginConfig.class);
 
-    protected final JcrNodeModel nodeModel;
-    private transient JcrMap map;
-    private transient Set<Entry<String, Object>> entries;
+    private class EntryDecorator implements Map.Entry<String, Object> {
 
-    public JcrPluginConfig(JcrNodeModel nodeModel) {
+        String key;
+
+        EntryDecorator(Map.Entry<String, Object> upstream) {
+            this.key = upstream.getKey();
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public Object getValue() {
+            return JcrPluginConfig.this.get(key);
+        }
+
+        public Object setValue(Object value) {
+            return JcrPluginConfig.this.put(key, value);
+        }
+    }
+
+    protected final JcrNodeModel nodeModel;
+    private IPluginContext context;
+    private IObserver observer;
+    private List<IPluginConfigListener> listeners = new ListenerList<IPluginConfigListener>();
+    private JcrMap map;
+    private transient Set<Map.Entry<String, Object>> entries;
+
+    public JcrPluginConfig(JcrNodeModel nodeModel, IPluginContext context) {
         this.nodeModel = nodeModel;
+        this.context = context;
+        this.map = new JcrMap(nodeModel);
     }
 
     public JcrNodeModel getNodeModel() {
         return nodeModel;
+    }
+
+    protected IPluginContext getPluginContext() {
+        return context;
     }
 
     public String getName() {
@@ -179,7 +220,7 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
                 Node node = nodeModel.getNode();
                 if (node.hasNode(strKey)) {
                     Node child = node.getNode(strKey);
-                    return new JcrPluginConfig(new JcrNodeModel(child));
+                    return new JcrPluginConfig(new JcrNodeModel(child), context);
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
@@ -197,7 +238,7 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
             for (int i = 0; children.hasNext(); i++) {
                 Node child = children.nextNode();
                 if (child != null) {
-                    configs.add(new JcrPluginConfig(new JcrNodeModel(child)));
+                    configs.add(new JcrPluginConfig(new JcrNodeModel(child), context));
                 }
             }
         } catch (RepositoryException ex) {
@@ -242,13 +283,13 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
 
     public void detach() {
         nodeModel.detach();
+        map.detach();
         entries = null;
     }
 
     @Override
     public Object get(Object key) {
-        JcrMap jcrMap = getMap();
-        Object obj = jcrMap.get(key);
+        Object obj = map.get(key);
         if (obj == null) {
             return null;
         }
@@ -268,34 +309,41 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
 
     @Override
     public Object put(Object key, Object value) {
-        JcrMap jcrMap = getMap();
-        return jcrMap.put((String) key, value);
+        if (value instanceof IPluginConfig) {
+            HippoMap map = new HippoMap();
+            map.setPrimaryType("frontend:pluginconfig");
+            map.putAll((IPluginConfig) value);
+            value = map;
+        } else if (value instanceof List) {
+            List<IHippoMap> list = new ArrayList<IHippoMap>(((List<IPluginConfig>) value).size());
+            for (IPluginConfig entry : (List<IPluginConfig>) value) {
+                HippoMap map = new HippoMap();
+                map.setPrimaryType("frontend:pluginconfig");
+                map.putAll((IPluginConfig) entry);
+                list.add(map);
+            }
+            value = list;
+        }
+        entries = null;
+        return map.put((String) key, value);
     }
-    
+
+    @Override
+    public void clear() {
+        entries = null;
+        map.clear();
+    }
+
     @Override
     public Set<Map.Entry<String, Object>> entrySet() {
         if (entries == null) {
-            final JcrMap jcrMap = getMap();
-            final Set<Map.Entry<String, Object>> orig = jcrMap.entrySet();
+            final Set<Map.Entry<String, Object>> orig = map.entrySet();
             entries = new LinkedHashSet<Map.Entry<String, Object>>();
             for (final Map.Entry<String, Object> entry : orig) {
-                entries.add(new Map.Entry<String, Object>() {
-
-                    public String getKey() {
-                        return entry.getKey();
-                    }
-
-                    public Object getValue() {
-                        return JcrPluginConfig.this.get(entry.getKey());
-                    }
-
-                    public Object setValue(Object value) {
-                        return jcrMap.put(entry.getKey(), value);
-                    }
-                });
+                entries.add(new EntryDecorator(entry));
             }
         }
-        return entries;
+        return Collections.unmodifiableSet(entries);
     }
 
     @Override
@@ -306,6 +354,7 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
         return false;
     }
 
+    @Override
     public int hashCode() {
         return 521 * nodeModel.hashCode();
     }
@@ -322,17 +371,10 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
         return null;
     }
 
-    private JcrMap getMap() {
-        if (map == null) {
-            map = new JcrMap(nodeModel.getNode());
-        }
-        return map;
-    }
-    
     private Object filter(Object value) {
         if (value instanceof JcrMap) {
             JcrMap map = (JcrMap) value;
-            return new JcrPluginConfig(new JcrNodeModel(map.getNode()));
+            return new JcrPluginConfig(new JcrNodeModel(map.getNode()), context);
         } else if (value instanceof List) {
             final List list = (List) value;
             return new AbstractList() {
@@ -350,4 +392,35 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig {
         }
         return value;
     }
+
+    public void addPluginConfigListener(IPluginConfigListener listener) {
+        listeners.add(listener);
+        if (listeners.size() > 0 && context != null) {
+            observer = new IObserver() {
+                private static final long serialVersionUID = 1L;
+
+                public IObservable getObservable() {
+                    return nodeModel;
+                }
+
+                public void onEvent(IEvent event) {
+                    entries = null;
+                    for (IPluginConfigListener listener : listeners) {
+                        listener.onPluginConfigChanged();
+                    }
+                }
+
+            };
+            context.registerService(observer, IObserver.class.getName());
+        }
+    }
+
+    public void removePluginConfigListener(IPluginConfigListener listener) {
+        listeners.remove(listener);
+        if (listeners.size() == 0 && context != null) {
+            context.unregisterService(observer, IObserver.class.getName());
+            observer = null;
+        }
+    }
+
 }

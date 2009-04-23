@@ -18,12 +18,17 @@ package org.hippoecm.frontend.model.map;
 import java.util.AbstractList;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Session;
+import org.apache.wicket.model.IDetachable;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrList extends AbstractList<IHippoMap> {
+public class JcrList extends AbstractList<IHippoMap> implements IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -31,18 +36,27 @@ public class JcrList extends AbstractList<IHippoMap> {
 
     private static final Logger log = LoggerFactory.getLogger(JcrList.class);
 
-    private Node item;
+    private String path;
     private String name;
+    private transient Node node;
 
-    public JcrList(Node node, String name) {
-        this.item = node;
+    public JcrList(JcrNodeModel nodeModel, String name) {
+        this.path = nodeModel.getItemModel().getPath();
         this.name = name;
+    }
+
+    protected Node getNode() throws PathNotFoundException, RepositoryException {
+        if (node == null) {
+            UserSession sessionProvider = (UserSession) Session.get();
+            node = (Node) sessionProvider.getJcrSession().getItem(path);
+        }
+        return node;
     }
 
     @Override
     public IHippoMap get(int index) {
         try {
-            return new JcrMap(item.getNode(name + "[" + (index + 1) + "]"));
+            return new JcrMap(new JcrNodeModel(getNode().getNode(name + "[" + (index + 1) + "]")));
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -50,9 +64,16 @@ public class JcrList extends AbstractList<IHippoMap> {
     }
 
     @Override
+    public IHippoMap set(int index, IHippoMap element) {
+        IHippoMap previous = remove(index);
+        add(index, element);
+        return previous;
+    }
+
+    @Override
     public int size() {
         try {
-            return (int) item.getNodes(name).getSize();
+            return (int) getNode().getNodes(name).getSize();
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -62,31 +83,36 @@ public class JcrList extends AbstractList<IHippoMap> {
     @Override
     public void add(int index, IHippoMap element) {
         try {
-            Node child = item.addNode(name, element.getPrimaryType());
+            Node child = getNode().addNode(name, element.getPrimaryType());
             for (String mixin : element.getMixinTypes()) {
                 child.addMixin(mixin);
             }
-            JcrMap map = new JcrMap(child);
+            JcrMap map = new JcrMap(new JcrNodeModel(child));
             map.putAll(element);
 
-            if (item.getPrimaryNodeType().hasOrderableChildNodes() && (index < (size() - 1))) {
-                Node predecessor = item.getNode(name + "[" + (index + 1) + "]");
-                item.orderBefore(name + "[" + child.getIndex() + "]", name + "[" + predecessor.getIndex() + "]");
+            Node node = getNode();
+            if (node.getPrimaryNodeType().hasOrderableChildNodes() && (index < (size() - 1))) {
+                Node predecessor = node.getNode(name + "[" + (index + 1) + "]");
+                node.orderBefore(name + "[" + child.getIndex() + "]", name + "[" + predecessor.getIndex() + "]");
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
     }
 
+    @Override
     public IHippoMap remove(int index) {
-        // FIXME: make deep copy of node, before it's removed
-        IHippoMap current = get(index);
+        IHippoMap current = new HippoMap(get(index));
         try {
-            item.getNode(name + "[" + (index + 1) + "]").remove();
+            getNode().getNode(name + "[" + (index + 1) + "]").remove();
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
         return current;
+    }
+
+    public void detach() {
+        node = null;
     }
 
 }

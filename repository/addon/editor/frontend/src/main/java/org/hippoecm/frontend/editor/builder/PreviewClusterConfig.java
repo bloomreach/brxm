@@ -15,72 +15,67 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelReference;
-import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
-import org.hippoecm.frontend.model.event.IObservationContext;
-import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.plugin.IPluginContext;
+import org.apache.wicket.Application;
+import org.apache.wicket.settings.IResourceSettings;
+import org.apache.wicket.util.resource.IResourceStream;
+import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
+import org.hippoecm.frontend.editor.plugins.field.FieldPlugin;
+import org.hippoecm.frontend.editor.plugins.field.FieldPluginEditorPlugin;
+import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
-import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class PreviewClusterConfig extends JcrClusterConfig implements IObservable {
+public class PreviewClusterConfig extends JavaClusterConfig {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private static int instanceCount = 0;
-    private String pluginConfigModel;
-    private String engineId;
-    private IPluginContext pluginContext;
-    private IObservationContext observationContext;
-    private List<IObserver> observers;
+    static final Logger log = LoggerFactory.getLogger(PreviewClusterConfig.class);
 
-    public PreviewClusterConfig(IPluginContext context, JcrNodeModel node, ModelReference model, String engineId) {
-        super(node);
+    private String clusterConfigModel;
+    private String selectedPluginModel;
+    private String helperId;
 
-        this.pluginContext = context;
-        this.engineId = engineId;
-        this.pluginConfigModel = context.getReference(model).getServiceId();
+    private Boolean editable;
+
+    public PreviewClusterConfig(IClusterConfig template, String clusterConfigModel, String selectedPluginModel,
+            String helperId, boolean editable) {
+        super(template);
+
+        this.clusterConfigModel = clusterConfigModel;
+        this.selectedPluginModel = selectedPluginModel;
+        this.helperId = helperId;
+        this.editable = editable;
     }
 
-    public void setObservationContext(IObservationContext context) {
-        observationContext = context;
-    }
-
-    public void startObservation() {
-        List<IPluginConfig> plugins = super.getPlugins();
-        observers = new ArrayList<IObserver>(plugins.size());
-        for (final IPluginConfig config : plugins) {
-            IObserver observer = new IObserver() {
-                private static final long serialVersionUID = 1L;
-
-                public IObservable getObservable() {
-                    return ((JcrPluginConfig) config).getNodeModel();
-                }
-
-                public void onEvent(IEvent event) {
-                    observationContext.notifyObservers(event);
-                }
-            };
-            observers.add(observer);
-            pluginContext.registerService(observer, IObserver.class.getName());
+    protected String getPluginConfigEditorClass(String pluginClass) {
+        try {
+            Class<?> clazz = Class.forName(pluginClass);
+            if (FieldPlugin.class.isAssignableFrom(clazz)) {
+                return FieldPluginEditorPlugin.class.getName();
+            } else if (RenderPlugin.class.isAssignableFrom(clazz)) {
+                return RenderPluginEditorPlugin.class.getName();
+            }
+        } catch (ClassNotFoundException ex) {
+            IResourceSettings resourceSettings = Application.get().getResourceSettings();
+            IResourceStreamLocator locator = resourceSettings.getResourceStreamLocator();
+            IResourceStream stream = locator.locate(null, pluginClass.replace('.', '/') + ".html");
+            if (stream == null) {
+                String message = ex.getClass().getName() + ": " + ex.getMessage();
+                log.error(message, ex);
+            } else {
+                return RenderPluginEditorPlugin.class.getName();
+            }
         }
-    }
-
-    public void stopObservation() {
-        for (IObserver observer : observers) {
-            pluginContext.unregisterService(observer, IObserver.class.getName());
-        }
-        observers = null;
+        return null;
     }
 
     @Override
@@ -88,23 +83,10 @@ public class PreviewClusterConfig extends JcrClusterConfig implements IObservabl
         List<IPluginConfig> plugins = super.getPlugins();
         List<IPluginConfig> result = new LinkedList<IPluginConfig>();
         for (final IPluginConfig config : plugins) {
-            if (config.get("wicket.id") != null && !"${wicket.id}".equals(config.get("wicket.id"))) {
-                final String wrappedId = PreviewClusterConfig.class.getName() + "." + newId();
-                IPluginConfig previewWrapper = new JavaPluginConfig(config.getName() + "-preview");
-                previewWrapper.put("plugin.class", PreviewPluginPlugin.class.getName());
-                previewWrapper.put("wicket.id", config.get("wicket.id"));
-                previewWrapper.put("wicket.model", pluginConfigModel);
-                previewWrapper.put("engine", engineId);
-                previewWrapper.put("preview", wrappedId);
-
-                JcrNodeModel pluginNodeModel = ((JcrPluginConfig) config).getNodeModel();
-                previewWrapper.put("plugin.node.path", pluginNodeModel.getItemModel().getPath());
-
-                result.add(previewWrapper);
-
-                IPluginConfig wrappedPluginConfig = new JavaPluginConfig(config);
-                wrappedPluginConfig.put("wicket.id", wrappedId);
-                result.add(wrappedPluginConfig);
+            String editorClass = getPluginConfigEditorClass(config.getString("plugin.class"));
+            if (editorClass != null) {
+                result.add(getEditorConfig(editorClass, config));
+                result.add(wrapConfig(config));
             } else {
                 result.add(config);
             }
@@ -112,10 +94,32 @@ public class PreviewClusterConfig extends JcrClusterConfig implements IObservabl
         return result;
     }
 
-    private int newId() {
-        synchronized (PreviewClusterConfig.class) {
-            return instanceCount++;
+    private IPluginConfig getEditorConfig(String clazz, IPluginConfig config) {
+        IPluginConfig previewWrapper = new JavaPluginConfig(config.getName() + "-preview");
+        previewWrapper.put("plugin.class", clazz);
+        previewWrapper.put("model.effective", config);
+
+        previewWrapper.put("wicket.helper.id", helperId);
+        previewWrapper.put("wicket.model", clusterConfigModel);
+        previewWrapper.put("model.plugin", selectedPluginModel);
+        previewWrapper.put("plugin.id", config.getName());
+        previewWrapper.put("builder.mode", editable);
+
+        if (config.get("wicket.id") != null) {
+            String wrappedId = "${cluster.id}.wrap." + config.getName();
+            previewWrapper.put("wicket.id", config.get("wicket.id"));
+            previewWrapper.put("preview", wrappedId);
         }
+
+        return previewWrapper;
     }
 
+    private IPluginConfig wrapConfig(IPluginConfig config) {
+        IPluginConfig wrappedPluginConfig = new JavaPluginConfig(config);
+        if (config.get("wicket.id") != null) {
+            String wrappedId = "${cluster.id}.wrap." + config.getName();
+            wrappedPluginConfig.put("wicket.id", wrappedId);
+        }
+        return wrappedPluginConfig;
+    }
 }

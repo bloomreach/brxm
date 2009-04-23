@@ -15,15 +15,23 @@
  */
 package org.hippoecm.frontend.types;
 
+import java.util.EventListener;
 import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Value;
 
-import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.IClusterable;
 
-public interface ITypeDescriptor extends IDetachable {
+public interface ITypeDescriptor extends IClusterable {
     final static String SVN_ID = "$Id$";
+
+    interface ITypeListener extends EventListener, IClusterable {
+
+        void fieldAdded(String field);
+
+        void fieldRemoved(String field);
+    }
 
     String getName();
 
@@ -37,7 +45,7 @@ public interface ITypeDescriptor extends IDetachable {
 
     IFieldDescriptor getField(String key);
 
-    String addField(String type);
+    void addField(IFieldDescriptor descriptor);
 
     void removeField(String name);
 
@@ -53,4 +61,8 @@ public interface ITypeDescriptor extends IDetachable {
 
     Value createValue();
 
+    void addTypeListener(ITypeListener listener);
+
+    void removeTypeListener(ITypeListener listener);
+    
 }

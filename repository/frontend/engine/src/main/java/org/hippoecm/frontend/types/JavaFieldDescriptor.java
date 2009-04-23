@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.types;
 
 import java.util.Set;
+import java.util.UUID;
 
 public class JavaFieldDescriptor implements IFieldDescriptor {
     @SuppressWarnings("unused")
@@ -23,6 +24,7 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
 
     private static final long serialVersionUID = 1L;
 
+    private String name;
     private String type;
     private String path;
 
@@ -35,16 +37,30 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
     private boolean ordered;
     private boolean primary;
 
-    public JavaFieldDescriptor(String path) {
-        this.type = null;
-        this.path = path;
+    public JavaFieldDescriptor(String prefix, String type) {
+        this.type = type;
+        this.path = prefix + ":" + type.toLowerCase().replace(':', '_');
         this.excluded = null;
+        this.name = UUID.randomUUID().toString();
 
         multiple = protect = binary = mandatory = ordered = primary = false;
     }
 
+    public JavaFieldDescriptor(IFieldDescriptor source) {
+        this.type = source.getType();
+        this.path = source.getPath();
+        this.excluded = source.getExcluded();
+
+        this.binary = source.isBinary();
+        this.mandatory = source.isMandatory();
+        this.multiple = source.isMultiple();
+        this.ordered = source.isOrdered();
+        this.primary = source.isPrimary();
+        this.protect = source.isProtected();
+    }
+
     public String getName() {
-        return path;
+        return name;
     }
 
     public String getType() {
@@ -111,6 +127,4 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
         this.primary = isPrimary;
     }
 
-    public void detach() {
-    }
 }

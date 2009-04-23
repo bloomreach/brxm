@@ -19,10 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -32,21 +28,15 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.hippoecm.frontend.editor.ITemplateEngine;
-import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
-import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
-import org.hippoecm.frontend.model.IModelReference;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.JcrTypeStore;
+import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.widgets.AbstractView;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,32 +49,9 @@ public class TemplateListPlugin extends RenderPlugin {
     private static final Logger log = LoggerFactory.getLogger(TemplateListPlugin.class);
 
     private List<ITypeDescriptor> templateList;
-    private ITypeDescriptor editedType;
-    private JcrNodeModel templateNodeModel;
 
     public TemplateListPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        JcrNodeModel templateTypeModel = (JcrNodeModel) getModel();
-        try {
-            Node typeNode = templateTypeModel.getNode();
-            if (typeNode.hasNode(HippoNodeType.HIPPO_TEMPLATE)) {
-                Node templateHandle = typeNode.getNode(HippoNodeType.HIPPO_TEMPLATE);
-                NodeIterator templates = templateHandle.getNodes(HippoNodeType.HIPPO_TEMPLATE);
-                while (templates.hasNext()) {
-                    Node template = templates.nextNode();
-                    if (template.isNodeType("frontend:plugincluster")) {
-                        templateNodeModel = new JcrNodeModel(template);
-                        JcrTypeStore typeStore = new JcrTypeStore(typeNode.getParent().getName());
-                        editedType = typeStore.getTypeDescriptor(typeNode.getParent().getName() + ":"
-                                + NodeNameCodec.decode(typeNode.getName()));
-                        break;
-                    }
-                }
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
 
         templateList = new LinkedList<ITypeDescriptor>();
         ITemplateEngine engine = context.getService(config.getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
@@ -115,7 +82,15 @@ public class TemplateListPlugin extends RenderPlugin {
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        addField(type);
+                        ITypeDescriptor containingType = (ITypeDescriptor) TemplateListPlugin.this.getModelObject();
+                        String prefix = containingType.getName();
+                        if (prefix.indexOf(':') > 0) {
+                            prefix = prefix.substring(0, prefix.indexOf(':'));
+                            containingType.addField(new JavaFieldDescriptor(prefix, type.getName()));
+                            // TODO: save!
+                        } else {
+                            log.warn("adding a field to a primitive type is not supported");
+                        }
                     }
 
                     @Override
@@ -151,58 +126,4 @@ public class TemplateListPlugin extends RenderPlugin {
         add(templateView);
     }
 
-    @Override
-    public void onDetach() {
-        for (ITypeDescriptor type : templateList) {
-            type.detach();
-        }
-        if (editedType != null) {
-            editedType.detach();
-            templateNodeModel.detach();
-        }
-        super.onDetach();
-    }
-
-    protected void addField(ITypeDescriptor typeDescriptor) {
-        if(editedType != null) {
-            try {
-                String name = editedType.addField(typeDescriptor.getName());
-
-                // add item to template
-                Node templateNode = templateNodeModel.getNode();
-
-                String pluginName = UUID.randomUUID().toString();
-                Node itemNode = templateNode.addNode(pluginName, "frontend:plugin");
-                if (typeDescriptor.isNode()) {
-                    itemNode.setProperty(IPlugin.CLASSNAME, NodeFieldPlugin.class.getName());
-                } else {
-                    itemNode.setProperty(IPlugin.CLASSNAME, PropertyFieldPlugin.class.getName());
-                }
-                itemNode.setProperty("wicket.id", "${cluster.id}.field");
-                itemNode.setProperty("wicket.model", "${wicket.model}");
-                itemNode.setProperty("mode", "${mode}");
-                itemNode.setProperty("engine", "${engine}");
-                itemNode.setProperty("field", name);
-                itemNode.setProperty("caption", new String[] { typeDescriptor.getName() });
-
-                templateNode.save();
-
-                // update helper model
-                select(new JcrNodeModel(itemNode));
-
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-        } else {
-            log.error("No type is being edited");
-        }
-    }
-
-    private void select(JcrNodeModel model) {
-        IModelReference helperModel = getPluginContext().getService(getPluginConfig().getString("helper.model"),
-                IModelReference.class);
-        if (helperModel != null) {
-            helperModel.setModel(model);
-        }
-    }
 }
