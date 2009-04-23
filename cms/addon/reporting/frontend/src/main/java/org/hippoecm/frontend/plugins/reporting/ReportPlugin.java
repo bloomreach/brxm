@@ -69,7 +69,7 @@ public class ReportPlugin implements IPlugin {
         try {
             Node rendererNode = reportNode.getNode(ReportingNodeTypes.PLUGIN);
             JcrNodeModel rendererNodeModel = new JcrNodeModel(rendererNode);
-            IPluginConfig pluginConfig = new JcrPluginConfig(rendererNodeModel);
+            IPluginConfig pluginConfig = new JcrPluginConfig(rendererNodeModel, null);
             clusterConfig = new JavaClusterConfig();
             clusterConfig.addPlugin(pluginConfig);
 

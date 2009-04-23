@@ -49,13 +49,6 @@ public class ValueTemplateProvider extends AbstractProvider<JcrPropertyValueMode
         this.type = type;
     }
 
-    @Override
-    public void detach() {
-        descriptor.detach();
-        type.detach();
-        super.detach();
-    }
-
     public IFieldDescriptor getDescriptor() {
         return descriptor;
     }

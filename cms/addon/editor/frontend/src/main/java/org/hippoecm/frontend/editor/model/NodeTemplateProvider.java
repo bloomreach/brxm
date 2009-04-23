@@ -56,7 +56,6 @@ public class NodeTemplateProvider extends AbstractProvider<JcrNodeModel> {
 
     @Override
     public void detach() {
-        descriptor.detach();
         if (prototype != null) {
             prototype.detach();
         }

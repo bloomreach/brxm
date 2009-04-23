@@ -49,7 +49,7 @@ public interface IPluginContext extends IClusterable {
     void unregisterService(IClusterable service, String name);
 
     /**
-     * Registers a service with the given name.
+     * Registers a service tracker with the given name.
      *
      * @param name
      * @param service
@@ -57,7 +57,7 @@ public interface IPluginContext extends IClusterable {
     void registerTracker(IServiceTracker<? extends IClusterable> listener, String name);
 
     /**
-     * Unregisters a service with the given name.
+     * Unregisters a service tracker with the given name.
      *
      * @param name
      * @param service

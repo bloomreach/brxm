@@ -55,7 +55,7 @@
     <appender-ref ref="root"/>
   </category>
 
-  <!--  category additivity="true" name="org.hippoecm.repository.LocalHippoRepository">
+  <!-- category additivity="true" name="org.hippoecm.repository.LocalHippoRepository">
     <level value="debug"/>
     <appender-ref ref="console"/>
   </category -->

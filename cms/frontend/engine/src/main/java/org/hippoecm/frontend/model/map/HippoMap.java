@@ -15,9 +15,14 @@
  */
 package org.hippoecm.frontend.model.map;
 
+import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class HippoMap extends HashMap<String, Object> implements IHippoMap {
     @SuppressWarnings("unused")
@@ -28,6 +33,16 @@ public class HippoMap extends HashMap<String, Object> implements IHippoMap {
     private String primaryType = "nt:unstructured";
     private List<String> mixins = new LinkedList<String>();
 
+    public HippoMap() {
+    }
+    
+    public HippoMap(IHippoMap original) {
+        super(original);
+
+        primaryType = original.getPrimaryType();
+        mixins = new ArrayList<String>(original.getMixinTypes());
+    }
+
     public String getPrimaryType() {
         return primaryType;
     }
@@ -36,10 +51,10 @@ public class HippoMap extends HashMap<String, Object> implements IHippoMap {
         primaryType = type;
     }
 
-    public String[] getMixinTypes() {
-        return mixins.toArray(new String[mixins.size()]);
+    public List<String> getMixinTypes() {
+        return mixins;
     }
-    
+
     public void addMixinType(String type) {
         mixins.add(type);
     }
@@ -49,10 +64,71 @@ public class HippoMap extends HashMap<String, Object> implements IHippoMap {
     }
 
     public void reset() {
-        clear();
+        throw new UnsupportedOperationException("Cannot reset HippoMap");
     }
 
     public void save() {
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Object put(String key, Object value) {
+        if (value instanceof List) {
+            List<IHippoMap> newList = new LinkedList<IHippoMap>();
+            for (IHippoMap entry : (List<IHippoMap>) value) {
+                newList.add(new HippoMap(entry));
+            }
+            value = newList;
+        }
+        return super.put(key, value);
+    }
+
+    @Override
+    public Set<Map.Entry<String, Object>> entrySet() {
+        final Set<Map.Entry<String, Object>> base = super.entrySet();
+        return new AbstractSet<Map.Entry<String, Object>>() {
+
+            @Override
+            public Iterator<Map.Entry<String, Object>> iterator() {
+                final Iterator<Map.Entry<String, Object>> iter = base.iterator();
+                return new Iterator<Map.Entry<String, Object>>() {
+
+                    public boolean hasNext() {
+                        return iter.hasNext();
+                    }
+
+                    public Map.Entry<String, Object> next() {
+                        final Map.Entry<String, Object> entry = iter.next();
+                        return new Map.Entry<String, Object>() {
+
+                            public String getKey() {
+                                return entry.getKey();
+                            }
+
+                            public Object getValue() {
+                                return HippoMap.this.get(entry.getKey());
+                            }
+
+                            public Object setValue(Object value) {
+                                return HippoMap.this.put(entry.getKey(), value);
+                            }
+                            
+                        };
+                    }
+
+                    public void remove() {
+                        iter.remove();
+                    }
+                    
+                };
+            }
+
+            @Override
+            public int size() {
+                return base.size();
+            }
+            
+        };
     }
 
 }

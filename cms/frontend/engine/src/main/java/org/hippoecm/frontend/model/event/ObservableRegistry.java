@@ -24,6 +24,8 @@ import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ServiceTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ObservableRegistry implements IPlugin {
     @SuppressWarnings("unused")
@@ -31,6 +33,8 @@ public class ObservableRegistry implements IPlugin {
 
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(ObservableRegistry.class);
+    
     private class ObservationContext implements IObservationContext {
         private static final long serialVersionUID = 1L;
 

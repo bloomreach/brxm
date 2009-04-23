@@ -17,9 +17,9 @@ package org.hippoecm.frontend.types;
 
 import java.util.Set;
 
-import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.IClusterable;
 
-public interface IFieldDescriptor extends IDetachable {
+public interface IFieldDescriptor extends IClusterable {
     final static String SVN_ID = "$Id$";
 
     String getName();

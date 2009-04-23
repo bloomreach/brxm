@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugin.config.impl;
 
 import java.lang.reflect.Array;
+import java.util.AbstractSet;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -30,16 +31,20 @@ import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.frontend.model.event.ListenerList;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.IPluginConfigListener;
 
 public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static final long serialVersionUID = 1L;
 
     private IPluginConfig upstream;
-    
+    private List<IPluginConfigListener> listeners = new ListenerList<IPluginConfigListener>();
+
+    private final int hashCode = new Object().hashCode();
     private String pluginInstanceName = null;
 
     public JavaPluginConfig() {
@@ -74,7 +79,7 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
         if (value instanceof IPluginConfig) {
             return (IPluginConfig) value;
         } else if (value instanceof List && ((List) value).size() > 0) {
-            return (IPluginConfig)((List) value).get(0);
+            return (IPluginConfig) ((List) value).get(0);
         } else {
             return new JavaPluginConfig();
         }
@@ -105,8 +110,7 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
     /**
      * @see IValueMap#getDouble(String, double)
      */
-    public final double getDouble(final String key, final double defaultValue)
-            throws StringValueConversionException {
+    public final double getDouble(final String key, final double defaultValue) throws StringValueConversionException {
         return getStringValue(key).toDouble(defaultValue);
     }
 
@@ -127,8 +131,7 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
     /**
      * @see IValueMap#getInt(String, int)
      */
-    public final int getInt(final String key, final int defaultValue)
-            throws StringValueConversionException {
+    public final int getInt(final String key, final int defaultValue) throws StringValueConversionException {
         return getStringValue(key).toInt(defaultValue);
     }
 
@@ -142,8 +145,7 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
     /**
      * @see IValueMap#getLong(String, long)
      */
-    public final long getLong(final String key, final long defaultValue)
-            throws StringValueConversionException {
+    public final long getLong(final String key, final long defaultValue) throws StringValueConversionException {
         return getStringValue(key).toLong(defaultValue);
     }
 
@@ -223,8 +225,9 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
             }
             return array;
         }
-        return new String[]{o.toString()};
+        return new String[] { o.toString() };
     }
+
     /**
      * @see IValueMap#getStringValue(String)
      */
@@ -268,7 +271,7 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
 
             return put(key, destArray);
         } else {
-            return put(key, new String[]{o.toString(), value});
+            return put(key, new String[] { o.toString(), value });
         }
     }
 
@@ -314,6 +317,83 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
             }
         }
         return buffer.toString();
+    }
+
+    public Object put(String key, Object value) {
+        Object oldValue = super.put(key, value);
+        for (IPluginConfigListener listener : listeners) {
+            listener.onPluginConfigChanged();
+        }
+        return oldValue;
+    }
+
+    @Override
+    public Set entrySet() {
+        final Set<Map.Entry> entries = super.entrySet();
+        return new AbstractSet<Map.Entry>() {
+
+            @Override
+            public Iterator<Map.Entry> iterator() {
+                final Iterator<Map.Entry> orig = entries.iterator();
+                return new Iterator<Map.Entry>() {
+
+                    public boolean hasNext() {
+                        return orig.hasNext();
+                    }
+
+                    public Map.Entry next() {
+                        final Map.Entry entry = orig.next();
+                        return new Map.Entry() {
+
+                            public Object getKey() {
+                                return entry.getKey();
+                            }
+
+                            public Object getValue() {
+                                return entry.getValue();
+                            }
+
+                            public Object setValue(Object value) {
+                                return JavaPluginConfig.this.put(entry.getKey(), value);
+                            }
+
+                        };
+                    }
+
+                    public void remove() {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                };
+            }
+
+            @Override
+            public int size() {
+                return entries.size();
+            }
+
+        };
+    }
+
+    public void addPluginConfigListener(IPluginConfigListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removePluginConfigListener(IPluginConfigListener listener) {
+        listeners.remove(listener);
+    }
+
+    // override super equals(), hashCode() as they depend on entry equivalence
+
+    @Override
+    public final boolean equals(Object o) {
+        return this == o;
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode;
     }
 
 }

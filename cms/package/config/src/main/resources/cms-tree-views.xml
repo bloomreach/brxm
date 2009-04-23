@@ -447,7 +447,7 @@
           <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
         </sv:property>
         <sv:property sv:name="workflow.categories" sv:type="String">
-          <sv:value>threepane</sv:value>
+          <sv:value>editor</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filters">

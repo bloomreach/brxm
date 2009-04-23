@@ -17,7 +17,7 @@ package org.hippoecm.frontend.editor.viewer;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
-import org.hippoecm.frontend.editor.impl.TemplateEngine;
+import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -27,8 +27,6 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.ITypeStore;
-import org.hippoecm.frontend.types.JcrTypeStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,26 +41,19 @@ public class ViewerPlugin extends RenderPlugin {
     private ModelReference modelService;
     private IClusterControl cluster;
     private String engineId;
-    private ITypeStore typeStore;
-    private TemplateEngine engine;
+    private ITemplateEngine engine;
 
     public ViewerPlugin(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
 
-        typeStore = new JcrTypeStore();
-        engine = new TemplateEngine(context, typeStore);
-        context.registerService(engine, ITemplateEngine.class.getName());
-        engineId = context.getReference(engine).getServiceId();
+        TemplateEngineFactory factory = new TemplateEngineFactory();
+        engine = factory.getService(context);
+        context.registerService(factory, ITemplateEngine.class.getName());
+        engineId = context.getReference(factory).getServiceId();
 
         addExtensionPoint("template");
 
         modelChanged();
-    }
-
-    @Override
-    public void onDetach() {
-        typeStore.detach();
-        super.onDetach();
     }
 
     @Override
@@ -89,6 +80,7 @@ public class ViewerPlugin extends RenderPlugin {
                     IPluginConfig parameters = new JavaPluginConfig();
                     parameters.put(RenderService.WICKET_ID, getPluginConfig().getString("template"));
                     parameters.put(ITemplateEngine.ENGINE, engineId);
+                    parameters.put(ITemplateEngine.MODE, "view");
 
                     cluster = context.newCluster(template, parameters);
                     String modelId = cluster.getClusterConfig().getString(RenderService.MODEL_ID);

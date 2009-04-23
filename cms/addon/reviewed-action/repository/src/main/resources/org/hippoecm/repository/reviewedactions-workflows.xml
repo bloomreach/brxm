@@ -313,6 +313,7 @@
       </sv:node>
     </sv:node>
   </sv:node>
+  <!-- FIXME: this should be part of the editor -->
   <sv:node sv:name="edit-model">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
@@ -332,60 +333,6 @@
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.standardworkflow.EditmodelWorkflowPlugin</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:types</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="template-editor-namespace">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:nodetype" sv:type="String">
-      <sv:value>hippo:namespace</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:classname" sv:type="String">
-      <sv:value>org.hippoecm.editor.repository.impl.NamespaceWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:display" sv:type="String">
-      <sv:value>Template engine workflow to create a type</sv:value>
-    </sv:property>
-    <sv:node sv:name="frontend:renderer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:types</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="template-editor-namespaces">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:nodetype" sv:type="String">
-      <sv:value>hippo:namespacefolder</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:classname" sv:type="String">
-      <sv:value>org.hippoecm.editor.repository.impl.TemplateEditorWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:display" sv:type="String">
-      <sv:value>Template engine workflow to create a namespace</sv:value>
-    </sv:property>
-    <sv:node sv:name="frontend:renderer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.editor.workflow.NamespaceWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:types">

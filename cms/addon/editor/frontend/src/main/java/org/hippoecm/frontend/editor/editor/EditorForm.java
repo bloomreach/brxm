@@ -23,7 +23,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
-import org.hippoecm.frontend.editor.impl.TemplateEngine;
+import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -35,8 +35,6 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.ITypeStore;
-import org.hippoecm.frontend.types.JcrTypeStore;
 
 public class EditorForm extends Form {
     @SuppressWarnings("unused")
@@ -50,8 +48,8 @@ public class EditorForm extends Form {
     private ModelReference modelService;
     private ServiceTracker<IRenderService> fieldTracker;
     private List<IRenderService> fields;
-    private ITypeStore typeStore;
-    private TemplateEngine engine;
+    private TemplateEngineFactory engineFactory;
+    private ITemplateEngine engine;
     private String engineId;
 
     public EditorForm(String wicketId, JcrNodeModel model, final IRenderService parent, IPluginContext context,
@@ -66,10 +64,10 @@ public class EditorForm extends Form {
         // FIXME: make this configurable
         setMaxSize(Bytes.megabytes(5));
 
-        typeStore = new JcrTypeStore();
-        engine = new TemplateEngine(context, typeStore);
-        context.registerService(engine, ITemplateEngine.class.getName());
-        engineId = context.getReference(engine).getServiceId();
+        engineFactory = new TemplateEngineFactory();
+        engine = engineFactory.getService(context);
+        context.registerService(engineFactory, ITemplateEngine.class.getName());
+        engineId = context.getReference(engineFactory).getServiceId();
 
         fields = new LinkedList<IRenderService>();
         fieldTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
@@ -95,7 +93,7 @@ public class EditorForm extends Form {
     }
 
     public void destroy() {
-        context.unregisterService(engine, ITemplateEngine.class.getName());
+        context.unregisterService(engineFactory, ITemplateEngine.class.getName());
         context.unregisterTracker(fieldTracker, engineId + ".wicket.root");
         if (cluster != null) {
             cluster.stop();
@@ -106,12 +104,6 @@ public class EditorForm extends Form {
     @Override
     public void validate() {
         super.validate();
-    }
-
-    @Override
-    public void onDetach() {
-        typeStore.detach();
-        super.onDetach();
     }
 
     @Override
@@ -141,6 +133,7 @@ public class EditorForm extends Form {
                     IPluginConfig parameters = new JavaPluginConfig();
                     parameters.put(RenderService.WICKET_ID, engineId + ".wicket.root");
                     parameters.put(ITemplateEngine.ENGINE, engineId);
+                    parameters.put(ITemplateEngine.MODE, ITemplateEngine.EDIT_MODE);
                     cluster = context.newCluster(template, parameters);
 
                     String modelId = cluster.getClusterConfig().getString(RenderService.MODEL_ID);

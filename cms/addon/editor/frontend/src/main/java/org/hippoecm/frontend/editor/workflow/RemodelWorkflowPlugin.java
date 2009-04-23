@@ -19,6 +19,7 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
@@ -27,6 +28,8 @@ import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.editor.tools.CndSerializer;
+import org.hippoecm.editor.tools.JcrPrototypeStore;
+import org.hippoecm.editor.tools.JcrTypeStore;
 import org.hippoecm.editor.tools.NamespaceUpdater;
 import org.hippoecm.editor.tools.TypeUpdate;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
@@ -36,8 +39,6 @@ import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.types.JcrPrototypeStore;
-import org.hippoecm.frontend.types.JcrTypeStore;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -90,12 +91,11 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
                     String prefix = workflow.getPrefix();
 
-                    CndSerializer serializer = new CndSerializer(sessionModel, prefix);
-                    serializer.versionNamespace(prefix);
+                    CndSerializer serializer = new CndSerializer(getPluginContext(), sessionModel, prefix);
                     String cnd = serializer.getOutput();
 
-                    NamespaceUpdater updater = new NamespaceUpdater(new JcrTypeStore(), new JcrTypeStore(prefix));
-                    Map<String, TypeUpdate> update = updater.getUpdate(prefix);
+                    JcrTypeStore typeStore = new JcrTypeStore(getPluginContext());
+                    Map<String, TypeUpdate> update = typeStore.getUpdate(prefix);
 
                     JcrPrototypeStore prototypeStore = new JcrPrototypeStore();
                     for (Map.Entry<String, TypeUpdate> entry : update.entrySet()) {

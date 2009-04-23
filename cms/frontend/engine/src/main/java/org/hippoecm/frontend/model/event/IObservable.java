@@ -26,4 +26,8 @@ public interface IObservable extends IClusterable {
     void startObservation();
 
     void stopObservation();
+
+    boolean equals(Object obj);
+
+    int hashCode();
 }

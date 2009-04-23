@@ -126,7 +126,6 @@ public class BuiltinTemplateStore implements IClusterable {
         }
 
         public void detach() {
-            type.detach();
         }
     }
 

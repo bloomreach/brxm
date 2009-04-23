@@ -15,24 +15,28 @@
  */
 package org.hippoecm.frontend.editor.impl;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.collections.MiniMap;
+import org.hippoecm.editor.tools.JcrPrototypeStore;
+import org.hippoecm.editor.tools.JcrTypeStore;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.ITypeStore;
-import org.hippoecm.frontend.types.JcrPrototypeStore;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateEngine implements ITemplateEngine, IDetachable {
+public class TemplateEngine implements ITemplateEngine {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -40,19 +44,19 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
 
     private static Logger log = LoggerFactory.getLogger(TemplateEngine.class);
 
-    private ITypeStore typeStore;
-    private JcrTemplateStore templateStore;
+    private IStore<ITypeDescriptor> typeStore;
+    private IStore<IClusterConfig> templateStore;
     private JcrPrototypeStore prototypeStore;
 
-    public TemplateEngine(IPluginContext context, ITypeStore typeStore) {
-        this.typeStore = typeStore;
+    public TemplateEngine(IPluginContext context) {
+        this.typeStore = new JcrTypeStore(context);
 
-        this.templateStore = new JcrTemplateStore();
+        this.templateStore = new JcrTemplateStore(typeStore, context);
         this.prototypeStore = new JcrPrototypeStore();
     }
 
     public ITypeDescriptor getType(String type) {
-        return typeStore.getTypeDescriptor(type);
+        return typeStore.load(type);
     }
 
     public ITypeDescriptor getType(IModel model) {
@@ -89,16 +93,18 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
     }
 
     public IClusterConfig getTemplate(ITypeDescriptor type, String mode) {
-        return templateStore.getCluster(type.getName() + "/" + mode);
+        Map<String, Object> criteria = new MiniMap(2);
+        criteria.put("type", type);
+        criteria.put("mode", mode);
+        Iterator<IClusterConfig> iter = templateStore.find(criteria);
+        if (iter.hasNext()) {
+            return iter.next();
+        }
+        return null;
     }
 
     public IModel getPrototype(ITypeDescriptor type) {
         return prototypeStore.getPrototype(type.getName(), false);
-    }
-
-    public void detach() {
-        templateStore.detach();
-        prototypeStore.detach();
     }
 
 }

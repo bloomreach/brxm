@@ -47,13 +47,11 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     private static final Logger log = LoggerFactory.getLogger(FieldPlugin.class);
 
     public static final String FIELD = "field";
-    public static final String TYPE = "type";
 
     protected String mode;
     protected IFieldDescriptor field;
     protected AbstractProvider<C> provider;
     protected String fieldName;
-    protected String typeName;
 
     private TemplateController controller;
 
@@ -65,8 +63,6 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         if (mode == null) {
             log.error("No edit mode specified");
         }
-
-        typeName = config.getString(FieldPlugin.TYPE);
 
         fieldName = config.getString(FieldPlugin.FIELD);
         if (fieldName == null) {
@@ -85,9 +81,6 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         if (provider != null) {
             provider.detach();
         }
-        if (field != null) {
-            field.detach();
-        }
         super.onDetach();
     }
 
@@ -95,12 +88,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         ITemplateEngine engine = getTemplateEngine();
         if (engine != null) {
             P model = (P) getModel();
-            ITypeDescriptor type;
-            if (typeName == null) {
-                type = engine.getType(model);
-            } else {
-                type = engine.getType(typeName);
-            }
+            ITypeDescriptor type = engine.getType(model);
             if (type != null) {
                 field = type.getField(fieldName);
                 if (field != null) {
@@ -157,9 +145,12 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     protected IClusterControl getTemplate(C model) {
         ITemplateEngine engine = getTemplateEngine();
         IClusterConfig template = engine.getTemplate(engine.getType(field.getType()), mode);
+
         IPluginConfig parameters = new JavaPluginConfig(getPluginConfig().getPluginConfig("cluster.options"));
         parameters.put(ITemplateEngine.ENGINE, getPluginConfig().getString(ITemplateEngine.ENGINE));
         parameters.put(RenderService.WICKET_ID, getItemId());
+        parameters.put(ITemplateEngine.MODE, mode);
+
         IClusterControl control = getPluginContext().newCluster(template, parameters);
         return control;
     }

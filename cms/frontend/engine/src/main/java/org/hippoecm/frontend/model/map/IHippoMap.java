@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.model.map;
 
+import java.util.List;
 import java.util.Map;
 
 public interface IHippoMap extends Map<String, Object> {
@@ -22,7 +23,7 @@ public interface IHippoMap extends Map<String, Object> {
 
     String getPrimaryType();
 
-    String[] getMixinTypes();
+    List<String> getMixinTypes();
 
     void reset();
 

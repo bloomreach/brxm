@@ -45,6 +45,7 @@ import org.hippoecm.frontend.model.map.JcrMap;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.repository.TestCase;
@@ -67,6 +68,12 @@ public class PluginConfigTest extends TestCase {
     public void setUp() throws Exception {
         super.setUp(true);
         root = session.getRootNode();
+        HippoTester tester = new HippoTester(new JcrSessionModel(null) {
+            @Override
+            protected Object load() {
+                return session;
+            }
+        });
     }
 
     @After
@@ -79,7 +86,7 @@ public class PluginConfigTest extends TestCase {
     public void testMap() throws Exception {
         build(session, content);
 
-        IHippoMap map = new JcrMap(root.getNode("map"));
+        IHippoMap map = new JcrMap(new JcrNodeModel(root.getNode("map")));
         assertEquals("b", map.get("a"));
 
         Set set = map.entrySet();
@@ -148,7 +155,7 @@ public class PluginConfigTest extends TestCase {
     }
 
     protected IPluginConfig getPluginConfig() throws Exception {
-        return new JcrPluginConfig(new JcrNodeModel(root.getNode("config")));
+        return new JcrPluginConfig(new JcrNodeModel(root.getNode("config")), null);
     }
 
     @Test
@@ -163,10 +170,16 @@ public class PluginConfigTest extends TestCase {
 
         config.put("e", "f");
         assertEquals("f", config.getString("e"));
+
+        subConfig = new JavaPluginConfig();
+        subConfig.put("test", "test");
+        config.put("x", subConfig);
+        subConfig = config.getPluginConfig("x");
+        assertEquals("test", subConfig.getString("test"));
     }
 
     protected IClusterConfig getClusterConfig() throws Exception {
-        return new JcrClusterConfig(new JcrNodeModel(root.getNode("cluster")));
+        return new JcrClusterConfig(new JcrNodeModel(root.getNode("cluster")), null);
     }
 
     @Test
@@ -191,6 +204,33 @@ public class PluginConfigTest extends TestCase {
     }
 
     @Test
+    public void testClusterEditing() throws Exception {
+        build(session, content);
+
+        IClusterConfig config = getClusterConfig();
+        List<IPluginConfig> plugins = config.getPlugins();
+        plugins.add(new JavaPluginConfig("abc"));
+        
+        assertEquals(2, plugins.size());
+
+        Node node = root.getNode("cluster/abc");
+        assertEquals("frontend:plugin", node.getPrimaryNodeType().getName());
+
+        IPluginConfig first = plugins.set(0, plugins.remove(1));
+        plugins.add(1, first);
+        assertEquals(2, plugins.size());
+
+        assertEquals("abc", plugins.get(0).getName());
+
+        List<String> services = config.getServices();
+        services.add("testing");
+
+        IClusterConfig testConfig = getClusterConfig();
+        assertEquals(1, testConfig.getServices().size());
+        assertEquals("testing", testConfig.getServices().get(0));
+    }
+
+    @Test
     public void testDecorator() throws Exception {
         build(session, content);
 
@@ -210,14 +250,6 @@ public class PluginConfigTest extends TestCase {
     @Test
     public void testSerialization() throws Exception {
         build(session, content);
-
-        // need session context
-        HippoTester tester = new HippoTester(new JcrSessionModel(new ValueMap("username=admin,password=admin")) {
-            @Override
-            protected Object load() {
-                return session;
-            }
-        });
 
         IPluginConfig original = getPluginConfig();
 
@@ -241,16 +273,6 @@ public class PluginConfigTest extends TestCase {
     @Test
     public void testCloning() throws Exception {
         build(session, content);
-
-        // need session context
-        HippoTester tester = new HippoTester(new JcrSessionModel(new ValueMap("username=admin,password=admin")) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected Object load() {
-                return session;
-            }
-        });
 
         IPluginConfig original = getPluginConfig();
 

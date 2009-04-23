@@ -17,9 +17,9 @@ package org.hippoecm.frontend.types;
 
 import java.util.List;
 
-import org.apache.wicket.model.IDetachable;
+import org.hippoecm.frontend.model.ocm.IStore;
 
-public interface ITypeStore extends IDetachable {
+public interface ITypeStore extends IStore<ITypeDescriptor> {
     final static String SVN_ID = "$Id$";
 
     ITypeDescriptor getTypeDescriptor(String name);

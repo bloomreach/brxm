@@ -16,110 +16,159 @@
 package org.hippoecm.frontend.editor.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
+import javax.jcr.Value;
 
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.ocm.IStore;
+import org.hippoecm.frontend.model.ocm.StoreException;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.plugin.config.IPluginConfigService;
-import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
+import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrTemplateStore implements IPluginConfigService {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
+public class JcrTemplateStore implements IStore<IClusterConfig> {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(JcrTemplateStore.class);
+    static final Logger log = LoggerFactory.getLogger(JcrTemplateStore.class);
 
-    public IClusterConfig getCluster(String key) {
-        IClusterConfig cluster;
-        String type = key;
-        final String mode;
-        int idx;
-        if ((idx = type.indexOf('/')) > 0) {
-            mode = type.substring(idx + 1);
-            type = type.substring(0, idx);
-        } else {
-            mode = "edit";
+    private IStore<ITypeDescriptor> typeStore;
+    private IPluginContext context;
+
+    public JcrTemplateStore(IStore<ITypeDescriptor> typeStore, IPluginContext context) {
+        this.typeStore = typeStore;
+        this.context = context;
+    }
+
+    public Iterator<IClusterConfig> find(Map<String, Object> criteria) {
+        if (criteria.containsKey("type")) {
+            List<IClusterConfig> list = new ArrayList<IClusterConfig>(1);
+            list.add(getTemplate((ITypeDescriptor) criteria.get("type")));
+            return list.iterator();
         }
-        Node templateNode = getTemplateNode(type);
-        if (templateNode != null) {
-            cluster = new JavaClusterConfig(new JcrClusterConfig(new JcrNodeModel(templateNode)));
-            cluster.put("mode", mode);
-        } else {
-            cluster = null;
-        }
-        return cluster;
+        return new ArrayList<IClusterConfig>(0).iterator();
     }
 
-    public List<String> listClusters(String folder) {
-        return new ArrayList();
+    public IClusterConfig load(String id) {
+        JcrNodeModel nodeModel = new JcrNodeModel(id);
+        return new JcrClusterConfig(nodeModel, context);
     }
 
-    public IClusterConfig getDefaultCluster() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public void detach() {
-        // TODO Auto-generated method stub
-
-    }
-
-    private Node getTemplateNode(String type) {
-        try {
-            Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
-            NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
-
-            String prefix = "system";
-            String subType = type;
-            if (type.indexOf(':') > 0) {
-                prefix = type.substring(0, type.indexOf(':'));
-                subType = type.substring(type.indexOf(':') + 1);
+    public String save(IClusterConfig cluster) throws StoreException {
+        if (cluster instanceof JcrClusterConfig) {
+            try {
+                Node node = ((JcrClusterConfig) cluster).getNodeModel().getNode();
+                node.save();
+                return node.getPath();
+            } catch (RepositoryException ex) {
+                throw new StoreException(ex);
             }
-            String uri = "internal";
-            if (!"system".equals(prefix)) {
-                uri = nsReg.getURI(prefix);
-            }
+        } else if (cluster instanceof BuiltinTemplateConfig) {
+            ITypeDescriptor type = ((BuiltinTemplateConfig) cluster).getType();
+            try {
+                Node node = getTemplateNode(type, true);
 
-            String nsVersion = "_" + uri.substring(uri.lastIndexOf("/") + 1);
-            if (prefix.length() > nsVersion.length()
-                    && nsVersion.equals(prefix.substring(prefix.length() - nsVersion.length()))) {
-                prefix = prefix.substring(0, prefix.length() - nsVersion.length());
-            } else {
-                uri = nsReg.getURI("rep");
-            }
+                JcrClusterConfig jcrConfig = new JcrClusterConfig(new JcrNodeModel(node), null);
+                for (Map.Entry entry : (Set<Map.Entry>) ((Map) cluster).entrySet()) {
+                    jcrConfig.put(entry.getKey(), entry.getValue());
+                }
 
-            String path = HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + subType + "/"
-                    + HippoNodeType.HIPPO_TEMPLATE;
-            Node node = session.getRootNode().getNode(path);
-            if (node != null) {
-                NodeIterator nodes = node.getNodes(HippoNodeType.HIPPO_TEMPLATE);
-                while (nodes.hasNext()) {
-                    Node template = nodes.nextNode();
-                    if (template.isNodeType("frontend:plugincluster")) {
-                        return template;
+                for (IPluginConfig plugin : cluster.getPlugins()) {
+                    String name = UUID.randomUUID().toString();
+                    Node child = node.addNode(name, "frontend:plugin");
+                    JcrPluginConfig pluginConfig = new JcrPluginConfig(new JcrNodeModel(child), null);
+                    for (Map.Entry entry : (Set<Map.Entry>) ((Map) plugin).entrySet()) {
+                        pluginConfig.put(entry.getKey(), entry.getValue());
                     }
                 }
+
+                node.setProperty("frontend:services", getValues(cluster.getServices()));
+                node.setProperty("frontend:references", getValues(cluster.getReferences()));
+                node.setProperty("frontend:properties", getValues(cluster.getProperties()));
+
+                return node.getPath();
+            } catch (RepositoryException ex) {
+                throw new StoreException(ex);
             }
-        } catch (PathNotFoundException ex) {
-            log.info("Path not found: " + ex.getMessage());
+        } else {
+            throw new StoreException("Unknown object");
+        }
+    }
+
+    public void close() {
+    }
+
+    public void delete(IClusterConfig object) {
+    }
+
+    protected Node getTemplateNode(ITypeDescriptor type, boolean create) throws RepositoryException {
+        String typeName = type.getName();
+        String path = "/hippo:namespaces/";
+        if (typeName.indexOf(':') > 0) {
+            path += typeName.replace(':', '/');
+        } else {
+            path += "system/" + typeName;
+        }
+        Node typeNode = (Node) ((UserSession) Session.get()).getJcrSession().getItem(path);
+
+        Node node;
+        if (!typeNode.hasNode(HippoNodeType.HIPPO_TEMPLATE)) {
+            if (create) {
+                node = typeNode.addNode(HippoNodeType.HIPPO_TEMPLATE, HippoNodeType.NT_HANDLE);
+            } else {
+                return null;
+            }
+        } else {
+            node = typeNode.getNode(HippoNodeType.HIPPO_TEMPLATE);
+        }
+        if (!node.hasNode(HippoNodeType.HIPPO_TEMPLATE)) {
+            if (create) {
+                node = node.addNode(HippoNodeType.HIPPO_TEMPLATE, "frontend:plugincluster");
+            } else {
+                return null;
+            }
+        } else {
+            node = node.getNode(HippoNodeType.HIPPO_TEMPLATE);
+        }
+        return node;
+    }
+
+    protected IClusterConfig getTemplate(ITypeDescriptor type) {
+        try {
+            Node node = getTemplateNode(type, false);
+            if (node == null) {
+                return new BuiltinTemplateConfig(typeStore, type);
+            } else {
+                return new JcrClusterConfig(new JcrNodeModel(node), context);
+            }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
         return null;
+    }
+
+    private Value[] getValues(List<String> list) throws RepositoryException {
+        Value[] values = new Value[list.size()];
+        int i = 0;
+        for (String override : list) {
+            values[i++] = ((UserSession) org.apache.wicket.Session.get()).getJcrSession().getValueFactory()
+                    .createValue(override);
+        }
+        return values;
     }
 
 }

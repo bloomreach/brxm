@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugin.config;
 
 import java.util.List;
 
+
 public interface IClusterConfig extends IPluginConfig {
     final static String SVN_ID = "$Id$";
 
@@ -27,4 +28,8 @@ public interface IClusterConfig extends IPluginConfig {
     List<String> getReferences();
 
     List<String> getProperties();
+
+    void addClusterConfigListener(IClusterConfigListener listener);
+
+    void removeClusterConfigListener(IClusterConfigListener listener);
 }

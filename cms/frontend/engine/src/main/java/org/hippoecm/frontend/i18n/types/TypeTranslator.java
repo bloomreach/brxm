@@ -27,8 +27,6 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.model.nodetypes.NodeTypeModelWrapper;
-import org.hippoecm.frontend.types.JcrTypeDescriptor;
-import org.hippoecm.frontend.types.JcrTypeStore;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,10 +71,10 @@ public class TypeTranslator extends NodeTypeModelWrapper {
     private void attach() {
         if (!attached) {
             String type = getNodeTypeModel().getType();
-            JcrTypeStore typeStore = new JcrTypeStore();
-            JcrTypeDescriptor descriptor = typeStore.getTypeDescriptor(type);
-            if (descriptor != null) {
-                nodeModel = descriptor.getNodeModel().getParentModel().getParentModel();
+            if (type.contains(":")) {
+                nodeModel = new JcrNodeModel("/hippo:namespaces/" + type.replace(':', '/'));
+            } else {
+                nodeModel = new JcrNodeModel("/hippo:namespaces/system/" + type);
             }
             attached = true;
         }

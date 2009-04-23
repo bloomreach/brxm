@@ -18,19 +18,27 @@ package org.hippoecm.editor.tools;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.jcr.NamespaceRegistry;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.model.ocm.IStore;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.ITypeStore;
-import org.hippoecm.frontend.types.JcrTypeStore;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,32 +51,119 @@ public class CndSerializer implements IClusterable {
 
     private static Logger log = LoggerFactory.getLogger(CndSerializer.class);
 
-    private JcrSessionModel jcrSession;
-    private HashMap<String, String> namespaces;
-    private LinkedHashSet<ITypeDescriptor> types;
-    private ITypeStore currentConfig;
-    private ITypeStore draftConfig;
+    class TypeEntry {
+        ITypeDescriptor oldType;
+        ITypeDescriptor newType;
 
-    public CndSerializer(JcrSessionModel sessionModel, String namespace) {
-        jcrSession = sessionModel;
-        namespaces = new HashMap<String, String>();
-        types = new LinkedHashSet<ITypeDescriptor>();
+        TypeEntry(ITypeDescriptor oldType, ITypeDescriptor newType) {
+            this.oldType = oldType;
+            this.newType = newType;
+        }
 
-        currentConfig = new JcrTypeStore();
-        draftConfig = new JcrTypeStore(namespace);
+        ITypeDescriptor getOldType() {
+            return oldType;
+        }
 
-        List<ITypeDescriptor> list = draftConfig.getTypes(namespace);
-        for (ITypeDescriptor descriptor : list) {
-            if (descriptor.isNode()) {
-                String type = descriptor.getType();
-                if (type.indexOf(':') > 0) {
-                    String prefix = type.substring(0, type.indexOf(':'));
-                    if (namespace.equals(prefix)) {
-                        addType(descriptor);
+        ITypeDescriptor getNewType() {
+            return newType;
+        }
+
+        TypeUpdate getUpdate() {
+            if (oldType == null) {
+                return null;
+            }
+
+            TypeUpdate update = new TypeUpdate();
+
+            if (newType != null) {
+                update.newName = newType.getName();
+            } else {
+                update.newName = oldType.getName();
+            }
+
+            update.renames = new HashMap<FieldIdentifier, FieldIdentifier>();
+            for (Map.Entry<String, IFieldDescriptor> entry : oldType.getFields().entrySet()) {
+                IFieldDescriptor origField = entry.getValue();
+                FieldIdentifier oldId = new FieldIdentifier();
+                oldId.path = origField.getPath();
+                oldId.type = currentConfig.load(origField.getType()).getType();
+
+                if (newType != null) {
+                    IFieldDescriptor newField = newType.getField(entry.getKey());
+                    if (newField != null) {
+                        FieldIdentifier newId = new FieldIdentifier();
+                        newId.path = newField.getPath();
+
+                        // deal with pseudo-types; find the jcr name
+                        String fieldTypeName = newField.getType();
+                        ITypeDescriptor fieldType;
+                        if (types.containsKey(fieldTypeName)) {
+                            fieldType = types.get(fieldTypeName).getNewType();
+                        } else {
+                            fieldType = currentConfig.load(fieldTypeName);
+                        }
+                        newId.type = fieldType.getType();
+
+                        update.renames.put(oldId, newId);
                     }
+                } else {
+                    update.renames.put(oldId, oldId);
                 }
             }
+            return update;
         }
+    }
+
+    class SortContext {
+        HashSet<String> visited;
+        LinkedHashSet<ITypeDescriptor> result;
+
+        SortContext() {
+            visited = new HashSet<String>();
+        }
+
+        void visit(String typeName) {
+            if (visited.contains(typeName) || !types.containsKey(typeName)) {
+                return;
+            }
+
+            ITypeDescriptor descriptor = types.get(typeName).getNewType();
+
+            visited.add(typeName);
+            for (String superType : descriptor.getSuperTypes()) {
+                visit(superType);
+            }
+            for (IFieldDescriptor field : descriptor.getFields().values()) {
+                visit(field.getType());
+            }
+            result.add(types.get(typeName).getNewType());
+        }
+
+        LinkedHashSet<ITypeDescriptor> sort() {
+            result = new LinkedHashSet<ITypeDescriptor>();
+            for (String type : types.keySet()) {
+                visit(type);
+            }
+            return result;
+        }
+    }
+
+    private IPluginContext context;
+    private JcrSessionModel jcrSession;
+    private HashMap<String, String> namespaces;
+    private LinkedHashMap<String, TypeEntry> types;
+    private IStore<ITypeDescriptor> currentConfig;
+
+    public CndSerializer(IPluginContext context, JcrSessionModel sessionModel, String namespace)
+            throws RepositoryException {
+        this.context = context;
+        this.jcrSession = sessionModel;
+
+        currentConfig = new JcrTypeStore(context);
+        namespaces = new HashMap<String, String>();
+        types = getTypes(namespace);
+
+        versionNamespace(namespace);
     }
 
     public String getOutput() {
@@ -78,15 +173,25 @@ public class CndSerializer implements IClusterable {
         }
         output.append("\n");
 
-        sortTypes();
-
-        for (ITypeDescriptor descriptor : types) {
-            renderType(output, descriptor);
+        Set<ITypeDescriptor> sorted = sortTypes();
+        for (ITypeDescriptor type : sorted) {
+            renderType(output, type);
         }
         return output.toString();
     }
 
-    public void addNamespace(String prefix) {
+    public Map<String, TypeUpdate> getUpdate() {
+        Map<String, TypeUpdate> result = new HashMap<String, TypeUpdate>();
+        for (Map.Entry<String, TypeEntry> entry : types.entrySet()) {
+            TypeUpdate update = entry.getValue().getUpdate();
+            if (update != null) {
+                result.put(entry.getKey(), entry.getValue().getUpdate());
+            }
+        }
+        return result;
+    }
+
+    protected void addNamespace(String prefix) {
         if (!namespaces.containsKey(prefix)) {
             try {
                 namespaces.put(prefix, jcrSession.getSession().getNamespaceURI(prefix));
@@ -96,7 +201,7 @@ public class CndSerializer implements IClusterable {
         }
     }
 
-    public void versionNamespace(String prefix) {
+    protected void versionNamespace(String prefix) {
         if (namespaces.containsKey(prefix)) {
             String namespace = namespaces.get(prefix);
             String last = namespace;
@@ -128,6 +233,69 @@ public class CndSerializer implements IClusterable {
         }
     }
 
+    private LinkedHashMap<String, TypeEntry> getTypes(String namespace) throws RepositoryException {
+        LinkedHashMap<String, TypeEntry> result = new LinkedHashMap<String, TypeEntry>();
+        Session session = jcrSession.getSession();
+
+        String uri = getCurrentUri(namespace);
+        Node nsNode = session.getRootNode().getNode(HippoNodeType.NAMESPACES_PATH + "/" + namespace);
+        NodeIterator typeIter = nsNode.getNodes();
+        while (typeIter.hasNext()) {
+            Node templateTypeNode = typeIter.nextNode();
+            String pseudoName = namespace + ":" + templateTypeNode.getName();
+
+            ITypeDescriptor oldType = null, newType = null;
+
+            Node ntNode = templateTypeNode.getNode(HippoNodeType.HIPPO_NODETYPE);
+            NodeIterator versions = ntNode.getNodes(HippoNodeType.HIPPO_NODETYPE);
+            while (versions.hasNext()) {
+                Node version = versions.nextNode();
+                if (version.isNodeType(HippoNodeType.NT_REMODEL)) {
+                    if (version.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
+                        oldType = new JcrTypeDescriptor(new JcrNodeModel(version), context);
+                    }
+                } else {
+                    newType = new JcrTypeDescriptor(new JcrNodeModel(version), context);
+                }
+            }
+
+            result.put(pseudoName, new TypeEntry(oldType, newType));
+        }
+        return result;
+    }
+
+    protected Map<String, String> getNamespaces() {
+        return namespaces;
+    }
+
+    protected void addType(String type, TypeEntry entry) {
+        if (type.indexOf(':') > 0) {
+            if (!types.containsKey(type)) {
+                ITypeDescriptor typeDescriptor = entry.getNewType();
+                for (String superType : typeDescriptor.getSuperTypes()) {
+                    addNamespace(superType.substring(0, superType.indexOf(':')));
+                }
+
+                for (IFieldDescriptor field : typeDescriptor.getFields().values()) {
+                    String subType = field.getType();
+                    ITypeDescriptor sub = getTypeDescriptor(subType);
+                    if (sub.isNode()) {
+                        addNamespace(subType.substring(0, subType.indexOf(':')));
+
+                        List<String> superTypes = sub.getSuperTypes();
+                        for (String superType : superTypes) {
+                            addNamespace(superType.substring(0, superType.indexOf(':')));
+                        }
+                    } else if (field.getPath().indexOf(':') > 0) {
+                        addNamespace(field.getPath().substring(0, field.getPath().indexOf(':')));
+                    }
+                }
+                types.put(type, entry);
+                addNamespace(type.substring(0, type.indexOf(':')));
+            }
+        }
+    }
+
     private static boolean isLater(String one, String two) {
         int pos = one.lastIndexOf('/');
         String[] oneVersions = one.substring(pos + 1).split("\\.");
@@ -148,36 +316,17 @@ public class CndSerializer implements IClusterable {
         return false;
     }
 
-    public Map<String, String> getNamespaces() {
-        return namespaces;
-    }
-
-    public void addType(ITypeDescriptor typeDescriptor) {
-        String type = typeDescriptor.getType();
-        if (type.indexOf(':') > 0) {
-            if (!types.contains(typeDescriptor)) {
-                for (String superType : typeDescriptor.getSuperTypes()) {
-                    addNamespace(superType.substring(0, superType.indexOf(':')));
-                }
-
-                for (IFieldDescriptor field : typeDescriptor.getFields().values()) {
-                    String subType = field.getType();
-                    ITypeDescriptor sub = getTypeDescriptor(subType);
-                    if (sub.isNode()) {
-                        addNamespace(subType.substring(0, subType.indexOf(':')));
-
-                        List<String> superTypes = sub.getSuperTypes();
-                        for (String superType : superTypes) {
-                            addNamespace(superType.substring(0, superType.indexOf(':')));
-                        }
-                    } else if (field.getPath().indexOf(':') > 0) {
-                        addNamespace(field.getPath().substring(0, field.getPath().indexOf(':')));
-                    }
-                }
-                types.add(typeDescriptor);
-                addNamespace(type.substring(0, type.indexOf(':')));
-            }
+    private String getCurrentUri(String prefix) {
+        if ("system".equals(prefix)) {
+            return "internal";
         }
+        try {
+            NamespaceRegistry nsReg = jcrSession.getSession().getWorkspace().getNamespaceRegistry();
+            return nsReg.getURI(prefix);
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return null;
     }
 
     private void renderField(StringBuffer output, IFieldDescriptor field) {
@@ -262,16 +411,15 @@ public class CndSerializer implements IClusterable {
     }
 
     private ITypeDescriptor getTypeDescriptor(String subType) {
-        ITypeDescriptor sub = draftConfig.getTypeDescriptor(subType);
-        if (sub == null) {
-            // FIXME: check subType prefix, subType could have been removed
-            sub = currentConfig.getTypeDescriptor(subType);
+        if (types.containsKey(subType)) {
+            return types.get(subType).getNewType();
+        } else {
+            return currentConfig.load(subType);
         }
-        return sub;
     }
 
-    private void sortTypes() {
-        types = new SortContext(types).sort();
+    private Set<ITypeDescriptor> sortTypes() {
+        return new SortContext().sort();
     }
 
     private static String encode(String name) {
@@ -282,39 +430,4 @@ public class CndSerializer implements IClusterable {
         return name;
     }
 
-    class SortContext {
-        HashSet<ITypeDescriptor> visited;
-        LinkedHashSet<ITypeDescriptor> result;
-        LinkedHashSet<ITypeDescriptor> set;
-
-        SortContext(LinkedHashSet set) {
-            this.set = set;
-            visited = new HashSet<ITypeDescriptor>();
-            result = new LinkedHashSet<ITypeDescriptor>();
-        }
-
-        void visit(ITypeDescriptor descriptor) {
-            if (visited.contains(descriptor) || !types.contains(descriptor)) {
-                return;
-            }
-
-            visited.add(descriptor);
-            for (String superType : descriptor.getSuperTypes()) {
-                ITypeDescriptor type = getTypeDescriptor(superType);
-                visit(type);
-            }
-            for (IFieldDescriptor field : descriptor.getFields().values()) {
-                ITypeDescriptor type = getTypeDescriptor(field.getType());
-                visit(type);
-            }
-            result.add(descriptor);
-        }
-
-        LinkedHashSet<ITypeDescriptor> sort() {
-            for (ITypeDescriptor type : set) {
-                visit(type);
-            }
-            return result;
-        }
-    }
 }

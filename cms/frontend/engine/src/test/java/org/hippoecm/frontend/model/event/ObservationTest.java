@@ -27,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.observation.Event;
 
 import org.apache.wicket.Page;
@@ -43,6 +42,8 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNode;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class ObservationTest extends TestCase {
@@ -111,7 +112,7 @@ public class ObservationTest extends TestCase {
     Home home;
     IPluginContext context;
 
-    @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         JcrSessionModel sessionModel = new JcrSessionModel(Main.DEFAULT_CREDENTIALS) {
@@ -125,6 +126,11 @@ public class ObservationTest extends TestCase {
         tester = new HippoTester(sessionModel);
         home = (Home) tester.startPage(Home.class);
         context = new PluginContext(home.getPluginManager(), new JavaPluginConfig("test"));
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Test

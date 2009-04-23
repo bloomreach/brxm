@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.ITypeStore;
 
 public class TypeConversion implements Serializable {
     @SuppressWarnings("unused")
@@ -31,7 +30,7 @@ public class TypeConversion implements Serializable {
 
     private TypeUpdate update;
 
-    public TypeConversion(ITypeStore currentConfig, ITypeStore draftConfig, ITypeDescriptor current, ITypeDescriptor draft) {
+    public TypeConversion(JcrTypeStore currentConfig, ITypeDescriptor current, ITypeDescriptor draft) {
         update = new TypeUpdate();
 
         if (draft != null) {
@@ -52,11 +51,7 @@ public class TypeConversion implements Serializable {
                 if (newField != null) {
                     FieldIdentifier newId = new FieldIdentifier();
                     newId.path = newField.getPath();
-                    ITypeDescriptor newType = draftConfig.getTypeDescriptor(newField.getType());
-                    if (newType == null) {
-                        // FIXME: test namespace prefix before resorting to the current config.
-                        newType = currentConfig.getTypeDescriptor(newField.getType());
-                    }
+                    ITypeDescriptor newType = currentConfig.getTypeDescriptor(newField.getType());
                     newId.type = newType.getType();
 
                     update.renames.put(oldId, newId);
