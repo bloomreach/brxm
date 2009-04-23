@@ -1,26 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2008 Hippo
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.onehippo.ecm.hst</groupId>
     <artifactId>applications</artifactId>
-    <version>2.03.03-SNAPSHOT</version>
+    <version>2.03.03</version>
   </parent>
 
   <name>Hippo Site Toolkit Container Web Application</name>
@@ -281,26 +265,20 @@
                   <tasks>
 
                     <echo>Replacing HST Shared Libraries.</echo>
-                    <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" 
-                          tofile="${tomcat.hst.shared.lib}/jcr-1.0.jar" />
-                    <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" 
-                          tofile="${tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
-                    <copy file="../../api/target/hst-api-${project.version}.jar"
-                          tofile="${tomcat.hst.shared.lib}/hst-api-${project.version}.jar" />
-                    <copy file="../../commons/target/hst-commons-${project.version}.jar"
-                          tofile="${tomcat.hst.shared.lib}/hst-commons-${project.version}.jar" />
+                    <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${tomcat.hst.shared.lib}/jcr-1.0.jar" />
+                    <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
+                    <copy file="../../api/target/hst-api-${project.version}.jar" tofile="${tomcat.hst.shared.lib}/hst-api-${project.version}.jar" />
+                    <copy file="../../commons/target/hst-commons-${project.version}.jar" tofile="${tomcat.hst.shared.lib}/hst-commons-${project.version}.jar" />
                     
                     <echo>Replacing cms web application into tomcat.</echo>
                     <delete dir="${tomcat.hst.cms.webapp}" />
                     <mkdir dir="${tomcat.hst.cms.webapp}" />
-                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.00.01.war" 
-                           dest="${tomcat.hst.cms.webapp}"/>
+                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.00.01.war" dest="${tomcat.hst.cms.webapp}" />
                                       
                     <echo>Replacing site web application into tomcat.</echo>
                     <delete dir="${tomcat.server.home}/webapps/${project.artifactId}" />
                     <mkdir dir="${tomcat.server.home}/webapps/${project.artifactId}" />
-                    <unwar src="${project.build.directory}/${project.artifactId}-${project.version}.war" 
-                           dest="${tomcat.server.home}/webapps/${project.artifactId}"/>
+                    <unwar src="${project.build.directory}/${project.artifactId}-${project.version}.war" dest="${tomcat.server.home}/webapps/${project.artifactId}" />
                     
                   </tasks>
                 </configuration>
@@ -362,27 +340,21 @@
                   <tasks>
 
                     <echo>Replacing HST Shared Libraries.</echo>
-                    <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" 
-                          tofile="${jetspeed.hst.shared.lib}/jcr-1.0.jar" />
-                    <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" 
-                          tofile="${jetspeed.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
-                    <copy file="../../api/target/hst-api-${project.version}.jar"
-                          tofile="${jetspeed.hst.shared.lib}/hst-api-${project.version}.jar" />
-                    <copy file="../../commons/target/hst-commons-${project.version}.jar"
-                          tofile="${jetspeed.hst.shared.lib}/hst-commons-${project.version}.jar" />
+                    <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${jetspeed.hst.shared.lib}/jcr-1.0.jar" />
+                    <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${jetspeed.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
+                    <copy file="../../api/target/hst-api-${project.version}.jar" tofile="${jetspeed.hst.shared.lib}/hst-api-${project.version}.jar" />
+                    <copy file="../../commons/target/hst-commons-${project.version}.jar" tofile="${jetspeed.hst.shared.lib}/hst-commons-${project.version}.jar" />
                     
                     <echo>Replacing cms web application into jetspeed.</echo>
                     <delete dir="${jetspeed.hst.cms.webapp}" />
                     <mkdir dir="${jetspeed.hst.cms.webapp}" />
-                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.00.01.war" 
-                           dest="${jetspeed.hst.cms.webapp}"/>
+                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.00.01.war" dest="${jetspeed.hst.cms.webapp}" />
                                       
                     <echo>Replacing site portlet application into jetspeed.</echo>
                     <delete dir="${jetspeed.server.home}/webapps/${project.artifactId}" />
                     <delete file="${jetspeed.server.home}/webapps/${project.artifactId}.war" />
                     <delete file="${jetspeed.portal.webapp}/WEB-INF/deploy/${project.artifactId}.war" />
-                    <copy file="${project.build.directory}/${project.artifactId}-${project.version}.war" 
-                          tofile="${jetspeed.portal.webapp}/WEB-INF/deploy/${project.artifactId}.war" />
+                    <copy file="${project.build.directory}/${project.artifactId}-${project.version}.war" tofile="${jetspeed.portal.webapp}/WEB-INF/deploy/${project.artifactId}.war" />
                     
                     <echo>Copy core libaries into jetspeed</echo>
                     <copy todir="${jetspeed.portal.webapp}/WEB-INF/lib">
