@@ -39,6 +39,7 @@ class BuiltinTypeDescriptor extends JavaTypeDescriptor {
     private static final Logger log = LoggerFactory.getLogger(BuiltinTypeDescriptor.class);
 
     private String type;
+    private Map<String, IFieldDescriptor> fields;
     private transient NodeType nt = null;
 
     BuiltinTypeDescriptor(String type) {
@@ -71,6 +72,32 @@ class BuiltinTypeDescriptor extends JavaTypeDescriptor {
                 Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
                 NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
                 nt = ntMgr.getNodeType(type);
+
+                fields = new LinkedHashMap<String, IFieldDescriptor>();
+                if (nt != null) {
+                    String prefix = nt.getName().substring(0, nt.getName().indexOf(':'));
+                    NodeDefinition[] childNodes = nt.getChildNodeDefinitions();
+                    for (NodeDefinition definition : childNodes) {
+                        fields.put(definition.getName(), new BuiltinFieldDescriptor(prefix, definition));
+                    }
+                    PropertyDefinition[] properties = nt.getPropertyDefinitions();
+                    for (PropertyDefinition definition : properties) {
+                        if (!definition.getDeclaringNodeType().getName().equals("nt:base")) {
+                            fields.put(definition.getName(), new BuiltinFieldDescriptor(prefix, definition));
+                        }
+                    }
+                }
+                Set<String> explicit = new HashSet<String>();
+                for (IFieldDescriptor field : fields.values()) {
+                    if (!field.getPath().equals("*")) {
+                        explicit.add(field.getPath());
+                    }
+                }
+                for (IFieldDescriptor field : fields.values()) {
+                    if (field.getPath().equals("*")) {
+                        field.setExcluded(explicit);
+                    }
+                }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
@@ -79,33 +106,7 @@ class BuiltinTypeDescriptor extends JavaTypeDescriptor {
 
     @Override
     public Map<String, IFieldDescriptor> getFields() {
-        load();
-        Map<String, IFieldDescriptor> fields = new LinkedHashMap<String, IFieldDescriptor>();
-        if (nt != null) {
-            String prefix = nt.getName().substring(0, nt.getName().indexOf(':'));
-            NodeDefinition[] childNodes = nt.getChildNodeDefinitions();
-            for (NodeDefinition definition : childNodes) {
-                fields.put(definition.getName(), new BuiltinFieldDescriptor(prefix, definition));
-            }
-            PropertyDefinition[] properties = nt.getPropertyDefinitions();
-            for (PropertyDefinition definition : properties) {
-                if (!definition.getDeclaringNodeType().getName().equals("nt:base")) {
-                    fields.put(definition.getName(), new BuiltinFieldDescriptor(prefix, definition));
-                }
-            }
-        }
-        Set<String> explicit = new HashSet<String>();
-        for (IFieldDescriptor field : fields.values()) {
-            if (!field.getPath().equals("*")) {
-                explicit.add(field.getPath());
-            }
-        }
-        for (IFieldDescriptor field : fields.values()) {
-            if (field.getPath().equals("*")) {
-                field.setExcluded(explicit);
-            }
-        }
-
         return fields;
     }
+
 }

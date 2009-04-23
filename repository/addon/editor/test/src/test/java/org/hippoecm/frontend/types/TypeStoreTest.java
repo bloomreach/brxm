@@ -15,9 +15,12 @@
  */
 package org.hippoecm.frontend.types;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.editor.tools.JcrTypeStore;
@@ -74,7 +77,7 @@ public class TypeStoreTest extends TestCase {
 
         IStore<ITypeDescriptor> typeStore = new JcrTypeStore(context);
         ITypeDescriptor type = typeStore.load("test:test");
-        assertTrue(type.getName().equals("test:test"));
+        assertEquals("test:test", type.getName());
 
         Map<String, IFieldDescriptor> fields = type.getFields();
         assertTrue(fields.size() == 2);
@@ -82,9 +85,9 @@ public class TypeStoreTest extends TestCase {
         assertTrue(fields.keySet().contains("child"));
 
         IFieldDescriptor title = fields.get("title");
-        assertTrue(title.getType().equals("String"));
-        assertTrue(title.getPath().equals("test:title"));
-        assertTrue(title.getName().equals("title"));
+        assertEquals("String", title.getType());
+        assertEquals("test:title", title.getPath());
+        assertEquals("title", title.getName());
     }
 
     @Test
@@ -99,7 +102,7 @@ public class TypeStoreTest extends TestCase {
 
         IStore<ITypeDescriptor> typeStore = new BuiltinTypeStore();
         ITypeDescriptor type = typeStore.load("test:test2");
-        assertTrue(type.getName().equals("test:test2"));
+        assertEquals("test:test2", type.getName());
 
         Map<String, IFieldDescriptor> fields = type.getFields();
         assertTrue(fields.size() == 2);
@@ -107,9 +110,8 @@ public class TypeStoreTest extends TestCase {
         assertTrue(fields.keySet().contains("test:child"));
 
         IFieldDescriptor title = fields.get("test:title");
-        assertTrue(title.getType().equals("String"));
-        assertTrue(title.getPath().equals("test:title"));
-        assertTrue(title.getName().equals("test:title"));
+        assertEquals("String", title.getType());
+        assertEquals("test:title", title.getPath());
     }
 
     @Test
@@ -126,21 +128,37 @@ public class TypeStoreTest extends TestCase {
 
         IStore<ITypeDescriptor> typeStore = new BuiltinTypeStore();
         ITypeDescriptor builtinType = typeStore.load("test:test2");
+        String titleName = null;
+        for (IFieldDescriptor field : builtinType.getFields().values()) {
+            if (field.getPath().equals("test:title")) {
+                titleName = field.getName();
+            }
+        }
+        assertTrue(titleName != null);
 
         jcrTypeStore.save(builtinType);
 
-        ITypeDescriptor type = typeStore.load("test:test2");
-        assertTrue(type.getName().equals("test:test2"));
+        ITypeDescriptor type = jcrTypeStore.load("test:test2");
+        assertEquals("test:test2", type.getName());
 
         Map<String, IFieldDescriptor> fields = type.getFields();
         assertTrue(fields.size() == 2);
-        assertTrue(fields.keySet().contains("test:title"));
-        assertTrue(fields.keySet().contains("test:child"));
+        Set<String> expected = new HashSet<String>();
+        expected.add("test:title");
+        expected.add("test:child");
+        IFieldDescriptor title = null;
+        for (IFieldDescriptor field : fields.values()) {
+            expected.remove(field.getPath());
+            if (field.getPath().equals("test:title")) {
+                title = field;
+            }
+        }
+        assertEquals(0, expected.size());
+        assertTrue(title != null);
 
-        IFieldDescriptor title = fields.get("test:title");
-        assertTrue(title.getType().equals("String"));
-        assertTrue(title.getPath().equals("test:title"));
-        assertTrue(title.getName().equals("test:title"));
+        assertEquals("String", title.getType());
+        assertEquals("test:title", title.getPath());
+        assertEquals(titleName, title.getName());
     }
 
 }
