@@ -131,10 +131,10 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         
         url.setViaPortlet(request.getAttribute("javax.portlet.request") != null);
         
-        String characterEncoding = response.getCharacterEncoding();
+        String characterEncoding = request.getCharacterEncoding();
         
         if (characterEncoding == null) {
-            characterEncoding = "UTF-8";
+            characterEncoding = "ISO-8859-1";
         }
         
         url.setCharacterEncoding(characterEncoding);
@@ -143,6 +143,13 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         
         if (pathInfo == null) {
             pathInfo = request.getPathInfo();
+            if (pathInfo != null) {
+                try {
+                    pathInfo = URLDecoder.decode(pathInfo, characterEncoding);
+                } catch (UnsupportedEncodingException e) {
+                    //  never happens
+                }
+            }
         }
         
         url.setPathInfo(pathInfo);
