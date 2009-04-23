@@ -27,28 +27,106 @@ import java.util.Set;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public class ClusterConfigDecorator extends JavaClusterConfig {
+public abstract class AbstractPluginDecorator extends JavaPluginConfig {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private class PluginConfigDecorator extends AbstractPluginDecorator {
+    private class PluginConfigDecorator extends JavaPluginConfig {
+        private static final long serialVersionUID = 1L;
+
         PluginConfigDecorator(IPluginConfig conf) {
             super(conf);
         }
 
-        @Override
-        protected Object decorate(Object object) {
-            return ClusterConfigDecorator.this.decorate(object);
+        public IPluginConfig getPluginConfig(Object key) {
+            return (IPluginConfig) decorate(super.getPluginConfig(key));
         }
+
+        public Set<IPluginConfig> getPluginConfigSet() {
+            Set<IPluginConfig> result = new LinkedHashSet<IPluginConfig>();
+            for (IPluginConfig config : super.getPluginConfigSet()) {
+                result.add((IPluginConfig) decorate(config));
+            }
+            return result;
+        }
+
+        @Override
+        public Object get(Object key) {
+            Object obj = super.get(key);
+            if (obj == null) {
+                return obj;
+            }
+            Object result;
+            if (obj.getClass().isArray()) {
+                int size = Array.getLength(obj);
+                Class<?> componentType = obj.getClass().getComponentType();
+                result = Array.newInstance(componentType, size);
+                for (int i = 0; i < size; i++) {
+                    Array.set(result, i, decorate(Array.get(obj, i)));
+                }
+            } else {
+                result = decorate(obj);
+            }
+            return result;
+        }
+
+        @Override
+        public Set entrySet() {
+            final Set orig = super.entrySet();
+            return new AbstractSet() {
+
+                @Override
+                public Iterator iterator() {
+                    final Iterator origIter = orig.iterator();
+                    return new Iterator() {
+
+                        public boolean hasNext() {
+                            return origIter.hasNext();
+                        }
+
+                        public Object next() {
+                            final Entry entry = (Map.Entry) origIter.next();
+                            if (entry != null) {
+                                return new Map.Entry() {
+
+                                    public Object getKey() {
+                                        return entry.getKey();
+                                    }
+
+                                    public Object getValue() {
+                                        return PluginConfigDecorator.this.get(entry.getKey());
+                                    }
+
+                                    public Object setValue(Object value) {
+                                        return entry.setValue(value);
+                                    }
+
+                                };
+                            }
+                            return null;
+                        }
+
+                        public void remove() {
+                            origIter.remove();
+                        }
+
+                    };
+                }
+
+                @Override
+                public int size() {
+                    return orig.size();
+                }
+
+            };
+        }
+
     }
 
-    private String clusterId;
-
-    public ClusterConfigDecorator(IClusterConfig upstream, final String clusterId) {
+    public AbstractPluginDecorator(IPluginConfig upstream) {
         super(upstream);
-        this.clusterId = clusterId;
     }
 
     @Override
@@ -86,11 +164,11 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
                                 }
 
                                 public Object getValue() {
-                                    return ClusterConfigDecorator.this.get(entry.getKey());
+                                    return AbstractPluginDecorator.this.get(entry.getKey());
                                 }
 
                                 public Object setValue(Object value) {
-                                    return ClusterConfigDecorator.this.put(entry.getKey(), value);
+                                    return AbstractPluginDecorator.this.put(entry.getKey(), value);
                                 }
 
                             };
@@ -113,12 +191,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
         };
     }
 
-    @Override
-    protected IPluginConfig newPluginConfig(IPluginConfig config) {
-        return new PluginConfigDecorator(config);
-    }
-
-    private Object decorate(Object object) {
+    protected abstract Object decorate(Object object); /*{
         if (object instanceof String) {
             String value = (String) object;
             if (value.length() > 2 && value.charAt(0) == '$' && value.charAt(1) == '{') {
@@ -127,7 +200,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
                 if ("cluster.id".equals(variable)) {
                     return clusterId + remainder;
                 } else {
-                    Object result = ClusterConfigDecorator.this.get(variable);
+                    Object result = AbstractPluginDecorator.this.get(variable);
                     if (result instanceof String) {
                         return ((String) result) + remainder;
                     } else {
@@ -156,6 +229,6 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
             };
         }
         return object;
-    }
+    }*/
 
 }
