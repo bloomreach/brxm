@@ -107,7 +107,7 @@ public class TemplateTypeEditorHelper implements IDetachable, IObservable {
                     pluginConfig.put("mode", "${mode}");
                     pluginConfig.put("engine", "${engine}");
                     pluginConfig.put("field", field);
-                    pluginConfig.put("caption", new String[] { fieldType.getName() });
+                    pluginConfig.put("caption", fieldType.getName());
 
                     template.getPlugins().add(pluginConfig);
 
