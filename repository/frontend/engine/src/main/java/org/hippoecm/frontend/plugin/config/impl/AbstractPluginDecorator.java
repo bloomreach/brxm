@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
+import java.lang.reflect.Array;
 import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.Map;
