@@ -48,15 +48,15 @@
   <body>
     <links>
       <item name="Hippo ECM" href="http://www.onehippo.org/"/>
-      <item name="Hippo CMS" href="/index.html"/>
+      <item name="Hippo CMS 7" href="/index.html"/>
       <item name="Hippo Site Toolkit" href="http://www.onehippo.org/site-toolkit/" />
       <item name="Hippo Forge" href='http://forge.onehippo.org/'/>
-      <item name="Hippo Portal 1.x" href="http://www.hippoportal.org/"/>
+      <item name="Hippo Portal 1" href="http://www.hippoportal.org/"/>
       <!-- <item name="Hippo Portal" href="http://www.onehippo.org/portal2"/> -->
-      <item name="Hippo CMS 6.x" href="http://www.hippocms.org/"/>
+      <item name="Hippo CMS 6" href="http://www.hippocms.org/"/>
     </links>
-    <menu name="About Hippo CMS">
-      <item name="What is Hippo CMS?" href="/index.html"/>
+    <menu name="About Hippo CMS 7">
+      <item name="What is Hippo CMS 7?" href="/index.html"/>
 
       <!--
       <item name="Use Cases" href="/about/use_cases.html"/>
@@ -68,14 +68,14 @@
       <item name="Term Index" href="/about/term_index.html"/>
     </menu>
 
-    <menu name="Hippo CMS Support">
+    <menu name="Hippo CMS 7 Support">
       <item name="Commercial support" href="http://www.onehippo.com/en/support"/>
       <item name="Community support" href="/support/community.html"/>
       <item name="Public Forums" href="/support/forums.html"/>
       <item name="Contributing" href="/support/contributing.html"/>
     </menu>
 
-    <menu name="Delve into Hippo CMS">
+    <menu name="Delve into Hippo CMS 7">
 
       <item name="Overview" href="/delve_into/overview.html" collapse="false" inherit="top"/>
       <item name="Quickstart" href="/delve_into/quickstart.html" collapse="false" inherit="top"/>
@@ -157,7 +157,7 @@
         <item name="Roadmap" href="/delve_into/user/roadmap.html" collapse="true"/>
         -->
 
-        <item name="CMS Admins" collapse="true" href="/delve_into/user/cms_admins/index.html">
+        <item name="CMS 7 Admins" collapse="true" href="/delve_into/user/cms_admins/index.html">
           <item name="Tour" collapse="false" href="/delve_into/user/cms_admins/tour.html"/> 
           <item name="Howto" collapse="true" href="/delve_into/user/cms_admins/howto/index.html"> 
             <item name="Add Group" href="/delve_into/user/cms_admins/howto/add_group.html"/>
@@ -170,15 +170,14 @@
             <item name="Goto Group Properties" href="/delve_into/user/cms_admins/howto/goto_group_properties.html"/>
             <item name="Goto User Management Tab" href="/delve_into/user/cms_admins/howto/goto_user_management_tab.html"/>
             <item name="Goto User Properties" href="/delve_into/user/cms_admins/howto/goto_user_properties.html"/>
-            <item name="CMS admin Howto" href="/delve_into/user/cms_admins/howto/index.html"/>
+            <item name="CMS 7 admin Howto" href="/delve_into/user/cms_admins/howto/index.html"/>
             <item name="Login as Admin" href="/delve_into/user/cms_admins/howto/login.html"/>
             <item name="Save settings" href="/delve_into/user/cms_admins/howto/save_settings.html"/>
-            <item name="Start CMS" href="/delve_into/user/cms_admins/howto/start_CMS.html"/>
+            <item name="Start CMS 7" href="/delve_into/user/cms_admins/howto/start_CMS.html"/>
             <item name="Type in editing region" href="/delve_into/user/cms_admins/howto/type_in_editing_region.html"/>
           </item>
           <item name="Concepts" collapse="true" href="/delve_into/user/cms_admins/concepts/index.html"/>
         </item>
-
       </item>
 
       <item name="Sysadmin Guide" href="delve_into/sysadmin/index.html" collapse="true">
@@ -242,7 +241,7 @@
         </item>
       </item>
 
-      <item name="CMS Customization" href="/delve_into/custom/index.html" collapse="true">
+      <item name="CMS 7 Customization" href="/delve_into/custom/index.html" collapse="true">
         <item name="Introduction" href="/delve_into/custom/introduction.html" />
         <item name="Howto" href="/delve_into/custom/howto/index.html" collapse="true">
           <item name="GUI Plugin" href="/delve_into/custom/howto/gui_plugin.html"/>

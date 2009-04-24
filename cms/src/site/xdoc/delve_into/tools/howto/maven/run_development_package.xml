@@ -27,7 +27,7 @@
     <span class='shortdesc'>How to build the package of a project and run it, all on the fly?</span>
 
         <p>
-         In production, the Hippo CMS and any addons are run by <a href="../../sysadmin/installation/in_servlet_container.html">
+         In production, the Hippo CMS and any addons are run by <a href="../../../sysadmin/installation/in_servlet_container.html">
          deploying the application wars in an application server</a>, but during development you will
          want to have a faster way, testing and improving your application often during your
          development cycle.
@@ -36,7 +36,7 @@
          To facilitate development it is possible to run Hippo CMS together with any
          addons using maven commands and kill the running CMS using Ctrl-C.
          Assuming that the project directory is '~/cms'
-         (after you have <a href='./get_Hippo_CMS_source.html'>checked out the Hippo CMS source</a> to it):
+         (after you have <a href='../get_Hippo_CMS_source.html'>checked out the Hippo CMS source</a> to it):
         </p>
         <source>
 &gt; cd ~/cms

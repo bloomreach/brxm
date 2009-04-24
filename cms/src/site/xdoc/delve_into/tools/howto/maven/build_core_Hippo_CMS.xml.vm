@@ -45,7 +45,7 @@
     <p>
      Assuming that you have
      <a href='./install_maven.html'>Installed Maven ensuring spaceless pathnames</a> and have
-     <a href='./get_Hippo_CMS_source.html'>checked out the Hippo CMS source</a> in the
+     <a href='../get_Hippo_CMS_source.html'>checked out the Hippo CMS source</a> in the
      directory <code>~/cms</code>, you build the package with:
      </p>
         <source>

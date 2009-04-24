@@ -12,7 +12,11 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project
+   xmlns="http://maven.apache.org/POM/4.0.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.hippoecm</groupId>
@@ -63,8 +67,8 @@
     <project_source_url>http://svn.onehippo.org/repos/hippo/hippo-ecm</project_source_url>
     <project_repository_url>http://repository.hippocms.org</project_repository_url>
     <issue_tracker_homepage>http://issues.onehippo.org</issue_tracker_homepage>
-    <product_name>Hippo CMS</product_name>
-    <product_abr>CMS</product_abr>
+    <product_name>Hippo CMS 7</product_name>
+    <product_abr>CMS 7</product_abr>
 
     <!-- Test dependencies  -->
     <easymock.version>1.1</easymock.version>
@@ -244,6 +248,20 @@
       <timezone>+1</timezone>
     </developer>
   </developers>
+
+  <contributors>
+    <contributor>
+      <name>Wander Grevink</name>
+      <email>wander at xs4all. nl</email>
+      <url>http://www.weloveit.nl/hippo_310506.htm</url>
+      <organization>SIG, Software improvement group</organization>
+      <organizationUrl>http://www.sig.nl</organizationUrl>
+      <roles>
+        <role>Previous developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </contributor>
+  </contributors>
 
   <mailingLists>
    <mailingList>

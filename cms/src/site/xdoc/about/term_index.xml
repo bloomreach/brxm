@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 892 terms</span>
+      <span class="shortdesc">Term index, 913 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -478,6 +478,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/editors/concepts/home_workspace.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Home Workspace</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/editors/concepts/index.html#Alternative">Alternative</a>
             </td>
             <td>Welcome: </td>
@@ -526,6 +532,18 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/edit_mode.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Edit mode</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/field_type_menu.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: string</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/concepts/index.html#Alternative">Alternative</a>
             </td>
             <td>Welcome: </td>
@@ -535,6 +553,12 @@
               <a href="../delve_into/user/information_architects/concepts/mandatory_or_optional.html#Alternative">Alternative</a>
             </td>
             <td>Concept: Mandatory or optional field</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/markuped_text.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Markuped text</td>
           </tr>
           <tr>
             <td>
@@ -1367,7 +1391,19 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/current_folder.html#Current_folder">Current folder</a>
+            </td>
+            <td>Concept: Current folder</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/current_folder.html#current_folder_screenshot">current folder screenshot</a>
+            </td>
+            <td>Concept: Current folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/current_folder.html#current_folder_screenshot">current folder screenshot</a>
             </td>
             <td>Concept: Current folder</td>
           </tr>
@@ -1715,7 +1751,19 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/edit_mode.html#Edit_mode">Edit mode</a>
+            </td>
+            <td>Concept: Edit mode</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/edit_mode.html#edit_mode_sreenshot">edit mode sreenshot</a>
+            </td>
+            <td>Concept: Edit mode</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/edit_mode.html#edit_mode_sreenshot">edit mode sreenshot</a>
             </td>
             <td>Concept: Edit mode</td>
           </tr>
@@ -2087,7 +2135,19 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/folder_action_menu.html#Folder_action_menu">Folder action menu</a>
+            </td>
+            <td>Concept: Folder action menu</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/folder_action_menu.html#Folder_action_menu_screenshot">Folder action menu screenshot</a>
+            </td>
+            <td>Concept: Folder action menu</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/folder_action_menu.html#Folder_action_menu_screenshot">Folder action menu screenshot</a>
             </td>
             <td>Concept: Folder action menu</td>
           </tr>
@@ -2647,6 +2707,18 @@
           <tr>
             <td>
               <a href="../delve_into/user/contributors/concepts/home_workspace.html#home_workspace">home workspace</a>
+            </td>
+            <td>Concept: Home Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/concepts/home_workspace.html#Home_Workspace">Home Workspace</a>
+            </td>
+            <td>Concept: Home Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/concepts/home_workspace.html#home_workspace">home workspace</a>
             </td>
             <td>Concept: Home Workspace</td>
           </tr>
@@ -3551,6 +3623,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/markuped_text.html#Markuped_text">Markuped text</a>
+            </td>
+            <td>Concept: Markuped text</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/howto/gui_plugin.html#Maven_structure">Maven structure</a>
             </td>
             <td>Howto: Hello World</td>
@@ -3914,6 +3992,12 @@
               <a href="../delve_into/user/editors/howto/start_CMS.html#Next">Next</a>
             </td>
             <td>Howto: Start CMS site</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/edit_mode.html#Next">Next</a>
+            </td>
+            <td>Concept: Edit mode</td>
           </tr>
           <tr>
             <td>
@@ -4709,6 +4793,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/field_type_menu.html#string">string</a>
+            </td>
+            <td>Concept: string</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/concepts/string.html#string">string</a>
             </td>
             <td>Concept: string</td>
@@ -5082,6 +5172,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/folder_action_menu.html#What_and_where_is_the_folder_action_menu_">What and where is the folder action menu?</a>
+            </td>
+            <td>Concept: Folder action menu</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/folder_navigation_panel.html#What_and_where_is_the_folder_navigation_panel_">What and where is the folder navigation panel?</a>
             </td>
             <td>Concept: Folder navigation panel</td>
@@ -5095,6 +5191,12 @@
           <tr>
             <td>
               <a href="../delve_into/user/contributors/concepts/home_workspace.html#What_and_where_is_the_home_workspace_">What and where is the home workspace?</a>
+            </td>
+            <td>Concept: Home Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/concepts/home_workspace.html#What_and_where_is_the_home_workspace_">What and where is the home workspace?</a>
             </td>
             <td>Concept: Home Workspace</td>
           </tr>
@@ -5166,6 +5268,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/field_type_menu.html#What_is_a_field_type_menu">What is a field type menu</a>
+            </td>
+            <td>Concept: string</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/folder.html#What_is_a_Folder_">What is a Folder?</a>
             </td>
             <td>Concept: Folder</td>
@@ -5226,6 +5334,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/edit_mode.html#What_is_edit_mode_">What is edit mode?</a>
+            </td>
+            <td>Concept: Edit mode</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/editing.html#What_is_editing_">What is editing?</a>
             </td>
             <td>Concept: Editing</td>
@@ -5244,6 +5358,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/markuped_text.html#What_is_markuped_text_">What is markuped text?</a>
+            </td>
+            <td>Concept: Markuped text</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/review_mode.html#What_is_review_mode_">What is review mode?</a>
             </td>
             <td>Concept: Review mode</td>
@@ -5251,6 +5371,12 @@
           <tr>
             <td>
               <a href="../delve_into/user/contributors/concepts/current_folder.html#What_is_the_current_folder_">What is the current folder?</a>
+            </td>
+            <td>Concept: Current folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/current_folder.html#What_is_the_current_folder_">What is the current folder?</a>
             </td>
             <td>Concept: Current folder</td>
           </tr>
