@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.editor.workflow;
 
-
-
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
