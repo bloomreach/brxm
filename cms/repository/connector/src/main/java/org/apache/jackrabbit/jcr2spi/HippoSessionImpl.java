@@ -35,6 +35,7 @@ import org.apache.jackrabbit.jcr2spi.state.NodeState;
 import org.apache.jackrabbit.jcr2spi.state.PropertyState;
 import org.apache.jackrabbit.jcr2spi.state.SessionItemStateManager;
 import org.apache.jackrabbit.jcr2spi.state.HippoSessionItemStateManager;
+import org.apache.jackrabbit.jcr2spi.state.Status;
 import org.apache.jackrabbit.jcr2spi.state.UpdatableItemStateManager;
 import org.apache.jackrabbit.jcr2spi.version.VersionManager;
 import org.apache.jackrabbit.jcr2spi.xml.ImportHandler;
@@ -164,6 +165,9 @@ public class HippoSessionImpl extends SessionImpl implements NamespaceResolver, 
         Set<Node> nodes = new LinkedHashSet<Node>();
         for(Iterator iter = affected.iterator(); iter.hasNext(); ) {
             ItemState state = (ItemState) iter.next();
+            if (!state.isValid()) {
+                continue;
+            }
             boolean propChange = false;
             if(!state.isNode()) {
                 state = state.getParent();
