@@ -24,7 +24,10 @@ import nl.hippo.htmlcleaner.ElementDescriptor;
 import nl.hippo.htmlcleaner.HtmlCleanerTemplate;
 import nl.hippo.htmlcleaner.OutputElementDescriptor;
 
+import org.hippoecm.frontend.HippoTester;
+import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.htmlcleaner.JCRHtmlCleanerTemplateBuilder;
@@ -40,11 +43,21 @@ public class HtmlCleanerConfigTest extends TestCase {
 
     Node root, cleanerConfigNode;
     WorkflowManager manager;
+    HippoTester tester;
 
     @Before
     public void setUp() throws Exception {
         super.setUp(true);
         root = session.getRootNode();
+        JcrSessionModel sessionModel = new JcrSessionModel(Main.DEFAULT_CREDENTIALS) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected Object load() {
+                return session;
+            }
+        };
+        tester = new HippoTester(sessionModel);
     }
 
     @After
