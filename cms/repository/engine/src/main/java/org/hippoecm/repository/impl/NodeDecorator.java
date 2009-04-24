@@ -62,18 +62,16 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
 
     @Override
     public Node getCanonicalNode() throws RepositoryException {
-        // FIXME HREPTWO-2127
-        String p = null;
-        try {
-            p = getProperty("hippo:uuid").getString();
-        } catch(RepositoryException ex) {
-        }
-        if (p != null) {
-            return getSession().getNodeByUUID(p);
-        } else if(((NodeImpl)node).getId() instanceof HippoNodeId) {
-            return null;
+        // Note that HREPTWO-2127 is still unresolved, even though the
+        // previous implementation did have problems with it, but the current
+        // implementation hasn't.  The point is that if you try to perform a
+        // hasPRoperty you do not have the same view as with getProperty,
+        // which is wrong.
+        Node canonical = ((SessionDecorator)getSession()).getCanonicalNode(node);
+        if(canonical != null) {
+            return factory.getNodeDecorator(session, canonical);
         } else {
-            return this;
+            return null;
         }
     }
 
@@ -145,22 +143,6 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
             }
         } else {
             return getName();
-        }
-    }
-
-    /**
-     * internal function to access the canonical node for a normal, Version or VersionHistory node.
-     * @param unwrapped the <em>underlying</em> node
-     * @param wrapped the <em>decorated</em> node
-     * @return an decorated canonical node
-     */
-    static Node getCanonicalNode(Node wrapped, Node unwrapped) throws RepositoryException {
-        if (unwrapped.hasProperty("hippo:uuid")) {
-            return unwrapped.getSession().getNodeByUUID(unwrapped.getProperty("hippo:uuid").getString());
-        } else if(((NodeImpl)unwrapped).getId() instanceof HippoNodeId) {
-            return null;
-        } else {
-            return wrapped;
         }
     }
 

@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 
 import org.apache.jackrabbit.core.HierarchyManager;
+import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.config.AccessManagerConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.security.AccessManager;
@@ -165,5 +166,9 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
     @Override
     public SessionItemStateManager getItemStateManager() {
         return super.getItemStateManager();
+    }
+
+    public Node getCanonicalNode(Node node) throws RepositoryException {
+        return helper.getCanonicalNode((NodeImpl)node);
     }
 }

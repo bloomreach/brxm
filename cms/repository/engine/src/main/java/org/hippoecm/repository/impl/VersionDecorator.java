@@ -39,7 +39,12 @@ public class VersionDecorator extends org.hippoecm.repository.decorating.Version
     }
 
     public Node getCanonicalNode() throws RepositoryException {
-        return NodeDecorator.getCanonicalNode(this, version);
+        Node canonical = ((SessionDecorator)getSession()).getCanonicalNode(version);
+        if(canonical != null) {
+            return factory.getNodeDecorator(session, canonical);
+        } else {
+            return null;
+        }
     }
 
     public String getDisplayName() throws RepositoryException {
