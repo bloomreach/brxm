@@ -51,6 +51,9 @@
       <sv:property sv:name="option.text" sv:type="String">
         <sv:value>add-image-label</sv:value>
       </sv:property>
+      <sv:property sv:name="option.label" sv:type="String">
+        <sv:value>add-image</sv:value>
+      </sv:property>
       <sv:property sv:name="gallery.thumbnail.size" sv:type="Long">
         <sv:value>60</sv:value>
       </sv:property>
@@ -97,6 +100,9 @@
       </sv:property>
       <sv:property sv:name="option.text" sv:type="String">
         <sv:value>add-file-label</sv:value>
+      </sv:property>
+      <sv:property sv:name="option.label" sv:type="String">
+        <sv:value>add-asset</sv:value>
       </sv:property>
       <sv:property sv:name="gallery.thumbnail.size" sv:type="Long">
         <sv:value>60</sv:value>
