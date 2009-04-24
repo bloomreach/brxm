@@ -30,6 +30,9 @@ import org.hippoecm.frontend.plugins.gallery.upload.UploadDialog;
 import org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin;
 
 public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     public GalleryWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
@@ -43,12 +46,12 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
             protected Dialog createRequestDialog() {
                 try {
                     UploadDialog dialog = new UploadDialog(GalleryWorkflowPlugin.this.getPluginContext(),
-                            GalleryWorkflowPlugin.this.getPluginConfig());
-                    dialog.setModel(new JcrNodeModel(((WorkflowDescriptorModel)GalleryWorkflowPlugin.this.getModel()).getNode()));
+                                                           GalleryWorkflowPlugin.this.getPluginConfig(),
+                                                           new JcrNodeModel(((WorkflowDescriptorModel)GalleryWorkflowPlugin.this.getModel()).getNode()));
                     return dialog;
                 } catch (RepositoryException ex) {
-		    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-		    ex.printStackTrace(System.err);
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                    ex.printStackTrace(System.err);
                     return null;
                 }
             }

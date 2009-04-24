@@ -25,10 +25,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.Gallery;
-import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -40,13 +40,20 @@ public class UploadDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private UploadWizard wizard;
-    private IPluginConfig pluginConfig;
+    UploadWizard wizard;
+    IPluginConfig pluginConfig;
+    IPluginContext pluginContext;
 
     public UploadDialog(IPluginContext context, IPluginConfig config) {
+        this(context, config, null);
+    }
+
+    public UploadDialog(IPluginContext context, IPluginConfig config, IModel model) {
+        super(model);
         ok.setVisible(false);
         cancel.setVisible(false);
         pluginConfig = config;
+        pluginContext = context;
         add(wizard = new UploadWizard("wizard", this));
     }
 
@@ -56,11 +63,12 @@ public class UploadDialog extends AbstractDialog {
         wizard.setDialogService(dialogService);
     }
 
-    public String getWorkflowCategory() {
-        return pluginConfig.getString("workflow.categories", "");
+    String getWorkflowCategory() {
+        String workflowCats = pluginConfig.getString("workflow.categories");
+        return workflowCats;
     }
 
-    public IWizardModel getWizardModel() {
+    IWizardModel getWizardModel() {
         return wizard.getWizardModel();
     }
 
@@ -68,11 +76,15 @@ public class UploadDialog extends AbstractDialog {
         return new StringResourceModel(pluginConfig.getString("option.text", ""), this, null);
     }
 
-    public int getThumbnailSize() {
+    int getThumbnailSize() {
         return pluginConfig.getInt("gallery.thumbnail.size", Gallery.DEFAULT_THUMBNAIL_SIZE);
     }
 
-    public Node getGalleryNode() {
+    void setGalleryNode(Node node) {
+        setModel(new JcrNodeModel(node));
+    }
+
+    Node getGalleryNode() {
         Object modelObject = getModelObject();
         Node node = null;
         try {
@@ -100,5 +112,4 @@ public class UploadDialog extends AbstractDialog {
         }
         return node;
     }
-
 }

@@ -20,13 +20,14 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:workflowcategory</sv:value>
   </sv:property>
-  <!-- FIXME: this entry should be part of the gallery add on this requires a merging import -->
-  <sv:node sv:name="gallery">
+
+  <!-- FIXME: these three entries should be part of the gallery add on this requires a merging import -->
+  <sv:node sv:name="image-gallery">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
-      <sv:value>hippostd:gallery</sv:value>
+      <sv:value>hippogallery:stdImageGallery</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:privileges" sv:type="String">
       <sv:value>hippo:author</sv:value>
@@ -35,7 +36,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
-      <sv:value>Workflow on gallery folders</sv:value>
+      <sv:value>Workflow on gallery image folders</sv:value>
     </sv:property>
     <sv:node sv:name="frontend:renderer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -68,6 +69,92 @@
       </sv:property>
     </sv:node>
   </sv:node>
+  <sv:node sv:name="asset-gallery">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:workflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:nodetype" sv:type="String">
+      <sv:value>hippogallery:stdAssetGallery</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:privileges" sv:type="String">
+      <sv:value>hippo:author</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:classname" sv:type="String">
+      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:display" sv:type="String">
+      <sv:value>Workflow on asset gallery folders</sv:value>
+    </sv:property>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.gallery.GalleryWorkflowPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="workflow.categories" sv:type="String">
+        <sv:value>shortcuts</sv:value>
+      </sv:property>
+      <sv:property sv:name="option.text" sv:type="String">
+        <sv:value>add-file-label</sv:value>
+      </sv:property>
+      <sv:property sv:name="gallery.thumbnail.size" sv:type="Long">
+        <sv:value>60</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:config">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>nt:unstructured</sv:value>
+      </sv:property>
+      <sv:property sv:name="attic" sv:type="Path">
+        <sv:value>/content/attic</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:types">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:types</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="generic-gallery">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:workflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:nodetype" sv:type="String">
+      <sv:value>hippostd:gallery</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:privileges" sv:type="String">
+      <sv:value>hippo:author</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:classname" sv:type="String">
+      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:display" sv:type="String">
+      <sv:value>Workflow on gallery folders</sv:value>
+    </sv:property>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:config">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>nt:unstructured</sv:value>
+      </sv:property>
+      <sv:property sv:name="attic" sv:type="Path">
+        <sv:value>/content/attic</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:types">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:types</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
   <sv:node sv:name="folder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
