@@ -42,9 +42,9 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
             info.put("rejectRequest", new Boolean(false));
             info.put("cancelRequest", new Boolean(true));
         } else {
-            info.put("acceptRequest", new Boolean(false));
-            info.put("rejectRequest", new Boolean(false));
-            info.put("cancelRequest", new Boolean(true));
+            info.put("acceptRequest", new Boolean(true));
+            info.put("rejectRequest", new Boolean(true));
+            info.put("cancelRequest", new Boolean(false));
         }
         return info;
     }
