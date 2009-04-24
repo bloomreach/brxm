@@ -129,12 +129,6 @@ public abstract class TestCase
             session.save();
             session.refresh(false);
         }
-        assertFalse("Setup failed to cleanup test node", session.getRootNode().hasNode("test"));
-        assertTrue("Missig jcr:system node", session.getRootNode().hasNode("jcr:system"));
-        //assertTrue("Missig hippo:log node", session.getRootNode().hasNode("hippo:log"));
-        //assertTrue("Missig hippo:namespaces node", session.getRootNode().hasNode("hippo:namespaces"));
-        assertTrue("Missig hippo:configuration node", session.getRootNode().hasNode("hippo:configuration"));
-        //assertEquals("Found more than five subnodes of the root node, probably the previous test didn't cleanup it's test nodes.", 4L, session.getRootNode().getNodes().getSize());
     }
     
     @After
