@@ -17,6 +17,9 @@ package org.hippoecm.frontend.editor.plugins.field;
 
 import java.util.List;
 
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -33,6 +36,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigListener;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
@@ -94,6 +98,11 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
         private IModel getClusterParameters(boolean edit) {
             if (edit && edited.getPluginConfig("cluster.options") == null) {
                 edited.put("cluster.options", new JavaPluginConfig());
+                try {
+                    ((UserSession) Session.get()).getJcrSession().save();
+                } catch (RepositoryException ex) {
+                    log.error("failed to add child node to plugin config", ex);
+                }
             }
             return new Model(edited.getPluginConfig("cluster.options"));
         }
@@ -147,8 +156,7 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
                 }
 
             }, IObserver.class.getName());
-            helper.show(helperModelRef.getModel() != null
-                    && pluginId.equals(helperModelRef.getModel().getObject()));
+            helper.show(helperModelRef.getModel() != null && pluginId.equals(helperModelRef.getModel().getObject()));
         } else {
             log.error("No model.plugin model reference found to select active plugin");
         }

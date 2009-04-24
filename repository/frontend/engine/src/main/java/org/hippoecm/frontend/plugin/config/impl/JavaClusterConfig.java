@@ -91,10 +91,6 @@ public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfi
         return properties;
     }
 
-    protected IPluginConfig newPluginConfig(IPluginConfig config) {
-        return new JavaPluginConfig(config);
-    }
-
     public void addClusterConfigListener(IClusterConfigListener listener) {
         listeners.add(listener);
     }

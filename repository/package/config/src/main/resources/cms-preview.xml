@@ -132,17 +132,15 @@
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>default</sv:value>
     </sv:property>
-    <sv:node sv:name="workflow.options">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>${browser.id}</sv:value>
-      </sv:property>
-    </sv:node>
+    <sv:property sv:name="editor.id" sv:type="String">
+      <sv:value>${editor.id}</sv:value>
+    </sv:property>
+    <sv:property sv:name="model.id" sv:type="String">
+      <sv:value>${wicket.model}</sv:value>
+    </sv:property>
+    <sv:property sv:name="browser.id" sv:type="String">
+      <sv:value>${browser.id}</sv:value>
+    </sv:property>
   </sv:node>
 
 </sv:node>

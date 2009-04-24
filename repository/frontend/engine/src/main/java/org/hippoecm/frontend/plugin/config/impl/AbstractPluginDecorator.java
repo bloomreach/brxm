@@ -15,16 +15,11 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import java.lang.reflect.Array;
-import java.util.AbstractList;
 import java.util.AbstractSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public abstract class AbstractPluginDecorator extends JavaPluginConfig {
