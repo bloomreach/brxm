@@ -158,4 +158,17 @@ public class PendingChangesTest extends TestCase {
         assertTrue(paths.contains("/test/test1"));
         assertTrue(paths.contains("/test/test1/vuur"));
     }
+
+    @Test
+    public void testNodeFilter() throws Exception {
+        Node node = root.addNode("test", "nt:unstructured");
+        node.remove();
+
+        NodeIterator changes = ((HippoSession) session).pendingChanges(null, null, true);
+        Set<String> paths = new HashSet<String>();
+        for (paths.clear(); changes.hasNext();) {
+            paths.add(changes.nextNode().getPath());
+        }
+        assertEquals(1, paths.size());
+    }
 }
