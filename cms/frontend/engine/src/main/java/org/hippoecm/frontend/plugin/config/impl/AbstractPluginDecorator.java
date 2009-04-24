@@ -33,98 +33,6 @@ public abstract class AbstractPluginDecorator extends JavaPluginConfig {
 
     private static final long serialVersionUID = 1L;
 
-    private class PluginConfigDecorator extends JavaPluginConfig {
-        private static final long serialVersionUID = 1L;
-
-        PluginConfigDecorator(IPluginConfig conf) {
-            super(conf);
-        }
-
-        public IPluginConfig getPluginConfig(Object key) {
-            return (IPluginConfig) decorate(super.getPluginConfig(key));
-        }
-
-        public Set<IPluginConfig> getPluginConfigSet() {
-            Set<IPluginConfig> result = new LinkedHashSet<IPluginConfig>();
-            for (IPluginConfig config : super.getPluginConfigSet()) {
-                result.add((IPluginConfig) decorate(config));
-            }
-            return result;
-        }
-
-        @Override
-        public Object get(Object key) {
-            Object obj = super.get(key);
-            if (obj == null) {
-                return obj;
-            }
-            Object result;
-            if (obj.getClass().isArray()) {
-                int size = Array.getLength(obj);
-                Class<?> componentType = obj.getClass().getComponentType();
-                result = Array.newInstance(componentType, size);
-                for (int i = 0; i < size; i++) {
-                    Array.set(result, i, decorate(Array.get(obj, i)));
-                }
-            } else {
-                result = decorate(obj);
-            }
-            return result;
-        }
-
-        @Override
-        public Set entrySet() {
-            final Set orig = super.entrySet();
-            return new AbstractSet() {
-
-                @Override
-                public Iterator iterator() {
-                    final Iterator origIter = orig.iterator();
-                    return new Iterator() {
-
-                        public boolean hasNext() {
-                            return origIter.hasNext();
-                        }
-
-                        public Object next() {
-                            final Entry entry = (Map.Entry) origIter.next();
-                            if (entry != null) {
-                                return new Map.Entry() {
-
-                                    public Object getKey() {
-                                        return entry.getKey();
-                                    }
-
-                                    public Object getValue() {
-                                        return PluginConfigDecorator.this.get(entry.getKey());
-                                    }
-
-                                    public Object setValue(Object value) {
-                                        return entry.setValue(value);
-                                    }
-
-                                };
-                            }
-                            return null;
-                        }
-
-                        public void remove() {
-                            origIter.remove();
-                        }
-
-                    };
-                }
-
-                @Override
-                public int size() {
-                    return orig.size();
-                }
-
-            };
-        }
-
-    }
-
     public AbstractPluginDecorator(IPluginConfig upstream) {
         super(upstream);
     }
@@ -132,12 +40,21 @@ public abstract class AbstractPluginDecorator extends JavaPluginConfig {
     @Override
     public Object get(Object key) {
         Object obj = super.get(key);
-        if (obj != null) {
-            // Intercept values of the form "${" + variable + "}" + ...
-            // These values are rewritten using the variables
-            return decorate(obj);
+        if (obj == null) {
+            return obj;
         }
-        return null;
+        Object result;
+        if (obj.getClass().isArray()) {
+            int size = Array.getLength(obj);
+            Class<?> componentType = obj.getClass().getComponentType();
+            result = Array.newInstance(componentType, size);
+            for (int i = 0; i < size; i++) {
+                Array.set(result, i, decorate(Array.get(obj, i)));
+            }
+        } else {
+            result = decorate(obj);
+        }
+        return result;
     }
 
     @Override
@@ -191,44 +108,5 @@ public abstract class AbstractPluginDecorator extends JavaPluginConfig {
         };
     }
 
-    protected abstract Object decorate(Object object); /*{
-        if (object instanceof String) {
-            String value = (String) object;
-            if (value.length() > 2 && value.charAt(0) == '$' && value.charAt(1) == '{') {
-                String variable = value.substring(2, value.lastIndexOf('}'));
-                String remainder = value.substring(value.lastIndexOf('}') + 1);
-                if ("cluster.id".equals(variable)) {
-                    return clusterId + remainder;
-                } else {
-                    Object result = AbstractPluginDecorator.this.get(variable);
-                    if (result instanceof String) {
-                        return ((String) result) + remainder;
-                    } else {
-                        return result;
-                    }
-                }
-                // unreachable
-            }
-            return value;
-        } else if (object instanceof IPluginConfig) {
-            return newPluginConfig((IPluginConfig) object);
-        } else if (object instanceof List) {
-            final List list = (List) object;
-            return new AbstractList() {
-
-                @Override
-                public Object get(int index) {
-                    return decorate(list.get(index));
-                }
-
-                @Override
-                public int size() {
-                    return list.size();
-                }
-
-            };
-        }
-        return object;
-    }*/
-
+    protected abstract Object decorate(Object object);
 }

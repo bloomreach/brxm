@@ -411,17 +411,19 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
                             // Deselect the currently selected node if it corresponds
                             // to the editor that is being closed.
                             JcrNodeModel selectedNodeModel = (JcrNodeModel) modelReference.getModel();
-                            Node selected = selectedNodeModel.getNode();
-                            if (selected != null && selected instanceof HippoNode) {
-                                try {
-                                    Node canonical = ((HippoNode) selected).getCanonicalNode();
-                                    if (canonical != null) {
-                                        if (canonical.isSame(selected) || canonical.getParent().isSame(parent)) {
-                                            modelReference.setModel(null);
+                            if(selectedNodeModel != null) {
+                                Node selected = selectedNodeModel.getNode();
+                                if (selected != null && selected instanceof HippoNode) {
+                                    try {
+                                        Node canonical = ((HippoNode) selected).getCanonicalNode();
+                                        if (canonical != null) {
+                                            if (canonical.isSame(selected) || canonical.getParent().isSame(parent)) {
+                                                modelReference.setModel(null);
+                                            }
                                         }
+                                    } catch (ItemNotFoundException ex) {
+                                        // physical item no longer exists
                                     }
-                                } catch (ItemNotFoundException ex) {
-                                    // physical item no longer exists
                                 }
                             }
                         }
