@@ -991,6 +991,11 @@
   </document><document ext="xml" filename="folder" relpath="delve_into/user/editors/concepts">Folder
    <section>Folder</section>
    <shortdesc>What is a Folder?</shortdesc>
+  </document><document ext="xml" filename="home_workspace" relpath="delve_into/user/editors/concepts">Home Workspace
+   <section>Home Workspace</section>
+   <shortdesc>What and where is the home workspace?</shortdesc>
+   <img>home workspace</img>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/user/editors/concepts">
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="request" relpath="delve_into/user/editors/concepts">Request
@@ -1068,15 +1073,37 @@
    <section>Boolean</section>
    <shortdesc>What is a boolean</shortdesc>
    <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="current_folder" relpath="delve_into/user/information_architects/concepts">Current folder
+   <section>Current folder</section>
+   <shortdesc>What is the current folder?</shortdesc>
+   <img>current folder screenshot</img>
   </document><document ext="xml" filename="documenttype" relpath="delve_into/user/information_architects/concepts">Document type
    <section>Document type</section>
    <shortdesc>What is a document type</shortdesc>
    <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="edit_mode" relpath="delve_into/user/information_architects/concepts">Edit mode
+   <section>Edit mode</section>
+   <shortdesc>What is edit mode?</shortdesc>
+   <img>edit mode sreenshot</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="field_type_menu" relpath="delve_into/user/information_architects/concepts">string
+   <section>string</section>
+   <shortdesc>What is a field type menu</shortdesc>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="folder_action_menu" relpath="delve_into/user/information_architects/concepts">Folder action menu
+   <section>Folder action menu</section>
+   <shortdesc>What and where is the folder action menu?</shortdesc>
+   <img>Folder action menu screenshot</img>
   </document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/concepts">
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="mandatory_or_optional" relpath="delve_into/user/information_architects/concepts">Mandatory or optional field
    <section>Mandatory or optional field</section>
    <shortdesc>What is a mandatory or optional field in a documenttype?</shortdesc>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="markuped_text" relpath="delve_into/user/information_architects/concepts">Markuped text
+   <section>Markuped text</section>
+   <shortdesc>What is markuped text?</shortdesc>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="namespaces_folder" relpath="delve_into/user/information_architects/concepts">Namespace folder
    <section>Namespace folder</section>

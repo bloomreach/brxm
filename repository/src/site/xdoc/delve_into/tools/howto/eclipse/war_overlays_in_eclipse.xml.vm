@@ -52,7 +52,7 @@
      <span class='download-48 icon-48'/> 
    </td>
    <td>
-    You need to have <a href='./get_Hippo_CMS_source.html'>checked out the Hippo CMS source</a>.
+    You need to have <a href='../get_Hippo_CMS_source.html'>checked out the Hippo CMS source</a>.
     In the following, it is asssumed that the Hippo CMS source is in your local <code>~/cms/</code> folder. 
     (<code>~\cms\</code> in Windows).
    </td>

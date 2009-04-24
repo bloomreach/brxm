@@ -60,12 +60,21 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.4.3</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl104-over-slf4j</artifactId>
       <version>1.4.3</version>
+     </dependency>
+     <dependency>
+       <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.13</version>
+      </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>2.7.0</version>
     </dependency>
     <dependency>
        <groupId>org.apache.geronimo.specs</groupId>
@@ -79,6 +88,9 @@
        </exclusions>
      </dependency>
   </dependencies>
+
+ <!-- xml-commons-apis
+ -->
 
   <build>
     <resources>
@@ -95,6 +107,25 @@
           <source>1.5</source>
           <target>1.5</target>
         </configuration>
+      </plugin>
+      <plugin>
+       <!--
+            Defining that it does not include xml-apis-1.0.b2.jar in WEB-INF/lib folder of web application,
+            to solve fatal error:
+            javax.xml.parsers.FactoryConfigurationError: Provider for javax.xml.parsers.DocumentBuilderFactory cannot be found
+            Caused by:  javax.xml.parsers.FactoryConfigurationError: Provider for javax.xml.parsers.DocumentBuilderFactory cannot be found
+            at javax.xml.parsers.DocumentBuilderFactory.newInstance(Unknown Source)
+        -->
+         <artifactId>maven-war-plugin</artifactId>
+         <configuration>
+           <warSourceExcludes>WEB-INF/lib/xml-apis-*.jar</warSourceExcludes>
+           <archive>
+             <manifest>
+               <addClasspath>true</addClasspath>
+               <classpathPrefix>lib/</classpathPrefix>
+             </manifest>
+           </archive>
+         </configuration>
       </plugin>
     </plugins>
   </build>

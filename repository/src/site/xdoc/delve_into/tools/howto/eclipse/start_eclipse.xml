@@ -37,7 +37,7 @@
     <p>On the commandline you may add some flags to configure eclipse, such as using extra
        large memory.
        This is for example necessary for the Hippo CMS itself. How this is done, you can find
-       <a href='/delve_into/custom/howto/eclipse/start_eclipse.html'>here</a>.
+       <a href='../../../custom/howto/eclipse/start_eclipse.html'>here</a>.
     </p>
 
     <p>Eclipse askes for a workspace. This is a foldertree that contains information eclipse

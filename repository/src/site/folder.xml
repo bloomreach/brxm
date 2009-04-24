@@ -44,20 +44,12 @@
    fullname='delve_into/core/building/eclipse.xml.vm'
    relpath='delve_into/core/building'
   >eclipse</file>
-     <file ext='xml.vm~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/core/building/eclipse.xml.vm~'
-   relpath='delve_into/core/building'
-  >eclipse</file>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/core/building/index.xml'
    relpath='delve_into/core/building'
   >index</file>
      <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/core/building/maven.xml.vm'
-   relpath='delve_into/core/building'
-  >maven</file>
-     <file ext='xml.vm~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/core/building/maven.xml.vm~'
    relpath='delve_into/core/building'
   >maven</file>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
@@ -124,10 +116,6 @@
   >configure_workspace</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/custom/howto/eclipse/import_project.xml'
-   relpath='delve_into/custom/howto/eclipse'
-  >import_project</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/custom/howto/eclipse/import_project.xml~'
    relpath='delve_into/custom/howto/eclipse'
   >import_project</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
@@ -514,20 +502,12 @@
    fullname='delve_into/tools/howto/eclipse/configure_workspace.xml.vm'
    relpath='delve_into/tools/howto/eclipse'
   >configure_workspace</file>
-      <file ext='xml.vm~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/tools/howto/eclipse/configure_workspace.xml.vm~'
-   relpath='delve_into/tools/howto/eclipse'
-  >configure_workspace</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/tools/howto/eclipse/index.xml'
    relpath='delve_into/tools/howto/eclipse'
   >index</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/tools/howto/eclipse/start_eclipse.xml'
-   relpath='delve_into/tools/howto/eclipse'
-  >start_eclipse</file>
-      <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/tools/howto/eclipse/start_eclipse.xml~'
    relpath='delve_into/tools/howto/eclipse'
   >start_eclipse</file>
       <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes'
@@ -583,10 +563,6 @@
      </folder>
      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/tools/howto/snapshot_dependencies.xml'
-   relpath='delve_into/tools/howto'
-  >snapshot_dependencies</file>
-     <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/tools/howto/snapshot_dependencies.xml~'
    relpath='delve_into/tools/howto'
   >snapshot_dependencies</file>
     </folder>
@@ -833,6 +809,10 @@
    fullname='delve_into/user/contributors/howto/fill_boolean_field_in_document.xml'
    relpath='delve_into/user/contributors/howto'
   >fill_boolean_field_in_document</file>
+      <file ext='xml~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/user/contributors/howto/fill_boolean_field_in_document.xml~'
+   relpath='delve_into/user/contributors/howto'
+  >fill_boolean_field_in_document</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/contributors/howto/fill_date_field_in_document.xml'
    relpath='delve_into/user/contributors/howto'
@@ -942,6 +922,10 @@
    fullname='delve_into/user/editors/concepts/folder.xml'
    relpath='delve_into/user/editors/concepts'
   >folder</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
+   fullname='delve_into/user/editors/concepts/home_workspace.xml'
+   relpath='delve_into/user/editors/concepts'
+  >home_workspace</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/editors/concepts/index.xml'
    relpath='delve_into/user/editors/concepts'
@@ -1002,10 +986,6 @@
    fullname='delve_into/user/index.xml'
    relpath='delve_into/user'
   >index</file>
-    <file ext='xml~' mimetype='text/html charset=us-ascii'
-   fullname='delve_into/user/index.xml~'
-   relpath='delve_into/user'
-  >index</file>
     <folder>information_architects
      <folder>concepts
 <info>
@@ -1024,9 +1004,29 @@
    relpath='delve_into/user/information_architects/concepts'
   >boolean</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/information_architects/concepts/current_folder.xml'
+   relpath='delve_into/user/information_architects/concepts'
+  >current_folder</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/concepts/documenttype.xml'
    relpath='delve_into/user/information_architects/concepts'
   >documenttype</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/information_architects/concepts/edit_mode.xml'
+   relpath='delve_into/user/information_architects/concepts'
+  >edit_mode</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/information_architects/concepts/field_type_menu.xml'
+   relpath='delve_into/user/information_architects/concepts'
+  >field_type_menu</file>
+      <file ext='xml~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/user/information_architects/concepts/field_type_menu.xml~'
+   relpath='delve_into/user/information_architects/concepts'
+  >field_type_menu</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/information_architects/concepts/folder_action_menu.xml'
+   relpath='delve_into/user/information_architects/concepts'
+  >folder_action_menu</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/concepts/index.xml'
    relpath='delve_into/user/information_architects/concepts'
@@ -1035,6 +1035,10 @@
    fullname='delve_into/user/information_architects/concepts/mandatory_or_optional.xml'
    relpath='delve_into/user/information_architects/concepts'
   >mandatory_or_optional</file>
+      <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
+   fullname='delve_into/user/information_architects/concepts/markuped_text.xml'
+   relpath='delve_into/user/information_architects/concepts'
+  >markuped_text</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/concepts/namespaces_folder.xml'
    relpath='delve_into/user/information_architects/concepts'
@@ -1057,12 +1061,24 @@
    fullname='delve_into/user/information_architects/howto/add_boolean_to_documenttype.xml'
    relpath='delve_into/user/information_architects/howto'
   >add_boolean_to_documenttype</file>
+      <file ext='xml~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/user/information_architects/howto/add_boolean_to_documenttype.xml~'
+   relpath='delve_into/user/information_architects/howto'
+  >add_boolean_to_documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/add_date_to_documenttype.xml'
    relpath='delve_into/user/information_architects/howto'
   >add_date_to_documenttype</file>
+      <file ext='xml~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/user/information_architects/howto/add_date_to_documenttype.xml~'
+   relpath='delve_into/user/information_architects/howto'
+  >add_date_to_documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/add_markuped_text_to_documenttype.xml'
+   relpath='delve_into/user/information_architects/howto'
+  >add_markuped_text_to_documenttype</file>
+      <file ext='xml~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/user/information_architects/howto/add_markuped_text_to_documenttype.xml~'
    relpath='delve_into/user/information_architects/howto'
   >add_markuped_text_to_documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
@@ -1073,12 +1089,20 @@
    fullname='delve_into/user/information_architects/howto/add_string_to_documenttype.xml'
    relpath='delve_into/user/information_architects/howto'
   >add_string_to_documenttype</file>
+      <file ext='xml~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/user/information_architects/howto/add_string_to_documenttype.xml~'
+   relpath='delve_into/user/information_architects/howto'
+  >add_string_to_documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/change_field_in_documenttype.xml'
    relpath='delve_into/user/information_architects/howto'
   >change_field_in_documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
    fullname='delve_into/user/information_architects/howto/create_documenttype.xml'
+   relpath='delve_into/user/information_architects/howto'
+  >create_documenttype</file>
+      <file ext='xml~' mimetype='text/html charset=us-ascii'
+   fullname='delve_into/user/information_architects/howto/create_documenttype.xml~'
    relpath='delve_into/user/information_architects/howto'
   >create_documenttype</file>
       <file ext='xml' mimetype='text/html charset=us-ascii' valid='yes'
@@ -1240,10 +1264,6 @@
   <folder>support
    <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes' note='todo'
    fullname='support/community.xml.vm'
-   relpath='support'
-  >community</file>
-   <file ext='xml.vm~' mimetype='text/html charset=us-ascii' note='todo'
-   fullname='support/community.xml.vm~'
    relpath='support'
   >community</file>
    <file ext='xml.vm' mimetype='text/html charset=us-ascii' valid='yes' note='todo'

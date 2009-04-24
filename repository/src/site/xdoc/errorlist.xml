@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">418 errors and/or todos in 230 out of 230 documents (100%).</span>
+      <span class="shortdesc">435 errors and/or todos in 236 out of 236 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -51,7 +51,7 @@
      </li>
         <li>1 not valid XML documents.
      </li>
-        <li>19 documents with bad text.
+        <li>21 documents with bad text.
      </li>
         <li>10 multisection documents.
      </li>
@@ -864,7 +864,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="badtext documents: 19">
+      <subsection name="badtext documents: 21">
         <ol>
           <li>
             <a href="./about/roadmap.html">roadmap: Roadmap Hippo CMS</a>
@@ -971,6 +971,27 @@ repository is;
             <a href="./delve_into/user/editors/howto/start_CMS.html">start_CMS: Start CMS site</a>
             <ul>
               <li>ia.org/. The site is not yet visible, because the user has not clicked yet. Coincidentially, the site<span xmlns="" class="bad"> current </span>ly visible happens to be the Hippo CMS documentation site at</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/concepts/current_folder.html">current_folder: Current folder</a>
+            <ul>
+              <li>What is the<span xmlns="" class="bad"> current </span>folder?</li>
+              <li>The<span xmlns="" class="bad"> current </span>folder is marked bright yellow in the</li>
+              <li>The<span xmlns="" class="bad"> current </span>folder is one single folder at any time, which is chosen by the user, by clicking on its name in the</li>
+              <li>. The<span xmlns="" class="bad"> current </span>folder name is marked with a color in the</li>
+              <li>. At any time, the user can chose another folder to be the<span xmlns="" class="bad"> current </span>folder.</li>
+              <li>The content of the<span xmlns="" class="bad"> current </span>folder is tabulated in the</li>
+              <li>The names of the subfolders of the<span xmlns="" class="bad"> current </span>folder are listed under the current folder name in the</li>
+              <li>. This allows to proceed to one of the subfolders and make that the<span xmlns="" class="bad"> current </span>folder.</li>
+              <li>Particular actions are possible for the<span xmlns="" class="bad"> current </span>folder, such as: creating a document in it, creating a subfolder in it, deleting a subfolder from it. The actions that a particular user may do on particular folder can be different for different fold</li>
+              <li>. At any particular moment, only folder actions on the<span xmlns="" class="bad"> current </span>folder are possible.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/concepts/folder_action_menu.html">folder_action_menu: Folder action menu</a>
+            <ul>
+              <li>At any particular moment, only folder actions on the<span xmlns="" class="bad"> current </span>folder are possible.</li>
             </ul>
           </li>
           <li>

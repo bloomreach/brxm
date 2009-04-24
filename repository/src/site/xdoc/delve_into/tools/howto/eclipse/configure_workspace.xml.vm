@@ -34,7 +34,7 @@
 
   <subsection name='Identify Maven local repository'>
 
-   <p>You need to have <a href='install_maven.html'>installed maven</a>.
+   <p>You need to have <a href='../maven/install_maven.html'>installed maven</a>.
    </p>
    <p>Ensure that a folder intended as Eclipse workspace for Hippo CMS addon projects exists.
     You can just create it, or <a href='start_eclipse.html'>start Eclipse</a> and have Eclipse
