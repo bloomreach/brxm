@@ -60,9 +60,8 @@
 
 [hippo:request] > nt:unstructured, mix:versionable
 
-// FIXME ought to be: [hippo:facetselect] > hippo:reference
 [hippo:facetselect] > nt:base
-- hippo:docbase (string) mandatory // FIXME ought to be reference
+- hippo:docbase (string) mandatory
 - hippo:facets (string) mandatory multiple
 - hippo:values (string) mandatory multiple
 - hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear', 'single', 'prefer', 'prefer-single'
@@ -80,10 +79,6 @@
 
 [hippo:facetlink] 
 - hippo:docbase (string) mandatory
-
-[hippo:reference] > hippo:handle
-- hippo:docbase (string) mandatory
-+ * (hippo:document) multiple ignore
 
 [hippo:resource]
 - jcr:encoding (string)
