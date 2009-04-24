@@ -47,11 +47,13 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     private static final Logger log = LoggerFactory.getLogger(FieldPlugin.class);
 
     public static final String FIELD = "field";
+    public static final String TYPE = "type";
 
     protected String mode;
     protected IFieldDescriptor field;
     protected AbstractProvider<C> provider;
     protected String fieldName;
+    protected String typeName;
 
     private TemplateController controller;
 
@@ -64,6 +66,8 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
             log.error("No edit mode specified");
         }
 
+        typeName = config.getString(FieldPlugin.TYPE);
+        
         fieldName = config.getString(FieldPlugin.FIELD);
         if (fieldName == null) {
             log.error("No field was specified in the configuration");
@@ -88,7 +92,12 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         ITemplateEngine engine = getTemplateEngine();
         if (engine != null) {
             P model = (P) getModel();
-            ITypeDescriptor type = engine.getType(model);
+            ITypeDescriptor type;
+            if (typeName == null) {
+                type = engine.getType(model);
+            } else {
+                type = engine.getType(typeName);
+            }
             if (type != null) {
                 field = type.getField(fieldName);
                 if (field != null) {
