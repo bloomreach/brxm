@@ -314,6 +314,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
             TextField text = new TextField("name", nameModel);
             text.setRequired(true);
+            text.setLabel(new StringResourceModel("name-label", FolderWorkflowPlugin.this, null));;
             add(text);
 
             add(typelabel= new Label("typelabel", new StringResourceModel("document-type", FolderWorkflowPlugin.this, null)));
@@ -324,6 +325,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 add(folderChoice = new DropDownChoice("prototype", prototypeModel, prototypesList, new TypeChoiceRenderer(this)));
                 folderChoice.setNullValid(false);
                 folderChoice.setRequired(true);
+                folderChoice.setLabel(new StringResourceModel("document-type", FolderWorkflowPlugin.this, null));;
                 // while not a prototype chosen, disable ok button
                 Component notypes;
                 add(notypes = new EmptyPanel("notypes"));
@@ -350,6 +352,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             }
         }
 
+        @Override
         public IModel getTitle() {
             return title;
         }
