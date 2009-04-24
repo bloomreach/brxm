@@ -36,7 +36,7 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
     public GalleryWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new WorkflowAction("add", new StringResourceModel("add-image", this, null, "Add")) {
+        add(new WorkflowAction("add", new StringResourceModel(config.getString("option.label","add"), this, null, "Add")) {
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "image-add-16.png");
