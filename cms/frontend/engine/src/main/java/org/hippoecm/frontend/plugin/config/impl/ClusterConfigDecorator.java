@@ -15,11 +15,9 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import java.lang.reflect.Array;
 import java.util.AbstractList;
 import java.util.AbstractSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +32,8 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
     private static final long serialVersionUID = 1L;
 
     private class PluginConfigDecorator extends AbstractPluginDecorator {
+        private static final long serialVersionUID = 1L;
+
         PluginConfigDecorator(IPluginConfig conf) {
             super(conf);
         }
@@ -43,6 +43,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
             return clusterId + ".plugin." + super.getName();
         }
 
+        @Override
         protected Object decorate(Object object) {
             return ClusterConfigDecorator.this.decorate(object);
         }

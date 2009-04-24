@@ -110,13 +110,13 @@ public class RenderPluginEditorPlugin extends RenderPlugin {
                 List<IPluginConfig> plugins = clusterConfig.getPlugins();
                 for (IPluginConfig config : plugins) {
                     if (config.getName().equals(pluginId)) {
-                        plugins.remove(config);
                         IModelReference pluginRef = context.getService(config.getString("model.plugin"),
                                 IModelReference.class);
                         if (pluginRef != null && pluginRef.getModel() != null
                                 && pluginId.equals(pluginRef.getModel().getObject())) {
                             pluginRef.setModel(null);
                         }
+                        plugins.remove(config);
                         break;
                     }
                 }

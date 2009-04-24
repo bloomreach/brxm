@@ -80,18 +80,20 @@ public class FacetSearchObserver implements EventListener {
     }
 
     void stop() {
-        try {
-            ObservationManager obMgr = session.getWorkspace().getObservationManager();
-            obMgr.removeEventListener(this);
-
-            Iterator<Map.Entry<String, FacetSearchListener>> iter = listeners.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry<String, FacetSearchListener> entry = iter.next();
-                obMgr.removeEventListener(entry.getValue());
-                iter.remove();
+        if (session.isLive()) {
+            try {
+                ObservationManager obMgr = session.getWorkspace().getObservationManager();
+                obMgr.removeEventListener(this);
+    
+                Iterator<Map.Entry<String, FacetSearchListener>> iter = listeners.entrySet().iterator();
+                while (iter.hasNext()) {
+                    Map.Entry<String, FacetSearchListener> entry = iter.next();
+                    obMgr.removeEventListener(entry.getValue());
+                    iter.remove();
+                }
+            } catch (RepositoryException ex) {
+                log.error("Failed to unsubscribe", ex);
             }
-        } catch (RepositoryException ex) {
-            log.error("Failed to unsubscribe", ex);
         }
     }
 

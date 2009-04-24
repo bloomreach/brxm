@@ -144,6 +144,9 @@
     <sv:property sv:name="validator.id" sv:type="String">
       <sv:value>${cluster.id}.validate</sv:value>
     </sv:property>
+    <sv:property sv:name="model.id" sv:type="String">
+      <sv:value>${wicket.model}</sv:value>
+    </sv:property>
   </sv:node>
 
 </sv:node>

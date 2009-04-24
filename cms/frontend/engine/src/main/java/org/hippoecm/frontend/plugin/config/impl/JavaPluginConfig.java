@@ -41,8 +41,8 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
 
     private static final long serialVersionUID = 1L;
 
-    private IPluginConfig upstream;
     private List<IPluginConfigListener> listeners = new ListenerList<IPluginConfigListener>();
+    private Set<IPluginConfig> configSet = new LinkedHashSet<IPluginConfig>();
 
     private final int hashCode = new Object().hashCode();
     private String pluginInstanceName = null;
@@ -58,8 +58,14 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
 
     public JavaPluginConfig(IPluginConfig parentConfig) {
         super(parentConfig == null ? new MiniMap(0) : parentConfig);
-        upstream = parentConfig;
+        for (IPluginConfig config : parentConfig.getPluginConfigSet()) {
+            configSet.add(newPluginConfig(config));
+        }
         pluginInstanceName = parentConfig.getName();
+    }
+
+    protected IPluginConfig newPluginConfig(IPluginConfig config) {
+        return new JavaPluginConfig(config);
     }
 
     public String getName() {
@@ -67,19 +73,15 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
     }
 
     public Set<IPluginConfig> getPluginConfigSet() {
-        if (upstream != null) {
-            return upstream.getPluginConfigSet();
-        } else {
-            return new LinkedHashSet<IPluginConfig>();
-        }
+        return configSet;
     }
 
     public IPluginConfig getPluginConfig(Object key) {
         Object value = get(key);
         if (value instanceof IPluginConfig) {
-            return (IPluginConfig) value;
+            return newPluginConfig((IPluginConfig) value);
         } else if (value instanceof List && ((List) value).size() > 0) {
-            return (IPluginConfig) ((List) value).get(0);
+            return newPluginConfig((IPluginConfig) ((List) value).get(0));
         } else {
             return new JavaPluginConfig();
         }

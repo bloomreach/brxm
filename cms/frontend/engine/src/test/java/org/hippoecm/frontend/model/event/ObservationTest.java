@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.model.event;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -140,7 +141,7 @@ public class ObservationTest extends TestCase {
         context.registerService(new TestObserver(observable, events), IObserver.class.getName());
 
         observable.fire();
-        assertTrue(events.size() == 1);
+        assertEquals(1, events.size());
     }
 
     @Test
@@ -154,12 +155,12 @@ public class ObservationTest extends TestCase {
         context.registerService(new TestObserver(observableB, eventsB), IObserver.class.getName());
 
         observableA.fire();
-        assertTrue(eventsB.size() == 1);
-        assertTrue(eventsA.size() == 1);
+        assertEquals(1, eventsB.size());
+        assertEquals(1, eventsA.size());
 
         observableB.fire();
-        assertTrue(eventsB.size() == 2);
-        assertTrue(eventsA.size() == 2);
+        assertEquals(2, eventsB.size());
+        assertEquals(2, eventsA.size());
     }
 
     @Test
@@ -186,11 +187,11 @@ public class ObservationTest extends TestCase {
         // in-session event
         JcrObservationManager.getInstance().processEvents();
         System.err.println("number of events: " + events.size());
-        assertTrue(events.size() == 1);
+        assertEquals(1, events.size());
 
         // shouldn't receive new event on next processing
         JcrObservationManager.getInstance().processEvents();
-        assertTrue(events.size() == 1);
+        assertEquals(1, events.size());
 
         session.save();
 
@@ -198,7 +199,7 @@ public class ObservationTest extends TestCase {
         JcrObservationManager.getInstance().processEvents();
 
         // "out-of-session" event
-        assertTrue(events.size() == 3);
+        assertEquals(3, events.size());
 
         context.unregisterService(observer, IObserver.class.getName());
 
@@ -210,7 +211,7 @@ public class ObservationTest extends TestCase {
         Thread.sleep(1000);
         JcrObservationManager.getInstance().processEvents();
 
-        assertTrue(events.size() == 3);
+        assertEquals(3, events.size());
     }
 
     @Test
@@ -226,27 +227,26 @@ public class ObservationTest extends TestCase {
 
         // shouldn't receive new event on next processing
         JcrObservationManager.getInstance().processEvents();
-        assertTrue(events.size() == 1);
+        assertEquals(1, events.size());
 
         testNode.setProperty("test", "bla");
 
         JcrObservationManager.getInstance().processEvents();
-        assertTrue(events.size() == 1);
+        assertEquals(1, events.size());
 
         JcrObservationManager.getInstance().processEvents();
-        assertTrue(events.size() == 1);
+        assertEquals(1, events.size());
 
         testNode.setProperty("test", "die");
 
         JcrObservationManager.getInstance().processEvents();
-        assertTrue(events.size() == 1);
+        assertEquals(1, events.size());
 
         JcrObservationManager.getInstance().processEvents();
-        assertTrue(events.size() == 1);
+        assertEquals(1, events.size());
 
         session.save();
     }
-
 
     @Test
     public void testInterSessionCommunication() throws Exception {
@@ -262,7 +262,7 @@ public class ObservationTest extends TestCase {
         Thread.sleep(500);
 
         JcrObservationManager.getInstance().processEvents();
-        assertTrue(events.size() == 1);
+        assertEquals(1, events.size());
 
         Node testNode = root.getNode("test");
         assertTrue(testNode.isSame(otherTestNode));
@@ -291,7 +291,7 @@ public class ObservationTest extends TestCase {
         Thread.sleep(1000);
         JcrObservationManager.getInstance().processEvents();
 
-        assertTrue(events.size() == 0);
+        assertEquals(0, events.size());
     }
 
     private static class SerializationTestContext implements Serializable {
@@ -335,7 +335,7 @@ public class ObservationTest extends TestCase {
         Thread.sleep(1000);
         JcrObservationManager.getInstance().processEvents();
 
-        assertTrue(copy.count == 1);
+        assertEquals(1, copy.count);
     }
 
     @Test
@@ -384,13 +384,36 @@ public class ObservationTest extends TestCase {
 
         // event should have been received
         JcrObservationManager.getInstance().processEvents();
-        assertTrue(events.size() == 1);
+        assertEquals(1, events.size());
 
         // basic facetsearch assertion
         Node result = sink.getNode("search/xyz/hippo:resultset/xyz");
         assertTrue(((HippoNode) result).getCanonicalNode().isSame(xyz));
 
         session.save();
+    }
+
+    @Test
+    public void testRemoveAdd() throws Exception {
+        Node root = session.getRootNode();
+
+        Node testNode = root.addNode("test", "nt:unstructured");
+        session.save();
+
+        Node subNode = testNode.addNode("abc");
+        session.save();
+
+        List<IEvent> events = new LinkedList<IEvent>();
+        JcrNodeModel model = new JcrNodeModel(testNode);
+        IObserver observer = new TestObserver(model, events);
+        context.registerService(observer, IObserver.class.getName());
+
+        subNode.setProperty("a", "b");
+        subNode.remove();
+        subNode = testNode.addNode("abc");
+
+        JcrObservationManager.getInstance().processEvents();
+        assertEquals(1, events.size());
     }
 
 }

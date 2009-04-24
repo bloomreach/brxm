@@ -69,6 +69,7 @@ class CmsEditor implements IEditor {
 
         String editorId = decorated.getString("editor.id");
         context.registerService(this, editorId);
+        context.registerService(manager, editorId);
 
         cluster.start();
 
@@ -122,12 +123,16 @@ class CmsEditor implements IEditor {
             context.unregisterService(this, renderId);
 
             cluster.stop();
+
+            String editorId = cluster.getClusterConfig().getString("editor.id");
+            context.unregisterService(manager, editorId);
+            context.unregisterService(this, editorId);
+
             modelService.destroy();
             for (IEditorFilter filter : filters) {
                 filter.postClose(filterContexts.get(filter));
             }
         }
-        context.unregisterService(this, cluster.getClusterConfig().getString("editor.id"));
         manager.unregister(this);
     }
 
