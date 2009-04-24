@@ -128,11 +128,11 @@ public class LoginPlugin extends RenderPlugin {
     protected class SignInForm extends Form {
         private static final long serialVersionUID = 1L;
         
-        private DropDownChoice locale;
+        protected final DropDownChoice locale;
         private List<String> locales = Arrays.asList(new String[] { "nl", "en" });
         public String selectedLocale;
-        private RequiredTextField usernameTextField;
-        private PasswordTextField passwordTextField; 
+        protected final RequiredTextField usernameTextField;
+        protected final PasswordTextField passwordTextField; 
         private Label userLabel;
         
         public SignInForm(final String id) {
