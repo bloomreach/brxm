@@ -28,7 +28,7 @@
 
     <p>General information about configuring an Eclipse workspace
       for Hippo projects can be found
-      <a href='/delve_into/tools/howto/eclipse/configure_workspace.html'>here</a>.
+      <a href='../../../tools/howto/eclipse/configure_workspace.html'>here</a>.
     </p>
 
   <p>
@@ -59,7 +59,7 @@
     in the
     <a href="${project_source_url}/${last_release}/tools/eclipse/bookmark.xml">eclipse bookmark.xml file</a>.
     If you have
-    <a href='get_Hippo_CMS_source.html'>checked out the Hippo CMS sources</a> to a local folder you called
+    <a href='../../../tools/howto/get_Hippo_CMS_source.html'>checked out the Hippo CMS sources</a> to a local folder you called
     <code>~/cms/</code>, then you find the file at <code>~/cms/tools/eclipse/bookmark.xml</code>.
    </p>
   </subsection>
@@ -115,7 +115,7 @@
    </li>
    <li>
     <b>Run Jetty Run: </b> to build and run the package of your project from within Eclipse, for easy testing.
-    Optional, you can also use the <a href='run_development_package.html'>commandline</a>.
+    Optional, you can also use the <a href='../../../tools/howto/maven/run_development_package.html'>commandline</a>.
     See their <a href="http://code.google.com/p/run-jetty-run/">documentation</a> to install the Eclipse plugin.
    </li>
  </ul>
@@ -123,7 +123,7 @@
 
 <subsection name='War overlays'>
 
- Also <a href='war_overlays_in_eclipse.html'>make symbolic links for war overlays.</a>
+ Also <a href='../../../tools/howto/eclipse/war_overlays_in_eclipse.html'>make symbolic links for war overlays.</a>
 
 </subsection>
 
