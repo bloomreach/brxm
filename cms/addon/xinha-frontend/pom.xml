@@ -72,7 +72,14 @@
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
+    <!-- provided -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- Testing needs a JTA implementation -->
     <dependency>
       <groupId>com.atomikos</groupId>
