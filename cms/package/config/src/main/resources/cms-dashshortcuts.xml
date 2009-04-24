@@ -89,6 +89,7 @@
     </sv:property>
   </sv:node>
 
+<!--
   <sv:node sv:name="imageGalleryShortcut">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -145,5 +146,6 @@
       <sv:value>4</sv:value>
     </sv:property>
   </sv:node>
+-->
 
 </sv:node>
