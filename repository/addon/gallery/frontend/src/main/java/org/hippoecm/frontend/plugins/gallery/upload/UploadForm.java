@@ -50,6 +50,7 @@ import org.hippoecm.repository.gallery.GalleryWorkflow;
 class UploadForm extends Form {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private final UploadDialog uploadDialog;
@@ -73,8 +74,7 @@ class UploadForm extends Form {
             List<String> galleryTypes = null;
             try {
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(this.uploadDialog
-                        .getWorkflowCategory(), galleryNode);
+                GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(this.uploadDialog.getWorkflowCategory(), galleryNode);
                 if (workflow == null) {
                     Gallery.log.error("No gallery workflow accessible");
                 } else {
@@ -108,11 +108,11 @@ class UploadForm extends Form {
         }
     }
 
-    public String getType() {
+    String getType() {
         return type;
     }
 
-    public String getDescription() {
+    String getDescription() {
         return description;
     }
 

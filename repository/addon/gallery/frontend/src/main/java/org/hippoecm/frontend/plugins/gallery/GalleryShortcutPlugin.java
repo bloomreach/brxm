@@ -40,8 +40,8 @@ public class GalleryShortcutPlugin extends RenderPlugin {
             public void onClick(AjaxRequestTarget target) {
                 IDialogService dialogService = getDialogService();
                 UploadDialog dialog = new UploadDialog(GalleryShortcutPlugin.this.getPluginContext(),
-                                                       GalleryShortcutPlugin.this.getPluginConfig());
-                dialog.setModel(GalleryShortcutPlugin.this.getModel());
+                                                       GalleryShortcutPlugin.this.getPluginConfig(),
+                                                       GalleryShortcutPlugin.this.getModel());
                 dialogService.show(dialog);
             }
         };
