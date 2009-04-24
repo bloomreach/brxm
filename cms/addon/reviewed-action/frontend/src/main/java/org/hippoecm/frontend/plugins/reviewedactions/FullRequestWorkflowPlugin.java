@@ -103,12 +103,14 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
                 Workflow workflow = manager.getWorkflow(workflowDescriptor);
                 Map<String, Serializable> info = workflow.hints();
+                /*
                 if (info.containsKey("acceptRequest") && info.get("acceptRequest") instanceof Boolean && !((Boolean)info.get("acceptRequest")).booleanValue()) {
                     acceptAction.setVisible(false);
                 }
                 if (info.containsKey("rejectRequest") && info.get("rejectRequest") instanceof Boolean && !((Boolean)info.get("rejectRequest")).booleanValue()) {
                     rejectAction.setVisible(false);
                 }
+                */
 
                 if (documentNode.hasProperty("type")) {
                     state = documentNode.getProperty("type").getString();
