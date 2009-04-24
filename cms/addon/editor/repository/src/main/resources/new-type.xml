@@ -117,6 +117,20 @@
           <sv:property sv:name="frontend:properties" sv:type="String">
             <sv:value>mode</sv:value>
           </sv:property>
+          <sv:node sv:name="root">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:plugin</sv:value>
+            </sv:property>
+            <sv:property sv:name="plugin.class" sv:type="String">
+              <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+            </sv:property>
+            <sv:property sv:name="wicket.id" sv:type="String">
+              <sv:value>${wicket.id}</sv:value>
+            </sv:property>
+            <sv:property sv:name="item" sv:type="String">
+              <sv:value>${cluster.id}.field</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
       </sv:node>
     </sv:node>
