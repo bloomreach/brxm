@@ -39,6 +39,10 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
         }
 
         @Override
+        public String getName() {
+            return clusterId + ".plugin." + super.getName();
+        }
+
         protected Object decorate(Object object) {
             return ClusterConfigDecorator.this.decorate(object);
         }
