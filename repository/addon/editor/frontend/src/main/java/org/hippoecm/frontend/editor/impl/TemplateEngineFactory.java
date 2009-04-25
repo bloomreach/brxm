@@ -20,6 +20,9 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceFactory;
 
 public class TemplateEngineFactory implements IServiceFactory<ITemplateEngine> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: $";
+
     private static final long serialVersionUID = 1L;
 
     public ITemplateEngine getService(IPluginContext context) {

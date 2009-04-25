@@ -20,6 +20,8 @@ import java.util.EventListener;
 import org.apache.wicket.IClusterable;
 
 public interface IPluginConfigListener extends EventListener, IClusterable {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     void onPluginConfigChanged();
 }
