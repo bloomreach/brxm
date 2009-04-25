@@ -21,6 +21,8 @@ import java.util.Map;
 import org.apache.wicket.IClusterable;
 
 public interface IStore<T> extends IClusterable {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     Iterator<T> find(Map<String, Object> criteria);
 

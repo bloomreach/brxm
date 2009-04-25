@@ -30,6 +30,9 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 
 public class BuiltinTemplateConfig extends JavaClusterConfig {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: $";
+
     private static final long serialVersionUID = 1L;
 
     private IStore<ITypeDescriptor> typeStore;

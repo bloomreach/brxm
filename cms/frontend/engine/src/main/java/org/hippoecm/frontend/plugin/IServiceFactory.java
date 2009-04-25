@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugin;
 import org.apache.wicket.IClusterable;
 
 public interface IServiceFactory<S extends IClusterable> extends IClusterable {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     Class<? extends S> getServiceClass();
 
