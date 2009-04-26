@@ -16,6 +16,8 @@
 
 package org.hippoecm.frontend.plugins.search.yui;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.jcr.ItemNotFoundException;
@@ -262,8 +264,8 @@ public class SearchBehavior extends AutoCompleteBehavior {
             }
 
             try {
-                if(result != null && result.getRows().getSize() > 0) {
-                    ResultItem[] results = new ResultItem[(int) result.getRows().getSize()];
+                List<ResultItem> resultList = new ArrayList<ResultItem>(15);
+                if(result != null) {
                     int count = 0;
 
                     for (RowIterator it = result.getRows(); it.hasNext();) {
@@ -283,18 +285,18 @@ public class SearchBehavior extends AutoCompleteBehavior {
                                 state = "null";
                             }
 
-                            String excerpt = row.getValue("rep:excerpt(.)").getString();
+                            String excerpt = row.getValue("rep:excerpt()").getString();
                             String displayName = NodeNameCodec.decode(node.getDisplayName());
                             String url = node.getPath();
 
-                            results[count++] = new ResultItem(displayName, url, state, excerpt);
+                            resultList.add(new ResultItem(displayName, url, state, excerpt));
                         } catch (ItemNotFoundException infe) {
                             log.warn("Item not found", infe);
                         } catch (ValueFormatException vfe) {
                             //Should never happen
                         }
                     }
-                    return results;
+                    return resultList.toArray(new ResultItem[resultList.size()]);
                 }
             } catch (RepositoryException e) {
                 log.error("Error parsing query results[" + queryString + "]", e);
