@@ -196,7 +196,7 @@
             <artifactId>hippo-ecm-repository-engine</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
-            <classifier>test</classifier>
+            <classifier>tests</classifier>
             <scope>test</scope>
             <optional>true</optional>
           </dependency>
