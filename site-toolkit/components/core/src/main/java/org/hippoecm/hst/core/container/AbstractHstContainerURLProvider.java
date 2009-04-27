@@ -308,7 +308,12 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
             url.append(this.navigationalStateCodec.encodeParameters(requestInfo, characterEncoding));
         }
         
-        url.append(containerURL.getPathInfo());
+        String[] unEncodedPaths = containerURL.getPathInfo().split("/");
+        for(String path : unEncodedPaths) {
+            if(!"".equals(path)) {
+                url.append("/").append(URLEncoder.encode(path, characterEncoding));
+            }
+        }
         
         boolean firstParamDone = (url.indexOf("?") >= 0);
         
