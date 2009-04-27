@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 
@@ -36,6 +37,7 @@ import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
@@ -140,7 +142,17 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
             @Override
             protected Dialog createRequestDialog() {
-                return new WorkflowAction.WorkflowDialog(new StringResourceModel("delete-message", FullReviewedActionsWorkflowPlugin.this, null)) {
+                IModel documentName;
+                try {
+                    documentName = (new NodeTranslator(new JcrNodeModel(((WorkflowDescriptorModel)FullReviewedActionsWorkflowPlugin.this.getModel()).getNode()))).getNodeName();
+                } catch(RepositoryException ex) {
+                    try {
+                        documentName = new Model(((WorkflowDescriptorModel)FullReviewedActionsWorkflowPlugin.this.getModel()).getNode().getName());
+                    } catch(RepositoryException e) {
+                        documentName = new StringResourceModel("unknown", FullReviewedActionsWorkflowPlugin.this, null);
+                    }
+                }
+                return new WorkflowAction.WorkflowDialog(new StringResourceModel("delete-message", FullReviewedActionsWorkflowPlugin.this, null, new Object[] {documentName})) {
                     @Override
                     public IModel getTitle() {
                         return new StringResourceModel("delete-label", FullReviewedActionsWorkflowPlugin.this, null);
