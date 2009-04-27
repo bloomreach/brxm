@@ -553,7 +553,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 throw returnException = new RepositoryException("Impossible failure for workflow proxy", ex);
             } catch (InvocationTargetException ex) {
                 rootSession.refresh(false);
-                log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
+                log.info(ex.getClass().getName()+": "+ex.getMessage(), ex);
                 throw returnException = ex.getCause();
             } finally {
                 StringBuffer sb = new StringBuffer();

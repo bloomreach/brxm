@@ -114,18 +114,19 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             if (dialog != null) {
                 getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(dialog);
             } else {
-                String message = execute();
-                if (message != null) {
-                    getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(createResponseDialog(message));
+                try {
+                    execute();
+                 } catch(Exception ex) {
+                    getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(createResponseDialog(ex.getClass().getName()+": "+ex.getMessage()));                   
                 }
             }
         }
 
-        protected String execute() {
-            return execute((WorkflowDescriptorModel<T>) CompatibilityWorkflowPlugin.this.getModel());
+        protected void execute() throws Exception {
+            execute((WorkflowDescriptorModel<T>) CompatibilityWorkflowPlugin.this.getModel());
         }
 
-        protected String execute(WorkflowDescriptorModel<T> model) {
+        protected void execute(WorkflowDescriptorModel<T> model) throws Exception {
             try {
                 WorkflowDescriptor descriptor = (WorkflowDescriptor) model.getObject();
                 WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
@@ -133,28 +134,11 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 session.save();
                 session.refresh(true);
                 Workflow workflow = manager.getWorkflow(descriptor);
-                execute((T)workflow);
+                String message = execute((T)workflow);
+                if(message != null) {
+                    throw new WorkflowException(message);
+                }
                 session.refresh(false);
-            } catch (RepositoryException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
-                error(ex);
-                return "";
-            } catch (WorkflowException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
-                error(ex);
-                return "";
-            } catch (RemoteException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
-                error(ex);
-                return "";
-            } catch (Exception ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
-                error(ex);
-                return "";
             } finally {
                 /*
                 IJcrService jcrService = plugin.getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
@@ -163,7 +147,6 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 }
                 */
             }
-            return null;
         }
 
         protected String execute(T workflow) throws Exception {
@@ -199,9 +182,10 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
             @Override
             protected void onOk() {
-                String errorMessage = execute();
-                if (errorMessage != null && !errorMessage.equals("")) {
-                    error(errorMessage);
+                try {
+                    execute();
+                } catch(Exception ex) {
+                    error(ex);
                 }
             }
 
@@ -213,8 +197,8 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
              * This abstract method is called from ok() and should implement
              * the action to be performed when the dialog's ok button is clicked.
              */
-            protected final String execute() {
-                return WorkflowAction.this.execute((WorkflowDescriptorModel<T>) CompatibilityWorkflowPlugin.this.getModel());
+            protected final void execute() throws Exception {
+                WorkflowAction.this.execute((WorkflowDescriptorModel<T>) CompatibilityWorkflowPlugin.this.getModel());
             }
         }
 
