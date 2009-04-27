@@ -192,7 +192,8 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
             };
     }
 
-    private Object wrap(final Object object) throws RepositoryException{
+    // FIXME: fragale code, reference (although weak) to all other sessions
+    private Object wrap(final Object object) throws RepositoryException {
         Class[] interfaces = object.getClass().getInterfaces();
         InvocationHandler handler = new InvocationHandler() {
 
@@ -220,6 +221,12 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
                 Object result;
                 try {
                     result = method.invoke(object, args);
+                } catch(InvocationTargetException ex) {
+                    if(ex.getCause() != null) {
+                        throw ex.getCause();
+                    } else {
+                        throw ex;
+                    }
                 } finally {
                     for (EventListener listener : registered) {
                         try {
@@ -276,8 +283,4 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
             this.nodeTypeName = nodeTypeName;
         }
     }
-
 }
-
-
-

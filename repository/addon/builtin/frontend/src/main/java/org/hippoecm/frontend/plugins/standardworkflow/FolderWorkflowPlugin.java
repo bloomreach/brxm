@@ -106,19 +106,14 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                     }};
             }
             @Override
-            public String execute(WorkflowDescriptorModel model) {
-                try {
-                    // FIXME: this assumes that folders are always embedded in other folders
-                    // and there is some logic here to look up the parent.  The real solution is
-                    // in the visual component to merge two workflows.
-                    Node node = model.getNode();
-                    WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                    FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
-                    workflow.delete(node.getName() + "[" + node.getIndex() + "]");
-                    return null;
-                } catch (Exception ex) {
-                    return ex.getClass().getName() + ": " + ex.getMessage();
-                }
+            public void execute(WorkflowDescriptorModel model) throws Exception {
+                // FIXME: this assumes that folders are always embedded in other folders
+                // and there is some logic here to look up the parent.  The real solution is
+                // in the visual component to merge two workflows.
+                Node node = model.getNode();
+                WorkflowManager manager = ((UserSession)Session.get()).getWorkflowManager();
+                FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow("embedded", node.getParent());
+                workflow.delete(node.getName() + "[" + node.getIndex() + "]");
             }
         });
 
@@ -134,19 +129,14 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 return new WorkflowAction.NameDialog(new StringResourceModel("rename-title", FolderWorkflowPlugin.this, null), new StringResourceModel("rename-text", FolderWorkflowPlugin.this, null), new PropertyModel(this, "name"));
             }
             @Override
-            protected String execute(WorkflowDescriptorModel model) {
-                try {
-                    // FIXME: this assumes that folders are always embedded in other folders
-                    // and there is some logic here to look up the parent.  The real solution is
-                    // in the visual component to merge two workflows.
-                    Node node = model.getNode();
-                    WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                    FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
-                    workflow.rename(node.getName() + "[" + node.getIndex() + "]", NodeNameCodec.encode(name, true));
-                    return null;
-                } catch (Exception ex) {
-                    return ex.getClass().getName() + ": " + ex.getMessage();
-                }
+            protected void execute(WorkflowDescriptorModel model) throws Exception {
+                // FIXME: this assumes that folders are always embedded in other folders
+                // and there is some logic here to look up the parent.  The real solution is
+                // in the visual component to merge two workflows.
+                Node node = model.getNode();
+                WorkflowManager manager = ((UserSession)Session.get()).getWorkflowManager();
+                FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow("embedded", node.getParent());
+                workflow.rename(node.getName() + "[" + node.getIndex() + "]", NodeNameCodec.encode(name, true));
             }
         });
 
@@ -157,15 +147,10 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 return new ReorderDialog(this, config, (WorkflowDescriptorModel)FolderWorkflowPlugin.this.getModel(), order);
             }
             @Override
-            protected String execute(WorkflowDescriptorModel model) {
-                try {
-                    WorkflowManager manager = ((UserSession)Session.get()).getWorkflowManager();
-                    FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow((WorkflowDescriptor)model.getObject());
-                    workflow.reorder(order);
-                    return null;
-                } catch (Exception ex) {
-                    return ex.getClass().getName() + ": " + ex.getMessage();
-                }
+            protected void execute(WorkflowDescriptorModel model) throws Exception {
+                WorkflowManager manager = ((UserSession)Session.get()).getWorkflowManager();
+                FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow((WorkflowDescriptor)model.getObject());
+                workflow.reorder(order);
             }
         });
 
