@@ -170,6 +170,7 @@
         <version>2.4</version>
         <configuration>
           <forkMode>always</forkMode>
+          <skipTests>true</skipTests>
           <workingDirectory>${project.build.directory}</workingDirectory>
           <systemProperties>
             <property>

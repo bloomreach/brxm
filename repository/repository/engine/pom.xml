@@ -215,6 +215,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>always</forkMode>
+          <skipTests>true</skipTests>
           <workingDirectory>${project.build.directory}</workingDirectory>
           <systemProperties>
             <property>
