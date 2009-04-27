@@ -37,8 +37,8 @@
 
   <modules>
     <module>api</module>
-    <module>frontend</module>
     <module>repository</module>
+    <module>frontend</module>
     <module>addon</module>
     <module>package</module>
     <module>quickstart</module>
