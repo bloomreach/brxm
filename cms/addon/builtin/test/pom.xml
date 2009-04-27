@@ -72,6 +72,12 @@
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.4</version>
+      <scope>test</scope>
+    </dependency>
 
     <!-- Testing needs a JTA implementation -->
     <dependency>
@@ -109,7 +115,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.4</version>
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
@@ -119,6 +124,14 @@
               <value>${history.points}</value>
             </property>
           </systemProperties>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
         </configuration>
       </plugin>
       <plugin>
