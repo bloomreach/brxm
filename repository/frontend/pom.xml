@@ -37,6 +37,7 @@
     <module>engine</module>
     <module>application</module>
     <module>plugins</module>
+    <module>test</module>
   </modules>
 
   <build>
