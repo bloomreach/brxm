@@ -15,10 +15,10 @@
  */
 package org.hippoecm.hst;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.collections.list.TreeList;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.hippoecm.hst.content.beans.Node;
@@ -36,8 +36,6 @@ import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
-import org.hippoecm.hst.util.DefaultKeyValue;
-import org.hippoecm.hst.util.KeyValue;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
@@ -98,18 +96,18 @@ public abstract class AbstractBeanSpringTestCase
     protected ObjectConverter getObjectConverter() {
         
         // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
-        List<KeyValue<String, Class[]>> jcrPrimaryNodeTypeClassPairs = new TreeList();
+        Map<String, Class> jcrPrimaryNodeTypeClassPairs = new HashMap<String, Class>();
 
 
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, SimpleTextPage.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, SimpleTextPageCopy.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDocument.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFolder.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSearch.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSelect.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDirectory.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFixedDirectory.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoHtml.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, SimpleTextPage.class, false);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, SimpleTextPageCopy.class, false);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDocument.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFolder.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSearch.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSelect.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDirectory.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFixedDirectory.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoHtml.class, true);
         
         // builds a fallback jcrPrimaryNodeType array.
         String [] fallBackJcrPrimaryNodeTypes = new String [] {"hippo:document"};
@@ -118,19 +116,27 @@ public abstract class AbstractBeanSpringTestCase
         return objectConverter;
     }
     
-    private static void addJcrPrimaryNodeTypeClassPair(List<KeyValue<String, Class[]>> jcrPrimaryNodeTypeClassPairs, Class clazz) {
+    private static void addJcrPrimaryNodeTypeClassPair(Map<String, Class> jcrPrimaryNodeTypeClassPairs, Class clazz, boolean builtinType) {
         String jcrPrimaryNodeType = null;
-        
         if (clazz.isAnnotationPresent(Node.class)) {
             Node anno = (Node) clazz.getAnnotation(Node.class);
             jcrPrimaryNodeType = anno.jcrType();
+        }
+        
+        if(jcrPrimaryNodeTypeClassPairs.get(jcrPrimaryNodeType) != null) {
+            if(builtinType) {
+                log.debug("Builtin annotated class for primary type '{}' is overridden. Builtin version is ignored", jcrPrimaryNodeType);
+            } else {
+                log.warn("Annotated class for primarytype '{}' is duplicate. Skipping this one.", jcrPrimaryNodeType);
+            }
+            return;
         }
         
         if (jcrPrimaryNodeType == null) {
             throw new IllegalArgumentException("There's no annotation for jcrType in the class: " + clazz);
         }
         
-        jcrPrimaryNodeTypeClassPairs.add(new DefaultKeyValue(jcrPrimaryNodeType, new Class [] { clazz }, true));
+        jcrPrimaryNodeTypeClassPairs.put(jcrPrimaryNodeType, clazz);
     }
     public static class SpringComponentManager implements ComponentManager, BeanPostProcessor {
         

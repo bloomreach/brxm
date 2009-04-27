@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.content.beans.manager;
 
-import java.util.List;
+import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -27,8 +27,6 @@ import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.service.ServiceFactory;
-import org.hippoecm.hst.util.DefaultKeyValue;
-import org.hippoecm.hst.util.KeyValue;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.LoggerFactory;
 
@@ -36,12 +34,12 @@ public class ObjectConverterImpl implements ObjectConverter {
     
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(ObjectConverterImpl.class);
     
-    protected List<KeyValue<String, Class[]>> jcrPrimaryNodeTypeClassPairs;
-    protected String [] fallBackJcrPrimaryNodeTypes;
+    protected Map<String, Class> jcrPrimaryNodeTypeClassPairs;
+    protected String [] fallBackJcrNodeTypes;
     
-    public ObjectConverterImpl(List<KeyValue<String, Class[]>> jcrPrimaryNodeTypeClassPairs, String [] fallBackJcrPrimaryNodeTypes) {
+    public ObjectConverterImpl(Map<String, Class> jcrPrimaryNodeTypeClassPairs, String [] fallBackJcrNodeTypes) {
         this.jcrPrimaryNodeTypeClassPairs = jcrPrimaryNodeTypeClassPairs;
-        this.fallBackJcrPrimaryNodeTypes = fallBackJcrPrimaryNodeTypes;
+        this.fallBackJcrNodeTypes = fallBackJcrNodeTypes;
     }
 
     public Object getObject(Session session, String path) throws ObjectBeanManagerException {
@@ -128,23 +126,18 @@ public class ObjectConverterImpl implements ObjectConverter {
         String path;
         try {
             jcrPrimaryNodeType = node.getPrimaryNodeType().getName();
-            Class [] proxyInterfacesOrDelegateeClass = null;
-            KeyValue<String, Class[]> jcrPrimaryNodeTypePair = new DefaultKeyValue<String, Class[]>(jcrPrimaryNodeType, null, true);
-            int offset = this.jcrPrimaryNodeTypeClassPairs.indexOf(jcrPrimaryNodeTypePair);
-            
-            if (offset != -1) {
-                KeyValue<String, Class[]> pair = this.jcrPrimaryNodeTypeClassPairs.get(offset);
-                proxyInterfacesOrDelegateeClass = pair.getValue();
-            } else if (this.fallBackJcrPrimaryNodeTypes != null) {
-                for (String fallBackJcrPrimaryNodeType : this.fallBackJcrPrimaryNodeTypes) {
+            Class proxyInterfacesOrDelegateeClass = this.jcrPrimaryNodeTypeClassPairs.get(jcrPrimaryNodeType);
+          
+            if (proxyInterfacesOrDelegateeClass == null) {
+                // no exact match, try a fallback type
+                for (String fallBackJcrPrimaryNodeType : this.fallBackJcrNodeTypes) {
                     
                     if(!node.isNodeType(fallBackJcrPrimaryNodeType)) {
                         continue;
                     }
-                    offset = this.jcrPrimaryNodeTypeClassPairs.indexOf(new DefaultKeyValue<String, Class[]>(fallBackJcrPrimaryNodeType, null, true));
-                    if (offset != -1) {
-                        KeyValue<String, Class[]> pair = this.jcrPrimaryNodeTypeClassPairs.get(offset);
-                        proxyInterfacesOrDelegateeClass = pair.getValue();
+                    // take the first fallback type
+                    proxyInterfacesOrDelegateeClass = this.jcrPrimaryNodeTypeClassPairs.get(fallBackJcrPrimaryNodeType);
+                    if(proxyInterfacesOrDelegateeClass != null) {
                         break;
                     }
                 }
@@ -171,16 +164,7 @@ public class ObjectConverterImpl implements ObjectConverter {
     }
 
     public Class getAnnotatedClassFor(String jcrPrimaryNodeType) {
-        Class [] proxyInterfacesOrDelegateeClass = null;
-        KeyValue<String, Class[]> jcrPrimaryNodeTypePair = new DefaultKeyValue<String, Class[]>(jcrPrimaryNodeType, null, true);
-        int offset = this.jcrPrimaryNodeTypeClassPairs.indexOf(jcrPrimaryNodeTypePair);
-        
-        if (offset != -1) {
-            KeyValue<String, Class[]> pair = this.jcrPrimaryNodeTypeClassPairs.get(offset);
-            proxyInterfacesOrDelegateeClass = pair.getValue();
-            return proxyInterfacesOrDelegateeClass[0];
-        } 
-        return null;
+        return this.jcrPrimaryNodeTypeClassPairs.get(jcrPrimaryNodeType);
     }
     
     private void checkUUID(String uuid) throws ObjectBeanManagerException{
