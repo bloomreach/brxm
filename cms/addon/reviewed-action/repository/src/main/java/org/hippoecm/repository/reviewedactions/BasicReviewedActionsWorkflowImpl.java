@@ -94,7 +94,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             if(draftDocument == null && !pendingRequest) {
                 publishable = true;
             }
-            if(draftDocument == null && publishedDocument == null) {
+            if(draftDocument == null && publishedDocument == null && !pendingRequest) {
                 deleteable = true;   
             }
         } else {

@@ -78,21 +78,23 @@ public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
         super.onModelChanged();
         WorkflowDescriptorModel model = (WorkflowDescriptorModel) getModel();
         schedule = null;
-        try {
-            Node node = model.getNode();
-            state = node.getProperty("type").getString();
-            if (node.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
-                schedule = node.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
-            } else if (node.hasProperty("reqdate")) {
-                schedule = new Date(node.getProperty("reqdate").getLong());
+        if (model != null) {
+            try {
+                Node node = model.getNode();
+                state = node.getProperty("type").getString();
+                if (node.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
+                    schedule = node.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
+                } else if (node.hasProperty("reqdate")) {
+                    schedule = new Date(node.getProperty("reqdate").getLong());
+                }
+                Map<String, Serializable> hints = ((WorkflowDescriptor)model.getObject()).hints();
+                if (hints.containsKey("cancelRequest") && !((Boolean)hints.get("cancelRequest")).booleanValue()) {
+                    cancelAction.setVisible(false);
+                }
+            } catch (RepositoryException ex) {
+                // status unknown, maybe there are legit reasons for this, so don't emit a warning
+                log.info(ex.getClass().getName() + ": " + ex.getMessage());
             }
-            Map<String,Serializable> hints = ((WorkflowDescriptor) model.getObject()).hints();
-            if(hints.containsKey("cancelRequest") && !((Boolean)hints.get("cancelRequest")).booleanValue()) {
-                cancelAction.setVisible(false);
-            }
-        } catch (RepositoryException ex) {
-            // status unknown, maybe there are legit reasons for this, so don't emit a warning
-            log.info(ex.getClass().getName() + ": " + ex.getMessage());
         }
     }
 }
