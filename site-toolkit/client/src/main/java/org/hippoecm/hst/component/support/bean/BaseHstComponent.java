@@ -19,6 +19,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.ServletConfig;
 
-import org.apache.commons.collections.list.TreeList;
 import org.apache.commons.digester.Digester;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.content.beans.Node;
@@ -54,8 +54,6 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.util.DefaultKeyValue;
-import org.hippoecm.hst.util.KeyValue;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,28 +183,37 @@ public class BaseHstComponent extends GenericHstComponent {
 
     public ObjectConverter getObjectConverter() {
         // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
-        List<KeyValue<String, Class[]>> jcrPrimaryNodeTypeClassPairs = new TreeList();
+        Map<String, Class> jcrPrimaryNodeTypeClassPairs = new HashMap<String, Class>();
         List<Class> annotatedClasses = getAnnotatedClassNames();
         for (Class c : annotatedClasses) {
-            addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, c);
+            addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, c, false);
         }
         // below the default present mapped mappings
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDocument.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFolder.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSearch.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSelect.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDirectory.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFixedDirectory.class);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoHtml.class);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDocument.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFolder.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSearch.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSelect.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDirectory.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFixedDirectory.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoHtml.class, true);
         // builds a fallback jcrPrimaryNodeType array.
-        String[] fallBackJcrPrimaryNodeTypes = new String[] { "hippo:facetselect", "hippo:document" };
+        String[] fallBackJcrNodeTypes = getFallBackJcrNodeTypes();
         ObjectConverter objectConverter = new ObjectConverterImpl(jcrPrimaryNodeTypeClassPairs,
-                fallBackJcrPrimaryNodeTypes);
+                fallBackJcrNodeTypes);
         return objectConverter;
     }
 
-    private static void addJcrPrimaryNodeTypeClassPair(List<KeyValue<String, Class[]>> jcrPrimaryNodeTypeClassPairs,
-            Class clazz) {
+    /**
+     * If you want other fallbacktypes, override this method. Note, that the fallback types are tried in order that the
+     * array is. A fallback type is suited for creating a bean for the node if: node.isNodeType(fallBackJcrNodeType) returns true.
+     * @return String array containing the fallback types
+     */
+    protected String[] getFallBackJcrNodeTypes(){
+        return new String[] { "hippo:facetselect", "hippo:document" };
+    }
+    
+    private static void addJcrPrimaryNodeTypeClassPair(Map<String, Class> jcrPrimaryNodeTypeClassPairs,
+            Class clazz, boolean builtinType) {
         String jcrPrimaryNodeType = null;
 
         if (clazz.isAnnotationPresent(Node.class)) {
@@ -214,11 +221,20 @@ public class BaseHstComponent extends GenericHstComponent {
             jcrPrimaryNodeType = anno.jcrType();
         }
 
+        if(jcrPrimaryNodeTypeClassPairs.get(jcrPrimaryNodeType) != null) {
+            if(builtinType) {
+                log.debug("Builtin annotated class for primary type '{}' is overridden. Builtin version is ignored", jcrPrimaryNodeType);
+            } else {
+                log.warn("Annotated class for primarytype '{}' is duplicate. Skipping this one.", jcrPrimaryNodeType);
+            }
+            return;
+        }
+        
         if (jcrPrimaryNodeType == null) {
             throw new IllegalArgumentException("There's no annotation for jcrType in the class: " + clazz);
         }
 
-        jcrPrimaryNodeTypeClassPairs.add(new DefaultKeyValue(jcrPrimaryNodeType, new Class[] { clazz }, true));
+        jcrPrimaryNodeTypeClassPairs.put(jcrPrimaryNodeType,clazz);
     }
 
     private List<Class> getAnnotatedClassNames() {
