@@ -165,7 +165,7 @@
         </dependency>
         <dependency>
           <groupId>org.hippoecm</groupId>
-          <artifactId>hippo-ecm-frontend-engine</artifactId>
+          <artifactId>hippo-ecm-frontend-engine-test</artifactId>
           <version>${project.version}</version>
           <type>jar</type>
           <classifier>tests</classifier>
@@ -195,7 +195,7 @@
           </dependency>
           <dependency>
             <groupId>org.hippoecm</groupId>
-            <artifactId>hippo-ecm-frontend-engine</artifactId>
+            <artifactId>hippo-ecm-frontend-engine-test</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <classifier>tests</classifier>
