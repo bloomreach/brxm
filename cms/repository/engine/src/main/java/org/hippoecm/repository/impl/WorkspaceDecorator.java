@@ -21,22 +21,33 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.ItemExistsException;
 import javax.jcr.LoginException;
+import javax.jcr.NoSuchWorkspaceException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Workspace;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
 
+import javax.jcr.util.TraversingItemVisitor;
+import javax.jcr.version.VersionException;
 import org.apache.jackrabbit.core.observation.SynchronousEventListener;
 import org.hippoecm.repository.HierarchyResolverImpl;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.decorating.DecoratorFactory;
@@ -181,4 +192,44 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
         }
     }
 
+    private void touch(String destAbsPath) throws RepositoryException {
+        Node destination = null, parent = getSession().getRootNode().getNode(destAbsPath.substring(1,destAbsPath.lastIndexOf("/")));
+        for(NodeIterator iter = parent.getNodes(destAbsPath.substring(destAbsPath.lastIndexOf("/")+1)); iter.hasNext(); ) {
+            destination = iter.nextNode();
+        }
+        if(destination != null) {
+            destination.accept(new TraversingItemVisitor() {
+                protected void entering(Property property, int level) throws RepositoryException {
+                }
+                protected void entering(Node node, int level) throws RepositoryException {
+                }
+                protected void leaving(Property property, int level) throws RepositoryException {
+                }
+                protected void leaving(Node node, int level) throws RepositoryException {
+                    if (node.isNodeType(HippoNodeType.NT_DERIVED)) {
+                        node.setProperty("hippo:compute", (String) null);
+                    }
+                }
+            });
+            destination.save();
+        }
+    }
+    public void copy(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
+        super.copy(srcAbsPath, destAbsPath);
+        touch(destAbsPath);
+    }
+
+    public void copy(String srcWorkspace, String srcAbsPath, String destAbsPath) throws NoSuchWorkspaceException, ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
+        super.copy(srcWorkspace, srcAbsPath, destAbsPath);
+        touch(destAbsPath);
+    }
+
+    public void clone(String srcWorkspace, String srcAbsPath, String destAbsPath, boolean removeExisting) throws NoSuchWorkspaceException, ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
+        super.clone(srcWorkspace, srcAbsPath, destAbsPath, removeExisting);
+        touch(destAbsPath);
+    }
+    public void move(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
+        super.move(srcAbsPath, destAbsPath);
+        touch(destAbsPath);
+    }
 }
