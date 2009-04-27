@@ -56,6 +56,8 @@
 [hst:sitemenuitem] orderable
 - hst:referencesitemapitem (string)
 - hst:foldersonly (boolean)
+- hst:repobased (boolean)
+- hst:depth (long)
 + * (hst:sitemenuitem)
 
 [hst:sitemenu] orderable
