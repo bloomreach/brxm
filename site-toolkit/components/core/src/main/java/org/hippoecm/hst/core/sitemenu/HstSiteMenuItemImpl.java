@@ -37,11 +37,12 @@ public class HstSiteMenuItemImpl implements HstSiteMenuItem {
     private boolean selected;
     private boolean expanded;
     private List<HstSiteMenuItem> hstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
-    private List<HstSiteMenuItem> expandedHstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
     private HstSiteMenuItem parent;
     private HstLinkCreator linkCreator;
     private HstSite hstSite;
     private String hstSiteMapItemPath;
+    private int depth;
+    private boolean repositoryBased;
     
     public HstSiteMenuItemImpl(HstSiteMenu hstSiteMenu, HstSiteMenuItem parent, HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration, HstRequestContext hstRequestContext) {
         this.hstSiteMenu = hstSiteMenu;
@@ -50,6 +51,8 @@ public class HstSiteMenuItemImpl implements HstSiteMenuItem {
         this.hstSiteMapItemPath = hstSiteMenuItemConfiguration.getSiteMapItemPath();
         this.linkCreator = hstRequestContext.getHstLinkCreator();
         this.name = hstSiteMenuItemConfiguration.getName();
+        this.depth = hstSiteMenuItemConfiguration.getDepth();
+        this.repositoryBased = hstSiteMenuItemConfiguration.isRepositoryBased();
         for(HstSiteMenuItemConfiguration childItemConfiguration : hstSiteMenuItemConfiguration.getChildItemConfigurations()) {
             hstSiteMenuItems.add(new HstSiteMenuItemImpl(hstSiteMenu, this, childItemConfiguration, hstRequestContext));
         }
@@ -66,16 +69,17 @@ public class HstSiteMenuItemImpl implements HstSiteMenuItem {
              }
              
              if(currentPathInfo.startsWith(siteMenuItemToMapPath)) {
-                // not selected but expand all ancestors
-                this.expanded = true;
-                for(HstSiteMenuItem hstSiteMenuItem : getChildMenuItems()) {
-                    this.addExpandedSiteMenuItem(hstSiteMenuItem);
-                }
-                if (this.parent == null) {
-                    // we are a root HstSiteMenuItem. Set selected to the HstSiteMenu container of this item
-                    ((HstSiteMenuImpl) this.hstSiteMenu).addExpandedSiteMenuItem(this);
-                } else {
-                    ((HstSiteMenuItemImpl) this.parent).addExpandedSiteMenuItem(this);
+                // check if the match was until a slash, otherwise it is not a sitemenu item we want to expand
+                String sub = currentPathInfo.substring(siteMenuItemToMapPath.length());
+                if("".equals(sub) || sub.startsWith("/")) {
+                    // not selected but expand all ancestors
+                    this.expanded = true;
+                    if (this.parent == null) {
+                        // we are a root HstSiteMenuItem. Set selected to the HstSiteMenu container of this item
+                        ((HstSiteMenuImpl) this.hstSiteMenu).setExpanded();
+                    } else {
+                        ((HstSiteMenuItemImpl) this.parent).setExpanded();
+                    }
                 }
             }
         }
@@ -105,28 +109,36 @@ public class HstSiteMenuItemImpl implements HstSiteMenuItem {
     public HstSiteMenuItem getParentItem() {
         return this.parent;
     }
-
-    public List<HstSiteMenuItem> getExpandedSiteMenuItems() {
-        return expandedHstSiteMenuItems;
+    
+    public void setExpanded(){
+       this.expanded = true;
+       if (this.parent == null) {
+           // we are a root HstSiteMenuItem. Set selected to the HstSiteMenu container of this item
+           ((HstSiteMenuImpl) this.hstSiteMenu).setExpanded();
+       } else {
+           ((HstSiteMenuItemImpl) this.parent).setExpanded();
+       }
     }
     
-    public void addExpandedSiteMenuItem(HstSiteMenuItem hstSiteMenuItem){
-        this.expanded = true;
-        // only add it when it is not already added
-        if(!this.expandedHstSiteMenuItems.contains(hstSiteMenuItem)) {
-            this.expandedHstSiteMenuItems.add(hstSiteMenuItem);
-            // set this HstSiteMenuItem also selected in the parent, and when parent is null, set in HstSiteMenu container the selected item 
-            if(this.parent == null) {
-                ((HstSiteMenuImpl)this.hstSiteMenu).addExpandedSiteMenuItem(hstSiteMenuItem);
-            } else {
-                // we are a root HstSiteMenuItem. Set selected to the HstSiteMenu container of this item
-                ((HstSiteMenuItemImpl)this.parent).addExpandedSiteMenuItem(this);
-            }
-        }
-    }
-
     public HstSiteMenu getHstSiteMenu() {
         return this.hstSiteMenu;
+    }
+
+    public int getDepth() {
+        return this.depth;
+    }
+
+    public boolean isRepositoryBased() {
+        return this.repositoryBased;
+    }
+    
+    public HstSiteMenuItem getDeepestExpandedItem(){
+        for(HstSiteMenuItem item : hstSiteMenuItems) {
+            if(item.isExpanded()) {
+                return ((HstSiteMenuItemImpl)item).getDeepestExpandedItem();
+            }
+        }
+        return this;
     }
 
 }

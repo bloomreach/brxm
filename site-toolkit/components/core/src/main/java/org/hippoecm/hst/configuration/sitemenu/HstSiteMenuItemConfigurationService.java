@@ -40,6 +40,8 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     private String name;
     private List<HstSiteMenuItemConfiguration> childItems = new ArrayList<HstSiteMenuItemConfiguration>();
     private String siteMapItemPath;
+    private int depth;
+    private boolean repositoryBased;
     
     public HstSiteMenuItemConfigurationService(Node siteMenuItem, HstSiteMenuItemConfiguration parent, HstSiteMenuConfiguration hstSiteMenuConfiguration) throws ServiceException {
         this.parent = parent;
@@ -71,6 +73,22 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
             } else {
                log.info("HstSiteMenuItemConfiguration cannot be used for linking because no associated HstSiteMapItem present"); 
             }
+            
+            if(siteMenuItem.hasProperty(Configuration.SITEMENUITEM_PROPERTY_REPOBASED)) {
+                this.repositoryBased = siteMenuItem.getProperty(Configuration.SITEMENUITEM_PROPERTY_REPOBASED).getBoolean();
+            }
+            
+            if(siteMenuItem.hasProperty(Configuration.SITEMENUITEM_PROPERTY_DEPTH)) {
+               this.depth = (int)siteMenuItem.getProperty(Configuration.SITEMENUITEM_PROPERTY_DEPTH).getLong();
+            }
+            
+            if( (this.repositoryBased && this.depth <= 0) || (!this.repositoryBased && this.depth > 0) ) {
+                this.repositoryBased =false;
+                this.depth = 0;
+                log.warn("Ambiguous configuration for repository based sitemenu: only when both repository based is true AND " +
+                		"depth > 0 the configuration is correct for repository based navigation. Skipping repobased and depth setting for this item.");
+            }
+            
         } catch (RepositoryException e) {
             throw new ServiceException("ServiceException while initializing HstSiteMenuItemConfiguration.", e);
         }
@@ -94,6 +112,14 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
 
     public String getSiteMapItemPath() {
         return this.siteMapItemPath;
+    }
+
+    public int getDepth() {
+        return this.depth;
+    }
+
+    public boolean isRepositoryBased() {
+        return this.repositoryBased;
     }
 
 }

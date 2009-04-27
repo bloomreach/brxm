@@ -36,8 +36,9 @@
                     </a>
                 </c:otherwise>
             </c:choose>
+            <c:if test="${symbol_dollar}{item.expanded}">
             <ul>
-                <c:forEach var="subitem" items="${symbol_dollar}{item.expandedSiteMenuItems}">
+                <c:forEach var="subitem" items="${symbol_dollar}{item.childMenuItems}">
                     <c:choose >
                     <c:when test="${symbol_dollar}{subitem.selected}">
                         <li>
@@ -53,8 +54,9 @@
                         </li>
                     </c:otherwise>
                     </c:choose>
+                        <c:if test="${symbol_dollar}{subitem.expanded}">
                         <ul>
-                        <c:forEach var="subsubitem" items="${symbol_dollar}{subitem.expandedSiteMenuItems}">
+                        <c:forEach var="subsubitem" items="${symbol_dollar}{subitem.childMenuItems}">
                             <c:choose >
                             <c:when test="${symbol_dollar}{subsubitem.selected}">
                                 <li>
@@ -72,8 +74,10 @@
                             </c:choose>
                         </c:forEach>
                         </ul>
+                        </c:if>
                 </c:forEach>
             </ul>
+            </c:if>
     </li>
     </c:forEach>
   </ul>

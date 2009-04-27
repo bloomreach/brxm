@@ -37,12 +37,6 @@ public interface HstSiteMenuItem extends Serializable{
     List<HstSiteMenuItem> getChildMenuItems();
     
     /**
-     * Returns the currently expanded sitemenu items. 
-     * @return the currently expanded sitemenu items. 
-     */
-    List<HstSiteMenuItem> getExpandedSiteMenuItems();
-    
-    /**
      * 
      * @return parent <code>HstSiteMenuItem</code> or <code>null</code> if it is a root item 
      */
@@ -70,4 +64,17 @@ public interface HstSiteMenuItem extends Serializable{
      * @return <code>true</code> is the SiteMenuItem is expanded
      */
     boolean isExpanded();
+    
+    
+    /**
+     * @return <code>true</code> when below this sitemenu item repository based navigation is expected
+     */
+    boolean isRepositoryBased();
+    
+    /**
+     * 
+     * @return the depth of repository based items in case of repository based navigation
+     */
+    int getDepth(); 
+    
 }

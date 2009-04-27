@@ -55,5 +55,14 @@ public interface HstSiteMenuItemConfiguration extends Serializable{
      */
     HstSiteMenuItemConfiguration getParentItemConfiguration();
     
-   
+    /**
+     * @return <code>true</code> when below this sitemenu item repository based navigation is expected
+     */
+    boolean isRepositoryBased();
+    
+    /**
+     * 
+     * @return the depth of repository based items in case of repository based navigation
+     */
+    int getDepth(); 
 }

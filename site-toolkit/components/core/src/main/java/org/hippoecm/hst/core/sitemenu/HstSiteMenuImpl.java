@@ -29,7 +29,6 @@ public class HstSiteMenuImpl implements HstSiteMenu {
     private String name;
     private HstSiteMenus hstSiteMenus;
     private List<HstSiteMenuItem> hstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
-    private List<HstSiteMenuItem> expandedHstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
     private HstSiteMenuItem selectedSiteMenuItem;
     private boolean expanded;
     
@@ -66,16 +65,25 @@ public class HstSiteMenuImpl implements HstSiteMenu {
         this.selectedSiteMenuItem = selectedSiteMenuItem;
     }
     
-    public List<HstSiteMenuItem> getExpandedSiteMenuItems() {
-        return expandedHstSiteMenuItems;
-    }
-    
-    
-    public void addExpandedSiteMenuItem(HstSiteMenuItem siteMenuItem){
+    public void setExpanded(){
         this.expanded = true;
-        if(!expandedHstSiteMenuItems.contains(siteMenuItem)) {
-            expandedHstSiteMenuItems.add(siteMenuItem);
+    }
+
+    public HstSiteMenuItem getDeepestExpandedItem() {
+        if(selectedSiteMenuItem != null) {
+            return selectedSiteMenuItem;
         }
+        if(!this.expanded) {
+            return null;
+        }
+        
+        // traverse to the deepest expanded item
+        for(HstSiteMenuItem item: hstSiteMenuItems) {
+            if(item.isExpanded()){
+                return ((HstSiteMenuItemImpl)item).getDeepestExpandedItem();
+            }
+        }
+        return null;
     }
 
 }

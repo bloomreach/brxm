@@ -44,13 +44,6 @@ public interface HstSiteMenu extends Serializable{
     HstSiteMenuItem getSelectSiteMenuItem();
     
     /**
-     * Returns the currently expanded sitemenu items.
-     * 
-     * @return the currently expanded sitemenu items. If no expanded items are present, an empty list is returned. 
-     */
-    List<HstSiteMenuItem> getExpandedSiteMenuItems();
-    
-    /**
      * @return returns all direct child {@link HstSiteMenuItem}'s of this SiteMenu
      */
     List<HstSiteMenuItem> getSiteMenuItems();
@@ -60,4 +53,11 @@ public interface HstSiteMenu extends Serializable{
      * @return the <code>HstSiteMenus</code> container for this HstSiteMenu
      */
     HstSiteMenus getHstSiteMenus();
+    
+    /**
+     * This utility method is valuable for creating repository based navigations, as you can easily get the deepest selected item, which might
+     * in turn need repository based menu build below it
+     * @return the <code>HstSiteMenuItem</code> that is the last one in the tree of expanded items, or <code>null</code> if none is expanded
+     */
+    HstSiteMenuItem getDeepestExpandedItem();
 }
