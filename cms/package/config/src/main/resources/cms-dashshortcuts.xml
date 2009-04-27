@@ -148,4 +148,19 @@
   </sv:node>
 -->
 
+  <sv:node sv:name="changePasswordShortcut">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.admin.plugins.ChangePasswordShortcutPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>shortcut</sv:value>
+    </sv:property>
+    <sv:property sv:name="workaround" sv:type="Long">
+      <sv:value>5</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>
