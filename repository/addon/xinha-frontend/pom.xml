@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon</artifactId>
-    <version>2.06.00</version>
+    <version>2.06.01-SNAPSHOT</version>
   </parent>
 
   <name>Xinha addon frontend plugin</name>
@@ -28,26 +28,26 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_00/addon/xinha-frontend</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_00/addon/xinha-frontend</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_00/addon/xinha-frontend</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/xinha-frontend</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/xinha-frontend</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/xinha-frontend</url>
   </scm>
 
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.06.00</version>
+      <version>2.06.01-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.06.00</version>
+      <version>2.06.01-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
-      <version>2.06.00</version>
+      <version>2.06.01-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>hippo</groupId>
@@ -63,7 +63,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-yui</artifactId>
-      <version>2.06.00</version>
+      <version>2.06.01-SNAPSHOT</version>
     </dependency>
 
     <!-- test  -->
@@ -110,7 +110,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.06.00</version>
+      <version>2.06.01-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
