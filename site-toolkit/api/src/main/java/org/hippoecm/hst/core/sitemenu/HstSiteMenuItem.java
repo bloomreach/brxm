@@ -60,8 +60,8 @@ public interface HstSiteMenuItem extends Serializable{
     boolean isSelected();
     
     /**
-     * A sitemenu item is expanded if one of its descendants is selected
-     * @return <code>true</code> is the SiteMenuItem is expanded
+     * A sitemenu item is expanded if one of its descendants is selected or if it is selected itself
+     * @return <code>true</code> if the SiteMenuItem is expanded
      */
     boolean isExpanded();
     
