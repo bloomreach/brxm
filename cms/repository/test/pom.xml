@@ -171,6 +171,7 @@
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
+          <skipTests>true</skipTests>
           <systemProperties>
             <property>
               <name>history.points</name>
