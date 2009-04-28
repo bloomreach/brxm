@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon-standards</artifactId>
-    <version>2.06.01-SNAPSHOT</version>
+    <version>2.05.01-SNAPSHOT</version>
   </parent>
 
   <name>Standards frontend addon</name>
@@ -37,20 +37,20 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.06.01-SNAPSHOT</version>
+      <version>2.05.01-SNAPSHOT</version>
     </dependency>
     <!-- FIXME: front end cms having direct dependency on INTERNAL implementation of repository -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.06.01-SNAPSHOT</version>
+      <version>2.05.01-SNAPSHOT</version>
     </dependency>
     
     <!-- test -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.06.01-SNAPSHOT</version>
+      <version>2.05.01-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
