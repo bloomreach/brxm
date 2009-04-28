@@ -32,7 +32,7 @@ public interface UpdaterContext {
      * that implements the UpdaterModule abstract base class.
      * @param name the name of this module being registered
      */
-    public void registerName(String name); // MUST BE CALLED
+    public void registerName(String name);
 
     /**
      * The registerBefore method MAY be called zero, once or multiple times.
@@ -94,7 +94,7 @@ public interface UpdaterContext {
     public void setPrimaryNodeType(Node node, String name) throws RepositoryException;
 
     /**
-     * During an update, this ias a convenient call to get all the node type
+     * During an update, this is a convenient call to get all the node type
      * definitions, both primary and mixin node types of a certain node.
      * @param node the node for which to obtain the defined node types
      * @return an array of all node type definitions, the primary node type
