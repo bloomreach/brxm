@@ -56,7 +56,7 @@
         <sv:value>hippo:remodel</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:uri" sv:type="String">
-        <sv:value>http://www.hippoecm.org/hippostd/nt/1.2</sv:value>
+        <sv:value>http://www.hippoecm.org/hippostd/nt/1.3</sv:value>
       </sv:property>
       <sv:node sv:name="hippo:field">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

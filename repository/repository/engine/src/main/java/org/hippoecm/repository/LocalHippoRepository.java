@@ -86,7 +86,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
     private final static String SVN_ID = "$Id$";
 
     /** Hippo Namespace */
-    public final static String NAMESPACE_URI = "http://www.hippoecm.org/nt/1.2";
+    public final static String NAMESPACE_URI = "http://www.hippoecm.org/nt/1.3";
 
     /** Hippo Namespace prefix */
     public final static String NAMESPACE_PREFIX = "hippo";
