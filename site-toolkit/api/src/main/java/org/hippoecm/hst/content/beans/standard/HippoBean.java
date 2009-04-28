@@ -59,17 +59,28 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
     HippoBean getParentBean();
     
     /**
+     * @param <T>
+     * @param childNodeName
+     * @return List<HippoBean> where the backing jcr nodes have the name childNodeName
+     */
+    <T> List<T> getChildBeansByName(String childNodeName);
+    
+    
+    /**
+     * @param <T>
+     * @param jcrPrimaryNodeType
+     * @return List<HippoBean> where the backing jcr nodes are of type jcrPrimaryNodeType
+     */
+    <T> List<T> getChildBeans(String jcrPrimaryNodeType);
+    
+    
+    /**
      * A convenience method capable of comparing two HippoBean instances for you for the underlying jcr node. 
      * 
      * When the nodes being compared have the same canonical node (physical equivalence) this method returns true.
      * @param compare the object to compare to
      * @return <code>true</code> if the object compared has the same canonical node
      */
-    
-    /**
-     * @return List<HippoBean> where the backing jcr nodes are of type jcrPrimaryNodeType
-     */
-    <T> List<T> getChildBeans(String jcrPrimaryNodeType);
     
     boolean equalCompare(Object compare);
     

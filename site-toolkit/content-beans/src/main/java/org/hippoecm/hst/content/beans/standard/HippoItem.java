@@ -113,6 +113,30 @@ public class HippoItem implements HippoBean{
         return null;
     }
     
+    public <T> List<T> getChildBeansByName(String childNodeName) {
+       List<T> childBeans = new ArrayList<T>();
+       NodeIterator nodes;
+       try {
+           nodes = node.getNodes();
+           while(nodes.hasNext()) {
+               Node child = nodes.nextNode();
+               if(child == null) {continue;}
+               if(child.getName().equals(childNodeName)) {
+                   try {
+                       Object bean = this.objectConverter.getObject(child);
+                       childBeans.add((T)bean);
+                   } catch (ObjectBeanManagerException e) {
+                      log.warn("Skipping bean: {}", e);
+                   }
+               }
+           }
+       } catch (RepositoryException e) {
+           log.error("RepositoryException: Cannot get ChildBeans for jcrPrimaryNodeType: {}", e);
+           return new ArrayList<T>();
+       }
+       return childBeans;
+    }
+    
     public <T> List<T> getChildBeans(String jcrPrimaryNodeType) {
          Class annotatedClass = this.objectConverter.getAnnotatedClassFor(jcrPrimaryNodeType);
          if(annotatedClass == null) {
