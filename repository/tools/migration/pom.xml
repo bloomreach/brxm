@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-tools</artifactId>
-    <version>2.06.01-SNAPSHOT</version>
+    <version>2.06.00</version>
   </parent>
 
   <name>Migration Tool</name>
@@ -28,9 +28,9 @@
   <artifactId>hippo-ecm-tools-migration</artifactId>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/migration</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/migration</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/migration</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_00/tools/migration</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_00/tools/migration</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_00/tools/migration</url>
   </scm>
 
   <build>
@@ -90,12 +90,12 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.06.01-SNAPSHOT</version>
+      <version>2.06.00</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-connector</artifactId>
-      <version>2.06.01-SNAPSHOT</version>
+      <version>2.06.00</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
