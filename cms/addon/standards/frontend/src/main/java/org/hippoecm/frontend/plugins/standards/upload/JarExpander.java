@@ -37,7 +37,7 @@ import javax.jcr.RepositoryException;
 public class JarExpander {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id:$";
+    private final static String SVN_ID = "$Id$";
 
     /** The name of the node type required to expand the archive */
     public static final String TYPE_JARFILE = "rep:jarFile";

@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class JcrNodeModel extends ItemModelWrapper implements IObservable {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: JcrNodeModel.java 12254 2008-07-01 11:09:05Z fvlankvelt $";
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

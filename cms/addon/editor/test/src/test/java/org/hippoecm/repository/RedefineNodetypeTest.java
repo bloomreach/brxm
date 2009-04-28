@@ -139,7 +139,7 @@ public class RedefineNodetypeTest extends TestCase {
             "<jcr='http://www.jcp.org/jcr/1.0'>\n" +
             "<nt='http://www.jcp.org/jcr/nt/1.0'>\n" +
             "<mix='http://www.jcp.org/jcr/mix/1.0'>\n" +
-            "<hippo='http://www.hippoecm.org/nt/1.2'>\n" +
+            "<hippo='http://www.hippoecm.org/nt/1.3'>\n" +
             "<hippotest2='http://www.hippoecm.org/test2/1.0'>\n" +
             "\n" +
             "[hippotest2:test] > hippo:document\n" +
@@ -150,7 +150,7 @@ public class RedefineNodetypeTest extends TestCase {
             "<jcr='http://www.jcp.org/jcr/1.0'>\n" +
             "<nt='http://www.jcp.org/jcr/nt/1.0'>\n" +
             "<mix='http://www.jcp.org/jcr/mix/1.0'>\n" +
-            "<hippo='http://www.hippoecm.org/nt/1.2'>\n" +
+            "<hippo='http://www.hippoecm.org/nt/1.3'>\n" +
             "<hippotest2='http://www.hippoecm.org/test2/1.1'>\n" +
             "\n" +
             "[hippotest2:test] > hippo:document\n" +

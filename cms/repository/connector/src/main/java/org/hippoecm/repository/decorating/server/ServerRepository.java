@@ -50,26 +50,26 @@ public class ServerRepository extends org.apache.jackrabbit.rmi.server.ServerRep
         BatchReadConfig cfg = new BatchReadConfig();
         cfg.setDepth(NameFactoryImpl.getInstance().create("internal", "root"), 3);
         cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.jcp.org/jcr/nt/1.0", "unstructured"), 3);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippostd/nt/1.2", "folder"), 3);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippostd/nt/1.2", "gallery"), 3);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippostd/nt/1.2", "directory"), 3);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippostd/nt/1.2", "fixeddirectory"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippostd/nt/1.3", "folder"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippostd/nt/1.3", "gallery"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippostd/nt/1.3", "directory"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippostd/nt/1.3", "fixeddirectory"), 3);
         cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/defaultcontent/1.2", "article"), -1);
         cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/defaultcontent/1.2", "news"), -1);
         cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/defaultcontent/1.2", "event"), -1);
         cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/defaultcontent/1.2", "overview"), -1);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/nt/1.2", "document"), 3);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippogallery/nt/1.2", "exampleImageSet"), 3);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippogallery/nt/1.2", "exampleAssetSet"), 3);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippogallery/nt/1.2", "stdgalleryset"), 3);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippogallery/nt/1.2", "stdImageGallery"), 3);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippogallery/nt/1.2", "stdAssetGallery"), 3);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippolog/nt/1.2", "item"), 3);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/frontend/nt/1.3", "plugincluster"), -1);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/frontend/nt/1.3", "plugin"), -1);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/frontend/nt/1.3", "pluginconfig"), -1);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/frontend/nt/1.3", "clusterfolder"), 1);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/frontend/nt/1.3", "application"), 1);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/nt/1.3", "document"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippogallery/nt/1.3", "exampleImageSet"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippogallery/nt/1.3", "exampleAssetSet"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippogallery/nt/1.3", "stdgalleryset"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippogallery/nt/1.3", "stdImageGallery"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippogallery/nt/1.3", "stdAssetGallery"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippolog/nt/1.3", "item"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/frontend/nt/1.4", "plugincluster"), -1);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/frontend/nt/1.4", "plugin"), -1);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/frontend/nt/1.4", "pluginconfig"), -1);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/frontend/nt/1.4", "clusterfolder"), 1);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/frontend/nt/1.4", "application"), 1);
 
         Repository loginRepository = new Repository() {
 
