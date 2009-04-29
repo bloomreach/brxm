@@ -59,7 +59,7 @@
             <phase>install</phase>
             <configuration>
               <tasks>
-
+                <!--
                 <echo message="$$$$$$$$$$ Deleting the existing example HST application if it exists. $$$$$$$$$$" />
                 <delete dir="${project.build.directory}/${gettingstarted.app.artifactId}" />
                                 
@@ -77,7 +77,6 @@
                       <include name="**/*.jar" />
                     </fileset>
                   </classpath>
-                  <arg value="-o" />
                   <arg value="archetype:generate" />
                   <arg value="-DarchetypeGroupId=org.onehippo.ecm.hst" />
                   <arg value="-DarchetypeArtifactId=hst-archetype" />
@@ -101,10 +100,9 @@
                       <include name="**/*.jar" />
                     </fileset>
                   </classpath>
-                  <arg value="-o" />
                   <arg value="install" />
                 </java>
-                
+                --> 
               </tasks>
             </configuration>
             <goals>
