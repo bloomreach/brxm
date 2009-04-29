@@ -59,7 +59,6 @@
             <phase>install</phase>
             <configuration>
               <tasks>
-                <!--
                 <echo message="$$$$$$$$$$ Deleting the existing example HST application if it exists. $$$$$$$$$$" />
                 <delete dir="${project.build.directory}/${gettingstarted.app.artifactId}" />
                                 
@@ -102,7 +101,6 @@
                   </classpath>
                   <arg value="install" />
                 </java>
-                --> 
               </tasks>
             </configuration>
             <goals>
