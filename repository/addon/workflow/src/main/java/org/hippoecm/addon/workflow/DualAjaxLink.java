@@ -18,12 +18,11 @@ package org.hippoecm.addon.workflow;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.calldecorator.AjaxPostprocessingCallDecorator;
 import org.apache.wicket.ajax.markup.html.IAjaxLink;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.string.AppendingStringBuffer;
+import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 
 public abstract class DualAjaxLink extends AbstractLink implements IAjaxLink {
     @SuppressWarnings("unused")
@@ -47,19 +46,7 @@ public abstract class DualAjaxLink extends AbstractLink implements IAjaxLink {
 
             @Override
             protected IAjaxCallDecorator getAjaxCallDecorator() {
-                return new AjaxPostprocessingCallDecorator(DualAjaxLink.this.getAjaxCallDecorator()) {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public final CharSequence postDecorateScript(CharSequence script) {
-                        return script + "return false;";
-                    }
-                };
-            }
-
-            @Override
-            protected CharSequence getEventHandler() {
-                return new AppendingStringBuffer(super.getEventHandler()).append("; return false;");
+                return new EventStoppingDecorator(super.getAjaxCallDecorator());
             }
 
             @Override
@@ -78,8 +65,8 @@ public abstract class DualAjaxLink extends AbstractLink implements IAjaxLink {
             }
 
             @Override
-            protected CharSequence getEventHandler() {
-                return new AppendingStringBuffer(super.getEventHandler()).append("; return false;");
+            protected IAjaxCallDecorator getAjaxCallDecorator() {
+                return new EventStoppingDecorator(super.getAjaxCallDecorator());
             }
 
             @Override

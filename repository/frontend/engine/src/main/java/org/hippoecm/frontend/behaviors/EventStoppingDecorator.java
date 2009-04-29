@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,20 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.root;
+package org.hippoecm.frontend.behaviors;
 
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.calldecorator.AjaxPreprocessingCallDecorator;
 
-public class FooterPlugin extends RenderPlugin {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
+public final class EventStoppingDecorator extends AjaxPreprocessingCallDecorator {
     private static final long serialVersionUID = 1L;
 
-    public FooterPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+    public EventStoppingDecorator() {
+        this((IAjaxCallDecorator) null);
+    }
+
+    public EventStoppingDecorator(IAjaxCallDecorator delegate) {
+        super(delegate);
+    }
+
+    @Override
+    public final CharSequence preDecorateScript(CharSequence script) {
+        return "Wicket.stopEvent(event); " + script;
     }
 
 }

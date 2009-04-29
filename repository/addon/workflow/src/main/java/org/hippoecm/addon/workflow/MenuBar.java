@@ -24,30 +24,36 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
-import org.hippoecm.frontend.plugin.ContextMenu;
+import org.hippoecm.frontend.behaviors.IContextMenu;
 
 class MenuBar extends Panel implements MenuComponent {
+    private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    List<ContextMenu> buttons;
+    private List<IContextMenu> buttons;
+
     public MenuBar(String id, MenuHierarchy list) {
         super(id);
-        buttons = new LinkedList<ContextMenu>();
+        buttons = new LinkedList<IContextMenu>();
         add(new DataView("list", new ListDataProvider(list.list(this))) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
             public void populateItem(final Item item) {
-                Component button = (Component)item.getModelObject();
+                Component button = (Component) item.getModelObject();
                 if (button instanceof MenuButton) {
-                    buttons.add((MenuButton)button);
+                    buttons.add((MenuButton) button);
                 }
                 item.add(button);
             }
         });
     }
 
-    public void collapse(ContextMenu current, AjaxRequestTarget target) {
-        for(ContextMenu button : buttons) {
-            if(button != current) {
+    public void collapse(IContextMenu current, AjaxRequestTarget target) {
+        for (IContextMenu button : buttons) {
+            if (button != current) {
                 button.collapse(target);
             }
         }

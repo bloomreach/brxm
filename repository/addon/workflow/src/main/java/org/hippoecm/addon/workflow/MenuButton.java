@@ -20,11 +20,10 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.behaviors.IContextMenu;
+import org.hippoecm.frontend.behaviors.IContextMenuManager;
 
-import org.hippoecm.frontend.plugin.ContextMenu;
-import org.hippoecm.frontend.plugin.ContextMenuManager;
-
-class MenuButton extends Panel implements ContextMenu {
+class MenuButton extends Panel implements IContextMenu {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -32,63 +31,45 @@ class MenuButton extends Panel implements ContextMenu {
 
     private Panel content;
     private AbstractLink link;
-    private boolean pinned;
-    private int activeCount = 0;
-    private String name;
-    
+
     MenuButton(String id, String name, final MenuHierarchy menu) {
         super(id);
-        this.name = name;
         setOutputMarkupId(true);
         add(content = new MenuList("item", null, menu));
         content.setOutputMarkupId(true);
         content.setVisible(false);
-        pinned = false;
         add(link = new DualAjaxLink("link") {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
-                pinned = !pinned;
-                content.setVisible(pinned);
-                target.addComponent(content);
+                content.setVisible(!content.isVisible());
                 target.addComponent(MenuButton.this);
-                ContextMenuManager manager = (ContextMenuManager)findParent(ContextMenuManager.class);
-                if (manager != null) {
-                    activeCount = 2;
-                    manager.collapse(MenuButton.this, target);
-                    manager.addContextMenu(MenuButton.this);
-                } else {
-                    if (content.isVisible()) {
-                        activeCount = 1;
-                        final MenuBar bar = (MenuBar)findParent(MenuBar.class);
-                        bar.collapse(MenuButton.this, target);
-                    }
-                }
+                IContextMenuManager manager = getContextMenuManager();
+                manager.collapse(MenuButton.this, target);
+                manager.addContextMenu(MenuButton.this, target);
             }
+
             @Override
             public void onRightClick(AjaxRequestTarget target) {
-                pinned = !pinned;
-                content.setVisible(pinned);
-                target.addComponent(content);
+                content.setVisible(!content.isVisible());
                 target.addComponent(MenuButton.this);
                 if (content.isVisible()) {
-                    activeCount = 1;
-                    final MenuBar bar = (MenuBar)findParent(MenuBar.class);
+                    final MenuBar bar = (MenuBar) findParent(MenuBar.class);
                     bar.collapse(MenuButton.this, target);
-                    ((ContextMenuManager)findParent(ContextMenuManager.class)).addContextMenu(MenuButton.this);
+                    getContextMenuManager().addContextMenu(MenuButton.this, target);
                 }
             }
         });
-        link.add(new Label("label",new StringResourceModel(name,MenuButton.this,null,name)));
+        link.add(new Label("label", new StringResourceModel(name, MenuButton.this, null, name)));
+    }
+
+    protected IContextMenuManager getContextMenuManager() {
+        return (IContextMenuManager) findParent(IContextMenuManager.class);
     }
 
     public void collapse(AjaxRequestTarget target) {
-        if(activeCount > 0) {
-            --activeCount;
-            return;
-        }
-        pinned = false;
-        content.setVisible(pinned);
-        target.addComponent(content);
+        content.setVisible(false);
         target.addComponent(MenuButton.this);
     }
 }

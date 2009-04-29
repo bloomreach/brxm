@@ -28,6 +28,7 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Response;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.HeaderContributor;
@@ -38,9 +39,9 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.lang.EnumeratedType;
-
-import org.hippoecm.frontend.plugin.ContextMenu;
-import org.hippoecm.frontend.plugin.ContextMenuManager;
+import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
+import org.hippoecm.frontend.behaviors.IContextMenu;
+import org.hippoecm.frontend.behaviors.IContextMenuManager;
 
 /**
  * Tree class that contains convenient functions related to presentation of the tree, which includes
@@ -575,12 +576,11 @@ public abstract class DefaultAbstractTree extends AbstractTree
 				// getTreeState().selectNode(node, !getTreeState().isNodeSelected(node));
                                 updateTree(target);
                                 content.setVisible(true);
-                                active = true;
                                 target.addComponent(parent);
-                                ContextMenuManager menuManager = (ContextMenuManager) findParent(ContextMenuManager.class);
+                                IContextMenuManager menuManager = (IContextMenuManager) findParent(IContextMenuManager.class); 
                                 if (menuManager != null) {
                                         menuManager.collapse(this, target);
-                                        menuManager.addContextMenu(this);
+                                        menuManager.addContextMenu(this, target);
                                 }
 			}
                 };
@@ -590,10 +590,10 @@ public abstract class DefaultAbstractTree extends AbstractTree
                 return link;
         }
 
-        public static abstract class ContextLink extends AjaxLink implements ContextMenu {
+        public static abstract class ContextLink extends AjaxLink implements IContextMenu {
                 MarkupContainer content;
                 MarkupContainer parent;
-                boolean active = false;
+
                 public ContextLink(String id, MarkupContainer content, MarkupContainer parent) {
                         super(id);
                         this.content = content;
@@ -601,12 +601,13 @@ public abstract class DefaultAbstractTree extends AbstractTree
                 }
 
                 public void collapse(AjaxRequestTarget target) {
-                        if(active) {
-                                active = false;
-                                return;
-                        }
                         content.setVisible(false);
                         target.addComponent(parent);
+                }
+
+                @Override
+                protected IAjaxCallDecorator getAjaxCallDecorator() {
+                    return new EventStoppingDecorator(super.getAjaxCallDecorator());
                 }
         }
 

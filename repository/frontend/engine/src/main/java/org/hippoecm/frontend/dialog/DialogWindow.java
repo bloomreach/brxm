@@ -24,6 +24,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 
 public class DialogWindow extends ModalWindow implements IDialogService {
     @SuppressWarnings("unused")
@@ -55,6 +56,8 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         super(id);
 
         pending = new LinkedList<Dialog>();
+
+        add(new EventStoppingBehavior("onclick"));
     }
 
     public void show(Dialog dialog) {

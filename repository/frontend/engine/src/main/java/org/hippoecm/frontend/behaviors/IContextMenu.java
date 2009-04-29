@@ -13,14 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugin;
+package org.hippoecm.frontend.behaviors;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
-public interface ContextMenuManager {
+public interface IContextMenu extends IClusterable {
     final static String SVN_ID = "$Id$";
 
-    public void addContextMenu(ContextMenu activeMenu);
-
-    public void collapse(ContextMenu current, AjaxRequestTarget target);
+    void collapse(AjaxRequestTarget target);
 }

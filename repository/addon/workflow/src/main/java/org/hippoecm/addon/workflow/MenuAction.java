@@ -19,9 +19,9 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.hippoecm.frontend.plugin.ContextMenu;
+import org.hippoecm.frontend.behaviors.IContextMenu;
 
-class MenuAction extends Panel implements ContextMenu {
+class MenuAction extends Panel implements IContextMenu {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
 

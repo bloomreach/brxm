@@ -13,9 +13,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.addon.workflow;
+package org.hippoecm.frontend.behaviors;
 
-interface MenuComponent {
-    final String SVN_ID = "$Id$";
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.markup.ComponentTag;
+
+public class EventStoppingBehavior extends AbstractBehavior {
+    private static final long serialVersionUID = 1L;
+
+    private String event;
+
+    public EventStoppingBehavior(String event) {
+        this.event = event;
+    }
+
+    @Override
+    public void onComponentTag(Component component, ComponentTag tag) {
+        super.onComponentTag(component, tag);
+
+        tag.put(event, "Wicket.stopEvent();");
+    }
 
 }

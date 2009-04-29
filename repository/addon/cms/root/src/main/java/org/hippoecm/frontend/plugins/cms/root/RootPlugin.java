@@ -15,36 +15,20 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-
-import org.hippoecm.frontend.plugin.ContextMenu;
-import org.hippoecm.frontend.plugin.ContextMenuManager;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.Pinger;
 
-public class RootPlugin extends RenderPlugin implements ContextMenuManager {
+public class RootPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private ContextMenu activeContextMenu;
-
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         add(new Pinger("pinger"));
-    }
-
-    public void addContextMenu(ContextMenu activeMenu) {
-        activeContextMenu = activeMenu;
-    }
-
-    public void collapse(ContextMenu current, AjaxRequestTarget target) {
-        if(activeContextMenu != null && current != activeContextMenu) {
-            activeContextMenu.collapse(target);
-        }
     }
 }
