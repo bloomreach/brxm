@@ -237,13 +237,7 @@
         <updatePolicy>never</updatePolicy>
       </releases>
       <layout>default</layout>
-    </repository>
-    <repository>
-      <id>hippoforge</id>
-      <name>Hippo maven 2 svn repo.</name>
-      <url>http://forge.onehippo.org/svn/simpleemail/simpleemail/repo/SNAPSHOTS/repository</url>
-      <snapshots />
-    </repository>        
+    </repository>     
     <repository>
       <id>hippo.legacy</id>
       <name>Hippo Maven 1 repository.</name>
@@ -275,14 +269,7 @@
   </pluginRepositories>
     
   <build>
-    <defaultGoal>package</defaultGoal>
-	<extensions>
-      <extension>
-        <groupId>org.jvnet.wagon-svn</groupId>
-        <artifactId>wagon-svn</artifactId>
-        <version>1.9</version>
-      </extension>      
-    </extensions>    
+    <defaultGoal>package</defaultGoal>  
     <pluginManagement>
       <plugins>
         <plugin>
