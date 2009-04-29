@@ -12,6 +12,6 @@ import org.hippoecm.hst.content.beans.standard.HippoHtml;
 public class TextPage extends GeneralPage{
 
     public HippoHtml getHtml(){
-        return getHippoHtml("{rootArtifactId.replace($hyphen,$empty)}:html");    
+        return getHippoHtml("${rootArtifactId.replace($hyphen,$empty)}:html");    
     }
 }
