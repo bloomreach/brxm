@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.workflow;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -89,7 +90,8 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 try {
                     JcrSessionModel sessionModel = ((UserSession) Session.get()).getJcrSessionModel();
 
-                    String prefix = workflow.getPrefix();
+                    Map<String, Serializable> hints = workflow.hints();
+                    String prefix = (String) hints.get("prefix");
 
                     CndSerializer serializer = new CndSerializer(getPluginContext(), sessionModel, prefix);
                     String cnd = serializer.getOutput();
@@ -137,6 +139,7 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                     }
                     return null;
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     return ex.getClass().getName() + ": " + ex.getMessage();
                 }
             }

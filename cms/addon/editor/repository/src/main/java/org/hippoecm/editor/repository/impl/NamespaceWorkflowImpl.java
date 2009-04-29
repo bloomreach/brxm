@@ -15,6 +15,7 @@
  */
 package org.hippoecm.editor.repository.impl;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.TreeMap;
@@ -40,8 +41,11 @@ public class NamespaceWorkflowImpl extends WorkflowImpl implements NamespaceWork
         super();
     }
 
-    public String getPrefix() {
-        return prefix;
+    @Override
+    public Map<String, Serializable> hints() {
+        Map<String, Serializable> hints = super.hints();
+        hints.put("prefix", prefix);
+        return hints;
     }
 
     public String addType(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {

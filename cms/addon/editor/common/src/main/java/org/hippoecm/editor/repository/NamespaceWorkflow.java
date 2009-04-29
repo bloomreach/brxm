@@ -26,8 +26,6 @@ import org.hippoecm.repository.api.WorkflowException;
 public interface NamespaceWorkflow extends Workflow {
     final static String SVN_ID = "$Id$";
 
-    String getPrefix() throws WorkflowException, MappingException, RepositoryException, RemoteException;
-
     String addType(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     void updateModel(String cnd, Object updates) throws WorkflowException, MappingException, RepositoryException, RemoteException;

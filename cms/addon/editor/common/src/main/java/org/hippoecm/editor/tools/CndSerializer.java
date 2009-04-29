@@ -36,6 +36,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -86,7 +87,7 @@ public class CndSerializer implements IClusterable {
                 IFieldDescriptor origField = entry.getValue();
                 FieldIdentifier oldId = new FieldIdentifier();
                 oldId.path = origField.getPath();
-                oldId.type = currentConfig.load(origField.getType()).getType();
+                oldId.type = jcrTypeStore.load(origField.getType()).getType();
 
                 if (newType != null) {
                     IFieldDescriptor newField = newType.getField(entry.getKey());
@@ -100,7 +101,7 @@ public class CndSerializer implements IClusterable {
                         if (types.containsKey(fieldTypeName)) {
                             fieldType = types.get(fieldTypeName).getNewType();
                         } else {
-                            fieldType = currentConfig.load(fieldTypeName);
+                            fieldType = jcrTypeStore.load(fieldTypeName);
                         }
                         newId.type = fieldType.getType();
 
@@ -150,25 +151,28 @@ public class CndSerializer implements IClusterable {
 
     private IPluginContext context;
     private JcrSessionModel jcrSession;
-    private HashMap<String, String> namespaces;
+    private Map<String, String> namespaces;
     private LinkedHashMap<String, TypeEntry> types;
-    private IStore<ITypeDescriptor> currentConfig;
+    private IStore<ITypeDescriptor> jcrTypeStore;
+    private IStore<ITypeDescriptor> builtinTypeStore;
 
     public CndSerializer(IPluginContext context, JcrSessionModel sessionModel, String namespace)
             throws RepositoryException {
         this.context = context;
         this.jcrSession = sessionModel;
 
-        currentConfig = new JcrTypeStore(context);
-        namespaces = new HashMap<String, String>();
-        types = getTypes(namespace);
+        this.jcrTypeStore = new JcrTypeStore(context);
+        this.builtinTypeStore = new BuiltinTypeStore();
+
+        initTypes(namespace);
+        initNamespaces();
 
         versionNamespace(namespace);
     }
 
     public String getOutput() {
         StringBuffer output = new StringBuffer();
-        for (Map.Entry<String, String> entry : getNamespaces().entrySet()) {
+        for (Map.Entry<String, String> entry : namespaces.entrySet()) {
             output.append("<" + entry.getKey() + "='" + entry.getValue() + "'>\n");
         }
         output.append("\n");
@@ -191,7 +195,70 @@ public class CndSerializer implements IClusterable {
         return result;
     }
 
-    protected void addNamespace(String prefix) {
+    private void initTypes(String namespace) throws RepositoryException {
+        types = new LinkedHashMap<String, TypeEntry>();
+        Session session = jcrSession.getSession();
+
+        String uri = getCurrentUri(namespace);
+        Node nsNode = session.getRootNode().getNode(HippoNodeType.NAMESPACES_PATH + "/" + namespace);
+        NodeIterator typeIter = nsNode.getNodes();
+        while (typeIter.hasNext()) {
+            Node templateTypeNode = typeIter.nextNode();
+            String pseudoName = namespace + ":" + templateTypeNode.getName();
+
+            ITypeDescriptor oldType = null, newType = null;
+
+            Node ntNode = templateTypeNode.getNode(HippoNodeType.HIPPO_NODETYPE);
+            NodeIterator versions = ntNode.getNodes(HippoNodeType.HIPPO_NODETYPE);
+            while (versions.hasNext()) {
+                Node version = versions.nextNode();
+                if (version.isNodeType(HippoNodeType.NT_REMODEL)) {
+                    if (version.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
+                        oldType = new JcrTypeDescriptor(new JcrNodeModel(version), context);
+                    }
+                } else {
+                    newType = new JcrTypeDescriptor(new JcrNodeModel(version), context);
+                }
+            }
+
+            // FIXME: it should be possible to delete types.
+            if (newType == null) {
+                newType = oldType;
+            }
+            types.put(pseudoName, new TypeEntry(oldType, newType));
+        }
+    }
+
+    private void initNamespaces() {
+        namespaces = new HashMap<String, String>();
+        for (TypeEntry entry : types.values()) {
+            ITypeDescriptor descriptor = entry.getNewType();
+            if (descriptor.isNode()) {
+                String type = descriptor.getType();
+                addNamespace(type.substring(0, type.indexOf(':')));
+                for (String superType : descriptor.getSuperTypes()) {
+                    addNamespace(superType.substring(0, superType.indexOf(':')));
+                }
+
+                for (IFieldDescriptor field : descriptor.getFields().values()) {
+                    String subType = field.getType();
+                    ITypeDescriptor sub = getTypeDescriptor(subType);
+                    if (sub.isNode()) {
+                        addNamespace(subType.substring(0, subType.indexOf(':')));
+
+                        List<String> superTypes = sub.getSuperTypes();
+                        for (String superType : superTypes) {
+                            addNamespace(superType.substring(0, superType.indexOf(':')));
+                        }
+                    } else if (field.getPath().indexOf(':') > 0) {
+                        addNamespace(field.getPath().substring(0, field.getPath().indexOf(':')));
+                    }
+                }
+            }
+        }
+    }
+
+    private void addNamespace(String prefix) {
         if (!namespaces.containsKey(prefix)) {
             try {
                 namespaces.put(prefix, jcrSession.getSession().getNamespaceURI(prefix));
@@ -201,7 +268,7 @@ public class CndSerializer implements IClusterable {
         }
     }
 
-    protected void versionNamespace(String prefix) {
+    private void versionNamespace(String prefix) {
         if (namespaces.containsKey(prefix)) {
             String namespace = namespaces.get(prefix);
             String last = namespace;
@@ -230,69 +297,6 @@ public class CndSerializer implements IClusterable {
             }
         } else {
             log.warn("namespace for " + prefix + " was not found");
-        }
-    }
-
-    private LinkedHashMap<String, TypeEntry> getTypes(String namespace) throws RepositoryException {
-        LinkedHashMap<String, TypeEntry> result = new LinkedHashMap<String, TypeEntry>();
-        Session session = jcrSession.getSession();
-
-        String uri = getCurrentUri(namespace);
-        Node nsNode = session.getRootNode().getNode(HippoNodeType.NAMESPACES_PATH + "/" + namespace);
-        NodeIterator typeIter = nsNode.getNodes();
-        while (typeIter.hasNext()) {
-            Node templateTypeNode = typeIter.nextNode();
-            String pseudoName = namespace + ":" + templateTypeNode.getName();
-
-            ITypeDescriptor oldType = null, newType = null;
-
-            Node ntNode = templateTypeNode.getNode(HippoNodeType.HIPPO_NODETYPE);
-            NodeIterator versions = ntNode.getNodes(HippoNodeType.HIPPO_NODETYPE);
-            while (versions.hasNext()) {
-                Node version = versions.nextNode();
-                if (version.isNodeType(HippoNodeType.NT_REMODEL)) {
-                    if (version.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
-                        oldType = new JcrTypeDescriptor(new JcrNodeModel(version), context);
-                    }
-                } else {
-                    newType = new JcrTypeDescriptor(new JcrNodeModel(version), context);
-                }
-            }
-
-            result.put(pseudoName, new TypeEntry(oldType, newType));
-        }
-        return result;
-    }
-
-    protected Map<String, String> getNamespaces() {
-        return namespaces;
-    }
-
-    protected void addType(String type, TypeEntry entry) {
-        if (type.indexOf(':') > 0) {
-            if (!types.containsKey(type)) {
-                ITypeDescriptor typeDescriptor = entry.getNewType();
-                for (String superType : typeDescriptor.getSuperTypes()) {
-                    addNamespace(superType.substring(0, superType.indexOf(':')));
-                }
-
-                for (IFieldDescriptor field : typeDescriptor.getFields().values()) {
-                    String subType = field.getType();
-                    ITypeDescriptor sub = getTypeDescriptor(subType);
-                    if (sub.isNode()) {
-                        addNamespace(subType.substring(0, subType.indexOf(':')));
-
-                        List<String> superTypes = sub.getSuperTypes();
-                        for (String superType : superTypes) {
-                            addNamespace(superType.substring(0, superType.indexOf(':')));
-                        }
-                    } else if (field.getPath().indexOf(':') > 0) {
-                        addNamespace(field.getPath().substring(0, field.getPath().indexOf(':')));
-                    }
-                }
-                types.put(type, entry);
-                addNamespace(type.substring(0, type.indexOf(':')));
-            }
         }
     }
 
@@ -345,9 +349,7 @@ public class CndSerializer implements IClusterable {
         }
 
         String type = sub.getType();
-        if (type.indexOf(':') > 0) {
-            addNamespace(type.substring(0, type.indexOf(':')));
-        } else {
+        if (type.indexOf(':') == -1) {
             type = type.toLowerCase();
         }
         output.append(" (" + type + ")");
@@ -414,7 +416,11 @@ public class CndSerializer implements IClusterable {
         if (types.containsKey(subType)) {
             return types.get(subType).getNewType();
         } else {
-            return currentConfig.load(subType);
+            ITypeDescriptor descriptor = jcrTypeStore.load(subType);
+            if (descriptor == null) {
+                return builtinTypeStore.load(subType);
+            }
+            return descriptor;
         }
     }
 
