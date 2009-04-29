@@ -19,19 +19,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.plugin.ContextMenuManager;
-import org.hippoecm.frontend.plugin.ContextMenu;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -43,8 +36,10 @@ import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class TabsPlugin extends RenderPlugin implements ContextMenuManager {
+public class TabsPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -72,12 +67,6 @@ public class TabsPlugin extends RenderPlugin implements ContextMenuManager {
 
         setOutputMarkupId(true);
 
-        add(new AjaxEventBehavior("onclick") {
-            public void onEvent(AjaxRequestTarget target) {
-                collapse(null, target);
-            }
-        });
-        
         IPluginConfig panelConfig = new JavaPluginConfig();
         panelConfig.put("wicket.id", properties.getString(TAB_ID));
         panelConfig.put("wicket.behavior", properties.getString("tabbedpanel.behavior"));
@@ -118,20 +107,6 @@ public class TabsPlugin extends RenderPlugin implements ContextMenuManager {
             }
         };
         context.registerTracker(tabsTracker, properties.getString(TAB_ID));
-    }
-
-    public void addContextMenu(ContextMenu activeMenu) {
-        ContextMenuManager parent = (ContextMenuManager) findParent(ContextMenuManager.class);
-        if(parent != null) {
-            parent.addContextMenu(activeMenu);
-        }
-    }
-
-    public void collapse(ContextMenu current, AjaxRequestTarget target) {
-        ContextMenuManager parent = (ContextMenuManager) findParent(ContextMenuManager.class);
-        if(parent != null) {
-            parent.collapse(current, target);
-        }
     }
 
     @Override

@@ -22,9 +22,9 @@ import java.util.TreeMap;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -134,14 +134,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin {
 
             @Override
             protected IAjaxCallDecorator getAjaxCallDecorator() {
-                return new AjaxCallDecorator() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public final CharSequence decorateScript(CharSequence script) {
-                        return super.decorateScript(script) + "event.cancelBubble=true;";
-                    }
-                };
+                return new EventStoppingDecorator(super.getAjaxCallDecorator());
             }
         });
         addExtensionPoint("preview");

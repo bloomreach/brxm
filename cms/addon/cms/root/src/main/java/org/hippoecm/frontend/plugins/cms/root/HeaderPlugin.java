@@ -15,16 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
-import org.apache.wicket.ajax.AjaxEventBehavior;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-
-import org.hippoecm.frontend.plugin.ContextMenu;
-import org.hippoecm.frontend.plugin.ContextMenuManager;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
-public class HeaderPlugin extends RenderPlugin implements ContextMenuManager {
+public class HeaderPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -32,26 +27,6 @@ public class HeaderPlugin extends RenderPlugin implements ContextMenuManager {
 
     public HeaderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        setOutputMarkupId(true);
-        add(new AjaxEventBehavior("onclick") {
-            public void onEvent(AjaxRequestTarget target) {
-                collapse(null, target);
-            }
-        });
     }
 
-    public void addContextMenu(ContextMenu activeMenu) {
-        ContextMenuManager parent = (ContextMenuManager) findParent(ContextMenuManager.class);
-        if(parent != null) {
-            parent.addContextMenu(activeMenu);
-        }
-    }
-
-    public void collapse(ContextMenu current, AjaxRequestTarget target) {
-        ContextMenuManager parent = (ContextMenuManager) findParent(ContextMenuManager.class);
-        if(parent != null) {
-            parent.collapse(current, target);
-        }
-    }
 }

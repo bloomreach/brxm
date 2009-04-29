@@ -16,13 +16,17 @@
 package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.plugin.ContextMenu;
+import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
+import org.hippoecm.frontend.behaviors.IContextMenu;
 
 abstract class MenuLink extends AjaxLink {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    private static final long serialVersionUID = 1L;
 
     public MenuLink(String id) {
         super(id);
@@ -33,8 +37,13 @@ abstract class MenuLink extends AjaxLink {
     }
 
     @Override
+    protected IAjaxCallDecorator getAjaxCallDecorator() {
+        return new EventStoppingDecorator(super.getAjaxCallDecorator());
+    }
+
+    @Override
     public void onClick(AjaxRequestTarget target) {
-        ContextMenu parent = ((ContextMenu)findParent(ContextMenu.class));
+        IContextMenu parent = ((IContextMenu)findParent(IContextMenu.class));
         if(parent != null) {
             parent.collapse(target);
         }

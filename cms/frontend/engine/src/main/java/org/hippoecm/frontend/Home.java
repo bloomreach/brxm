@@ -16,10 +16,14 @@
 package org.hippoecm.frontend;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.protocol.http.WebResponse;
+import org.hippoecm.frontend.behaviors.ContextMenuBehavior;
+import org.hippoecm.frontend.behaviors.IContextMenu;
+import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.dialog.DialogService;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrSessionModel;
@@ -37,7 +41,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
 
-public class Home extends WebPage implements IServiceTracker<IRenderService>, IRenderService {
+public class Home extends WebPage implements IServiceTracker<IRenderService>, IRenderService, IContextMenuManager {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -49,6 +53,8 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     private DialogService dialogService;
     private ObservableRegistry obRegistry;
     private IPluginConfigService pluginConfigService;
+    private IContextMenu activeContextMenu;
+    private ContextMenuBehavior contextMenuBehavior;
 
     public Home() {
         add(new EmptyPanel("root"));
@@ -88,6 +94,9 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         };
         context.registerTracker(tracker, serviceId);
 
+        contextMenuBehavior = new ContextMenuBehavior();
+        add(contextMenuBehavior);
+        
         IClusterConfig pluginCluster = pluginConfigService.getDefaultCluster();
         IClusterControl clusterControl = context.newCluster(pluginCluster, null);
         clusterControl.start();
@@ -166,6 +175,18 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     public void onDetach() {
         context.detach();
         super.onDetach();
+    }
+
+    public void addContextMenu(IContextMenu activeMenu, AjaxRequestTarget target) {
+        activeContextMenu = activeMenu;
+        contextMenuBehavior.setShown(true, target);
+    }
+
+    public void collapse(IContextMenu current, AjaxRequestTarget target) {
+        if (activeContextMenu != null && current != activeContextMenu) {
+            activeContextMenu.collapse(target);
+            contextMenuBehavior.setShown(false, target);
+        }
     }
 
 }
