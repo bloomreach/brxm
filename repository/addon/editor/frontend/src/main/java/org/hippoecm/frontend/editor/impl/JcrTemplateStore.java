@@ -60,14 +60,21 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
     public Iterator<IClusterConfig> find(Map<String, Object> criteria) {
         if (criteria.containsKey("type")) {
             List<IClusterConfig> list = new ArrayList<IClusterConfig>(1);
-            list.add(getTemplate((ITypeDescriptor) criteria.get("type")));
+            try {
+                list.add(getTemplate((ITypeDescriptor) criteria.get("type")));
+            } catch (StoreException ex) {
+                // ignore
+            }
             return list.iterator();
         }
         return new ArrayList<IClusterConfig>(0).iterator();
     }
 
-    public IClusterConfig load(String id) {
+    public IClusterConfig load(String id) throws StoreException {
         JcrNodeModel nodeModel = new JcrNodeModel(id);
+        if (nodeModel.getNode() == null) {
+            throw new StoreException("Unknown template " + id);
+        }
         return new JcrClusterConfig(nodeModel, context);
     }
 
@@ -80,10 +87,13 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
             } catch (RepositoryException ex) {
                 throw new StoreException(ex);
             }
-        } else if (cluster instanceof BuiltinTemplateConfig) {
-            ITypeDescriptor type = ((BuiltinTemplateConfig) cluster).getType();
+        } else {
+            String type = cluster.getString("type");
+            if (type == null) {
+                throw new StoreException("Can only store clusters with a type");
+            }
             try {
-                Node node = getTemplateNode(type, true);
+                Node node = getTemplateNode(typeStore.load(type), true);
 
                 JcrClusterConfig jcrConfig = new JcrClusterConfig(new JcrNodeModel(node), null);
                 for (Map.Entry entry : (Set<Map.Entry>) ((Map) cluster).entrySet()) {
@@ -107,8 +117,6 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
             } catch (RepositoryException ex) {
                 throw new StoreException(ex);
             }
-        } else {
-            throw new StoreException("Unknown object");
         }
     }
 
@@ -150,11 +158,11 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
         return node;
     }
 
-    protected IClusterConfig getTemplate(ITypeDescriptor type) {
+    protected IClusterConfig getTemplate(ITypeDescriptor type) throws StoreException {
         try {
             Node node = getTemplateNode(type, false);
             if (node == null) {
-                return new BuiltinTemplateConfig(typeStore, type);
+                throw new StoreException("No template found for " + type);
             } else {
                 return new JcrClusterConfig(new JcrNodeModel(node), context);
             }

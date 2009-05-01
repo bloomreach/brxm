@@ -32,7 +32,6 @@ import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class JcrPrototypeStore implements IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -54,9 +53,9 @@ public class JcrPrototypeStore implements IDetachable {
         JcrNodeModel result = prototypes.get(name);
         if (result == null) {
             try {
-                Node typeNode = lookupConfigNode(name, draft);
-                if (typeNode != null) {
-                    result = new JcrNodeModel(typeNode);
+                Node node = lookupConfigNode(name, draft);
+                if (node != null) {
+                    result = new JcrNodeModel(node);
                     prototypes.put(name, result);
                 }
             } catch (RepositoryException e) {
@@ -64,6 +63,38 @@ public class JcrPrototypeStore implements IDetachable {
             }
         }
         return result;
+    }
+
+    public JcrNodeModel createPrototype(String name, boolean draft) {
+        JcrNodeModel prototype = getPrototype(name, draft);
+        if (prototype != null) {
+            throw new IllegalArgumentException("prototype " + name + " exists");
+        }
+
+        try {
+            String path = getLocation(name);
+            Session session = getJcrSession();
+            if (session.itemExists(path)) {
+                throw new IllegalArgumentException("handle for prototype already exists");
+            }
+            String parentPath = path.substring(0, path.lastIndexOf('/'));
+            Node parent = session.getRootNode().getNode(parentPath.substring(1));
+            Node handle = parent.addNode(HippoNodeType.HIPPO_PROTOTYPE, HippoNodeType.NT_HANDLE);
+            handle.addMixin(HippoNodeType.NT_HARDHANDLE);
+
+            Node node;
+            if (draft) {
+                node = handle.addNode(HippoNodeType.HIPPO_PROTOTYPE, "nt:unstructured");
+            } else {
+                node = handle.addNode(HippoNodeType.HIPPO_PROTOTYPE, name);
+            }
+            parent.save();
+
+            prototype = new JcrNodeModel(node);
+        } catch (RepositoryException ex) {
+            log.error("Failed to create prototype node", ex);
+        }
+        return prototype;
     }
 
     public void detach() {
@@ -89,9 +120,7 @@ public class JcrPrototypeStore implements IDetachable {
         return ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
     }
 
-    private Node lookupConfigNode(String type, boolean draft) throws RepositoryException {
-        HippoSession session = (HippoSession) getJcrSession();
-
+    private String getLocation(String type) {
         String prefix = "system";
         String subType = type;
         if (type.indexOf(':') > 0) {
@@ -106,8 +135,12 @@ public class JcrPrototypeStore implements IDetachable {
             prefix = prefix.substring(0, prefix.length() - nsVersion.length());
         }
 
-        String path = "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + subType + "/"
-                + HippoNodeType.HIPPO_PROTOTYPE;
+        return "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + subType + "/" + HippoNodeType.HIPPO_PROTOTYPE;
+    }
+
+    private Node lookupConfigNode(String type, boolean draft) throws RepositoryException {
+        HippoSession session = (HippoSession) getJcrSession();
+        String path = getLocation(type);
         if (!session.itemExists(path) || !session.getItem(path).isNode()) {
             return null;
         }

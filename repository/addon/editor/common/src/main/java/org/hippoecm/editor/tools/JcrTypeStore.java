@@ -97,8 +97,12 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
         return null;
     }
 
-    public ITypeDescriptor load(String id) {
-        return getTypeDescriptor(id);
+    public ITypeDescriptor load(String id) throws StoreException {
+        ITypeDescriptor result = getTypeDescriptor(id);
+        if (result == null) {
+            throw new StoreException("Could not find type " + id);
+        }
+        return result;
     }
 
     public String save(ITypeDescriptor object) throws StoreException {

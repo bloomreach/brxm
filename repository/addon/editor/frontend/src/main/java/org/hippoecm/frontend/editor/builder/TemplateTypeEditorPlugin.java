@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -64,7 +65,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
 
     };
 
-    private TemplateTypeEditorHelper typeHelper;
+    private TemplateBuilder builder;
     private IClusterControl child;
     private IObserver templateObserver;
     private String clusterModelId;
@@ -87,7 +88,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
         try {
             Node node = (Node) nodeModel.getObject();
             String typeName = node.getParent().getName() + ":" + node.getName();
-            typeHelper = new TemplateTypeEditorHelper(typeName, context);
+            builder = new TemplateBuilder(typeName, !"edit".equals(config.getString("mode")), context);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -109,14 +110,14 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
             child = null;
         }
 
-        ITypeDescriptor type = typeHelper.getTypeDescriptor();
-        if (type != null) {
+        try {
+            ITypeDescriptor type = builder.getTypeDescriptor();
             String mode = config.getString("mode");
 
-            PreviewClusterConfig template = new PreviewClusterConfig(typeHelper.getTemplate(), clusterModelId,
+            PreviewClusterConfig template = new PreviewClusterConfig(builder.getTemplate(), clusterModelId,
                     selectedPluginId, config.getString("wicket.helper.id"), "edit".equals(mode));
 
-            context.getService(clusterModelId, IModelReference.class).setModel(new Model(typeHelper.getTemplate()));
+            context.getService(clusterModelId, IModelReference.class).setModel(new Model(builder.getTemplate()));
             context.getService(selectedPluginId, IModelReference.class).setModel(null);
 
             IPluginConfig parameters = new JavaPluginConfig();
@@ -126,18 +127,18 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
 
             final IClusterControl control = context.newCluster(template, parameters);
             String modelId = control.getClusterConfig().getString(RenderService.MODEL_ID);
-            IModel prototypeModel = typeHelper.getPrototype();
+            IModel prototypeModel = builder.getPrototype();
             final ModelReference modelService = new ModelReference(modelId, prototypeModel);
             modelService.init(getPluginContext());
 
             String typeModelId = config.getString("model.type");
             final ModelReference typeService = new ModelReference(typeModelId,
-                    new Model(typeHelper.getTypeDescriptor()));
+                    new Model(builder.getTypeDescriptor()));
             typeService.init(getPluginContext());
 
             control.start();
 
-            context.registerService(templateObserver = new TemplateObserver(typeHelper), IObserver.class.getName());
+            context.registerService(templateObserver = new TemplateObserver(builder), IObserver.class.getName());
             child = new IClusterControl() {
                 private static final long serialVersionUID = 1L;
 
@@ -156,12 +157,14 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
             };
 
             redraw();
+        } catch (BuilderException ex) {
+            log.error("Failed to update model", ex);
         }
     }
 
     @Override
     protected void onDetach() {
-        typeHelper.detach();
+        builder.detach();
         super.onDetach();
     }
 

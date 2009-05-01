@@ -23,6 +23,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
@@ -35,12 +36,16 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EditorForm extends Form {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(EditorForm.class);
 
     private IPluginContext context;
 
@@ -125,23 +130,23 @@ public class EditorForm extends Form {
     protected void createTemplate() {
         JcrNodeModel model = (JcrNodeModel) getModel();
         if (model != null && model.getNode() != null) {
-            ITypeDescriptor type = engine.getType(model);
+            try {
+                ITypeDescriptor type = engine.getType(model);
 
-            if (type != null) {
                 IClusterConfig template = engine.getTemplate(type, ITemplateEngine.EDIT_MODE);
-                if (template != null) {
-                    IPluginConfig parameters = new JavaPluginConfig();
-                    parameters.put(RenderService.WICKET_ID, engineId + ".wicket.root");
-                    parameters.put(ITemplateEngine.ENGINE, engineId);
-                    parameters.put(ITemplateEngine.MODE, ITemplateEngine.EDIT_MODE);
-                    cluster = context.newCluster(template, parameters);
+                IPluginConfig parameters = new JavaPluginConfig();
+                parameters.put(RenderService.WICKET_ID, engineId + ".wicket.root");
+                parameters.put(ITemplateEngine.ENGINE, engineId);
+                parameters.put(ITemplateEngine.MODE, ITemplateEngine.EDIT_MODE);
+                cluster = context.newCluster(template, parameters);
 
-                    String modelId = cluster.getClusterConfig().getString(RenderService.MODEL_ID);
-                    modelService = new ModelReference(modelId, model);
-                    modelService.init(context);
+                String modelId = cluster.getClusterConfig().getString(RenderService.MODEL_ID);
+                modelService = new ModelReference(modelId, model);
+                modelService.init(context);
 
-                    cluster.start();
-                }
+                cluster.start();
+            } catch (TemplateEngineException ex) {
+                log.error("Unable to open editor", ex);
             }
         }
     }

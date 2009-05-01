@@ -17,6 +17,7 @@ package org.hippoecm.frontend.editor.viewer;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -71,27 +72,27 @@ public class ViewerPlugin extends RenderPlugin {
     protected void createTemplate() {
         IModel model = getModel();
         if (model != null && model.getObject() != null) {
-            ITypeDescriptor type = engine.getType(model);
-            IPluginContext context = getPluginContext();
+            try {
+                ITypeDescriptor type = engine.getType(model);
+                IPluginContext context = getPluginContext();
 
-            if (type != null) {
                 IClusterConfig template = engine.getTemplate(type, "view");
-                if (template != null) {
-                    IPluginConfig parameters = new JavaPluginConfig();
-                    parameters.put(RenderService.WICKET_ID, getPluginConfig().getString("template"));
-                    parameters.put(ITemplateEngine.ENGINE, engineId);
-                    parameters.put(ITemplateEngine.MODE, "view");
+                IPluginConfig parameters = new JavaPluginConfig();
+                parameters.put(RenderService.WICKET_ID, getPluginConfig().getString("template"));
+                parameters.put(ITemplateEngine.ENGINE, engineId);
+                parameters.put(ITemplateEngine.MODE, "view");
 
-                    cluster = context.newCluster(template, parameters);
-                    String modelId = cluster.getClusterConfig().getString(RenderService.MODEL_ID);
-                    if (modelId != null) {
-                        modelService = new ModelReference(modelId, model);
-                        modelService.init(context);
-                        cluster.start();
-                    } else {
-                        log.warn("No model specified in template for type " + type.getName());
-                    }
+                cluster = context.newCluster(template, parameters);
+                String modelId = cluster.getClusterConfig().getString(RenderService.MODEL_ID);
+                if (modelId != null) {
+                    modelService = new ModelReference(modelId, model);
+                    modelService.init(context);
+                    cluster.start();
+                } else {
+                    log.warn("No model specified in template for type " + type.getName());
                 }
+            } catch (TemplateEngineException ex) {
+                log.error("Unable to open template", ex);
             }
         }
     }

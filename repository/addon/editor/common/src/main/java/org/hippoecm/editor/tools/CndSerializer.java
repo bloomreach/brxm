@@ -35,6 +35,7 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.ocm.IStore;
+import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
@@ -69,7 +70,7 @@ public class CndSerializer implements IClusterable {
             return newType;
         }
 
-        TypeUpdate getUpdate() {
+        TypeUpdate getUpdate() throws StoreException {
             if (oldType == null) {
                 return null;
             }
@@ -157,7 +158,7 @@ public class CndSerializer implements IClusterable {
     private IStore<ITypeDescriptor> builtinTypeStore;
 
     public CndSerializer(IPluginContext context, JcrSessionModel sessionModel, String namespace)
-            throws RepositoryException {
+            throws RepositoryException, StoreException {
         this.context = context;
         this.jcrSession = sessionModel;
 
@@ -178,13 +179,17 @@ public class CndSerializer implements IClusterable {
         output.append("\n");
 
         Set<ITypeDescriptor> sorted = sortTypes();
-        for (ITypeDescriptor type : sorted) {
-            renderType(output, type);
+        try {
+            for (ITypeDescriptor type : sorted) {
+                renderType(output, type);
+            }
+        } catch (StoreException ex) {
+            throw new RuntimeException("Type has disappeared!", ex);
         }
         return output.toString();
     }
 
-    public Map<String, TypeUpdate> getUpdate() {
+    public Map<String, TypeUpdate> getUpdate() throws StoreException {
         Map<String, TypeUpdate> result = new HashMap<String, TypeUpdate>();
         for (Map.Entry<String, TypeEntry> entry : types.entrySet()) {
             TypeUpdate update = entry.getValue().getUpdate();
@@ -229,7 +234,7 @@ public class CndSerializer implements IClusterable {
         }
     }
 
-    private void initNamespaces() {
+    private void initNamespaces() throws StoreException {
         namespaces = new HashMap<String, String>();
         for (TypeEntry entry : types.values()) {
             ITypeDescriptor descriptor = entry.getNewType();
@@ -333,7 +338,7 @@ public class CndSerializer implements IClusterable {
         return null;
     }
 
-    private void renderField(StringBuffer output, IFieldDescriptor field) {
+    private void renderField(StringBuffer output, IFieldDescriptor field) throws StoreException {
         String subType = field.getType();
         ITypeDescriptor sub = getTypeDescriptor(subType);
         if (sub.isNode()) {
@@ -365,7 +370,7 @@ public class CndSerializer implements IClusterable {
         output.append("\n");
     }
 
-    private void renderType(StringBuffer output, ITypeDescriptor typeDescriptor) {
+    private void renderType(StringBuffer output, ITypeDescriptor typeDescriptor) throws StoreException {
         String type = typeDescriptor.getType();
         output.append("[" + encode(type) + "]");
 
@@ -412,15 +417,15 @@ public class CndSerializer implements IClusterable {
         output.append("\n");
     }
 
-    private ITypeDescriptor getTypeDescriptor(String subType) {
+    private ITypeDescriptor getTypeDescriptor(String subType) throws StoreException {
         if (types.containsKey(subType)) {
             return types.get(subType).getNewType();
         } else {
-            ITypeDescriptor descriptor = jcrTypeStore.load(subType);
-            if (descriptor == null) {
+            try {
+                return jcrTypeStore.load(subType);
+            } catch (StoreException ex) {
                 return builtinTypeStore.load(subType);
             }
-            return descriptor;
         }
     }
 

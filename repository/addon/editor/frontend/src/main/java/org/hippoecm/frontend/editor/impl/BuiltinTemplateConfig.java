@@ -22,18 +22,23 @@ import java.util.Map;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
 import org.hippoecm.frontend.model.ocm.IStore;
+import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BuiltinTemplateConfig extends JavaClusterConfig {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
 
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(BuiltinTemplateConfig.class);
 
     private IStore<ITypeDescriptor> typeStore;
     private ITypeDescriptor type;
@@ -41,7 +46,9 @@ public class BuiltinTemplateConfig extends JavaClusterConfig {
 
     public BuiltinTemplateConfig(IStore<ITypeDescriptor> store, ITypeDescriptor type) {
         this.type = type;
+        super.put("type", type.getName());
         this.name = type.getName().replace(':', '_');
+        this.typeStore = store;
     }
 
     @Override
@@ -82,28 +89,28 @@ public class BuiltinTemplateConfig extends JavaClusterConfig {
 
         Map<String, IFieldDescriptor> fields = type.getFields();
         for (Map.Entry<String, IFieldDescriptor> entry : fields.entrySet()) {
-            IFieldDescriptor field = entry.getValue();
-            ITypeDescriptor type = typeStore.load(field.getType());
+            try {
+                IFieldDescriptor field = entry.getValue();
+                ITypeDescriptor type = typeStore.load(field.getType());
 
-            config = new JavaPluginConfig(entry.getKey());
-            if (type.isNode()) {
-                config.put("plugin.class", NodeFieldPlugin.class.getName());
-            } else {
-                config.put("plugin.class", PropertyFieldPlugin.class.getName());
+                config = new JavaPluginConfig(entry.getKey());
+                if (type.isNode()) {
+                    config.put("plugin.class", NodeFieldPlugin.class.getName());
+                } else {
+                    config.put("plugin.class", PropertyFieldPlugin.class.getName());
+                }
+                config.put("wicket.id", "${cluster.id}.field");
+                config.put("wicket.model", "${wicket.model}");
+                config.put("engine", "${engine}");
+                config.put("mode", "${mode}");
+                config.put("caption", entry.getKey());
+                config.put("field", entry.getKey());
+                list.add(config);
+            } catch (StoreException ex) {
+                log.error("Invalid type description", ex);
             }
-            config.put("wicket.id", "${cluster.id}.field");
-            config.put("wicket.model", "${wicket.model}");
-            config.put("engine", "${engine}");
-            config.put("mode", "${mode}");
-            config.put("caption", entry.getKey());
-            config.put("field", entry.getKey());
-            list.add(config);
         }
         return list;
-    }
-
-    protected ITypeDescriptor getType() {
-        return type;
     }
 
 }

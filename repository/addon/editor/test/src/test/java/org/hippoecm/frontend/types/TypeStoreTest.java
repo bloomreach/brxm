@@ -66,7 +66,7 @@ public class TypeStoreTest extends TestCase {
     }
 
     @Test
-    public void testJcrTypeDescriptor() {
+    public void testJcrTypeDescriptor() throws Exception {
         // need session context
         HippoTester tester = new HippoTester(new JcrSessionModel(new ValueMap("username=admin,password=admin")) {
             @Override
@@ -91,7 +91,7 @@ public class TypeStoreTest extends TestCase {
     }
 
     @Test
-    public void testBuiltinTypeDescriptor() {
+    public void testBuiltinTypeDescriptor() throws Exception {
         // need session context
         HippoTester tester = new HippoTester(new JcrSessionModel(new ValueMap("username=admin,password=admin")) {
             @Override

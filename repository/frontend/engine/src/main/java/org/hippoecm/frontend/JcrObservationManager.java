@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -42,6 +43,7 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
+import javax.jcr.util.TraversingItemVisitor;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -330,6 +332,36 @@ public class JcrObservationManager implements ObservationManager {
             }
         }
 
+        void expandNew(final List<Node> nodes) throws RepositoryException {
+            for (Node node : new ArrayList<Node>(nodes)) {
+                if (node.isNew()) {
+                    ItemVisitor visitor = new TraversingItemVisitor() {
+
+                        @Override
+                        protected void entering(Property property, int level) throws RepositoryException {
+                        }
+
+                        @Override
+                        protected void entering(Node node, int level) throws RepositoryException {
+                            if (level > 0) {
+                                nodes.add(node);
+                            }
+                        }
+
+                        @Override
+                        protected void leaving(Property property, int level) throws RepositoryException {
+                        }
+
+                        @Override
+                        protected void leaving(Node node, int level) throws RepositoryException {
+                        }
+                        
+                    };
+                    visitor.visit(node);
+                }
+            }
+        }
+        
         synchronized void getChanges(Set<String> paths) {
             try {
                 if (events.size() > 0) {
@@ -360,13 +392,13 @@ public class JcrObservationManager implements ObservationManager {
                 if (!isVirtual(root)) {
                     List<Node> nodes = new LinkedList<Node>();
                     if (nodeTypes == null) {
-                        if (root.isModified()) {
+                        if (root.isModified() || root.isNew()) {
                             nodes.add(root);
                         }
                         NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null, true);
                         processPending(iter, nodes);
                     } else {
-                        if (root.isModified()) {
+                        if (root.isModified() || root.isNew()) {
                             for (String type : nodeTypes) {
                                 if (root.isNodeType(type)) {
                                     nodes.add(root);
@@ -379,6 +411,8 @@ public class JcrObservationManager implements ObservationManager {
                             processPending(iter, nodes);
                         }
                     }
+
+                    expandNew(nodes);
 
                     List<String> paths = new LinkedList<String>();
                     for (Node node : nodes) {
