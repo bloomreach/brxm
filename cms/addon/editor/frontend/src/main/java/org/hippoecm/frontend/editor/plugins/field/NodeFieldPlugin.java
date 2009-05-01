@@ -26,6 +26,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.model.AbstractProvider;
 import org.hippoecm.frontend.editor.model.NodeTemplateProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -66,12 +67,17 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     @Override
     protected AbstractProvider<JcrNodeModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
             JcrNodeModel nodeModel) {
-        JcrNodeModel prototype = (JcrNodeModel) getTemplateEngine().getPrototype(type);
-        NodeTemplateProvider provider = new NodeTemplateProvider(descriptor, prototype, nodeModel.getItemModel());
-        if (ITemplateEngine.EDIT_MODE.equals(mode) && !descriptor.isMultiple() && provider.size() == 0) {
-            provider.addNew();
+        try {
+            JcrNodeModel prototype = (JcrNodeModel) getTemplateEngine().getPrototype(type);
+            NodeTemplateProvider provider = new NodeTemplateProvider(descriptor, prototype, nodeModel.getItemModel());
+            if (ITemplateEngine.EDIT_MODE.equals(mode) && !descriptor.isMultiple() && provider.size() == 0) {
+                provider.addNew();
+            }
+            return provider;
+        } catch (TemplateEngineException ex) {
+            log.warn("Could not find prototype", ex);
+            return null;
         }
-        return provider;
     }
 
     @Override

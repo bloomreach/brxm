@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.impl;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -26,10 +27,13 @@ import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.editor.tools.JcrPrototypeStore;
 import org.hippoecm.editor.tools.JcrTypeStore;
 import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.IStore;
+import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -45,21 +49,65 @@ public class TemplateEngine implements ITemplateEngine {
     private static Logger log = LoggerFactory.getLogger(TemplateEngine.class);
 
     private IStore<ITypeDescriptor> typeStore;
-    private IStore<IClusterConfig> templateStore;
+    private IStore<IClusterConfig> jcrTemplateStore;
+    private IStore<IClusterConfig> builtinTemplateStore;
     private JcrPrototypeStore prototypeStore;
 
     public TemplateEngine(IPluginContext context) {
-        this.typeStore = new JcrTypeStore(context);
+        final IStore<ITypeDescriptor> jcrTypeStore = new JcrTypeStore(context);
+        final IStore<ITypeDescriptor> builtinTypeStore = new BuiltinTypeStore();
+        typeStore = new IStore<ITypeDescriptor>() {
+            private static final long serialVersionUID = 1L;
 
-        this.templateStore = new JcrTemplateStore(typeStore, context);
+            public void close() {
+            }
+
+            public void delete(ITypeDescriptor object) throws StoreException {
+                throw new UnsupportedOperationException("Type store is read only");
+            }
+
+            public Iterator<ITypeDescriptor> find(Map<String, Object> criteria) {
+                Map<String, ITypeDescriptor> types = new HashMap<String, ITypeDescriptor>();
+
+                for (Iterator<ITypeDescriptor> iter = builtinTypeStore.find(criteria); iter.hasNext();) {
+                    ITypeDescriptor type = iter.next();
+                    types.put(type.getName(), type);
+                }
+                for (Iterator<ITypeDescriptor> iter = jcrTypeStore.find(criteria); iter.hasNext();) {
+                    ITypeDescriptor type = iter.next();
+                    types.put(type.getName(), type);
+                }
+                return types.values().iterator();
+            }
+
+            public ITypeDescriptor load(String id) throws StoreException {
+                try {
+                    return jcrTypeStore.load(id);
+                } catch (StoreException ex) {
+                    return builtinTypeStore.load(id);
+                }
+            }
+
+            public String save(ITypeDescriptor object) throws StoreException {
+                throw new UnsupportedOperationException("Type store is read only");
+            }
+
+        };
+
+        this.jcrTemplateStore = new JcrTemplateStore(typeStore, context);
+        this.builtinTemplateStore = new BuiltinTemplateStore(typeStore);
         this.prototypeStore = new JcrPrototypeStore();
     }
 
-    public ITypeDescriptor getType(String type) {
-        return typeStore.load(type);
+    public ITypeDescriptor getType(String type) throws TemplateEngineException {
+        try {
+            return typeStore.load(type);
+        } catch (StoreException ex) {
+            throw new TemplateEngineException("Unable to load type", ex);
+        }
     }
 
-    public ITypeDescriptor getType(IModel model) {
+    public ITypeDescriptor getType(IModel model) throws TemplateEngineException {
         if (model instanceof JcrNodeModel) {
             try {
                 Node node = ((JcrNodeModel) model).getNode();
@@ -76,7 +124,7 @@ public class TemplateEngine implements ITemplateEngine {
                             }
                             parent = parent.getParent();
                         }
-                        return null;
+                        throw new TemplateEngineException("Could not find template type ancestor");
                     }
                 } else if (node.isNodeType("nt:frozenNode")) {
                     String type = node.getProperty("jcr:frozenPrimaryType").getString();
@@ -84,23 +132,25 @@ public class TemplateEngine implements ITemplateEngine {
                 }
                 return getType(node.getPrimaryNodeType().getName());
             } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
+                throw new TemplateEngineException("Invalid model", ex);
             }
-        } else {
-            log.error("Unable to resolve type of {}", model);
         }
-        return null;
+        throw new TemplateEngineException("Unable to resolve type of " + model);
     }
 
-    public IClusterConfig getTemplate(ITypeDescriptor type, String mode) {
+    public IClusterConfig getTemplate(ITypeDescriptor type, String mode) throws TemplateEngineException {
         Map<String, Object> criteria = new MiniMap(2);
         criteria.put("type", type);
         criteria.put("mode", mode);
-        Iterator<IClusterConfig> iter = templateStore.find(criteria);
+        Iterator<IClusterConfig> iter = jcrTemplateStore.find(criteria);
         if (iter.hasNext()) {
             return iter.next();
         }
-        return null;
+        iter = builtinTemplateStore.find(criteria);
+        if (iter.hasNext()) {
+            return iter.next();
+        }
+        throw new TemplateEngineException("No template found");
     }
 
     public IModel getPrototype(ITypeDescriptor type) {

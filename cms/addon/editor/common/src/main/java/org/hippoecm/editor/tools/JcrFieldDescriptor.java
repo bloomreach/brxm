@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.ocm.JcrObject;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.types.IFieldDescriptor;
@@ -37,10 +38,12 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
 
     private static final Logger log = LoggerFactory.getLogger(JcrFieldDescriptor.class);
 
+    private JcrTypeDescriptor type;
     private Set<String> excluded;
 
-    public JcrFieldDescriptor(JcrNodeModel model, IPluginContext context) {
+    public JcrFieldDescriptor(JcrNodeModel model, JcrTypeDescriptor type, IPluginContext context) {
         super(model, context);
+        this.type = type;
         init();
     }
 
@@ -110,28 +113,6 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         return false;
     }
 
-    void copy(IFieldDescriptor source) {
-        setName(source.getName());
-        setType(source.getType());
-        setPath(source.getPath());
-        setExcluded(source.getExcluded());
-
-//        setBinary(source.isBinary());
-        setMandatory(source.isMandatory());
-        setMultiple(source.isMultiple());
-        setOrdered(source.isOrdered());
-        setPrimary(source.isPrimary());
-//        setProtected(source.isProtected());
-    }
-
-    void setName(String name) {
-        setString(HippoNodeType.HIPPO_NAME, name);
-    }
-    
-    void setPrimary(boolean isprimary) {
-        setBoolean(HippoNodeType.HIPPO_PRIMARY, isprimary);
-    }
-
     @Override
     public boolean equals(Object object) {
         if (object instanceof JcrFieldDescriptor) {
@@ -147,6 +128,38 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(getName()).append(getPath()).toHashCode();
+    }
+
+    @Override
+    protected void onEvent(IEvent event) {
+        type.notifyFieldChanged(this);
+    }
+
+    @Override
+    protected void dispose() {
+        super.dispose();
+    }
+
+    void copy(IFieldDescriptor source) {
+        setName(source.getName());
+        setType(source.getType());
+        setPath(source.getPath());
+        setExcluded(source.getExcluded());
+
+        //        setBinary(source.isBinary());
+        setMandatory(source.isMandatory());
+        setMultiple(source.isMultiple());
+        setOrdered(source.isOrdered());
+        setPrimary(source.isPrimary());
+        //        setProtected(source.isProtected());
+    }
+
+    void setName(String name) {
+        setString(HippoNodeType.HIPPO_NAME, name);
+    }
+
+    void setPrimary(boolean isprimary) {
+        setBoolean(HippoNodeType.HIPPO_PRIMARY, isprimary);
     }
 
     private String getString(String path) {

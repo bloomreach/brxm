@@ -35,6 +35,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
@@ -75,10 +76,14 @@ public class MixinPlugin extends RenderPlugin {
         String[] mixins = config.getStringArray("mixins");
         available = new ArrayList<MixinModel>(mixins.length);
         for (String mixin : mixins) {
-            MixinModel model = new MixinModel(engine, mixin);
-            available.add(model);
-            if ((Boolean) model.getObject()) {
-                controllers.put(mixin, startMixin(mixin));
+            try {
+                MixinModel model = new MixinModel(engine, mixin);
+                available.add(model);
+                if ((Boolean) model.getObject()) {
+                    controllers.put(mixin, startMixin(mixin));
+                }
+            } catch (TemplateEngineException ex) {
+                log.error("Unable to start editor for mixin " + mixin, ex);
             }
         }
 
@@ -102,7 +107,11 @@ public class MixinPlugin extends RenderPlugin {
                         String mixin = model.getMixin();
                         if (value) {
                             if (!controllers.containsKey(mixin)) {
-                                controllers.put(mixin, startMixin(mixin));
+                                try {
+                                    controllers.put(mixin, startMixin(mixin));
+                                } catch (TemplateEngineException ex) {
+                                    log.error("Unable to start editor for mixin " + mixin, ex);
+                                }
                             }
                         } else {
                             if (controllers.containsKey(mixin)) {
@@ -117,8 +126,7 @@ public class MixinPlugin extends RenderPlugin {
                 checkbox.setOutputMarkupId(true);
                 checkbox.setEnabled("edit".equals(mode) && !model.isPrimaryNodeType());
                 item.add(checkbox);
-                item.add(new Label("label", new TypeTranslator(new JcrNodeTypeModel(model.getMixin()))
-                .getTypeName()) {
+                item.add(new Label("label", new TypeTranslator(new JcrNodeTypeModel(model.getMixin())).getTypeName()) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -132,7 +140,7 @@ public class MixinPlugin extends RenderPlugin {
         });
     }
 
-    protected IClusterControl startMixin(String mixin) {
+    protected IClusterControl startMixin(String mixin) throws TemplateEngineException {
         IPluginContext context = getPluginContext();
         IPluginConfig config = getPluginConfig();
         ITemplateEngine engine = context.getService(config.getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
@@ -162,7 +170,7 @@ public class MixinPlugin extends RenderPlugin {
         String name;
         String realType;
 
-        MixinModel(ITemplateEngine engine, String mixin) {
+        MixinModel(ITemplateEngine engine, String mixin) throws TemplateEngineException {
             this.name = mixin;
             ITypeDescriptor type = engine.getType(mixin);
             this.realType = type.getType();
@@ -215,7 +223,7 @@ public class MixinPlugin extends RenderPlugin {
             }
             return false;
         }
-        
+
         public void detach() {
         }
     }

@@ -59,10 +59,21 @@ public class PluginConfigTest extends TestCase {
 
     Node root, cleanerConfigNode;
 
-    String[] content = new String[] { "/map", "nt:unstructured", "a", "b", "c", "d", "/config",
-            "frontend:pluginconfig", "a", "b", "/config/sub", "frontend:pluginconfig", "c", "d", "/cluster",
-            "frontend:plugincluster", "/cluster/plugin", "frontend:plugin", "c", "d", "x", "${cluster.id}",
-            "/cluster/plugin/sub", "frontend:pluginconfig", "a", "b", "y", "${cluster.id}" };
+    String[] content = new String[] {
+            "/map", "nt:unstructured",
+                "a", "b",
+                "c", "d",
+            "/config", "frontend:pluginconfig",
+                "a", "b",
+            "/config/sub", "frontend:pluginconfig",
+                "c", "d",
+            "/cluster", "frontend:plugincluster",
+            "/cluster/plugin", "frontend:plugin",
+                "c", "d",
+                "x", "${cluster.id}",
+            "/cluster/plugin/sub", "frontend:pluginconfig",
+                "a", "b",
+                "y", "${cluster.id}" };
 
     @Before
     public void setUp() throws Exception {

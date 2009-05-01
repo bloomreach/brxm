@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
+import org.hippoecm.frontend.model.ocm.StoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,12 +57,16 @@ public class BuiltinTypeStore implements ITypeStore {
         return null;
     }
 
-    public ITypeDescriptor load(String id) {
-        return getTypeDescriptor(id);
+    public ITypeDescriptor load(String id) throws StoreException {
+        ITypeDescriptor result = getTypeDescriptor(id);
+        if (result == null) {
+            throw new StoreException("Could not find type " + id);
+        }
+        return result;
     }
 
-    public String save(ITypeDescriptor object) {
-        throw new UnsupportedOperationException();
+    public String save(ITypeDescriptor object) throws StoreException {
+        throw new StoreException("Builtin type store is read-only");
     }
 
 }

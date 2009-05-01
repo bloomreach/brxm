@@ -215,6 +215,26 @@ public class ObservationTest extends TestCase {
     }
 
     @Test
+    public void testNewNodeObservation() throws Exception {
+        Node root = session.getRootNode();
+        Node test = root.addNode("test", "nt:unstructured");
+
+        List<IEvent> events = new LinkedList<IEvent>();
+        IObserver observer = new TestObserver(new JcrNodeModel(test), events);
+        context.registerService(observer, IObserver.class.getName());
+
+        JcrObservationManager.getInstance().processEvents();
+
+        assertEquals(1, events.size());
+
+        test.addNode("sub", "nt:unstructured");
+
+        JcrObservationManager.getInstance().processEvents();
+
+        assertEquals(3, events.size());
+    }
+
+    @Test
     public void testInSessionEventSuppression() throws Exception {
         Node root = session.getRootNode();
         List<IEvent> events = new LinkedList<IEvent>();

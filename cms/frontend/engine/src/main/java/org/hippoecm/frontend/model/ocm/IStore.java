@@ -26,11 +26,11 @@ public interface IStore<T> extends IClusterable {
 
     Iterator<T> find(Map<String, Object> criteria);
 
-    T load(String id);
+    T load(String id) throws StoreException;
 
     String save(T object) throws StoreException;
 
-    void delete(T object);
+    void delete(T object) throws StoreException;
 
     void close();
 }

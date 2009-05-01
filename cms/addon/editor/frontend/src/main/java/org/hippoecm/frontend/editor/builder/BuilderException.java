@@ -13,27 +13,28 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.model.ocm;
+package org.hippoecm.frontend.editor.builder;
 
-public class StoreException extends Exception {
+public class BuilderException extends Exception {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    public StoreException() {
+    public BuilderException() {
         super();
     }
 
-    public StoreException(String message) {
+    public BuilderException(String message) {
         super(message);
     }
 
-    public StoreException(String message, Throwable cause) {
+    public BuilderException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public StoreException(Throwable cause) {
+    public BuilderException(Throwable cause) {
         super(cause);
     }
+
 }

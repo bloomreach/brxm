@@ -30,6 +30,8 @@ public interface ITypeDescriptor extends IClusterable {
 
         void fieldAdded(String field);
 
+        void fieldChanged(String field);
+
         void fieldRemoved(String field);
     }
 

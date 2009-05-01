@@ -17,7 +17,6 @@ package org.hippoecm.frontend.editor.builder;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -28,12 +27,12 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.widgets.AbstractView;
@@ -59,9 +58,13 @@ public class TemplateListPlugin extends RenderPlugin {
             String[] templates = config.getStringArray("templates");
             if (templates != null) {
                 for (String type : templates) {
-                    ITypeDescriptor typeDescriptor = engine.getType(type);
-                    if (engine.getTemplate(typeDescriptor, ITemplateEngine.EDIT_MODE) != null) {
-                        templateList.add(typeDescriptor);
+                    try {
+                        ITypeDescriptor typeDescriptor = engine.getType(type);
+                        if (engine.getTemplate(typeDescriptor, ITemplateEngine.EDIT_MODE) != null) {
+                            templateList.add(typeDescriptor);
+                        }
+                    } catch (TemplateEngineException ex) {
+                        log.error("Incomplete type " + type, ex);
                     }
                 }
             } else {

@@ -23,6 +23,7 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.model.AbstractProvider;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -92,13 +93,15 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         ITemplateEngine engine = getTemplateEngine();
         if (engine != null) {
             P model = (P) getModel();
-            ITypeDescriptor type;
-            if (typeName == null) {
-                type = engine.getType(model);
-            } else {
-                type = engine.getType(typeName);
-            }
-            if (type != null) {
+            try {
+                field = null;
+
+                ITypeDescriptor type;
+                if (typeName == null) {
+                    type = engine.getType(model);
+                } else {
+                    type = engine.getType(typeName);
+                }
                 field = type.getField(fieldName);
                 if (field != null) {
                     ITypeDescriptor subType = engine.getType(field.getType());
@@ -110,8 +113,8 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
                 } else {
                     log.warn("Unknown field {} in type {}", fieldName, type.getName());
                 }
-            } else {
-                log.warn("Unable to obtain type descriptor for {}", model);
+            } catch (TemplateEngineException ex) {
+                log.warn("Unable to obtain type descriptor for " + model, ex);
             }
         } else {
             log.warn("No engine found to display new model");
@@ -151,7 +154,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
                 .getService(getPluginConfig().getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
     }
 
-    protected IClusterControl getTemplate(C model) {
+    protected IClusterControl getTemplate(C model) throws TemplateEngineException {
         ITemplateEngine engine = getTemplateEngine();
         IClusterConfig template = engine.getTemplate(engine.getType(field.getType()), mode);
 
@@ -160,8 +163,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         parameters.put(RenderService.WICKET_ID, getItemId());
         parameters.put(ITemplateEngine.MODE, mode);
 
-        IClusterControl control = getPluginContext().newCluster(template, parameters);
-        return control;
+        return getPluginContext().newCluster(template, parameters);
     }
 
     protected C findModel(IRenderService renderer) {
@@ -204,8 +206,8 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         }
 
         private void addModel(final C model) {
-            IClusterControl control = FieldPlugin.this.getTemplate(model);
-            if (control != null) {
+            try {
+                IClusterControl control = FieldPlugin.this.getTemplate(model);
                 String modelId = control.getClusterConfig().getString(RenderService.MODEL_ID);
                 ModelReference modelService = new ModelReference(modelId, model);
                 models.put(model, modelService);
@@ -213,6 +215,8 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
                 modelService.init(getPluginContext());
                 control.start();
                 plugins.put(model, control);
+            } catch (TemplateEngineException ex) {
+                log.error("Failed to open editor for new model", ex);
             }
         }
 

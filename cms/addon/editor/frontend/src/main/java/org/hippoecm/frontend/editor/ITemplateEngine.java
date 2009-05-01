@@ -31,12 +31,12 @@ public interface ITemplateEngine extends IClusterable {
 
     String EDIT_MODE = "edit";
 
-    ITypeDescriptor getType(String type);
+    ITypeDescriptor getType(String type) throws TemplateEngineException;
 
-    ITypeDescriptor getType(IModel model);
+    ITypeDescriptor getType(IModel model) throws TemplateEngineException;
 
-    IClusterConfig getTemplate(ITypeDescriptor type, String mode);
+    IClusterConfig getTemplate(ITypeDescriptor type, String mode) throws TemplateEngineException;
 
-    IModel getPrototype(ITypeDescriptor type);
+    IModel getPrototype(ITypeDescriptor type) throws TemplateEngineException;
 
 }

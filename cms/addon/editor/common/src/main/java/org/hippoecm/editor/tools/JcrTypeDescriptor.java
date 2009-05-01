@@ -135,37 +135,6 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         return fields;
     }
 
-    protected Map<String, IFieldDescriptor> loadFields() {
-        Map<String, IFieldDescriptor> fields = new HashMap<String, IFieldDescriptor>();
-        try {
-            Node node = getNode();
-            if (node != null) {
-                NodeIterator it = node.getNodes();
-                while (it.hasNext()) {
-                    Node child = it.nextNode();
-                    if (child != null && child.isNodeType(HippoNodeType.NT_FIELD)) {
-                        JcrFieldDescriptor field = new JcrFieldDescriptor(new JcrNodeModel(child), getPluginContext());
-                        fields.put(field.getName(), field);
-                    }
-                }
-            }
-            Set<String> explicit = new HashSet<String>();
-            for (IFieldDescriptor field : fields.values()) {
-                if (!field.getPath().equals("*")) {
-                    explicit.add(field.getPath());
-                }
-            }
-            for (IFieldDescriptor field : fields.values()) {
-                if (field.getPath().equals("*")) {
-                    field.setExcluded(explicit);
-                }
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        return fields;
-    }
-
     public IFieldDescriptor getField(String key) {
         return getFields().get(key);
     }
@@ -232,7 +201,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         try {
             Node typeNode = getNode();
             Node field = typeNode.addNode(HippoNodeType.HIPPO_FIELD, HippoNodeType.NT_FIELD);
-            JcrFieldDescriptor desc = new JcrFieldDescriptor(new JcrNodeModel(field), getPluginContext());
+            JcrFieldDescriptor desc = new JcrFieldDescriptor(new JcrNodeModel(field), this, getPluginContext());
             desc.copy(descriptor);
             fields.put(desc.getName(), desc);
 
@@ -248,12 +217,14 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         try {
             Node fieldNode = getFieldNode(field);
             if (fieldNode != null) {
-                IFieldDescriptor descriptor = new JcrFieldDescriptor(new JcrNodeModel(fieldNode), getPluginContext());
+                IFieldDescriptor descriptor = new JcrFieldDescriptor(new JcrNodeModel(fieldNode), this,
+                        getPluginContext());
 
                 if (descriptor.isPrimary()) {
                     primary = null;
                 }
-                fields.remove(field);
+                JcrFieldDescriptor fieldDescriptor = (JcrFieldDescriptor) fields.remove(field);
+                fieldDescriptor.dispose();
                 fieldNode.remove();
                 for (ITypeListener listener : listeners) {
                     listener.fieldRemoved(field);
@@ -279,15 +250,19 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
         IFieldDescriptor field = fields.get(name);
         if (field != null) {
-            if (field instanceof JcrFieldDescriptor) {
-                ((JcrFieldDescriptor) field).setPrimary(true);
-                primary = (JcrFieldDescriptor) field;
-            } else {
-                log.warn("unknown type " + field.getClass().getName());
-            }
+            ((JcrFieldDescriptor) field).setPrimary(true);
+            primary = (JcrFieldDescriptor) field;
         } else {
             log.warn("field " + name + " was not found");
         }
+    }
+
+    public void addTypeListener(ITypeListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeTypeListener(ITypeListener listener) {
+        listeners.remove(listener);
     }
 
     @Override
@@ -302,6 +277,64 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(53, 7).append(this.name).toHashCode();
+    }
+
+    protected Map<String, IFieldDescriptor> loadFields() {
+        Map<String, IFieldDescriptor> fields = new HashMap<String, IFieldDescriptor>();
+        try {
+            Node node = getNode();
+            if (node != null) {
+                NodeIterator it = node.getNodes();
+                while (it.hasNext()) {
+                    Node child = it.nextNode();
+                    if (child != null && child.isNodeType(HippoNodeType.NT_FIELD)) {
+                        JcrFieldDescriptor field = new JcrFieldDescriptor(new JcrNodeModel(child), this,
+                                getPluginContext());
+                        fields.put(field.getName(), field);
+                    }
+                }
+            }
+            Set<String> explicit = new HashSet<String>();
+            for (IFieldDescriptor field : fields.values()) {
+                if (!field.getPath().equals("*")) {
+                    explicit.add(field.getPath());
+                }
+            }
+            for (IFieldDescriptor field : fields.values()) {
+                if (field.getPath().equals("*")) {
+                    field.setExcluded(explicit);
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return fields;
+    }
+
+    @Override
+    protected void onEvent(IEvent event) {
+        Map<String, IFieldDescriptor> newFields = loadFields();
+        for (String field : newFields.keySet()) {
+            if (!fields.containsKey(field)) {
+                fields.put(field, newFields.get(field));
+                for (ITypeListener listener : listeners) {
+                    listener.fieldAdded(field);
+                }
+            } else {
+                ((JcrFieldDescriptor) newFields.get(field)).dispose();
+            }
+        }
+        Iterator<Entry<String, IFieldDescriptor>> iter = fields.entrySet().iterator();
+        while (iter.hasNext()) {
+            Entry<String, IFieldDescriptor> entry = iter.next();
+            if (!newFields.containsKey(entry.getKey())) {
+                for (ITypeListener listener : listeners) {
+                    listener.fieldRemoved(entry.getKey());
+                }
+                ((JcrFieldDescriptor) entry.getValue()).dispose();
+                iter.remove();
+            }
+        }
     }
 
     private boolean getBoolean(String path) {
@@ -338,34 +371,9 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         return null;
     }
 
-    public void addTypeListener(ITypeListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeTypeListener(ITypeListener listener) {
-        listeners.remove(listener);
-    }
-
-    @Override
-    protected void onEvent(IEvent event) {
-        Map<String, IFieldDescriptor> newFields = loadFields();
-        for (String field : newFields.keySet()) {
-            if (!fields.containsKey(field)) {
-                fields.put(field, newFields.get(field));
-                for (ITypeListener listener : listeners) {
-                    listener.fieldAdded(field);
-                }
-            }
-        }
-        Iterator<Entry<String, IFieldDescriptor>> iter = fields.entrySet().iterator();
-        while (iter.hasNext()) {
-            Entry<String, IFieldDescriptor> entry = iter.next();
-            if (!newFields.containsKey(entry.getKey())) {
-                for (ITypeListener listener : listeners) {
-                    listener.fieldRemoved(entry.getKey());
-                }
-                iter.remove();
-            }
+    void notifyFieldChanged(IFieldDescriptor field) {
+        for (ITypeListener listener : listeners) {
+            listener.fieldChanged(field.getName());
         }
     }
 

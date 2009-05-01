@@ -383,7 +383,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
     }
 
     static String getPluginName(Node node) throws RepositoryException {
-        return node.getName() + "[" + node.getIndex() + "]";
+        return new JcrPluginConfig(new JcrNodeModel(node), null).getName();
     }
 
     public void addClusterConfigListener(IClusterConfigListener listener) {
