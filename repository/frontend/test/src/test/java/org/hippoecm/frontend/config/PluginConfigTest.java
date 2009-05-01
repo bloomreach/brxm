@@ -166,7 +166,7 @@ public class PluginConfigTest extends TestCase {
     }
 
     protected IPluginConfig getPluginConfig() throws Exception {
-        return new JcrPluginConfig(new JcrNodeModel(root.getNode("config")), null);
+        return new JcrPluginConfig(new JcrNodeModel(root.getNode("config")));
     }
 
     @Test
@@ -231,7 +231,7 @@ public class PluginConfigTest extends TestCase {
         plugins.add(1, first);
         assertEquals(2, plugins.size());
 
-        assertEquals("abc", plugins.get(0).getName());
+        assertEquals("abc[1]", plugins.get(0).getName());
 
         List<String> services = config.getServices();
         services.add("testing");

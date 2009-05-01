@@ -23,18 +23,26 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.model.IModelReference;
+import org.hippoecm.frontend.plugin.IActivator;
+import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.IPluginConfigListener;
+import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RenderPluginEditorPlugin extends RenderPlugin {
+public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -43,6 +51,8 @@ public class RenderPluginEditorPlugin extends RenderPlugin {
     private static final Logger log = LoggerFactory.getLogger(RenderPluginEditorPlugin.class);
 
     private String pluginId;
+    protected IClusterControl previewControl;
+    private IPluginConfigListener pluginConfigListener;
 
     public RenderPluginEditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -137,11 +147,81 @@ public class RenderPluginEditorPlugin extends RenderPlugin {
                 return new EventStoppingDecorator(super.getAjaxCallDecorator());
             }
         });
-        addExtensionPoint("preview");
+
+        updatePreview();
+    }
+
+    public void start() {
+        IPluginConfig editedConfig = getEditablePluginConfig();
+        editedConfig.addPluginConfigListener(pluginConfigListener = new IPluginConfigListener() {
+            private static final long serialVersionUID = 1L;
+
+            public void onPluginConfigChanged() {
+                updatePreview();
+            }
+        });
+    }
+
+    public void stop() {
+        IPluginConfig editedConfig = getEditablePluginConfig();
+        editedConfig.removePluginConfigListener(pluginConfigListener);
+    }
+
+    @Override
+    public void render(PluginRequestTarget target) {
+        super.render(target);
+
+        if (previewControl != null) {
+            String serviceId = getPluginContext().getReference(this).getServiceId() + ".preview";
+            IRenderService previewService = getPluginContext().getService(serviceId, IRenderService.class);
+            if (previewService != null) {
+                previewService.render(target);
+            }
+        }
+    }
+
+    protected void updatePreview() {
+        if (previewControl != null) {
+            previewControl.stop();
+            previewControl = null;
+        }
+
+        IPluginContext pluginContext = getPluginContext();
+        JavaClusterConfig childClusterConfig = new JavaClusterConfig();
+        IPluginConfig childPluginConfig = new JavaPluginConfig(getEffectivePluginConfig());
+
+        String serviceId = getPluginContext().getReference(this).getServiceId() + ".preview";
+        childPluginConfig.put(RenderService.WICKET_ID, serviceId);
+        childClusterConfig.addPlugin(childPluginConfig);
+
+        previewControl = pluginContext.newCluster(childClusterConfig, null);
+        previewControl.start();
+
+        IRenderService renderService = pluginContext.getService(serviceId, IRenderService.class);
+        if (renderService != null) {
+            renderService.bind(this, "preview");
+            addOrReplace(renderService.getComponent());
+        } else {
+            addOrReplace(new EmptyPanel("preview"));
+            log.warn("No render service found in plugin preview");
+        }
+
+        redraw();
     }
 
     protected IPluginConfig getEffectivePluginConfig() {
         return getPluginConfig().getPluginConfig("model.effective");
+    }
+
+    protected IPluginConfig getEditablePluginConfig() {
+        IClusterConfig clusterConfig = (IClusterConfig) getModelObject();
+        List<IPluginConfig> plugins = clusterConfig.getPlugins();
+        for (IPluginConfig plugin : plugins) {
+            if (plugin.getName().equals(getPluginConfig().getString("plugin.id"))) {
+                return plugin;
+            }
+        }
+        throw new RuntimeException("Could not find plugin in cluster");
     }
 
 }

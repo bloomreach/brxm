@@ -53,7 +53,7 @@ public class ShortcutsPlugin implements IPlugin {
             while (iter.hasNext()) {
                 JcrNodeModel model = (JcrNodeModel) query.model(iter.next());
 
-                IPluginConfig pluginConfig = new JavaPluginConfig(new JcrPluginConfig(model, context));
+                IPluginConfig pluginConfig = new JavaPluginConfig(new JcrPluginConfig(model));
                 pluginConfig.put(RenderService.WICKET_ID, config.getString(RenderService.WICKET_ID));
                 clusterConfig.addPlugin(pluginConfig);
             }

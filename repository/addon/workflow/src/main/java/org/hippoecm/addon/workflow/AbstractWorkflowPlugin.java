@@ -92,7 +92,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
                                     if (pluginRenderer == null || pluginRenderer.trim().equals("")) {
                                         plugin = new StdWorkflowPlugin("item", pluginModel);
                                     } else if(pluginRenderer.startsWith("/")) {
-                                        plugin = (Panel) this.newPlugin("id", new JcrPluginConfig(new JcrNodeModel(documentNode.getSession().getRootNode().getNode(pluginRenderer.substring(1))), null));
+                                        plugin = (Panel) this.newPlugin("id", new JcrPluginConfig(new JcrNodeModel(documentNode.getSession().getRootNode().getNode(pluginRenderer.substring(1)))));
                                         if(plugin != null) {
                                             plugin.setModel(pluginModel);
                                         } else {

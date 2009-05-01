@@ -86,7 +86,6 @@ public class PreviewClusterConfig extends JavaClusterConfig {
             String editorClass = getPluginConfigEditorClass(config.getString("plugin.class"));
             if (editorClass != null) {
                 result.add(getEditorConfig(editorClass, config));
-                result.add(wrapConfig(config));
             } else {
                 result.add(config);
             }
@@ -106,20 +105,9 @@ public class PreviewClusterConfig extends JavaClusterConfig {
         previewWrapper.put("builder.mode", editable);
 
         if (config.get("wicket.id") != null) {
-            String wrappedId = "${cluster.id}.wrap." + config.getName();
             previewWrapper.put("wicket.id", config.get("wicket.id"));
-            previewWrapper.put("preview", wrappedId);
         }
 
         return previewWrapper;
-    }
-
-    private IPluginConfig wrapConfig(IPluginConfig config) {
-        IPluginConfig wrappedPluginConfig = new JavaPluginConfig(config);
-        if (config.get("wicket.id") != null) {
-            String wrappedId = "${cluster.id}.wrap." + config.getName();
-            wrappedPluginConfig.put("wicket.id", wrappedId);
-        }
-        return wrappedPluginConfig;
     }
 }

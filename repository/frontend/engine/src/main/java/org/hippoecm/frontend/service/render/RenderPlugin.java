@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.wicket.Component;
-
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -36,12 +36,42 @@ public class RenderPlugin extends RenderService implements IPlugin {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
-    Map<String, IClusterControl> childPlugins = new TreeMap<String,IClusterControl>();
+
+    class PluginEntry {
+        IClusterControl control;
+        String serviceId;
+
+        PluginEntry(String serviceId, IClusterControl control) {
+            this.serviceId = serviceId;
+            this.control = control;
+        }
+
+        IRenderService getRenderService() {
+            return getPluginContext().getService(serviceId, IRenderService.class);
+        }
+
+        void render(PluginRequestTarget target) {
+            IRenderService renderservice = getRenderService();
+            if (renderservice != null) {
+                renderservice.render(target);
+            }
+        }
+    }
+
+    Map<String, PluginEntry> childPlugins = new TreeMap<String, PluginEntry>();
     static long childPluginCounter = 0L;
 
     public RenderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+    }
+
+    @Override
+    public void render(PluginRequestTarget target) {
+        super.render(target);
+
+        for (PluginEntry entry : childPlugins.values()) {
+            entry.render(target);
+        }
     }
 
     protected Component newPlugin(String id, IPluginConfig config) {
@@ -53,16 +83,18 @@ public class RenderPlugin extends RenderService implements IPlugin {
         childPluginConfig.put(RenderService.WICKET_ID, serviceId);
         childClusterConfig.addPlugin(childPluginConfig);
 
-        IClusterControl pluginControl = childPlugins.get(id);
-        if (pluginControl != null) {
-            pluginControl.stop();
+        PluginEntry entry = childPlugins.get(id);
+        if (entry == null) {
+            entry = new PluginEntry(serviceId, null);
+            childPlugins.put(id, entry);
+        } else {
+            entry.control.stop();
         }
-        
-        pluginControl = pluginContext.newCluster(childClusterConfig, null);
-        pluginControl.start();
-        childPlugins.put(id, pluginControl);
-        
-        IRenderService renderservice = pluginContext.getService(serviceId, IRenderService.class);
+
+        entry.control = pluginContext.newCluster(childClusterConfig, null);
+        entry.control.start();
+
+        IRenderService renderservice = entry.getRenderService();
         if (renderservice != null) {
             renderservice.bind(this, id);
             return renderservice.getComponent();
@@ -72,6 +104,8 @@ public class RenderPlugin extends RenderService implements IPlugin {
     }
 
     private class InheritingPluginConfig extends AbstractPluginDecorator {
+        private static final long serialVersionUID = 1L;
+
         InheritingPluginConfig(IPluginConfig upstream) {
             super(upstream);
         }
@@ -79,16 +113,16 @@ public class RenderPlugin extends RenderService implements IPlugin {
         @Override
         protected Object decorate(Object object) {
             if (object instanceof String) {
-                String value = (String)object;
+                String value = (String) object;
                 if (value.startsWith("${") && value.endsWith("}")) {
                     return RenderPlugin.this.getPluginConfig().get(value.substring(2, value.length() - 1));
                 } else {
                     return value;
                 }
             } else if (object instanceof IPluginConfig) {
-                return new InheritingPluginConfig((IPluginConfig)object);
+                return new InheritingPluginConfig((IPluginConfig) object);
             } else if (object instanceof List) {
-                final List list = (List)object;
+                final List list = (List) object;
                 return new AbstractList() {
                     @Override
                     public Object get(int index) {
@@ -104,12 +138,13 @@ public class RenderPlugin extends RenderService implements IPlugin {
             return object;
         }
     }
-        
+
+    // FIXME: retrieve config from config service iso relying on the JCR implementation of the configuration
     protected Component newPlugin(String id, String name) {
         IPluginConfig pluginConfig;
         pluginConfig = getPluginConfig().getPluginConfig(name);
         if (pluginConfig == null) {
-            pluginConfig = getPluginConfig().getPluginConfig("../"+name);
+            pluginConfig = getPluginConfig().getPluginConfig("../" + name);
         }
         return newPlugin(id, pluginConfig);
     }

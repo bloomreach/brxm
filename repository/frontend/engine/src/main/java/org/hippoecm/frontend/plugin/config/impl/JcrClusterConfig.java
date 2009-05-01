@@ -171,7 +171,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
 
         @Override
         public IPluginConfig get(int index) {
-            return new JcrPluginConfig(new JcrNodeModel(getNode(index)), getPluginContext());
+            return wrapConfig(getNode(index));
         }
 
         @Override
@@ -195,7 +195,11 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
             if (index <= size()) {
                 try {
                     Node node = getNode();
-                    Node child = node.addNode(element.getName(), "frontend:plugin");
+                    String name = element.getName();
+                    if (name.indexOf('[') > 0) {
+                        name = name.substring(0, name.indexOf('['));
+                    }
+                    Node child = node.addNode(name, "frontend:plugin");
                     JcrMap map = new JcrMap(new JcrNodeModel(child));
                     map.putAll(element);
 
@@ -207,7 +211,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
                     if (getPluginContext() == null) {
                         plugins.add(index, getPluginName(child));
                         for (IClusterConfigListener listener : listeners) {
-                            listener.onPluginAdded(new JcrPluginConfig(new JcrNodeModel(child), getPluginContext()));
+                            listener.onPluginAdded(wrapConfig(child));
                         }
                     }
                 } catch (RepositoryException ex) {
@@ -272,7 +276,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
                         Node root = getNode();
                         while (!node.isSame(root)) {
                             if (node.isNodeType("frontend:plugin")) {
-                                IPluginConfig config = new JcrPluginConfig(new JcrNodeModel(node), getPluginContext());
+                                IPluginConfig config = wrapConfig(node);
                                 for (IClusterConfigListener listener : listeners) {
                                     listener.onPluginChanged(config);
                                 }
@@ -316,6 +320,10 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
 
     private PluginList configs;
     private List<IClusterConfigListener> listeners;
+
+    public JcrClusterConfig(JcrNodeModel nodeModel) {
+        this(nodeModel, null);
+    }
 
     public JcrClusterConfig(JcrNodeModel nodeModel, IPluginContext context) {
         super(nodeModel, context);
@@ -382,8 +390,8 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
                 PropertyType.STRING);
     }
 
-    static String getPluginName(Node node) throws RepositoryException {
-        return new JcrPluginConfig(new JcrNodeModel(node), null).getName();
+    String getPluginName(Node node) throws RepositoryException {
+        return wrapConfig(node).getName();
     }
 
     public void addClusterConfigListener(IClusterConfigListener listener) {
