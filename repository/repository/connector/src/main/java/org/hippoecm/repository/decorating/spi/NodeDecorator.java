@@ -50,6 +50,9 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
         if ("/".equals(path)) {
             return session.getRootNode();
         }
+        if (node.isNew()) {
+            return node;
+        }
         node = remoteSession.getRootNode().getNode(node.getPath().substring(1));
         if (node == null) {
             return null;
