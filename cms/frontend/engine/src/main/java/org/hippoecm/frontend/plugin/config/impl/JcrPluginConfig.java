@@ -20,6 +20,8 @@ import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -85,12 +87,59 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
     private IObserver observer;
     private List<IPluginConfigListener> listeners = new ListenerList<IPluginConfigListener>();
     private JcrMap map;
+    private Map<JcrNodeModel, JcrPluginConfig> childConfigs;
     private transient Set<Map.Entry<String, Object>> entries;
 
-    public JcrPluginConfig(JcrNodeModel nodeModel, IPluginContext context) {
+    public JcrPluginConfig(JcrNodeModel nodeModel) {
+        this(nodeModel, null);
+    }
+
+    JcrPluginConfig(JcrNodeModel nodeModel, IPluginContext context) {
         this.nodeModel = nodeModel;
         this.context = context;
         this.map = new JcrMap(nodeModel);
+        this.childConfigs = new HashMap<JcrNodeModel, JcrPluginConfig>();
+    }
+
+    protected void init() {
+        if (context != null) {
+            observer = new IObserver() {
+                private static final long serialVersionUID = 1L;
+
+                public IObservable getObservable() {
+                    return nodeModel;
+                }
+
+                public void onEvent(IEvent event) {
+                    sync();
+                    for (IPluginConfigListener listener : listeners) {
+                        listener.onPluginConfigChanged();
+                    }
+                }
+
+            };
+            context.registerService(observer, IObserver.class.getName());
+        }
+    }
+
+    protected void dispose() {
+        if (context != null) {
+            context.unregisterService(observer, IObserver.class.getName());
+            observer = null;
+        }
+    }
+
+    protected void sync() {
+        entries = null;
+        Iterator<Map.Entry<JcrNodeModel, JcrPluginConfig>> childIter = childConfigs.entrySet().iterator();
+        while (childIter.hasNext()) {
+            Map.Entry<JcrNodeModel, JcrPluginConfig> entry = childIter.next();
+            JcrNodeModel model = entry.getKey();
+            if (!model.getItemModel().exists()) {
+                childIter.remove();
+                entry.getValue().dispose();
+            }
+        }
     }
 
     public JcrNodeModel getNodeModel() {
@@ -220,7 +269,7 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
                 Node node = nodeModel.getNode();
                 if (node.hasNode(strKey)) {
                     Node child = node.getNode(strKey);
-                    return new JcrPluginConfig(new JcrNodeModel(child), context);
+                    return wrapConfig(child);
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
@@ -238,7 +287,7 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
             for (int i = 0; children.hasNext(); i++) {
                 Node child = children.nextNode();
                 if (child != null) {
-                    configs.add(new JcrPluginConfig(new JcrNodeModel(child), context));
+                    configs.add(wrapConfig(child));
                 }
             }
         } catch (RepositoryException ex) {
@@ -285,6 +334,10 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
         nodeModel.detach();
         map.detach();
         entries = null;
+        for (Map.Entry<JcrNodeModel, JcrPluginConfig> entry : childConfigs.entrySet()) {
+            entry.getKey().detach();
+            entry.getValue().detach();
+        }
     }
 
     @Override
@@ -332,6 +385,7 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
     public void clear() {
         entries = null;
         map.clear();
+        childConfigs.clear();
     }
 
     @Override
@@ -359,6 +413,16 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
         return 521 * nodeModel.hashCode();
     }
 
+    protected JcrPluginConfig wrapConfig(Node node) {
+        JcrNodeModel nodeModel = new JcrNodeModel(node);
+        if (!childConfigs.containsKey(nodeModel)) {
+            childConfigs.put(nodeModel, new JcrPluginConfig(nodeModel, context));
+        }
+        JcrPluginConfig result = childConfigs.get(nodeModel);
+        result.nodeModel.detach();
+        return result;
+    }
+
     private Property getProperty(String key) throws RepositoryException {
         Node node = nodeModel.getNode();
         if (node != null) {
@@ -374,7 +438,7 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
     private Object filter(Object value) {
         if (value instanceof JcrMap) {
             JcrMap map = (JcrMap) value;
-            return new JcrPluginConfig(new JcrNodeModel(map.getNode()), context);
+            return wrapConfig(map.getNode());
         } else if (value instanceof List) {
             final List list = (List) value;
             return new AbstractList() {
@@ -395,32 +459,10 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
 
     public void addPluginConfigListener(IPluginConfigListener listener) {
         listeners.add(listener);
-        if (listeners.size() > 0 && context != null) {
-            observer = new IObserver() {
-                private static final long serialVersionUID = 1L;
-
-                public IObservable getObservable() {
-                    return nodeModel;
-                }
-
-                public void onEvent(IEvent event) {
-                    entries = null;
-                    for (IPluginConfigListener listener : listeners) {
-                        listener.onPluginConfigChanged();
-                    }
-                }
-
-            };
-            context.registerService(observer, IObserver.class.getName());
-        }
     }
 
     public void removePluginConfigListener(IPluginConfigListener listener) {
         listeners.remove(listener);
-        if (listeners.size() == 0 && context != null) {
-            context.unregisterService(observer, IObserver.class.getName());
-            observer = null;
-        }
     }
 
 }

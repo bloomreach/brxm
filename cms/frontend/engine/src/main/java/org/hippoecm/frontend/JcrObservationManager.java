@@ -395,8 +395,10 @@ public class JcrObservationManager implements ObservationManager {
                         if (root.isModified() || root.isNew()) {
                             nodes.add(root);
                         }
-                        NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null, true);
-                        processPending(iter, nodes);
+                        if (!root.isNew()) {
+                            NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null, true);
+                            processPending(iter, nodes);
+                        }
                     } else {
                         if (root.isModified() || root.isNew()) {
                             for (String type : nodeTypes) {
@@ -406,9 +408,11 @@ public class JcrObservationManager implements ObservationManager {
                                 }
                             }
                         }
-                        for (String type : nodeTypes) {
-                            NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, type, true);
-                            processPending(iter, nodes);
+                        if (!root.isNew()) {
+                            for (String type : nodeTypes) {
+                                NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, type, true);
+                                processPending(iter, nodes);
+                            }
                         }
                     }
 
@@ -440,6 +444,7 @@ public class JcrObservationManager implements ObservationManager {
                 }
             } catch (PathNotFoundException ex) {
                 log.warn("Root node no longer exists: " + ex.getMessage());
+                ex.printStackTrace();
                 dispose();
                 return;
             } catch (RepositoryException ex) {

@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.ITemplateEngine;
-import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -103,7 +102,9 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
         final IPluginContext context = getPluginContext();
         final IPluginConfig config = getPluginConfig();
 
+        IModel selectedPlugin = null;
         if (child != null) {
+            selectedPlugin = context.getService(selectedPluginId, IModelReference.class).getModel();
             context.unregisterService(templateObserver, IObserver.class.getName());
             templateObserver = null;
             child.stop();
@@ -118,7 +119,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
                     selectedPluginId, config.getString("wicket.helper.id"), "edit".equals(mode));
 
             context.getService(clusterModelId, IModelReference.class).setModel(new Model(builder.getTemplate()));
-            context.getService(selectedPluginId, IModelReference.class).setModel(null);
+            context.getService(selectedPluginId, IModelReference.class).setModel(selectedPlugin);
 
             IPluginConfig parameters = new JavaPluginConfig();
             parameters.put(ITemplateEngine.ENGINE, config.getString("engine"));

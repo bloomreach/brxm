@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
-import java.util.List;
-
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
@@ -35,12 +33,12 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.IPluginConfigListener;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor.ITypeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +54,7 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
     private static final String FIELD_PLUGIN_EDITOR = "fieldPluginEditor";
     private static final String FIELD_EDITOR = "fieldEditor";
 
-    static class PropertyEditor extends RenderService {
+    class PropertyEditor extends RenderService {
         private static final long serialVersionUID = 1L;
 
         private ITypeDescriptor type;
@@ -73,14 +71,33 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
             // Field editor
             IFieldDescriptor descriptor = getFieldDescriptor();
             if (descriptor != null) {
-                add(new FieldEditor(FIELD_EDITOR, type, new Model(getFieldDescriptor()), edit));
+                type.addTypeListener(new ITypeListener() {
+                    private static final long serialVersionUID = 1L;
+
+                    public void fieldAdded(String field) {
+                    }
+
+                    public void fieldChanged(String field) {
+                        if (field.equals(PropertyEditor.this.edited.getString("field"))) {
+                            PropertyEditor.this.redraw();
+                            FieldPluginEditorPlugin.this.updatePreview();
+                            FieldPluginEditorPlugin.this.redraw();
+                        }
+                    }
+
+                    public void fieldRemoved(String field) {
+                    }
+
+                });
+                add(new FieldEditor(FIELD_EDITOR, type, new Model(descriptor), edit));
                 add(new FieldPluginEditor(FIELD_PLUGIN_EDITOR, new Model(edited), edit));
 
                 String subType = descriptor.getType();
                 Panel panel = new EmptyPanel(TEMPLATE_PARAMETER_EDITOR);
                 try {
                     IClusterConfig target = engine.getTemplate(engine.getType(subType), "edit");
-                    panel = new TemplateParameterEditor(TEMPLATE_PARAMETER_EDITOR, getClusterParameters(edit), target, edit);
+                    panel = new TemplateParameterEditor(TEMPLATE_PARAMETER_EDITOR, getClusterParameters(edit), target,
+                            edit);
                 } finally {
                     add(panel);
                 }
@@ -131,21 +148,12 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
 
         edit = config.getBoolean("builder.mode");
 
-        IPluginConfig editedConfig = getEditedPluginConfig();
-        editedConfig.addPluginConfigListener(new IPluginConfigListener() {
-            private static final long serialVersionUID = 1L;
-
-            public void onPluginConfigChanged() {
-                onModelChanged();
-            }
-        });
-
         try {
             ITypeDescriptor type = getTypeModel();
             IPluginConfig helperConfig = new JavaPluginConfig(config);
             helperConfig.put("wicket.id", config.getString("wicket.helper.id"));
-            helper = new PropertyEditor(getPluginContext(), helperConfig, getTemplateEngine(), getEditedPluginConfig(),
-                    type, edit);
+            helper = new PropertyEditor(getPluginContext(), helperConfig, getTemplateEngine(),
+                    getEditablePluginConfig(), type, edit);
 
             final String pluginId = config.getString("plugin.id");
             final IModelReference helperModelRef = context.getService(config.getString("model.plugin"),
@@ -179,24 +187,16 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
         return getPluginContext().getService(getEffectivePluginConfig().getString("engine"), ITemplateEngine.class);
     }
 
-    private IPluginConfig getEditedPluginConfig() {
-        IClusterConfig clusterConfig = (IClusterConfig) getModelObject();
-        List<IPluginConfig> plugins = clusterConfig.getPlugins();
-        for (IPluginConfig plugin : plugins) {
-            if (plugin.getName().equals(getPluginConfig().getString("plugin.id"))) {
-                return plugin;
-            }
-        }
-        throw new RuntimeException("Could not find plugin in cluster");
-    }
-
     private ITypeDescriptor getTypeModel() throws TemplateEngineException {
-        IPluginContext context = getPluginContext();
         IPluginConfig config = getEffectivePluginConfig();
-
-        IModelReference reference = context.getService(config.getString("wicket.model"), IModelReference.class);
         ITemplateEngine engine = getTemplateEngine();
-        return engine.getType(reference.getModel());
+        if (config.getString("type") == null) {
+            IPluginContext context = getPluginContext();
+            IModelReference reference = context.getService(config.getString("wicket.model"), IModelReference.class);
+            return engine.getType(reference.getModel());
+        } else {
+            return engine.getType(config.getString("type"));
+        }
     }
 
 }

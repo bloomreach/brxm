@@ -103,7 +103,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
                 for (IPluginConfig plugin : cluster.getPlugins()) {
                     String name = UUID.randomUUID().toString();
                     Node child = node.addNode(name, "frontend:plugin");
-                    JcrPluginConfig pluginConfig = new JcrPluginConfig(new JcrNodeModel(child), null);
+                    JcrPluginConfig pluginConfig = new JcrPluginConfig(new JcrNodeModel(child));
                     for (Map.Entry entry : (Set<Map.Entry>) ((Map) plugin).entrySet()) {
                         pluginConfig.put(entry.getKey(), entry.getValue());
                     }

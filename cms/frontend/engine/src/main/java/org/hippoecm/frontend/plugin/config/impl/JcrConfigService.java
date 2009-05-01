@@ -17,6 +17,8 @@ package org.hippoecm.frontend.plugin.config.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -60,23 +62,29 @@ public class JcrConfigService implements IServiceFactory<IPluginConfigService> {
         private static final long serialVersionUID = 1L;
 
         private IPluginContext context;
-        
+        // cache lookups to always return the same instance
+        private Map<String, IClusterConfig> cache;
+
         PluginConfigService(IPluginContext context) {
             this.context = context;
+            this.cache = new TreeMap<String, IClusterConfig>();
         }
-        
+
         public IClusterConfig getCluster(String key) {
-            IClusterConfig cluster = null;
-            try {
-                if (model.getNode().hasNode(key)) {
-                    Node clusterNode = model.getNode().getNode(key);
-                    JcrNodeModel clusterNodeModel = new JcrNodeModel(clusterNode);
-                    cluster = new JcrClusterConfig(clusterNodeModel, context);
+            if (!cache.containsKey(key)) {
+                IClusterConfig cluster = null;
+                try {
+                    if (model.getNode().hasNode(key)) {
+                        Node clusterNode = model.getNode().getNode(key);
+                        JcrNodeModel clusterNodeModel = new JcrNodeModel(clusterNode);
+                        cluster = new JcrClusterConfig(clusterNodeModel, context);
+                    }
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
                 }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
+                cache.put(key, cluster);
             }
-            return cluster;
+            return cache.get(key);
         }
 
         public List<String> listClusters(String folder) {

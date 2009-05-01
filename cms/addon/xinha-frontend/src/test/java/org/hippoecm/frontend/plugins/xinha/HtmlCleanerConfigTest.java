@@ -68,7 +68,7 @@ public class HtmlCleanerConfigTest extends TestCase {
     protected IPluginConfig getPluginConfig() throws Exception {
         Node cleanerConfigNode = root.getNode("cleaner.config");
         JcrNodeModel nodeModel = new JcrNodeModel(cleanerConfigNode);
-        return new JcrPluginConfig(nodeModel, null);
+        return new JcrPluginConfig(nodeModel);
     }
 
     @Test
