@@ -164,7 +164,10 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
 
     public void stop() {
         IPluginConfig editedConfig = getEditablePluginConfig();
-        editedConfig.removePluginConfigListener(pluginConfigListener);
+        // config may already have disappeared (causing this plugin to be stopped)
+        if (editedConfig != null) {
+            editedConfig.removePluginConfigListener(pluginConfigListener);
+        }
     }
 
     @Override
@@ -221,7 +224,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
                 return plugin;
             }
         }
-        throw new RuntimeException("Could not find plugin in cluster");
+        return null;
     }
 
 }

@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.wicket.Application;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.resource.IResourceStream;
@@ -26,13 +23,13 @@ import org.hippoecm.frontend.editor.plugins.field.FieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginEditorPlugin;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
+import org.hippoecm.frontend.plugin.config.impl.AbstractClusterDecorator;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PreviewClusterConfig extends JavaClusterConfig {
+public class PreviewClusterConfig extends AbstractClusterDecorator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -57,6 +54,9 @@ public class PreviewClusterConfig extends JavaClusterConfig {
     }
 
     protected String getPluginConfigEditorClass(String pluginClass) {
+        if (pluginClass == null) {
+            return null;
+        }
         try {
             Class<?> clazz = Class.forName(pluginClass);
             if (FieldPlugin.class.isAssignableFrom(clazz)) {
@@ -78,21 +78,6 @@ public class PreviewClusterConfig extends JavaClusterConfig {
         return null;
     }
 
-    @Override
-    public List<IPluginConfig> getPlugins() {
-        List<IPluginConfig> plugins = super.getPlugins();
-        List<IPluginConfig> result = new LinkedList<IPluginConfig>();
-        for (final IPluginConfig config : plugins) {
-            String editorClass = getPluginConfigEditorClass(config.getString("plugin.class"));
-            if (editorClass != null) {
-                result.add(getEditorConfig(editorClass, config));
-            } else {
-                result.add(config);
-            }
-        }
-        return result;
-    }
-
     private IPluginConfig getEditorConfig(String clazz, IPluginConfig config) {
         IPluginConfig previewWrapper = new JavaPluginConfig(config.getName() + "-preview");
         previewWrapper.put("plugin.class", clazz);
@@ -109,5 +94,19 @@ public class PreviewClusterConfig extends JavaClusterConfig {
         }
 
         return previewWrapper;
+    }
+
+    @Override
+    protected Object decorate(Object object) {
+        if (object instanceof IPluginConfig) {
+            IPluginConfig config = (IPluginConfig) object;
+            String editorClass = getPluginConfigEditorClass(config.getString("plugin.class"));
+            if (editorClass != null) {
+                return getEditorConfig(editorClass, config);
+            } else {
+                return config;
+            }
+        }
+        return object;
     }
 }

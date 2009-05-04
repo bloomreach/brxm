@@ -187,7 +187,7 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
                 return getNode().getProperty(path).getBoolean();
             }
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
         return false;
     }

@@ -444,7 +444,6 @@ public class JcrObservationManager implements ObservationManager {
                 }
             } catch (PathNotFoundException ex) {
                 log.warn("Root node no longer exists: " + ex.getMessage());
-                ex.printStackTrace();
                 dispose();
                 return;
             } catch (RepositoryException ex) {

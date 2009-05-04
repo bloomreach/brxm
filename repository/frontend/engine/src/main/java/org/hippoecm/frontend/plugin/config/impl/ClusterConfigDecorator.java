@@ -15,17 +15,14 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import java.util.AbstractList;
-import java.util.AbstractSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.TreeMap;
 
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public class ClusterConfigDecorator extends JavaClusterConfig {
+public class ClusterConfigDecorator extends AbstractClusterDecorator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -50,80 +47,40 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
     }
 
     private String clusterId;
+    private Map<String, Object> values;
 
     public ClusterConfigDecorator(IClusterConfig upstream, final String clusterId) {
         super(upstream);
         this.clusterId = clusterId;
+        this.values = new TreeMap<String, Object>();
     }
 
+    @Override
+    public Object put(Object key, Object value) {
+        String strKey = (String) key;
+        List<String>[] lists = new List[] { 
+                ((IClusterConfig) upstream).getProperties(),
+                ((IClusterConfig) upstream).getServices(),
+                ((IClusterConfig) upstream).getReferences()
+        };
+        for (List<String> list : lists) {
+            if (list.contains(strKey)) {
+               return values.put(strKey, value); 
+            }
+        }
+        return super.put(strKey, value);
+    }
+    
     @Override
     public Object get(Object key) {
-        Object obj = super.get(key);
-        if (obj != null) {
-            // Intercept values of the form "${" + variable + "}" + ...
-            // These values are rewritten using the variables
-            return decorate(obj);
+        if (values.containsKey(key)) {
+            return values.get(key);
         }
-        return null;
+        return super.get(key);
     }
 
     @Override
-    public Set entrySet() {
-        final Set orig = super.entrySet();
-        return new AbstractSet() {
-
-            @Override
-            public Iterator iterator() {
-                final Iterator origIter = orig.iterator();
-                return new Iterator() {
-
-                    public boolean hasNext() {
-                        return origIter.hasNext();
-                    }
-
-                    public Object next() {
-                        final Entry entry = (Map.Entry) origIter.next();
-                        if (entry != null) {
-                            return new Map.Entry() {
-
-                                public Object getKey() {
-                                    return entry.getKey();
-                                }
-
-                                public Object getValue() {
-                                    return ClusterConfigDecorator.this.get(entry.getKey());
-                                }
-
-                                public Object setValue(Object value) {
-                                    return ClusterConfigDecorator.this.put(entry.getKey(), value);
-                                }
-
-                            };
-                        }
-                        return null;
-                    }
-
-                    public void remove() {
-                        origIter.remove();
-                    }
-
-                };
-            }
-
-            @Override
-            public int size() {
-                return orig.size();
-            }
-
-        };
-    }
-
-    @Override
-    protected IPluginConfig newPluginConfig(IPluginConfig config) {
-        return new PluginConfigDecorator(config);
-    }
-
-    private Object decorate(Object object) {
+    protected Object decorate(Object object) {
         if (object instanceof String) {
             String value = (String) object;
             if (value.length() > 2 && value.charAt(0) == '$' && value.charAt(1) == '{') {
@@ -143,22 +100,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
             }
             return value;
         } else if (object instanceof IPluginConfig) {
-            return newPluginConfig((IPluginConfig) object);
-        } else if (object instanceof List) {
-            final List list = (List) object;
-            return new AbstractList() {
-
-                @Override
-                public Object get(int index) {
-                    return decorate(list.get(index));
-                }
-
-                @Override
-                public int size() {
-                    return list.size();
-                }
-
-            };
+            return new PluginConfigDecorator((IPluginConfig) object);
         }
         return object;
     }
