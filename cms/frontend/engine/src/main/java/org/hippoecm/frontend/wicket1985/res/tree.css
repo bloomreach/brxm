@@ -41,7 +41,7 @@ div.wicket-tree div.row-selected {
 div.wicket-tree div.a_ {
 	/* prevent hiding text */
 	padding-left: 1em; margin: 0px; 
-	width: 2000px;
+	/*width: 2000px;*/
 }
 
 div.wicket-tree span.junction,
