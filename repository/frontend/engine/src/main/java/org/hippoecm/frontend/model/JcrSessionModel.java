@@ -62,6 +62,11 @@ public class JcrSessionModel extends LoadableDetachableModel {
 
     public JcrSessionModel(ValueMap credentials) {
         this.credentials = credentials;
+        /* Warning: non-trivial side effect of load() operation below,
+         * this causes the invalid-login (username/password mismatch)
+         * to be displayed.
+         */
+        load();
     }
 
     public void logout() {
