@@ -1741,68 +1741,6 @@
         <sv:property sv:name="hippo:uri" sv:type="String">
           <sv:value>http://www.hippoecm.org/nt/1.3</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:supertype" sv:type="String">
-          <sv:value>nt:unstructured</sv:value>
-        </sv:property>
-
-        <!-- paths -->
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>hippo:paths</sv:value>
-          </sv:property>
-        </sv:node>
-
-        <!-- content -->
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>Xinha</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>content</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-
-        <!-- state -->
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>state</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-
-        <!-- language -->
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>language</sv:value>
-          </sv:property>
-        </sv:node>
-
       </sv:node>
     </sv:node>
 
