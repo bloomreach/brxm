@@ -81,7 +81,6 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
                         if (field.equals(PropertyEditor.this.edited.getString("field"))) {
                             PropertyEditor.this.redraw();
                             FieldPluginEditorPlugin.this.updatePreview();
-                            FieldPluginEditorPlugin.this.redraw();
                         }
                     }
 
@@ -150,7 +149,8 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
 
         try {
             ITypeDescriptor type = getTypeModel();
-            IPluginConfig helperConfig = new JavaPluginConfig(config);
+            IPluginConfig helperConfig = new JavaPluginConfig(config.getName() + ".helper");
+            helperConfig.putAll(config);
             helperConfig.put("wicket.id", config.getString("wicket.helper.id"));
             helper = new PropertyEditor(getPluginContext(), helperConfig, getTemplateEngine(),
                     getEditablePluginConfig(), type, edit);

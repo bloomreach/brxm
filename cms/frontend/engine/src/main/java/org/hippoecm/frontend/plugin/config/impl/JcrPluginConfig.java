@@ -416,7 +416,9 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
     protected JcrPluginConfig wrapConfig(Node node) {
         JcrNodeModel nodeModel = new JcrNodeModel(node);
         if (!childConfigs.containsKey(nodeModel)) {
-            childConfigs.put(nodeModel, new JcrPluginConfig(nodeModel, context));
+            JcrPluginConfig childConfig = new JcrPluginConfig(nodeModel, context);
+            childConfig.init();
+            childConfigs.put(nodeModel, childConfig);
         }
         JcrPluginConfig result = childConfigs.get(nodeModel);
         result.nodeModel.detach();

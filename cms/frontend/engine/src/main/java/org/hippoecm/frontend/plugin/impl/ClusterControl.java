@@ -169,6 +169,9 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
     }
 
     public void detach() {
+        if (config instanceof IDetachable) {
+            ((IDetachable) config).detach();
+        }
         for (PluginContext context : contexts) {
             if (context != null) {
                 context.detach();

@@ -260,7 +260,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 }
 
                 public void onPluginChanged(IPluginConfig config) {
-                    notifyObservers();
+//                    notifyObservers();
                 }
 
             });

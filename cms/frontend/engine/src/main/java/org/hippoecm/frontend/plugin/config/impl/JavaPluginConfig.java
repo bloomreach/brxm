@@ -58,16 +58,18 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
 
     public JavaPluginConfig(IPluginConfig parentConfig) {
         super(parentConfig == null ? new MiniMap(0) : parentConfig);
-        for (IPluginConfig config : parentConfig.getPluginConfigSet()) {
-            configSet.add(newPluginConfig(config));
+        if (parentConfig != null) {
+            for (IPluginConfig config : parentConfig.getPluginConfigSet()) {
+                configSet.add(newPluginConfig(config));
+            }
+            pluginInstanceName = parentConfig.getName();
         }
-        pluginInstanceName = parentConfig.getName();
     }
 
-    protected IPluginConfig newPluginConfig(IPluginConfig config) {
-        return new JavaPluginConfig(config);
+    protected IPluginConfig newPluginConfig(IPluginConfig source) {
+        return new JavaPluginConfig(source);
     }
-
+    
     public String getName() {
         return pluginInstanceName;
     }
@@ -78,13 +80,10 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
 
     public IPluginConfig getPluginConfig(Object key) {
         Object value = get(key);
-        if (value instanceof IPluginConfig) {
-            return newPluginConfig((IPluginConfig) value);
-        } else if (value instanceof List && ((List) value).size() > 0) {
-            return newPluginConfig((IPluginConfig) ((List) value).get(0));
-        } else {
-            return new JavaPluginConfig();
+        if (value instanceof List && ((List) value).size() > 0) {
+            return (IPluginConfig) ((List) value).get(0);
         }
+        return (IPluginConfig) value;
     }
 
     public boolean isImmutable() {

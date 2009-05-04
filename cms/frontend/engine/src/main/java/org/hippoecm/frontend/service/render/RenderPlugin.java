@@ -77,7 +77,7 @@ public class RenderPlugin extends RenderService implements IPlugin {
     protected Component newPlugin(String id, IPluginConfig config) {
         IPluginContext pluginContext = getPluginContext();
         JavaClusterConfig childClusterConfig = new JavaClusterConfig();
-        IPluginConfig childPluginConfig = new InheritingPluginConfig(new JavaPluginConfig(config));
+        IPluginConfig childPluginConfig = new JavaPluginConfig(new InheritingPluginConfig(config));
 
         String serviceId = getPluginContext().getReference(this).getServiceId() + "." + "id" + (++childPluginCounter);
         childPluginConfig.put(RenderService.WICKET_ID, serviceId);
