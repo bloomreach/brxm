@@ -40,6 +40,7 @@ import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -220,7 +221,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
         add(moveAction = new WorkflowAction("move", new StringResourceModel("move-label", this, null)) {
             public String name;
-            public JcrNodeModel destination;
+            public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) { };
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "move-16.png");
@@ -232,8 +233,11 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
             @Override
             protected String execute(Workflow wf) throws Exception {
+                if(name == null || name.trim().equals("")) {
+                    throw new WorkflowException("No name for destination given");
+                }
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.move(new Document(destination.getNode().getUUID()), NodeNameCodec.encode(name, true));
+                workflow.move(new Document(destination.getNodeModel().getNode().getUUID()), NodeNameCodec.encode(name, true));
                 return null;
             }
         });
@@ -251,6 +255,9 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
             @Override
             protected String execute(Workflow wf) throws Exception {
+                if(name == null || name.trim().equals("")) {
+                    throw new WorkflowException("No name for destination given");
+                }
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 workflow.rename(NodeNameCodec.encode(name, true));
                 return null;
@@ -259,7 +266,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
         add(copyAction = new WorkflowAction("copy", new StringResourceModel("copy-label", this, null)) {
             public String name;
-            public JcrNodeModel destination;
+            public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) { };
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "copy-16.png");
@@ -271,8 +278,11 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
             @Override
             protected String execute(Workflow wf) throws Exception {
+                if(name == null || name.trim().equals("")) {
+                    throw new WorkflowException("No name for destination given");
+                }
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.copy(new Document(destination.getNode().getUUID()), NodeNameCodec.encode(name, true));
+                workflow.copy(new Document(destination.getNodeModel().getNode().getUUID()), NodeNameCodec.encode(name, true));
                 return null;
             }
         });

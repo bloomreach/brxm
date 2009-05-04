@@ -44,6 +44,7 @@ import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.SearchingTranslatorPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
+import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -61,6 +62,7 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 
+@Deprecated
 public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends RenderPlugin implements IActivator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: AbstractWorkflowPlugin.java 16815 2009-03-11 16:09:10Z fvlankvelt $";
@@ -80,6 +82,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
     public void stop() {
     }
     
+    @Deprecated
     public class WorkflowAction extends StdWorkflow {
         ResourceReference iconModel;
 
@@ -153,6 +156,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             throw new WorkflowException("unsupported operation");
         }
 
+        @Deprecated
         public class WorkflowDialog extends AbstractDialog implements IStringResourceProvider {
 
             private static final long serialVersionUID = 1L;
@@ -202,7 +206,8 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
         }
 
-        public class NameDialog extends WorkflowDialog {
+       @Deprecated
+       public class NameDialog extends WorkflowDialog {
             private static final long serialVersionUID = 1L;
             private IModel title;
 
@@ -218,13 +223,14 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
         }
 
+        @Deprecated
         public class DestinationDialog extends WorkflowDialog {
 
             private IModel title;
             private IRenderService dialogRenderer;
             private IClusterControl control;
 
-            public DestinationDialog(IModel title, IModel question, PropertyModel nameModel, final JcrNodeModel destination) {
+            public DestinationDialog(IModel title, IModel question, PropertyModel nameModel, final NodeModelWrapper destination) {
                 super();
                 this.title = title;
                 add(new Label("question", question));
@@ -245,7 +251,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                     @Override
                     public void setModel(IModel model) {
                         if (model != null && model instanceof JcrNodeModel && ((JcrNodeModel) model).getNode() != null) {
-                            destination.setObject(model.getObject());
+                            destination.setChainedModel(model);
                         }
                         super.setModel(model);
                     }
@@ -280,6 +286,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
         }
 
+        @Deprecated
         public class DateDialog extends WorkflowDialog {
 
             protected Button now;
