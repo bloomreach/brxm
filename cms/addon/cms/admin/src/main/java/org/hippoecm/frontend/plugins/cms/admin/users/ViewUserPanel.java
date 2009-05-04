@@ -15,9 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
@@ -29,6 +33,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -40,6 +45,7 @@ import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxBreadCrumbPanelLink;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.ConfirmDeleteDialog;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,13 +80,14 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
 
         // local memberships
         add(new Label("local-memberships-label", new ResourceModel("user-local-memberships")));
-        add(new MembershipsListView("local-memberships", "local-membership", user.getLocalMemberships()));
+        add(new MembershipsListView("local-memberships", "local-membership", new PropertyModel(user, "localMemberships")));
+        //add(new MembershipsListView("local-memberships", "local-membership", new Model().valueOf(user.getLocalMemberships())));
 
         // external memberships
         Label external = new Label("external-memberships-label", new ResourceModel("user-external-memberships"));
         external.setVisible((user.getExternalMemberships().size() > 0));
         add(external);
-        add(new MembershipsListView("external-memberships", "external-membership", user.getExternalMemberships()));
+        add(new MembershipsListView("external-memberships", "external-membership", new PropertyModel(user, "externalMemberships")));
 
         // properties
         add(new Label("properties-label", new ResourceModel("user-properties")) {
@@ -165,9 +172,10 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
         private static final long serialVersionUID = 1L;
         private String labelId;
 
-        public MembershipsListView(final String id, final String labelId, final List<DetachableGroup> list) {
-            super(id, list);
+        public MembershipsListView(final String id, final String labelId, IModel listModel) {
+            super(id, listModel);
             this.labelId = labelId;
+            setReuseItems(false);
         }
 
         protected void populateItem(ListItem item) {

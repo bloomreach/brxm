@@ -71,7 +71,7 @@ public class User implements Comparable<User>, IClusterable {
     private String provider;
 
     private Map<String, String> properties = new TreeMap<String, String>();
-    private List<DetachableGroup> externalMemberships;
+    private transient List<DetachableGroup> externalMemberships;
 
     private transient Node node;
 
