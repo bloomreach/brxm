@@ -89,6 +89,7 @@ public class RenderPlugin extends RenderService implements IPlugin {
             childPlugins.put(id, entry);
         } else {
             entry.control.stop();
+            entry.serviceId = serviceId;
         }
 
         entry.control = pluginContext.newCluster(childClusterConfig, null);
