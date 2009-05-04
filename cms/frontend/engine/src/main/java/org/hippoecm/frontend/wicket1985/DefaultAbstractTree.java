@@ -140,9 +140,13 @@ public abstract class DefaultAbstractTree extends AbstractTree
 	private static final ResourceReference ITEM = new ResourceReference(DefaultAbstractTree.class,
 		"res/item.gif");
 
-    /** Reference to the icon for context menus */
-    private static final ResourceReference MENU = new ResourceReference(DefaultAbstractTree.class,
-        "res/menu.png");
+	/** Reference to the icon for context menus */
+	private static final ResourceReference MENU = new ResourceReference(DefaultAbstractTree.class,
+        	"res/menu.png");
+
+	/** Reference to the javascript that adds hover behavior to the tree's div */
+	private static final ResourceReference IE6_HOVER_FIX = new ResourceReference(DefaultAbstractTree.class,
+		"res/ie6_hover_fix.js");
 
 	/** The link type, default is {@link LinkType#AJAX ajax}. */
 	private LinkType linkType = LinkType.AJAX;
@@ -673,6 +677,30 @@ public abstract class DefaultAbstractTree extends AbstractTree
 		if (css != null)
 		{
 			add(HeaderContributor.forCss(css.getScope(), css.getName()));
+		}
+	}
+
+	@Override
+	public void onTargetRespond(AjaxRequestTarget target) {
+		super.onTargetRespond(target);
+		WebClientInfo info = (WebClientInfo) getRequestCycle().getClientInfo();
+		if (info != null) {
+			String userAgent = info.getUserAgent().toLowerCase();
+			if (userAgent.indexOf("msie 6") > -1) {
+				target.getHeaderResponse().renderOnDomReadyJavascript("fixIE6Hover('row', 'div', 'context_hover');");
+			}
+		}
+	}
+
+	@Override
+	public void renderHead(HtmlHeaderContainer container) {
+		super.renderHead(container);
+		WebClientInfo info = (WebClientInfo) getRequestCycle().getClientInfo();
+		if (info != null) {
+			String userAgent = info.getUserAgent().toLowerCase();
+			if (userAgent.indexOf("msie 6") > -1) {
+				container.getHeaderResponse().renderJavascriptReference(IE6_HOVER_FIX);
+			}
 		}
 	}
 
