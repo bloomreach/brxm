@@ -122,7 +122,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
         @Override
         public final void onSubmit() {
             UserSession userSession = (UserSession)getSession();
-            userSession.setJcrSessionModel(new JcrSessionModel(credentials) {
+            JcrSessionModel sessionModel = new JcrSessionModel(credentials) {
                 @Override
                 protected Object load() {
                     javax.jcr.Session result = null;
@@ -194,10 +194,10 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                     }
                     return result;
                 }
-            });
+            };
+            userSession.setJcrSessionModel(sessionModel);
             ConcurrentLoginFilter.validateSession(((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true), usernameTextField.getModelObjectAsString(), false);
             userSession.setLocale(new Locale(selectedLocale));
-            userSession.getJcrSession();
             setResponsePage(new Home());
         }
     }
