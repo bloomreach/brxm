@@ -150,7 +150,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             }
             @Override
             protected Dialog createRequestDialog() {
-                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-publish-text", BasicReviewedActionsWorkflowPlugin.this, null)) {
+                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-publish-text", BasicReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "date")) {
                     @Override
                     public IModel getTitle() {
                         return new StringResourceModel("schedule-publish-title", BasicReviewedActionsWorkflowPlugin.this, null);
@@ -176,7 +176,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             }
             @Override
             protected Dialog createRequestDialog() {
-                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-depublish-text", BasicReviewedActionsWorkflowPlugin.this, null)) {
+                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-depublish-text", BasicReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "date")) {
                     @Override
                     public IModel getTitle() {
                         return new StringResourceModel("schedule-depublish-title", BasicReviewedActionsWorkflowPlugin.this, null);

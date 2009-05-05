@@ -291,9 +291,8 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
             protected Button now;
 
-            public DateDialog(IModel question) {
+            public DateDialog(IModel question, final PropertyModel dateModel) {
                 super();
-                final PropertyModel dateModel = new PropertyModel(WorkflowAction.this, "date");
 
                 add(new Label("question", question));
 

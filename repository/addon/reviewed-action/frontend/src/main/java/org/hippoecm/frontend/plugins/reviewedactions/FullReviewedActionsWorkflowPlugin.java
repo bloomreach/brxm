@@ -175,7 +175,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
             @Override
             protected Dialog createRequestDialog() {
-                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-publish-text", FullReviewedActionsWorkflowPlugin.this, null)) {
+                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-publish-text", FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "date")) {
                     @Override
                     public IModel getTitle() {
                         return new StringResourceModel("schedule-publish-title", FullReviewedActionsWorkflowPlugin.this, null);
@@ -185,9 +185,9 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             protected String execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow)wf;
                 if (date != null) {
-                    workflow.requestPublication(date);
+                    workflow.publish(date);
                 } else {
-                    workflow.requestPublication();
+                    workflow.publish();
                 }
                 return null;
             }
@@ -201,7 +201,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
             @Override
             protected Dialog createRequestDialog() {
-                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-depublish-text", FullReviewedActionsWorkflowPlugin.this, null)) {
+                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-depublish-text", FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "date")) {
                     @Override
                     public IModel getTitle() {
                         return new StringResourceModel("schedule-depublish-title", FullReviewedActionsWorkflowPlugin.this, null);
@@ -211,9 +211,9 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             protected String execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow)wf;
                 if (date != null) {
-                    workflow.requestDepublication(date);
+                    workflow.depublish(date);
                 } else {
-                    workflow.requestDepublication();
+                    workflow.depublish();
                 }
                 return null;
             }
