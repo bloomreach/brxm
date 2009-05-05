@@ -925,7 +925,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                        new WorkflowChainHandler(workflowNode, module) {
                            @Override
                            public void invoke(Method method, Object[] args) throws RepositoryException {
-                               submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, document, method, args));
+                               module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, document, method, args));
                            }
                        });
             }
@@ -940,7 +940,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                        new WorkflowChainHandler(workflowNode, module) {
                            @Override
                            public void invoke(Method method, Object[] args) throws RepositoryException {
-                               submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, subject, method, args));
+                               module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, subject, method, args));
                            }
                        });
             }
