@@ -64,7 +64,6 @@ final class UpdaterProperty extends UpdaterItem implements Property {
             return false;
     }
 
-
     void commit() throws RepositoryException {
         if(origin != null) {
             if(values != null) {

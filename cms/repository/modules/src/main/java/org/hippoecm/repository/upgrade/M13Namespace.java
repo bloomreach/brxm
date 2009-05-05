@@ -81,8 +81,9 @@ public class M13Namespace extends M13 implements UpdaterModule {
                 }
                 if(rename("hippo:roles").equals(rename(prop.getName()))) {
                     context.setName(prop, rename("hippo:privileges"));
-                }
-                if(rename("frontend:overrides").equals(rename(prop.getName()))) {
+                } else if(rename("hippo:related").equals(rename(prop.getName()))) {
+                    prop.remove();
+                } else if(rename("frontend:overrides").equals(rename(prop.getName()))) {
                     prop.remove();
                 }
             }
