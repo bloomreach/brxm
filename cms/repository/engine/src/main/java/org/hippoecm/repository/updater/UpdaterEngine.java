@@ -355,8 +355,8 @@ public class UpdaterEngine {
                         log.info("migration cycle save");
                         subSession.save();
                         log.info("migration cycle saved");
-                        log.info("migration cycle wrapup");
                         engine.wrapup();
+                        log.info("migration cycle wrapup");
                     } catch(UpdaterException ex) {
                         subSession.refresh(false);
                         log.error("error in migration cycle, skipping but might lead to serious errors");

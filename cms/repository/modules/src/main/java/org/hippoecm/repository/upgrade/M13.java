@@ -22,12 +22,15 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -73,15 +76,6 @@ public class M13 {
         String newNamespaceURI;
         String cndName;
         InputStream cndStream;
-        public NamespaceMapping(String prefix, String uri, String cndName, InputStream cndStream) {
-            this.prefix = prefix;
-            oldVersion = "1.0";
-            newVersion = "1.1";
-            oldNamespaceURI = uri + oldVersion;
-            newNamespaceURI = uri + newVersion;
-            this.cndName = cndName;
-            this.cndStream = cndStream;
-        }
         public NamespaceMapping(String prefix, String uri, String oldVersion, String newVersion, String cndName, InputStream cndStream) {
             this.prefix = prefix;
             this.oldVersion = oldVersion;
@@ -93,27 +87,30 @@ public class M13 {
         }
     }
 
-    static List<NamespaceMapping> mappings;
-    static Set<String> prefixes;
+    static private LinkedHashMap<String,NamespaceMapping> mappings;
+
+    static void addMapping(NamespaceMapping mapping) {
+        mappings.put(mapping.prefix, mapping);
+    }
+
+    Collection<NamespaceMapping> getNamespaceMappings() {
+        return mappings.values();
+    }
 
     static void initialize() {
-        mappings = new LinkedList<NamespaceMapping>();
-        prefixes = new HashSet<String>();
+        mappings = new LinkedHashMap<String,NamespaceMapping>();
         try {
             Class clazz = Class.forName("org.hippoecm.repository.LocalHippoRepository");
-            mappings.add(new NamespaceMapping("hippo",            "http://www.hippoecm.org/nt/",                "1.2", "1.3", "repository.cnd",       clazz.getResourceAsStream("repository.cnd")));
-            mappings.add(new NamespaceMapping("hippostd",         "http://www.hippoecm.org/hippostd/nt/",       "1.2", "1.3", "hippostd.cnd",         clazz.getResourceAsStream("hippostd.cnd")));
-            mappings.add(new NamespaceMapping("hippolog",         "http://www.hippoecm.org/hippolog/nt/",       "1.2", "1.3", "logging.cnd",          clazz.getResourceAsStream("logging.cnd")));
-            mappings.add(new NamespaceMapping("frontend",         "http://www.hippoecm.org/frontend/nt/",       "1.3", "1.4", "frontend.cnd",         clazz.getResourceAsStream("frontend.cnd")));
-	    mappings.add(new NamespaceMapping("reporting",        "http://www.hippoecm.org/reporting/nt/",      "1.3", "1.4", "reporting.cnd",        clazz.getResourceAsStream("reporting.cnd")));
-            mappings.add(new NamespaceMapping("defaultcontent",   "http://www.hippoecm.org/defaultcontent/nt/", "1.3", "1.4", "defaultcontent.cnd",   clazz.getClassLoader().getResourceAsStream("defaultcontent.cnd")));
-            mappings.add(new NamespaceMapping("hippoldap",        "http://www.hippoecm.org/hippoldap/nt/",      "1.2", "1.3", "hippoldap.cnd",        clazz.getResourceAsStream("hippoldap.cnd")));
-	    mappings.add(new NamespaceMapping("hippogallery",     "http://www.hippoecm.org/hippogallery/nt/",   "1.2", "1.3", "hippogallery.cnd",     clazz.getClassLoader().getResourceAsStream("hippogallery.cnd")));
-            mappings.add(new NamespaceMapping("hippohtmlcleaner", "http://www.hippoecm.org/htmlcleaner/nt/",    "1.1", "1.2", "hippohtmlcleaner.cnd", clazz.getClassLoader().getResourceAsStream("hippohtmlcleaner.cnd")));
-            mappings.add(new NamespaceMapping("hipposched",       "http://www.hippoecm.org/hipposched/nt/",     "1.1", "1.2", "hipposched.cnd",       clazz.getClassLoader().getResourceAsStream("hipposched.cnd")));
-            for (NamespaceMapping mapping : mappings) {
-                prefixes.add(mapping.prefix);
-            }
+            addMapping(new NamespaceMapping("hippo",            "http://www.hippoecm.org/nt/",                "1.2", "1.3", "repository.cnd",       clazz.getResourceAsStream("repository.cnd")));
+            addMapping(new NamespaceMapping("hippostd",         "http://www.hippoecm.org/hippostd/nt/",       "1.2", "1.3", "hippostd.cnd",         clazz.getResourceAsStream("hippostd-migration.cnd")));
+            addMapping(new NamespaceMapping("hippolog",         "http://www.hippoecm.org/hippolog/nt/",       "1.2", "1.3", "logging.cnd",          clazz.getResourceAsStream("logging.cnd")));
+            addMapping(new NamespaceMapping("frontend",         "http://www.hippoecm.org/frontend/nt/",       "1.3", "1.4", "frontend.cnd",         clazz.getResourceAsStream("frontend.cnd")));
+            addMapping(new NamespaceMapping("reporting",        "http://www.hippoecm.org/reporting/nt/",      "1.3", "1.4", "reporting.cnd",        clazz.getResourceAsStream("reporting.cnd")));
+            addMapping(new NamespaceMapping("defaultcontent",   "http://www.hippoecm.org/defaultcontent/nt/", "1.3", "1.4", "defaultcontent.cnd",   clazz.getClassLoader().getResourceAsStream("defaultcontent.cnd")));
+            addMapping(new NamespaceMapping("hippoldap",        "http://www.hippoecm.org/hippoldap/nt/",      "1.2", "1.3", "hippoldap.cnd",        clazz.getResourceAsStream("hippoldap.cnd")));
+            addMapping(new NamespaceMapping("hippogallery",     "http://www.hippoecm.org/hippogallery/nt/",   "1.2", "1.3", "hippogallery.cnd",     clazz.getClassLoader().getResourceAsStream("hippogallery.cnd")));
+            addMapping(new NamespaceMapping("hippohtmlcleaner", "http://www.hippoecm.org/htmlcleaner/nt/",    "1.1", "1.2", "hippohtmlcleaner.cnd", clazz.getClassLoader().getResourceAsStream("hippohtmlcleaner.cnd")));
+            addMapping(new NamespaceMapping("hipposched",       "http://www.hippoecm.org/hipposched/nt/",     "1.1", "1.2", "hipposched.cnd",       clazz.getClassLoader().getResourceAsStream("hipposched.cnd")));
         } catch (ClassNotFoundException ex) {
         }
     }
@@ -122,7 +119,7 @@ public class M13 {
     }
 
     protected void initializeDerivedNodeTypes(Workspace workspace) throws RepositoryException {
-        CND cnd = new CND(workspace, prefixes);
+        CND cnd = new CND(workspace, new TreeSet<String>(mappings.keySet()));
         Set<String> addedPrefixes = cnd.addSubtypedNamespaces();
         for(String namespace : addedPrefixes) {
             ByteArrayOutputStream bastream = new ByteArrayOutputStream();
@@ -133,7 +130,7 @@ public class M13 {
                 @Override
                 protected String getPrefixNamespaceURI(String prefix) throws RepositoryException {
                     String uri = super.getPrefixNamespaceURI(prefix);
-                    if(M13.prefixes.contains(prefix)) {
+                    if(M13.mappings.containsKey(prefix)) {
                         int pos = uri.lastIndexOf('.')+1;
                         uri = uri.substring(0, pos) + (Integer.parseInt(uri.substring(pos)) + 1);
                     }
@@ -147,13 +144,12 @@ public class M13 {
             String newVersion = oldVersion.substring(0, oldVersion.lastIndexOf('.')+1) +
                 (Integer.parseInt(oldVersion.substring(oldVersion.lastIndexOf('.')+1)) + 1);
             namespaceURI = namespaceURI.substring(0, namespaceURI.lastIndexOf('/')+1);
-            mappings.add(new NamespaceMapping(namespace, namespaceURI, oldVersion, newVersion, namespace + ".cnd", new ByteArrayInputStream(bastream.toByteArray())));
+            addMapping(new NamespaceMapping(namespace, namespaceURI, oldVersion, newVersion, namespace + ".cnd", new ByteArrayInputStream(bastream.toByteArray())));
         }
     }
 
     protected static void loadNodeTypes(Workspace workspace, String cndName, InputStream cndStream) {
         try {
-            System.err.println("BERRY#1 "+cndName+" "+cndStream);
             CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cndStream), cndName);
             List ntdList = cndReader.getNodeTypeDefs();
             NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl)workspace.getNodeTypeManager();
@@ -165,23 +161,38 @@ public class M13 {
                 try {
                     EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
                 } catch (NamespaceException ex) {
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage()); ex.printStackTrace();
                 } catch (InvalidNodeTypeDefException ex) {
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage()); ex.printStackTrace();
                 } catch (RepositoryException ex) {
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage()); ex.printStackTrace();
                 }
             }
         } catch (ParseException ex) {
+            System.err.println(ex.getClass().getName()+": "+ex.getMessage()); ex.printStackTrace();
         } catch (RepositoryException ex) {
+            System.err.println(ex.getClass().getName()+": "+ex.getMessage()); ex.printStackTrace();
         }
     }
 
     protected final String rename(String name) {
-        return name.substring(0, name.indexOf(":")) + "_1.1:" + name.substring(name.indexOf(":") + 1);
+        int pos = name.indexOf(":");
+        if(pos > 0) {
+        NamespaceMapping mapping = mappings.get(name.substring(0, pos));
+        if(mapping != null) {
+            return mapping.prefix + "_" + mapping.newVersion + ":" + name.substring(name.indexOf(":") + 1);
+        } else {
+            return name;
+        }
+        } else {
+            return name;
+        }
     }
 
     protected final boolean isPrefix(String name) {
         int position = name.indexOf(":");
         if (position >= 0) {
-            return prefixes.contains(name.substring(0, position));
+            return mappings.containsKey(name.substring(0, position));
         } else {
             return false;
         }
@@ -313,8 +324,9 @@ public class M13 {
             String ntprefix = nt.getName();
             if (ntprefix.contains(":")) {
                 ntprefix = ntprefix.substring(0, ntprefix.indexOf(":"));
-                if(nodeTypes.contains(nt))
+                if(nodeTypes.contains(nt)) {
                     return ntprefix;
+                }
                 if (prefixes.contains(ntprefix)) {
                     nodeTypes.add(nt);
                     NodeType[] superNodeTypes = nt.getDeclaredSupertypes();
@@ -325,8 +337,9 @@ public class M13 {
                     });
                     for (NodeType superNodeType : superNodeTypes) {
                         String superPrefix = processNodeType(superNodeType);
-                        if (superPrefix != null)
+                        if (superPrefix != null) {
                             namespaces.add(superPrefix);
+                        }
                     }
                     PropertyDefinition[] propertyDefinitions = nt.getDeclaredPropertyDefinitions();
                     Arrays.sort(propertyDefinitions, new Comparator<PropertyDefinition>() {
@@ -384,10 +397,11 @@ public class M13 {
 
         public void writeTo(PrintWriter out) throws RepositoryException {
             for (String prefix : namespaces) {
+                String uri = getPrefixNamespaceURI(prefix);
                 out.print("<");
                 out.print(prefix);
                 out.print("='");
-                out.print(escape(getPrefixNamespaceURI(prefix)));
+                out.print(escape(uri));
                 out.println("'>");
             }
             for (NodeType nt : nodeTypes) {

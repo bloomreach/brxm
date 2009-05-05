@@ -44,12 +44,15 @@ public class M13Namespace extends M13 implements UpdaterModule {
                 if (level == 0) {
                     initializeDerivedNodeTypes(node.getSession().getWorkspace());
                     NamespaceRegistry nsReg = node.getSession().getWorkspace().getNamespaceRegistry();
-                    for(NamespaceMapping mapping : mappings) {
+                    for(NamespaceMapping mapping : getNamespaceMappings()) {
                         nsReg.registerNamespace(mapping.prefix+"_"+mapping.newVersion, mapping.newNamespaceURI);
                         loadNodeTypes(node.getSession().getWorkspace(), mapping.cndName, mapping.cndStream);
                     }
                 }
                 String nodetype = node.getProperty("jcr:primaryType").getString();
+                if(nodetype.equals("hippostd:fixeddirectory")) {
+                    nodetype = rename("hippostd:directory");
+                }
                 if(isPrefix(nodetype)) {
                     node.setProperty("jcr:primaryType", rename(nodetype));
                 }
@@ -72,9 +75,15 @@ public class M13Namespace extends M13 implements UpdaterModule {
             }
 
             @Override
-            protected void entering(Property prop, int level) throws RepositoryException {
+            protected void leaving(Property prop, int level) throws RepositoryException {
                 if (isPrefix(prop.getName())) {
                     context.setName(prop, rename(prop.getName()));
+                }
+                if(rename("hippo:roles").equals(rename(prop.getName()))) {
+                    context.setName(prop, rename("hippo:privileges"));
+                }
+                if(rename("frontend:overrides").equals(rename(prop.getName()))) {
+                    prop.remove();
                 }
             }
         });
