@@ -174,15 +174,17 @@ final class UpdaterNode extends UpdaterItem implements Node {
             }
         }
 
-        if (getInternalProperty("jcr:primaryType").length > 0)
+        if (getInternalProperty("jcr:primaryType").length > 0) {
             nodeTypesChanged = !((Node) origin).getPrimaryNodeType().getName().equals(getInternalProperty("jcr:primaryType")[0]);
-        else
+        } else {
             nodeTypesChanged = true;
+        }
 
-        if (parent == null)
+        if (parent == null) {
             nodeLocationChanged = false;
-        else
+        } else {
             nodeLocationChanged = (!parent.origin.isSame(origin.getParent()) || !origin.getName().equals(getName()));
+        }
 
         if(UpdaterEngine.log.isDebugEnabled()) {
             UpdaterEngine.log.debug("commit node "+getPath()+" origin "+(origin!=null?origin.getPath():"null")+(nodeTypesChanged?" type changed":"")+(nodeLocationChanged?" location changed":""));
@@ -214,14 +216,6 @@ final class UpdaterNode extends UpdaterItem implements Node {
                     nodeRelinked = true;
                 }
             }
-        } else {
-            if (nodeLocationChanged) {
-                // first move item
-                if(UpdaterEngine.log.isDebugEnabled()) {
-                    UpdaterEngine.log.debug("commit move "+origin.getPath()+" to "+parent.origin.getPath() + "/" + getName());
-                }
-                origin.getSession().move(origin.getPath(), parent.origin.getPath() + "/" + getName());
-            }
         }
         if (!hollow) {
             Set<String> curMixins = new TreeSet();
@@ -235,14 +229,6 @@ final class UpdaterNode extends UpdaterItem implements Node {
             if(((Node)origin).hasProperty("jcr:mixinTypes")) {
                 for(Value mixin : ((Node)origin).getProperty("jcr:mixinTypes").getValues()) {
                     curMixins.add(mixin.getString());
-                }
-            }
-            for(String mixin : curMixins) {
-                if(!newMixins.contains(mixin)) {
-                    if(UpdaterEngine.log.isDebugEnabled()) {
-                        UpdaterEngine.log.debug("commit removeMixin "+origin.getPath()+" mixin "+mixin);
-                    }
-                    ((Node)origin).removeMixin(mixin);
                 }
             }
             for(String mixin : newMixins) {
@@ -267,11 +253,6 @@ final class UpdaterNode extends UpdaterItem implements Node {
                 String name = items.getKey();
                 if (name.startsWith(":")) {
                     name = name.substring(1);
-                    Node node = (Node) origin;
-
-                    //if(node.hasProperty(name) && node.getProperty(name).getDefinition().isProtected())
-                    //continue;
-
                     boolean isValid = false;
                     for(NodeType nodeType : nodetypes) {
                         PropertyDefinition[] defs = nodeType.getPropertyDefinitions();
@@ -327,6 +308,14 @@ final class UpdaterNode extends UpdaterItem implements Node {
                     if(!definition.isProtected()) {
                         item.origin.remove();
                     }
+                }
+            }
+            for(String mixin : curMixins) {
+                if(!newMixins.contains(mixin)) {
+                    if(UpdaterEngine.log.isDebugEnabled()) {
+                        UpdaterEngine.log.debug("commit removeMixin "+origin.getPath()+" mixin "+mixin);
+                    }
+                    ((Node)origin).removeMixin(mixin);
                 }
             }
             if (oldOrigin != null) {

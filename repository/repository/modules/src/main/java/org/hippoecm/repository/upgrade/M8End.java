@@ -27,7 +27,7 @@ public class M8End implements UpdaterModule {
 
     public void register(final UpdaterContext context) {
         context.registerName("m8-end");
-        context.registerStartTag("m8-process");
-        context.registerEndTag("m8");
+        context.registerStartTag("m13-pre2");
+        context.registerEndTag("m13");
     }
 }

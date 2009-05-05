@@ -40,7 +40,7 @@ public class M13Switch extends M13 implements UpdaterModule {
             @Override
             public void visit(Node node) throws RepositoryException {
                     NamespaceRegistry nsReg = node.getSession().getWorkspace().getNamespaceRegistry();
-                    for(NamespaceMapping mapping : mappings) {
+                    for(NamespaceMapping mapping : getNamespaceMappings()) {
                         ((NamespaceRegistryImpl)nsReg).externalRemap(mapping.prefix, mapping.prefix+"_"+mapping.oldVersion, mapping.oldNamespaceURI);
                         ((NamespaceRegistryImpl)nsReg).externalRemap(mapping.prefix+"_"+mapping.oldVersion, mapping.prefix, mapping.newNamespaceURI);
                     }
