@@ -20,6 +20,9 @@ import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.markup.ComponentTag;
 
 public class EventStoppingBehavior extends AbstractBehavior {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: $";
+
     private static final long serialVersionUID = 1L;
 
     private String event;

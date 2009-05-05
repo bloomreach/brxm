@@ -45,6 +45,8 @@ import org.junit.After;
 import org.junit.Test;
 
 public class TemplateBuilderTest extends TestCase {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: ";
 
     HippoTester tester;
     Home home;
