@@ -47,7 +47,7 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
 
     private final static int MAXCOUNT = 2000;
 
-    private List<TreeNode> children = new ArrayList<TreeNode>();
+    private List<TreeNode> children;
 
     private boolean reloadChildren = true;
     private boolean reloadChildcount = true;

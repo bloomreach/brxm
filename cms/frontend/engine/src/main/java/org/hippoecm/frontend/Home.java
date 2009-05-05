@@ -106,17 +106,23 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         return this;
     }
 
-    void update() {
+    /**
+     * Refresh the page by refreshing the JCR session and notifying listeners in the page.
+     */
+    public void update() {
         // objects may be invalid after refresh, so reacquire them when needed
         detach();
 
-        // process JCR events
-        JcrObservationManager.getInstance().processEvents();
+        // refresh session
+        JcrObservationManager.getInstance().refreshSession();
 
         // re-evaluate models
         for (IRefreshable refreshable : context.getServices(IRefreshable.class.getName(), IRefreshable.class)) {
             refreshable.refresh();
         }
+
+        // process JCR events
+        JcrObservationManager.getInstance().processEvents();
     }
 
     public void render(PluginRequestTarget target) {

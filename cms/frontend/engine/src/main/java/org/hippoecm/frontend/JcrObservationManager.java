@@ -366,9 +366,8 @@ public class JcrObservationManager implements ObservationManager {
             try {
                 if (events.size() > 0) {
                     for (Event event : events) {
-                        int type = event.getType();
                         String path = event.getPath();
-                        if (type == Event.NODE_ADDED || type == Event.NODE_REMOVED) {
+                        if (event.getType() != 0) {
                             path = path.substring(0, path.lastIndexOf('/'));
                         }
                         paths.add(path);
@@ -464,7 +463,7 @@ public class JcrObservationManager implements ObservationManager {
                 }
 
                 public long getPosition() {
-                    throw new UnsupportedOperationException("skip() is not implemented yet");
+                    throw new UnsupportedOperationException("getPosition() is not implemented yet");
                 }
 
                 public long getSize() {
@@ -489,7 +488,12 @@ public class JcrObservationManager implements ObservationManager {
 
             };
             try {
-                get().onEvent(iter);
+                EventListener listener = get();
+                if (listener != null) {
+                    listener.onEvent(iter);
+                } else {
+                    log.info("Listener disappeared during processing");
+                }
             } catch (RuntimeException ex) {
                 log.error("Error occured when processing event", ex);
             }
@@ -554,7 +558,7 @@ public class JcrObservationManager implements ObservationManager {
         }
     }
 
-    public void processEvents() {
+    public void refreshSession() {
         cleanup();
 
         UserSession session = (UserSession) org.apache.wicket.Session.get();
@@ -595,7 +599,7 @@ public class JcrObservationManager implements ObservationManager {
                     while (pathIter.hasNext()) {
                         String[] ancestors = pathIter.next().split("/");
                         StringBuilder compound = new StringBuilder("/");
-                        for (int i = 1; i < ancestors.length; i++) {
+                        for (int i = 1; i < ancestors.length - 1; i++) {
                             compound.append(ancestors[i]);
                             if (paths.contains(compound.toString())) {
                                 pathIter.remove();
@@ -607,13 +611,44 @@ public class JcrObservationManager implements ObservationManager {
 
                     // do the refresh
                     for (String path : paths) {
-                        session.getRootNode().getNode(path).refresh(true);
+                        log.info("Refreshing {}", path);
+                        session.getRootNode().getNode(path.substring(1)).refresh(true);
                     }
                 }
             } catch (PathNotFoundException ex) {
                 log.error("Could not find path for event", ex);
             } catch (RepositoryException ex) {
                 log.error("Failed to refresh session", ex);
+            }
+        } else {
+            log.error("No session found");
+        }
+    }
+
+    void processEvents() {
+        cleanup();
+
+        UserSession session = (UserSession) org.apache.wicket.Session.get();
+        if (session != null) {
+            // copy set of listeners; don't synchronize on map while notifying observers
+            // as it may need to be modified as a result of the event.
+            SortedSet<JcrListener> set = new TreeSet<JcrListener>(new Comparator<JcrListener>() {
+
+                public int compare(JcrListener o1, JcrListener o2) {
+                    int result = o1.path.compareTo(o2.path);
+                    if (result == 0) {
+                        return new Integer(o1.hashCode()).compareTo(o2.hashCode());
+                    }
+                    return result;
+                }
+                
+            });
+            synchronized (listeners) {
+                for (JcrListener listener : listeners.values()) {
+                    if (listener.getSession() == session) {
+                        set.add(listener);
+                    }
+                }
             }
 
             for (JcrListener listener : set) {
@@ -627,6 +662,9 @@ public class JcrObservationManager implements ObservationManager {
     private void cleanup() {
         JcrListener ref;
         synchronized (listeners) {
+            // cleanup weak-ref-table
+            listeners.size();
+
             // cleanup gc'ed listeners
             while ((ref = (JcrListener) listenerQueue.poll()) != null) {
                 ref.dispose();
