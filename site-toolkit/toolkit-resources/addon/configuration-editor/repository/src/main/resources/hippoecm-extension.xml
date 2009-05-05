@@ -20,69 +20,114 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
   xmlns:hippo="http://www.hippoecm.org/nt/1.2" xmlns:fn="http://www.w3.org/2005/xpath-functions"
   sv:name="hippo:initialize">
+  
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
 
-    <sv:node sv:name="hst-configuration-editor-loader">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:initializeitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>10013</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentresource" sv:type="String">
-            <sv:value>configuration-editor-loader.xml</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration/hippo:frontend/cms/cms-static</sv:value>
-        </sv:property>
-    </sv:node>
+  <sv:node sv:name="hst-editor-namespace">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>10012</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hst-editor-namespace.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces</sv:value>
+    </sv:property>
+  </sv:node>
+    
+  <sv:node sv:name="hst-editor-loader">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>10013</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hst-editor-loader.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-static</sv:value>
+    </sv:property>
+  </sv:node>
 
-    <sv:node sv:name="hst-configuration-editor">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:initializeitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>10014</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentresource" sv:type="String">
-            <sv:value>configuration-editor.xml</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
-        </sv:property>
-    </sv:node>
+  <sv:node sv:name="hst-editor">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>10014</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hst-editor.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
+    </sv:property>
+  </sv:node>
+    
+  <sv:node sv:name="hst-editor-views">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>10016</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hst-editor-views.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
+    </sv:property>
+  </sv:node>
 
-    <sv:node sv:name="hst-configuration-tree-views">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:initializeitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>10015</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentresource" sv:type="String">
-            <sv:value>configuration-tree-views.xml</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
-        </sv:property>
-    </sv:node>
+  <sv:node sv:name="hst-editor-pickers">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>10017</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hst-editor-pickers.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
+    </sv:property>
+  </sv:node>
 
-    <sv:node sv:name="hst-configuration-editor-views">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:initializeitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>10016</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentresource" sv:type="String">
-            <sv:value>configuration-editor-views.xml</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
-        </sv:property>
-    </sv:node>
+  <sv:node sv:name="hst-editor-tree-views">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>10017</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hst-editor-tree-views.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
+    </sv:property>
+  </sv:node>
 
+  <sv:node sv:name="hst-editor-navigator">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>10018</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hst-editor-navigator.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
+    </sv:property>
+  </sv:node>
 
 </sv:node>

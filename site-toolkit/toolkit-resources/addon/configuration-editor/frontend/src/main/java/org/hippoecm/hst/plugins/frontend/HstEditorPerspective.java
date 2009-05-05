@@ -16,39 +16,52 @@
 
 package org.hippoecm.hst.plugins.frontend;
 
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.browse.AbstractBrowseView;
+import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.hippoecm.hst.plugins.frontend.editor.context.HstContext;
 
 public class HstEditorPerspective extends Perspective {
-
     private static final long serialVersionUID = 1L;
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
-    private final AbstractBrowseView browserView;
+    private static final String EDITOR_ROOT = "editor.root";
 
     public HstEditorPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        browserView = new AbstractBrowseView(context, config, null) {
+        if (!config.containsKey(EDITOR_ROOT)) {
+            throw new IllegalArgumentException("Property " + EDITOR_ROOT + " is mandatory");
+        }
+
+        JcrNodeModel root = new JcrNodeModel(config.getString(EDITOR_ROOT));
+        HstContext hstContext = new HstContext(root);
+        context.registerService(hstContext, HstContext.class.getName());
+
+        new ViewController(context, config, root) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected String getExtensionPoint() {
-                return config.getString("extension.list");
-            }
-
-            @Override
-            protected void onBrowse() {
-                focus(null);
+                return config.getString("extension.editor");
             }
         };
+
+        IPluginConfigService pluginConfig = context.getService(IPluginConfigService.class.getName(),
+                IPluginConfigService.class);
+        IClusterConfig cluster = pluginConfig.getCluster(config.getString("cluster.name"));
+        IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig("cluster.options"));
+
+        parameters.put("path", hstContext.config.getPath());
+        parameters.put("content.path", hstContext.content.getPath());
+        parameters.put("sitemap.path", hstContext.sitemap.getPath());
+        context.newCluster(cluster, parameters).start();
     }
 
-    @Override
-    protected void onDetach() {
-        browserView.detach();
-        super.onDetach();
-    }
 
 }

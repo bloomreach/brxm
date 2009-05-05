@@ -16,32 +16,58 @@
 
 package org.hippoecm.hst.plugins.frontend.editor;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.hst.plugins.frontend.editor.domain.BeanProvider;
+import org.hippoecm.hst.plugins.frontend.editor.domain.EditorBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BasicEditorPlugin extends RenderPlugin {
+public abstract class BasicEditorPlugin<K extends EditorBean> extends EditorPlugin<K> implements BeanProvider<K> {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(BasicEditorPlugin.class);
 
-    protected Form form;
+    private final FeedbackPanel feedback;
+    protected final Form form;
+    protected K bean;
 
     public BasicEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(form = new Form("editor"));
-        form.add(new Label("title", new StringResourceModel("title", this, null)));
+        bean = dao.load((JcrNodeModel) getModel());
 
-        form.add(new AjaxButton("save", form) {
+        add(form = new Form("editor", new CompoundPropertyModel(new LoadableDetachableModel(bean) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected Object load() {
+                if (getModel() instanceof JcrNodeModel) {
+                    JcrNodeModel newModel = (JcrNodeModel) getModel();
+                    JcrNodeModel oldModel = bean.getModel();
+                    if (!newModel.equals(oldModel)) {
+                        bean = dao.load(newModel);
+                    }
+                }
+                return bean;
+            }
+        })));
+
+        add(new AjaxSubmitLink("save", form) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -50,16 +76,67 @@ public class BasicEditorPlugin extends RenderPlugin {
             }
         });
 
-        add(new FeedbackPanel("editor-feedback"));
+        add(new AjaxLink("remove") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                doRemove();
+            }
+        });
+
+        form.add(feedback = new FeedbackPanel("editor-feedback"));
+        feedback.setOutputMarkupId(true);
+
         modelChanged();
     }
 
-    protected void doSave() {
+    @Override
+    public void render(PluginRequestTarget target) {
+        if (target != null && feedback.anyMessage()) {
+            target.addComponent(feedback);
+        }
+        super.render(target);
     }
 
-    @Override
-    protected void onModelChanged() {
-        redraw();
+    protected void doSave() {
+        if (dao.save(bean)) {
+            setModel(bean.getModel());
+            info("Node saved.");
+        }
     }
+
+    protected void doRemove() {
+        try {
+            final String name = bean.getModel().getNode().getName();
+            JcrNodeModel nextModel = bean.getModel().getParentModel();
+            if (dao.delete(bean)) {
+                Node next = nextModel.getNode();
+                if (next.hasNodes()) {
+                    boolean found = false;
+                    for (NodeIterator it = next.getNodes(); it.hasNext();) {
+                        Node node = it.nextNode();
+                        if (node.getName().compareTo(name) < 0) {
+                            found = true;
+                        } else if (found) {
+                            break;
+                        } else {
+                            found = true;
+                        }
+                        next = node;
+                    }
+                }
+                setModel(new JcrNodeModel(next));
+                info(getString("node.removed", new Model(name)));
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to remove node, model = " + bean.getModel());
+        }
+    }
+
+    public K getBean() {
+        return bean;
+    }
+
 
 }

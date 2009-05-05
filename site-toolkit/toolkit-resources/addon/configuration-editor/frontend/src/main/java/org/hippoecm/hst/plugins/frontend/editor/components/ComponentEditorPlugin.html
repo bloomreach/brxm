@@ -1,0 +1,71 @@
+<!--
+  * Copyright 2008 Hippo
+  *
+  * Licensed under the Apache License, Version 2.0 (the  "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+-->
+
+<html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:panel>
+    <wicket:extend>
+      <p><wicket:message key="intro">Intro</wicket:message></p>  
+      <fieldset>
+        <legend><wicket:message key="fieldset.legend">Legend</wicket:message></legend>
+        <div>
+          <label for="reference"><wicket:message key="componentReference.label">Is relative component label</wicket:message></label>
+          <input type="checkbox" wicket:id="reference" name="reference"/>
+        </div>        
+        <div wicket:id="frag">[ Frag ]</div>
+        <div>
+          <label for="parameters"><wicket:message key="parameters.label">Parameters label</wicket:message></label>
+          <a href="#" wicket:id="addParameter">Add parameter</a>
+          <select wicket:id="parameterOverrides"><option>Overide parameter</option></select>
+        </div>
+        <div>
+          <ul>
+            <li wicket:id="parameters">
+              <input type="text" wicket:id="name" class="small" />: <input type="text" wicket:id="value" class="small" /> <a wicket:id="remove"><em>X</em></a>
+            </li>
+          </ul>  
+        </div>
+
+      </fieldset>
+      
+      <wicket:fragment wicket:id="component">
+        <div>
+          <label for="name"><wicket:message key="name.label">Name label</wicket:message></label>
+          <input type="text" wicket:id="name" name="name"/>
+        </div>
+        <div>
+          <label for="componentClassName"><wicket:message key="componentClassName.label">ComponentClassName label</wicket:message></label>
+          <input type="text" wicket:id="componentClassName" name="componentClassName"/>
+        </div>
+        <div>
+          <label for="serverResourcePath"><wicket:message key="serverResourcePath.label">ServerResourcePath label</wicket:message></label>
+          <input type="text" wicket:id="serverResourcePath" name="serverResourcePath"/>
+        </div>
+        <div>
+          <label for="template"><wicket:message key="template.label">Template label</wicket:message></label><select name="template" wicket:id="template"></select>
+        </div>
+      </wicket:fragment>
+
+      <wicket:fragment wicket:id="refComponent">
+        <div>
+          <label for="refname"><wicket:message key="componentReferenceName.label">Reference name label</wicket:message></label>
+          <input type="text" wicket:id="referenceName" name="refname"/> <span wicket:id="referencePicker">[Component Picker]</span>
+        </div>
+      </wicket:fragment>
+      
+    </wicket:extend>
+  </wicket:panel>
+  
+</html>

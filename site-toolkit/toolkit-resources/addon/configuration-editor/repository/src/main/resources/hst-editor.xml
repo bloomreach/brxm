@@ -26,6 +26,10 @@
     <sv:value>frontend:plugincluster</sv:value>
   </sv:property>
   
+  <sv:property sv:name="frontend:references" sv:type="String">
+    <sv:value>engine</sv:value>
+  </sv:property>
+  
   <sv:node sv:name="configTranslator">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -132,7 +136,67 @@
             <sv:value>Pagina's</sv:value>
           </sv:property>
         </sv:node>
-      </sv:node>    
+      </sv:node>
+      <sv:node sv:name="section-components">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>nt:base</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:translated</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>en</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Components</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>nl</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Componenten</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>  
+      <sv:node sv:name="section-templates">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>nt:base</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:translated</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>en</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Templates</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>nl</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Sjablonen</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>                  
     </sv:node>  
   </sv:node>
   
@@ -158,29 +222,46 @@
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.navigator</sv:value>
-      <sv:value>extension.list</sv:value>
+      <sv:value>extension.editor</sv:value>
     </sv:property>
     <sv:property sv:name="extension.navigator" sv:type="String">
-      <sv:value>${cluster.id}.editor.tree</sv:value>
+      <sv:value>${cluster.id}.navigator</sv:value>
     </sv:property>
-    <sv:property sv:name="extension.list" sv:type="String">
-      <sv:value>${cluster.id}.editor.list</sv:value>
+    <sv:property sv:name="extension.editor" sv:type="String">
+      <sv:value>hst.config.editor</sv:value>
     </sv:property>
-    <sv:property sv:name="model.folder" sv:type="String">
-      <sv:value>${cluster.id}.model.browse.folder</sv:value>
+    <sv:property sv:name="browser.model" sv:type="String">
+      <sv:value>${cluster.id}.browser.model</sv:value>
     </sv:property>
-    <sv:property sv:name="model.document" sv:type="String">
-      <sv:value>${cluster.id}.model.browse.document</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.folder.root" sv:type="String">
+    <!--     
+    <sv:property sv:name="browser.root" sv:type="String">
       <sv:value>/hst:configuration/hst:configuration</sv:value>
     </sv:property>
-    <sv:property sv:name="browser.id" sv:type="String">
-      <sv:value>hst.service.editor</sv:value><!-- TODO: clusterid? -->
-    </sv:property>
+    -->
     <sv:property sv:name="browser.viewers" sv:type="String">
       <sv:value>hst-editor-views</sv:value>
     </sv:property>
+    <sv:property sv:name="editor.root" sv:type="String">
+      <sv:value>/testpreview</sv:value>
+    </sv:property>
+    <sv:property sv:name="cluster.name" sv:type="String">
+      <sv:value>hst-editor-navigator</sv:value>
+    </sv:property>
+    <sv:node sv:name="cluster.options">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${cluster.id}.navigator</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.model" sv:type="String">
+          <sv:value>${cluster.id}.browser.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="translator.id" sv:type="String">
+          <sv:value>${cluster.id}.service.translator.config</sv:value>
+        </sv:property>
+    </sv:node>
+    
   </sv:node>
   
   <sv:node sv:name="hstLayout">
@@ -216,82 +297,4 @@
     </sv:node>  
   </sv:node>
 
-  <sv:node sv:name="hstSectionTree">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.SectionTreePlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>${cluster.id}.editor.tree</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>${cluster.id}.model.browse.folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="translator.id" sv:type="String">
-      <sv:value>${cluster.id}.service.translator.config</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.sitemap</sv:value>
-      <sv:value>extension.pages</sv:value>
-    </sv:property>
-    <sv:property sv:name="headers" sv:type="String">
-      <sv:value>section-sitemap</sv:value>
-      <sv:value>section-pages</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.sitemap" sv:type="String">
-      <sv:value>${cluster.id}.tree.sitemap</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.pages" sv:type="String">
-      <sv:value>${cluster.id}.tree.pages</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="sitemapTreeLoader">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugin.loader.PluginClusterLoader</sv:value>
-    </sv:property>
-    <sv:property sv:name="cluster.name" sv:type="String">
-      <sv:value>hst-tree-views/sitemap</sv:value>
-    </sv:property>
-    <sv:node sv:name="cluster.config">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${cluster.id}.tree.sitemap</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>${cluster.id}.model.browse.folder</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="pagesTreeLoader">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugin.loader.PluginClusterLoader</sv:value>
-    </sv:property>
-    <sv:property sv:name="cluster.name" sv:type="String">
-      <sv:value>hst-tree-views/pages</sv:value>
-    </sv:property>
-    <sv:node sv:name="cluster.config">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${cluster.id}.tree.pages</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>${cluster.id}.model.browse.folder</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  
 </sv:node>  

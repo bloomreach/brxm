@@ -1,0 +1,95 @@
+
+/*
+HST Editor
+*/
+
+div.hst-perspective {
+  margin-top:25px;
+}
+div.hst-editor {
+  background: #ffffff url('../../skin/images/document-list-back.png') repeat-x;
+  border-left: 1px solid #afafaf; 
+  border-right: 1px solid #afafaf;
+  
+  width: 400px;
+  height: 1200px; /*hack*/ 
+}
+div.hst-editor h2{
+  color: #666666; 
+  display: block; 
+  height: 14px;
+  width: 100%;
+  padding: 5px;
+  padding-left: 5px; 
+  padding-right: 0px;
+  border-bottom: 1px solid #afafaf; 
+  font-weight: normal;
+}
+
+div.hst-editor p{
+ margin-left: 5px;
+}
+
+div.hst-editor a.menu, div.hst-editor > span > em {
+ display:block;
+ padding-top: 2px;
+ padding-left: 7px;
+ float:left;
+}
+
+div.hst-editor > span > em  {
+    color: #999999;
+}
+
+div.hst-editor-form {
+  margin-top: 30px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+div.hst-editor-form-buttons {
+  margin-left: 8px;
+}
+div.hst-editor-form-buttons a {
+ background-color: #DDD;
+  padding:4px;
+  font-size: 1.1em;
+  font-weight:bold;
+  color: #666666;
+  border: 1px solid #999;   
+}
+
+div.hst-editor .intro {
+}
+
+div.hst-editor-form fieldset {
+ margin-top: 10px;
+ border: 1px solid #AFAFAF;;
+ padding: 10px;
+}
+
+div.hst-editor-form fieldset input {
+  width: 230px; 
+}
+
+div.hst-editor-form input.small {
+  width: 110px; 
+}
+
+div.hst-editor-form fieldset { margin: 10px 0; padding: 10px; border: #DDD 1px solid; }
+div.hst-editor-form legend { font-weight: bold; color: #666; }
+div.hst-editor-form fieldset div { padding: 0.25em 0; float:left; clear:left; margin-bottom: 3px; }
+
+div.hst-editor-form fieldset label { margin-right: 10px; padding-right: 10px; width: 85px; display: block; float: left; text-align: right; position: relative; }
+
+div.hst-editor-form fieldset div ul { margin-left: 105px; }
+
+div.hst-editor-feedback ul { margin: 0 0 10px 0; background-color: #FFC;padding: 5px 10px; border: #FC6 1px solid; }
+div.hst-editor-feedback ul li { list-style-type:disc; margin-left: 10px;}
+
+div.hst-editor-form a {
+  margin:0;
+  padding:0;
+  float:none;
+  display:inline;
+}

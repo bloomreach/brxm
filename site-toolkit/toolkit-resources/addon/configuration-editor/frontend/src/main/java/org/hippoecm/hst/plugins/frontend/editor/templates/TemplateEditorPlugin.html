@@ -1,0 +1,45 @@
+<!--
+  * Copyright 2008 Hippo
+  *
+  * Licensed under the Apache License, Version 2.0 (the  "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+-->
+
+<html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:panel>
+    <wicket:extend>
+      <p><wicket:message key="intro">Intro</wicket:message></p>  
+      <fieldset>
+        <legend><wicket:message key="fieldset.legend">Legend</wicket:message></legend>
+        <div>
+          <label for="name"><wicket:message key="name.label">Name label</wicket:message></label>
+          <input type="text" wicket:id="name" name="name"/>
+        </div>
+        <div>
+          <label for="renderPath"><wicket:message key="renderPath.label">RenderPath label</wicket:message></label>
+          <input type="text" wicket:id="renderPath" name="renderPath"/>
+        </div>
+        <div>
+          <label for="containers"><wicket::message key="containers.label">Containers label</wicket::message></label>
+          <a href="#" wicket:id="addContainer">Add container</a>
+        </div>
+        <div>
+          <ul>
+            <li wicket:id="containers">
+              <input type="text" wicket:id="containerName" /> <a wicket:id="removeContainer"><em>X</em></a>
+            </li>
+          </ul>  
+        </div>
+      </fieldset>
+    </wicket:extend>
+  </wicket:panel>
+</html>

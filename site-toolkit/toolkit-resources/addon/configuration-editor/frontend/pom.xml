@@ -30,6 +30,20 @@
       <version>${hippoecm.version}</version>
       <scope>provided</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-editor</artifactId>
+      <version>${hippoecm.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-cms-browse</artifactId>
+      <version>${hippoecm.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
   </dependencies>
 

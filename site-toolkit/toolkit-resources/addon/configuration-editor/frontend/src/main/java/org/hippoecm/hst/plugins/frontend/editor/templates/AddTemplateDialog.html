@@ -13,20 +13,17 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:panel>
-    <wicket:extend>
-      <a href="#" wicket:id="remove" class="menu"><wicket:message key="remove.label">Remove</wicket:message></a>
-      <div class="hst-editor-form">
-        <form wicket:id="editor">
-          <wicket:child/>
-          <div wicket:id="editor-feedback" class="hst-editor-feedback" onclick="this.style.display= 'none'">[ Feedback ]</div>
-        </form>
-      </div>
-      <div class="hst-editor-form-buttons">
-        <a href="#" wicket:id="save"><wicket:message key="save.label">Save</wicket:message></a>  
-      </div>  
-    </wicket:extend>
-  </wicket:panel>
+  <wicket:extend>
+    <table class="hippo-window-form">
+      <tr>
+        <td>
+          <label><wicket:message key="name.label" /></label>
+        </td>
+        <td>
+          <input type="text" wicket:id="name"></input>
+        </td>
+      </tr>
+    </table>
+  </wicket:extend>
 </html>

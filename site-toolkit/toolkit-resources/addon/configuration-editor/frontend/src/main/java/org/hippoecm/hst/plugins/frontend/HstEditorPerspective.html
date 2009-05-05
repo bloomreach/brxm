@@ -15,8 +15,13 @@
 -->
 
 <html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:head>
+    <wicket:link>
+      <link rel="stylesheet" type="text/css" href="style.css"/>
+    </wicket:link>
+  </wicket:head>
   <wicket:panel>
-    <div yui:id="hst-perspective-wrapper" style="margin-top: 25px;">
+    <div yui:id="hst-perspective-wrapper" class="hst-perspective">
       <div class="hippo-browser-small" yui:id="hst-perspective-left">
         <div yui:id="hst-perspective-left-body">
           <div wicket:id="extension.navigator">navigator here</div>
@@ -24,7 +29,7 @@
       </div>
       <div yui:id="hst-perspective-center">
         <div yui:id="hst-perspective-center-body">
-          <div wicket:id="extension.list">[ Editor ]</div>
+          <div wicket:id="extension.editor">[ Editor ]</div>
         </div>
       </div>
     </div>
