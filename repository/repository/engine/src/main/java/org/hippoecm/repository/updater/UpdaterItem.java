@@ -103,10 +103,15 @@ public abstract class UpdaterItem implements Item {
         if (parent == null)
             return "jcr:root";
         String name = parent.reverse.get(this);
-        if (name.startsWith(":"))
-            return name.substring(1);
-        else
-            return name;
+        if(name != null) {
+            if (name.startsWith(":")) {
+                return name.substring(1);
+            } else {
+                return name;
+            }
+        } else {
+            return origin.getName();
+        }
     }
 
     public Item getAncestor(int depth) throws ItemNotFoundException, AccessDeniedException, RepositoryException {
