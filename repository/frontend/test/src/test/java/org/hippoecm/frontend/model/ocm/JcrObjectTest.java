@@ -119,13 +119,13 @@ public class JcrObjectTest extends TestCase {
         testObject.addListener(listener);
         testObject.setValue("testing 1 2 3");
         
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
 
         assertEquals(1, listener.count);
 
         testObject.setValue("bladie");
 
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
 
         assertEquals(2, listener.count);
     }

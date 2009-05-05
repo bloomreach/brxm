@@ -34,7 +34,6 @@ import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.Home;
-import org.hippoecm.frontend.JcrObservationManager;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
@@ -185,18 +184,18 @@ public class ObservationTest extends TestCase {
         root.addNode("test", "nt:unstructured");
 
         // in-session event
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
         System.err.println("number of events: " + events.size());
         assertEquals(1, events.size());
 
         // shouldn't receive new event on next processing
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
         assertEquals(1, events.size());
 
         session.save();
 
         Thread.sleep(1000);
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
 
         // "out-of-session" event
         assertEquals(3, events.size());
@@ -209,7 +208,7 @@ public class ObservationTest extends TestCase {
         session.save();
 
         Thread.sleep(1000);
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
 
         assertEquals(3, events.size());
     }
@@ -223,13 +222,13 @@ public class ObservationTest extends TestCase {
         IObserver observer = new TestObserver(new JcrNodeModel(test), events);
         context.registerService(observer, IObserver.class.getName());
 
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
 
         assertEquals(1, events.size());
 
         test.addNode("sub", "nt:unstructured");
 
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
 
         assertEquals(3, events.size());
     }
@@ -246,23 +245,23 @@ public class ObservationTest extends TestCase {
         Node testNode = root.addNode("test", "nt:unstructured");
 
         // shouldn't receive new event on next processing
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
         assertEquals(1, events.size());
 
         testNode.setProperty("test", "bla");
 
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
         assertEquals(1, events.size());
 
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
         assertEquals(1, events.size());
 
         testNode.setProperty("test", "die");
 
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
         assertEquals(1, events.size());
 
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
         assertEquals(1, events.size());
 
         session.save();
@@ -275,17 +274,22 @@ public class ObservationTest extends TestCase {
         IObserver observer = new TestObserver(new JcrNodeModel(root), events);
         context.registerService(observer, IObserver.class.getName());
 
+        // create node in other session and verify that it is picked up as an event
         javax.jcr.Session other = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         Node otherTestNode = other.getRootNode().addNode("test", "nt:unstructured");
         other.save();
 
         Thread.sleep(500);
 
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
         assertEquals(1, events.size());
 
         Node testNode = root.getNode("test");
         assertTrue(testNode.isSame(otherTestNode));
+
+        // remove the node in the other session; verify that change is seen
+        otherTestNode.remove();
+        other.save();
     }
 
     @Test
@@ -309,7 +313,7 @@ public class ObservationTest extends TestCase {
         session.save();
 
         Thread.sleep(1000);
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
 
         assertEquals(0, events.size());
     }
@@ -353,7 +357,7 @@ public class ObservationTest extends TestCase {
         session.save();
 
         Thread.sleep(1000);
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
 
         assertEquals(1, copy.count);
     }
@@ -403,7 +407,7 @@ public class ObservationTest extends TestCase {
         Thread.sleep(300);
 
         // event should have been received
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
         assertEquals(1, events.size());
 
         // basic facetsearch assertion
@@ -432,7 +436,7 @@ public class ObservationTest extends TestCase {
         subNode.remove();
         subNode = testNode.addNode("abc");
 
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
         assertEquals(1, events.size());
     }
 

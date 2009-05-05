@@ -304,8 +304,8 @@ public abstract class AbstractTree extends Panel implements ITreeStateListener, 
 						item.afterRender();
 					}
 				});
-	            setFlag(FLAG_RENDER_CHILDREN, false);
 			}
+            setFlag(FLAG_RENDER_CHILDREN, false);
 		}
 	}
 

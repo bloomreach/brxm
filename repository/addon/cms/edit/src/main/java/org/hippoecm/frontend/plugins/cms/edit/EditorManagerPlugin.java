@@ -321,10 +321,10 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
             }
         }
 
-        JcrNodeModel nodeModel = (JcrNodeModel) modelReference.getModel();
-        if (nodeModel != null && !nodeModel.getItemModel().exists()) {
-            // close preview when a new document is selected
-            if (preview != null) {
+        // close preview when a new document is selected
+        if (preview != null) {
+            JcrNodeModel nodeModel = (JcrNodeModel) preview.getModel();
+            if (nodeModel != null && !nodeModel.getItemModel().exists()) {
                 try {
                     preview.close();
                     preview = null;

@@ -25,6 +25,7 @@ import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
@@ -32,7 +33,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BrowseService implements IBrowseService<IModel>, IDetachable {
+public class BrowseService implements IBrowseService<IModel>, IRefreshable, IDetachable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -66,6 +67,8 @@ public class BrowseService implements IBrowseService<IModel>, IDetachable {
         document = findDocument(document);
 
         context.registerService(this, config.getString(IBrowseService.BROWSER_ID, BrowseService.class.getName()));
+
+        context.registerService(this, IRefreshable.class.getName());
 
         if (config.getString("model.document") != null) {
             documentService = new DocumentModelService(config, document);
@@ -126,6 +129,21 @@ public class BrowseService implements IBrowseService<IModel>, IDetachable {
         } else {
             updateDocumentModel(null);
             log.warn("Model {} is not an JcrNodeModel", model);
+        }
+    }
+
+    public void refresh() {
+        JcrNodeModel nodeModel = documentService.getModel();
+        if (nodeModel == null) {
+            nodeModel = folderService.getModel();
+        }
+        boolean hasChanged = false;
+        while (nodeModel != null && !nodeModel.getItemModel().exists()) {
+            nodeModel = nodeModel.getParentModel();
+            hasChanged = true;
+        }
+        if (hasChanged && nodeModel != null) {
+            browse(nodeModel);
         }
     }
 

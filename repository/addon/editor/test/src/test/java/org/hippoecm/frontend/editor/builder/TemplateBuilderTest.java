@@ -26,7 +26,6 @@ import javax.jcr.Node;
 
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.Home;
-import org.hippoecm.frontend.JcrObservationManager;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
@@ -104,7 +103,7 @@ public class TemplateBuilderTest extends TestCase {
         ITypeDescriptor type = builder.getTypeDescriptor();
         type.addField(new JavaFieldDescriptor("test", "nt:unstructured"));
 
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
 
         assertEquals(1, added.size());
     }
@@ -121,7 +120,7 @@ public class TemplateBuilderTest extends TestCase {
         IClusterConfig config = builder.getTemplate();
         List<IPluginConfig> plugins = config.getPlugins();
         session.save();
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
 
         // setup field removal detection
         final List<String> added = new LinkedList<String>();
@@ -144,7 +143,7 @@ public class TemplateBuilderTest extends TestCase {
         // remove a field plugin
         plugins.remove(1);
 
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
 
         assertEquals(1, removed.size());
     }
@@ -160,7 +159,7 @@ public class TemplateBuilderTest extends TestCase {
         // initialize type descriptor and template
         ITypeDescriptor type = builder.getTypeDescriptor();
         session.save();
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
 
         Map<String, IFieldDescriptor> fields = type.getFields();
         IFieldDescriptor titleField = fields.get("title");
@@ -172,7 +171,7 @@ public class TemplateBuilderTest extends TestCase {
         
         titleField.setPath("test:titel_new");
 
-        JcrObservationManager.getInstance().processEvents();
+        home.update();
 
         assertTrue(prototype.getNode().hasProperty("test:titel_new"));
         assertEquals("titel", prototype.getNode().getProperty("test:titel_new").getString());
