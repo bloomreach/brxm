@@ -26,7 +26,7 @@ import org.hippoecm.hst.configuration.HstSites;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.provider.jcr.JCRUtilities;
@@ -66,7 +66,7 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         if(bean.getNode() == null) {
             log.debug("Jcr node is detached from bean. Trying to create a link with the detached path.");
             if(bean.getPath() != null) {
-                if(bean instanceof HippoDocument) {
+                if(bean instanceof HippoDocumentBean) {
                     return this.create(bean.getPath(), hstRequestContext.getResolvedSiteMapItem(), true);
                 } else {
                     return this.create(bean.getPath(), hstRequestContext.getResolvedSiteMapItem(), false);

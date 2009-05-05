@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Node(jcrType="hippo:document")
-public class HippoDocument extends HippoItem{
+public class HippoDocument extends HippoItem implements HippoDocumentBean{
 
     private static Logger log = LoggerFactory.getLogger(HippoDocument.class);
     
