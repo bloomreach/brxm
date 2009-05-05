@@ -144,7 +144,7 @@ public abstract class DefaultAbstractTree extends AbstractTree
 
 	/** Reference to the icon for context menus */
 	private static final ResourceReference MENU = new ResourceReference(DefaultAbstractTree.class,
-        	"res/menu.png");
+        	"res/menu.gif");
 
 	/** Reference to the javascript that adds hover behavior to the tree's div */
 	private static final ResourceReference IE6_HOVER_FIX = new ResourceReference(DefaultAbstractTree.class,
