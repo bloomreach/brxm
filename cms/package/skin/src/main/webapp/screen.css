@@ -610,6 +610,9 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 .hippo-tree div.wicket-tree div.row a,
 .hippo-tree div.wicket-tree div.row-selected a {font-weight: normal; color: black;}
 
+/* IE6 workaround */
+.hippo-tree div.wicket-tree div.context_hover{background-position: -200px 0px;}
+
 .hippo-tree .wicket-tree span.plus, 
 .hippo-tree .wicket-tree span.minus {background-image: url("images/tree-icons.png"); width: 14px;}
 
@@ -660,9 +663,9 @@ font-weight: bold;
 
 /* Hippo tree addition */
 
-.hippo-tree-dropdown-icon-container{float: right; display: block;}
-.hippo-tree-dropdown-icon {display: block; width: 18px; height: 18px; float: right; margin-right: 4px;}
-.hippo-tree-dropdown-icon:hover {background-position: 0px 19px;}
+.hippo-tree-dropdown-icon-container{float: right; display: block; background: transparent;}
+.hippo-tree-dropdown-icon {display: block; width: 18px; height: 18px; float: right; margin-right: 4px; background: transparent;}
+.hippo-tree-dropdown-icon:hover {background-position: 0px 18px;}
 .hippo-tree-dropdown{position: relative; display:block; float: right;}
 .hippo-tree-dropdown .hippo-toolbar-menu-item{}
 
