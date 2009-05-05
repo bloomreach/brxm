@@ -96,18 +96,24 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
             public void onClick(AjaxRequestTarget target) {
                 IClusterConfig clusterConfig = (IClusterConfig) RenderPluginEditorPlugin.this.getModelObject();
                 List<IPluginConfig> plugins = clusterConfig.getPlugins();
-                int index = 0;
+                IPluginConfig previous = null;
                 for (IPluginConfig config : plugins) {
                     if (config.getName().equals(pluginId)) {
-                        if (index < plugins.size() - 1) {
-                            IPluginConfig previous = plugins.remove(index + 1);
-                            plugins.add(index, previous);
-                        } else {
-                            log.warn("Unable to move the first plugin further up");
+                        previous = config;
+                        if (previous.getString("wicket.id") == null) {
+                            log.warn("No wicket.id present; cannot move plugin");
+                            break;
                         }
+                    } else if (previous != null
+                            && previous.getString("wicket.id").equals(config.getString("wicket.id"))) {
+                        IPluginConfig backup = new JavaPluginConfig(config);
+                        config.clear();
+                        config.putAll(previous);
+
+                        previous.clear();
+                        previous.putAll(backup);
                         break;
                     }
-                    index++;
                 }
             }
         }.setVisible(editable));

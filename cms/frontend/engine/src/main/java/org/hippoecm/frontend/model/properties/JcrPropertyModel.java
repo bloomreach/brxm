@@ -19,9 +19,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -59,6 +63,56 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
 
     public Property getProperty() {
         return (Property) itemModel.getObject();
+    }
+
+    public PropertyDefinition getDefinition(int type, boolean multiValued) {
+        Node node = (Node) itemModel.getParentModel().getObject();
+        String path = itemModel.getPath();
+        String name = path.substring(path.lastIndexOf('/') + 1);
+
+        try {
+            NodeType priType = node.getPrimaryNodeType();
+            PropertyDefinition def = findDefinition(priType, name, type, multiValued);
+            if (def != null) {
+                return def;
+            }
+            for (NodeType mixin : node.getMixinNodeTypes()) {
+                def = findDefinition(mixin, name, type, multiValued);
+                if (def != null) {
+                    return def;
+                }
+            }
+
+            // not found; try to match ANY ("*") definitions
+            priType = node.getPrimaryNodeType();
+            def = findDefinition(priType, "*", type, multiValued);
+            if (def != null) {
+                return def;
+            }
+            for (NodeType mixin : node.getMixinNodeTypes()) {
+                def = findDefinition(mixin, "*", type, multiValued);
+                if (def != null) {
+                    return def;
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return null;
+    }
+
+    protected PropertyDefinition findDefinition(NodeType nodeType, String name, int type, boolean multiValued) {
+        PropertyDefinition best = null;
+        for (PropertyDefinition pdef : nodeType.getPropertyDefinitions()) {
+            if (pdef.getName().equals(name) && pdef.isMultiple() == multiValued) {
+                if (type == PropertyType.UNDEFINED || pdef.getRequiredType() == type) {
+                    return pdef;
+                } else if (pdef.getRequiredType() == PropertyType.UNDEFINED) {
+                    best = pdef;
+                }
+            }
+        }
+        return best;
     }
 
     // IDataProvider implementation for use in DataViews
