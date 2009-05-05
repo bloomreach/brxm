@@ -19,17 +19,21 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
+import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.wicket.Session;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,8 +56,27 @@ public class JcrPropertyValueModel extends Model {
 
     public JcrPropertyValueModel(JcrPropertyModel propertyModel) throws RepositoryException {
         this.propertyModel = propertyModel;
-        this.index = NO_INDEX;
-        this.type = propertyModel.getProperty().getType();
+        if (propertyModel.getItemModel().exists()) {
+            PropertyDefinition pdef = propertyModel.getProperty().getDefinition();
+            this.type = pdef.getRequiredType();
+            this.index = pdef.isMultiple() ? 0 : NO_INDEX;
+        } else {
+            PropertyDefinition pdef = propertyModel.getDefinition(PropertyType.UNDEFINED, false);
+            if (pdef != null) {
+                this.type = pdef.getRequiredType();
+                this.index = NO_INDEX;
+            } else {
+                pdef = propertyModel.getDefinition(PropertyType.UNDEFINED, true);
+                if (pdef != null) {
+                    this.type = pdef.getRequiredType();
+                    this.index = NO_INDEX;
+                } else {
+                    this.type = PropertyType.UNDEFINED;
+                    this.index = NO_INDEX;
+                    log.warn("No property definition found for {}", propertyModel);
+                }
+            }
+        }
     }
 
     public JcrPropertyValueModel(int index, Value value, JcrPropertyModel propertyModel) {
@@ -88,19 +111,44 @@ public class JcrPropertyValueModel extends Model {
 
         try {
             Property prop = propertyModel.getProperty();
-            if (prop.getDefinition().isMultiple()) {
-                Value[] oldValues = prop.getValues();
-                Value[] newValues = new Value[oldValues.length];
-                for (int i = 0; i < oldValues.length; i++) {
-                    if (i == index) {
-                        newValues[i] = value;
-                    } else {
-                        newValues[i] = oldValues[i];
+            if (prop != null) {
+                if (prop.getDefinition().isMultiple()) {
+                    Value[] oldValues = prop.getValues();
+                    Value[] newValues = new Value[oldValues.length];
+                    for (int i = 0; i < oldValues.length; i++) {
+                        if (i == index) {
+                            newValues[i] = value;
+                        } else {
+                            newValues[i] = oldValues[i];
+                        }
                     }
+                    prop.setValue(newValues);
+                } else {
+                    prop.setValue(value);
                 }
-                prop.setValue(newValues);
             } else {
-                prop.setValue(value);
+                Node node = (Node) propertyModel.getItemModel().getParentModel().getObject();
+                String name;
+                PropertyDefinition pdef = propertyModel.getDefinition(value.getType(), index != NO_INDEX);
+                if (pdef != null) {
+                    if (pdef.getName().equals("*")) {
+                        String path = propertyModel.getItemModel().getPath();
+                        name = path.substring(path.lastIndexOf('/') + 1);
+                    } else {
+                        name = pdef.getName();
+                    }
+                    if (index != NO_INDEX) {
+                        Value[] values = new Value[1];
+                        values[0] = value;
+                        node.setProperty(name, values);
+                        this.index = 0;
+                    } else {
+                        node.setProperty(name, value);
+                    }
+                    this.type = pdef.getRequiredType();
+                } else {
+                    log.warn("No definition found for property");
+                }
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
@@ -135,7 +183,7 @@ public class JcrPropertyValueModel extends Model {
     public void setObject(final Serializable object) {
         load();
         try {
-            ValueFactory factory = propertyModel.getProperty().getSession().getValueFactory();
+            ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
             switch (type) {
             case PropertyType.BOOLEAN:
                 value = factory.createValue((Boolean) object);
@@ -198,15 +246,11 @@ public class JcrPropertyValueModel extends Model {
     }
 
     public void setIndex(int index) {
-        try {
-            if (propertyModel.getProperty().getDefinition().isMultiple()) {
-                this.index = index;
-            } else {
-                this.index = NO_INDEX;
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+        PropertyDefinition pdef = propertyModel.getDefinition(PropertyType.UNDEFINED, index != NO_INDEX);
+        if (pdef != null && pdef.isMultiple()) {
             this.index = index;
+        } else {
+            this.index = NO_INDEX;
         }
     }
 
