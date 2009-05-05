@@ -68,7 +68,6 @@
 + * multiple ignore
 
 [hippo:document] > nt:base
-+ * (hippo:facetselect) version
 
 [hippo:handle] > nt:unstructured
 - hippo:discriminator (string) multiple
