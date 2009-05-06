@@ -56,6 +56,8 @@ import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+enum NeedsProcessing { FALSE, TRUE, UNKNOWN };
+
 public class JcrObservationManager implements ObservationManager {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -315,6 +317,8 @@ public class JcrObservationManager implements ObservationManager {
             return false;
         }
 
+        private NeedsProcessing needsProcessing = NeedsProcessing.UNKNOWN;
+
         void processPending(NodeIterator iter, List<Node> nodes) throws RepositoryException {
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
@@ -355,13 +359,13 @@ public class JcrObservationManager implements ObservationManager {
                         @Override
                         protected void leaving(Node node, int level) throws RepositoryException {
                         }
-                        
+
                     };
                     visitor.visit(node);
                 }
             }
         }
-        
+
         synchronized void getChanges(Set<String> paths) {
             try {
                 if (events.size() > 0) {
@@ -386,69 +390,76 @@ public class JcrObservationManager implements ObservationManager {
             }
 
             // process pending changes
-            try {
-                Node root = getRoot();
-                if (!isVirtual(root)) {
-                    List<Node> nodes = new LinkedList<Node>();
-                    if (nodeTypes == null) {
-                        if (root.isModified() || root.isNew()) {
-                            nodes.add(root);
-                        }
-                        if (!root.isNew()) {
-                            NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null, true);
-                            processPending(iter, nodes);
-                        }
+            if (needsProcessing != NeedsProcessing.FALSE) {
+                try {
+                    Node root = getRoot();
+                    if (!isVirtual(root)) {
+                        needsProcessing = NeedsProcessing.TRUE;
                     } else {
-                        if (root.isModified() || root.isNew()) {
-                            for (String type : nodeTypes) {
-                                if (root.isNodeType(type)) {
-                                    nodes.add(root);
-                                    break;
+                        needsProcessing = NeedsProcessing.FALSE;
+                    }
+                    if (needsProcessing == NeedsProcessing.TRUE) {
+                        List<Node> nodes = new LinkedList<Node>();
+                        if (nodeTypes == null) {
+                            if (root.isModified() || root.isNew()) {
+                                nodes.add(root);
+                            }
+                            if (!root.isNew()) {
+                                NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null, true);
+                                processPending(iter, nodes);
+                            }
+                        } else {
+                            if (root.isModified() || root.isNew()) {
+                                for (String type : nodeTypes) {
+                                    if (root.isNodeType(type)) {
+                                        nodes.add(root);
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!root.isNew()) {
+                                for (String type : nodeTypes) {
+                                    NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, type, true);
+                                    processPending(iter, nodes);
                                 }
                             }
                         }
-                        if (!root.isNew()) {
-                            for (String type : nodeTypes) {
-                                NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, type, true);
-                                processPending(iter, nodes);
+
+                        expandNew(nodes);
+ 
+                        List<String> paths = new LinkedList<String>();
+                        for (Node node : nodes) {
+                            String path;
+                            path = node.getPath();
+                            paths.add(path);
+                            if (pending.containsKey(path)) {
+                                Iterator<Event> iter = pending.get(path).update(node);
+                                while (iter.hasNext()) {
+                                    events.add(iter.next());
+                                }
+                            } else {
+                                NodeCache cache = new NodeCache(node);
+                                pending.put(path, cache);
+                                events.add(cache.new NodeEvent(null, 0));
+                            }
+                        }
+
+                        for (String path : new ArrayList<String>(pending.keySet())) {
+                            if (!paths.contains(path)) {
+                                NodeCache cache = pending.remove(path);
+                                events.add(cache.new NodeEvent(null, 0));
                             }
                         }
                     }
-
-                    expandNew(nodes);
-
-                    List<String> paths = new LinkedList<String>();
-                    for (Node node : nodes) {
-                        String path;
-                        path = node.getPath();
-                        paths.add(path);
-                        if (pending.containsKey(path)) {
-                            Iterator<Event> iter = pending.get(path).update(node);
-                            while (iter.hasNext()) {
-                                events.add(iter.next());
-                            }
-                        } else {
-                            NodeCache cache = new NodeCache(node);
-                            pending.put(path, cache);
-                            events.add(cache.new NodeEvent(null, 0));
-                        }
-                    }
-
-                    for (String path : new ArrayList<String>(pending.keySet())) {
-                        if (!paths.contains(path)) {
-                            NodeCache cache = pending.remove(path);
-                            events.add(cache.new NodeEvent(null, 0));
-                        }
-                    }
+                } catch (PathNotFoundException ex) {
+                    log.warn("Root node no longer exists: " + ex.getMessage());
+                    dispose();
+                    return;
+                } catch (RepositoryException ex) {
+                    log.error("Failed to parse pending changes", ex);
+                    dispose();
+                    return;
                 }
-            } catch (PathNotFoundException ex) {
-                log.warn("Root node no longer exists: " + ex.getMessage());
-                dispose();
-                return;
-            } catch (RepositoryException ex) {
-                log.error("Failed to parse pending changes", ex);
-                dispose();
-                return;
             }
 
             final Iterator<Event> upstream = events.iterator();
@@ -574,7 +585,7 @@ public class JcrObservationManager implements ObservationManager {
                     }
                     return result;
                 }
-                
+
             });
             synchronized (listeners) {
                 for (JcrListener listener : listeners.values()) {
@@ -641,7 +652,7 @@ public class JcrObservationManager implements ObservationManager {
                     }
                     return result;
                 }
-                
+
             });
             synchronized (listeners) {
                 for (JcrListener listener : listeners.values()) {

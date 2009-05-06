@@ -43,15 +43,15 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
     }
 
     static Node getCanonicalNode(Session session, HippoSession remoteSession, Node node) throws RepositoryException {
+        if (node.isNew()) {
+            return node;
+        }
         String path = node.getPath();
         if (path == null) {
             return null;
         }
         if ("/".equals(path)) {
             return session.getRootNode();
-        }
-        if (node.isNew()) {
-            return node;
         }
         node = remoteSession.getRootNode().getNode(node.getPath().substring(1));
         if (node == null) {
