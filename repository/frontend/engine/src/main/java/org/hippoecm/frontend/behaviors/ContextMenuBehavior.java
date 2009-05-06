@@ -31,9 +31,9 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
     private String markupId = null;
     private IContextMenuManager manager;
 
-    public void setShown(boolean isShown, AjaxRequestTarget target) {
+    public void setShown(boolean isShown, String id, AjaxRequestTarget target) {
         if (isShown) {
-            target.appendJavascript("Hippo.ContextMenu.show('" + markupId + "');");
+            target.appendJavascript("Hippo.ContextMenu.show('" + markupId + "', '" + id + "');");
         } else {
             target.appendJavascript("Hippo.ContextMenu.hide('" + markupId + "');");
         }
@@ -61,7 +61,9 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
     public void renderHead(IHeaderResponse response) {
         response.renderJavascriptReference(new ResourceReference(ContextMenuBehavior.class, "contextmenu.js"));
         response.renderOnLoadJavascript((markupId == null ? "document.body" : "Wicket.$('" + markupId + "')")
-                + ".onclick = function() { " + getCallbackScript() + " }");
+                + ".onclick = function() { " + getCallbackScript() + " };");
+        response.renderOnDomReadyJavascript("Hippo.ContextMenu.init();");
+
     }
 
     @Override

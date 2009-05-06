@@ -96,7 +96,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
 
         contextMenuBehavior = new ContextMenuBehavior();
         add(contextMenuBehavior);
-        
+
         IClusterConfig pluginCluster = pluginConfigService.getDefaultCluster();
         IClusterControl clusterControl = context.newCluster(pluginCluster, null);
         clusterControl.start();
@@ -185,13 +185,13 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
 
     public void addContextMenu(IContextMenu activeMenu, AjaxRequestTarget target) {
         activeContextMenu = activeMenu;
-        contextMenuBehavior.setShown(true, target);
+        contextMenuBehavior.setShown(true, activeMenu.getContextMenuId(), target);
     }
 
     public void collapse(IContextMenu current, AjaxRequestTarget target) {
         if (activeContextMenu != null && current != activeContextMenu) {
             activeContextMenu.collapse(target);
-            contextMenuBehavior.setShown(false, target);
+            contextMenuBehavior.setShown(false, activeContextMenu.getContextMenuId(), target);
         }
     }
 

@@ -358,11 +358,6 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
 border: 1px solid #000000;
 }
 
-div.navigator-left > div {
-  overflow: visible ! important;
-}
-
-
 /* Dropdown menu */
 /* ================================================ */ 
 .hippo-toolbar-menu-item{
@@ -393,7 +388,7 @@ color: black
 /* override the default text-decoration: underline */
 .hippo-root .hippo-toolbar-menu-item-button:hover{background: #fff6e0; border: 1px solid #afafaf; text-decoration: none}
 
-.hippo-toolbar-menu-item li{display: block; clear:left; margin-right: 0px}
+.hippo-toolbar-menu-item li{display: block; clear:left; margin-right: 0px; padding-top: 1px; padding-bottom: 1px;}
 
 .hippo-toolbar-menu-item-button-icon{display: block; float: left; margin-right: 11px; }
 
@@ -606,12 +601,13 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 .hippo-tree div.wicket-tree div.row{background-image: url("images/controls/folderdropdownicon.png"); background-repeat:no-repeat; background-position: 0px 0px; }
 .hippo-tree div.wicket-tree div.row:hover{background-position: -200px 0px;}
 .hippo-tree div.wicket-tree div.row-selected {background-image: url("images/controls/folderdropdownicon.png"); background-position: 0px -20px;}
-.hippo-tree div.wicket-tree div.row-selected:hover{background-position: -200px -20px;}
+.hippo-tree div.wicket-tree div.row-selected:hover{background-position: -200px -21px;}
 .hippo-tree div.wicket-tree div.row a,
 .hippo-tree div.wicket-tree div.row-selected a {font-weight: normal; color: black;}
 
 /* IE6 workaround */
-.hippo-tree div.wicket-tree div.context_hover{background-position: -200px 0px;}
+.hippo-tree div.wicket-tree div.context-hover{background-position: -200px 0px;}
+.hippo-tree div.wicket-tree div.context-hover-selected{background-position: -200px -21px;}
 
 .hippo-tree .wicket-tree span.plus, 
 .hippo-tree .wicket-tree span.minus {background-image: url("images/tree-icons.png"); width: 14px;}
@@ -666,7 +662,11 @@ font-weight: bold;
 .hippo-tree-dropdown-icon-container{float: right; display: block; background: transparent;}
 .hippo-tree-dropdown-icon {display: block; width: 18px; height: 18px; float: right; margin-right: 4px; background: transparent;}
 .hippo-tree-dropdown-icon:hover {background-position: 0px 18px;}
-.hippo-tree-dropdown{position: relative; display:block; float: right;}
+
+/*AB*/
+.hippo-tree-dropdown{visibility: hidden;}
+.hippo-tree-dropdown li a{color: #000;}
+
 .hippo-tree-dropdown .hippo-toolbar-menu-item{}
 
 /* Document Preview Plugin */
@@ -1049,3 +1049,12 @@ div.hippo-controlpanel-actions-top{border-bottom: 1px solid #afafaf; border-top:
 .createnamespace_ico{background-image:url("images/icons/document-new-16.png")}
 .modelreq_ico{background-image:url("images/icons/refresh-16.png")}
 .createtyperequest_ico{background-image:url("images/icons/document-new-16.png")}
+
+#context-menu-container {
+  text-align: left;
+  position: absolute;
+  display: block;
+  z-index: 10000;
+  color: #000;
+  padding:3px;
+}
