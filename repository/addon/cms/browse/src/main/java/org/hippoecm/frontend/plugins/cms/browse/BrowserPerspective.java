@@ -50,6 +50,10 @@ public class BrowserPerspective extends Perspective {
                 focus(null);
             }
         };
+
+        // register as the IRenderService for the browser service
+        String browserId = config.getString("browser.id");
+        context.registerService(this, browserId);
     }
     
     @Override

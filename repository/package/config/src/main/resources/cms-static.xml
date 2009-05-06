@@ -780,7 +780,6 @@
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.navigator</sv:value>
       <sv:value>extension.editor</sv:value>
-      <sv:value>extension.focus</sv:value>
     </sv:property>
     <sv:property sv:name="extension.navigator" sv:type="String">
       <sv:value>service.browse.navigator</sv:value>
@@ -790,24 +789,6 @@
     </sv:property>
     <sv:property sv:name="extension.list" sv:type="String">
       <sv:value>service.browse.list</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.focus" sv:type="String">
-      <sv:value>service.browse.focus</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="focusPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standards.browse.FocusPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.focus</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.focus</sv:value>
     </sv:property>
   </sv:node>
 

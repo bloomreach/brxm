@@ -18,9 +18,14 @@ package org.hippoecm.frontend.plugins.cms.edit;
 import java.util.IdentityHashMap;
 import java.util.List;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -32,6 +37,7 @@ import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IFocusListener;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +56,7 @@ class CmsEditor implements IEditor {
     private JcrNodeModel model;
     private EditorManagerPlugin manager;
     private IFocusListener focusListener;
+    private IObserver handleObserver;
 
     CmsEditor(final EditorManagerPlugin manager, IPluginContext context, String clusterName, IPluginConfig config,
             IModel model) throws CmsEditorException {
@@ -99,6 +106,46 @@ class CmsEditor implements IEditor {
 
         };
         context.registerService(focusListener, renderId);
+
+        try {
+            if (this.model.getParentModel().getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+                context.registerService(handleObserver = new IObserver() {
+                    private static final long serialVersionUID = 1L;
+
+                    public IObservable getObservable() {
+                        return CmsEditor.this.model.getParentModel();
+                    }
+
+                    public void onEvent(IEvent event) {
+                        JcrNodeModel nodeModel = CmsEditor.this.model.getParentModel();
+
+                        // select draft if it exists
+                        JcrNodeModel draftDocument = manager.getDraftModel(nodeModel);
+                        if (draftDocument != null) {
+                            modelService.setModel(draftDocument);
+                            return;
+                        }
+
+                        // show preview
+                        JcrNodeModel previewDocument = manager.getPreviewModel(nodeModel);
+                        if (previewDocument != null) {
+                            modelService.setModel(previewDocument);
+                            return;
+                        }
+
+                        // close
+                        try {
+                            close();
+                        } catch (EditorException ex) {
+                            log.error("Could not close editor for empty handle");
+                        }
+                    }
+
+                }, IObserver.class.getName());
+            }
+        } catch (RepositoryException ex) {
+            log.error("Could not subscribe to parent model");
+        }
     }
 
     public IModel getModel() {
@@ -106,7 +153,7 @@ class CmsEditor implements IEditor {
     }
 
     public void close() throws EditorException {
-        if(context.getReference(this) != null) {
+        if (context.getReference(this) != null) {
             List<IEditorFilter> filters = context.getServices(context.getReference(this).getServiceId(),
                     IEditorFilter.class);
             IdentityHashMap<IEditorFilter, Object> filterContexts = new IdentityHashMap<IEditorFilter, Object>();
@@ -116,6 +163,10 @@ class CmsEditor implements IEditor {
                     throw new EditorException("Close operation cancelled by filter");
                 }
                 filterContexts.put(filter, filterContext);
+            }
+
+            if (handleObserver != null) {
+                context.unregisterService(handleObserver, IObserver.class.getName());
             }
 
             String renderId = context.getReference(renderer).getServiceId();
