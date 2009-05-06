@@ -84,6 +84,12 @@ public interface HstRequestContext {
     HstURLFactory getURLFactory();
 
     /**
+     * Returns the {@link HstSiteMapMatcher} to be able to match a path to a sitemap item
+     * @return HstSiteMapMatcher
+     */
+    HstSiteMapMatcher getSiteMapMatcher();
+    
+    /**
      * Returns the {@link HstLinkCreator} to create navigational links
      * 
      * @return HstLinkCreator
