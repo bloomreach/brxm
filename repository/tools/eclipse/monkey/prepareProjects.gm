@@ -25,7 +25,13 @@ addProjectDependency('hippo-ecm-package-war', 'hippo-ecm-frontend-application');
 removeClasspathEntry('hippo-ecm-frontend-engine', 'src/test/resources');
 removeClasspathEntry('hippo-ecm-repository-engine', 'src/test/resources');
 removeClasspathEntry('hippo-ecm-addon-standards-frontend', 'src/test/resources');
+removeClasspathEntry('hippo-ecm-addon-xinha-frontend', 'src/test/java');
 removeClasspathEntry('hippo-ecm-addon-xinha-frontend', 'src/test/resources');
+removeClasspathEntry('hippo-ecm-addon-yui', 'src/test/resources');
+removeClasspathEntry('hippo-ecm-addon-eavesdrop', 'src/test/resources');
+removeClasspathEntry('hippo-ecm-addon-faceteddate-repository', 'src/test/resources');
+
+removeProjectDependency('hippo-ecm-addon-xinha-frontend', 'hippo-ecm-frontend-engine-test');
 
 println "\n$metadata.menuName finished";
 
@@ -50,7 +56,7 @@ def removeClasspathEntry(projectName, pathPattern) {
             def op = new SetClasspathOperation(javaProject, classpath, javaProject.getOutputLocation(), true);
             op.runOperation(monitor);
 	    } else {
-	       println "  $projectName has no dependency $pathPattern, leaving as is..";
+	        println "  $projectName has no classpath entry $pathPattern, leaving as is..";
 	    }
 	}
 }
@@ -85,7 +91,33 @@ def addProjectDependency(fromName, toName) {
 	    	def op = new SetClasspathOperation(fromProject, classpath, fromProject.getOutputLocation(), true);
 	    	op.runOperation(monitor);
 	    } else {
-            println "  Project dependency from $fromName to $toName allready exist, leaving as is..";
+            println "  Project dependency from $fromName to $toName already exists, leaving as is..";
+        }
+    }
+}
+
+def removeProjectDependency(fromName, toName) {
+    def from = workspace.root.getProject(fromName);
+    def to = workspace.root.getProject(toName);
+    if (from.isOpen() && to.isOpen()) {   
+        def fromProject = from.getNature('org.eclipse.jdt.core.javanature');
+        def classpath = fromProject.getRawClasspath();
+        def path = to.getFullPath();
+        def toBeRemoved = null;
+        classpath.each() {
+            if (it.getPath().toString().equals()) {
+                toBeRemoved = it;
+            }
+        };
+        if (toBeRemoved != null) {
+            println "  Removing project dependency from $fromName to $toName";
+            def classpathSet = new LinkedHashSet(Arrays.asList(classpath));
+            classpathSet.remove(toBeRemoved);
+            classpath = (IClasspathEntry[])classpathSet.toArray();
+            def op = new SetClasspathOperation(javaProject, classpath, fromProject.getOutputLocation(), true);
+            op.runOperation(monitor);
+        } else {
+            println "  $fromName has no project dependency to $toName, leaving as is..";
         }
     }
 }
