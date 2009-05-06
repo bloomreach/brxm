@@ -24,6 +24,8 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,11 +42,13 @@ public class HstSiteMenuItemImpl implements HstSiteMenuItem {
     private List<HstSiteMenuItem> hstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
     private HstSiteMenuItem parent;
     private HstLinkCreator linkCreator;
+    private HstSiteMapMatcher hstSiteMapMatcher;
     private HstSite hstSite;
     private String hstSiteMapItemPath;
     private int depth;
     private boolean repositoryBased;
     private Map<String, Object> properties;
+    private ResolvedSiteMapItemWrapper resolvedSiteMapItem;
     
     public HstSiteMenuItemImpl(HstSiteMenu hstSiteMenu, HstSiteMenuItem parent, HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration, HstRequestContext hstRequestContext) {
         this.hstSiteMenu = hstSiteMenu;
@@ -52,6 +56,7 @@ public class HstSiteMenuItemImpl implements HstSiteMenuItem {
         this.hstSite = hstSiteMenuItemConfiguration.getHstSiteMenuConfiguration().getSiteMenusConfiguration().getSite();
         this.hstSiteMapItemPath = hstSiteMenuItemConfiguration.getSiteMapItemPath();
         this.linkCreator = hstRequestContext.getHstLinkCreator();
+        this.hstSiteMapMatcher = hstRequestContext.getSiteMapMatcher();
         this.name = hstSiteMenuItemConfiguration.getName();
         this.depth = hstSiteMenuItemConfiguration.getDepth();
         this.repositoryBased = hstSiteMenuItemConfiguration.isRepositoryBased();
@@ -92,6 +97,18 @@ public class HstSiteMenuItemImpl implements HstSiteMenuItem {
         return hstSiteMenuItems;
     }
 
+    public ResolvedSiteMapItem resolveToSiteMapItem(){
+        if(this.resolvedSiteMapItem != null) {
+             return resolvedSiteMapItem.resolvedItem;
+        }
+        if(hstSiteMapItemPath == null) {
+            log.warn("Cannot resolve pathInfo null to a SiteMapItem");
+            return null;
+        }
+        this.resolvedSiteMapItem = new ResolvedSiteMapItemWrapper(this.hstSiteMapMatcher.match(this.hstSiteMapItemPath, this.hstSite));
+        return this.resolvedSiteMapItem.resolvedItem;
+    }
+    
     public HstLink getHstLink() {
         return linkCreator.create(this.hstSiteMapItemPath, this.hstSite);
     }
@@ -148,4 +165,12 @@ public class HstSiteMenuItemImpl implements HstSiteMenuItem {
         return this.properties;
     }
 
+    private class ResolvedSiteMapItemWrapper {
+        
+        private ResolvedSiteMapItem resolvedItem;
+        
+        ResolvedSiteMapItemWrapper(ResolvedSiteMapItem resolvedItem){
+            this.resolvedItem = resolvedItem;
+        }
+    }
 }

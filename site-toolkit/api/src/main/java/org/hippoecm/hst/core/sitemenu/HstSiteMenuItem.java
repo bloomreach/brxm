@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 /**
  *
@@ -54,6 +55,12 @@ public interface HstSiteMenuItem extends Serializable{
      * @return a HstLink that contains a link for this SiteMenuItem
      */
     HstLink getHstLink();
+    
+    /**
+     * @return the <code>{@link ResolvedSiteMapItem}</code> belonging to this SiteMenuItem or <code>null</code> if it cannot be resolved 
+     * in the <code>{@link HstSiteMap}</code>
+     */
+    ResolvedSiteMapItem resolveToSiteMapItem();
     
     /**
      * @return <code>true</code> is the SiteMenuItem is selected
