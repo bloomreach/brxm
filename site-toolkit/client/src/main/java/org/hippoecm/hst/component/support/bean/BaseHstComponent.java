@@ -96,7 +96,15 @@ public class BaseHstComponent extends GenericHstComponent {
         return null;
     }
     
+    /**
+     * Use {@link BaseHstComponent#getContentBean(HstRequest)}
+     */
+    @Deprecated
     public HippoBean getContentNode(HstRequest request) {
+        return this.getContentBean(request);
+    }
+    
+    public HippoBean getContentBean(HstRequest request) {
         ResolvedSiteMapItem resolvedSitemapItem = request.getRequestContext().getResolvedSiteMapItem();
         
         String base = PathUtils.normalizePath(resolvedSitemapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
@@ -114,7 +122,15 @@ public class BaseHstComponent extends GenericHstComponent {
         
     }
     
+    /**
+     * Use {@link BaseHstComponent#getSiteContentBaseBean(HstRequest)}
+     */
+    @Deprecated
     public HippoBean getSiteContentBaseNode(HstRequest request) {
+        return this.getSiteContentBaseBean(request);
+    }
+    
+    public HippoBean getSiteContentBaseBean(HstRequest request) {
         ResolvedSiteMapItem resolvedSitemapItem = request.getRequestContext().getResolvedSiteMapItem();
         String base = PathUtils.normalizePath(resolvedSitemapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
         try {
