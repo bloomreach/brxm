@@ -689,7 +689,7 @@ public abstract class DefaultAbstractTree extends AbstractTree
 		if (info != null) {
 			String userAgent = info.getUserAgent().toLowerCase();
 			if (userAgent.indexOf("msie 6") > -1) {
-				target.getHeaderResponse().renderOnDomReadyJavascript("fixIE6Hover('row', 'div', 'context_hover');");
+				target.getHeaderResponse().renderOnDomReadyJavascript("fixIE6Hover('row', 'div', 'context_hover'); fixIE6Hover('row-selected', 'div', 'context-hover-selected');");
 			}
 		}
 	}
@@ -702,6 +702,7 @@ public abstract class DefaultAbstractTree extends AbstractTree
 			String userAgent = info.getUserAgent().toLowerCase();
 			if (userAgent.indexOf("msie 6") > -1) {
 				container.getHeaderResponse().renderJavascriptReference(IE6_HOVER_FIX);
+                                container.getHeaderResponse().renderOnDomReadyJavascript("fixIE6Hover('row', 'div', 'context_hover'); fixIE6Hover('row-selected', 'div', 'context-hover-selected');");
 			}
 		}
 	}
