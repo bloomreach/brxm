@@ -28,7 +28,7 @@ public class Detail extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
         
-        HippoBean  n = this.getContentNode(request);
+        HippoBean  n = this.getContentBean(request);
         
         if(n == null) {
             return;

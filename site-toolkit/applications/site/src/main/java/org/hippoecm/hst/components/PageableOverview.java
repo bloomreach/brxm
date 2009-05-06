@@ -50,7 +50,7 @@ public class PageableOverview extends GenericResourceServingHstComponent {
             }
         }
         
-        HippoBean  n = this.getContentNode(request);
+        HippoBean  n = this.getContentBean(request);
         
         if(n == null) {
             return;

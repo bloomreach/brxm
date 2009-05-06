@@ -21,6 +21,8 @@ import org.hippoecm.hst.content.beans.standard.HippoFolder;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 public class Overview extends BaseHstComponent {
     
@@ -30,10 +32,10 @@ public class Overview extends BaseHstComponent {
         
        // System.out.println(this.getParameters(request));
         
-        HippoBean hippoBean = this.getContentNode(request);
+        HippoBean hippoBean = this.getContentBean(request);
         
         if(hippoBean == null) {
-            hippoBean = this.getSiteContentBaseNode(request);
+            hippoBean = this.getSiteContentBaseBean(request);
         }
       
         if(hippoBean == null) {

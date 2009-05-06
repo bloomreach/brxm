@@ -40,7 +40,7 @@ public class Action extends GenericResourceServingHstComponent {
         
         String s = this.getParameter("foo" , request);
         
-        HippoBean  n = this.getContentNode(request);
+        HippoBean  n = this.getContentBean(request);
         
         if(n == null) {
             return;
