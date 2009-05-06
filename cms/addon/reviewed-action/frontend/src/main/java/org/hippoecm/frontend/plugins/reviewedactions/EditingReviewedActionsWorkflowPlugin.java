@@ -25,12 +25,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.Session;
 import org.apache.wicket.model.StringResourceModel;
-
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -44,6 +40,7 @@ import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
@@ -54,6 +51,8 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlugin implements IValidateService {
     @SuppressWarnings("unused")
@@ -201,6 +200,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
             public String execute(Workflow wf) throws Exception {
                 IPluginConfig config = getPluginConfig();
                 IBrowseService browser = context.getService(config.getString("browser.id"), IBrowseService.class);
+                IRenderService browserRenderer = context.getService(config.getString("browser.id"), IRenderService.class);
                 IEditor editor = context.getService(config.getString(IEditorManager.EDITOR_ID),IEditor.class);
 
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
@@ -211,7 +211,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
 
                 closing = true;
                 editor.close();
-                browser.browse(new JcrNodeModel(((WorkflowDescriptorModel)EditingReviewedActionsWorkflowPlugin.this.getModel()).getNode()));
+                browserRenderer.focus(null);
                 return null;
             }
         });

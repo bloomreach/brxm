@@ -30,6 +30,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
@@ -61,7 +62,7 @@ public class BrowseLink extends Panel {
         final JcrNodeModel nodeModel = new JcrNodeModel(docPath);
         AjaxLink link = new AjaxLink("link", nodeModel) {
             private static final long serialVersionUID = 1L;
-    
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 String browserId = config.getString("browser.id");
@@ -70,6 +71,13 @@ public class BrowseLink extends Panel {
                     browseService.browse(nodeModel);
                 } else {
                     log.warn("no browser service found");
+                }
+
+                IRenderService browserRenderer = context.getService(browserId, IRenderService.class);
+                if (browserRenderer != null) {
+                    browserRenderer.focus(null);
+                } else {
+                    log.warn("no focus service found");
                 }
             }
         };

@@ -22,6 +22,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.search.yui.SearchBehavior;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,12 @@ public class SearchPlugin extends RenderPlugin implements IBrowseService<IModel>
         IBrowseService<IModel> browseService = getPluginContext().getService(browserId, IBrowseService.class);
         if (browseService != null && model instanceof JcrNodeModel) {
             browseService.browse(model);
+        }
+        IRenderService browserRenderer = getPluginContext().getService(browserId, IRenderService.class);
+        if (browserRenderer != null) {
+            browserRenderer.focus(null);
+        } else {
+            log.warn("no focus service found");
         }
     }
 }

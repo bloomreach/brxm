@@ -15,19 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.gotolink;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -47,14 +44,14 @@ public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
             public void onClick(AjaxRequestTarget target) {
                 String browserId = config.getString("browser.id");
                 IBrowseService browseService = context.getService(browserId, IBrowseService.class);
-                IBrowseService focusService = context.getService("focus.id", IBrowseService.class);
                 if (browseService != null) {
                     browseService.browse(new JcrNodeModel(config.getString("option.location","/content")));
                 } else {
                     log.warn("no browser service found");
                 }
-                if (focusService != null) {
-                    focusService.browse(new JcrNodeModel(config.getString("option.location","/content")));
+                IRenderService browserRenderer = context.getService(browserId, IRenderService.class);
+                if (browserRenderer != null) {
+                    browserRenderer.focus(null);
                 } else {
                     log.warn("no focus service found");
                 }
