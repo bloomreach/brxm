@@ -18,6 +18,7 @@ package org.hippoecm.hst.configuration.sitemenu;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -25,6 +26,8 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.Configuration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.provider.ValueProvider;
+import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +45,7 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     private String siteMapItemPath;
     private int depth;
     private boolean repositoryBased;
+    private Map<String, Object> properties;
     
     public HstSiteMenuItemConfigurationService(Node siteMenuItem, HstSiteMenuItemConfiguration parent, HstSiteMenuConfiguration hstSiteMenuConfiguration) throws ServiceException {
         this.parent = parent;
@@ -89,6 +93,10 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
                 		"depth > 0 the configuration is correct for repository based navigation. Skipping repobased and depth setting for this item.");
             }
             
+            // fetch all properties from the sitemenu item node and put this in the propertyMap
+            ValueProvider provider = new JCRValueProviderImpl(siteMenuItem);
+            this.properties = provider.getProperties();
+            
         } catch (RepositoryException e) {
             throw new ServiceException("ServiceException while initializing HstSiteMenuItemConfiguration.", e);
         }
@@ -120,6 +128,10 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
 
     public boolean isRepositoryBased() {
         return this.repositoryBased;
+    }
+
+    public Map<String, Object> getProperties() {
+        return properties;
     }
 
 }

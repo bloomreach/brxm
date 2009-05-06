@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.sitemenu;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
@@ -43,6 +44,7 @@ public class HstSiteMenuItemImpl implements HstSiteMenuItem {
     private String hstSiteMapItemPath;
     private int depth;
     private boolean repositoryBased;
+    private Map<String, Object> properties;
     
     public HstSiteMenuItemImpl(HstSiteMenu hstSiteMenu, HstSiteMenuItem parent, HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration, HstRequestContext hstRequestContext) {
         this.hstSiteMenu = hstSiteMenu;
@@ -53,6 +55,7 @@ public class HstSiteMenuItemImpl implements HstSiteMenuItem {
         this.name = hstSiteMenuItemConfiguration.getName();
         this.depth = hstSiteMenuItemConfiguration.getDepth();
         this.repositoryBased = hstSiteMenuItemConfiguration.isRepositoryBased();
+        this.properties = hstSiteMenuItemConfiguration.getProperties();
         for(HstSiteMenuItemConfiguration childItemConfiguration : hstSiteMenuItemConfiguration.getChildItemConfigurations()) {
             hstSiteMenuItems.add(new HstSiteMenuItemImpl(hstSiteMenu, this, childItemConfiguration, hstRequestContext));
         }
@@ -139,6 +142,10 @@ public class HstSiteMenuItemImpl implements HstSiteMenuItem {
             }
         }
         return this;
+    }
+
+    public Map<String, Object> getProperties() {
+        return this.properties;
     }
 
 }

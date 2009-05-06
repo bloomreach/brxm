@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.sitemenu;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.hippoecm.hst.core.linking.HstLink;
 
@@ -65,7 +66,14 @@ public interface HstSiteMenuItem extends Serializable{
      */
     boolean isExpanded();
     
-    
+    /**
+     * When developers have customized SiteMenuItem configuration with extra properties, these properties can be 
+     * accessed through this Map
+     * 
+     * @return a Map containing the value for every property in the backing content provider for this SiteMenuItem
+     */
+     Map<String, Object> getProperties(); 
+     
     /**
      * @return <code>true</code> when below this sitemenu item repository based navigation is expected
      */

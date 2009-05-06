@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration.sitemenu;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implementations should return an unmodifiable map for {@link #getSiteMenuItemConfigurations()} because clients should not
@@ -50,10 +51,17 @@ public interface HstSiteMenuItemConfiguration extends Serializable{
     
     
     /**
-     * 
      * @return the parent <code>HstSiteMenuItemConfiguration</code> and <code>null</code> is none exists (ie, it is a root)
      */
     HstSiteMenuItemConfiguration getParentItemConfiguration();
+    
+    /**
+     * When developers have customized SiteMenuItem configuration with extra properties, these properties can be 
+     * accessed through this Map
+     * 
+     * @return a Map containing the value for every property in the backing content provider for this SiteMenuItem
+     */
+     Map<String, Object> getProperties(); 
     
     /**
      * @return <code>true</code> when below this sitemenu item repository based navigation is expected
