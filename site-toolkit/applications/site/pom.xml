@@ -273,7 +273,7 @@
                     <echo>Replacing cms web application into tomcat.</echo>
                     <delete dir="${tomcat.hst.cms.webapp}" />
                     <mkdir dir="${tomcat.hst.cms.webapp}" />
-                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.00.01.war" dest="${tomcat.hst.cms.webapp}" />
+                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.01.00.war" dest="${tomcat.hst.cms.webapp}" />
                                       
                     <echo>Replacing site web application into tomcat.</echo>
                     <delete dir="${tomcat.server.home}/webapps/${project.artifactId}" />
@@ -348,7 +348,7 @@
                     <echo>Replacing cms web application into jetspeed.</echo>
                     <delete dir="${jetspeed.hst.cms.webapp}" />
                     <mkdir dir="${jetspeed.hst.cms.webapp}" />
-                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.00.01.war" dest="${jetspeed.hst.cms.webapp}" />
+                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.01.00.war" dest="${jetspeed.hst.cms.webapp}" />
                                       
                     <echo>Replacing site portlet application into jetspeed.</echo>
                     <delete dir="${jetspeed.server.home}/webapps/${project.artifactId}" />
