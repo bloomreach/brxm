@@ -22,4 +22,6 @@ public interface IContextMenu extends IClusterable {
     final static String SVN_ID = "$Id$";
 
     void collapse(AjaxRequestTarget target);
+
+    String getContextMenuId();
 }

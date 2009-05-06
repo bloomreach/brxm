@@ -59,16 +59,41 @@
 
 	Hippo.ContextMenu = new Object();
 	
-	Hippo.ContextMenu.show = function(id) {
-		menus.add(id);
+	Hippo.ContextMenu.init = function() {
+	    if(document.getElementById('context-menu-container') == null) {
+	        var x = document.createElement('div');
+	        x.id = "context-menu-container";
+	        document.body.appendChild(x);
+	    }
+	}
+
+	Hippo.ContextMenu.show = function(id, contentId) {
+	    menus.add(id);
+
+	    var YUID = YAHOO.util.Dom;
+	    var container = YUID.get('context-menu-container');
+
+	    //reset container
+	    container.innerHTML = '';
+	    
+        var clickPoint = YUID.getPreviousSibling(contentId);
+	    var region  = YUID.getRegion(clickPoint);
+	    var x = region.right - 12;
+	    var y = region.top + 5;
+	    
+	    container.appendChild(YUID.get(contentId));
+        YUID.setXY(container, [x,y]);
+        YUID.setStyle(contentId, 'visibility', 'visible');
 	}
 
 	Hippo.ContextMenu.hide = function(id) {
 		menus.remove(id);
+		var YUID = YAHOO.util.Dom;
+		YUID.get('context-menu-container').innerHTML = '';
 	}
 
 	Hippo.ContextMenu.isShown = function(id) {
 		return menus.contains(id);
 	}
-	
+
 })();
