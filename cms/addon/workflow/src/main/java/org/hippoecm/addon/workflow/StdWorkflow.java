@@ -86,7 +86,7 @@ public abstract class StdWorkflow extends ActionDescription {
     }
 
     protected ResourceReference getIcon() {
-        return new ResourceReference(getClass(), "workflow-16.png");
+        return new ResourceReference(StdWorkflow.class, "workflow-16.png");
     }
 
     protected abstract void invoke();
