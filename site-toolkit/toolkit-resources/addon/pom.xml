@@ -32,7 +32,7 @@
   <modules>
     <module>repository</module>
     <module>testcontents</module>
-    <module>configuration-editor</module>
+    <!--<module>configuration-editor</module>-->
   </modules>
 
   <build>
