@@ -259,36 +259,70 @@ public class HstSiteConfigServlet extends HttpServlet {
         return allRunning;
     }
 
+    /**
+     * <p>The goal of this method is to load the configuration using parameters provided by servlet config parameters,
+     * and/or system parameters. Some sane defaults are available as well.</p>
+     * <p>You can use the commons configuration xml config, which by default should be in the WEB-INF folder. You can
+     * also configure the location of this file in init-params of the servlet. Check the example</p>
+     * <p>Another way to configure commons configuration is to use a properties file. Again the location by default is
+     * in the WEB-INF folder, but you can change location and name of the file using init-params of the servlet</p>
+     * <p/>
+     *
+     * <strong>Example - using xml configuration and a system parameter</strong>
+     * <pre>-DConfig.dir=/usr/local/tomcat/config</pre><br/>
+     * <pre>hst-configuration.xml</pre> (in the WEB-INF folder)
+     * <pre>
+     * &lt;configuration>
+     *     &lt;properties fileName="${Config.dir}/site/hst-config.properties"/&gt;
+     * &lt;/configuration>
+     * </pre>
+     *
+     * <strong>Example - using servlet init param for hst.properties</strong>
+     * <pre>web.xml</pre>
+     * <pre>
+     * &lt;init-param>
+     *     &lt;param-name>hst-config-properties&lt;/param-name>
+     * &lt;param-value>/usr/local/tomcat/config/site/hst-config.properties&lt;/param-value>
+     * &lt;/init-param>
+     * </pre>
+     *
+     * @param servletConfig ServletConfig that contains the init params
+     * @return Configuration containing all the params found in the system, jndi and the config file found
+     * @throws ServletException thrown if file's cannot be found or configuration problems arise.
+     */
     protected Configuration getConfiguration(ServletConfig servletConfig) throws ServletException {
         Configuration configuration = null;
         ConfigurationFactory factory = new ConfigurationFactory();
-        
+
+        // check if we have an commons configuration xml config file
         String hstConfigurationFilePath = servletConfig.getInitParameter(HST_CONFIGURATION_PARAM);
-        File hstConfigurationFile = null;
         
         if (hstConfigurationFilePath == null) {
             hstConfigurationFilePath = "/WEB-INF/" + HST_CONFIGURATION_XML;
         }
-        
-        hstConfigurationFile = new File(servletConfig.getServletContext().getRealPath(hstConfigurationFilePath));
-        
+
         try {
+            String absolutePath = servletConfig.getServletContext().getRealPath(hstConfigurationFilePath);
+            File hstConfigurationFile = new File(absolutePath);
+            
             if (hstConfigurationFile.isFile()) {
-                factory.setConfigurationFileName(hstConfigurationFile.toURI().toString());
+                factory.setConfigurationFileName(absolutePath);
                 configuration = factory.getConfiguration();
             } else {
+                // no xml config found, try the properties file alternative
                 String hstConfigPropFilePath = servletConfig.getInitParameter(HST_CONFIG_PROPERTIES_PARAM);
-                
+
                 if (hstConfigPropFilePath == null) {
                     hstConfigPropFilePath = servletConfig.getServletContext().getRealPath("/WEB-INF/" + HST_CONFIG_PROPERTIES);
                 }
-                
+
                 configuration = new PropertiesConfiguration(new File(hstConfigPropFilePath));
             }
         } catch (ConfigurationException e) {
             throw new ServletException(e);
         }
-        
+
         return configuration;
     }
+    
 }
