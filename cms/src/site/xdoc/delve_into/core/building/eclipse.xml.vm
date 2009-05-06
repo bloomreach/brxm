@@ -47,6 +47,10 @@
       <p>Follow all steps documented on the <a href="maven.html">Building with Maven</a> page.
         Don't continue with the instructions on this page before you have seen a running application
         using just Maven.</p>
+      <p>For later use, extract the MANIFEST.MF file from the repository-modules jar.  I.e. in the
+        <code>target/</code> folder under <code>repository/modules/</code>, extract the jar
+        (<code>jar xvf hippo-ecm-repository-modules-2.06.02-SNAPSHOT.jar</code>) and copy the
+        file <code>META-INF/MANIFEST.MF</code> to a location outside the build tree</p>
 
       <div style="border:1px solid black; padding:1em;">
         <p>NOTE: Do not do the initial checkout of the source tree from within Eclipse, use the command
@@ -105,6 +109,13 @@
           <p>Wait until Eclipse has finished building everything, until there is no more activity in the Eclipse 'Progress' view.</p>
         </li>
       </ol>     
+    </subsection>
+
+    <subsection name="Fixup">
+      <p>
+        In the hippo-ecm-repository-modules project, create the folder <code>META-INF</code> under src/main/resources.
+        Copy the MANIFEST.MF file that was copied earlier from the maven build into this folder.
+      </p>
       <p>
         As a final step you need to run the 
         <a href="${project_source_url}/trunk/tools/eclipse/monkey/prepareProjects.gm">
@@ -118,11 +129,20 @@
         <br/><br/>
       </p>      
     </subsection>
-    
+
     <subsection name="Run">
       <p>
         <a href="http://code.google.com/p/run-jetty-run/">Create Run-Jetty-Run configuration</a>
       </p>
+      <div style="border:1px solid black; padding:1em;">
+        <p>NOTE: The 1.1.0 release does not work under unices due to
+          <a href="http://code.google.com/p/run-jetty-run/issues/detail?id=25">this issue</a>.
+          The 1.0.1 release doesn't work for any platform due to
+          <a href="http://code.google.com/p/run-jetty-run/issues/detail?id=3">another issue</a>;
+          however it is easy to work around the issue by adding the servlet-api.jar to the
+          hippo-ecm-quickstart-war library dependencies.
+        </p>
+      </div>
       <ul>
         <li>
           <p>Name is 'hippo-ecm-quickstart-war'</p>
@@ -144,7 +164,6 @@
       <source>-Dorg.mortbay.util.FileResource.checkAliases=False</source>
       <p>(Optional) Select the 'Common' tab and check 'Run' and 'Debug' under
         'display in favorites menu'</p>
-  <span class='update'>org.hippoecm.frontend.Home</span>
       <p> You can now debug Hippo ECM within Eclipse: Set a breakpoint in the constructor
         of org.hippoecm.frontend.Home, start the Run-Jetty-Run launcher in debug mode,
         open your browser and go to <a href="http://localhost:8080/cms">http://localhost:8080/cms</a></p>
