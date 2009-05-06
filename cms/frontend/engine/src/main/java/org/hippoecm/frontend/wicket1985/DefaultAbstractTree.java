@@ -615,6 +615,11 @@ public abstract class DefaultAbstractTree extends AbstractTree
                 protected IAjaxCallDecorator getAjaxCallDecorator() {
                     return new EventStoppingDecorator(super.getAjaxCallDecorator());
                 }
+
+		public String getContextMenuId() {
+			return content.getMarkupId();
+		}
+
         }
 
 	/**
