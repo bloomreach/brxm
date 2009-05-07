@@ -67,23 +67,8 @@
 	    }
 	}
 
-	Hippo.ContextMenu.show = function(id, contentId) {
+	Hippo.ContextMenu.show = function(id) {
 	    menus.add(id);
-
-	    var YUID = YAHOO.util.Dom;
-	    var container = YUID.get('context-menu-container');
-
-	    //reset container
-	    container.innerHTML = '';
-	    
-        var clickPoint = YUID.getPreviousSibling(contentId);
-	    var region  = YUID.getRegion(clickPoint);
-	    var x = region.right - 12;
-	    var y = region.top + 5;
-	    
-	    container.appendChild(YUID.get(contentId));
-        YUID.setXY(container, [x,y]);
-        YUID.setStyle(contentId, 'visibility', 'visible');
 	}
 
 	Hippo.ContextMenu.hide = function(id) {
@@ -94,6 +79,23 @@
 
 	Hippo.ContextMenu.isShown = function(id) {
 		return menus.contains(id);
+	}
+	
+	Hippo.ContextMenu.renderInTree = function(id) {
+        var YUID = YAHOO.util.Dom;
+        var container = YUID.get('context-menu-container');
+
+        //reset container
+        container.innerHTML = '';
+        
+        var clickPoint = YUID.getPreviousSibling(id);
+        var region  = YUID.getRegion(clickPoint);
+        var x = region.right - 12;
+        var y = region.top + 5;
+        
+        container.appendChild(YUID.get(id));
+        YUID.setXY(container, [x,y]);
+        YUID.setStyle(id, 'visibility', 'visible');	    
 	}
 
 })();

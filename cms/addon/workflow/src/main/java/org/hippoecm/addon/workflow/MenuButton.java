@@ -73,7 +73,4 @@ class MenuButton extends Panel implements IContextMenu {
         target.addComponent(MenuButton.this);
     }
 
-    public String getContextMenuId() {
-        return getMarkupId();
-    }
 }
