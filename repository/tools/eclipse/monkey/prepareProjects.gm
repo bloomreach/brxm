@@ -114,7 +114,7 @@ def removeProjectDependency(fromName, toName) {
             def classpathSet = new LinkedHashSet(Arrays.asList(classpath));
             classpathSet.remove(toBeRemoved);
             classpath = (IClasspathEntry[])classpathSet.toArray();
-            def op = new SetClasspathOperation(javaProject, classpath, fromProject.getOutputLocation(), true);
+            def op = new SetClasspathOperation(fromProject, classpath, fromProject.getOutputLocation(), true);
             op.runOperation(monitor);
         } else {
             println "  $fromName has no project dependency to $toName, leaving as is..";
