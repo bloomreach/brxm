@@ -588,6 +588,7 @@ public abstract class DefaultAbstractTree extends AbstractTree
                                         menuManager.collapse(this, target);
                                         menuManager.addContextMenu(this, target);
                                 }
+				super.onClick(target);
 			}
                 };
                 setOutputMarkupId(true);
@@ -616,8 +617,9 @@ public abstract class DefaultAbstractTree extends AbstractTree
                     return new EventStoppingDecorator(super.getAjaxCallDecorator());
                 }
 
-		public String getContextMenuId() {
-			return content.getMarkupId();
+		@Override
+		public void onClick(AjaxRequestTarget target) {
+			target.getHeaderResponse().renderOnDomReadyJavascript("Hippo.ContextMenu.renderInTree('" + content.getMarkupId() + "');");
 		}
 
         }
