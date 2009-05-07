@@ -73,6 +73,33 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      */
     <T> List<T> getChildBeans(String jcrPrimaryNodeType);
     
+    /**
+     * Returns <code>true</code> when this <code>HippoBean</code> is an ancestor of the <code>compare</code> HippoBean. 
+     * Note that this is done by the jcr path of the backing jcr node. In case of a virtual node, the virtual path 
+     * is taken. 
+     * @param compare 
+     * @return <code>true</code> when this <code>HippoBean</code> is an ancestor of the <code>compare</code> HippoBean. 
+     */
+    boolean isAncestor(HippoBean compare);
+    
+    /**
+     * Returns <code>true</code> when this <code>HippoBean</code> is an descendant of the <code>compare</code> HippoBean. 
+     * Note that this is done by the jcr path of the backing jcr node. In case of a virtual node, the virtual path 
+     * is taken. This means, that although the canonical nodes of the backing jcr nodes might return true for this method, this
+     * does not automatically holds for the beans of the virtual nodes.
+     * @param compare 
+     * @return <code>true</code> when this <code>HippoBean</code> is an descendant of the <code>compare</code> HippoBean. 
+     */
+    boolean isDescendant(HippoBean compare);
+    
+    /**
+     * Returns <code>true</code> when this <code>HippoBean</code> has a underlying jcr node with the same jcr path as the
+     * <code>compare</code> HippoBean. This means, that two HippoBeans might have the same canonical underlying jcr node, but
+     * do not return <code>true</code> because their virtual node might have different jcr paths.
+     * @param compare
+     * @return Returns <code>true</code> when this <code>HippoBean</code> has the same underlying jcr node path as the <code>compare</code> HippoBean. 
+     */
+    boolean isSelf(HippoBean compare);
     
     /**
      * A convenience method capable of comparing two HippoBean instances for you for the underlying jcr node. 

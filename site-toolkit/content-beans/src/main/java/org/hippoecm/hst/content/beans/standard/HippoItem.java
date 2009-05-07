@@ -198,6 +198,34 @@ public class HippoItem implements HippoBean{
         return null;
     }
     
+    public boolean isAncestor(HippoBean compare) {
+        if(this.getPath() == null || compare.getPath() == null){
+            log.warn("Cannot compare the HippoBeans as one as a path that is null. Return false.");
+            return false;
+        }
+        if(compare.getPath().startsWith(this.getPath())) {
+            if(!isSelf(compare)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isDescendant(HippoBean compare) {
+        return !isAncestor(compare) && !isSelf(compare);
+    }
+
+    public boolean isSelf(HippoBean compare) {
+        if(this.getPath() == null || compare.getPath() == null){
+            log.warn("Cannot compare the HippoBeans as one as a path that is null. Return false.");
+            return false;
+        }
+        if(this.getPath().equals(compare.getPath())) {
+            return true;
+        }
+        return false;
+    }
+    
     public boolean equalCompare(Object compare){
         return (Boolean)new ComparatorMap().get(compare);
     }
@@ -312,5 +340,7 @@ public class HippoItem implements HippoBean{
         log.error("Repository exception while trying to attach jcr node: {}", e);
       }
     }
+
+
     
 }
