@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
+import java.util.Iterator;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -62,7 +64,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements Tabl
                         return documentReference;
                     }
 
-                    public void onEvent(IEvent event) {
+                    public void onEvent(Iterator<? extends IEvent> event) {
                         updateSelection(documentReference.getModel());
                     }
                     
@@ -109,7 +111,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements Tabl
                         return (IObservable) provider;
                     }
 
-                    public void onEvent(IEvent event) {
+                    public void onEvent(Iterator<? extends IEvent> event) {
                         redraw();
                     }
                     

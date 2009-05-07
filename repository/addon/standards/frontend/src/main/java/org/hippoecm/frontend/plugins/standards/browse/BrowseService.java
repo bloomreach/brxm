@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.standards.browse;
 
+import java.util.Iterator;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -87,7 +89,7 @@ public class BrowseService implements IBrowseService<IModel>, IRefreshable, IDet
                     return folderService;
                 }
 
-                public void onEvent(IEvent event) {
+                public void onEvent(Iterator<? extends IEvent> event) {
                     selectFolder(folderService.getModel());
                 }
 

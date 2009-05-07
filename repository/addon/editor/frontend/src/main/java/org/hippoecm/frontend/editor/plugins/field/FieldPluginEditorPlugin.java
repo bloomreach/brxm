@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
+import java.util.Iterator;
+
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
@@ -166,7 +168,7 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
                         return helperModelRef;
                     }
 
-                    public void onEvent(IEvent event) {
+                    public void onEvent(Iterator<? extends IEvent> event) {
                         helper.show(helperModelRef.getModel() != null
                                 && pluginId.equals(helperModelRef.getModel().getObject()));
                     }

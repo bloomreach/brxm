@@ -110,7 +110,7 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
                     return nodeModel;
                 }
 
-                public void onEvent(IEvent event) {
+                public void onEvent(Iterator<? extends IEvent> event) {
                     sync();
                     for (IPluginConfigListener listener : listeners) {
                         listener.onPluginConfigChanged();

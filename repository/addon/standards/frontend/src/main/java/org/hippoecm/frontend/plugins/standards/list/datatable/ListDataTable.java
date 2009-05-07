@@ -186,7 +186,7 @@ public class ListDataTable extends DataTable {
                     return (IObservable) model;
                 }
 
-                public void onEvent(IEvent event) {
+                public void onEvent(Iterator<? extends IEvent> event) {
                     dirty.add(item);
                 }
             };

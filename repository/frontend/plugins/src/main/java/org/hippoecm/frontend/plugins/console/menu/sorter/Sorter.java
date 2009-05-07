@@ -138,7 +138,7 @@ public class Sorter extends Panel {
         if (model instanceof JcrNodeModel) {
             try {
                 JcrNodeModel newModel = (JcrNodeModel) model;
-                if (newModel.getNode().getDepth() == 0) {
+                if (newModel.getNode() == null || newModel.getNode().getDepth() == 0) {
                     up.setEnabled(false);
                     down.setEnabled(false);
                 } else {

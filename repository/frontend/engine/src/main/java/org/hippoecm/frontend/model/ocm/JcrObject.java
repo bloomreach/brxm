@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.model.ocm;
 
+import java.util.Iterator;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -52,7 +54,7 @@ public class JcrObject implements IDetachable {
                 return JcrObject.this.nodeModel;
             }
 
-            public void onEvent(IEvent event) {
+            public void onEvent(Iterator<? extends IEvent> event) {
                 JcrObject.this.onEvent(event);
             }
 
@@ -71,7 +73,7 @@ public class JcrObject implements IDetachable {
         return nodeModel.getNode();
     }
 
-    protected void onEvent(IEvent event) {
+    protected void onEvent(Iterator<? extends IEvent> event) {
     }
 
     public void save() {

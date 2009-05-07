@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
+import java.util.Iterator;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -58,7 +60,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
             return (IObservable) template;
         }
 
-        public void onEvent(IEvent event) {
+        public void onEvent(Iterator<? extends IEvent> event) {
             modelChanged();
         }
 

@@ -56,7 +56,9 @@ import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-enum NeedsProcessing { FALSE, TRUE, UNKNOWN };
+enum TriState {
+    FALSE, TRUE, UNKNOWN
+};
 
 public class JcrObservationManager implements ObservationManager {
     @SuppressWarnings("unused")
@@ -191,6 +193,7 @@ public class JcrObservationManager implements ObservationManager {
         String[] nodeTypes;
         boolean isDeep;
         String path;
+        boolean isvirtual;
 
         Map<String, NodeCache> pending;
         List<Event> events;
@@ -222,6 +225,7 @@ public class JcrObservationManager implements ObservationManager {
             this.path = absPath;
             this.isDeep = isDeep;
             this.nodeTypes = nodeTypes;
+            this.isvirtual = isVirtual(getRoot());
 
             Session session = getSession().getJcrSession();
             pending = new HashMap<String, NodeCache>();
@@ -317,8 +321,6 @@ public class JcrObservationManager implements ObservationManager {
             return false;
         }
 
-        private NeedsProcessing needsProcessing = NeedsProcessing.UNKNOWN;
-
         void processPending(NodeIterator iter, List<Node> nodes) throws RepositoryException {
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
@@ -390,65 +392,58 @@ public class JcrObservationManager implements ObservationManager {
             }
 
             // process pending changes
-            if (needsProcessing != NeedsProcessing.FALSE) {
+            if (!isvirtual) {
                 try {
                     Node root = getRoot();
-                    if (!isVirtual(root)) {
-                        needsProcessing = NeedsProcessing.TRUE;
+                    List<Node> nodes = new LinkedList<Node>();
+                    if (nodeTypes == null) {
+                        if (root.isModified() || root.isNew()) {
+                            nodes.add(root);
+                        }
+                        if (!root.isNew()) {
+                            NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null, true);
+                            processPending(iter, nodes);
+                        }
                     } else {
-                        needsProcessing = NeedsProcessing.FALSE;
-                    }
-                    if (needsProcessing == NeedsProcessing.TRUE) {
-                        List<Node> nodes = new LinkedList<Node>();
-                        if (nodeTypes == null) {
-                            if (root.isModified() || root.isNew()) {
-                                nodes.add(root);
+                        if (root.isModified() || root.isNew()) {
+                            for (String type : nodeTypes) {
+                                if (root.isNodeType(type)) {
+                                    nodes.add(root);
+                                    break;
+                                }
                             }
-                            if (!root.isNew()) {
-                                NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null, true);
+                        }
+                        if (!root.isNew()) {
+                            for (String type : nodeTypes) {
+                                NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, type, true);
                                 processPending(iter, nodes);
                             }
+                        }
+                    }
+
+                    expandNew(nodes);
+
+                    List<String> paths = new LinkedList<String>();
+                    for (Node node : nodes) {
+                        String path;
+                        path = node.getPath();
+                        paths.add(path);
+                        if (pending.containsKey(path)) {
+                            Iterator<Event> iter = pending.get(path).update(node);
+                            while (iter.hasNext()) {
+                                events.add(iter.next());
+                            }
                         } else {
-                            if (root.isModified() || root.isNew()) {
-                                for (String type : nodeTypes) {
-                                    if (root.isNodeType(type)) {
-                                        nodes.add(root);
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!root.isNew()) {
-                                for (String type : nodeTypes) {
-                                    NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, type, true);
-                                    processPending(iter, nodes);
-                                }
-                            }
+                            NodeCache cache = new NodeCache(node);
+                            pending.put(path, cache);
+                            events.add(cache.new NodeEvent(null, 0));
                         }
+                    }
 
-                        expandNew(nodes);
- 
-                        List<String> paths = new LinkedList<String>();
-                        for (Node node : nodes) {
-                            String path;
-                            path = node.getPath();
-                            paths.add(path);
-                            if (pending.containsKey(path)) {
-                                Iterator<Event> iter = pending.get(path).update(node);
-                                while (iter.hasNext()) {
-                                    events.add(iter.next());
-                                }
-                            } else {
-                                NodeCache cache = new NodeCache(node);
-                                pending.put(path, cache);
-                                events.add(cache.new NodeEvent(null, 0));
-                            }
-                        }
-
-                        for (String path : new ArrayList<String>(pending.keySet())) {
-                            if (!paths.contains(path)) {
-                                NodeCache cache = pending.remove(path);
-                                events.add(cache.new NodeEvent(null, 0));
-                            }
+                    for (String path : new ArrayList<String>(pending.keySet())) {
+                        if (!paths.contains(path)) {
+                            NodeCache cache = pending.remove(path);
+                            events.add(cache.new NodeEvent(null, 0));
                         }
                     }
                 } catch (PathNotFoundException ex) {
@@ -464,49 +459,51 @@ public class JcrObservationManager implements ObservationManager {
 
             final Iterator<Event> upstream = events.iterator();
             final long size = events.size();
-            EventIterator iter = new EventIterator() {
-
-                public Event nextEvent() {
-                    Event event = upstream.next();
-                    upstream.remove();
-                    log.debug("processing " + event.toString() + ", session " + sessionRef.get().getId());
-                    return event;
+            if (size > 0) {
+                EventIterator iter = new EventIterator() {
+    
+                    public Event nextEvent() {
+                        Event event = upstream.next();
+                        log.debug("processing " + event.toString() + ", session " + sessionRef.get().getId());
+                        return event;
+                    }
+    
+                    public long getPosition() {
+                        throw new UnsupportedOperationException("getPosition() is not implemented yet");
+                    }
+    
+                    public long getSize() {
+                        return size;
+                    }
+    
+                    public void skip(long skipNum) {
+                        throw new UnsupportedOperationException("skip() is not implemented yet");
+                    }
+    
+                    public boolean hasNext() {
+                        return upstream.hasNext();
+                    }
+    
+                    public Object next() {
+                        return nextEvent();
+                    }
+    
+                    public void remove() {
+                        throw new UnsupportedOperationException("remove() is not implemented yet");
+                    }
+    
+                };
+                try {
+                    EventListener listener = get();
+                    if (listener != null) {
+                        listener.onEvent(iter);
+                    } else {
+                        log.info("Listener disappeared during processing");
+                    }
+                    events.clear();
+                } catch (RuntimeException ex) {
+                    log.error("Error occured when processing event", ex);
                 }
-
-                public long getPosition() {
-                    throw new UnsupportedOperationException("getPosition() is not implemented yet");
-                }
-
-                public long getSize() {
-                    return size;
-                }
-
-                public void skip(long skipNum) {
-                    throw new UnsupportedOperationException("skip() is not implemented yet");
-                }
-
-                public boolean hasNext() {
-                    return upstream.hasNext();
-                }
-
-                public Object next() {
-                    return nextEvent();
-                }
-
-                public void remove() {
-                    throw new UnsupportedOperationException("remove() is not implemented yet");
-                }
-
-            };
-            try {
-                EventListener listener = get();
-                if (listener != null) {
-                    listener.onEvent(iter);
-                } else {
-                    log.info("Listener disappeared during processing");
-                }
-            } catch (RuntimeException ex) {
-                log.error("Error occured when processing event", ex);
             }
         }
 

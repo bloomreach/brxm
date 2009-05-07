@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.browse;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -73,7 +74,7 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
                     return folderReference;
                 }
 
-                public void onEvent(IEvent event) {
+                public void onEvent(Iterator<? extends IEvent> event) {
                     onFolderChanged(folderReference.getModel());
                 }
 

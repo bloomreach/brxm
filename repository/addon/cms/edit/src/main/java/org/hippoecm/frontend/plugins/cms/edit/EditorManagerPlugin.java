@@ -117,7 +117,7 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
         return modelReference;
     }
 
-    public void onEvent(IEvent event) {
+    public void onEvent(Iterator<? extends IEvent> event) {
         if (!active) {
             active = true;
             try {

@@ -55,9 +55,11 @@ public class JcrEventListener implements EventListener, IClusterable {
 
     public void onEvent(EventIterator events) {
         if (context != null) {
+            EventCollection<JcrEvent> list = new EventCollection<JcrEvent>();
             while (events.hasNext()) {
-                context.notifyObservers(new JcrEvent(events.nextEvent()));
+                list.add(new JcrEvent(events.nextEvent()));
             }
+            context.notifyObservers(list);
         } else {
             log.error("No observation context present");
         }
@@ -82,7 +84,7 @@ public class JcrEventListener implements EventListener, IClusterable {
     }
 
     // re-register listener when it is deserialized
-    
+
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         ois.defaultReadObject();
 

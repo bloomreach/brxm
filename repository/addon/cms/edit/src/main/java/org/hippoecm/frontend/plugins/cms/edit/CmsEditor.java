@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.edit;
 
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
@@ -116,7 +117,7 @@ class CmsEditor implements IEditor {
                         return CmsEditor.this.model.getParentModel();
                     }
 
-                    public void onEvent(IEvent event) {
+                    public void onEvent(Iterator<? extends IEvent> event) {
                         JcrNodeModel nodeModel = CmsEditor.this.model.getParentModel();
 
                         // select draft if it exists

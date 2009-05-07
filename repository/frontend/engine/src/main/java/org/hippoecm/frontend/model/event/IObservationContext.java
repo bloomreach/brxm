@@ -19,10 +19,9 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.Page;
 
 public interface IObservationContext extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
-    void notifyObservers(IEvent event);
+    void notifyObservers(EventCollection<? extends IEvent> event);
 
     Page getPage();
 }

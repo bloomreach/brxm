@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.model.tree;
 
+import java.util.Iterator;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 import javax.swing.event.TreeModelEvent;
@@ -46,18 +48,21 @@ public class CachedTreeModel extends JcrTreeModel implements IObserver {
         return this;
     }
 
-    public void onEvent(IEvent event) {
-        if (event instanceof JcrEvent) {
-            Event jcrEvent = ((JcrEvent) event).getEvent();
-            try {
-                TreeModelEvent tme = newTreeModelEvent(jcrEvent);
-                if (tme != null) {
-                    for (TreeModelListener l : getListeners(TreeModelListener.class)) {
-                        l.treeStructureChanged(tme);
+    public void onEvent(Iterator<? extends IEvent> iter) {
+        while (iter.hasNext()) {
+            IEvent event = iter.next();
+            if (event instanceof JcrEvent) {
+                Event jcrEvent = ((JcrEvent) event).getEvent();
+                try {
+                    TreeModelEvent tme = newTreeModelEvent(jcrEvent);
+                    if (tme != null) {
+                        for (TreeModelListener l : getListeners(TreeModelListener.class)) {
+                            l.treeStructureChanged(tme);
+                        }
                     }
+                } catch (RepositoryException ex) {
+                    log.error("failed to broadcast event", ex);
                 }
-            } catch (RepositoryException ex) {
-                log.error("failed to broadcast event", ex);
             }
         }
     }
