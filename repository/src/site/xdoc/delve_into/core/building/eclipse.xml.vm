@@ -139,8 +139,8 @@
           <a href="http://code.google.com/p/run-jetty-run/issues/detail?id=25">this issue</a>.
           The 1.0.1 release doesn't work for any platform due to
           <a href="http://code.google.com/p/run-jetty-run/issues/detail?id=3">another issue</a>;
-          however it is easy to work around the issue by adding the servlet-api.jar to the
-          hippo-ecm-quickstart-war library dependencies.
+          however it is easy to work around the issue by adding the servlet-api.jar (version
+          2.4 or later) to the hippo-ecm-quickstart-war library dependencies.
         </p>
       </div>
       <ul>
