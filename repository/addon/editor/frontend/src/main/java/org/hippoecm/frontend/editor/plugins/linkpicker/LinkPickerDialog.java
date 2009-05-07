@@ -161,6 +161,7 @@ public class LinkPickerDialog extends AbstractDialog {
         return dialogRenderer.getComponent();
     }
 
+    @Override
     public final void onClose() {
         dialogRenderer.unbind();
         dialogRenderer = null;

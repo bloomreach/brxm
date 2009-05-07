@@ -172,14 +172,16 @@ public class BrowseService implements IBrowseService<IModel>, IRefreshable, IDet
 
     private JcrNodeModel getParent(JcrNodeModel model) {
         JcrNodeModel parentModel = model.getParentModel();
-        try {
-            // skip facetresult nodes in hierarchy
-            Node parent = parentModel.getNode();
-            if (parent.isNodeType(HippoNodeType.NT_FACETRESULT)) {
-                return new JcrNodeModel(parent.getParent());
+        if (parentModel != null) {
+            try {
+                // skip facetresult nodes in hierarchy
+                Node parent = parentModel.getNode();
+                if (parent.isNodeType(HippoNodeType.NT_FACETRESULT)) {
+                    return new JcrNodeModel(parent.getParent());
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
             }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
         }
         return parentModel;
     }
