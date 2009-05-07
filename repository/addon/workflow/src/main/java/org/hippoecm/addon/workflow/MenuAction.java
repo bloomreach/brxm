@@ -62,7 +62,4 @@ class MenuAction extends Panel implements IContextMenu {
     public void collapse(AjaxRequestTarget target) {
     }
 
-    public String getContextMenuId() {
-        return getMarkupId();
-    }
 }

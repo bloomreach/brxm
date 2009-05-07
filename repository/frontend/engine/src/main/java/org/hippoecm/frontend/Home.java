@@ -185,13 +185,13 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
 
     public void addContextMenu(IContextMenu activeMenu, AjaxRequestTarget target) {
         activeContextMenu = activeMenu;
-        contextMenuBehavior.setShown(true, activeMenu.getContextMenuId(), target);
+        contextMenuBehavior.setShown(true, target);
     }
 
     public void collapse(IContextMenu current, AjaxRequestTarget target) {
         if (activeContextMenu != null && current != activeContextMenu) {
             activeContextMenu.collapse(target);
-            contextMenuBehavior.setShown(false, activeContextMenu.getContextMenuId(), target);
+            contextMenuBehavior.setShown(false, target);
         }
     }
 

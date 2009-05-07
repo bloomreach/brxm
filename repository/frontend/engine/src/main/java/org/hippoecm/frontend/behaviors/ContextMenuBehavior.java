@@ -31,9 +31,9 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
     private String markupId = null;
     private IContextMenuManager manager;
 
-    public void setShown(boolean isShown, String id, AjaxRequestTarget target) {
+    public void setShown(boolean isShown, AjaxRequestTarget target) {
         if (isShown) {
-            target.appendJavascript("Hippo.ContextMenu.show('" + markupId + "', '" + id + "');");
+            target.appendJavascript("Hippo.ContextMenu.show('" + markupId + "');");
         } else {
             target.appendJavascript("Hippo.ContextMenu.hide('" + markupId + "');");
         }
