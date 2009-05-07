@@ -768,7 +768,7 @@ div.wicket-modal div.wicket-tree {border: 0px;}
 background-image:url("images/icons/workflow-16.png"); background-repeat: no-repeat;padding-top: 4px; padding-bottom: 2px; padding-left: 20px; display: block}
 .hippo-editor .hippo-editor-template-field-new li a:hover{text-decoration: underline}
 /* .hippo-editor .hippo-editor-template-field-new li span em{display: none;} */
-.hippo-editor-template-field-edit{padding: 15px;}
+.hippo-editor-template-field-edit{padding-left: 15px; padding-right: 15px; padding-top: 10px; padding-bottom: 5px;}
 
 /* subfields */
 .hippo-editor .hippo-editor-field .add-16{display: block; padding: 10px; background-color: white; border: 1px solid white; background-position: right center; margin-top: 8px;}
