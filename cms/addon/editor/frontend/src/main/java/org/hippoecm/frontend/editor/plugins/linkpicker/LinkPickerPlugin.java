@@ -61,6 +61,7 @@ public class LinkPickerPlugin extends RenderPlugin {
         IModel displayModel = new Model() {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public Object getObject() {
                 String docbaseUUID = (String) valueModel.getObject();
                 if (docbaseUUID == null || docbaseUUID.equals("")) {
@@ -123,7 +124,7 @@ public class LinkPickerPlugin extends RenderPlugin {
             };
             add(new DialogLink("value", displayModel, dialogFactory, dialogService));
         } else {
-            add(new Label("value", valueModel));
+            add(new Label("value", displayModel));
         }
         setOutputMarkupId(true);
     }
