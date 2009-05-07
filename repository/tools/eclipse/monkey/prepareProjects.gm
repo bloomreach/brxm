@@ -105,7 +105,7 @@ def removeProjectDependency(fromName, toName) {
         def path = to.getFullPath();
         def toBeRemoved = null;
         classpath.each() {
-            if (it.getPath().toString().equals()) {
+            if (it.getPath().toString().contains(toName)) {
                 toBeRemoved = it;
             }
         };
