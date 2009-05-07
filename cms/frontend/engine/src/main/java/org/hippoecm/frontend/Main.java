@@ -275,7 +275,7 @@ public class Main extends WebApplication {
                 if (target instanceof IPageRequestTarget) {
                     Page page = ((IPageRequestTarget) target).getPage();
                     if (page instanceof Home) {
-                        ((Home) page).update();
+                        ((Home) page).processEvents();
                         
                         if (target instanceof PluginRequestTarget) {
                             ((Home) page).render((PluginRequestTarget) target);

@@ -15,20 +15,30 @@
  */
 package org.hippoecm.frontend.model.event;
 
-import java.util.EventListener;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
-import org.apache.wicket.IClusterable;
+public class EventCollection<T extends IEvent> implements Iterable<T>, Serializable {
+    private static final long serialVersionUID = 1L;
 
-/**
- * This interface defines the contract for a service that update its internal state in
- * response to changes in an observable object (IObservable).
- */
-public interface IObserver extends EventListener, IClusterable {
-    final static String SVN_ID = "$Id$";
-    
-    IObservable getObservable();
-    
-    void onEvent(Iterator<? extends IEvent> event);
+    private List<T> events;
+
+    public EventCollection() {
+        this.events = new ArrayList<T>();
+    }
+
+    public void add(T event) {
+        events.add(event);
+    }
+
+    public EventCollection(List<T> events) {
+        this.events = new ArrayList<T>(events);
+    }
+
+    public Iterator<T> iterator() {
+        return events.iterator();
+    }
 
 }

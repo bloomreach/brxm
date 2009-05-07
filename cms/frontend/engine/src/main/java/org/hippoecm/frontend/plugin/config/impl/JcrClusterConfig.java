@@ -337,8 +337,10 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
                     return new Observable(JcrClusterConfig.this);
                 }
 
-                public void onEvent(IEvent event) {
-                    configs.process(((JcrEvent) event).getEvent(), listeners);
+                public void onEvent(Iterator<? extends IEvent> iter) {
+                    while (iter.hasNext()) {
+                        configs.process(((JcrEvent) iter.next()).getEvent(), listeners);
+                    }
                 }
 
             }, IObserver.class.getName());

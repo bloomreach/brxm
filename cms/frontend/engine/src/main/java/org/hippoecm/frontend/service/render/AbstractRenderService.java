@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.service.render;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -94,11 +95,8 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
                         return modelReference;
                     }
 
-                    public void onEvent(IEvent event) {
-                        if (event instanceof IModelReference.IModelChangeEvent) {
-                            IModelReference.IModelChangeEvent mce = (IModelReference.IModelChangeEvent) event;
-                            updateModel(mce.getNewModel());
-                        }
+                    public void onEvent(Iterator<? extends IEvent> event) {
+                        updateModel(modelReference.getModel());
                     }
 
                 }, IObserver.class.getName());
@@ -217,7 +215,7 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
         return (IObservable) getModel();
     }
 
-    public void onEvent(IEvent event) {
+    public void onEvent(Iterator<? extends IEvent> event) {
         modelChanged();
     }
 

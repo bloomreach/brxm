@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -67,13 +68,15 @@ public class ObservationTest extends TestCase {
         }
 
         void fire() {
-            context.notifyObservers(new IEvent() {
+            EventCollection<IEvent> collection = new EventCollection<IEvent>();
+            collection.add(new IEvent() {
 
                 public IObservable getSource() {
                     return TestObservable.this;
                 }
 
             });
+            context.notifyObservers(collection);
         }
 
         @Override
@@ -102,8 +105,10 @@ public class ObservationTest extends TestCase {
             return model;
         }
 
-        public void onEvent(IEvent event) {
-            events.add(event);
+        public void onEvent(Iterator<? extends IEvent> iter) {
+            while (iter.hasNext()) {
+                events.add(iter.next());
+            }
         }
 
     }
@@ -184,18 +189,18 @@ public class ObservationTest extends TestCase {
         root.addNode("test", "nt:unstructured");
 
         // in-session event
-        home.update();
+        home.processEvents();
         System.err.println("number of events: " + events.size());
         assertEquals(1, events.size());
 
         // shouldn't receive new event on next processing
-        home.update();
+        home.processEvents();
         assertEquals(1, events.size());
 
         session.save();
 
         Thread.sleep(1000);
-        home.update();
+        home.processEvents();
 
         // "out-of-session" event
         assertEquals(3, events.size());
@@ -208,7 +213,7 @@ public class ObservationTest extends TestCase {
         session.save();
 
         Thread.sleep(1000);
-        home.update();
+        home.processEvents();
 
         assertEquals(3, events.size());
     }
@@ -222,13 +227,13 @@ public class ObservationTest extends TestCase {
         IObserver observer = new TestObserver(new JcrNodeModel(test), events);
         context.registerService(observer, IObserver.class.getName());
 
-        home.update();
+        home.processEvents();
 
         assertEquals(1, events.size());
 
         test.addNode("sub", "nt:unstructured");
 
-        home.update();
+        home.processEvents();
 
         assertEquals(3, events.size());
     }
@@ -245,23 +250,23 @@ public class ObservationTest extends TestCase {
         Node testNode = root.addNode("test", "nt:unstructured");
 
         // shouldn't receive new event on next processing
-        home.update();
+        home.processEvents();
         assertEquals(1, events.size());
 
         testNode.setProperty("test", "bla");
 
-        home.update();
+        home.processEvents();
         assertEquals(1, events.size());
 
-        home.update();
+        home.processEvents();
         assertEquals(1, events.size());
 
         testNode.setProperty("test", "die");
 
-        home.update();
+        home.processEvents();
         assertEquals(1, events.size());
 
-        home.update();
+        home.processEvents();
         assertEquals(1, events.size());
 
         session.save();
@@ -281,7 +286,7 @@ public class ObservationTest extends TestCase {
 
         Thread.sleep(500);
 
-        home.update();
+        home.processEvents();
         assertEquals(1, events.size());
 
         Node testNode = root.getNode("test");
@@ -313,7 +318,7 @@ public class ObservationTest extends TestCase {
         session.save();
 
         Thread.sleep(1000);
-        home.update();
+        home.processEvents();
 
         assertEquals(0, events.size());
     }
@@ -329,7 +334,7 @@ public class ObservationTest extends TestCase {
                 return null;
             }
 
-            public void notifyObservers(IEvent event) {
+            public void notifyObservers(EventCollection<? extends IEvent> event) {
                 count++;
             }
 
@@ -357,7 +362,7 @@ public class ObservationTest extends TestCase {
         session.save();
 
         Thread.sleep(1000);
-        home.update();
+        home.processEvents();
 
         assertEquals(1, copy.count);
     }
@@ -389,8 +394,10 @@ public class ObservationTest extends TestCase {
                 return home;
             }
 
-            public void notifyObservers(IEvent event) {
-                events.add(event);
+            public void notifyObservers(EventCollection<? extends IEvent> collection) {
+                for (IEvent event : collection) {
+                    events.add(event);
+                }
             }
 
         }, Event.NODE_ADDED | Event.NODE_REMOVED, "/test/sink", true, null, null);
@@ -407,7 +414,7 @@ public class ObservationTest extends TestCase {
         Thread.sleep(300);
 
         // event should have been received
-        home.update();
+        home.processEvents();
         assertEquals(1, events.size());
 
         // basic facetsearch assertion
@@ -436,7 +443,7 @@ public class ObservationTest extends TestCase {
         subNode.remove();
         subNode = testNode.addNode("abc");
 
-        home.update();
+        home.processEvents();
         assertEquals(1, events.size());
     }
 

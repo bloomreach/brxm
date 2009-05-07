@@ -107,22 +107,32 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     }
 
     /**
-     * Refresh the page by refreshing the JCR session and notifying listeners in the page.
+     * Refresh the JCR session, i.e. invalidate (cached) subtrees for which an event has been received.
      */
-    public void update() {
+    public void refresh() {
         // objects may be invalid after refresh, so reacquire them when needed
         detach();
 
         // refresh session
         JcrObservationManager.getInstance().refreshSession();
+    }
 
-        // re-evaluate models
-        for (IRefreshable refreshable : context.getServices(IRefreshable.class.getName(), IRefreshable.class)) {
-            refreshable.refresh();
+    /**
+     * Notify refreshables and listeners in the page for which events have been received.
+     */
+    public void processEvents() {
+        refresh();
+        try {
+            // re-evaluate models
+            for (IRefreshable refreshable : context.getServices(IRefreshable.class.getName(), IRefreshable.class)) {
+                refreshable.refresh();
+            }
+
+            // process JCR events
+            JcrObservationManager.getInstance().processEvents();
+        } finally {
+            setFlag(FLAG_RESERVED1, false);
         }
-
-        // process JCR events
-        JcrObservationManager.getInstance().processEvents();
     }
 
     public void render(PluginRequestTarget target) {

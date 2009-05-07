@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.model;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.event.EventCollection;
+import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -56,7 +58,7 @@ public class ModelReference<T extends IModel> implements IModelReference<T> {
             if (observationContext == null) {
                 return;
             }
-            observationContext.notifyObservers(new IModelChangeEvent<T>() {
+            IEvent mce = new IModelChangeEvent<T>() {
 
                 public T getNewModel() {
                     return newModel;
@@ -69,7 +71,10 @@ public class ModelReference<T extends IModel> implements IModelReference<T> {
                 public IObservable getSource() {
                     return ModelReference.this;
                 }
-            });
+            };
+            EventCollection<IEvent> collection = new EventCollection<IEvent>();
+            collection.add(mce);
+            observationContext.notifyObservers(collection);
         }
     }
 

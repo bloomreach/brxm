@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.model.event;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.Page;
@@ -62,10 +63,10 @@ public class ObservableRegistry implements IPlugin {
             return !observers.isEmpty();
         }
 
-        public void notifyObservers(IEvent event) {
+        public void notifyObservers(EventCollection<? extends IEvent> events) {
             for (IObserver observer : new ArrayList<IObserver>(observers)) {
                 if (observers.contains(observer)) {
-                    observer.onEvent(event);
+                    observer.onEvent(events.iterator());
                 }
             }
             getPage().dirty();

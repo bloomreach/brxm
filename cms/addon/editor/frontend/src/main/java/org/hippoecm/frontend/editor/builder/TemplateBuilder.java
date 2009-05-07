@@ -36,6 +36,7 @@ import org.hippoecm.frontend.editor.impl.JcrTemplateStore;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
@@ -260,7 +261,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 }
 
                 public void onPluginChanged(IPluginConfig config) {
-//                    notifyObservers();
+                    //                    notifyObservers();
                 }
 
             });
@@ -313,13 +314,15 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     private void notifyObservers() {
         if (observationContext != null) {
-            observationContext.notifyObservers(new IEvent() {
+            EventCollection<IEvent> collection = new EventCollection<IEvent>();
+            collection.add(new IEvent() {
 
                 public IObservable getSource() {
                     return TemplateBuilder.this;
                 }
 
             });
+            observationContext.notifyObservers(collection);
         }
     }
 

@@ -312,7 +312,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     }
 
     @Override
-    protected void onEvent(IEvent event) {
+    protected void onEvent(Iterator<? extends IEvent> events) {
         Map<String, IFieldDescriptor> newFields = loadFields();
         for (String field : newFields.keySet()) {
             if (!fields.containsKey(field)) {

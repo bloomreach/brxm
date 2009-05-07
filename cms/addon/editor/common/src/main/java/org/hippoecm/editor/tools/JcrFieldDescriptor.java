@@ -15,6 +15,7 @@
  */
 package org.hippoecm.editor.tools;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.jcr.RepositoryException;
@@ -131,7 +132,7 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
     }
 
     @Override
-    protected void onEvent(IEvent event) {
+    protected void onEvent(Iterator<? extends IEvent> event) {
         type.notifyFieldChanged(this);
     }
 

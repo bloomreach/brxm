@@ -17,6 +17,7 @@ package org.hippoecm.frontend.model.ocm;
 
 import static junit.framework.Assert.assertEquals;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +26,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.Home;
-import org.hippoecm.frontend.JcrObservationManager;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
@@ -69,7 +69,7 @@ public class JcrObjectTest extends TestCase {
         }
 
         @Override
-        protected void onEvent(IEvent event) {
+        protected void onEvent(Iterator<? extends IEvent> event) {
             for (IListener listener : listeners) {
                 listener.objectChanged();
             }
@@ -119,13 +119,13 @@ public class JcrObjectTest extends TestCase {
         testObject.addListener(listener);
         testObject.setValue("testing 1 2 3");
         
-        home.update();
+        home.processEvents();
 
         assertEquals(1, listener.count);
 
         testObject.setValue("bladie");
 
-        home.update();
+        home.processEvents();
 
         assertEquals(2, listener.count);
     }

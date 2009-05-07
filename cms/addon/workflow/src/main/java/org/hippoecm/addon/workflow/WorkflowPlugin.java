@@ -15,6 +15,7 @@
  */
 package org.hippoecm.addon.workflow;
 
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.jcr.Node;
@@ -51,11 +52,8 @@ public final class WorkflowPlugin extends AbstractWorkflowPlugin {
                         return modelReference;
                     }
 
-                    public void onEvent(IEvent event) {
-                        if (event instanceof IModelReference.IModelChangeEvent) {
-                            IModelReference.IModelChangeEvent<JcrNodeModel> mce = (IModelReference.IModelChangeEvent<JcrNodeModel>) event;
-                            updateModel(mce.getNewModel());
-                        }
+                    public void onEvent(Iterator<? extends IEvent> event) {
+                        updateModel(modelReference.getModel());
                     }
                 }, IObserver.class.getName());
             }

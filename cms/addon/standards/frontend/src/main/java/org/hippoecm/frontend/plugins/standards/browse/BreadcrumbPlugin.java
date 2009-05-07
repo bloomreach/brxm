@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.standards.browse;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -83,7 +84,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
                         return folderReference;
                     }
 
-                    public void onEvent(IEvent event) {
+                    public void onEvent(Iterator<? extends IEvent> event) {
                         update((JcrNodeModel) folderReference.getModel());
                     }
 

@@ -16,6 +16,8 @@
 
 package org.hippoecm.frontend.plugins.standards.browse;
 
+import java.util.Iterator;
+
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -64,7 +66,7 @@ public class BrowserPlugin extends RenderPlugin {
                     return documentReference;
                 }
 
-                public void onEvent(IEvent event) {
+                public void onEvent(Iterator<? extends IEvent> event) {
                     BrowserPlugin.this.setModel(documentReference.getModel());
                 }
 
@@ -78,7 +80,7 @@ public class BrowserPlugin extends RenderPlugin {
                     return folderReference;
                 }
 
-                public void onEvent(IEvent event) {
+                public void onEvent(Iterator<? extends IEvent> event) {
                     BrowserPlugin.this.setModel(documentReference.getModel());
                 }
 
