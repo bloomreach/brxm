@@ -28,6 +28,7 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.ServletConfig;
 
 import org.apache.commons.digester.Digester;
+import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
@@ -96,6 +97,16 @@ public class BaseHstComponent extends GenericHstComponent {
         return null;
     }
     
+
+    public HstSite getHstSite(HstRequest request){
+        return request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSite();
+    }
+    
+    public String getSiteContentBasePath(HstRequest request){
+        return PathUtils.normalizePath(getHstSite(request).getContentPath());
+    }
+    
+    
     /**
      * Use {@link BaseHstComponent#getContentBean(HstRequest)}
      */
@@ -104,22 +115,17 @@ public class BaseHstComponent extends GenericHstComponent {
         return this.getContentBean(request);
     }
     
+    
+    /**
+     * When the <code>{@link ResolvedSiteMapItem}</code> belonging to the current requestUri has a relativeContentPath that points to an
+     * existing jcr Node, a HippoBean wrapping this node is returned. When there is no relativeContentPath or the location does not exist,
+     * <code>null</code> is returned
+     * @param request
+     * @return A <code>HippoBean</code> or <code>null</code> when there cannot be created a content bean for the resolvedSiteMapItem belonging to the current request
+     */
     public HippoBean getContentBean(HstRequest request) {
-        ResolvedSiteMapItem resolvedSitemapItem = request.getRequestContext().getResolvedSiteMapItem();
-        
-        String base = PathUtils.normalizePath(resolvedSitemapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
-        String relPath = PathUtils.normalizePath(resolvedSitemapItem.getRelativeContentPath());
-        try {
-            if(relPath == null || "".equals(relPath)) {
-                return (HippoBean) getObjectBeanManager(request).getObject("/"+base);
-            } else {
-                return (HippoBean) getObjectBeanManager(request).getObject("/"+base+ "/" + relPath);
-            }
-        } catch (ObjectBeanManagerException e) {
-            log.error("ObjectBeanManagerException. Return null : {}", e);
-        }
-        return null;
-        
+        ResolvedSiteMapItem resolvedSiteMapItem = request.getRequestContext().getResolvedSiteMapItem();
+        return this.getBeanForResolvedSiteMapItem(request, resolvedSiteMapItem);
     }
     
     /**
@@ -131,14 +137,41 @@ public class BaseHstComponent extends GenericHstComponent {
     }
     
     public HippoBean getSiteContentBaseBean(HstRequest request) {
-        ResolvedSiteMapItem resolvedSitemapItem = request.getRequestContext().getResolvedSiteMapItem();
-        String base = PathUtils.normalizePath(resolvedSitemapItem.getHstSiteMapItem().getHstSiteMap().getSite().getContentPath());
+        String base = getSiteContentBasePath(request);
         try {
             return (HippoBean) getObjectBeanManager(request).getObject("/"+base);
         } catch (ObjectBeanManagerException e) {
             log.error("ObjectBeanManagerException. Return null : {}", e);
         }
         return null;
+    }
+    
+    /**
+     * Return a <code>HippoBean</code> when it can be found for the relativeContentPath for the <code>{@link ResolvedSiteMapItem}</code>. If there is no
+     * relativeContentPath available in the <code>{@link ResolvedSiteMapItem}</code>, or when the relativeContentPath does not point to an existing jcr node,
+     * <code>null</code> will be returned
+     * @param request
+     * @param resolvedSiteMapItem
+     * @return A <code>HippoBean</code> or <code>null</code> when there cannot be created a content bean for this resolvedSiteMapItem
+     */
+    public HippoBean getBeanForResolvedSiteMapItem(HstRequest request, ResolvedSiteMapItem resolvedSiteMapItem) {
+        String base = getSiteContentBasePath(request);
+        String relPath = PathUtils.normalizePath(resolvedSiteMapItem.getRelativeContentPath());
+        if(relPath == null) {
+            log.debug("Cannot return a content bean for relative path null for resolvedSitemapItem belonging to '{}'. Return null", resolvedSiteMapItem.getHstSiteMapItem().getId());
+            return null;
+        }
+        try {
+            if("".equals(relPath)) {
+                return (HippoBean) getObjectBeanManager(request).getObject("/"+base);
+            } else {
+                return (HippoBean) getObjectBeanManager(request).getObject("/"+base+ "/" + relPath);
+            }
+        } catch (ObjectBeanManagerException e) {
+            log.error("ObjectBeanManagerException. Return null : {}", e);
+        }
+        return null;
+        
     }
     
     public HstQueryManager getQueryManager(){
