@@ -31,14 +31,14 @@ import org.slf4j.LoggerFactory;
 @Node(jcrType="hippostd:folder")
 public class HippoFolder extends HippoItem implements HippoFolderBean{
     private static Logger log = LoggerFactory.getLogger(HippoFolder.class);
-    private List<HippoFolder> hippoFolders;
-    private List<HippoDocument> hippoDocuments;
+    private List<HippoFolderBean> hippoFolders;
+    private List<HippoDocumentBean> hippoDocuments;
     
-    public List<HippoFolder> getFolders(){
+    public List<HippoFolderBean> getFolders(){
          return this.getFolders(false);
     }
     
-    public List<HippoFolder> getFolders(boolean sorted){
+    public List<HippoFolderBean> getFolders(boolean sorted){
         if(this.hippoFolders != null) {
             return this.hippoFolders;
         }
@@ -47,7 +47,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean{
             return null;
         }
         try {
-            this.hippoFolders = new ArrayList<HippoFolder>();
+            this.hippoFolders = new ArrayList<HippoFolderBean>();
             NodeIterator nodes = this.node.getNodes();
             while(nodes.hasNext()) {
                 javax.jcr.Node child = nodes.nextNode();
@@ -71,18 +71,18 @@ public class HippoFolder extends HippoItem implements HippoFolderBean{
         return getDocuments().size();
     }
     
-    public List<HippoDocument> getDocuments() {
+    public List<HippoDocumentBean> getDocuments() {
         return getDocuments(false);
     }
     
-    public List<HippoDocument> getDocuments(int from, int to) {
+    public List<HippoDocumentBean> getDocuments(int from, int to) {
         return getDocuments(from,to,false);
     }
     
-    public List<HippoDocument> getDocuments(int from, int to, boolean sorted) {
-        List<HippoDocument> documents = getDocuments(sorted);
+    public List<HippoDocumentBean> getDocuments(int from, int to, boolean sorted) {
+        List<HippoDocumentBean> documents = getDocuments(sorted);
         if(from < 0) {from = 0;}
-        if(from > documents.size()) {return new ArrayList<HippoDocument>();}
+        if(from > documents.size()) {return new ArrayList<HippoDocumentBean>();}
         
         if(documents.size() == 0) {
             return documents.subList(0, 0);
@@ -91,7 +91,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean{
         return documents.subList(from, to);
     }
     
-    public List<HippoDocument> getDocuments(boolean sorted) {
+    public List<HippoDocumentBean> getDocuments(boolean sorted) {
         if(this.hippoDocuments != null) {
             return this.hippoDocuments;
         }
@@ -100,7 +100,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean{
             return null;
         }
         try {
-            this.hippoDocuments = new ArrayList<HippoDocument>();
+            this.hippoDocuments = new ArrayList<HippoDocumentBean>();
             NodeIterator nodes = this.node.getNodes();
             while(nodes.hasNext()) {
                 javax.jcr.Node child = nodes.nextNode();

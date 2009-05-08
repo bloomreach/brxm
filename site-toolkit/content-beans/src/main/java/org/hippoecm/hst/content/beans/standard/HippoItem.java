@@ -226,11 +226,11 @@ public class HippoItem implements HippoBean{
         return false;
     }
     
-    public boolean isHippoDocument() {
+    public boolean isHippoDocumentBean() {
         return this instanceof HippoDocumentBean;
     }
 
-    public boolean isHippoFolder() {
+    public boolean isHippoFolderBean() {
         return this instanceof HippoFolderBean;
     } 
     
