@@ -15,10 +15,25 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
+import java.util.List;
+
 /**
- * This is a marker interface for all beans that represent a folder. When developers implement their own bean which
+ * This is a base interface for all beans that represent a folder should implement. When developers implement their own bean which
  * does not extend the standard HippoFolder bean, they should implement this interface. 
  */
-public interface HippoFolderBean {
+public interface HippoFolderBean extends HippoBean{
 
+    List<HippoFolderBean> getFolders();
+    
+    List<HippoFolderBean> getFolders(boolean sorted);
+    
+    int getDocumentSize();
+    
+    List<HippoDocumentBean> getDocuments();
+    
+    List<HippoDocumentBean> getDocuments(int from, int to);
+    
+    List<HippoDocumentBean> getDocuments(int from, int to, boolean sorted);
+    
+    List<HippoDocumentBean> getDocuments(boolean sorted);
 }

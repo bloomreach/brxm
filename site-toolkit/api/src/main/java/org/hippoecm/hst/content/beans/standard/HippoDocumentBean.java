@@ -20,6 +20,6 @@ package org.hippoecm.hst.content.beans.standard;
  * does not extend the standard HippoDocument bean, they should implement this interface. This ensures that linkrewriting
  * works correctly for extensions like .html or .xml etc etc
  */
-public interface HippoDocumentBean {
+public interface HippoDocumentBean extends HippoBean{
 
 }

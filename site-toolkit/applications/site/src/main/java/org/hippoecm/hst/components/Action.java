@@ -27,6 +27,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
+import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -49,8 +50,7 @@ public class Action extends GenericResourceServingHstComponent {
         request.setAttribute("parent", n.getParentBean());
         request.setAttribute("current",(n));
         
-        if(n instanceof HippoFolder) {
-            List<HippoFolder> collection = ((HippoFolder)n).getFolders();
+        if(n.isHippoFolderBean()) {
             request.setAttribute("collections",((HippoFolder)n).getFolders());
             request.setAttribute("documents",((HippoFolder)n).getDocuments());
         }

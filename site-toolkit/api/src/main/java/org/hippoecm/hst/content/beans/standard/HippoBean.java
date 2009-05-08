@@ -76,12 +76,12 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
     /**
      * @return <code>true</code> is this HippoBean is an instanceof <code>{@link HippoDocumentBean}</code>
      */
-    boolean isHippoDocument();
+    boolean isHippoDocumentBean();
     
     /**
      * @return <code>true</code> is this HippoBean is an instanceof <code>{@link HippoFolderBean}</code>
      */
-    boolean isHippoFolder();
+    boolean isHippoFolderBean();
     
     /**
      * Returns <code>true</code> when this <code>HippoBean</code> is an ancestor of the <code>compare</code> HippoBean. 
