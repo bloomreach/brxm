@@ -74,6 +74,16 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
     <T> List<T> getChildBeans(String jcrPrimaryNodeType);
     
     /**
+     * @return <code>true</code> is this HippoBean is an instanceof <code>{@link HippoDocumentBean}</code>
+     */
+    boolean isHippoDocument();
+    
+    /**
+     * @return <code>true</code> is this HippoBean is an instanceof <code>{@link HippoFolderBean}</code>
+     */
+    boolean isHippoFolder();
+    
+    /**
      * Returns <code>true</code> when this <code>HippoBean</code> is an ancestor of the <code>compare</code> HippoBean. 
      * Note that this is done by the jcr path of the backing jcr node. In case of a virtual node, the virtual path 
      * is taken. 

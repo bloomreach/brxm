@@ -226,6 +226,14 @@ public class HippoItem implements HippoBean{
         return false;
     }
     
+    public boolean isHippoDocument() {
+        return this instanceof HippoDocumentBean;
+    }
+
+    public boolean isHippoFolder() {
+        return this instanceof HippoFolderBean;
+    } 
+    
     public boolean equalCompare(Object compare){
         return (Boolean)new ComparatorMap().get(compare);
     }
@@ -342,5 +350,4 @@ public class HippoItem implements HippoBean{
     }
 
 
-    
 }

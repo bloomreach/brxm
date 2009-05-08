@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Node(jcrType="hippostd:folder")
-public class HippoFolder extends HippoItem {
+public class HippoFolder extends HippoItem implements HippoFolderBean{
     private static Logger log = LoggerFactory.getLogger(HippoFolder.class);
     private List<HippoFolder> hippoFolders;
     private List<HippoDocument> hippoDocuments;
@@ -83,6 +83,10 @@ public class HippoFolder extends HippoItem {
         List<HippoDocument> documents = getDocuments(sorted);
         if(from < 0) {from = 0;}
         if(from > documents.size()) {return new ArrayList<HippoDocument>();}
+        
+        if(documents.size() == 0) {
+            return documents.subList(0, 0);
+        }
         if(to >= documents.size()) {to = documents.size() -1;}
         return documents.subList(from, to);
     }
