@@ -27,6 +27,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import javax.jcr.AccessDeniedException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -36,12 +38,14 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
+import javax.jcr.version.VersionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -243,6 +247,22 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
     }
 
+    private void doArchive(String source, String destination) throws ConstraintViolationException, PathNotFoundException, ItemNotFoundException, VersionException, VersionException, AccessDeniedException, RepositoryException {
+        rootSession.getWorkspace().move(source, destination);
+        Node target = rootSession.getRootNode().getNode(destination.substring(1));
+        if(target.isNodeType(HippoNodeType.NT_HANDLE)) {
+            target.checkout();
+            for(NodeIterator iter = target.getNodes(); iter.hasNext(); ) {
+                iter.nextNode().checkin();
+            }
+            for(NodeIterator iter = target.getNodes(); iter.hasNext(); ) {
+                iter.nextNode().remove();
+            }
+            target.save();
+            target.checkin();
+        }
+    }
+
     public void archive(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String atticPath = null;
         RepositoryMap config = workflowContext.getWorkflowConfiguration();
@@ -264,8 +284,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                     folder.save();
                 } else {
                     if (userSession.getRootNode().hasNode(atticPath.substring(1))) {
-                        rootSession.getWorkspace().move(folder.getPath() + "/" + offspring.getName(),
-                                                        atticPath + "/" + atticName(atticPath, offspring.getName(), true));
+                        doArchive(folder.getPath() + "/" + offspring.getName(),
+                                  atticPath + "/" + atticName(atticPath, offspring.getName(), true));
                     } else {
                         throw new WorkflowException("Attic " + atticPath + " for archivation does not exist");
                     }
@@ -294,7 +314,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 documentNode.remove();
                 folderNode.save();
             } else {
-                rootSession.getWorkspace().move(documentNode.getPath(), atticPath + "/" + atticName(atticPath, documentNode.getName(), true));
+                doArchive(documentNode.getPath(), atticPath + "/" + atticName(atticPath, documentNode.getName(), true));
             }
             } else {
                 throw new WorkflowException("No attic for archivation defined");
