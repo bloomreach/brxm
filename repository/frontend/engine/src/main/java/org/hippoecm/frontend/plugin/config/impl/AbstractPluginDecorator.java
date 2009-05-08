@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.AbstractList;
 import java.util.AbstractMap;
@@ -41,6 +42,28 @@ public abstract class AbstractPluginDecorator extends AbstractMap implements IPl
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
+    @SuppressWarnings("unchecked")
+    private class ListWrapper extends AbstractList implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private List list;
+
+        ListWrapper(List list) {
+            this.list = list;
+        }
+
+        @Override
+        public Object get(int index) {
+            return wrap(list.get(index));
+        }
+
+        @Override
+        public int size() {
+            return list.size();
+        }
+
+    }
 
     protected IPluginConfig upstream;
     private List<IPluginConfigListener> listeners;
@@ -346,25 +369,25 @@ public abstract class AbstractPluginDecorator extends AbstractMap implements IPl
             }
             return array;
         } else if (obj instanceof List) {
-            final List list = (List) obj;
-            return new AbstractList() {
-
-                @Override
-                public Object get(int index) {
-                    return wrap(list.get(index));
-                }
-
-                @Override
-                public int size() {
-                    return list.size();
-                }
-
-            };
+            return new ListWrapper((List) obj);
         } else if (obj instanceof IPluginConfig) {
             return wrapConfig((IPluginConfig) obj);
         } else {
             return decorate(obj);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof AbstractPluginDecorator) {
+            return ((AbstractPluginDecorator) o).upstream.equals(upstream);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return upstream.hashCode() ^ 34603;
     }
 
     protected abstract Object decorate(Object object);
