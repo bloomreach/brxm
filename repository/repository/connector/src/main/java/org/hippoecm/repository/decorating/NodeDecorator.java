@@ -548,4 +548,16 @@ public abstract class NodeDecorator extends ItemDecorator implements HippoNode {
     public NodeIterator pendingChanges() throws RepositoryException {
         return session.pendingChanges(this, null);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public void refresh(boolean keepChanges) throws InvalidItemStateException, RepositoryException {
+        if (keepChanges == false && getDepth() == 0) {
+            session.refresh(keepChanges);
+            return;
+        }
+        super.refresh(keepChanges);
+    }
+
 }
