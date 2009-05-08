@@ -110,8 +110,6 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider {
                         query.setOffset(reportNode.getProperty(ReportingNodeTypes.OFFSET).getLong());
                     }
 
-                    javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-                    session.refresh(true);
                     if (arguments.isEmpty()) {
                         resultSet = query.execute();
                     } else {
