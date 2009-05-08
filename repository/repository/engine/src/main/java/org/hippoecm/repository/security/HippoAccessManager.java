@@ -904,6 +904,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             } else if (itemMgr.hasTransientItemStateInAttic(id)) {
                 return itemMgr.getAtticItemState(id);
             }
+        } catch (NoSuchItemStateException ex) {
+	    throw ex;
         } catch (ItemStateException e) {
             String msg = "invalid item id: " + id;
             log.error(msg, e);
