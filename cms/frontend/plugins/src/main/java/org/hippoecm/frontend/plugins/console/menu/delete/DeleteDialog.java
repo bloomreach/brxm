@@ -17,9 +17,13 @@ package org.hippoecm.frontend.plugins.console.menu.delete;
 
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
@@ -29,6 +33,8 @@ public class DeleteDialog extends AbstractDialog {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(DeleteDialog.class);
 
     private MenuPlugin plugin;
 
@@ -50,6 +56,7 @@ public class DeleteDialog extends AbstractDialog {
             plugin.setModel(parentModel);
 
         } catch (RepositoryException ex) {
+            log.error("Error while deleting document", ex);
             error(ex.getMessage());
         }
     }
