@@ -86,6 +86,7 @@ class NodeEditor extends Form {
                 typesEditor.setModelObject(result);
                 typesEditor.setNodeModel(newModel);
                 typesEditor.setVisible(true);
+                propertiesEditor.setVisible(true);
 
                 primaryType = newModel.getNode().getPrimaryNodeType().getName();
                 mixinTypes = new String();
