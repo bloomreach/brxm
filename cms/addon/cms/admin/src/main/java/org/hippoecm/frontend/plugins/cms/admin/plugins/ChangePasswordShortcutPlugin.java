@@ -239,7 +239,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                         .getString());
                 ok = false;
             } else if (!checkPassword(currentPassword.toCharArray())) {
-                error(new StringResourceModel("current-password-wrong", ChangePasswordShortcutPlugin.this, null)
+                error(new StringResourceModel("current-password-invalid", ChangePasswordShortcutPlugin.this, null)
                         .getString());
                 ok = false;
             }
