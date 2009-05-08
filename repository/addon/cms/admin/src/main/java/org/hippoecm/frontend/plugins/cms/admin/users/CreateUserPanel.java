@@ -91,6 +91,7 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
         form.add(password);
 
         final PasswordTextField passwordCheck = new PasswordTextField("password-check");
+        passwordCheck.setRequired(false);
         passwordCheck.setModel(password.getModel());
         passwordCheck.setResetPassword(false);
         form.add(passwordCheck);
