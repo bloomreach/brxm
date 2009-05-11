@@ -28,6 +28,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.util.string.PrependingStringBuffer;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,52 +42,57 @@ public class JcrItemModel extends LoadableDetachableModel {
     static final Logger log = LoggerFactory.getLogger(JcrItemModel.class);
 
     private String uuid;
-    private String path;
+    private String relPath;
+    private transient String absPath;
 
     // constructors
 
     public JcrItemModel(Item item) {
         super(item);
-        path = null;
+        relPath = null;
         uuid = null;
     }
 
     public JcrItemModel(String path) {
         super();
-        this.path = path;
+        this.absPath = path;
+    }
+
+    public String getUuid() {
+        save();
+        return uuid;
+    }
+
+    public String getRelativePath() {
+        save();
+        return relPath;
     }
 
     public String getPath() {
-        if (path == null && isAttached()) {
+        if (absPath == null) {
             Item item = (Item) getObject();
             if (item != null) {
                 try {
-                    path = item.getPath();
+                    absPath = item.getPath();
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
                 }
             }
         }
-        return path;
+        return absPath;
     }
 
     public boolean exists() {
-        if (path == null) {
-            if (isAttached()) {
-                return getObject() != null;
-            } else {
-                return false;
-            }
-        } else {
-            boolean result = false;
+        String path = getPath();
+        if (path != null) {
             try {
                 UserSession sessionProvider = (UserSession) Session.get();
-                result = sessionProvider.getJcrSession().itemExists(path);
+                return sessionProvider.getJcrSession().itemExists(path);
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
-            return result;
         }
+        return false;
     }
 
     public JcrItemModel getParentModel() {
@@ -121,72 +127,74 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     @Override
     protected Object load() {
-        Item result = null;
-        if (uuid != null) {
-            try {
-                UserSession sessionProvider = (UserSession) Session.get();
-                result = sessionProvider.getJcrSession().getNodeByUUID(uuid);
-            } catch (RepositoryException e) {
-                log.warn("failed to load " + e.getMessage());
-            }
-        } else if (path != null) {
-            try {
-                UserSession sessionProvider = (UserSession) Session.get();
-                result = sessionProvider.getJcrSession().getItem(path);
-                if(result != null && result.isNode()) {
-                    Node node = (Node) result;
-                    if (node.isNodeType("mix:referenceable")) {
-                        uuid = node.getUUID();
-                    }
+        try {
+            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+            if (uuid != null) {
+                Node node = session.getNodeByUUID(uuid);
+                if (relPath == null) {
+                    return node;
                 }
-            } catch (RepositoryException e) {
-                log.warn("failed to load " + e.getMessage());
+                if (node.isSame(session.getRootNode())) {
+                    return session.getItem("/" + relPath);
+                } else {
+                    return session.getItem(node.getPath() + "/" + relPath);
+                }
+            } else {
+                if (absPath != null) {
+                    return session.getItem(absPath);
+                } else {
+                    log.debug("Neither path nor uuid present for item model");
+                }
             }
-        } else {
-            log.error("No path info present");
+        } catch (RepositoryException e) {
+            log.warn("failed to load " + e.getMessage());
         }
-        return result;
+        return null;
     }
 
     @Override
     public void detach() {
-        if (isAttached()) {
-            // if we have a uuid we're done
-            if (uuid == null) {
-                if (path != null) {
-                    // we have a path but not a uuid, try to find the uuid if possible
-                    UserSession sessionProvider = (UserSession) Session.get();
-                    try {
-                        Item item = sessionProvider.getJcrSession().getItem(path);
-                        if (item != null && item.isNode()) {
-                            Node node = (Node) item;
-                            if (node.isNodeType("mix:referenceable")) {
-                                uuid = node.getUUID();
-                            }
-                        }
-                    } catch (RepositoryException ex) {
-                        log.error(ex.getMessage());
+        save();
+        absPath = null;
+        super.detach();
+    }
+
+    private void save() {
+        if (uuid == null) {
+            Item item = (Item) getObject();
+            // determine uuid + relative path for attached item
+            if (item != null) {
+                relPath = null;
+                try {
+                    Node node;
+                    PrependingStringBuffer spb = new PrependingStringBuffer();
+                    if (item.isNode()) {
+                        node = (Node) item;
+                    } else {
+                        node = item.getParent();
+                        spb.prepend(item.getName());
+                        spb.prepend('/');
                     }
-                } else {
-                    // we have neither a uuid nor a path, try the get the uuid, else get the path from the item
-                    Item item = (Item) getObject();
-                    if (item != null) {
-                        try {
-                            if (item.isNode()) {
-                                Node node = (Node) item;
-                                if (node.isNodeType("mix:referenceable")) {
-                                    uuid = node.getUUID();
-                                }
-                            }
-                            path = item.getPath();
-                        } catch (RepositoryException ex) {
-                            log.error(ex.getMessage());
-                        }
+                    while (node != null && !node.isNodeType("mix:referenceable")) {
+                        spb.prepend(']');
+                        spb.prepend(new Integer(node.getIndex()).toString());
+                        spb.prepend('[');
+                        spb.prepend(node.getName());
+                        spb.prepend('/');
+                        node = node.getParent();
                     }
+                    if (node == null) {
+                        throw new IllegalStateException("No referenceable parent node was found");
+                    }
+                    uuid = node.getUUID();
+                    if (spb.length() > 1) {
+                        relPath = spb.toString().substring(1);
+                    }
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
                 }
             }
         }
-        super.detach();
     }
 
     private void writeObject(ObjectOutputStream output) throws IOException {
@@ -212,22 +220,16 @@ public class JcrItemModel extends LoadableDetachableModel {
         if (this == object) {
             return true;
         }
-        JcrItemModel itemModel = (JcrItemModel) object;
-        return new EqualsBuilder().append(normalizePath(getPath()), normalizePath(itemModel.getPath())).isEquals();
+        JcrItemModel that = (JcrItemModel) object;
+        save();
+        that.save();
+        return new EqualsBuilder().append(uuid, that.uuid).append(relPath, that.relPath).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(177, 3).append(getPath()).toHashCode();
+        save();
+        return new HashCodeBuilder(177, 3).append(uuid).append(relPath).toHashCode();
     }
 
-    private static String normalizePath(String path) {
-        if (path != null && path.length() > 0) {
-            if (path.charAt(path.length() - 1) == ']') {
-                return path;
-            }
-            return path + "[1]";
-        }
-        return path;
-    }
 }

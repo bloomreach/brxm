@@ -70,7 +70,7 @@ public class JcrEventListener implements EventListener, IClusterable {
         try {
             obMgr.addEventListener(this, eventTypes, absPath, isDeep, uuid, nodeTypeName, false);
         } catch (RepositoryException ex) {
-            log.error("unable to register event listener, " + ex.getMessage());
+            log.error("unable to register event listener", ex);
         }
     }
 

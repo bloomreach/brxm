@@ -301,20 +301,26 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
 
     // validate existence of all open documents
     public void refresh() {
+        active = true;
+
         Iterator<Map.Entry<JcrNodeModel, CmsEditor>> iter = editors.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry<JcrNodeModel, CmsEditor> entry = iter.next();
             if (!entry.getKey().getItemModel().exists()) {
-                try {
-                    entry.getValue().close();
-                    iter.remove();
-                } catch (EditorException ex) {
-                    log.warn("failed to close editor for non-existing document");
+                // close editor if there is no handle
+                JcrNodeModel handleModel = entry.getValue().getHandle();
+                if (handleModel == null || !handleModel.getItemModel().exists()) {
+                    try {
+                        entry.getValue().close();
+                        iter.remove();
+                    } catch (EditorException ex) {
+                        log.warn("failed to close editor for non-existing document");
+                    }
                 }
             }
         }
 
-        for(Iterator<JcrNodeModel> pendingIter = pending.iterator(); pendingIter.hasNext();) {
+        for (Iterator<JcrNodeModel> pendingIter = pending.iterator(); pendingIter.hasNext();) {
             JcrNodeModel model = pendingIter.next();
             if (!model.getItemModel().exists()) {
                 pendingIter.remove();
@@ -325,14 +331,19 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
         if (preview != null) {
             JcrNodeModel nodeModel = (JcrNodeModel) preview.getModel();
             if (nodeModel != null && !nodeModel.getItemModel().exists()) {
-                try {
-                    preview.close();
-                    preview = null;
-                } catch (EditorException ex) {
-                    log.warn("failed to close preview");
+                JcrNodeModel handleModel = preview.getHandle();
+                if (handleModel == null || !handleModel.getItemModel().exists()) {
+                    try {
+                        preview.close();
+                        preview = null;
+                    } catch (EditorException ex) {
+                        log.warn("failed to close preview");
+                    }
                 }
             }
         }
+
+        active = false;
     }
 
     void setActiveModel(JcrNodeModel nodeModel) {
@@ -396,58 +407,66 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
         }
     }
 
+    void remap(JcrNodeModel source, JcrNodeModel target) {
+        if (preview == null || !source.equals(preview.getModel())) {
+            CmsEditor editor = editors.remove(source);
+            if (editor != null) {
+                editors.put(target, editor);
+            } else {
+                log.error("Unable to find editor");
+            }
+        }
+    }
+
     void unregister(CmsEditor editor) {
         JcrNodeModel model = (JcrNodeModel) editor.getModel();
-        if (model != null) {
-            
-            if (!active) {
-                active = true;
+        if (model != null && !active) {
+            active = true;
 
-                JcrNodeModel parentModel = model.getParentModel();
-                if (parentModel.getItemModel().exists()) {
-                    try {
-                        Node parent = parentModel.getNode();
-                        if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            // Deselect the currently selected node if it corresponds
-                            // to the editor that is being closed.
-                            JcrNodeModel selectedNodeModel = (JcrNodeModel) modelReference.getModel();
-                            if(selectedNodeModel != null) {
-                                Node selected = selectedNodeModel.getNode();
-                                if (selected != null && selected instanceof HippoNode) {
-                                    try {
-                                        Node canonical = ((HippoNode) selected).getCanonicalNode();
-                                        if (canonical != null) {
-                                            if (canonical.isSame(selected) || canonical.getParent().isSame(parent)) {
-                                                modelReference.setModel(null);
-                                            }
+            JcrNodeModel parentModel = editor.getHandle();
+            if (parentModel.getItemModel().exists()) {
+                try {
+                    Node parent = parentModel.getNode();
+                    if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        // Deselect the currently selected node if it corresponds
+                        // to the editor that is being closed.
+                        JcrNodeModel selectedNodeModel = (JcrNodeModel) modelReference.getModel();
+                        if (selectedNodeModel != null) {
+                            Node selected = selectedNodeModel.getNode();
+                            if (selected != null && selected instanceof HippoNode) {
+                                try {
+                                    Node canonical = ((HippoNode) selected).getCanonicalNode();
+                                    if (canonical != null) {
+                                        if (canonical.isSame(selected) || canonical.getParent().isSame(parent)) {
+                                            modelReference.setModel(null);
                                         }
-                                    } catch (ItemNotFoundException ex) {
-                                        // physical item no longer exists
                                     }
+                                } catch (ItemNotFoundException ex) {
+                                    // physical item no longer exists
                                 }
                             }
                         }
-                    } catch (RepositoryException ex) {
-                        log.error(ex.getMessage());
                     }
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
                 }
-
-                // cleanup lru list
-                lastReferences.remove(parentModel);
-
-                active = false;
             }
+
+            // cleanup lru list
+            lastReferences.remove(parentModel);
 
             // cleanup internals
             if (editors.containsKey(model)) {
                 editors.remove(model);
             }
-            if(preview == editor) {
+            if (preview == editor) {
                 preview = null;
             }
             if (pending.contains(model)) {
                 pending.remove(model);
             }
+
+            active = false;
         }
     }
 
