@@ -202,7 +202,6 @@ public class BaseHstComponent extends GenericHstComponent {
      * @param response the HstResponse
      * @param redirectToSiteMapItemId the sitemap item id to redirect to
      */
-    // TODO Make use of the HstURLFactory : HSTTWO-474
     public void sendRedirect(HstRequest request, HstResponse response, String redirectToSiteMapItemId) {
         HstLinkCreator linkCreator = request.getRequestContext().getHstLinkCreator();
         HstSiteMap siteMap = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap();
@@ -214,9 +213,9 @@ public class BaseHstComponent extends GenericHstComponent {
             url.append("/").append(enc);
         }
 
-        url.insert(0, request.getContextPath() + request.getServletPath());
+        String urlString = ((HstResponse) response).createNavigationalURL(url.toString()).toString();
         try {
-            response.sendRedirect(url.toString());
+            response.sendRedirect(urlString);
         } catch (IOException e) {
             throw new HstComponentException("Could not redirect. ",e);
         }
