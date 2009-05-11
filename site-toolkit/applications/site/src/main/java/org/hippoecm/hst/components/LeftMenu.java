@@ -26,6 +26,7 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.sitemenu.EditableMenu;
 import org.hippoecm.hst.core.sitemenu.EditableMenuItem;
@@ -142,7 +143,11 @@ public class LeftMenu extends BaseHstComponent {
         }
 
         public ResolvedSiteMapItem resolveToSiteMapItem(HstRequest request) {
-            return null;
+            if(this.hstLink == null || this.hstLink.getPath() == null || "".equals(this.hstLink.getPath())) {
+                return null;
+            }
+            HstRequestContext ctx = request.getRequestContext();
+            return ctx.getSiteMapMatcher().match(this.hstLink.getPath(), ctx.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSite());
         }
 
         public void setExpanded(boolean expanded) {
