@@ -81,7 +81,8 @@ public class SystemInfoDataProvider implements IDataProvider {
         info.put("Memory total free", nf.format(((double) 
                 (runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory())) / MB) + " MB");
         info.put("Hippo CMS version", getCMSVersion());
-        info.put("Hippo Repository version", getRepositoryVersion());
+        info.put("Repository vendor", getRepositoryVendor());
+        info.put("Repository version", getRepositoryVersion());
         info.put("Java vendor", System.getProperty("java.vendor"));
         info.put("Java version", System.getProperty("java.version"));
         info.put("Java VM", System.getProperty("java.vm.name"));
@@ -140,11 +141,16 @@ public class SystemInfoDataProvider implements IDataProvider {
     private String getRepositoryVersion() {
         Repository repository = ((UserSession) Session.get()).getJcrSession().getRepository();
         if (repository != null) {
-            StringBuffer sb = new StringBuffer();
-            sb.append(repository.getDescriptor(Repository.REP_NAME_DESC));
-            sb.append(" ");
-            sb.append(repository.getDescriptor(Repository.REP_VERSION_DESC));
-            return sb.toString();
+            return repository.getDescriptor(Repository.REP_VERSION_DESC);
+        } else {
+            return "unknown";
+        }
+    }
+    
+    private String getRepositoryVendor() {
+        Repository repository = ((UserSession) Session.get()).getJcrSession().getRepository();
+        if (repository != null) {
+            return repository.getDescriptor(Repository.REP_NAME_DESC);
         } else {
             return "unknown";
         }
