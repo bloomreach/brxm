@@ -394,7 +394,7 @@ public class RepositoryServlet extends HttpServlet {
                         writer.println(resultNode.getPath());
                     }
                 }
-                writer.println("  </ol><hr><table>");
+                writer.println("  </ol><hr/><table summary=\"searchresult\">");
                 result = query.execute();
                 String[] columns = result.getColumnNames();
                 writer.println("  <tr>");
@@ -417,9 +417,9 @@ public class RepositoryServlet extends HttpServlet {
                             }
                         }
                     }
-                    writer.println("</tr>");
+                    writer.println("  </tr>");
                 }
-                writer.println("  </ol>");
+                writer.println("</table>");
             }
             if ((queryString = req.getParameter("map")) != null) {
                 queryString = URLDecoder.decode(queryString, "UTF-8");
