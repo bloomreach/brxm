@@ -15,23 +15,28 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.markup.html.basic.Label;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.ResourceReference;
+
+import org.apache.wicket.model.IModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CancelWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -41,64 +46,50 @@ public class CancelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
     private static Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
 
-    private boolean cancelable = true;
-
     private String state = "unknown";
     private Date schedule = null;
+    private boolean cancelable = true;
+
+    WorkflowAction cancelAction;
 
     public CancelWorkflowPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);}/*
+        super(context, config);
+
+        add(new StdWorkflow("info", "info") {
+            @Override
+            protected IModel getTitle() {
+                return new StringResourceModel("state-"+state, this, null, new Object[] {  (schedule!=null ? schedule.toString() : "??") }, "unknown");
+            }
+            @Override
+            protected void invoke() {
+            }
+        });
+
+        add(cancelAction = new WorkflowAction("cancel", new StringResourceModel("cancel-request", this, null).getString(), null) {
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "delete-16.png");
+            }
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                BasicRequestWorkflow workflow = (BasicRequestWorkflow) wf;
+                workflow.cancelRequest();
+                return null;
+            }
+        });
 
         onModelChanged();
-
-        add(new Label("status", new StringResourceModel("state-"+state, this, null, new Object[] {  (schedule!=null ? schedule.toString() : "??") }, "unknown")));
-
-        addWorkflowAction("cancelRequest-dialog", new StringResourceModel("cancel-request", this, null),
-                new Visibility() {
-                    private static final long serialVersionUID = 1L;
-
-                    public boolean isVisible() {
-                        return cancelable;
-                    }
-                }, new WorkflowAction() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public void execute(Workflow wf) throws Exception {
-                        BasicRequestWorkflow workflow = (BasicRequestWorkflow) wf;
-                        workflow.cancelRequest();
-                    }
-                });
     }
 
     @Override
     public void onModelChanged() {
         super.onModelChanged();
         WorkflowDescriptorModel model = (WorkflowDescriptorModel) getModel();
-        state = "unknown";
         schedule = null;
-        try {
-            Node node = model.getNode();
-            Node child = null;
-            if (node.isNodeType(HippoNodeType.NT_DOCUMENT) && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                node = node.getParent();
-            }
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                for (NodeIterator iter = node.getNodes(HippoNodeType.NT_REQUEST); iter.hasNext();) {
-                    child = iter.nextNode();
-                    if (child.isNodeType(HippoNodeType.NT_REQUEST)) {
-                        node = child;
-                    } else {
-                        child = null;
-                    }
-                }
-            }
-            if (node == null || !node.isNodeType(HippoNodeType.NT_REQUEST)) {
-                node = null;
-                cancelable = false;
-            }
-            if (node != null && node.isNodeType("hipposched:job")) {
-                if(node.hasProperty("hipposched:data")) {
+        if (model != null) {
+            try {
+                Node node = model.getNode();
+                if (node.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
                     String data = node.getProperty("hipposched:data").getString();
                     if(data.contains("java.lang.reflect.Method") && data.contains("java.util.ArrayList")) {
                         data = data.substring(data.indexOf("java.lang.reflect.Method")+"java.lang.reflect.Method".length(), data.indexOf("java.util.ArrayList"));
@@ -112,16 +103,21 @@ public class CancelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                     } else {
                         state = "unknown";
                     }
+                } else {
+                    state = "unknown";
                 }
                 if(node.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
                     schedule = node.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
-                } else if(node.hasProperty("reqdate")) {
+                } else if (node.hasProperty("reqdate")) {
                     schedule = new Date(node.getProperty("reqdate").getLong());
                 }
+                Map<String, Serializable> hints = ((WorkflowDescriptor)model.getObject()).hints();
+                if (hints.containsKey("cancelRequest") && !((Boolean)hints.get("cancelRequest")).booleanValue()) {
+                    cancelAction.setVisible(false);
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
             }
-        } catch (RepositoryException ex) {
-            // status unknown, maybe there are legit reasons for this, so don't emit a warning
-            log.info(ex.getClass().getName() + ": " + ex.getMessage());
         }
     }
-*/}
+}
