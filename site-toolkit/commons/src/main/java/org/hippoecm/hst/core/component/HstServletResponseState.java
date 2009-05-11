@@ -48,6 +48,10 @@ public class HstServletResponseState extends AbstractHstResponseState
         isMimeResponse = isRenderResponse || isResourceResponse;
     }
 
+    public Element createElement(String tagName) {
+        return null;
+    }    
+
     protected void setResponseLocale(Locale locale) {
         this.response.setLocale(locale);
     }

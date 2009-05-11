@@ -369,6 +369,8 @@
                         <exclude name="commons-*.jar" />
                         <exclude name="hst-client-*.jar" />
                         <exclude name="jstl-*.jar" />
+                        <exclude name="slf4j-*.jar" />
+                        <exclude name="log4j-*.jar" />
                         <exclude name="standard-*.jar" />
                         <exclude name="spring-*.jar" />
                         <exclude name="xml-apis-*.jar" />

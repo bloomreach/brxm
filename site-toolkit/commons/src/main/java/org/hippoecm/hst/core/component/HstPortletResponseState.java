@@ -48,6 +48,20 @@ public class HstPortletResponseState extends AbstractHstResponseState {
         isStateAwareResponse = isActionResponse;
         isMimeResponse = isRenderResponse || isResourceResponse;
     }
+    
+    public Element createElement(String tagName) {
+        Element element = null;
+        ClassLoader paCL = Thread.currentThread().getContextClassLoader();
+        
+        try {
+            Thread.currentThread().setContextClassLoader(this.response.getClass().getClassLoader());
+            element = this.response.createElement(tagName);
+        } finally {
+            Thread.currentThread().setContextClassLoader(paCL);
+        }
+        
+        return element;
+    }
 
     protected void setResponseLocale(Locale locale) {
         if (isResourceResponse) {
@@ -76,7 +90,14 @@ public class HstPortletResponseState extends AbstractHstResponseState {
     }
     
     protected void addResponseHeadElement(Element element, String keyHint) {
-        this.response.addProperty(MimeResponse.MARKUP_HEAD_ELEMENT, element);
+        ClassLoader paCL = Thread.currentThread().getContextClassLoader();
+        
+        try {
+            Thread.currentThread().setContextClassLoader(this.response.getClass().getClassLoader());
+            this.response.addProperty(MimeResponse.MARKUP_HEAD_ELEMENT, element);
+        } finally {
+            Thread.currentThread().setContextClassLoader(paCL);
+        }
     }
 
     protected void setResponseStatus(int status) {

@@ -297,7 +297,19 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     }
 
     public Element createElement(String tagName) {
-        return DOMUtils.createSerializableElement(tagName);
+        Element element = null;
+        
+        if (this.topParentHstResponse != null) {
+            element = this.topParentHstResponse.createElement(tagName); 
+        } else {
+            element = this.responseState.createElement(tagName);
+        }
+        
+        if (element == null) {
+            element = DOMUtils.createSerializableElement(tagName);
+        }
+        
+        return element;
     }
     
     public void addHeadElement(Element element, String keyHint) {

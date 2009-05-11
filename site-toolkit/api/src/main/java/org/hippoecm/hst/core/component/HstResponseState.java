@@ -107,6 +107,8 @@ public interface HstResponseState
     void setContentType(String type);
 
     void setLocale(Locale locale);
+    
+    Element createElement(String tagName);
 
     void addHeadElement(Element element, String keyHint);
     
