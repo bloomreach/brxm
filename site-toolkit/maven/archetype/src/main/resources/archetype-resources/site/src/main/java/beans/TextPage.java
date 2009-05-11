@@ -3,9 +3,9 @@
 #set( $symbol_escape = '\' )
 #set($hyphen = '-')
 #set($empty = '')
-package ${package}.ocm;
+package ${package}.beans;
 
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
 @Node(jcrType="${rootArtifactId.replace($hyphen,$empty)}:textpage")
