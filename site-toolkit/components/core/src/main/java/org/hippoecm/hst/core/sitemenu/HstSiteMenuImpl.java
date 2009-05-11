@@ -86,4 +86,8 @@ public class HstSiteMenuImpl implements HstSiteMenu {
         return null;
     }
 
+    public EditableMenu extractEditableMenu() {
+        return new EditableMenuImpl(this);
+    }
+
 }

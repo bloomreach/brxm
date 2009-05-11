@@ -21,7 +21,7 @@
 <div style="border:1px solid">
     <h1>My menu : ${menu.name}</h1>
     <ul>
-    <c:forEach var="item" items="${menu.siteMenuItems}">
+    <c:forEach var="item" items="${menu.menuItems}">
         <li>
             <c:choose >
                 <c:when test="${item.selected}">
@@ -70,6 +70,27 @@
                                     </li>
                                 </c:otherwise>
                                 </c:choose>
+                                <c:if test="${subitem.expanded}">
+                                <ul>
+                                    <c:forEach var="subsubsubitem" items="${subsubitem.childMenuItems}">
+                                        <c:choose >
+                                        <c:when test="${subsubsubitem.selected}">
+                                            <li>
+                                            <b>${subsubsubitem.name}</b>
+                                            </li>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <hst:link var="link" link="${subsubsubitem.hstLink}"/>
+                                            <li>
+                                            <a href="${link}">
+                                                ${subsubsubitem.name}
+                                            </a>
+                                            </li>
+                                        </c:otherwise>
+                                        </c:choose>
+                                    </c:forEach>
+                                </ul>
+                            </c:if>
                             </c:forEach>
                             </ul>
                         </c:if>
