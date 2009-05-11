@@ -83,11 +83,13 @@ public class HstElementTag extends BodyTagSupport {
                         return document;
                     }
 
+                    @SuppressWarnings("unused")
                     public void setTextContent(String textContent)
                     {
                         setText(textContent);
                     }
                     
+                    @SuppressWarnings("unused")
                     public String getTextContent()
                     {
                         return getText();
