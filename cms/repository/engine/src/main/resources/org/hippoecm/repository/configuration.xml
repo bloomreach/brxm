@@ -215,6 +215,9 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:role</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:roles" sv:type="String">
+        <sv:value>editor</sv:value>
+      </sv:property>
       <sv:property sv:name="hippo:privileges" sv:type="String">
         <sv:value>jcr:all</sv:value>
       </sv:property>

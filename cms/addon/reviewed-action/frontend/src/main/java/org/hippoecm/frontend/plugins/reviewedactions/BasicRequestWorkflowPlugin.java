@@ -28,14 +28,15 @@ import org.slf4j.LoggerFactory;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.ResourceReference;
 
+import org.apache.wicket.model.IModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
-
 
 public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -55,7 +56,15 @@ public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
     public BasicRequestWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(infoAction = new WorkflowAction("status", new StringResourceModel("state-"+state, this, null, new Object[] {  (schedule!=null ? schedule.toString() : "??") }, "unknown")));
+        add(new StdWorkflow("info", "info") {
+            @Override
+            protected IModel getTitle() {
+                return new StringResourceModel("state-"+state, this, null, new Object[] {  (schedule!=null ? schedule.toString() : "??") }, "unknown");
+            }
+            @Override
+            protected void invoke() {
+            }
+        });
 
         add(cancelAction = new WorkflowAction("cancel", new StringResourceModel("cancel-request", this, null).getString(), null) {
             @Override

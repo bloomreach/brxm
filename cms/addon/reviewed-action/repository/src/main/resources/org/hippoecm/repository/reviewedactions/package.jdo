@@ -42,6 +42,11 @@
       <field name="request" column="."/>
       <field name="document" column="{document}"/>
     </class>
+    <class name="ScheduledRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
+      <datastore-identity strategy="native"/>
+      <field name="request" column="."/>
+      <field name="document" column="{document}"/>
+    </class>
     <class name="PublishableDocument" detachable="true" table="documents">
       <inheritance strategy="new-table"/>
       <field name="state" column="hippostd:state"/>

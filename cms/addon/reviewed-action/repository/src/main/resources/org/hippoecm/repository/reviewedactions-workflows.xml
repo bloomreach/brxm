@@ -90,7 +90,7 @@
       <sv:value>hipposched:job</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.reviewedactions.BasicRequestWorkflowImpl</sv:value>
+      <sv:value>org.hippoecm.repository.reviewedactions.ScheduledRequestWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Scheduled workflow</sv:value>
@@ -120,7 +120,7 @@
       <sv:value>hipposched:job</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.reviewedactions.BasicRequestWorkflowImpl</sv:value>
+      <sv:value>org.hippoecm.repository.reviewedactions.ScheduledRequestWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Scheduled workflow</sv:value>
