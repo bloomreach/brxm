@@ -18,5 +18,5 @@
     limitations under the License.
 -->
 <hst-content-beans>
-    <annotated-class>${package}.ocm.TextPage</annotated-class>
+    <annotated-class>${package}.beans.TextPage</annotated-class>
 </hst-content-beans>
