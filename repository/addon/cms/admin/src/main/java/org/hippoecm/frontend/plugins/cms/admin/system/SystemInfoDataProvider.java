@@ -15,21 +15,36 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.system;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
+import javax.jcr.Repository;
+import javax.servlet.ServletContext;
+
+import org.apache.wicket.Application;
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.protocol.http.WebApplication;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.HippoRepositoryFactory;
 
 public class SystemInfoDataProvider implements IDataProvider {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static final long serialVersionUID = 1L;
 
     private final static double MB = 1024 * 1024;
@@ -63,7 +78,10 @@ public class SystemInfoDataProvider implements IDataProvider {
         info.put("Memory taken", nf.format(((double) runtime.totalMemory()) / MB) + " MB");
         info.put("Memory free", nf.format(((double) runtime.freeMemory()) / MB) + " MB");
         info.put("Memory in use", nf.format(((double) (runtime.totalMemory() - runtime.freeMemory())) / MB) + " MB");
-        info.put("Memory total free", nf.format(((double) (runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory())) / MB) + " MB");
+        info.put("Memory total free", nf.format(((double) 
+                (runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory())) / MB) + " MB");
+        info.put("Hippo CMS version", getCMSVersion());
+        info.put("Hippo Repository version", getRepositoryVersion());
         info.put("Java vendor", System.getProperty("java.vendor"));
         info.put("Java version", System.getProperty("java.version"));
         info.put("Java VM", System.getProperty("java.vm.name"));
@@ -80,4 +98,55 @@ public class SystemInfoDataProvider implements IDataProvider {
     public void detach() {
     }
 
+    private String getCMSVersion() {
+        StringBuffer sb = new StringBuffer();
+        ServletContext servletContext = ((WebApplication) Application.get()).getServletContext();
+        try {
+            InputStream istream = servletContext.getResourceAsStream("META-INF/MANIFEST.MF");
+            if (istream == null) {
+                File manifestFile = new File(servletContext.getRealPath("/"), "META-INF/MANIFEST.MF");
+                if (manifestFile.exists()) {
+                    istream = new FileInputStream(manifestFile);
+                }
+            }
+            if (istream == null) {
+                try {
+                    istream = HippoRepositoryFactory.getManifest(getClass()).openStream();
+                } catch (FileNotFoundException ex) {
+                } catch (IOException ex) {
+                }
+            }
+            if (istream != null) {
+                Manifest manifest = new Manifest(istream);
+                Attributes atts = manifest.getMainAttributes();
+                if (atts.getValue("Implementation-Version") != null) {
+                    sb.append(atts.getValue("Implementation-Version"));
+                }
+                if (atts.getValue("Implementation-Build") != null) {
+                    sb.append(" build ");
+                    sb.append(atts.getValue("Implementation-Build"));
+                }
+            }
+        } catch (IOException ex) {
+            // deliberate ignore
+        }
+        if (sb.length() == 0) {
+            return "unknown";
+        } else {
+            return sb.toString();
+        }
+    }
+
+    private String getRepositoryVersion() {
+        Repository repository = ((UserSession) Session.get()).getJcrSession().getRepository();
+        if (repository != null) {
+            StringBuffer sb = new StringBuffer();
+            sb.append(repository.getDescriptor(Repository.REP_NAME_DESC));
+            sb.append(" ");
+            sb.append(repository.getDescriptor(Repository.REP_VERSION_DESC));
+            return sb.toString();
+        } else {
+            return "unknown";
+        }
+    }
 }
