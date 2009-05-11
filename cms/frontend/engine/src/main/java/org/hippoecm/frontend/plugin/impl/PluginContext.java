@@ -255,9 +255,11 @@ public class PluginContext implements IPluginContext, IDetachable {
                 control.stop();
             }
 
-            for (Map.Entry<String, List<IServiceTracker<? extends IClusterable>>> entry : listeners.entrySet()) {
-                for (IServiceTracker<? extends IClusterable> service : entry.getValue()) {
-                    manager.unregisterTracker(service, entry.getKey());
+            if (!initializing) {
+                for (Map.Entry<String, List<IServiceTracker<? extends IClusterable>>> entry : listeners.entrySet()) {
+                    for (IServiceTracker<? extends IClusterable> service : entry.getValue()) {
+                        manager.unregisterTracker(service, entry.getKey());
+                    }
                 }
             }
             listeners.clear();

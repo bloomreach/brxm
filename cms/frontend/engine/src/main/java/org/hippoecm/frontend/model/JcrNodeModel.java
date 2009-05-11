@@ -80,14 +80,6 @@ public class JcrNodeModel extends ItemModelWrapper implements IObservable {
         super.detach();
     }
 
-    public JcrNodeModel findRootModel() {
-        JcrNodeModel result = this;
-        while (result.getParentModel() != null) {
-            result = result.getParentModel();
-        }
-        return result;
-    }
-
     public boolean isVirtual() {
         Node node = getNode();
         if (node == null || !(node instanceof HippoNode)) {
@@ -116,13 +108,19 @@ public class JcrNodeModel extends ItemModelWrapper implements IObservable {
     }
 
     public void startObservation() {
-        if (itemModel.getObject() != null) {
-            listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
-                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, getItemModel().getPath(), false, null, null);
-            listener.start();
-        } else {
-            log.debug("skipping observation for null node");
+        if (itemModel.getObject() == null) {
+            log.warn("skipping observation for null node");
+            return;
         }
+        if (itemModel.getRelativePath() == null) {
+            listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
+                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, "/", true,
+                    new String[] { itemModel.getUuid() }, null);
+        } else {
+            listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
+                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, itemModel.getPath(), false, null, null);
+        }
+        listener.start();
     }
 
     public void stopObservation() {

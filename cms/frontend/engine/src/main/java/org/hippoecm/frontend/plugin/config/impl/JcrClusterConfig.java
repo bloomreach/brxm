@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
+import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.AbstractSet;
 import java.util.Iterator;
@@ -141,7 +142,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
 
     };
 
-    class PluginList extends AbstractList<IPluginConfig> {
+    class PluginList extends AbstractList<IPluginConfig> implements Serializable {
         @SuppressWarnings("unused")
         private final static String SVN_ID = "$Id$";
 

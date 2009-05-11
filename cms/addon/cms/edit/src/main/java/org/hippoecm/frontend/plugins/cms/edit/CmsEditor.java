@@ -55,6 +55,7 @@ class CmsEditor implements IEditor {
     private IRenderService renderer;
     private ModelReference<IModel> modelService;
     private JcrNodeModel model;
+    private JcrNodeModel parent;
     private EditorManagerPlugin manager;
     private IFocusListener focusListener;
     private IObserver handleObserver;
@@ -110,19 +111,22 @@ class CmsEditor implements IEditor {
 
         try {
             if (this.model.getParentModel().getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+                parent = this.model.getParentModel();
                 context.registerService(handleObserver = new IObserver() {
                     private static final long serialVersionUID = 1L;
 
                     public IObservable getObservable() {
-                        return CmsEditor.this.model.getParentModel();
+                        return parent;
                     }
 
                     public void onEvent(Iterator<? extends IEvent> event) {
-                        JcrNodeModel nodeModel = CmsEditor.this.model.getParentModel();
+                        JcrNodeModel nodeModel = parent;
 
                         // select draft if it exists
                         JcrNodeModel draftDocument = manager.getDraftModel(nodeModel);
                         if (draftDocument != null) {
+                            manager.remap(CmsEditor.this.model, draftDocument);
+                            CmsEditor.this.model = draftDocument;
                             modelService.setModel(draftDocument);
                             return;
                         }
@@ -130,6 +134,8 @@ class CmsEditor implements IEditor {
                         // show preview
                         JcrNodeModel previewDocument = manager.getPreviewModel(nodeModel);
                         if (previewDocument != null) {
+                            manager.remap(CmsEditor.this.model, previewDocument);
+                            CmsEditor.this.model = previewDocument;
                             modelService.setModel(previewDocument);
                             return;
                         }
@@ -151,6 +157,10 @@ class CmsEditor implements IEditor {
 
     public IModel getModel() {
         return model;
+    }
+
+    public JcrNodeModel getHandle() {
+        return parent;
     }
 
     public void close() throws EditorException {

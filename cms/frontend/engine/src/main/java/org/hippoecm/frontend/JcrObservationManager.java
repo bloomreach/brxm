@@ -18,8 +18,10 @@ package org.hippoecm.frontend;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -190,9 +192,10 @@ public class JcrObservationManager implements ObservationManager {
     }
 
     private class JcrListener extends WeakReference<EventListener> implements EventListener {
-        String[] nodeTypes;
-        boolean isDeep;
         String path;
+        String[] nodeTypes;
+        Set<String> uuids;
+        boolean isDeep;
         boolean isvirtual;
 
         Map<String, NodeCache> pending;
@@ -224,6 +227,13 @@ public class JcrObservationManager implements ObservationManager {
 
             this.path = absPath;
             this.isDeep = isDeep;
+            if (uuid != null) {
+                this.uuids = new HashSet<String>();
+                for (String id : uuid) {
+                    uuids.add(id);
+                }
+            }
+
             this.nodeTypes = nodeTypes;
             this.isvirtual = isVirtual(getRoot());
 
@@ -275,6 +285,23 @@ public class JcrObservationManager implements ObservationManager {
             }
         }
 
+        List<Node> getReferencedNodes() throws RepositoryException {
+            if (uuids != null) {
+                Session session = getSession().getJcrSession();
+                ArrayList<Node> list = new ArrayList<Node>(uuids.size());
+                for (String id : uuids) {
+                    try {
+                        list.add(session.getNodeByUUID(id));
+                    } catch (ItemNotFoundException infe) {
+                        log.warn("Could not dereference uuid {}", id);
+                    }
+                }
+                return list;
+            } else {
+                return Collections.emptyList();
+            }
+        }
+
         boolean listenToFacetSearch() {
             // subscribe when listening to deep tree structures;
             // there will/might be facetsearches in there.
@@ -297,6 +324,12 @@ public class JcrObservationManager implements ObservationManager {
                         return true;
                     }
                     node = node.getParent();
+                }
+
+                for (Node item : getReferencedNodes()) {
+                    if (item.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
+                        return true;
+                    }
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
@@ -321,19 +354,25 @@ public class JcrObservationManager implements ObservationManager {
             return false;
         }
 
+        boolean isVisible(Node node) throws RepositoryException {
+            String path = node.getPath();
+            if ((isDeep && path.startsWith(this.path)) || path.equals(this.path)) {
+                if (uuids != null) {
+                    if (node.isNodeType("mix:referenceable") && uuids.contains(node.getUUID())) {
+                        return true;
+                    }
+                } else {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
         void processPending(NodeIterator iter, List<Node> nodes) throws RepositoryException {
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
-                String path;
-                path = node.getPath();
-                if (isDeep) {
-                    if (path.startsWith(this.path)) {
-                        nodes.add(node);
-                    }
-                } else {
-                    if (path.equals(this.path)) {
-                        nodes.add(node);
-                    }
+                if (isVisible(node)) {
+                    nodes.add(node);
                 }
             }
         }
@@ -394,18 +433,18 @@ public class JcrObservationManager implements ObservationManager {
             // process pending changes
             if (!isvirtual) {
                 try {
-                    Node root = getRoot();
                     List<Node> nodes = new LinkedList<Node>();
+                    Node root = getRoot();
                     if (nodeTypes == null) {
-                        if (root.isModified() || root.isNew()) {
+                        if ((root.isModified() || root.isNew()) && isVisible(root)) {
                             nodes.add(root);
                         }
-                        if (!root.isNew()) {
+                        if (isDeep && !root.isNew()) {
                             NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null, true);
                             processPending(iter, nodes);
                         }
                     } else {
-                        if (root.isModified() || root.isNew()) {
+                        if ((root.isModified() || root.isNew()) && isVisible(root)) {
                             for (String type : nodeTypes) {
                                 if (root.isNodeType(type)) {
                                     nodes.add(root);
@@ -413,10 +452,26 @@ public class JcrObservationManager implements ObservationManager {
                                 }
                             }
                         }
-                        if (!root.isNew()) {
+                        if (isDeep && !root.isNew()) {
                             for (String type : nodeTypes) {
                                 NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, type, true);
                                 processPending(iter, nodes);
+                            }
+                        }
+                    }
+                    for (Node node : getReferencedNodes()) {
+                        if (nodeTypes == null) {
+                            if (node.isModified() || node.isNew()) {
+                                nodes.add(node);
+                            }
+                        } else {
+                            if (node.isModified() || node.isNew()) {
+                                for (String type : nodeTypes) {
+                                    if (node.isNodeType(type)) {
+                                        nodes.add(node);
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }
@@ -461,37 +516,37 @@ public class JcrObservationManager implements ObservationManager {
             final long size = events.size();
             if (size > 0) {
                 EventIterator iter = new EventIterator() {
-    
+
                     public Event nextEvent() {
                         Event event = upstream.next();
                         log.debug("processing " + event.toString() + ", session " + sessionRef.get().getId());
                         return event;
                     }
-    
+
                     public long getPosition() {
                         throw new UnsupportedOperationException("getPosition() is not implemented yet");
                     }
-    
+
                     public long getSize() {
                         return size;
                     }
-    
+
                     public void skip(long skipNum) {
                         throw new UnsupportedOperationException("skip() is not implemented yet");
                     }
-    
+
                     public boolean hasNext() {
                         return upstream.hasNext();
                     }
-    
+
                     public Object next() {
                         return nextEvent();
                     }
-    
+
                     public void remove() {
                         throw new UnsupportedOperationException("remove() is not implemented yet");
                     }
-    
+
                 };
                 try {
                     EventListener listener = get();
@@ -510,7 +565,7 @@ public class JcrObservationManager implements ObservationManager {
         @Override
         public String toString() {
             return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("path", path).append("isDeep",
-                    isDeep).toString();
+                    isDeep).append("UUIDs", uuids).toString();
         }
     }
 
@@ -566,6 +621,23 @@ public class JcrObservationManager implements ObservationManager {
         }
     }
 
+    private void prune(Set<String> paths) {
+        // filter out descendants
+        Iterator<String> pathIter = paths.iterator();
+        while (pathIter.hasNext()) {
+            String[] ancestors = pathIter.next().split("/");
+            StringBuilder compound = new StringBuilder("/");
+            for (int i = 1; i < ancestors.length - 1; i++) {
+                compound.append(ancestors[i]);
+                if (paths.contains(compound.toString())) {
+                    pathIter.remove();
+                    break;
+                }
+                compound.append('/');
+            }
+        }
+    }
+
     public void refreshSession() {
         cleanup();
 
@@ -602,24 +674,11 @@ public class JcrObservationManager implements ObservationManager {
                 if (paths.contains("")) {
                     session.getRootNode().refresh(true);
                 } else {
-                    // filter out descendants
-                    Iterator<String> pathIter = paths.iterator();
-                    while (pathIter.hasNext()) {
-                        String[] ancestors = pathIter.next().split("/");
-                        StringBuilder compound = new StringBuilder("/");
-                        for (int i = 1; i < ancestors.length - 1; i++) {
-                            compound.append(ancestors[i]);
-                            if (paths.contains(compound.toString())) {
-                                pathIter.remove();
-                                break;
-                            }
-                            compound.append('/');
-                        }
-                    }
+                    prune(paths);
 
                     // do the refresh
                     for (String path : paths) {
-                        log.info("Refreshing {}", path);
+                        log.info("Refreshing {}, keeping changes", path);
                         session.getRootNode().getNode(path.substring(1)).refresh(true);
                     }
                 }

@@ -61,6 +61,7 @@ public class BrowseService implements IBrowseService<IModel>, IRefreshable, IDet
     }
 
     private JcrNodeModel folder;
+    private String path;
     private ModelReference<JcrNodeModel> folderService;
     private DocumentModelService documentService;
 
@@ -139,17 +140,31 @@ public class BrowseService implements IBrowseService<IModel>, IRefreshable, IDet
         if (nodeModel == null) {
             nodeModel = folderService.getModel();
         }
-        boolean hasChanged = false;
-        while (nodeModel != null && !nodeModel.getItemModel().exists()) {
-            nodeModel = nodeModel.getParentModel();
-            hasChanged = true;
-        }
-        if (hasChanged && nodeModel != null) {
-            browse(nodeModel);
+
+        if (!nodeModel.getItemModel().exists() && path != null) {
+            // detect move/delete of ancestor
+            nodeModel = new JcrNodeModel(path);
+            boolean hasChanged = false;
+            while (!nodeModel.getItemModel().exists() && path.length() > 0) {
+                path = path.substring(0, path.lastIndexOf('/'));
+                nodeModel = new JcrNodeModel(path);
+                hasChanged = true;
+            }
+            if (hasChanged && nodeModel != null) {
+                browse(nodeModel);
+            }
         }
     }
 
     public void detach() {
+        JcrNodeModel nodeModel = documentService.getModel();
+        if (nodeModel == null) {
+            nodeModel = folderService.getModel();
+        }
+        if (nodeModel != null) {
+            path = nodeModel.getItemModel().getPath();
+        }
+
         folderService.detach();
         documentService.detach();
     }
