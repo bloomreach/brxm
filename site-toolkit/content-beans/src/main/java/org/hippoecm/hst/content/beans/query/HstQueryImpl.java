@@ -143,7 +143,7 @@ public class HstQueryImpl implements HstQuery {
         } catch (LoginException e) {
             log.warn("LoginException. Return null : {}", e);
         } catch (RepositoryException e) {
-            log.warn("RepositoryException. Return null :  {}", e);
+            throw new QueryException(e.getMessage(), e);
         }
         return null;
     }
