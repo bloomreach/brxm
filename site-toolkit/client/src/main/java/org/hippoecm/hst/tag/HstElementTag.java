@@ -23,8 +23,10 @@ import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.dom4j.dom.DOMDocument;
 import org.dom4j.dom.DOMElement;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -64,12 +66,30 @@ public class HstElementTag extends BodyTagSupport {
             if (response instanceof HstResponse) {
                 element = ((HstResponse) response).createElement(name);
             } else {
-                element = new DOMElement(name) {
+                element = new DOMElement(name)
+                {
                     private static final long serialVersionUID = 1L;
-                    public void setTextContent(String textContent) {
+                    
+                    private Document document;
+                    
+                    @Override
+                    public Document getOwnerDocument() 
+                    {
+                        if (document == null)
+                        {
+                            document = new DOMDocument(this);
+                        }
+                        
+                        return document;
+                    }
+
+                    public void setTextContent(String textContent)
+                    {
                         setText(textContent);
                     }
-                    public String getTextContent() {
+                    
+                    public String getTextContent()
+                    {
                         return getText();
                     }
                 };
@@ -104,7 +124,7 @@ public class HstElementTag extends BodyTagSupport {
             String textContent = bodyContent.getString();
             
             if (element != null) {
-                element.setTextContent(textContent);
+                element.appendChild(element.getOwnerDocument().createTextNode(textContent));
             }
         }
         

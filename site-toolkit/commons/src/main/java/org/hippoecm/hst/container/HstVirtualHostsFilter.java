@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.hippoecm.hst.container;
 
 import java.io.IOException;
@@ -12,15 +27,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.hosting.VirtualHostsManager;
 import org.hippoecm.hst.core.request.MatchedMapping;
+import org.hippoecm.hst.logging.Logger;
+import org.hippoecm.hst.logging.LoggerFactory;
 import org.hippoecm.hst.site.HstServices;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HstVirtualHostsFilter implements Filter {
 
     private static final long serialVersionUID = 1L;
-
-    private final static Logger log = LoggerFactory.getLogger(HstVirtualHostsFilter.class);
+    
+    private static final String LOGGER_FACTORY_COMPONENT_NAME = LoggerFactory.class.getName();
+    private static final String LOGGER_CATEGORY_NAME = HstVirtualHostsFilter.class.getName();
 
     private final static String FILTER_DONE_KEY = "filter.done_"+HstVirtualHostsFilter.class.getName();
     private final static String REQUEST_START_TICK_KEY = "request.start_"+HstVirtualHostsFilter.class.getName();
@@ -34,16 +50,22 @@ public class HstVirtualHostsFilter implements Filter {
             ServletException {
         
         HttpServletRequest req = (HttpServletRequest)request;
+        
+        Logger logger = null;
+        
         try {
-            if(log.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
-            
             if (!HstServices.isAvailable()) {
                 String msg = "The HST Container Services are not initialized yet.";
-                log.error(msg);
                 response.getWriter().println(msg);
                 response.flushBuffer();
                 return;
             }
+            
+            LoggerFactory loggerFactory = HstServices.getComponentManager().getComponent(LOGGER_FACTORY_COMPONENT_NAME);
+            logger = loggerFactory.getLogger(LOGGER_CATEGORY_NAME);
+            
+            if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
+            
             
             String pathInfo = req.getRequestURI().substring(req.getContextPath().length());
             
@@ -77,10 +99,10 @@ public class HstVirtualHostsFilter implements Filter {
                 chain.doFilter(request, response);
             }
         } finally {
-            if(log.isDebugEnabled()) {
+            if (logger != null && logger.isDebugEnabled()) {
                 long starttick = request.getAttribute(REQUEST_START_TICK_KEY) == null ? 0 : (Long)request.getAttribute(REQUEST_START_TICK_KEY);
                 if(starttick != 0) {
-                    log.debug( "Handling request took --({})-- ms for '{}'.", (System.nanoTime() - starttick)/1000000, req.getRequestURI());
+                    logger.debug( "Handling request took --({})-- ms for '{}'.", (System.nanoTime() - starttick)/1000000, req.getRequestURI());
                 }
             }
         }

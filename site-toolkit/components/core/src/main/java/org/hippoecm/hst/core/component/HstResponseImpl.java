@@ -28,10 +28,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.dom4j.dom.DOMElement;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.util.DOMUtils;
 import org.w3c.dom.Element;
 
 /**
@@ -297,15 +297,7 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     }
 
     public Element createElement(String tagName) {
-        return new DOMElement(tagName) {
-            private static final long serialVersionUID = 1L;
-            public void setTextContent(String textContent) {
-                setText(textContent);
-            }
-            public String getTextContent() {
-                return getText();
-            }
-        };
+        return DOMUtils.createSerializableElement(tagName);
     }
     
     public void addHeadElement(Element element, String keyHint) {
