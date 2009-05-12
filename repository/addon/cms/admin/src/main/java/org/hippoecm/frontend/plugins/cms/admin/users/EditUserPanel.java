@@ -106,7 +106,7 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        // add a button that can be used to submit the form via ajax
+        // add a cancel/back button
         form.add(new AjaxButton("cancel-button") {
             private static final long serialVersionUID = 1L;
 

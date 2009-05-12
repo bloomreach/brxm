@@ -36,10 +36,10 @@
           <td><input type="checkbox" wicket:id="active"/></td>
         </tr>
       </table>
-    <div class="hippo-controlpanel-actions">
-        <input type="submit" value="Save" wicket:id="save-button"/>
-        <input type="submit" value="Cancel" wicket:id="cancel-button"/>
-    </div>
+      <div class="hippo-controlpanel-actions">
+        <input type="submit" wicket:message="value:user-save-action" wicket:id="save-button"/>
+        <input type="submit" wicket:message="value:user-cancel-action" wicket:id="cancel-button"/>
+      </div>
     </form>
   </wicket:extend>
 </html>

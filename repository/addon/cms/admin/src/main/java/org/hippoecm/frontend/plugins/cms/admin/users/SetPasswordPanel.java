@@ -34,6 +34,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.cms.admin.validators.PasswordStrengthValidator;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,13 +63,13 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
 
         final PasswordTextField password = new PasswordTextField("password", new Model(""));
         password.setResetPassword(false);
-        password.add(StringValidator.minimumLength(4));
+        password.add(new PasswordStrengthValidator());
         form.add(password);
 
         final PasswordTextField passwordCheck = new PasswordTextField("password-check");
         passwordCheck.setModel(password.getModel());
+        passwordCheck.setRequired(false);
         passwordCheck.setResetPassword(false);
-        passwordCheck.add(StringValidator.minimumLength(4));
         form.add(passwordCheck);
 
         form.add(new EqualPasswordInputValidator(password, passwordCheck));

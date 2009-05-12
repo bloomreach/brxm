@@ -31,6 +31,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
@@ -62,7 +63,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
         
         List<IColumn> columns = new ArrayList<IColumn>();
 
-        columns.add(new AbstractColumn(new Model("User"), "username") {
+        columns.add(new AbstractColumn(new ResourceModel("user-username"), "username") {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(final Item item, final String componentId, final IModel model) {
@@ -87,9 +88,9 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        columns.add(new PropertyColumn(new Model("First Name"), "frontend:firstname", "firstName"));
-        columns.add(new PropertyColumn(new Model("Last Name"), "frontend:lastname", "lastName"));
-        columns.add(new PropertyColumn(new Model("E-mail"), "frontend:email", "email"));
+        columns.add(new PropertyColumn(new ResourceModel("user-firstname"), "frontend:firstname", "firstName"));
+        columns.add(new PropertyColumn(new ResourceModel("user-lastname"), "frontend:lastname", "lastName"));
+        columns.add(new PropertyColumn(new ResourceModel("user-email"), "frontend:email", "email"));
         columns.add(new AbstractColumn(new Model("Type")) {
             private static final long serialVersionUID = 1L;
 
