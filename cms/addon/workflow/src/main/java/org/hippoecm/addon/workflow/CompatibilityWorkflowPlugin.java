@@ -78,10 +78,10 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
     public void start() {
         modelChanged();
     }
-    
+
     public void stop() {
     }
-    
+
     @Deprecated
     public class WorkflowAction extends StdWorkflow {
         ResourceReference iconModel;
@@ -103,6 +103,11 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
         }
 
+        @Override
+        protected IModel initModel() {
+            return CompatibilityWorkflowPlugin.this.getModel();
+        }
+
         protected Dialog createRequestDialog() {
             return null;
         }
@@ -119,10 +124,11 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             } else {
                 try {
                     execute();
-                 } catch(Exception ex) {
-                    getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(createResponseDialog(ex.getClass().getName()+": "+ex.getMessage()));                   
+                } catch (Exception ex) {
+                    getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(
+                            createResponseDialog(ex.getClass().getName() + ": " + ex.getMessage()));
                     ex.printStackTrace();
-                 }
+                }
             }
         }
 
@@ -138,8 +144,8 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 session.save();
                 session.refresh(true);
                 Workflow workflow = manager.getWorkflow(descriptor);
-                String message = execute((T)workflow);
-                if(message != null) {
+                String message = execute((T) workflow);
+                if (message != null) {
                     throw new WorkflowException(message);
                 }
                 session.refresh(false);
@@ -189,7 +195,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             protected void onOk() {
                 try {
                     execute();
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     error(ex);
                 }
             }
@@ -207,8 +213,8 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
         }
 
-       @Deprecated
-       public class NameDialog extends WorkflowDialog {
+        @Deprecated
+        public class NameDialog extends WorkflowDialog {
             private static final long serialVersionUID = 1L;
             private IModel title;
 
@@ -231,7 +237,8 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             private IRenderService dialogRenderer;
             private IClusterControl control;
 
-            public DestinationDialog(IModel title, IModel question, PropertyModel nameModel, final NodeModelWrapper destination) {
+            public DestinationDialog(IModel title, IModel question, PropertyModel nameModel,
+                    final NodeModelWrapper destination) {
                 super();
                 this.title = title;
                 add(new Label("question", question));
@@ -239,7 +246,8 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
                 IPluginContext context = CompatibilityWorkflowPlugin.this.getPluginContext();
                 IPluginConfig config = CompatibilityWorkflowPlugin.this.getPluginConfig();
-                IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(), IPluginConfigService.class);
+                IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
+                        IPluginConfigService.class);
                 IClusterConfig cluster = pluginConfigService.getCluster("cms-pickers/folders");
                 control = context.newCluster(cluster, config.getPluginConfig("cluster.options"));
                 IClusterConfig decorated = control.getClusterConfig();
