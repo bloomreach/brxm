@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm</artifactId>
-    <version>2.06.02</version>
+    <version>2.06.03-SNAPSHOT</version>
   </parent>
 
   <name>Tools</name>
@@ -28,9 +28,9 @@
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_02/tools</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_02/tools</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_02/tools</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools</url>
   </scm>
 
   <modules>

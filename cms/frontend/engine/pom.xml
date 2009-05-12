@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-frontend</artifactId>
-    <version>2.06.02</version>
+    <version>2.06.03-SNAPSHOT</version>
   </parent>
 
   <name>Frontend engine</name>
@@ -28,21 +28,21 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_02/frontend/engine</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_02/frontend/engine</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_02/frontend/engine</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/frontend/engine</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/frontend/engine</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/frontend/engine</url>
   </scm>
 
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.06.02</version>
+      <version>2.06.03-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>2.06.02</version>
+      <version>2.06.03-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.wicket</groupId>
@@ -77,13 +77,13 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.06.02</version>
+      <version>2.06.03-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-tools-testutils</artifactId>
-      <version>2.06.02</version>
+      <version>2.06.03-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
 
