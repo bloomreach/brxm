@@ -407,7 +407,7 @@
 	  <!-- preparationGoals>clean install</preparationGoals -->
 	  <!-- commitByProject>true</commitByProject -->
 	  <autoVersionSubmodules>true</autoVersionSubmodules>
-	  <remoteTagging>true</remoteTagging>
+	  <!-- remoteTagging>true</remoteTagging -->
 	  <scmCommentPrefix>HREPTWO-2497:</scmCommentPrefix>
 	</configuration>
       </plugin>
