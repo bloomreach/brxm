@@ -18,16 +18,16 @@
   <wicket:extend>
     <h2><wicket:message key="permissions-set"/></h2>
     <form wicket:id="form">
-      I want to give the:
+      <wicket:message key="permissions-grant-group"/>
       <select wicket:id="groups-select">
         <option>group1</option>
       </select>
-      group the   
+      <wicket:message key="permissions-the-role"/>
       <select wicket:id="roles-select">
         <option>role1</option>
       </select>
-      role. for this security domain
-      <input type="button" value="Do it" wicket:id="submit"/>
+      <wicket:message key="permissions-in-domain"/>
+      <input type="button" wicket:message="value:permissions-assign" wicket:id="submit"/>
     </form>
     <h3><span wicket:id="current-permissions-label"/></h3>
     <table class="hippo-controlpanel-table-default hippo-list-details">
