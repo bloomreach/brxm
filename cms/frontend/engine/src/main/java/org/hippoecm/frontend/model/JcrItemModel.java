@@ -20,6 +20,7 @@ import java.io.ObjectOutputStream;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -76,6 +77,18 @@ public class JcrItemModel extends LoadableDetachableModel {
                     absPath = item.getPath();
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
+                }
+            } else if (uuid != null) {
+                javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+                try {
+                    Node node = session.getNodeByUUID(uuid);
+                    if (relPath == null) {
+                        return node.getPath();
+                    } else {
+                        return node.getPath() + "/" + relPath;
+                    }
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
                 }
             }
         }
@@ -151,7 +164,7 @@ public class JcrItemModel extends LoadableDetachableModel {
         }
         return null;
     }
-
+    
     @Override
     public void detach() {
         save();
@@ -161,13 +174,14 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     private void save() {
         if (uuid == null) {
-            Item item = (Item) getObject();
-            // determine uuid + relative path for attached item
-            if (item != null) {
+            try {
                 relPath = null;
-                try {
-                    Node node;
-                    PrependingStringBuffer spb = new PrependingStringBuffer();
+                Node node = null;
+                PrependingStringBuffer spb = new PrependingStringBuffer();
+
+                Item item = (Item) getObject();
+                // determine uuid + relative path for attached item
+                if (item != null) {
                     if (item.isNode()) {
                         node = (Node) item;
                     } else {
@@ -175,24 +189,43 @@ public class JcrItemModel extends LoadableDetachableModel {
                         spb.prepend(item.getName());
                         spb.prepend('/');
                     }
-                    while (node != null && !node.isNodeType("mix:referenceable")) {
-                        spb.prepend(']');
-                        spb.prepend(new Integer(node.getIndex()).toString());
-                        spb.prepend('[');
-                        spb.prepend(node.getName());
-                        spb.prepend('/');
-                        node = node.getParent();
+                } else if (absPath != null) {
+                    javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+                    String path = absPath;
+                    while (path.lastIndexOf('/') > 0) {
+                        spb.prepend(path.substring(path.lastIndexOf('/')));
+                        path = path.substring(0, path.lastIndexOf('/'));
+                        try {
+                            node = (Node) session.getItem(path);
+                            break;
+                        } catch (PathNotFoundException ex) {
+                            continue;
+                        }
                     }
-                    if (node == null) {
-                        throw new IllegalStateException("No referenceable parent node was found");
-                    }
-                    uuid = node.getUUID();
-                    if (spb.length() > 1) {
-                        relPath = spb.toString().substring(1);
-                    }
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
+                } else {
+                    log.debug("Neither path nor uuid present");
+                    return;
                 }
+
+                while (node != null && !node.isNodeType("mix:referenceable")) {
+                    spb.prepend(']');
+                    spb.prepend(new Integer(node.getIndex()).toString());
+                    spb.prepend('[');
+                    spb.prepend(node.getName());
+                    spb.prepend('/');
+                    node = node.getParent();
+                }
+
+                if (node == null) {
+                    throw new IllegalStateException("No referenceable parent node was found");
+                }
+
+                uuid = node.getUUID();
+                if (spb.length() > 1) {
+                    relPath = spb.toString().substring(1);
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
             }
         }
     }

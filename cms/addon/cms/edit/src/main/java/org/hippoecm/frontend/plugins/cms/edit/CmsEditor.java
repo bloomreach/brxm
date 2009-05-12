@@ -119,24 +119,36 @@ class CmsEditor implements IEditor {
                         return parent;
                     }
 
+                    private void setModel(JcrNodeModel newModel) {
+                        if (!newModel.equals(CmsEditor.this.model)) {
+                            if (manager.remap(CmsEditor.this.model, newModel)) {
+                                CmsEditor.this.model = newModel;
+                                modelService.setModel(newModel);
+                            } else {
+                                try {
+                                    close();
+                                } catch (EditorException e) {
+                                    log.error("failed to close editor");
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                    
                     public void onEvent(Iterator<? extends IEvent> event) {
                         JcrNodeModel nodeModel = parent;
 
                         // select draft if it exists
                         JcrNodeModel draftDocument = manager.getDraftModel(nodeModel);
                         if (draftDocument != null) {
-                            manager.remap(CmsEditor.this.model, draftDocument);
-                            CmsEditor.this.model = draftDocument;
-                            modelService.setModel(draftDocument);
+                            setModel(draftDocument);
                             return;
                         }
 
                         // show preview
                         JcrNodeModel previewDocument = manager.getPreviewModel(nodeModel);
                         if (previewDocument != null) {
-                            manager.remap(CmsEditor.this.model, previewDocument);
-                            CmsEditor.this.model = previewDocument;
-                            modelService.setModel(previewDocument);
+                            setModel(previewDocument);
                             return;
                         }
 

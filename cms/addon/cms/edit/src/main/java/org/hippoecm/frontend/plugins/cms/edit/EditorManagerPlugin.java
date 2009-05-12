@@ -407,15 +407,21 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
         }
     }
 
-    void remap(JcrNodeModel source, JcrNodeModel target) {
+    boolean remap(JcrNodeModel source, JcrNodeModel target) {
         if (preview == null || !source.equals(preview.getModel())) {
             CmsEditor editor = editors.remove(source);
             if (editor != null) {
-                editors.put(target, editor);
+                if (!editors.containsKey(target)) {
+                    editors.put(target, editor);
+                    return true;
+                }
             } else {
                 log.error("Unable to find editor");
             }
+        } else if (preview != null && source.equals(preview.getModel())){
+            return true;
         }
+        return false;
     }
 
     void unregister(CmsEditor editor) {

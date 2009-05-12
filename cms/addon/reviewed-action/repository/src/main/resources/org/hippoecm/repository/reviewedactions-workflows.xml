@@ -44,6 +44,9 @@
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.reviewedactions.FullReviewedActionsWorkflowPlugin</sv:value>
       </sv:property>
+      <sv:property sv:name="editor.id" sv:type="String">
+        <sv:value>${editor.id}</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -161,6 +164,9 @@
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.reviewedactions.BasicReviewedActionsWorkflowPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="editor.id" sv:type="String">
+        <sv:value>${editor.id}</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:types">
