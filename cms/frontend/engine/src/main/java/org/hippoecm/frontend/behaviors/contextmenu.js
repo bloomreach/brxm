@@ -30,12 +30,16 @@
 		},
 	
 		remove : function (entry) {
+		    if(this.entries.length == 0) {
+		        return null;
+		    }
+		    
 			var index = this._getIndex(entry);
 			if (index >= 0) {
 			    var part1 = this.entries.slice(0, index);
 			    var part2 = this.entries.slice(index + 1);
 	
-			    entries = part1.concat(part2);
+			    this.entries = part1.concat(part2);
 			    return index;
 			}
 			return null;
@@ -72,9 +76,11 @@
 	}
 
 	Hippo.ContextMenu.hide = function(id) {
-		menus.remove(id);
-		var YUID = YAHOO.util.Dom;
-		YUID.get('context-menu-container').innerHTML = '';
+        menus.remove(id);
+        var YUID = YAHOO.util.Dom;
+        var el = YUID.get('context-menu-container');
+	    el.innerHTML = '';
+	    YUID.setXY(el, [-100, -100]);
 	}
 
 	Hippo.ContextMenu.isShown = function(id) {
