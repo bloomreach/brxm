@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon-sample</artifactId>
-    <version>2.06.02-SNAPSHOT</version>
+    <version>2.06.02</version>
   </parent>
 
   <name>Sample addon tests</name>
@@ -28,9 +28,9 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/sample/test</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/sample/test</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/sample/test</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_02/addon/sample/test</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_02/addon/sample/test</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_02/addon/sample/test</url>
   </scm>
 
   <dependencies>
@@ -38,31 +38,31 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-sample-common</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-sample-frontend</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-sample-repository</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <scope>test</scope>
     </dependency>
     <dependency>
