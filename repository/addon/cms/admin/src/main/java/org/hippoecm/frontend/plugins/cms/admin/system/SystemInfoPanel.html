@@ -17,19 +17,13 @@
 <wicket:panel>
   <h2><wicket:message key="system-info-title"/></h2>
   <div class="hippo-controlpanel-actions-top">
-       <input type="button" href="#" wicket:id="refresh" value="Refresh" />
+    <input type="button" href="#" wicket:id="refresh" wicket:message="value:system-info-refresh" />
     </div>
       <table class="hippo-controlpanel-table-default hippo-list-details">
-      <thead>
-        <tr class="headers">
-          <th>What</th>
-          <th>Amount</th>
-        </tr>
-      </thead>
       <tbody>
       <tr wicket:id="rows">
         <td wicket:id="cells">
-            <span wicket:id="cell">cell content goes here</span>
+          <span wicket:id="cell">cell content goes here</span>
         </td>
       </tr>
       </tbody>
