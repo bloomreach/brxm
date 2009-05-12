@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPlugin;
@@ -75,6 +76,10 @@ public class RenderPlugin extends RenderService implements IPlugin {
     }
 
     protected Component newPlugin(String id, IPluginConfig config) {
+        if (config == null) {
+            return new EmptyPanel(id);
+        }
+
         IPluginContext pluginContext = getPluginContext();
         JavaClusterConfig childClusterConfig = new JavaClusterConfig();
         IPluginConfig childPluginConfig = new JavaPluginConfig(new InheritingPluginConfig(config));

@@ -18,15 +18,12 @@ package org.hippoecm.frontend.plugins.cms.browse.tree;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.tree.ITreeState;
-
 import org.hippoecm.addon.workflow.ContextWorkflowPlugin;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -41,6 +38,8 @@ import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.FolderTreeNode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.JcrTree;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FolderTreePlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -72,18 +71,22 @@ public class FolderTreePlugin extends RenderPlugin {
 
             @Override
             protected MarkupContainer newContextContent(MarkupContainer parent, String id, final TreeNode node) {
-                ContextWorkflowPlugin content = new ContextWorkflowPlugin(context, config.getPluginConfig("module.workflow"));
-                content.bind(FolderTreePlugin.this, id);
-                JcrNodeModel nodeModel = ((IJcrTreeNode) node).getNodeModel();
-                content.setModel(nodeModel);
-                return content;
-                /* FIMXE: the following section would be a better implementation, but plugins
-                   loaded this way cannot instantiate plugins themselves.
-                MarkupContainer content = (MarkupContainer) FolderTreePlugin.this.newPlugin(id, "module.workflow");
-                JcrNodeModel nodeModel = ((IJcrTreeNode) node).getNodeModel();
-                content.setModel(nodeModel);
-                return content;
-                */
+                IPluginConfig workflowConfig = config.getPluginConfig("module.workflow");
+                if (workflowConfig != null) {
+                    ContextWorkflowPlugin content = new ContextWorkflowPlugin(context, workflowConfig);
+                    content.bind(FolderTreePlugin.this, id);
+                    JcrNodeModel nodeModel = ((IJcrTreeNode) node).getNodeModel();
+                    content.setModel(nodeModel);
+                    return content;
+                    /* FIMXE: the following section would be a better implementation, but plugins
+                    loaded this way cannot instantiate plugins themselves.
+                    MarkupContainer content = (MarkupContainer) FolderTreePlugin.this.newPlugin(id, "module.workflow");
+                    JcrNodeModel nodeModel = ((IJcrTreeNode) node).getNodeModel();
+                    content.setModel(nodeModel);
+                    return content;
+                     */
+                }
+                return new EmptyPanel(id);
             }
 
             @Override
