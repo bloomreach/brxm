@@ -33,6 +33,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
@@ -60,7 +61,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
 
         List<IColumn> columns = new ArrayList<IColumn>();
 
-        columns.add(new AbstractColumn(new Model("Name")) {
+        columns.add(new AbstractColumn(new ResourceModel("group-name")) {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(final Item item, final String componentId, final IModel model) {
@@ -85,8 +86,8 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        columns.add(new PropertyColumn(new Model("Description"), "description"));
-        columns.add(new AbstractColumn(new Model("Members")) {
+        columns.add(new PropertyColumn(new ResourceModel("group-description"), "description"));
+        columns.add(new AbstractColumn(new ResourceModel("group-members")) {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(Item cellItem, String componentId, IModel model) {
