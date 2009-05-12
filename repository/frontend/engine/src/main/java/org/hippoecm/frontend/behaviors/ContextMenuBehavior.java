@@ -33,10 +33,14 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
 
     public void setShown(boolean isShown, AjaxRequestTarget target) {
         if (isShown) {
-            target.appendJavascript("Hippo.ContextMenu.show('" + markupId + "');");
+            target.appendJavascript("Hippo.ContextMenu.show('" + getMarkupId() + "');");
         } else {
-            target.appendJavascript("Hippo.ContextMenu.hide('" + markupId + "');");
+            target.appendJavascript("Hippo.ContextMenu.hide('" + getMarkupId() + "');");
         }
+    }
+
+    private String getMarkupId() {
+        return markupId == null ? "document.body" : markupId;
     }
 
     @Override
@@ -54,7 +58,7 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
 
     @Override
     protected CharSequence getPreconditionScript() {
-        return "return Hippo.ContextMenu.isShown('" + markupId + "');";
+        return "return Hippo.ContextMenu.isShown('" + getMarkupId() + "');";
     }
 
     @Override

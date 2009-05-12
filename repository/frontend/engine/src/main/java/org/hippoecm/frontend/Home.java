@@ -199,7 +199,11 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     }
 
     public void collapse(IContextMenu current, AjaxRequestTarget target) {
-        if (activeContextMenu != null && current != activeContextMenu) {
+        if (activeContextMenu == null) {
+            return;
+        }
+
+        if (current != activeContextMenu) {
             activeContextMenu.collapse(target);
             contextMenuBehavior.setShown(false, target);
         }
