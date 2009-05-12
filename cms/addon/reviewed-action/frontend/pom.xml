@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon-reviewed-action</artifactId>
-    <version>2.06.02-SNAPSHOT</version>
+    <version>2.06.02</version>
   </parent>
 
   <name>Reviewed action frontend addon</name>
@@ -28,41 +28,41 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/reviewed-action/frontend</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/reviewed-action/frontend</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/reviewed-action/frontend</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_02/addon/reviewed-action/frontend</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_02/addon/reviewed-action/frontend</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_02/addon/reviewed-action/frontend</url>
   </scm>
 
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-workflow</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-workflow</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
     </dependency>
   </dependencies>
 

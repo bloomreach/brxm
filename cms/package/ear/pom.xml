@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-package</artifactId>
-    <version>2.06.02-SNAPSHOT</version>
+    <version>2.06.02</version>
   </parent>
 
   <name>Hippo ECM EAR package</name>
@@ -28,9 +28,9 @@
   <packaging>ear</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/ear</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/ear</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/ear</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_02/package/ear</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_02/package/ear</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_02/package/ear</url>
   </scm>
 
   <dependencies>
@@ -38,13 +38,13 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-xinha</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-xinha-frontend</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
 
@@ -52,7 +52,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-package-skin</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>war</type>
     </dependency>
     
@@ -60,7 +60,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-package-layout</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>war</type>
     </dependency>
 
@@ -68,13 +68,13 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-application</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-application</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>war</type>
     </dependency>
 
@@ -82,7 +82,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-package-auth</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
 
@@ -90,7 +90,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-package-config</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
 
@@ -98,19 +98,19 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-frontend</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
 
@@ -118,7 +118,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-versioning</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
 
@@ -126,7 +126,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
 
@@ -134,19 +134,19 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
 
@@ -154,13 +154,13 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-faceteddate-repository</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-faceteddate-frontend</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
 
@@ -168,19 +168,19 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-editor-common</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-editor-repository</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-editor-frontend</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
 
@@ -188,13 +188,13 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reporting-frontend</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
 
@@ -202,37 +202,37 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-cms-root</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-cms-browse</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-cms-dashboard</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-cms-edit</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-cms-management</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-cms-admin</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
 
@@ -240,19 +240,19 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-gallery-common</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-gallery-repository</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-gallery-frontend</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
 
@@ -260,14 +260,14 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-search-frontend</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
 
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-workflow</artifactId>
-      <version>2.06.02-SNAPSHOT</version>
+      <version>2.06.02</version>
       <type>jar</type>
     </dependency>
   </dependencies>
