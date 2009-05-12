@@ -21,6 +21,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
@@ -37,8 +38,8 @@ public class SystemPropertiesPanel extends AdminBreadCrumbPanel {
         super(id, breadCrumbModel);
 
         IColumn[] columns = new IColumn[2];
-        columns[0] = new PropertyColumn(new Model("Key"), "key");
-        columns[1] = new PropertyColumn(new Model("Value"), "value");
+        columns[0] = new PropertyColumn(new ResourceModel("admin-system-properties-key"), "key");
+        columns[1] = new PropertyColumn(new ResourceModel("admin-system-properties-value"), "value");
         
         add(new AdminDataTable("table", columns, new SystemPropertiesDataProvider(), 25));
     }
