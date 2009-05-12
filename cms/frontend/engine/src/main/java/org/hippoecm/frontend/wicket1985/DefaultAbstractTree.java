@@ -587,8 +587,8 @@ public abstract class DefaultAbstractTree extends AbstractTree
                                 if (menuManager != null) {
                                         menuManager.collapse(this, target);
                                         menuManager.addContextMenu(this, target);
-                                }
-				super.onClick(target);
+																				target.appendJavascript("Hippo.ContextMenu.renderInTree('" + content.getMarkupId() + "');");
+                                }																
 			}
                 };
                 setOutputMarkupId(true);
@@ -616,12 +616,6 @@ public abstract class DefaultAbstractTree extends AbstractTree
                 protected IAjaxCallDecorator getAjaxCallDecorator() {
                     return new EventStoppingDecorator(super.getAjaxCallDecorator());
                 }
-
-		@Override
-		public void onClick(AjaxRequestTarget target) {
-			target.getHeaderResponse().renderOnDomReadyJavascript("Hippo.ContextMenu.renderInTree('" + content.getMarkupId() + "');");
-		}
-
         }
 
 	/**
@@ -696,7 +690,7 @@ public abstract class DefaultAbstractTree extends AbstractTree
 		if (info != null) {
 			String userAgent = info.getUserAgent().toLowerCase();
 			if (userAgent.indexOf("msie 6") > -1) {
-				target.getHeaderResponse().renderOnDomReadyJavascript("fixIE6Hover('row', 'div', 'context_hover'); fixIE6Hover('row-selected', 'div', 'context-hover-selected');");
+				target.getHeaderResponse().renderOnDomReadyJavascript("fixIE6Hover('row', 'div', 'context-hover'); fixIE6Hover('row-selected', 'div', 'context-hover-selected');");
 			}
 		}
 	}
@@ -709,7 +703,7 @@ public abstract class DefaultAbstractTree extends AbstractTree
 			String userAgent = info.getUserAgent().toLowerCase();
 			if (userAgent.indexOf("msie 6") > -1) {
 				container.getHeaderResponse().renderJavascriptReference(IE6_HOVER_FIX);
-                                container.getHeaderResponse().renderOnDomReadyJavascript("fixIE6Hover('row', 'div', 'context_hover'); fixIE6Hover('row-selected', 'div', 'context-hover-selected');");
+                                container.getHeaderResponse().renderOnDomReadyJavascript("fixIE6Hover('row', 'div', 'context-hover'); fixIE6Hover('row-selected', 'div', 'context-hover-selected');");
 			}
 		}
 	}
