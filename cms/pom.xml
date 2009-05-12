@@ -408,6 +408,7 @@
 	  <!-- commitByProject>true</commitByProject -->
 	  <autoVersionSubmodules>true</autoVersionSubmodules>
 	  <remoteTagging>true</remoteTagging>
+	  <scmCommentPrefix>HREPTWO-2497:</scmCommentPrefix>
 	</configuration>
       </plugin>
       <plugin>
