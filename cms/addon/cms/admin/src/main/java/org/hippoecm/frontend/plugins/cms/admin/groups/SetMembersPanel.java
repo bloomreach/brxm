@@ -73,6 +73,10 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
 
         // All local groups
         List<IColumn> columns = new ArrayList<IColumn>();
+        columns.add(new PropertyColumn(new ResourceModel("user-username"), "username"));
+        columns.add(new PropertyColumn(new ResourceModel("user-firstname"), "firstName"));
+        columns.add(new PropertyColumn(new ResourceModel("user-lastname"), "lastName"));
+        
         columns.add(new AbstractColumn(new Model(""), "add") {
             private static final long serialVersionUID = 1L;
 
@@ -102,10 +106,6 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
                 item.add(action);
             }
         });
-
-        columns.add(new PropertyColumn(new Model("Username"), "username"));
-        columns.add(new PropertyColumn(new Model("First Name"), "firstName"));
-        columns.add(new PropertyColumn(new Model("Last Name"), "lastName"));
 
         table = new AdminDataTable("table", columns, new UserDataProvider(), 20);
         table.setOutputMarkupId(true);

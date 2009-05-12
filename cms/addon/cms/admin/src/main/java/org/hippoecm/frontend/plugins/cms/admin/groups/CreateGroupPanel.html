@@ -28,10 +28,10 @@
           <td><input type="text" wicket:id="description"/></td>
         </tr>
       </table>
-        <div class="hippo-controlpanel-actions">
-          <input type="submit" value="Create" wicket:id="create-button"/>
-          <input type="submit" value="Cancel" wicket:id="cancel-button"/>
-        </div>
+      <div class="hippo-controlpanel-actions">
+        <input type="submit" wicket:message="value:group-create-action" wicket:id="create-button"/>
+        <input type="submit" wicket:message="value:group-cancel-action" wicket:id="cancel-button"/>
+      </div>
     </form>
   </wicket:extend>
 </html>
