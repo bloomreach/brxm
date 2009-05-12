@@ -54,6 +54,7 @@ public class User implements Comparable<User>, IClusterable {
     public static final String PROP_LASTNAME = "frontend:lastname";
     public static final String PROP_EMAIL = "frontend:email";
     public static final String PROP_PASSWORD = HippoNodeType.HIPPO_PASSWORD;
+    public static final String PROP_PASSKEY = HippoNodeType.HIPPO_PASSKEY;
     public static final String PROP_PROVIDER = HippoNodeType.HIPPO_SECURITYPROVIDER;
 
     private final static String QUERY_USER_EXISTS = "SELECT * FROM hippo:user WHERE fn:name()='{}'";
@@ -217,7 +218,7 @@ public class User implements Comparable<User>, IClusterable {
                 lastName = p.getString();
             } else if (name.equals(HippoNodeType.HIPPO_ACTIVE)) {
                 active = p.getBoolean();
-            } else if (name.equals(PROP_PASSWORD)) {
+            } else if (name.equals(PROP_PASSWORD) || name.equals(PROP_PASSKEY)) {
                 // do not expose password hash
             } else if (name.equals(PROP_PROVIDER)) {
                 provider = p.getString();
