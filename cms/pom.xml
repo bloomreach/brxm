@@ -405,7 +405,7 @@
         <version>2.0-beta-9</version>
 	<configuration>
 	  <!-- preparationGoals>clean install</preparationGoals -->
-	  <commitByProject>true</commitByProject>
+	  <!-- commitByProject>true</commitByProject -->
 	  <autoVersionSubmodules>true</autoVersionSubmodules>
 	  <remoteTagging>true</remoteTagging>
 	</configuration>
