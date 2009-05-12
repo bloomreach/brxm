@@ -439,7 +439,8 @@ public class JcrObservationManager implements ObservationManager {
                         if ((root.isModified() || root.isNew()) && isVisible(root)) {
                             nodes.add(root);
                         }
-                        if (isDeep && !root.isNew()) {
+                        // use pendingChanges to detect changes in sub-trees and properties
+                        if (!root.isNew()) {
                             NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null, true);
                             processPending(iter, nodes);
                         }
@@ -452,7 +453,8 @@ public class JcrObservationManager implements ObservationManager {
                                 }
                             }
                         }
-                        if (isDeep && !root.isNew()) {
+                        // use pendingChanges to detect changes in sub-trees and properties
+                        if (!root.isNew()) {
                             for (String type : nodeTypes) {
                                 NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, type, true);
                                 processPending(iter, nodes);
