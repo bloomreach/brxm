@@ -23,6 +23,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -100,16 +101,29 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
         // local memberships
         Label localLabel = new Label("local-memberships-label", new ResourceModel("user-local-memberships"));
         localList = new MembershipsListEditView("local-memberships", "local-membership", user);
-        add(localLabel);
-        add(localList);
+        form.add(localLabel);
+        form.add(localList);
 
         // external memberships
         Label externalLabel = new Label("external-memberships-label", new ResourceModel("user-external-memberships"));
         externalList = new MembershipsListView("external-memberships", "external-membership", user);
         externalLabel.setVisible((user.getExternalMemberships().size() > 0));
         externalList.setVisible((user.getExternalMemberships().size() > 0));
-        add(externalLabel);
-        add(externalList);
+        form.add(externalLabel);
+        form.add(externalList);
+        
+
+        // add a cancel/back button
+        form.add(new AjaxButton("back-button") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form form) {
+                // one up
+                List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
+                breadCrumbModel.setActive(l.get(l.size() -2));
+            }
+        }.setDefaultFormProcessing(false));
     }
 
     /** list view to be nested in the form. */

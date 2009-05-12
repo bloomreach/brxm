@@ -17,29 +17,31 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
     <h2><wicket:message key="user-membership-groups-title"/></h2>
-    <div class="hippo-controlpanel-actions hippo-controlpanel-actions-top">
-      <form wicket:id="form">
-        Make this user member of the 
+    <form wicket:id="form">
+      <div class="hippo-controlpanel-actions hippo-controlpanel-actions-top">
+        <wicket:message key="user-membership-make-member-of"/>
         <select wicket:id="local-groups">
           <option>group1</option>
         </select>
-        group
-        <input type="button" value="Do it" wicket:id="submit"/>
-      </form>
-    </div>
-    <h3 wicket:id="local-memberships-label"/>
-    <table class="hippo-controlpanel-table-nested hippo-list-details">
-      <tr wicket:id="local-memberships">
-        <td><label wicket:id="local-membership"/></td>
-        <td><span class="delete-inline-16 icon-16" wicket:id="remove"/></td>
-      </tr>
-    </table>
-    <h3 wicket:id="external-memberships-label"/>
-    <table class="hippo-controlpanel-table-default hippo-list-details">
-      <tr wicket:id="external-memberships">
-        <td><label wicket:id="external-membership"/></td>
-        <td><li class="delete-inline-16-disabled icon-16"/></td>
-      </tr>
-    </table>
+        <input type="submit" wicket:message="value:user-membership-add-action" wicket:id="submit"/>
+      </div>
+      <h3 wicket:id="local-memberships-label"/>
+      <table class="hippo-controlpanel-table-nested hippo-list-details">
+        <tr wicket:id="local-memberships">
+          <td><label wicket:id="local-membership"/></td>
+          <td><span class="delete-inline-16 icon-16" wicket:id="remove"/></td>
+        </tr>
+      </table>
+      <h3 wicket:id="external-memberships-label"/>
+      <table class="hippo-controlpanel-table-default hippo-list-details">
+        <tr wicket:id="external-memberships">
+          <td><label wicket:id="external-membership"/></td>
+          <td><li class="delete-inline-16-disabled icon-16"/></td>
+        </tr>
+      </table>
+      <div class="hippo-controlpanel-actions">
+        <input type="submit" wicket:message="value:user-back-action" wicket:id="back-button"/>
+      </div>
+    </form>
   </wicket:extend>
 </html>

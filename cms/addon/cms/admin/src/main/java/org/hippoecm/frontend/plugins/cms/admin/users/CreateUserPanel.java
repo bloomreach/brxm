@@ -42,6 +42,8 @@ import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.cms.admin.validators.PasswordStrengthValidator;
+import org.hippoecm.frontend.plugins.cms.admin.validators.UsernameValidator;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,41 +143,6 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
         }.setDefaultFormProcessing(false));
     }
 
-    class UsernameValidator extends StringValidator {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onValidate(IValidatable validatable) {
-            String username = (String) validatable.getValue();
-            if (User.userExists(username)) {
-                error(validatable);
-            }
-        }
-
-        @Override
-        protected String resourceKey() {
-            return "UsernameValidator.exists";
-        }
-    }
-
-
-    class PasswordStrengthValidator extends StringValidator {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void onValidate(IValidatable validatable) {
-            String password = (String) validatable.getValue();
-            // currently only check length
-            if (password.length() < 4) {
-                error(validatable);
-            }
-        }
-
-        @Override
-        protected String resourceKey() {
-            return "PasswordStrength.invalid";
-        }
-    }
     
     public IModel getTitle(Component component) {
         return new StringResourceModel("user-create", component, null);
