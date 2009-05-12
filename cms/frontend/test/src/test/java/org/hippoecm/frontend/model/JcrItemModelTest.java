@@ -90,4 +90,15 @@ public class JcrItemModelTest extends TestCase {
         Node verify = (Node) itemModel.getObject();
         assertTrue("Node found by path is incorrect", test.isSame(verify));
     }
+
+    @Test
+    public void testNonExistingPath() throws Exception {
+        Node test = this.root.addNode("test", "nt:unstructured");
+        test.addMixin("mix:referenceable");
+        root.save();
+
+        JcrItemModel itemModel = new JcrItemModel("/test/bla");
+        assertTrue(((Node) itemModel.getParentModel().getObject()).isSame(test));
+    }
+
 }
