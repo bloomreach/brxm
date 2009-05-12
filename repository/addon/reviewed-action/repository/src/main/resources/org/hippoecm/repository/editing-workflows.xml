@@ -144,7 +144,7 @@
         <sv:value>org.hippoecm.frontend.plugins.reviewedactions.EditingDefaultWorkflowPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>$[editor.id}</sv:value>
+        <sv:value>${editor.id}</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:types">

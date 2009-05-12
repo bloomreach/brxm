@@ -23,7 +23,6 @@ import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -34,7 +33,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AutoEditPlugin implements IPlugin, IRefreshable {
+public class AutoEditPlugin implements IPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -42,19 +41,7 @@ public class AutoEditPlugin implements IPlugin, IRefreshable {
 
     public static final Logger log = LoggerFactory.getLogger(AutoEditPlugin.class);
 
-    private IPluginContext context;
-    private IPluginConfig config;
-
     public AutoEditPlugin(IPluginContext context, IPluginConfig config) {
-        this.context = context;
-        this.config = config;
-
-        context.registerService(this, IRefreshable.class.getName());
-
-        refresh();
-    }
-
-    public void refresh() {
         if (config.getString("editor.id") != null) {
             final IEditorManager editService = context.getService(config.getString("editor.id"), IEditorManager.class);
             if (editService != null) {

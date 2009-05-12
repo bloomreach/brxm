@@ -119,6 +119,9 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
             boolean shown = false;
             try {
                 Node node = ((JcrNodeModel) model).getNode();
+                if (node == null) {
+                    return;
+                }
                 Node root = node.getSession().getRootNode();
                 IPluginConfigService pluginConfig = context.getService(IPluginConfigService.class.getName(),
                         IPluginConfigService.class);

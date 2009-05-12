@@ -98,26 +98,30 @@ public class FacetSearchObserver implements EventListener {
     }
 
     public void addListener(EventListener listener, String basePath) {
-        if (upstream.size() == 0) {
-            start();
+        synchronized (upstream) {
+            if (upstream.size() == 0) {
+                start();
+            }
+            UpstreamEntry entry = new UpstreamEntry();
+            entry.basePath = basePath;
+            entry.listener = listener;
+            upstream.add(entry);
         }
-        UpstreamEntry entry = new UpstreamEntry();
-        entry.basePath = basePath;
-        entry.listener = listener;
-        upstream.add(entry);
     }
 
     public void removeListener(EventListener listener) {
-        Iterator<UpstreamEntry> iter = upstream.iterator();
-        while (iter.hasNext()) {
-            UpstreamEntry entry = iter.next();
-            if (entry.listener == listener) {
-                iter.remove();
-                break;
+        synchronized (upstream) {
+            Iterator<UpstreamEntry> iter = upstream.iterator();
+            while (iter.hasNext()) {
+                UpstreamEntry entry = iter.next();
+                if (entry.listener == listener) {
+                    iter.remove();
+                    break;
+                }
             }
-        }
-        if (upstream.size() == 0) {
-            stop();
+            if (upstream.size() == 0) {
+                stop();
+            }
         }
     }
 
@@ -194,7 +198,11 @@ public class FacetSearchObserver implements EventListener {
                 }
 
             });
-            for (UpstreamEntry listener : upstream) {
+            List<UpstreamEntry> listeners;
+            synchronized (upstream) {
+                listeners = new ArrayList(upstream);
+            }
+            for (UpstreamEntry listener : listeners) {
                 // notify listener if it registered at an ancestor or child
                 if (fsNodePath.startsWith(listener.basePath) || listener.basePath.startsWith(fsNodePath)) {
                     final Iterator<Event> baseIter = base.iterator();
