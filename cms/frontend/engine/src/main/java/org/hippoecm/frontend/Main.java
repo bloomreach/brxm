@@ -52,10 +52,12 @@ import org.apache.wicket.session.ISessionStore;
 import org.apache.wicket.settings.IExceptionSettings;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.collections.MiniMap;
+import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.UrlResourceStream;
 import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.util.resource.locator.ResourceStreamLocator;
+import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
@@ -75,6 +77,7 @@ public class Main extends WebApplication {
     public final static String REPOSITORY_ADDRESS_PARAM = "repository-address";
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
     public final static String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
+    public final static String MAXUPLOAD_PARAM = "upload-limit";
     public final static ValueMap DEFAULT_CREDENTIALS = new ValueMap("username=,password=");
 
     @Override
@@ -99,6 +102,14 @@ public class Main extends WebApplication {
         getPageSettings().setVersionPagesByDefault(false);
         
         getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
+        try {
+            String cfgParam = getConfigurationParameter(MAXUPLOAD_PARAM, null);
+            if(cfgParam != null && cfgParam.trim().length() > 0) {
+                getApplicationSettings().setDefaultMaximumUploadSize(Bytes.valueOf(cfgParam));
+            }
+        } catch(StringValueConversionException ex) {
+            log.warn("Unable to parse number as specified by "+MAXUPLOAD_PARAM, ex);
+        }
         getApplicationSettings().setClassResolver(new IClassResolver() {
             public Class resolveClass(String name) throws ClassNotFoundException {
                 if (Session.exists()) {

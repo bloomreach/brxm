@@ -66,8 +66,6 @@ public class EditorForm extends Form {
         add(new EmptyPanel("template"));
 
         setMultiPart(true);
-        // FIXME: make this configurable
-        setMaxSize(Bytes.megabytes(5));
 
         engineFactory = new TemplateEngineFactory();
         engine = engineFactory.getService(context);

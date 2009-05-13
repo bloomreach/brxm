@@ -63,7 +63,6 @@ public class UploadPlugin extends RenderPlugin {
         public FileUploadForm(String name, JcrNodeModel model) {
             super(name, model);
             setMultiPart(true);
-            setMaxSize(Bytes.megabytes(5));
             add(fileUploadField = new FileUploadField("fileInput"));
         }
 

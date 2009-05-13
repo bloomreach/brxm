@@ -51,6 +51,10 @@
             <param-name>configuration</param-name>
             <param-value>deployment</param-value>
         </init-param>
+        <init-param>
+            <param-name>upload-limit</param-name>
+            <param-value>4096k</param-value>
+        </init-param>
     </servlet>
 
     <!--Builtin console-->
