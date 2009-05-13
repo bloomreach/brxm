@@ -13,6 +13,7 @@ import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.hst.content.beans.query.filter.PrimaryNodeTypeFilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
+import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 
@@ -32,7 +33,7 @@ public class SimpleSearchExample {
                 hstQuery.addOrderByAscending("testproject:date");
                 
                 Filter filter = new FilterImpl();
-                filter.addContains(".", query);
+                filter.addContains(".",  query);
                 hstQuery.setFilter(filter);
                 
                 if(false) {
@@ -59,7 +60,7 @@ public class SimpleSearchExample {
                 result.setSize(queryResult.getSize());
                 result.setHits(hits);
             } catch (QueryException e) {
-               
+               throw new HstComponentException("Execption happened for query : " + e.getMessage() , e);
             }
         }
         
