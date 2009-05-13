@@ -25,6 +25,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,7 +33,6 @@ public class OrderByNodeNameTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private final static String TEST_PATH = "testnodes";
     private Node testPath;
 
     private final static List<String> names = new ArrayList<String>();
@@ -56,44 +56,23 @@ public class OrderByNodeNameTest extends TestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        if (session.getRootNode().hasNode(TEST_PATH)) {
-            session.getRootNode().getNode(TEST_PATH).remove();
-        }
-        testPath = session.getRootNode().addNode(TEST_PATH);
-        session.save();
-    }
-
-    @Test
-    public void testSortingNamesXpath() throws RepositoryException {
+        testPath = session.getRootNode().addNode("test");
         for (String name : names) {
             testPath.addNode(name);
         }
         session.save();
+    }
 
-        String xpath = "/jcr:root" + testPath.getPath() + "//*order by @jcr:name descending";
-        QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
-
-        String prev = null;
-        for (NodeIterator nodeit = queryResult.getNodes(); nodeit.hasNext();) {
-            String nodename = nodeit.nextNode().getName();
-            if (prev != null) {
-                assertTrue(prev.compareTo(nodename) <= 0);
-            }
-            prev = nodename;
-        }
-
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
     
     @Test
-    public void testSortingNamesSql() throws RepositoryException {
-        for (String name : names) {
-            testPath.addNode(name);
-        }
-        session.save();
-
-        String sql = "SELECT * FROM nt:base WHERE jcr:path LIKE '/testnodes/%' ORDER BY jcr:name DESC";
-         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(sql, "sql").execute();
-
+    public void testSortingNamesXpathDefault() throws RepositoryException {
+        String xpath = "/jcr:root/test//* order by @jcr:name";
+        QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         String prev = null;
         for (NodeIterator nodeit = queryResult.getNodes(); nodeit.hasNext();) {
             String nodename = nodeit.nextNode().getName();
@@ -102,7 +81,76 @@ public class OrderByNodeNameTest extends TestCase {
             }
             prev = nodename;
         }
+    }
 
+    @Test
+    public void testSortingNamesXpathAscending() throws RepositoryException {
+        String xpath = "/jcr:root/test//* order by @jcr:name ascending";
+        QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+        String prev = null;
+        for (NodeIterator nodeit = queryResult.getNodes(); nodeit.hasNext();) {
+            String nodename = nodeit.nextNode().getName();
+            if (prev != null) {
+                assertTrue(prev.compareTo(nodename) <= 0);
+            }
+            prev = nodename;
+        }
+    }
+
+    @Test
+    public void testSortingNamesXpathDescending() throws RepositoryException {
+        String xpath = "/jcr:root/test//* order by @jcr:name descending";
+        QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+        String prev = null;
+        for (NodeIterator nodeit = queryResult.getNodes(); nodeit.hasNext();) {
+            String nodename = nodeit.nextNode().getName();
+            if (prev != null) {
+                assertTrue(prev.compareTo(nodename) >= 0);
+            }
+            prev = nodename;
+        }
+    }
+
+    @Test
+    public void testSortingNamesSqlDefault() throws RepositoryException {
+        String sql = "SELECT * FROM nt:base WHERE jcr:path LIKE '/test/%' ORDER BY jcr:name";
+        QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(sql, "sql").execute();
+        String prev = null;
+        for (NodeIterator nodeit = queryResult.getNodes(); nodeit.hasNext();) {
+            String nodename = nodeit.nextNode().getName();
+            if (prev != null) {
+                assertTrue(prev.compareTo(nodename) <= 0);
+            }
+            prev = nodename;
+        }
+    }
+
+    @Test
+    public void testSortingNamesSqlAsc() throws RepositoryException {
+        String sql = "SELECT * FROM nt:base WHERE jcr:path LIKE '/test/%' ORDER BY jcr:name ASC";
+        QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(sql, "sql").execute();
+        String prev = null;
+        for (NodeIterator nodeit = queryResult.getNodes(); nodeit.hasNext();) {
+            String nodename = nodeit.nextNode().getName();
+            if (prev != null) {
+                assertTrue(prev.compareTo(nodename) <= 0);
+            }
+            prev = nodename;
+        }
+    }
+
+    @Test
+    public void testSortingNamesSqlDesc() throws RepositoryException {
+        String sql = "SELECT * FROM nt:base WHERE jcr:path LIKE '/test/%' ORDER BY jcr:name DESC";
+        QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(sql, "sql").execute();
+        String prev = null;
+        for (NodeIterator nodeit = queryResult.getNodes(); nodeit.hasNext();) {
+            String nodename = nodeit.nextNode().getName();
+            if (prev != null) {
+                assertTrue(prev.compareTo(nodename) >= 0);
+            }
+            prev = nodename;
+        }
     }
 
 }
