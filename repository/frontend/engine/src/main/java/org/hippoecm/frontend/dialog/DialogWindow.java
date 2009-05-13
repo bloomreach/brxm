@@ -26,7 +26,7 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 
-public class DialogWindow extends ModalWindow implements IDialogService {
+public class DialogWindow extends PersistentModalWindow implements IDialogService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -83,13 +83,21 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         }
     }
 
+    @Override
+    protected void onBeforeRender() {
+        if (shown != null && !isShown()) {
+            show();
+        }
+        super.onBeforeRender();
+    }
+
     private void internalShow(Dialog dialog) {
         shown = dialog;
         dialog.setDialogService(this);
         setContent(dialog.getComponent());
         setTitle(dialog.getTitle());
         setWindowClosedCallback(new Callback(dialog));
-        
+
         IValueMap properties = dialog.getProperties();
         setInitialHeight(properties.getInt("height", 455));
         setInitialWidth(properties.getInt("width", 850));
