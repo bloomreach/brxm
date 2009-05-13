@@ -46,7 +46,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/frontend/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/frontend/nt/1.4</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>hippo:user</sv:value>

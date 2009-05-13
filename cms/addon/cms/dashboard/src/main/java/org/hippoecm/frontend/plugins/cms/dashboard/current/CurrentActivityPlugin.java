@@ -34,7 +34,6 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -70,9 +69,9 @@ public class CurrentActivityPlugin extends RenderPlugin {
     }
 
     @Override
-    public void render(PluginRequestTarget target) {
+    protected void onModelChanged() {
+        super.onModelChanged();
         redraw();
-        super.render(target);
     }
 
     String uuid2Path(String uuid) {
@@ -115,7 +114,7 @@ public class CurrentActivityPlugin extends RenderPlugin {
                 public void remove() {
                     iter.remove();
                 }
-                
+
             };
         }
 

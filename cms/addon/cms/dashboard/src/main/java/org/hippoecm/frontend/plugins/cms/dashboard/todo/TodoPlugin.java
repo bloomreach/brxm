@@ -27,7 +27,6 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
@@ -52,9 +51,9 @@ public class TodoPlugin extends RenderPlugin {
     }
 
     @Override
-    public void render(PluginRequestTarget target) {
+    protected void onModelChanged() {
+        super.onModelChanged();
         redraw();
-        super.render(target);
     }
 
     private class TodoView extends RefreshingView {
@@ -81,7 +80,7 @@ public class TodoPlugin extends RenderPlugin {
                 public void remove() {
                     iter.remove();
                 }
-                
+
             };
         }
 
@@ -89,6 +88,7 @@ public class TodoPlugin extends RenderPlugin {
         protected void populateItem(final Item item) {
             item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel() {
                 private static final long serialVersionUID = 1L;
+
                 @Override
                 public Object getObject() {
                     return (item.getIndex() % 2 == 1) ? "even" : "odd";

@@ -19,9 +19,28 @@ public interface FrontendNodeTypes {
     final static String SVN_ID = "$Id$";
 
     // NodeTypes
-    public static final String NT_FRONTEND_WORKFLOW = "frontend:workflow";
+    String NT_FRONTEND_PLUGINCONFIG = "frontend:pluginconfig";
+    String NT_FRONTEND_PLUGIN = "frontend:plugin";
+    String NT_FRONTEND_PLUGINCLUSTER = "frontend:plugincluster";
+    String NT_FRONTEND_CLUSTERFOLDER = "frontend:clusterfolder";
+    String NT_FRONTEND_APPLICATION = "frontend:application";
+    String NT_FRONTEND_WORKFLOW = "frontend:workflow";
+    String NT_FRONTEND_USER = "frontend:user";
+    String NT_FRONTEND_NAMESPACE = "hippo:namespace";
+    String NT_FRONTEND_NAMESPACEFOLDER = "hippo:namespacefolder";
 
     // Paths
-    final public static String WORKFLOW_RENDERER = "frontend:renderer";
+    String WORKFLOW_RENDERER = "frontend:renderer";
+    String SERVICES = "frontend:services";
+    String REFERENCES = "frontend:references";
+    String PROPERTIES = "frontend:properties";
+    String FIRSTNAME = "frontend:firstname";
+    String LASTNAME = "frontend:lastname";
+    String EMAIL = "frontend:email";
 
+    String PATH = "frontend:path";
+    String EVENTS = "frontend:events";
+    String DEEP = "frontend:deep";
+    String UUIDS = "frontend:uuids";
+    String NODETYPES = "frontend:nodetypes";
 }
