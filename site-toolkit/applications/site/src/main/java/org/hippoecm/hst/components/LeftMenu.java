@@ -40,7 +40,7 @@ public class LeftMenu extends BaseHstComponent {
 
         HstSiteMenu menu = request.getRequestContext().getHstSiteMenus().getSiteMenu("main");
         
-        EditableMenu editable = menu.extractEditableMenu();
+        EditableMenu editable = menu.getEditableMenu();
         EditableMenuItem item = editable.getDeepestExpandedItem();
 
         if (item.isRepositoryBased() && item.getDepth() > 0) {
