@@ -129,4 +129,23 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
         else
             throw new WorkflowException("cannot delete document which is not contained in a folder");
     }
+
+    public void copy(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
+        Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
+        Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
+        if(workflow instanceof FolderWorkflow)
+            ((FolderWorkflow)workflow).copy(document, destination, newName);
+        else
+            throw new WorkflowException("cannot copy document which is not contained in a folder");
+    }
+
+    public void move(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
+        Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
+        Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
+        if(workflow instanceof FolderWorkflow)
+            ((FolderWorkflow)workflow).move(document, destination, newName);
+        else
+            throw new WorkflowException("cannot move document which is not contained in a folder");
+    }
+
 }
