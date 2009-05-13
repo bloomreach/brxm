@@ -591,19 +591,40 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     public Document duplicate(String relPath)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        return null;
+        Node source = subject.getNode(relPath);
+        return duplicate(source, "Copy of "+source.getName());
     }
+
     public Document duplicate(Document offspring)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        return null;
+        Node source = userSession.getNodeByUUID(offspring.getIdentity());
+        return duplicate(source, "Copy of "+source.getName());
     }
+
     public Document duplicate(String relPath, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        return null;
+        Node source = subject.getNode(relPath);
+        return duplicate(source, "Copy of "+arguments.get("name"));
     }
+
     public Document duplicate(Document offspring, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        return null;
+        Node source = userSession.getNodeByUUID(offspring.getIdentity());
+        String targetName = arguments.get("name");
+        return duplicate(source, targetName);
+    }
+
+    private Document duplicate(Node source, String targetName) throws WorkflowException, RepositoryException {
+        if (subject.hasNode(targetName)) {
+            throw new WorkflowException("Cannot duplicate document when duplicate already exists");
+        }
+        if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+            source = source.getParent();
+        }
+        subject.getSession().getWorkspace().copy(source.getPath(), subject.getPath() + "/" + targetName);
+        renameChildDocument(subject, targetName);
+        subject.save();
+        return new Document(subject.getNode(targetName).getUUID());
     }
 
     public Document copy(String relPath, String absPath)
@@ -661,10 +682,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
         Node destination = userSession.getNodeByUUID(targetFolder.getIdentity());
-        if (folder.isSame(destination)) {
-            throw new WorkflowException("Cannot copy document to same folder, use duplicate instead");
-        }
         Node source = userSession.getNodeByUUID(offspring.getIdentity());
+        if (folder.isSame(destination)) {
+            //throw new WorkflowException("Cannot copy document to same folder, use duplicate instead");
+            return duplicate(source, targetName);
+        }
         if (source.getAncestor(folder.getDepth()).isSame(folder)) {
             ((EmbedWorkflow)workflowContext.getWorkflow("embedded", new Document(destination.getUUID()))).copyTo(new Document(subject.getUUID()), offspring, targetName, arguments);
         }
@@ -698,7 +720,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
         Node destination = userSession.getNodeByUUID(targetFolder.getIdentity());
         if (folder.isSame(destination)) {
-            throw new WorkflowException("Cannot move document to same folder, use duplicate instead");
+            throw new WorkflowException("Cannot move document to same folder");
         }
         Node source = userSession.getNodeByUUID(offspring.getIdentity());
         if (source.getAncestor(folder.getDepth()).isSame(folder)) {

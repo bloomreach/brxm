@@ -32,11 +32,14 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 
 public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
@@ -52,6 +55,8 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
     private WorkflowAction editAction;
     private WorkflowAction deleteAction;
     private WorkflowAction renameAction;
+    private WorkflowAction copyAction;
+    private WorkflowAction moveAction;
 
     public DefaultWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -121,6 +126,52 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             protected String execute(Workflow wf) throws Exception {
                         DefaultWorkflow workflow = (DefaultWorkflow) wf;
                         workflow.rename(NodeNameCodec.encode(name, true));
+                return null;
+            }
+        });
+
+        add(moveAction = new WorkflowAction("move", new StringResourceModel("move-label", this, null)) {
+            public String name;
+            public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) { };
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "move-16.png");
+            }
+            @Override
+            protected Dialog createRequestDialog() {
+                name = "";
+                return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title", DefaultWorkflowPlugin.this, null), new StringResourceModel("move-text", DefaultWorkflowPlugin.this, null), new PropertyModel(this, "name"), destination);
+            }
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                if(name == null || name.trim().equals("")) {
+                    throw new WorkflowException("No name for destination given");
+                }
+                DefaultWorkflow workflow = (DefaultWorkflow) wf;
+                workflow.move(new Document(destination.getNodeModel().getNode().getUUID()), NodeNameCodec.encode(name, true));
+                return null;
+            }
+        });
+
+        add(copyAction = new WorkflowAction("copy", new StringResourceModel("copy-label", this, null)) {
+            public String name;
+            public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) { };
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "copy-16.png");
+            }
+            @Override
+            protected Dialog createRequestDialog() {
+                name = "";
+                return new WorkflowAction.DestinationDialog(new StringResourceModel("copy-title", DefaultWorkflowPlugin.this, null), new StringResourceModel("copy-text", DefaultWorkflowPlugin.this, null), new PropertyModel(this, "name"), destination);
+            }
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                if(name == null || name.trim().equals("")) {
+                    throw new WorkflowException("No name for destination given");
+                }
+                DefaultWorkflow workflow = (DefaultWorkflow) wf;
+                workflow.copy(new Document(destination.getNodeModel().getNode().getUUID()), NodeNameCodec.encode(name, true));
                 return null;
             }
         });

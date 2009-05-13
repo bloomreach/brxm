@@ -19,6 +19,7 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -32,4 +33,8 @@ public interface DefaultWorkflow extends Workflow {
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
     public void rename(String newName)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public void copy(Document target, String newName)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public void move(Document target, String newName)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }
