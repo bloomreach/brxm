@@ -91,6 +91,17 @@ public class HippoFolder extends HippoItem implements HippoFolderBean{
         return documents.subList(from, to);
     }
     
+    public <T> List<T> getDocuments(Class<T> clazz) {
+        List<HippoDocumentBean> documents = getDocuments();
+        List<T> documentOfClass = new ArrayList<T>();
+        for(HippoDocumentBean bean : documents) {
+            if(clazz.isAssignableFrom(bean.getClass())) {
+                documentOfClass.add((T)bean);
+            }
+        }
+        return documentOfClass;
+    }
+    
     public List<HippoDocumentBean> getDocuments(boolean sorted) {
         if(this.hippoDocuments != null) {
             return this.hippoDocuments;

@@ -36,4 +36,6 @@ public interface HippoFolderBean extends HippoBean{
     List<HippoDocumentBean> getDocuments(int from, int to, boolean sorted);
     
     List<HippoDocumentBean> getDocuments(boolean sorted);
+    
+    <T> List<T> getDocuments(Class<T> clazz);
 }
