@@ -28,6 +28,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class JcrItemModelTest extends TestCase {
+    @SuppressWarnings("unused")
+    private static final String SVN_ID = "$Id$";
 
     Node root;
     HippoTester tester;
