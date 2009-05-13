@@ -50,8 +50,8 @@ public class UploadDialog extends AbstractDialog {
 
     public UploadDialog(IPluginContext context, IPluginConfig config, IModel model) {
         super(model);
-        ok.setVisible(false);
-        cancel.setVisible(false);
+        setOkVisible(false);
+        setCancelVisible(false);
         pluginConfig = config;
         pluginContext = context;
         add(wizard = new UploadWizard("wizard", this));
