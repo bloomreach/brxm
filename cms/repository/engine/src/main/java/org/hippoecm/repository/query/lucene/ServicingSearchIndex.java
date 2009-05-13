@@ -169,7 +169,7 @@ public class ServicingSearchIndex extends SearchIndex {
         for (int i = 0; i < orderProps.length; i++) {
             if (orderProps[i].equals(NameConstants.JCR_NAME)) {
                 // replace the one created by the one from Jackrabbit, because the jackrabbit cannot sort on jcr:name (core < 1.4.6) 
-                sortFields[i] = new SortField(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, orderSpecs[i]);
+                sortFields[i] = new SortField(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, !orderSpecs[i]);
             }
         }
         return sortFields;
