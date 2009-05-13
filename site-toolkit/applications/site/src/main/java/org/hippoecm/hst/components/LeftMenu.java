@@ -15,21 +15,15 @@
  */
 package org.hippoecm.hst.components;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.sitemenu.EditableMenu;
 import org.hippoecm.hst.core.sitemenu.EditableMenuItem;
+import org.hippoecm.hst.core.sitemenu.EditableMenuItemImpl;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
 
 public class LeftMenu extends BaseHstComponent {
@@ -57,36 +51,24 @@ public class LeftMenu extends BaseHstComponent {
 
     }
 
-    public class MyRepoBasedMenuItem implements EditableMenuItem {
-
-        private String name;
-        private int depth;
-        private boolean repositoryBased;
-        private EditableMenu editableMenu;
-        private HstLink hstLink;
-        private EditableMenuItem parentItem;
-        private Map<String, Object> properties;
-        private boolean expanded;
-        private boolean selected;
-        private List<EditableMenuItem> childMenuItems = new ArrayList<EditableMenuItem>();
+    public class MyRepoBasedMenuItem extends EditableMenuItemImpl {
 
         public MyRepoBasedMenuItem(HippoFolderBean repoItem, EditableMenuItem parentItem, HstRequest request,
                 HippoBean currentContentBean) {
+            super(parentItem);
             this.name = repoItem.getName();
             this.depth = parentItem.getDepth() - 1;
             this.repositoryBased = true;
-            this.editableMenu = parentItem.getEditableMenu();
             this.hstLink = request.getRequestContext().getHstLinkCreator()
                     .create(repoItem, request.getRequestContext());
-            this.parentItem = parentItem;
-
+         
             if (repoItem.isAncestor(currentContentBean)) {
                 this.expanded = true;
             }
             if (repoItem.isSelf(currentContentBean)) {
                 this.expanded = true;
                 this.selected = true;
-                this.editableMenu.setSelectedMenuItem(this);
+                this.getEditableMenu().setSelectedMenuItem(this);
             }
 
             if (this.depth > 0 && this.expanded) {
@@ -96,62 +78,6 @@ public class LeftMenu extends BaseHstComponent {
                 }
             }
 
-        }
-
-        public void addChildMenuItem(EditableMenuItem childMenuItem) {
-            this.childMenuItems.add(childMenuItem);
-        }
-
-        public List<EditableMenuItem> getChildMenuItems() {
-            return this.childMenuItems;
-        }
-
-        public int getDepth() {
-            return this.depth;
-        }
-
-        public EditableMenu getEditableMenu() {
-            return this.editableMenu;
-        }
-
-        public HstLink getHstLink() {
-            return this.hstLink;
-        }
-
-        public String getName() {
-            return this.name;
-        }
-
-        public EditableMenuItem getParentItem() {
-            return this.parentItem;
-        }
-
-        public Map<String, Object> getProperties() {
-            return this.properties;
-        }
-
-        public boolean isExpanded() {
-            return this.expanded;
-        }
-
-        public boolean isRepositoryBased() {
-            return this.repositoryBased;
-        }
-
-        public boolean isSelected() {
-            return this.selected;
-        }
-
-        public ResolvedSiteMapItem resolveToSiteMapItem(HstRequest request) {
-            if(this.hstLink == null || this.hstLink.getPath() == null || "".equals(this.hstLink.getPath())) {
-                return null;
-            }
-            HstRequestContext ctx = request.getRequestContext();
-            return ctx.getSiteMapMatcher().match(this.hstLink.getPath(), ctx.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSite());
-        }
-
-        public void setExpanded(boolean expanded) {
-            this.expanded = expanded;
         }
 
     }

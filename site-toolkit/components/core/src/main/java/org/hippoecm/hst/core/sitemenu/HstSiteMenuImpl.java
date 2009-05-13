@@ -22,15 +22,13 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
-public class HstSiteMenuImpl implements HstSiteMenu {
+public class HstSiteMenuImpl extends AbstractMenu implements HstSiteMenu {
 
     private static final long serialVersionUID = 1L;
 
-    private String name;
     private HstSiteMenus hstSiteMenus;
     private List<HstSiteMenuItem> hstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
     private HstSiteMenuItem selectedSiteMenuItem;
-    private boolean expanded;
     
 
     public HstSiteMenuImpl(HstSiteMenus hstSiteMenus, HstSiteMenuConfiguration siteMenuConfiguration, HstRequestContext hstRequestContext) {
@@ -41,18 +39,10 @@ public class HstSiteMenuImpl implements HstSiteMenu {
         }
     }
 
-    public String getName() {
-        return this.name;
-    }
-
     public List<HstSiteMenuItem> getSiteMenuItems() {
         return hstSiteMenuItems;
     }
 
-    public boolean isExpanded() {
-        return expanded;
-    }
-    
     public HstSiteMenus getHstSiteMenus() {
         return this.hstSiteMenus;
     }

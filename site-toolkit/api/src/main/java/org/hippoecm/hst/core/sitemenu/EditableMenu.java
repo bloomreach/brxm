@@ -17,11 +17,7 @@ package org.hippoecm.hst.core.sitemenu;
 
 import java.util.List;
 
-public interface EditableMenu {
-    
-    String getName();
-    
-    boolean isExpanded();
+public interface EditableMenu extends CommonMenu{
     
     EditableMenuItem getSelectMenuItem();
     

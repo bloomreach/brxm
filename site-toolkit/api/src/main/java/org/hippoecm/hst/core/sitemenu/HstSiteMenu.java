@@ -15,28 +15,13 @@
  */
 package org.hippoecm.hst.core.sitemenu;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * The interface for a SiteMenu implementation, containing possibly a tree of {@link HstSiteMenuItem}'s
  *
  */
-public interface HstSiteMenu extends Serializable{
-    /**
-     * Returns the name of this SiteMenu. For example, you could have a "topmenu", "leftmenu" and "footermenu" on your site/portal,
-     * where these names might be appropriate 
-     * @return the name of this SiteMenu
-     */
-    String getName();
-    
-    /**
-     * Based on the request, the implementation should be able to indicate whether this HstSiteMenu is expanded
-     * 
-     * @return <code>true</code> when any HstSiteMenuItem in this HstSiteMenu container is selected
-     */
-    boolean isExpanded();
-    
+public interface HstSiteMenu extends CommonMenu{
     /**
      * 
      * @return the currently selected <code>HstSiteMenuItem</code> or <code>null</code> if none is selected

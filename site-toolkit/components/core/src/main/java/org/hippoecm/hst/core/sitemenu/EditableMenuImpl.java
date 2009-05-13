@@ -18,15 +18,13 @@ package org.hippoecm.hst.core.sitemenu;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EditableMenuImpl implements EditableMenu{
+public class EditableMenuImpl extends AbstractMenu implements EditableMenu{
 
     private static final long serialVersionUID = 1L;
 
-    private String name;
     private HstSiteMenus hstSiteMenus;
     private List<EditableMenuItem> editableMenuItems = new ArrayList<EditableMenuItem>();
     private EditableMenuItem selectedMenuItem;
-    private boolean expanded;
     
     public EditableMenuImpl(HstSiteMenu hstSiteMenu) {
        this.name = hstSiteMenu.getName();
@@ -35,15 +33,6 @@ public class EditableMenuImpl implements EditableMenu{
        for(HstSiteMenuItem siteMenuItem : hstSiteMenu.getSiteMenuItems()) {
            editableMenuItems.add(new EditableMenuItemImpl(this, null, siteMenuItem));
        }
-    }
-
-
-    public boolean isExpanded() {
-        return this.expanded;
-    }
-
-    public String getName() {
-        return this.name;
     }
 
     public List<EditableMenuItem> getMenuItems() {

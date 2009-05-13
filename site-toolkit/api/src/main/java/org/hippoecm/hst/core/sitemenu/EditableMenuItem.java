@@ -16,36 +16,18 @@
 package org.hippoecm.hst.core.sitemenu;
 
 import java.util.List;
-import java.util.Map;
 
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-
-public interface EditableMenuItem {
+public interface EditableMenuItem extends CommonMenuItem{
     List<EditableMenuItem> getChildMenuItems();
 
     void addChildMenuItem(EditableMenuItem childMenuItem);
 
-    int getDepth();
-
-    HstLink getHstLink();
-
     EditableMenu getEditableMenu();
 
-    String getName();
-
     EditableMenuItem getParentItem();
-
-    Map<String, Object> getProperties();
-
-    boolean isExpanded();
-
+    
     void setExpanded(boolean expanded);
     
-    boolean isRepositoryBased();
 
-    boolean isSelected();
-
-    ResolvedSiteMapItem resolveToSiteMapItem(HstRequest request);
+    
 }

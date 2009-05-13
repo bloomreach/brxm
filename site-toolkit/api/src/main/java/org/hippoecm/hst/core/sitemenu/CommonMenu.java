@@ -15,29 +15,19 @@
  */
 package org.hippoecm.hst.core.sitemenu;
 
-import java.util.List;
-
-/**
- *
- */
-public interface HstSiteMenuItem extends CommonMenuItem{
-   
-    /**
-     * 
-     * @return all direct child SiteMenuItem's of this item
-     */
-    List<HstSiteMenuItem> getChildMenuItems();
+public interface CommonMenu {
     
     /**
-     * 
-     * @return parent <code>HstSiteMenuItem</code> or <code>null</code> if it is a root item 
+     * Returns the name of this SiteMenu. For example, you could have a "topmenu", "leftmenu" and "footermenu" on your site/portal,
+     * where these names might be appropriate 
+     * @return the name of this SiteMenu
      */
-    HstSiteMenuItem getParentItem();
+    String getName();
     
     /**
+     * Based on the request, the implementation should be able to indicate whether this HstSiteMenu is expanded
      * 
-     * @return the container <code>HstSiteMenu</code> of this <code>HstSiteMenuItem</code>
+     * @return <code>true</code> when any HstSiteMenuItem in this HstSiteMenu container is selected
      */
-    HstSiteMenu getHstSiteMenu();
-    
+    boolean isExpanded();
 }

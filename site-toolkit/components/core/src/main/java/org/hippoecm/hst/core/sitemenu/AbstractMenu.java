@@ -15,29 +15,17 @@
  */
 package org.hippoecm.hst.core.sitemenu;
 
-import java.util.List;
+public abstract class AbstractMenu implements CommonMenu {
 
-/**
- *
- */
-public interface HstSiteMenuItem extends CommonMenuItem{
-   
-    /**
-     * 
-     * @return all direct child SiteMenuItem's of this item
-     */
-    List<HstSiteMenuItem> getChildMenuItems();
+    protected String name;
+    protected boolean expanded;
     
-    /**
-     * 
-     * @return parent <code>HstSiteMenuItem</code> or <code>null</code> if it is a root item 
-     */
-    HstSiteMenuItem getParentItem();
-    
-    /**
-     * 
-     * @return the container <code>HstSiteMenu</code> of this <code>HstSiteMenuItem</code>
-     */
-    HstSiteMenu getHstSiteMenu();
-    
+    public String getName() {
+        return this.name;
+    }
+
+    public boolean isExpanded() {
+        return this.expanded;
+    }
+
 }
