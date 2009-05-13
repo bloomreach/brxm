@@ -26,7 +26,7 @@ class TooManyEditorsDialog extends AbstractDialog {
     private final static String SVN_ID = "$Id$";
 
     TooManyEditorsDialog() {
-        cancel.setVisible(false);
+        setCancelVisible(false);
     }
 
     public IModel getTitle() {
