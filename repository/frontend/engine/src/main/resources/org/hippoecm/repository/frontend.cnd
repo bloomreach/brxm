@@ -57,6 +57,13 @@
 - frontend:lastname (string)
 - frontend:email (string)
 
+[frontend:listener] > nt:base
+- frontend:path (string) mandatory
+- frontend:events (long) mandatory
+- frontend:deep (boolean) = false
+- frontend:uuids (string) multiple
+- frontend:nodetypes (string) multiple
+
 // FIXME: move into frontend namespace
 
 [hippo:namespace]

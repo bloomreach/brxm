@@ -23,10 +23,11 @@
 <frontend='http://www.hippoecm.org/frontend/nt/1.4'>
 
 [reporting:report] > hippo:document
-+ hippo:query (hippo:query) = hippo:query mandatory
++ reporting:query (hippo:query) = hippo:query mandatory
 - reporting:parameternames (string) multiple
 - reporting:parametervalues (string) multiple
 - reporting:limit (Long)
 - reporting:offset (Long)
-+ frontend:plugin (frontend:plugin) = frontend:plugin mandatory
++ reporting:listener (frontend:listener)
++ reporting:plugin (frontend:plugin) = frontend:plugin mandatory
 

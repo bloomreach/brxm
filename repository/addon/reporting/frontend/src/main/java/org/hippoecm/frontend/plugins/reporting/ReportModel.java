@@ -36,12 +36,15 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.model.event.JcrFrontendListener;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ReportModel extends NodeModelWrapper implements IDataProvider {
+public class ReportModel extends NodeModelWrapper implements IDataProvider, IObservable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -51,6 +54,8 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider {
 
     static final Logger log = LoggerFactory.getLogger(ReportModel.class);
 
+    private JcrFrontendListener listener;
+    private IObservationContext obContext;
     private transient boolean attached = false;
     private transient QueryResult resultSet;
 
@@ -133,7 +138,34 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider {
     public void detach() {
         attached = false;
         resultSet = null;
+        if (listener != null) {
+            listener.detach();
+        }
         super.detach();
+    }
+
+    // IObservable
+
+    public void setObservationContext(IObservationContext context) {
+        this.obContext = context;
+    }
+
+    public void startObservation() {
+        try {
+            Node node = getNodeModel().getNode();
+            Node listenerNode = node.getNode(ReportingNodeTypes.LISTENER);
+            listener = new JcrFrontendListener(obContext, new JcrNodeModel(listenerNode));
+            listener.start();
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+    }
+
+    public void stopObservation() {
+        if (listener != null) {
+            listener.stop();
+            listener = null;
+        }
     }
 
     // Object
