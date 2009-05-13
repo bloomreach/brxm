@@ -28,7 +28,6 @@ import javax.jcr.query.QueryResult;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
@@ -85,7 +84,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
     }
 
     /**
-     * Set the user node. This really should be looked up by some UserManager. For now 
+     * Set the user node. This really should be looked up by some UserManager. For now
      * use the same code as in the AbstractUserManager
      * @see org.hippoecm.repository.security.user.AbstractUserManager#getUser(String)
      * @param userId
@@ -99,7 +98,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             statement.append("//element");
             statement.append("(*, ").append(HippoNodeType.NT_USER).append(")");
             statement.append('[').append("fn:name() = ").append("'").append(NodeNameCodec.encode(username, true))
-                    .append("'").append(']');
+            .append("'").append(']');
             Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
             QueryResult result = q.execute();
             NodeIterator nodeIter = result.getNodes();
@@ -202,8 +201,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         private PasswordWidget currentWidget;
 
         public Dialog(final IPluginContext context, final IPluginConfig config) {
-            ok.addOrReplace(new Label("label", new StringResourceModel("change-label",
-                    ChangePasswordShortcutPlugin.this, null)));
+            setOkLabel(new StringResourceModel("change-label", ChangePasswordShortcutPlugin.this, null));
 
             feedback = new FeedbackPanel("feedback");
             replace(feedback);
@@ -220,13 +218,13 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
             final PasswordWidget newWidget = new PasswordWidget("new-password", new PropertyModel(
                     ChangePasswordShortcutPlugin.this, "newPassword"), new StringResourceModel("new-password-label",
-                    ChangePasswordShortcutPlugin.this, null));
+                            ChangePasswordShortcutPlugin.this, null));
             newWidget.setResetPassword(false);
             add(newWidget);
 
             final PasswordWidget checkWidget = new PasswordWidget("check-password", new PropertyModel(
                     ChangePasswordShortcutPlugin.this, "checkPassword"), new StringResourceModel(
-                    "new-password-label-again", ChangePasswordShortcutPlugin.this, null));
+                            "new-password-label-again", ChangePasswordShortcutPlugin.this, null));
             checkWidget.setResetPassword(false);
             add(checkWidget);
         }
@@ -236,40 +234,40 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             boolean ok = true;
             if (currentPassword == null || currentPassword.length() == 0) {
                 error(new StringResourceModel("current-password-missing", ChangePasswordShortcutPlugin.this, null)
-                        .getString());
+                .getString());
                 ok = false;
             } else if (!checkPassword(currentPassword.toCharArray())) {
                 error(new StringResourceModel("current-password-invalid", ChangePasswordShortcutPlugin.this, null)
-                        .getString());
+                .getString());
                 ok = false;
             }
 
             if (newPassword == null) {
                 error(new StringResourceModel("new-password-missing", ChangePasswordShortcutPlugin.this, null)
-                        .getString());
+                .getString());
                 ok = false;
             } else if (newPassword.length() < 4) {
                 error(new StringResourceModel("new-password-invalid", ChangePasswordShortcutPlugin.this, null)
-                        .getString());
+                .getString());
                 ok = false;
             }
 
             if (checkPassword == null) {
                 error(new StringResourceModel("confirm-password-missing", ChangePasswordShortcutPlugin.this, null)
-                        .getString());
+                .getString());
                 ok = false;
             }
 
             if (newPassword != null && !newPassword.equals(checkPassword)) {
                 error(new StringResourceModel("passwords-do-not-match", ChangePasswordShortcutPlugin.this, null)
-                        .getString());
+                .getString());
                 ok = false;
             }
 
             if (ok) {
                 if (!setPassword(newPassword.toCharArray())) {
                     error(new StringResourceModel("error-setting-password", ChangePasswordShortcutPlugin.this, null)
-                            .getString());
+                    .getString());
                     log.warn("Setting the password by user '" + username + "' failed.");
                 } else {
                     log.info("Password changed by user '" + username + "'.");
@@ -295,8 +293,8 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
         public CannotChangeDialog(final IPluginContext context, final IPluginConfig config) {
             info(new StringResourceModel("cannot-change-passoword", ChangePasswordShortcutPlugin.this, null)
-                    .getString());
-            cancel.setVisible(false);
+            .getString());
+            setCancelVisible(false);
         }
 
         public IModel getTitle() {

@@ -54,7 +54,7 @@ public class RenameDialog extends AbstractDialog {
 
         add(new TextField("name", new PropertyModel(this, "name")));
         if (nodeModel.getNode() == null) {
-            ok.setVisible(false);
+            setOkVisible(false);
         }
     }
 

@@ -32,7 +32,6 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
 import org.apache.wicket.Session;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -78,7 +77,7 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
 
     private final JcrNodeModel nodeModel;
     private FileUploadField fileUploadField;
-    
+
     // hard coded defaults
     private String uuidBehavior = "Create new uuids on import";
     private String mergeBehavior = "Try to add, else skip same name nodes";
@@ -120,11 +119,11 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
 
         // file upload
         setMultiPart(true);
-        setAjaxSubmit(false);
+        setNonAjaxSubmit();
         add(fileUploadField = new FileUploadField("fileInput"));
-        
-        ok.addOrReplace(new Label("label", new Model("import")));
-        
+
+        setOkLabel("import");
+
         try {
             info("Import content from a file to node: " + nodeModel.getNode().getPath());
         } catch (RepositoryException e) {

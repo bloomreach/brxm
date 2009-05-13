@@ -57,9 +57,9 @@ public class CopyDialog extends LookupDialog {
         try {
             if (model.getParentModel() != null) {
                 setSelectedNode(model.getParentModel());
-                
+
                 add(new Label("source", model.getNode().getPath()));
-                
+
                 target = StringUtils.substringBeforeLast(model.getNode().getPath(), "/") + "/";
                 targetLabel = new Label("target", new PropertyModel(this, "target"));
                 targetLabel.setOutputMarkupId(true);
@@ -73,14 +73,14 @@ public class CopyDialog extends LookupDialog {
                 add(new Label("source", "Cannot copy the root node"));
                 add(new EmptyPanel("target"));
                 add(new EmptyPanel("name"));
-                ok.setVisible(false);
+                setOkVisible(false);
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
             add(new Label("source", e.getClass().getName()));
             add(new Label("target", e.getMessage()));
             add(new EmptyPanel("name"));
-            ok.setVisible(false);
+            setOkVisible(false);
         }
     }
 
@@ -112,7 +112,7 @@ public class CopyDialog extends LookupDialog {
     public void onOk() {
         try {
             JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
-    
+
             JcrNodeModel selectedNode = getSelectedNode().getNodeModel();
             if (selectedNode != null && name != null && !"".equals(name)) {
                 JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
@@ -121,12 +121,12 @@ public class CopyDialog extends LookupDialog {
                     targetPath += "/";
                 }
                 targetPath += name;
-    
+
                 // The actual copy
                 UserSession wicketSession = (UserSession) getSession();
                 HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
                 jcrSession.copy(nodeModel.getNode(), targetPath);
-    
+
                 Node rootNode = nodeModel.getNode().getSession().getRootNode();
                 Node targetNode = rootNode.getNode(targetPath.substring(1));
                 plugin.setModel(new JcrNodeModel(targetNode));

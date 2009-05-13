@@ -51,13 +51,13 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
     public OnCloseDialog(final Actions actions, JcrNodeModel model, final IEditor editor) {
         super(model);
 
-        this.ok.setVisible(false);
+        setOkVisible(false);
 
         final Label exceptionLabel = new Label("exception", "");
         exceptionLabel.setOutputMarkupId(true);
         add(exceptionLabel);
 
-        addButton((AjaxButton) new AjaxButton(getButtonId()) {
+        AjaxButton button = new AjaxButton(getButtonId()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -71,9 +71,11 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
                     target.addComponent(exceptionLabel);
                 }
             }
-        }.add(new Label("label", new ResourceModel("discard", "Discard"))));
+        };
+        button.setModel(new ResourceModel("discard", "Discard"));
+        addButton(button);
 
-        addButton((AjaxButton) new AjaxButton(getButtonId()) {
+        button = new AjaxButton(getButtonId()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -87,12 +89,14 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
                     target.addComponent(exceptionLabel);
                 }
             }
-        }.add(new Label("label", new ResourceModel("save", "Save"))));
+        };
+        button.setModel(new ResourceModel("save", "Save"));
+        addButton(button);
     }
 
     public IModel getTitle() {
         return new StringResourceModel("close-document", this, null, new Object[] { new PropertyModel(getModel(),
-                "name") }, "Close {0}");
+        "name") }, "Close {0}");
     }
 
 }

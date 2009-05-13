@@ -123,12 +123,12 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
     void doSave() throws Exception {
         ((UserSession) Session.get()).getJcrSession().save();
     }
-    
+
     void doRevert() throws Exception {
         WorkflowDescriptorModel model = (WorkflowDescriptorModel) TemplateEditingWorkflowPlugin.this.getModel();
         model.getNode().refresh(false);
     }
-    
+
     public boolean hasError() {
         if (!validated) {
             validate();
@@ -188,13 +188,13 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
 
         public OnCloseDialog() {
 
-            this.ok.setVisible(false);
+            setOkVisible(false);
 
             final Label exceptionLabel = new Label("exception", "");
             exceptionLabel.setOutputMarkupId(true);
             add(exceptionLabel);
 
-            addButton((AjaxButton) new AjaxButton(getButtonId()) {
+            AjaxButton button = new AjaxButton(getButtonId()) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -207,9 +207,11 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
                         target.addComponent(exceptionLabel);
                     }
                 }
-            }.add(new Label("label", new ResourceModel("discard", "Discard"))));
+            };
+            button.setModel(new ResourceModel("discard", "Discard"));
+            addButton(button);
 
-            addButton((AjaxButton) new AjaxButton(getButtonId()) {
+            button = new AjaxButton(getButtonId()) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -222,13 +224,15 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
                         target.addComponent(exceptionLabel);
                     }
                 }
-            }.add(new Label("label", new ResourceModel("save", "Save"))));
+            };
+            button.setModel(new ResourceModel("save", "Save"));
+            addButton(button);
         }
 
         public IModel getTitle() {
             try {
-            return new StringResourceModel("close-document", this, null, new Object[] { new PropertyModel(
-                    ((WorkflowDescriptorModel)TemplateEditingWorkflowPlugin.this.getModel()).getNode(), "name") }, "Close {0}");
+                return new StringResourceModel("close-document", this, null, new Object[] { new PropertyModel(
+                        ((WorkflowDescriptorModel)TemplateEditingWorkflowPlugin.this.getModel()).getNode(), "name") }, "Close {0}");
             } catch(RepositoryException ex) {
                 return new StringResourceModel("close-document", this, null, new Object[] { });
             }

@@ -56,6 +56,10 @@ public class ImageBrowserDialog extends AbstractBrowserDialog {
 
     @Override
     protected JcrNodeModel findNewModel(IModel model) {
+        if (model == null) {
+            return null;
+        }
+
         JcrNodeModel nodeModel = (JcrNodeModel) model;
         Node node = nodeModel.getNode();
         if (node != null) {

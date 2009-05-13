@@ -97,7 +97,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
         private IPluginConfig config;
 
         public Dialog(IPluginConfig config) {
-            ok.setModel(new Model("Execute"));
+            setOkLabel(new Model("Execute"));
             this.config = config;
 
             if (config.containsKey("mode")) {

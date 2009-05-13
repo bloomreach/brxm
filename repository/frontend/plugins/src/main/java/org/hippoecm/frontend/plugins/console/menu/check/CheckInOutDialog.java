@@ -114,8 +114,8 @@ public class CheckInOutDialog extends AbstractDialog implements ITitleDecorator 
         add(actionLink);
         add(statusLabel);
 
-        ok.addOrReplace(new Label("label", "Close"));
-        cancel.setVisible(false);
+        setOkLabel("Close");
+        setCancelVisible(false);
     }
 
     public IModel getTitle() {
