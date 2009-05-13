@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
@@ -31,7 +32,6 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxIndicatorAware;
-import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.WicketAjaxIndicatorAppender;
@@ -58,7 +58,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.resource.IResourceStream;
-import org.apache.wicket.util.string.AppendingStringBuffer;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -95,6 +94,7 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         }
 
         // used for markup inheritance (<wicket:extend />)
+        @Override
         public MarkupStream getAssociatedMarkupStream(final boolean throwException) {
             try {
                 return getApplication().getMarkupSettings().getMarkupCache().getMarkupStream(AbstractDialog.this,
@@ -112,26 +112,9 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
                                 + AbstractDialog.this.getClass().getName()
                                 + "' not found."
                                 + " Enable debug messages for org.apache.wicket.util.resource to get a list of all filenames tried"),
-                        ex);
+                                ex);
             }
         }
-    }
-
-    private final static ResourceReference AJAX_LOADER_GIF = new ResourceReference(AbstractDialog.class,
-            "ajax-loader.gif");
-
-    protected FeedbackPanel feedback;
-    private LinkedList<Button> buttons;
-    protected final Button ok;
-    protected final Button cancel;
-    private IDialogService dialogService;
-    private Panel container;
-    private WicketAjaxIndicatorAppender indicator;
-    private AjaxFormSubmitBehavior ajaxSubmit;
-    protected boolean cancelled = false;
-
-    public AbstractDialog() {
-        this(null);
     }
 
     protected class ExceptionFeedbackPanel extends FeedbackPanel {
@@ -153,15 +136,16 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
                 super(id);
                 setOutputMarkupId(true);
                 add(link = new AjaxLink("message") {
-                        public void onClick(final AjaxRequestTarget target) {
-                            // the following does not work as the list is re-created
-                            //   details.setVisible(!details.isVisible());
-                            //   target.addComponent(details);
-                            // so instead here we remember the previous state in the parent
-                            expanded = !expanded;
-                            target.addComponent(ExceptionFeedbackPanel.this);
-                        }
-                    });
+                    @Override
+                    public void onClick(final AjaxRequestTarget target) {
+                        // the following does not work as the list is re-created
+                        //   details.setVisible(!details.isVisible());
+                        //   target.addComponent(details);
+                        // so instead here we remember the previous state in the parent
+                        expanded = !expanded;
+                        target.addComponent(ExceptionFeedbackPanel.this);
+                    }
+                });
                 Label label;
                 link.add(label = new Label("label", model));
                 label.setEscapeModelStrings(escape);
@@ -219,6 +203,142 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         }
     }
 
+    class ButtonWrapper implements IClusterable {
+        private static final long serialVersionUID = 1L;
+
+        private Button button;
+
+        private boolean ajax;
+        private IModel label;
+        private boolean visible;
+        private boolean enabled;
+
+
+        public ButtonWrapper(Button button) {
+            this.button = button;
+            visible = button.isVisible();
+            enabled = button.isEnabled();
+            label = button.getModel();
+
+            if (button instanceof AjaxButton) {
+                ajax = true;
+            }
+        }
+
+        public ButtonWrapper(IModel label) {
+            this(label, true);
+        }
+
+        public ButtonWrapper(IModel label, boolean ajax) {
+            this.ajax = ajax;
+            this.label = label;
+            this.visible = true;
+            this.enabled = true;
+        }
+
+        private Button createButton() {
+            if (ajax) {
+                AjaxButton button = new AjaxButton(getButtonId()) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected void onSubmit(AjaxRequestTarget target, Form form) {
+                        ButtonWrapper.this.onSubmit();
+                    }
+                };
+                button.setModel(label);
+                return button;
+            } else {
+                Button button = new Button(getButtonId()) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public void onSubmit() {
+                        ButtonWrapper.this.onSubmit();
+                    }
+                };
+                button.setModel(label);
+                return button;
+            }
+        }
+
+        public Button getButton() {
+            if(button == null) {
+                button = createButton();
+            }
+            return decorate(button);
+        }
+
+        protected Button decorate(Button button) {
+            button.setEnabled(enabled);
+            button.setVisible(visible);
+            return button;
+        }
+
+        public void setEnabled(boolean isset) {
+            enabled = isset;
+        }
+
+        public void setVisible(boolean isset) {
+            visible = isset;
+        }
+
+        public void setAjax(boolean c) {
+            ajax = c;
+        }
+
+        public void setLabel(IModel label) {
+            this.label = label;
+            if (button != null) {
+                button.setModel(label);
+            }
+            //TODO: test if this works or if it needs to add itself to the render target
+        }
+
+        protected void onSubmit() {
+        }
+
+        public boolean hasChanges() {
+            if (!ajax) {
+                return false;
+            }
+
+            if (button == null) {
+                return true;
+            }
+
+            if (visible != button.isVisible()) {
+                return true;
+            }
+
+            if (enabled != button.isEnabled()) {
+                return true;
+            }
+            return false;
+        }
+
+    }
+
+    private final static ResourceReference AJAX_LOADER_GIF = new ResourceReference(AbstractDialog.class,
+    "ajax-loader.gif");
+
+    protected FeedbackPanel feedback;
+    private Component focusComponent;
+
+    private LinkedList<ButtonWrapper> buttons;
+    private final ButtonWrapper ok;
+    private final ButtonWrapper cancel;
+
+    private IDialogService dialogService;
+    private Panel container;
+    private WicketAjaxIndicatorAppender indicator;
+
+    protected boolean cancelled = false;
+
+    public AbstractDialog() {
+        this(null);
+    }
+
     public AbstractDialog(IModel model) {
         super("form", model);
 
@@ -231,47 +351,47 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         feedback.setOutputMarkupId(true);
         add(feedback);
 
-        buttons = new LinkedList<Button>();
-        add(new ListView("buttons", new Model(buttons)) {
+        buttons = new LinkedList<ButtonWrapper>();
+        ListView buttonsView = new ListView("buttons", new Model(buttons)) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void populateItem(ListItem item) {
-                Button button = (Button) item.getModelObject();
-                if (!button.getId().equals("button")) {
-                    log.error("button's id not correct");
-                }
-                item.add(button);
-            }
-        });
-
-        ok = new Button(getButtonId()) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onSubmit() {
-                onOk();
-                if (!hasError()) {
-                    closeDialog();
-                }
+                item.add(((ButtonWrapper) item.getModelObject()).getButton());
             }
         };
-        ok.add(new Label("label", new ResourceModel("ok")));
-        buttons.add(ok);
+        buttonsView.setReuseItems(true);
+        buttonsView.setOutputMarkupId(true);
+        add(buttonsView);
 
-        setAjaxSubmit(true);
-
-        cancel = new AjaxButton(getButtonId(), this) {
+        ok = new ButtonWrapper(new StringResourceModel("ok", AbstractDialog.this, null)) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit() {
+                handleSubmit();
+            }
+
+        };
+        buttons.add(ok);
+
+        cancel = new ButtonWrapper(new ResourceModel("cancel")) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onSubmit() {
                 cancelled = true;
                 onCancel();
                 closeDialog();
             }
-        }.setDefaultFormProcessing(false);
-        cancel.add(new Label("label", new ResourceModel("cancel")));
+
+            @Override
+            protected Button decorate(Button b) {
+                b.setDefaultFormProcessing(false);
+                return super.decorate(b);
+            }
+
+        };
         buttons.add(cancel);
 
         add(indicator = new WicketAjaxIndicatorAppender() {
@@ -297,39 +417,48 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         return true;
     }
 
-    public void setAjaxSubmit(boolean isset) {
-        if (isset) {
-            if (ajaxSubmit == null) {
-                ok.add(ajaxSubmit = new AjaxFormSubmitBehavior(this, "onclick") {
-                    private static final long serialVersionUID = 1L;
+    protected final void closeDialog() {
+        dialogService.close();
+    }
 
-                    protected CharSequence getEventHandler() {
-                        return new AppendingStringBuffer(super.getEventHandler()).append("; return false;");
-                    }
+    public void setNonAjaxSubmit() {
+        ok.setAjax(false);
+    }
 
-                    @Override
-                    protected void onError(AjaxRequestTarget target) {
-                    }
+    protected void setOkEnabled(boolean isset) {
+        ok.setEnabled(isset);
+    }
 
-                    @Override
-                    protected void onSubmit(AjaxRequestTarget target) {
-                    }
-                });
-            }
-        } else {
-            if (ajaxSubmit != null) {
-                ok.remove(ajaxSubmit);
-                ajaxSubmit = null;
-            }
-        }
+    protected void setOkVisible(boolean isset) {
+        ok.setVisible(isset);
+    }
+
+    protected void setOkLabel(String label) {
+        setOkLabel(new Model(label));
+    }
+
+    protected void setOkLabel(IModel label) {
+        ok.setLabel(label);
+    }
+
+    protected void setCancelEnabled(boolean isset) {
+        cancel.setEnabled(isset);
+    }
+
+    protected void setCancelVisible(boolean isset) {
+        cancel.setVisible(isset);
+    }
+
+    protected void setCancelLabel(String label) {
+        setCancelLabel(new Model(label));
+    }
+
+    protected void setCancelLabel(IModel label) {
+        cancel.setLabel(label);
     }
 
     public void setDialogService(IDialogService dialogService) {
         this.dialogService = dialogService;
-    }
-
-    protected final void closeDialog() {
-        dialogService.close();
     }
 
     protected String getButtonId() {
@@ -338,14 +467,26 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
 
     protected void addButton(Button button) {
         if (getButtonId().equals(button.getId())) {
-            buttons.addFirst(button);
+            buttons.addFirst(new ButtonWrapper(button));
         } else {
             log.error("Failed to add button: component id is not '{}'", getButtonId());
         }
     }
 
     protected void removeButton(Button button) {
-        buttons.remove(button);
+        for (ButtonWrapper bw : buttons) {
+            if (bw.getButton().equals(button)) {
+                buttons.remove(bw);
+                break;
+            }
+        }
+    }
+
+    protected void handleSubmit() {
+        onOk();
+        if (!hasError()) {
+            closeDialog();
+        }
     }
 
     @Override
@@ -354,10 +495,7 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         if (page != null) {
             IFormSubmittingComponent submitButton = findSubmittingButton();
             if (submitButton == null) {
-                onOk();
-                if (!hasError()) {
-                    closeDialog();
-                }
+                handleSubmit();
             }
         }
     }
@@ -372,10 +510,24 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         return container;
     }
 
+    public Component setFocusComponent(Component c) {
+        this.focusComponent = c;
+        return c;
+    }
+
     public void render(PluginRequestTarget target) {
         if (target != null) {
             target.addComponent(feedback);
-            target.addComponent(ok);
+            for (ButtonWrapper bw : buttons) {
+                if (bw.hasChanges()) {
+                    target.addComponent(bw.getButton());
+                }
+            }
+
+            if (focusComponent != null) {
+                target.focusComponent(focusComponent);
+                focusComponent = null;
+            }
         }
     }
 

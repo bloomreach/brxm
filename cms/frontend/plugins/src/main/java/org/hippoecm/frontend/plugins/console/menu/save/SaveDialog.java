@@ -59,12 +59,12 @@ public class SaveDialog extends AbstractDialog {
                 message = new MultiLineLabel("message", buf.toString());
             } else {
                 message = new Label("message", "There are no pending changes");
-                ok.setVisible(false);
+                setOkVisible(false);
             }
         } catch (RepositoryException e) {
             message = new Label("message", "exception: " + e.getMessage());
             e.printStackTrace();
-            ok.setVisible(false);
+            setOkVisible(false);
         }
         add(message);
     }

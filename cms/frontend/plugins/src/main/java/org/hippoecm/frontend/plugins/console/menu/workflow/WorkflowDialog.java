@@ -69,7 +69,7 @@ public class WorkflowDialog extends AbstractDialog {
             dump.setModel(new Model(ex.getClass().getName()+": "+ex.getMessage()));
         }
 
-        cancel.setVisible(false);
+        setCancelVisible(false);
     }
 
     @Override

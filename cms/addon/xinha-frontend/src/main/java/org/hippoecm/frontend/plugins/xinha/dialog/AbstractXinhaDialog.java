@@ -18,22 +18,22 @@ package org.hippoecm.frontend.plugins.xinha.dialog;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 
 public abstract class AbstractXinhaDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
-    
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     public AbstractXinhaDialog(IModel model) {
         super(model);
-        
+
         final Button remove = new AjaxButton("button") {
             private static final long serialVersionUID = 1L;
 
@@ -50,15 +50,15 @@ public abstract class AbstractXinhaDialog extends AbstractDialog {
                 return hasRemoveButton();
             }
         };
-        remove.add(new Label("label", "Remove"));
+        remove.setModel(new ResourceModel("remove", "Remove"));
         addButton(remove);
 
     }
-    
+
     public IModel getTitle() {
         return new StringResourceModel("dialog-title", this, null);
     }
-    
+
     protected void checkState() {
         IPersistedMap link = (IPersistedMap) getModelObject();
         enableOk(link.isValid() && link.hasChanged());
@@ -68,8 +68,9 @@ public abstract class AbstractXinhaDialog extends AbstractDialog {
         return ((IPersistedMap) getModelObject()).isExisting();
     }
 
+    //FIXME: remove and use set*Enabled
     protected void enableOk(boolean state) {
-        ok.setEnabled(state);
+        setOkEnabled(state);
     }
 
     protected String getCancelScript() {
@@ -100,10 +101,10 @@ public abstract class AbstractXinhaDialog extends AbstractDialog {
 
     void onCloseInternal() {
     }
-    
+
     protected void onCloseDialog() {
     }
-    
+
     protected void onRemove() {
         IPersistedMap link = (IPersistedMap) getModelObject();
         link.delete();

@@ -72,14 +72,14 @@ public class MoveDialog extends LookupDialog {
                 add(new Label("source", "Cannot move the root node"));
                 add(new EmptyPanel("target"));
                 add(new EmptyPanel("name"));
-                ok.setVisible(false);
+                setOkVisible(false);
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
             add(new Label("source", e.getClass().getName()));
             add(new Label("target", e.getMessage()));
             add(new EmptyPanel("name"));
-            ok.setVisible(false);
+            setOkVisible(false);
         }
     }
 

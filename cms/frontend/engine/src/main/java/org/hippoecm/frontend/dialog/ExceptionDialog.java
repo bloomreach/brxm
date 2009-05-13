@@ -28,12 +28,12 @@ public class ExceptionDialog extends AbstractDialog {
 
     public ExceptionDialog(Exception exception) {
         this.exception = exception;
-        cancel.setVisible(false);
+        setCancelVisible(false);
         add(new Label("message", exception.getLocalizedMessage()));
     }
 
     public ExceptionDialog(String message) {
-        cancel.setVisible(false);
+        setCancelVisible(false);
         add(new Label("message", message));
     }
 

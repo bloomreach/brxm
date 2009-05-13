@@ -123,7 +123,7 @@ public class CndExportDialog extends AbstractDialog {
         DownloadExportLink link = new DownloadExportLink("download-link", nodeModel, selectedNsModel);
         link.add(new Label("download-link-text", "Download"));
         add(link);
-        cancel.setVisible(false);
+        setCancelVisible(false);
     }
 
     public IModel getTitle() {

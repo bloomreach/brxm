@@ -60,7 +60,7 @@ public class ContentExportDialog extends AbstractDialog {
         CheckBox skipBinaries = new CheckBox("skip-binaries", skipBinaryModel);
         skipBinaries.add(new Label("skip-binaries-text", new Model("Do not include binary properties in export")));
         add(skipBinaries);
-        
+
         DownloadExportLink link = new DownloadExportLink("download-link", nodeModel, skipBinaryModel);
         link.add(new Label("download-link-text", "Download (or right click and choose \"Save as..\""));
         add(link);
@@ -70,28 +70,28 @@ public class ContentExportDialog extends AbstractDialog {
         add(dump);
 
         AjaxLink viewLink = new AjaxLink("view-link", nodeModel) {
-                private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    String export;
-                    try {
-                        Node node = nodeModel.getNode();
-                        ByteArrayOutputStream out = new ByteArrayOutputStream();
-                        ((HippoSession) node.getSession()).exportDereferencedView(node.getPath(), out, skipBinary, false);
-                        export = prettyPrint(out.toByteArray());
-                    } catch (Exception e) {
-                        export = e.getMessage();
-                    }
-                    dump.setModel(new Model(export));
-                    target.addComponent(dump);
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                String export;
+                try {
+                    Node node = nodeModel.getNode();
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    ((HippoSession) node.getSession()).exportDereferencedView(node.getPath(), out, skipBinary, false);
+                    export = prettyPrint(out.toByteArray());
+                } catch (Exception e) {
+                    export = e.getMessage();
                 }
-            };
+                dump.setModel(new Model(export));
+                target.addComponent(dump);
+            }
+        };
         viewLink.add(new Label("view-link-text", "Show export in this window"));
         add(viewLink);
 
-        ok.setVisible(false);
-        
+        setOkVisible(false);
+
         try {
             info("Export content from : " + nodeModel.getNode().getPath());
         } catch (RepositoryException e) {
@@ -117,7 +117,7 @@ public class ContentExportDialog extends AbstractDialog {
         Source source = new StreamSource(new ByteArrayInputStream(bytes));
         DOMResult result = new DOMResult();
         TransformerFactory transformerFactory = TransformerFactory
-            .newInstance();
+        .newInstance();
         Transformer identityTransformer = transformerFactory.newTransformer();
         identityTransformer.transform(source, result);
         Document doc = (Document) result.getNode();

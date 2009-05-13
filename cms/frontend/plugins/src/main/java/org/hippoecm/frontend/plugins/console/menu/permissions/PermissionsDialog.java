@@ -60,11 +60,11 @@ public class PermissionsDialog extends AbstractDialog {
      */
     public static final String READ_PRIVILEGE = "jcr:read";
     public static final String WRITE_PRIVILEGE = "jcr:write";
-    public static final String ALL_PRIVILEGE= "jcr:all";
+    public static final String ALL_PRIVILEGE = "jcr:all";
     public static final String SET_PROPERTIES_PRIVILEGE = "jcr:setProperties";
     public static final String ADD_CHILD_PRIVILEGE = "jcr:addChildNodes";
-    public static final String REMOVE_CHILD_PRIVILEGE= "jcr:removeChildNodes";
-    
+    public static final String REMOVE_CHILD_PRIVILEGE = "jcr:removeChildNodes";
+
     /**
      * Predefined hippo privileges
      */
@@ -72,8 +72,8 @@ public class PermissionsDialog extends AbstractDialog {
     public static final String EDITOR_PRIVILEGE = "hippo:editor";
 
     public static final String[] JCR_PRIVILEGES = new String[] { READ_PRIVILEGE, WRITE_PRIVILEGE, ALL_PRIVILEGE,
-        SET_PROPERTIES_PRIVILEGE, ADD_CHILD_PRIVILEGE, REMOVE_CHILD_PRIVILEGE, AUTHOR_PRIVILEGE, EDITOR_PRIVILEGE };
-    
+            SET_PROPERTIES_PRIVILEGE, ADD_CHILD_PRIVILEGE, REMOVE_CHILD_PRIVILEGE, AUTHOR_PRIVILEGE, EDITOR_PRIVILEGE };
+
     static final Logger log = LoggerFactory.getLogger(PermissionsDialog.class);
 
     public PermissionsDialog(MenuPlugin plugin, IPluginContext context) {
@@ -114,7 +114,7 @@ public class PermissionsDialog extends AbstractDialog {
         } catch (RepositoryException ex) {
             actionsLabel.setModel(new Model(ex.getClass().getName() + ": " + ex.getMessage()));
         }
-        cancel.setVisible(false);
+        setCancelVisible(false);
     }
 
     private boolean hasPermission(Node node, String actions) throws RepositoryException {
@@ -160,8 +160,7 @@ public class PermissionsDialog extends AbstractDialog {
     }
 
     private String[] getMemberships(Session session, String username) throws RepositoryException {
-        final String queryString = "//element(*, hippo:group)[jcr:contains(@hippo:members, '" + username
-                + "')]";
+        final String queryString = "//element(*, hippo:group)[jcr:contains(@hippo:members, '" + username + "')]";
         final String queryType = "xpath";
         final List<String> list = new ArrayList<String>();
         try {

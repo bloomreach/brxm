@@ -51,14 +51,14 @@ public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
 
     public CndImportDialog(MenuPlugin plugin) {
         setMultiPart(true);
-        setAjaxSubmit(false);
+        setNonAjaxSubmit();
         add(fileUploadField = new FileUploadField("fileInput"));
 
         msgText = new Model("Import a CND file.");
         message = new Label("message", msgText);
         add(message);
-        
-        ok.addOrReplace(new Label("label", new Model("import")));
+
+        setOkLabel("import");
     }
 
     public IModel getTitle() {

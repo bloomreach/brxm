@@ -15,19 +15,12 @@
  */
 package org.hippoecm.addon.workflow;
 
-import java.rmi.RemoteException;
 import java.util.Map;
-
-import javax.jcr.RepositoryException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -61,6 +54,8 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Deprecated
 public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends RenderPlugin implements IActivator {
@@ -225,6 +220,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 add(new TextFieldWidget("value", nameModel));
             }
 
+            @Override
             public IModel getTitle() {
                 return title;
             }
@@ -290,6 +286,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 control.stop();
             }
 
+            @Override
             public IModel getTitle() {
                 return title;
             }
@@ -298,8 +295,6 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         @Deprecated
         public class DateDialog extends WorkflowDialog {
 
-            protected Button now;
-
             public DateDialog(IModel question, final PropertyModel dateModel) {
                 super();
 
@@ -307,20 +302,18 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
                 add(new AjaxDateTimeField("value", dateModel));
 
-                now = new AjaxButton(getButtonId(), this) {
+                AjaxButton now = new AjaxButton(getButtonId(), this) {
 
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     public void onSubmit(AjaxRequestTarget target, Form form) {
                         dateModel.setObject(null);
-                        onOk();
-                        if (!hasError()) {
-                            closeDialog();
-                        }
+                        handleSubmit();
                     }
-                }.setDefaultFormProcessing(false);
-                now.add(new Label("label", new ResourceModel("now", "Now")));
+                };
+                now.setDefaultFormProcessing(false);
+                now.setModel(new ResourceModel("now", "Now"));
                 addButton(now);
             }
         }

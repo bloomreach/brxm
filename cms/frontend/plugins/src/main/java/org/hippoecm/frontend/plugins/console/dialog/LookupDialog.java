@@ -39,7 +39,7 @@ public abstract class LookupDialog extends AbstractDialog {
 
     @Override
     public final void onModelChanged() {
-        ok.setEnabled(isValidSelection(getSelectedNode()));
+        setOkEnabled(isValidSelection(getSelectedNode()));
         onSelect(getSelectedNode().getNodeModel());
     }
 

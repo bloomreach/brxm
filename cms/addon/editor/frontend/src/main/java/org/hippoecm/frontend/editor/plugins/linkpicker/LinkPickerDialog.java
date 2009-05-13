@@ -64,20 +64,24 @@ public class LinkPickerDialog extends AbstractDialog {
         this.config = config;
         this.nodetypes = nodetypes;
 
-        ok.setEnabled(false);
-        try {
-            String uuid = (String) model.getObject();
-            if (uuid != null && !"".equals(uuid)) {
-                selectedNode = new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByUUID(uuid));
-                ok.setEnabled(true);
-            }
-        } catch(RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
+        selectedNode = getInitialNode();
+        setOkEnabled(selectedNode != null);
 
         setOutputMarkupId(true);
 
         add(createContentPanel("content"));
+    }
+
+    protected IModel getInitialNode() {
+        try {
+            String uuid = getModelObjectAsString();
+            if (uuid != null && !"".equals(uuid)) {
+                return new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByUUID(uuid));
+            }
+        } catch(RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return null;
     }
 
     public IModel getTitle() {
@@ -114,8 +118,8 @@ public class LinkPickerDialog extends AbstractDialog {
             isLinkable = targetNode.isNodeType("mix:referenceable");
             // do not enable linking to hippo documents below hippo handle
             isLinkable = isLinkable
-                    && !(targetNode.isNodeType(HippoNodeType.NT_DOCUMENT) && targetNode.getParent().isNodeType(
-                            HippoNodeType.NT_HANDLE));
+            && !(targetNode.isNodeType(HippoNodeType.NT_DOCUMENT) && targetNode.getParent().isNodeType(
+                    HippoNodeType.NT_HANDLE));
         } catch (RepositoryException e) {
             log.error(e.getMessage());
             error("Failed to determine validity of selection");
@@ -145,9 +149,9 @@ public class LinkPickerDialog extends AbstractDialog {
             public void setModel(IModel model) {
                 if (isValidSelection(model)) {
                     selectedNode = model;
-                    ok.setEnabled(true);
+                    setOkEnabled(true);
                 } else {
-                    ok.setEnabled(false);
+                    setOkEnabled(false);
                 }
                 super.setModel(model);
             }
@@ -168,7 +172,7 @@ public class LinkPickerDialog extends AbstractDialog {
         control.stop();
         modelService.destroy();
     }
-    
+
     @Override
     public void render(PluginRequestTarget target) {
         if (dialogRenderer != null) {
@@ -183,8 +187,12 @@ public class LinkPickerDialog extends AbstractDialog {
             error("No node selected");
             return;
         }
+        saveNode((Node) selectedNode.getObject());
+    }
+
+    protected void saveNode(Node node) {
         try {
-            getModel().setObject(((Node) selectedNode.getObject()).getUUID());
+            getModel().setObject(node.getUUID());
         } catch (RepositoryException ex) {
             error(ex.getMessage());
         }

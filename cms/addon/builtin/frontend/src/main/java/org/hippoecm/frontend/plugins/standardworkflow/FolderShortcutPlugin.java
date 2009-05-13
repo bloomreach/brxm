@@ -36,10 +36,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -66,6 +62,8 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FolderShortcutPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -87,8 +85,8 @@ public class FolderShortcutPlugin extends RenderPlugin {
             public void onClick(AjaxRequestTarget target) {
                 IDialogService dialogService = getDialogService();
                 JcrNodeModel model = (JcrNodeModel) FolderShortcutPlugin.this.getModel();
-                dialogService.show(new FolderShortcutPlugin.Dialog(context, config,
-                        (model != null ? model.getNode() : null), defaultDropLocation));
+                dialogService.show(new FolderShortcutPlugin.Dialog(context, config, (model != null ? model.getNode()
+                        : null), defaultDropLocation));
             }
         };
         add(link);
@@ -100,7 +98,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
 
         if (!defaultDropLocation.equals("")) {
             try {
-                Session jcrSession = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
+                Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
                 while (defaultDropLocation.startsWith("/")) {
                     defaultDropLocation = defaultDropLocation.substring(1);
                 }
@@ -114,7 +112,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 defaultDropLocation = null; // force adding empty panel
             }
         }
-        
+
         if (defaultDropLocation == null) {
             link.setVisible(false);
         }
@@ -133,7 +131,8 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 if (browser != null) {
                     browser.browse(nodeModel);
                 }
-                if (!nodeModel.getNode().isNodeType("hippostd:folder") && !nodeModel.getNode().isNodeType("hippostd:directory")) {
+                if (!nodeModel.getNode().isNodeType("hippostd:folder")
+                        && !nodeModel.getNode().isNodeType("hippostd:directory")) {
                     if (editorMgr != null) {
                         JcrNodeModel editNodeModel = nodeModel;
                         Node editNodeModelNode = nodeModel.getNode();
@@ -148,9 +147,11 @@ public class FolderShortcutPlugin extends RenderPlugin {
                                 EditableWorkflow editableWorkflow = (EditableWorkflow) workflow;
                                 Document editableDocument = editableWorkflow.obtainEditableInstance();
                                 if (editableDocument != null) {
-                                    Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+                                    Session jcrSession = ((UserSession) org.apache.wicket.Session.get())
+                                            .getJcrSession();
                                     jcrSession.refresh(true);
-                                    editNodeModel = new JcrNodeModel(jcrSession.getNodeByUUID(editableDocument.getIdentity()));
+                                    editNodeModel = new JcrNodeModel(jcrSession.getNodeByUUID(editableDocument
+                                            .getIdentity()));
                                 } else {
                                     editNodeModel = null;
                                 }
@@ -194,7 +195,6 @@ public class FolderShortcutPlugin extends RenderPlugin {
         private boolean optionSelectFirst = false;
 
         public Dialog(IPluginContext context, IPluginConfig config, Node folder, String defaultFolder) {
-            ok.setModel(new Model("Create"));
 
             if (config.containsKey("option.first"))
                 optionSelectFirst = config.getBoolean("option.first");
@@ -206,15 +206,18 @@ public class FolderShortcutPlugin extends RenderPlugin {
             editServiceRef = context.getReference(context.getService(config.getString(IEditorManager.EDITOR_ID),
                     IEditorManager.class));
 
-            add(typelabel = new Label("typelabel", new StringResourceModel("document-type", FolderShortcutPlugin.this, null)));
+            add(typelabel = new Label("typelabel", new StringResourceModel("document-type", FolderShortcutPlugin.this,
+                    null)));
 
             String workflowCategory = config.getString("workflow.categories");
             Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
             WorkflowDescriptor folderWorkflowDescriptor = null;
             try {
                 WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
-                folderWorkflowDescriptor = (folder != null ? manager.getWorkflowDescriptor(workflowCategory, folder) : null);
-                Workflow workflow = (folderWorkflowDescriptor != null ? manager.getWorkflow(folderWorkflowDescriptor) : null);
+                folderWorkflowDescriptor = (folder != null ? manager.getWorkflowDescriptor(workflowCategory, folder)
+                        : null);
+                Workflow workflow = (folderWorkflowDescriptor != null ? manager.getWorkflow(folderWorkflowDescriptor)
+                        : null);
                 if (workflow instanceof FolderWorkflow) {
                     templates = ((FolderWorkflow) workflow).list();
                 } else {
@@ -304,11 +307,12 @@ public class FolderShortcutPlugin extends RenderPlugin {
             categoryChoice.setRequired(true);
             categoryChoice.setOutputMarkupId(true);
 
-            ok.setEnabled(false);
+            setOkEnabled(false);
+
             if (folder != null && folderWorkflowDescriptor != null) {
                 try {
                     setModel(new WorkflowDescriptorModel(folderWorkflowDescriptor, workflowCategory, folder));
-                    ok.setEnabled(true);
+                    setOkEnabled(true);
                 } catch (RepositoryException ex) {
                     setModel(null);
                 }
@@ -357,10 +361,10 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 folderChoice.setVisible(false);
                 prototype = null;
             }
-            ok.setEnabled(prototype != null);
+            setOkEnabled(prototype != null);
+
             AjaxRequestTarget target = AjaxRequestTarget.get();
             if (target != null) {
-                target.addComponent(ok);
                 target.addComponent(folderChoice);
                 target.addComponent(categoryChoice);
             }
@@ -380,7 +384,8 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 if (model != null && model instanceof WorkflowDescriptorModel) {
                     Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
                     WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
-                    FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow((WorkflowDescriptor)((WorkflowDescriptorModel) model).getObject());
+                    FolderWorkflow workflow = (FolderWorkflow) manager
+                            .getWorkflow((WorkflowDescriptor) ((WorkflowDescriptorModel) model).getObject());
                     if (prototype == null) {
                         error("You need to select a type");
                         return;

@@ -47,8 +47,8 @@ public class RemodelDialog extends CompatibilityWorkflowPlugin.WorkflowAction.Wo
             add(wizard);
         }
 
-        ok.setVisible(false);
-        cancel.setVisible(false);
+        setOkVisible(false);
+        setCancelVisible(false);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class RemodelDialog extends CompatibilityWorkflowPlugin.WorkflowAction.Wo
         super.setDialogService(dialogService);
         wizard.setDialogService(dialogService);
     }
-    
+
     @Override
     public IModel getTitle() {
         return new StringResourceModel("update-content", this, null);
