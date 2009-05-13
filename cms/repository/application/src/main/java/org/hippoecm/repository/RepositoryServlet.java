@@ -222,12 +222,10 @@ public class RepositoryServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        // if(req.getAuthType() != req.BASIC_AUTH) {
-        //     res.setHeader("WWW-Authenticate","Basic realm=\"Repository\"");
-        //     res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
-        //     return;
-        // }
-
+        // explicitly set character encoding
+        req.setCharacterEncoding("UTF-8");
+        res.setContentType("text/html;charset=UTF-8");
+        
         String username = "admin", password = "admin";
         String authhead = req.getHeader("Authorization");
         if (authhead != null) {
@@ -290,9 +288,9 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("    <td class=\"header\">");
             writer.println("      <h3>Searching</h3>");
             writer.println("      <table style=\"params\" summary=\"searching\">");
-            writer.println("        <tr><th>UUID : </th><td><form method=\"get\" action=\"\"><input name=\"uuid\" type=\"text\" size=\"50\"/> <input type=\"submit\" value=\"Fetch\"/></form></td></tr>");
-            writer.println("        <tr><th>XPath : </th><td><form method=\"get\" action=\"\"><input name=\"xpath\" type=\"text\" size=\"50\"/> <input type=\"submit\" value=\"Search\"/></form></td></tr>");
-            writer.println("        <tr><th>SQL : </th><td><form method=\"get\" action=\"\"><input name=\"sql\" type=\"text\" size=\"50\"/> <input type=\"submit\" value=\"Search\"/></form></td></tr>");
+            writer.println("        <tr><th>UUID : </th><td><form method=\"get\" action=\"\" accept-charset=\"UTF-8\"><input name=\"uuid\" type=\"text\" size=\"50\"/> <input type=\"submit\" value=\"Fetch\"/></form></td></tr>");
+            writer.println("        <tr><th>XPath : </th><td><form method=\"get\" action=\"\" accept-charset=\"UTF-8\"><input name=\"xpath\" type=\"text\" size=\"50\"/> <input type=\"submit\" value=\"Search\"/></form></td></tr>");
+            writer.println("        <tr><th>SQL : </th><td><form method=\"get\" action=\"\" accept-charset=\"UTF-8\"><input name=\"sql\" type=\"text\" size=\"50\"/> <input type=\"submit\" value=\"Search\"/></form></td></tr>");
             writer.println("      </table>");
             writer.println("    </td>");
             writer.println("    <td class=\"header\">");
@@ -377,7 +375,6 @@ public class RepositoryServlet extends HttpServlet {
 
             String queryString = null;
             if ((queryString = req.getParameter("xpath")) != null || (queryString = req.getParameter("sql")) != null) {
-                queryString = URLDecoder.decode(queryString, "UTF-8");
                 writer.println("  <h3>Query executed</h3>");
                 writer.println("  <blockquote>");
                 writer.println(queryString);
@@ -422,7 +419,6 @@ public class RepositoryServlet extends HttpServlet {
                 writer.println("</table>");
             }
             if ((queryString = req.getParameter("map")) != null) {
-                queryString = URLDecoder.decode(queryString, "UTF-8");
                 writer.println("  <h3>Repository as map</h3>");
                 Map map = repository.getRepositoryMap(node);
                 if(!queryString.equals("")) {
@@ -458,7 +454,6 @@ public class RepositoryServlet extends HttpServlet {
                 writer.println("  </blockquote>");
             }
             if ((queryString = req.getParameter("uuid")) != null) {
-                queryString = URLDecoder.decode(queryString, "UTF-8");
                 writer.println("  <h3>Get node by UUID</h3>");
                 writer.println("  <blockquote>");
                 writer.println("UUID = " + queryString);
@@ -478,7 +473,6 @@ public class RepositoryServlet extends HttpServlet {
 
             }
             if ((queryString = req.getParameter("deref")) != null) {
-                queryString = URLDecoder.decode(queryString, "UTF-8");
                 writer.println("  <h3>Getting nodes having a reference to </h3>");
                 writer.println("  <blockquote>");
                 writer.println("UUID = " + queryString);
