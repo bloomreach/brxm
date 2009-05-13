@@ -62,9 +62,9 @@ public interface HstSiteMenu extends Serializable{
     HstSiteMenuItem getDeepestExpandedItem();
     
     /**
-     * Returns an <code>{@link EditableMenu}</code> instance extracted from this HstSiteMenu. Note that changing the <code>{@link EditableMenu}</code> using the setters and adders (like adding a
+     * Returns an <code>{@link EditableMenu}</code> instance from this HstSiteMenu. Note that changing the <code>{@link EditableMenu}</code> using the setters and adders (like adding a
      * {@link EditableMenuItem}) will not being reflected in this HstSiteMenu instance. 
-     * @return an <code>AugmentableMenu</code> instance of this HstSiteMenu. 
+     * @return an <code>EditableMenu</code> instance of this HstSiteMenu. 
      */
-    EditableMenu extractEditableMenu();
+    EditableMenu getEditableMenu();
 }
