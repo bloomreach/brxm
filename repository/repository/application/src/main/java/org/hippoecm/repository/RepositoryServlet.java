@@ -134,6 +134,17 @@ public class RepositoryServlet extends HttpServlet {
         return result;
     }
 
+    public String getRequestParameter(HttpServletRequest request, String parameterName, String defaultValue) {
+        String result = request.getParameter(parameterName);
+        if (result == null || result.equals("")) {
+            result = getServletContext().getInitParameter(parameterName);
+        }
+        if (result == null || result.equals("")) {
+            result = defaultValue;
+        }
+        return result;
+    }
+    
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -292,7 +303,7 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("          <th>UUID : </th>");
             writer.println("          <td>");
             writer.println("            <form method=\"get\" action=\"\" accept-charset=\"UTF-8\">");
-            writer.println("              <input name=\"uuid\" type=\"text\" size=\"50\"/>");
+            writer.println("              <input name=\"uuid\" type=\"text\" size=\"50\" value=\"" + getRequestParameter(req,"uuid","") + "\"/>");
             writer.println("              <input type=\"submit\" value=\"Fetch\"/>");
             writer.println("            </form>");
             writer.println("          </td>");
@@ -301,7 +312,7 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("          <th>XPath : </th>");
             writer.println("          <td>");
             writer.println("            <form method=\"get\" action=\"\" accept-charset=\"UTF-8\">");
-            writer.println("              <input name=\"xpath\" type=\"text\" size=\"50\"/>");
+            writer.println("              <input name=\"xpath\" type=\"text\" size=\"50\" value=\"" + getRequestParameter(req,"xpath","") + "\"/>");
             writer.println("              <input type=\"submit\" value=\"Search\"/>");
             writer.println("            </form>");
             writer.println("          </td>");
@@ -310,7 +321,7 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("          <th>SQL : </th>");
             writer.println("          <td>");
             writer.println("            <form method=\"get\" action=\"\" accept-charset=\"UTF-8\">");
-            writer.println("              <input name=\"sql\" type=\"text\" size=\"50\"/>");
+            writer.println("              <input name=\"sql\" type=\"text\" size=\"50\" value=\"" + getRequestParameter(req,"sql","") + "\"/>");
             writer.println("              <input type=\"submit\" value=\"Search\"/>");
             writer.println("            </form>");
             writer.println("          </td>");
