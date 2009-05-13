@@ -155,6 +155,7 @@ public class JcrSessionModel extends LoadableDetachableModel {
                         if(workflow instanceof EventLoggerWorkflow) {
                             ((EventLoggerWorkflow)workflow).logEvent(result.getUserID(), "Repository", "login");
                         }
+                        result.getRootNode().getNode("hippo:log").refresh(true);
                     }
                 } catch (AccessDeniedException ex) {
                     log.debug("Unable to log login event (maybe trying as Anonymous?): " +  ex.getMessage());
