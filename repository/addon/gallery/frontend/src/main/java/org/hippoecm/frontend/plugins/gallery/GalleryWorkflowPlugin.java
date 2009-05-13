@@ -69,7 +69,7 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
             super();
             setMultiPart(true);
             setOutputMarkupId(true);
-            this.setAjaxSubmit(false);
+            setNonAjaxSubmit();
             add(uploadField = new FileUploadField("input"));
 
             List<String> galleryTypes = null;
