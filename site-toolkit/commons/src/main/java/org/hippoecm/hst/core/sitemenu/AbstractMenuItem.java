@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractMenuItem implements CommonMenuItem{
 
     private static final Logger log = LoggerFactory.getLogger(AbstractMenuItem.class);
+    private ResolvedSiteMapItemWrapper resolvedSiteMapItem;
+    
     protected int depth;
     protected boolean repositoryBased;
     protected Map<String, Object> properties;
@@ -34,7 +36,6 @@ public abstract class AbstractMenuItem implements CommonMenuItem{
     protected String name;
     protected boolean expanded;
     protected boolean selected;
-    private ResolvedSiteMapItemWrapper resolvedSiteMapItem;
     
     public int getDepth() {
         return this.depth;

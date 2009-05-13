@@ -23,8 +23,8 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.sitemenu.EditableMenu;
 import org.hippoecm.hst.core.sitemenu.EditableMenuItem;
-import org.hippoecm.hst.core.sitemenu.EditableMenuItemImpl;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
+import org.hippoecm.hst.utilities.MyRepoBasedMenuItem;
 
 public class LeftMenu extends BaseHstComponent {
 
@@ -51,35 +51,6 @@ public class LeftMenu extends BaseHstComponent {
 
     }
 
-    public class MyRepoBasedMenuItem extends EditableMenuItemImpl {
-
-        public MyRepoBasedMenuItem(HippoFolderBean repoItem, EditableMenuItem parentItem, HstRequest request,
-                HippoBean currentContentBean) {
-            super(parentItem);
-            this.name = repoItem.getName();
-            this.depth = parentItem.getDepth() - 1;
-            this.repositoryBased = true;
-            this.hstLink = request.getRequestContext().getHstLinkCreator()
-                    .create(repoItem, request.getRequestContext());
-         
-            if (repoItem.isAncestor(currentContentBean)) {
-                this.expanded = true;
-            }
-            if (repoItem.isSelf(currentContentBean)) {
-                this.expanded = true;
-                this.selected = true;
-                this.getEditableMenu().setSelectedMenuItem(this);
-            }
-
-            if (this.depth > 0 && this.expanded) {
-                for (HippoFolderBean childRepoItem : repoItem.getFolders()) {
-                    EditableMenuItem childMenuItem = new MyRepoBasedMenuItem(childRepoItem, this, request, currentContentBean);
-                    this.addChildMenuItem(childMenuItem);
-                }
-            }
-
-        }
-
-    }
+    
 
 }
