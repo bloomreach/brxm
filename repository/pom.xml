@@ -251,9 +251,18 @@
       <email>wander at xs4all. nl</email>
       <url>http://www.weloveit.nl/hippo_310506.htm</url>
       <organization>SIG, Software improvement group</organization>
-      <organizationUrl>http://www.sig.nl</organizationUrl>
+      <organizationUrl>http://www.sig.nl/</organizationUrl>
       <roles>
         <role>Previous developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </contributor>
+    <contributor>
+      <name>Jettro Coenradie</name>
+      <organization>JTeam</organization>
+      <organizationUrl>http://www.jteam.nl/</organizationUrl>
+      <roles>
+        <role>External contributor</role>
       </roles>
       <timezone>+1</timezone>
     </contributor>
@@ -403,13 +412,13 @@
         <inherited>true</inherited>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.0-beta-8</version>
-	<configuration>
-	  <!-- preparationGoals>clean install</preparationGoals -->
-	  <!-- commitByProject>true</commitByProject -->
-	  <autoVersionSubmodules>true</autoVersionSubmodules>
-	  <!-- remoteTagging>true</remoteTagging -->
-	  <scmCommentPrefix>HREPTWO-2497:</scmCommentPrefix>
-	</configuration>
+          <configuration>
+          <!-- preparationGoals>clean install</preparationGoals -->
+          <!-- commitByProject>true</commitByProject -->
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <!-- remoteTagging>true</remoteTagging -->
+          <scmCommentPrefix>HREPTWO-2497:</scmCommentPrefix>
+        </configuration>
       </plugin>
       <plugin>
         <inherited>true</inherited>
