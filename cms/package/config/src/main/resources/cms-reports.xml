@@ -43,7 +43,7 @@
         <sv:property sv:name="reporting:limit" sv:type="Long">
             <sv:value>15</sv:value>
         </sv:property>
-        <sv:node sv:name="hippo:query">
+        <sv:node sv:name="reporting:query">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:query</sv:value>
             </sv:property>
@@ -54,7 +54,24 @@
               <sv:value>SELECT * FROM hippolog:item WHERE hippo:eventUser&lt;&gt;'anonymous' AND hippo:eventUser&lt;&gt;'workflowuser' AND hippo:eventUser&lt;&gt;'system' AND hippo:eventMethod&lt;&gt;'list' AND hippo:eventMethod&lt;&gt;'getGalleryTypes' AND hippo:eventMethod&lt;&gt;'archive' AND hippo:eventMethod&lt;&gt;'logEvent' ORDER BY hippo:timestamp DESC</sv:value>
             </sv:property>
         </sv:node>
-        <sv:node sv:name="frontend:plugin">
+        <sv:node sv:name="reporting:listener">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>frontend:listener</sv:value>
+            </sv:property>
+            <sv:property sv:name="frontend:events" sv:type="Long">
+                <sv:value>3</sv:value>
+            </sv:property>
+            <sv:property sv:name="frontend:path" sv:type="String">
+                <sv:value>/</sv:value>
+            </sv:property>
+            <sv:property sv:name="frontend:deep" sv:type="Boolean">
+                <sv:value>true</sv:value>
+            </sv:property>
+            <sv:property sv:name="frontend:nodetypes" sv:type="String">
+                <sv:value>hippolog:item</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="reporting:plugin">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>frontend:plugin</sv:value>
             </sv:property>
@@ -88,7 +105,7 @@
         <sv:property sv:name="reporting:limit" sv:type="Long">
             <sv:value>15</sv:value>
         </sv:property>
-        <sv:node sv:name="hippo:query">
+        <sv:node sv:name="reporting:query">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:query</sv:value>
             </sv:property>
@@ -99,7 +116,24 @@
                 <sv:value>SELECT * FROM hippo:request WHERE type &lt;&gt; 'rejected'</sv:value>
             </sv:property>
         </sv:node>
-        <sv:node sv:name="frontend:plugin">
+        <sv:node sv:name="reporting:listener">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>frontend:listener</sv:value>
+            </sv:property>
+            <sv:property sv:name="frontend:events" sv:type="Long">
+                <sv:value>3</sv:value>
+            </sv:property>
+            <sv:property sv:name="frontend:path" sv:type="String">
+                <sv:value>/</sv:value>
+            </sv:property>
+            <sv:property sv:name="frontend:deep" sv:type="Boolean">
+                <sv:value>true</sv:value>
+            </sv:property>
+            <sv:property sv:name="frontend:nodetypes" sv:type="String">
+                <sv:value>hippo:request</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="reporting:plugin">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>frontend:plugin</sv:value>
             </sv:property>
