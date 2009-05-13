@@ -36,7 +36,7 @@
       <sv:value>http://www.hippoecm.org/hst/nt/${rootArtifactId.replace($hyphen,$empty)}/1.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
-      <sv:value>${rootArtifactId.replace($hyphen,$empty)}-types.cnd</sv:value>
+      <sv:value>${rootArtifactId}-types.cnd</sv:value>
     </sv:property>
   </sv:node>
   
@@ -48,7 +48,7 @@
       <sv:value>10051</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>${rootArtifactId.replace($hyphen,$empty)}-namespace.xml</sv:value>
+      <sv:value>${rootArtifactId}-namespace.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:namespaces</sv:value>
@@ -186,7 +186,7 @@
       <sv:value>10400</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>${rootArtifactId.replace($hyphen,$empty)}-root.xml</sv:value>
+      <sv:value>${rootArtifactId}-root.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/content</sv:value>
@@ -201,7 +201,7 @@
       <sv:value>10404</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>${rootArtifactId.replace($hyphen,$empty)}-common.xml</sv:value>
+      <sv:value>${rootArtifactId}-common.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
      <sv:value>/content/${rootArtifactId.replace($hyphen,$empty)}</sv:value>
