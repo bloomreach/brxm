@@ -415,9 +415,11 @@
           <configuration>
           <!-- preparationGoals>clean install</preparationGoals -->
           <!-- commitByProject>true</commitByProject -->
+          <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <!-- remoteTagging>true</remoteTagging -->
           <scmCommentPrefix>HREPTWO-2497:</scmCommentPrefix>
+          <tag>test</tag>
         </configuration>
       </plugin>
       <plugin>
