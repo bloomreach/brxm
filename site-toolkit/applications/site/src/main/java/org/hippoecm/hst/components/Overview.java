@@ -15,14 +15,16 @@
  */
 package org.hippoecm.hst.components;
 
+import java.util.List;
+
+import org.hippoecm.hst.beans.GeneralPage;
+import org.hippoecm.hst.beans.NewsPage;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 public class Overview extends BaseHstComponent {
     
@@ -33,6 +35,14 @@ public class Overview extends BaseHstComponent {
        // System.out.println(this.getParameters(request));
         
         HippoBean hippoBean = this.getContentBean(request);
+
+        
+        // how to get a list of documents of some specific bean
+        List<NewsPage> news = ((HippoFolder)hippoBean).getDocuments(NewsPage.class);
+        
+        // how to get a list of documents of some superclass bean
+        List<GeneralPage> generalpages = ((HippoFolder)hippoBean).getDocuments(GeneralPage.class);
+        
         
         if(hippoBean == null) {
             hippoBean = this.getSiteContentBaseBean(request);
