@@ -131,7 +131,6 @@ public class BrowseService implements IBrowseService<IModel>, IRefreshable, IDet
             }
         } else {
             updateDocumentModel(null);
-            log.warn("Model {} is not an JcrNodeModel", model);
         }
     }
 
