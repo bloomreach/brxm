@@ -83,37 +83,56 @@ public class ActionValve extends AbstractValve
                 }
             }
             
-            if (responseState.getRedirectLocation() == null) {
+            if (responseState.getErrorCode() > 0) {
+                
                 try {
-                    // Clear action state first
-                    if (baseURL.getActionParameterMap() != null) {
-                        baseURL.getActionParameterMap().clear();
+                    if (log.isDebugEnabled()) {
+                        log.debug("The action window has error status code: {} - {}", responseState.getErrorCode(), window.getName());
                     }
-                    baseURL.setActionWindowReferenceNamespace(null);
-                    
-                    if (baseURL.isViaPortlet()) {
-                        HstContainerURLProvider urlProvider = getUrlFactory().getPortletUrlProvider();
-                        // TODO: Use the context relative HST url path to pass to portlet later.
-                        //responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL));
-                        responseState.sendRedirect(urlProvider.toURLString(baseURL));
-                    } else {
-                        HstContainerURLProvider urlProvider = getUrlFactory().getServletUrlProvider();
-                        responseState.sendRedirect(urlProvider.toURLString(baseURL));
-                    }
-                } catch (UnsupportedEncodingException e) {
-                    throw new ContainerException(e);
+                    servletResponse.sendError(responseState.getErrorCode(), responseState.getErrorMessage());
                 } catch (IOException e) {
-                    throw new ContainerException(e);
+                    if (log.isDebugEnabled()) {
+                        log.warn("Exception invocation on sendError().", e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Exception invocation on sendError().");
+                    }
                 }
-            }
+                
+            } else {
             
-            try {
-                if (!baseURL.isViaPortlet()) {
-                    responseState.flush();
-                    servletResponse.sendRedirect(responseState.getRedirectLocation());
+                if (responseState.getRedirectLocation() == null) {
+                    try {
+                        // Clear action state first
+                        if (baseURL.getActionParameterMap() != null) {
+                            baseURL.getActionParameterMap().clear();
+                        }
+                        baseURL.setActionWindowReferenceNamespace(null);
+                        
+                        if (baseURL.isViaPortlet()) {
+                            HstContainerURLProvider urlProvider = getUrlFactory().getPortletUrlProvider();
+                            // TODO: Use the context relative HST url path to pass to portlet later.
+                            //responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL));
+                            responseState.sendRedirect(urlProvider.toURLString(baseURL));
+                        } else {
+                            HstContainerURLProvider urlProvider = getUrlFactory().getServletUrlProvider();
+                            responseState.sendRedirect(urlProvider.toURLString(baseURL));
+                        }
+                    } catch (UnsupportedEncodingException e) {
+                        throw new ContainerException(e);
+                    } catch (IOException e) {
+                        throw new ContainerException(e);
+                    }
                 }
-            } catch (IOException e) {
-                log.warn("Unexpected exception during redirect to " + responseState.getRedirectLocation(), e);
+                
+                try {
+                    if (!baseURL.isViaPortlet()) {
+                        responseState.flush();
+                        servletResponse.sendRedirect(responseState.getRedirectLocation());
+                    }
+                } catch (IOException e) {
+                    log.warn("Unexpected exception during redirect to " + responseState.getRedirectLocation(), e);
+                }
+                
             }
         } else {
             // continue

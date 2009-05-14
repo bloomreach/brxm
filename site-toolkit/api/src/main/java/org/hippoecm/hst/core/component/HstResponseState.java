@@ -63,6 +63,10 @@ public interface HstResponseState
     void sendError(int errorCode, String errorMessage) throws IOException;
 
     void sendError(int errorCode) throws IOException;
+    
+    int getErrorCode();
+    
+    String getErrorMessage();
 
     void sendRedirect(String redirectLocation) throws IOException;
 

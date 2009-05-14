@@ -203,6 +203,14 @@ public abstract class AbstractHstResponseState implements HstResponseState {
         sendError(errorCode, null);
     }
 
+    public int getErrorCode() {
+        return this.errorCode;
+    }
+    
+    public String getErrorMessage() {
+        return this.errorMessage;
+    }
+    
     /*
      * (non-Javadoc)
      * 

@@ -180,5 +180,38 @@ public interface HstResponse extends HttpServletResponse {
      * @throws IOException
      */
     void flushChildContent(String name) throws IOException;
+
+    /**
+     * Sends an error response to the client using the specified status.
+     * <P>
+     * Only in {@link HstComponent#doAction(HstRequest, HstResponse)}, 
+     * {@link HstComponent#doBeforeRender(HstRequest, HstResponse)} 
+     * or {@link HstComponent#doBeforeServeResource(HstRequest, HstResponse)},
+     * the invocation on this method will be effective.
+     * If the invocation on this method is done in a view page during render phase,
+     * the invocation will be just ignored with no operation.
+     * </P>
+     * 
+     * @param sc the error status code
+     * @param msg the descriptive message
+     * @throws IOException If the response was committed
+     */
+    void sendError(int sc, String msg) throws IOException;
+    
+    /**
+     * Sends an error response to the client using the specified status.
+     * <P>
+     * Only in {@link HstComponent#doAction(HstRequest, HstResponse)}, 
+     * {@link HstComponent#doBeforeRender(HstRequest, HstResponse)} 
+     * or {@link HstComponent#doBeforeServeResource(HstRequest, HstResponse)},
+     * the invocation on this method will be effective.
+     * If the invocation on this method is done in a view page during render phase,
+     * the invocation will be just ignored with no operation.
+     * </P>
+     * 
+     * @param sc the error status code
+     * @throws IOException If the response was committed
+     */
+    void sendError(int sc) throws  IOException;
     
 }

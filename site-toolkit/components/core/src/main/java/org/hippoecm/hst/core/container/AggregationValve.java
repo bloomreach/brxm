@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,8 +40,8 @@ public class AggregationValve extends AbstractValve {
     @Override
     public void invoke(ValveContext context) throws ContainerException {
 
-        ServletRequest servletRequest = context.getServletRequest();
-        ServletResponse servletResponse = context.getServletResponse();
+        HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
+        HttpServletResponse servletResponse = (HttpServletResponse) context.getServletResponse();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
         
         if (!context.getServletResponse().isCommitted() && requestContext.getBaseURL().getResourceWindowReferenceNamespace() == null) {
@@ -76,24 +77,64 @@ public class AggregationValve extends AbstractValve {
                 HstContainerConfig requestContainerConfig = context.getRequestContainerConfig();
                 // process doBeforeRender() of each component as sorted order, parent first.
                 processWindowsBeforeRender(requestContainerConfig, sortedComponentWindows, requestMap, responseMap);
-                // process doRender() of each component as reversed sort order, child first.
-                processWindowsRender(requestContainerConfig, sortedComponentWindows, requestMap, responseMap);
-
-                if (log.isWarnEnabled()) {
-                    // log warnings of each component execution as reversed sort order, child first.
-                    logWarningsForEachComponentWindow(sortedComponentWindows);
-                }
-
-                try {
-                    // flush root component window content.
-                    // note that the child component's contents are already flushed into the root component's response state.
-                    rootWindow.getResponseState().flush();
-                } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Exception during flushing the response state.", e);
-                    } else if (log.isWarnEnabled()) {
-                        log.warn("Exception during flushing the response state.");
+                
+                // check if any invocation on sendError() exists...
+                int errorCode = 0;
+                String errorMessage = null;
+                String errorWindowName = null;
+                
+                for (HstComponentWindow window : sortedComponentWindows) {
+                    HstResponseState responseStateForWindow = ((HstComponentWindowImpl) window).getResponseState();
+                    if (responseStateForWindow.getErrorCode() > 0) {
+                        errorCode = responseStateForWindow.getErrorCode();
+                        errorMessage = responseStateForWindow.getErrorMessage();
+                        errorWindowName = window.getName(); 
+                        break;
                     }
+                }
+                
+                if (errorCode > 0) {
+                    
+                    try {
+                        if (log.isDebugEnabled()) {
+                            log.debug("The component window has error status code: {} - {}", errorCode, errorWindowName);
+                        }
+                        servletResponse.sendError(errorCode, errorMessage);
+                        
+                        if (log.isWarnEnabled()) {
+                            // log warnings of each component execution as reversed sort order, child first.
+                            logWarningsForEachComponentWindow(sortedComponentWindows);
+                        }
+                    } catch (IOException e) {
+                        if (log.isDebugEnabled()) {
+                            log.warn("Exception invocation on sendError().", e);
+                        } else if (log.isWarnEnabled()) {
+                            log.warn("Exception invocation on sendError().");
+                        }
+                    }
+                    
+                } else {
+
+                    // process doRender() of each component as reversed sort order, child first.
+                    processWindowsRender(requestContainerConfig, sortedComponentWindows, requestMap, responseMap);
+    
+                    if (log.isWarnEnabled()) {
+                        // log warnings of each component execution as reversed sort order, child first.
+                        logWarningsForEachComponentWindow(sortedComponentWindows);
+                    }
+    
+                    try {
+                        // flush root component window content.
+                        // note that the child component's contents are already flushed into the root component's response state.
+                        rootWindow.getResponseState().flush();
+                    } catch (Exception e) {
+                        if (log.isDebugEnabled()) {
+                            log.warn("Exception during flushing the response state.", e);
+                        } else if (log.isWarnEnabled()) {
+                            log.warn("Exception during flushing the response state.");
+                        }
+                    }
+                    
                 }
             }
         }
