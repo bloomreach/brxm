@@ -401,6 +401,8 @@ color: black
 .menu-action:hover{border: 1px solid #000000;background-color: #fff6e0;}
 .menu-action-text{width: 90px; height: 17px; vertical-align: top; padding-top: 0px; margin-top: 0px; clip-rect(0px,0px,15px,100px);}
 .menu-action-icon{padding-top: 0px;}
+.menu-label{padding-left: 4px; padding-right: 8px; padding-top: 3px; background-image: none; border: 0px solid #e3e3e3; display: block; min-width:100px; height: 17px; white-space: nowrap; }
+.menu-spacer{width:80px;}
 
 /* Default feedback */
 /* ================================================ */
