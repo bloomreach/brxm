@@ -33,7 +33,7 @@
     
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-editor</artifactId>
+      <artifactId>hippo-ecm-addon-editor-frontend</artifactId>
       <version>${hippoecm.version}</version>
       <scope>provided</scope>
     </dependency>

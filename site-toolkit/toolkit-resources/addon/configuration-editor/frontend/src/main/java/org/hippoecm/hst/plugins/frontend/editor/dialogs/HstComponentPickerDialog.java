@@ -22,7 +22,6 @@ public class HstComponentPickerDialog extends HstPickerDialog {
 
     @Override
     protected boolean isValidSelection(Node node) throws RepositoryException {
-        // TODO Auto-generated method stub
         return false;
     }
 }

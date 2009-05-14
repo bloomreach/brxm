@@ -39,7 +39,7 @@
     
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon.toolkit-cnd</groupId>
-      <artifactId>hst-addon-cnd_7_0</artifactId>
+      <artifactId>hst-addon-cnd_7_1</artifactId>
       <type>jar</type>
     </dependency>
     

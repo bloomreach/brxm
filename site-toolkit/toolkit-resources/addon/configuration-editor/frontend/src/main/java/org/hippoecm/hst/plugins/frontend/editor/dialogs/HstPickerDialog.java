@@ -44,10 +44,9 @@ public abstract class HstPickerDialog extends LinkPickerDialog {
 
     protected abstract boolean isValidSelection(Node node) throws RepositoryException;
 
-
     @Override
     protected IModel getInitialNode() {
-        String path = (String) getModelObject();
+        String path = getModelObjectAsString();
         if (path != null && !"".equals(path)) {
             return new JcrNodeModel(path);
         }

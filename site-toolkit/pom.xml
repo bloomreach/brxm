@@ -84,7 +84,7 @@
 
     <jackrabbit.version>1.5.0</jackrabbit.version>
 
-    <hippoecm.version>2.04.00</hippoecm.version>
+    <hippoecm.version>2.06.02-SNAPSHOT</hippoecm.version>
 
   </properties>
 

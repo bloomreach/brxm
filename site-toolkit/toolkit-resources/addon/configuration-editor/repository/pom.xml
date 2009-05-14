@@ -8,5 +8,14 @@
   <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
   <artifactId>hst-addon-configuration-editor-repository</artifactId>
   <name>HST Configuration Editor Frontend</name>
-
+    
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon.toolkit-cnd</groupId>
+      <artifactId>hst-addon-cnd_7_1</artifactId>
+      <version>${pom.version}</version>
+      <scope>test</scope>   
+    </dependency>
+  </dependencies>    
+    
 </project>

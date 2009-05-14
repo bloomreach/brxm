@@ -1,5 +1,6 @@
 package org.hippoecm.hst.plugins.frontend;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -63,7 +64,7 @@ public abstract class ViewController implements IClusterable {
                     return modelRef;
                 }
 
-                public void onEvent(IEvent event) {
+                public void onEvent(Iterator<? extends IEvent> event) {
                     onModelChanged(modelRef.getModel());
                 }
 
