@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon</artifactId>
-    <version>2.06.04-SNAPSHOT</version>
+    <version>2.06.03-SNAPSHOT</version>
   </parent>
 
   <name>Xinha addon frontend plugin</name>
@@ -37,17 +37,17 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.06.04-SNAPSHOT</version>
+      <version>2.06.03-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.06.04-SNAPSHOT</version>
+      <version>2.06.03-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
-      <version>2.06.04-SNAPSHOT</version>
+      <version>2.06.03-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>hippo</groupId>
@@ -63,7 +63,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-yui</artifactId>
-      <version>2.06.04-SNAPSHOT</version>
+      <version>2.06.03-SNAPSHOT</version>
     </dependency>
 
     <!-- test  -->
@@ -110,13 +110,13 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine-test</artifactId>
-      <version>2.06.04-SNAPSHOT</version>
+      <version>2.06.03-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.06.04-SNAPSHOT</version>
+      <version>2.06.03-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
