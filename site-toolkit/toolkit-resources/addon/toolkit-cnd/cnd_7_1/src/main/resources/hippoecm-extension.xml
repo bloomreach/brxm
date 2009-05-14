@@ -20,21 +20,19 @@
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
 
-
-  <sv:node sv:name="hst-configuration">
+  <sv:node sv:name="hst">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>9991</sv:value>
+      <sv:value>8990</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hst-configuration.xml</sv:value>
+    <sv:property sv:name="hippo:namespace" sv:type="String">
+      <sv:value>http://www.hippoecm.org/hst/nt/1.2</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/</sv:value>
+    <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
+      <sv:value>hst-types.cnd</sv:value>
     </sv:property>
   </sv:node>
-  
-  
+
 </sv:node>
