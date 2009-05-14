@@ -29,6 +29,6 @@ public interface IObserver extends EventListener, IClusterable {
     
     IObservable getObservable();
     
-    void onEvent(Iterator<? extends IEvent> event);
+    void onEvent(Iterator<? extends IEvent> events);
 
 }

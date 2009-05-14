@@ -21,7 +21,28 @@ import org.apache.wicket.Page;
 public interface IObservationContext extends IClusterable {
     final static String SVN_ID = "$Id$";
 
-    void notifyObservers(EventCollection<? extends IEvent> event);
+    /**
+     * Notify observers of events that pertain to an observable.
+     * The events are dispatched to registered observers.
+     * 
+     * @param events The events to be dispatched to interested parties
+     */
+    void notifyObservers(EventCollection<? extends IEvent> events);
+
+    /**
+     * Register an observer.
+     * Allows observables to delegate subscriptions to one another.
+     * 
+     * @param observer
+     */
+    void registerObserver(IObserver observer);
+
+    /**
+     * Unegister an observer.
+     * 
+     * @param observer
+     */
+    void unregisterObserver(IObserver observer);
 
     Page getPage();
 }

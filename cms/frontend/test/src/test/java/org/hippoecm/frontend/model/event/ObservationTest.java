@@ -338,6 +338,16 @@ public class ObservationTest extends TestCase {
                 count++;
             }
 
+            public void registerObserver(IObserver observer) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            public void unregisterObserver(IObserver observer) {
+                // TODO Auto-generated method stub
+                
+            }
+
         }, Event.NODE_ADDED, "/", false, null, null);
     }
 
@@ -398,6 +408,16 @@ public class ObservationTest extends TestCase {
                 for (IEvent event : collection) {
                     events.add(event);
                 }
+            }
+
+            public void registerObserver(IObserver observer) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            public void unregisterObserver(IObserver observer) {
+                // TODO Auto-generated method stub
+                
             }
 
         }, Event.NODE_ADDED | Event.NODE_REMOVED, "/test/sink", true, null, null);
