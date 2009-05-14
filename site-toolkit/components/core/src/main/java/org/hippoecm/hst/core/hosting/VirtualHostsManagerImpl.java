@@ -54,8 +54,10 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
         VirtualHosts vHosts = this.virtualHosts;
         
         if (vHosts == null) {
-            buildVirtualHosts();
-            vHosts = this.virtualHosts;
+            synchronized(this) {
+                buildVirtualHosts();
+                vHosts = this.virtualHosts;
+            }
         }
         
         return vHosts;
@@ -104,7 +106,7 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
     }
     
 
-    public void invalidate(String path) {
+    public synchronized void invalidate(String path) {
         this.virtualHosts = null;
     }
 

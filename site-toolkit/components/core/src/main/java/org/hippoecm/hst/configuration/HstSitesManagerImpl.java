@@ -41,11 +41,14 @@ public class HstSitesManagerImpl implements HstSitesManager {
     }
 
     public HstSites getSites() {
-        if (this.sites == null) {
-            buildSites();
+        HstSites s = this.sites;
+        if (s == null) {
+            synchronized(this) {
+                buildSites();
+                s = this.sites;
+            }
         }
-        
-        return this.sites;
+        return s;
     }
 
     public void setSitesContentPath(String sitesContentPath) {
