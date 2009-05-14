@@ -20,6 +20,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
+import org.apache.wicket.model.StringResourceModel;
 
 class MenuDrop extends Panel implements MenuComponent {
     @SuppressWarnings("unused")
@@ -29,11 +30,16 @@ class MenuDrop extends Panel implements MenuComponent {
 
     MenuDrop(String id, ActionDescription wf, MenuHierarchy menu) {
         super(id);
+        Label header;
+        add(header = new Label("header", new StringResourceModel("empty-menu", this, null)));
         add(new DataView("list", new ListDataProvider(menu.list(this))) {
-            public void populateItem(final Item item) {
-                MenuItem menuItem = (MenuItem)item.getModelObject();
-                item.add(menuItem);
-            }
-        });
+                public void populateItem(final Item item) {
+                    MenuItem menuItem = (MenuItem)item.getModelObject();
+                    item.add(menuItem);
+                }
+            });
+        if(menu.size(this) > 0) {
+            header.setVisible(false);
+        }
     }
 }
