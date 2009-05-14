@@ -74,7 +74,7 @@ InsertImage.prototype.prepareDialog = function()
         } else {
             self.apply();
         }
-        self.editor.plugins.AutoSave.instance.saveSynchronous();
+        self.editor.plugins.AutoSave.instance.save();
     };
     this.dialogReady = true;
 };

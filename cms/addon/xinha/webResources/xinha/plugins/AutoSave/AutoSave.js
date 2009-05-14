@@ -32,7 +32,7 @@ function AutoSave(editor) {
       if (self.timeoutId != null) {
         window.clearTimeout(self.timeoutId);
         self.timeoutId = null;
-        self.saveSynchronous();
+        self.save();
       }
     }
     Wicket.Ajax.registerPreCallHandler(preCallHandler);
@@ -104,7 +104,7 @@ AutoSave.prototype.setUnChanged = function() {
     this.changed = false;
 }
         
-AutoSave.prototype.saveSynchronous = function() {
+AutoSave.prototype.save = function() {
     var self = this;
     this.timoutId = null;
     var form = this.editor._textArea.form;
@@ -112,33 +112,8 @@ AutoSave.prototype.saveSynchronous = function() {
     var callbackUrl = this.editor.config.callbackUrl + "&save=true";
     var myId = this.editor._textArea.getAttribute("id");
 
-    req = Xinha.getXMLHTTPRequestObject();
-    req.open('POST', callbackUrl, false);
-    req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'+(Xinha._postback_send_charset ? '; charset=UTF-8' : ''));
-    req.send(wicketSerialize(Wicket.$(myId)));
-
-    if(req.responseText.indexOf(self.lConfig.saveSuccessFlag) > -1) {
-      self.initial_html = self.editor.getInnerHTML();
-      self.changed = false;
-    } else {
-      alert('Failed to save HTML');
-    }
-}
-
-AutoSave.prototype.save =  function() {
-    var self = this;
-    this.timoutId = null;
-    var form = this.editor._textArea.form;
-    form.onsubmit();
-    var callbackUrl = this.editor.config.callbackUrl + "&save=true";
-    var myId = this.editor._textArea.getAttribute("id");
-    
-    var postFunc = function(responseText) {
-      if(responseText.indexOf(self.lConfig.saveSuccessFlag) > -1) {
+    return wicketAjaxPost(callbackUrl, wicketSerialize(Wicket.$(myId)), function() {
         self.initial_html = self.editor.getInnerHTML();
         self.changed = false;
-      }  
-    }
-    //TODO: use Xinha form serialize method instead of Wicket's
-    var doCall = Xinha._postback(callbackUrl, wicketSerialize(Wicket.$(myId)), postFunc);
+    }, null, function() { return Wicket.$(myId) != null; });
 }

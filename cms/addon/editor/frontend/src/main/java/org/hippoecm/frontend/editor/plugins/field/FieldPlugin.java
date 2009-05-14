@@ -130,27 +130,15 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     protected abstract AbstractProvider<C> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type, P parentModel);
 
     public void onAddItem(AjaxRequestTarget target) {
-        controller.stop();
         provider.addNew();
-        controller.start(provider);
-
-        modelChanged();
     }
 
     public void onRemoveItem(C childModel, AjaxRequestTarget target) {
-        controller.stop();
         provider.remove(childModel);
-        controller.start(provider);
-
-        modelChanged();
     }
 
     public void onMoveItemUp(C model, AjaxRequestTarget target) {
         provider.moveUp(model);
-
-        // FIXME: support reordering
-        // controller.update();
-        modelChanged();
     }
 
     protected ITemplateEngine getTemplateEngine() {

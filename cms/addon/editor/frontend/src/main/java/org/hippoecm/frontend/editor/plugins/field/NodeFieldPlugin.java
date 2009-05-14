@@ -15,8 +15,11 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
+import java.util.Iterator;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.observation.Event;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -30,6 +33,8 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.model.AbstractProvider;
 import org.hippoecm.frontend.editor.model.NodeTemplateProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.JcrEvent;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
@@ -85,6 +90,41 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
         updateProvider();
         replace(createAddLink());
         redraw();
+    }
+
+    @Override
+    public void onEvent(Iterator<? extends IEvent> events) {
+        // filter events
+        if (field == null) {
+            return;
+        }
+        if (field.getPath().equals("*")) {
+            modelChanged();
+        }
+        while (events.hasNext()) {
+            JcrEvent jcrEvent = (JcrEvent) events.next();
+            Event event = jcrEvent.getEvent();
+            try {
+                switch (event.getType()) {
+                case 0:
+                    modelChanged();
+                    return;
+                case Event.NODE_ADDED:
+                case Event.NODE_REMOVED:
+                    String path = event.getPath();
+                    String name = path.substring(path.lastIndexOf('/'));
+                    if (name.indexOf('[') > 0) {
+                        name = name.substring(0, name.indexOf('['));
+                    }
+                    if (name.equals(field.getPath())) {
+                        modelChanged();
+                        return;
+                    }
+                }
+            } catch (RepositoryException ex) {
+                log.error("Error filtering event", ex);
+            }
+        }
     }
 
     @Override

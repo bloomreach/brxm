@@ -97,7 +97,7 @@ public class FacetSearchObserver implements EventListener {
         }
     }
 
-    public void addListener(EventListener listener, String basePath) {
+    public void subscribe(EventListener listener, String basePath) {
         synchronized (upstream) {
             if (upstream.size() == 0) {
                 start();
@@ -109,14 +109,13 @@ public class FacetSearchObserver implements EventListener {
         }
     }
 
-    public void removeListener(EventListener listener) {
+    public void unsubscribe(EventListener listener) {
         synchronized (upstream) {
             Iterator<UpstreamEntry> iter = upstream.iterator();
             while (iter.hasNext()) {
                 UpstreamEntry entry = iter.next();
                 if (entry.listener == listener) {
                     iter.remove();
-                    break;
                 }
             }
             if (upstream.size() == 0) {
