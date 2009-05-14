@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon-reporting</artifactId>
-    <version>2.06.03</version>
+    <version>2.06.03-SNAPSHOT</version>
   </parent>
 
   <name>Reporting frontend addon</name>
@@ -28,21 +28,21 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/test/addon/reporting/frontend</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/test/addon/reporting/frontend</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/test/addon/reporting/frontend</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/reporting/frontend</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/reporting/frontend</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/reporting/frontend</url>
   </scm>
 
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.06.03</version>
+      <version>2.06.03-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.06.03</version>
+      <version>2.06.03-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

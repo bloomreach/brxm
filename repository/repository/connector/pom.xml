@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-repository</artifactId>
-    <version>2.06.03</version>
+    <version>2.06.03-SNAPSHOT</version>
   </parent>
 
   <name>Repository connector</name>
@@ -28,9 +28,9 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/test/repository/connector</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/test/repository/connector</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/test/repository/connector</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/connector</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/connector</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/connector</url>
   </scm>
 
   <dependencies>
@@ -53,7 +53,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.06.03</version>
+      <version>2.06.03-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -83,7 +83,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-tools-testutils</artifactId>
-      <version>2.06.03</version>
+      <version>2.06.03-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
