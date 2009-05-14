@@ -29,6 +29,9 @@ import org.slf4j.LoggerFactory;
  * Code by Maurice Marrink to allow a modal window to render on a non-ajax request.
  */
 public class PersistentModalWindow extends ModalWindow {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PersistentModalWindow.class);
