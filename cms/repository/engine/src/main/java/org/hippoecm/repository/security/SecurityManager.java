@@ -431,7 +431,8 @@ public class SecurityManager {
                 }
             }
         } catch (PathNotFoundException e) {
-            log.warn("Role not found: {}", roleId);
+            // log at info level instead of warn, this occurs a lot during unit tests
+            log.info("Role not found: {}", roleId);
         } catch (RepositoryException e) {
             log.error("Error while looking up role: " + roleId, e);
         }
@@ -477,7 +478,8 @@ public class SecurityManager {
                 }
             }
         } catch (PathNotFoundException e) {
-            log.warn("Role not found: {}", roleId);
+            // log at info level instead of warn, this occurs a lot during unit tests
+            log.info("Role not found: {}", roleId);
         } catch (RepositoryException e) {
             log.error("Error while looking up role: " + roleId, e);
         }
