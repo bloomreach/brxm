@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -47,15 +48,16 @@ import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
+import org.hippoecm.frontend.i18n.SearchingTranslatorPlugin;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standardworkflow.ReorderDialog;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AbstractView;
@@ -158,6 +160,14 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
     }
 
     @Override
+    public String getString(Map<String, String> keys) {
+        Map<String,String> criteria = new TreeMap<String,String>(keys);
+        ITranslateService translator = new SearchingTranslatorPlugin(getPluginContext(), null);
+        criteria.put("hippo:workflow", FolderWorkflow.class.getName());
+        return translator.translate(criteria);
+    }
+
+    @Override
     public void onModelChanged() {
         try {
             IModel model = getModel();
@@ -177,7 +187,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 
                 final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
                 for (final String category : prototypes.keySet()) {
-                    list.add(new WorkflowAction("id", category, new ResourceReference(getClass(), "document-new-16.png")) {
+                    String categoryLabel = new StringResourceModel("add-category", this, null, new Object[] { new StringResourceModel(category, this, null) }).getString();
+                    list.add(new WorkflowAction("id", categoryLabel, new ResourceReference(getClass(), "document-new-16.png")) {
                         public String prototype;
                         public String targetName;
                         @Override
