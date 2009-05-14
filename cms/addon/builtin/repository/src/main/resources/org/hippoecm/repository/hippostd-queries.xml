@@ -19,7 +19,7 @@
     <sv:value>hippo:queryfolder</sv:value>
   </sv:property>
 
-  <sv:node sv:name="New Document">
+  <sv:node sv:name="new-document">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
     </sv:property>
@@ -44,7 +44,7 @@
         <sv:value>en</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>New Document</sv:value>
+        <sv:value>new document</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:workflow" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
@@ -58,7 +58,7 @@
         <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Nieuw Document</sv:value>
+        <sv:value>nieuw document</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:workflow" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
@@ -96,7 +96,7 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippostd:templates</sv:value>
       </sv:property>
-      <sv:node sv:name="New Document">
+      <sv:node sv:name="new-document">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:handle</sv:value>
         </sv:property>
@@ -104,7 +104,7 @@
           <sv:value>hippo:hardhandle</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:paths" sv:type="String"> </sv:property>
-        <sv:node sv:name="New Document">
+        <sv:node sv:name="new-document">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippostd:document</sv:value>
           </sv:property>
@@ -157,7 +157,7 @@
     </sv:node>
   </sv:node>
 
-  <sv:node sv:name="New Folder">
+  <sv:node sv:name="new-folder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
     </sv:property>
@@ -167,7 +167,7 @@
       <sv:value>hippostd:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:statement" sv:type="String">
-      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/New_x0020_Folder/hippostd:templates/node()</sv:value>
+      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-folder/hippostd:templates/node()</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:language" sv:type="String">
       <sv:value>xpath</sv:value>
@@ -195,8 +195,8 @@
         </sv:property>
         <sv:property sv:name="hippo:paths" sv:type="String"> </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
-          <sv:value>New Folder</sv:value>
-          <sv:value>New Document</sv:value>
+          <sv:value>new-folder</sv:value>
+          <sv:value>new-document</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="Unordered folder">
@@ -208,8 +208,8 @@
         </sv:property>
         <sv:property sv:name="hippo:paths" sv:type="String"> </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
-          <sv:value>New Folder</sv:value>
-          <sv:value>New Document</sv:value>
+          <sv:value>new-folder</sv:value>
+          <sv:value>new-document</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -221,7 +221,7 @@
         <sv:value>en</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>New Folder</sv:value>
+        <sv:value>new folder</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:workflow" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
@@ -235,7 +235,7 @@
         <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Nieuwe Map</sv:value>
+        <sv:value>nieuwe map</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:workflow" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
@@ -260,7 +260,7 @@
             <sv:value>en</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Folder</sv:value>
+            <sv:value>folder</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:workflow" sv:type="String">
             <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
@@ -274,7 +274,7 @@
             <sv:value>nl</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Map</sv:value>
+            <sv:value>map</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:workflow" sv:type="String">
             <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
@@ -296,7 +296,7 @@
             <sv:value>en</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Unordered folder</sv:value>
+            <sv:value>unordered folder</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:workflow" sv:type="String">
             <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
@@ -310,7 +310,7 @@
             <sv:value>nl</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Ongeordende map</sv:value>
+            <sv:value>ongeordende map</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:workflow" sv:type="String">
             <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
@@ -336,12 +336,12 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="New Smart Folder">
+  <sv:node sv:name="new-smart-folder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:statement" sv:type="String">
-      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/New_x0020_Smart_x0020_Folder/hippostd:templates/node()</sv:value>
+      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-smart-folder/hippostd:templates/node()</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:language" sv:type="String">
       <sv:value>xpath</sv:value>
@@ -366,7 +366,7 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippostd:templates</sv:value>
       </sv:property>
-      <sv:node sv:name="New Smart Folder">
+      <sv:node sv:name="new-smart-folder">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>nt:unstructured</sv:value>
         </sv:property>
