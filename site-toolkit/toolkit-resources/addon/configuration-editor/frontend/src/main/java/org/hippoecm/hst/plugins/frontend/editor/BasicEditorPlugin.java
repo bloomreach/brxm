@@ -27,7 +27,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -127,7 +127,7 @@ public abstract class BasicEditorPlugin<K extends EditorBean> extends EditorPlug
                     }
                 }
                 setModel(new JcrNodeModel(next));
-                info(getString("node.removed", new Model(name)));
+                info(new StringResourceModel("node.removed", this, null, new Object[] { name }).getString());
             }
         } catch (RepositoryException e) {
             log.error("Failed to remove node, model = " + bean.getModel());
@@ -137,6 +137,5 @@ public abstract class BasicEditorPlugin<K extends EditorBean> extends EditorPlug
     public K getBean() {
         return bean;
     }
-
 
 }
