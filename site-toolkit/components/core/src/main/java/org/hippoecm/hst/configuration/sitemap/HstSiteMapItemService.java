@@ -48,6 +48,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     private String value;
     
+    private int statusCode; 
+    
     private String parameterizedPath;
     
     private int occurences;
@@ -90,6 +92,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         this.id = nodePath.substring(siteMapRootNodePath.length()+1);
         // currently, the value is always the nodename
         this.value = getValueProvider().getName();
+
+        this.statusCode = getValueProvider().getLong(Configuration.SITEMAPITEM_PROPERTY_STATUSCODE).intValue();
         
         if(this.value == null){
             log.error("The 'value' of a SiteMapItem is not allowed to be null: '{}'", nodePath);
@@ -227,6 +231,9 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         return Collections.unmodifiableMap(this.parameters);
     }
 
+    public int getStatusCode() {
+        return this.statusCode;
+    }
 
     public List<String> getRoles() {
         return Collections.unmodifiableList(this.roles);

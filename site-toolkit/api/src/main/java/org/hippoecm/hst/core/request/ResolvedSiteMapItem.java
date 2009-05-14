@@ -70,6 +70,12 @@ public interface ResolvedSiteMapItem {
     HstSiteMapItem getHstSiteMapItem();
     
     /**
+     * 
+     * @return the statusCode specified by <code>{@link HstSiteMapItem#getStatusCode()}</code> 
+     */
+    int getStatusCode();
+    
+    /**
      * @return the <code>HstComponentConfiguration</code> that is found through {@link #getHstSiteMapItem()}
      */
     HstComponentConfiguration getHstComponentConfiguration();

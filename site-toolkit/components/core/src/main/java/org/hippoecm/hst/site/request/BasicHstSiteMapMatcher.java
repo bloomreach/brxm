@@ -233,6 +233,10 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             return null;
         }
         
+        public int getStatusCode(){
+            return 0;
+        }
+        
         public String getPathInfo() {
             return null;
         }

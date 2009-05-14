@@ -68,6 +68,9 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
 
     }
     
+    public int getStatusCode(){
+        return this.hstSiteMapItem.getStatusCode();
+    }
     
     public HstSiteMapItem getHstSiteMapItem() {
         return this.hstSiteMapItem;

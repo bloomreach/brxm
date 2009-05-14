@@ -134,4 +134,11 @@ public interface HstSiteMapItem {
      * @return the <code>HstSiteMap</code> that is the container of this <code>HstSiteMapItem</code>
      */
     HstSiteMap getHstSiteMap();
+    
+    /**
+     * A <code>HstSiteMapItem</code> can specify the status-code that needs to be set on the webpage header. If a status-code
+     * is specified, it can be retrieved through this method. <code>0</code> is return is non is specified. 
+     * @return if a status code is set, return this, otherwise <code>0</code>
+     */
+    int getStatusCode();
 }
