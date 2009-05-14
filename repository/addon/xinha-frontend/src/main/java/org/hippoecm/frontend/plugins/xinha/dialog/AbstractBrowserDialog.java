@@ -103,10 +103,10 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
             dialogRenderer.render(target);
         }
     }
-    
+
     @Override
     public IValueMap getProperties() {
-        return new ValueMap("width=850,height=465");
+        return new ValueMap("width=850,height=445");
     }
 
     @Override
@@ -116,7 +116,7 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
         control.stop();
         modelService.destroy();
     }
-    
+
     protected abstract JcrNodeModel findNewModel(IModel model);
 
 }
