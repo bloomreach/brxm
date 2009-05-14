@@ -429,37 +429,39 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IObserver, 
         if (model != null && !active) {
             active = true;
 
-            JcrNodeModel parentModel = editor.getHandle();
-            if (parentModel.getItemModel().exists()) {
-                try {
-                    Node parent = parentModel.getNode();
-                    if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        // Deselect the currently selected node if it corresponds
-                        // to the editor that is being closed.
-                        JcrNodeModel selectedNodeModel = (JcrNodeModel) modelReference.getModel();
-                        if (selectedNodeModel != null) {
-                            Node selected = selectedNodeModel.getNode();
-                            if (selected != null && selected instanceof HippoNode) {
-                                try {
-                                    Node canonical = ((HippoNode) selected).getCanonicalNode();
-                                    if (canonical != null) {
-                                        if (canonical.isSame(selected) || canonical.getParent().isSame(parent)) {
-                                            modelReference.setModel(null);
+            if (editor.getHandle() != null) {
+                JcrNodeModel parentModel = editor.getHandle();
+                if (parentModel.getItemModel().exists()) {
+                    try {
+                        Node parent = parentModel.getNode();
+                        if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            // Deselect the currently selected node if it corresponds
+                            // to the editor that is being closed.
+                            JcrNodeModel selectedNodeModel = (JcrNodeModel) modelReference.getModel();
+                            if (selectedNodeModel != null) {
+                                Node selected = selectedNodeModel.getNode();
+                                if (selected != null && selected instanceof HippoNode) {
+                                    try {
+                                        Node canonical = ((HippoNode) selected).getCanonicalNode();
+                                        if (canonical != null) {
+                                            if (canonical.isSame(selected) || canonical.getParent().isSame(parent)) {
+                                                modelReference.setModel(null);
+                                            }
                                         }
+                                    } catch (ItemNotFoundException ex) {
+                                        // physical item no longer exists
                                     }
-                                } catch (ItemNotFoundException ex) {
-                                    // physical item no longer exists
                                 }
                             }
                         }
+                    } catch (RepositoryException ex) {
+                        log.error(ex.getMessage());
                     }
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
                 }
+    
+                // cleanup lru list
+                lastReferences.remove(parentModel);
             }
-
-            // cleanup lru list
-            lastReferences.remove(parentModel);
 
             // cleanup internals
             if (editors.containsKey(model)) {
