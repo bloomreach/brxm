@@ -462,7 +462,7 @@
         <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>merkbaar</sv:value>
+        <sv:value>tags toestaan</sv:value>
       </sv:property>
     </sv:node>
 
