@@ -15,7 +15,10 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -31,6 +34,7 @@ public class ContextResolvingValve extends AbstractValve
     public void invoke(ValveContext context) throws ContainerException
     {
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
+        HttpServletResponse servletResponse = (HttpServletResponse) context.getServletResponse();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
         HstContainerURL baseURL = requestContext.getBaseURL();
         
@@ -71,34 +75,53 @@ public class ContextResolvingValve extends AbstractValve
             throw new ContainerNotFoundException("No match for " + pathInfo);
         }
         
-        ((HstRequestContextImpl) requestContext).setResolvedSiteMapItem(resolvedSiteMapItem);
-        
-        HstComponentConfiguration rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
-        
-        if(rootComponentConfig == null) {
-            throw new ContainerNotFoundException("Resolved siteMapItem does not contain a ComponentConfiguration that can be resolved." + pathInfo);
-        }
-        
-        if (log.isDebugEnabled()) {
-            log.debug("Matched root component config for {}: {}", pathInfo, rootComponentConfig.getId());
-        }
-        
-        try {
-            HstComponentWindow rootComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, rootComponentConfig, getComponentFactory());
-            context.setRootComponentWindow(rootComponentWindow);
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to create component windows: {}", e.getMessage(), e);
-            } else if (log.isWarnEnabled()) {
-                log.warn("Failed to create component windows: {}", e.getMessage());
+        if (resolvedSiteMapItem.getStatusCode() > 0) {
+            
+            try {
+                if (log.isDebugEnabled()) {
+                    log.debug("The resolved sitemap item for {} has error status: {}", pathInfo, resolvedSiteMapItem.getStatusCode());
+                }           
+                servletResponse.sendError(resolvedSiteMapItem.getStatusCode());
+            } catch (IOException e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Exception invocation on sendError().", e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Exception invocation on sendError().");
+                }
             }
             
-            throw new ContainerException("Failed to create component window for the configuration: " + 
-                    (rootComponentConfig != null ? rootComponentConfig.getId() : "rootComponentConfig is null."), e);
+        } else {
+            
+            ((HstRequestContextImpl) requestContext).setResolvedSiteMapItem(resolvedSiteMapItem);
+            
+            HstComponentConfiguration rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
+            
+            if(rootComponentConfig == null) {
+                throw new ContainerNotFoundException("Resolved siteMapItem does not contain a ComponentConfiguration that can be resolved." + pathInfo);
+            }
+            
+            if (log.isDebugEnabled()) {
+                log.debug("Matched root component config for {}: {}", pathInfo, rootComponentConfig.getId());
+            }
+            
+            try {
+                HstComponentWindow rootComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, rootComponentConfig, getComponentFactory());
+                context.setRootComponentWindow(rootComponentWindow);
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to create component windows: {}", e.getMessage(), e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Failed to create component windows: {}", e.getMessage());
+                }
+                
+                throw new ContainerException("Failed to create component window for the configuration: " + 
+                        (rootComponentConfig != null ? rootComponentConfig.getId() : "rootComponentConfig is null."), e);
+            }
+            
+            // continue
+            context.invokeNext();
+            
         }
-        
-        // continue
-        context.invokeNext();
     }
     
 }
