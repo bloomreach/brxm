@@ -392,7 +392,7 @@ color: black
 
 .hippo-toolbar-menu-item-button-icon{display: block; float: left; margin-right: 11px; }
 
-.hippo-toolbar-section li.icon-16{padding-left: 0px; background-position: 3px 4px}
+.hippo-toolbar-section li.icon-16{padding-left: 0px; background-position: 3px 4px; width: 118px;}
 .hippo-toolbar-section span.icon-16{display: block; height: 16px; width: 16px}
 
 .hippo-toolbar-section li.icon-16 div{position: relative}
