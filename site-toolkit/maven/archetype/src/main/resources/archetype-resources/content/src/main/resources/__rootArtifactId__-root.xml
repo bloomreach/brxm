@@ -17,7 +17,7 @@
     <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
   </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
-    <sv:value>New Folder</sv:value>
-    <sv:value>New Document</sv:value>
+    <sv:value>new-folder</sv:value>
+    <sv:value>new-document</sv:value>
   </sv:property>
 </sv:node>

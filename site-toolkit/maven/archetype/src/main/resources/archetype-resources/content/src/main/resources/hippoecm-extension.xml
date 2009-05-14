@@ -189,7 +189,7 @@
       <sv:value>${rootArtifactId}-root.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/content</sv:value>
+      <sv:value>/content/documents</sv:value>
     </sv:property>
   </sv:node>
 
@@ -204,7 +204,7 @@
       <sv:value>${rootArtifactId}-common.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-     <sv:value>/content/${rootArtifactId.replace($hyphen,$empty)}</sv:value>
+     <sv:value>/content/documents/${rootArtifactId.replace($hyphen,$empty)}</sv:value>
     </sv:property>
    </sv:node>
 

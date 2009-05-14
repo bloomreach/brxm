@@ -19,7 +19,7 @@
 <sv:node  xmlns:sv="http://www.jcp.org/jcr/sv/1.0" 
     sv:name="content">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippostd:fixeddirectory</sv:value>
+        <sv:value>hippostd:directory</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
@@ -28,9 +28,25 @@
         <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>New Document</sv:value>
-        <sv:value>New Folder</sv:value>
+        <sv:value>new-document</sv:value>
+        <sv:value>new-folder</sv:value>
     </sv:property>
+    <sv:node sv:name="documents" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippostd:directory</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+        </sv:property>
+        <sv:property sv:name="hippostd:foldertype" sv:type="String">
+            <sv:value>new-folder</sv:value>
+        </sv:property>
+    </sv:node>
     <sv:node sv:name="gallery">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippogallery:stdImageGallery</sv:value>

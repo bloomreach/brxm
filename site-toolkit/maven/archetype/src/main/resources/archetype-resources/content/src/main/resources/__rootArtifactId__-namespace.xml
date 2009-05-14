@@ -150,17 +150,18 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
         </sv:property>
-        <sv:property sv:name="frontend:overrides" sv:type="String">
+        <sv:property sv:name="frontend:services" sv:type="String">
           <sv:value>wicket.id</sv:value>
-          <sv:value>wicket.dialog</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:references" sv:type="String">
           <sv:value>engine</sv:value>
+          <sv:value>wicket.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:properties" sv:type="String">
           <sv:value>mode</sv:value>
         </sv:property>
         <sv:property sv:name="mode" sv:type="String">
           <sv:value>edit</sv:value>
-        </sv:property>
-        <sv:property sv:name="wicket.model" sv:type="String">
-          <sv:value>${symbol_dollar}{cluster.id}.model</sv:value>
         </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">

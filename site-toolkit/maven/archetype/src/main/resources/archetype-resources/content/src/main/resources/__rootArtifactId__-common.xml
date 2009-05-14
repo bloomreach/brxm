@@ -22,8 +22,8 @@
   </sv:property>
   <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
-    <sv:value>New Folder</sv:value>
-    <sv:value>New Document</sv:value>
+    <sv:value>new-folder</sv:value>
+    <sv:value>new-document</sv:value>
   </sv:property>
   <sv:node sv:name="homepage">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
