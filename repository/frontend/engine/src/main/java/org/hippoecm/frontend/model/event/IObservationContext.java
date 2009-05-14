@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.model.event;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.Page;
 
 public interface IObservationContext extends IClusterable {
     final static String SVN_ID = "$Id$";
@@ -43,6 +42,4 @@ public interface IObservationContext extends IClusterable {
      * @param observer
      */
     void unregisterObserver(IObserver observer);
-
-    Page getPage();
 }

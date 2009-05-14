@@ -133,6 +133,9 @@ public class ObservableRegistry implements IPlugin {
     void removeObserver(IObserver service) {
         IObservable observable = service.getObservable();
         ObservationContext obContext = getContext(observable);
+        if (obContext == null) {
+            return;
+        }
         obContext.removeObserver(service);
         if (!obContext.hasObservers()) {
             obContext.observable.stopObservation();

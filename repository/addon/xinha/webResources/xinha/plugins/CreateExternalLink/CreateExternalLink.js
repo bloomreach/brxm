@@ -127,7 +127,7 @@ CreateExternalLink.prototype.prepareDialog = function()
           self.dialog._values.f_target = v;
         }
         self.apply();
-        self.editor.plugins.AutoSave.instance.saveSynchronous();
+        self.editor.plugins.AutoSave.instance.save();
     };
     this.dialogReady = true;
 };

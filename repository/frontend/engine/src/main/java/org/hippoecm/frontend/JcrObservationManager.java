@@ -193,14 +193,16 @@ public class JcrObservationManager implements ObservationManager {
 
     private class JcrListener extends WeakReference<EventListener> implements EventListener {
         String path;
-        String[] nodeTypes;
-        Set<String> uuids;
+        int eventTypes;
         boolean isDeep;
-        boolean isvirtual;
+        Set<String> uuids;
+        String[] nodeTypes;
+        boolean noLocal;
 
+        boolean isvirtual;
         Map<String, NodeCache> pending;
         List<Event> events;
-        ObservationManager obMgr;
+        Session session;
         FacetSearchObserver fso;
         WeakReference<UserSession> sessionRef;
 
@@ -226,6 +228,7 @@ public class JcrObservationManager implements ObservationManager {
             }
 
             this.path = absPath;
+            this.eventTypes = eventTypes;
             this.isDeep = isDeep;
             if (uuid != null) {
                 this.uuids = new HashSet<String>();
@@ -233,43 +236,88 @@ public class JcrObservationManager implements ObservationManager {
                     uuids.add(id);
                 }
             }
-
             this.nodeTypes = nodeTypes;
+            this.noLocal = noLocal;
+
             this.isvirtual = isVirtual(getRoot());
 
-            Session session = getSession().getJcrSession();
+            session = getSession().getJcrSession();
             pending = new HashMap<String, NodeCache>();
 
             if (session != null) {
-                obMgr = session.getWorkspace().getObservationManager();
-                obMgr.addEventListener(this, eventTypes, absPath, isDeep, uuid, nodeTypes, noLocal);
-
-                // listen to facetsearches
-                if (listenToFacetSearch()) {
-                    fso = getSession().getJcrSessionModel().getFacetSearchObserver();
-                    fso.addListener(this, absPath);
-                }
+                subscribe();
             } else {
                 log.error("No jcr session bound to wicket session");
             }
         }
 
         void dispose() {
-            if (fso != null) {
-                fso.removeListener(this);
-                fso = null;
-            }
-            if (obMgr != null) {
+            if (session != null) {
                 try {
-                    obMgr.removeEventListener(this);
+                    unsubscribe();
                 } catch (RepositoryException ex) {
                     log.error("Unable to unregister event listener, " + ex.getMessage());
                 }
-                obMgr = null;
+                session = null;
             }
             events.clear();
-            nodeTypes = null;
             pending = null;
+        }
+
+        void subscribe() throws RepositoryException {
+            ObservationManager obMgr = session.getWorkspace().getObservationManager();
+            String[] uuid = null;
+            if (uuids != null) {
+                uuid = uuids.toArray(new String[uuids.size()]);
+            }
+            obMgr.addEventListener(this, eventTypes, path, isDeep, uuid, nodeTypes, noLocal);
+
+            fso = getSession().getJcrSessionModel().getFacetSearchObserver();
+
+            // subscribe when listening to deep tree structures;
+            // there will/might be facetsearches in there.
+            if (isDeep && uuids == null) {
+                if (nodeTypes == null) {
+                    fso.subscribe(this, path);
+                } else {
+                    for (String type : nodeTypes) {
+                        if (type.equals(HippoNodeType.NT_DOCUMENT)) {
+                            fso.subscribe(this, path);
+                        }
+                    }
+                }
+                return;
+            }
+
+            // subscribe when target has a facetsearch as an ancestor
+            try {
+                for (Node node = getRoot(); node.getDepth() > 0;) {
+                    if (node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
+                        fso.subscribe(this, node.getPath());
+                        break;
+                    }
+                    node = node.getParent();
+                }
+
+                for (Node node : getReferencedNodes()) {
+                    if (node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
+                        fso.subscribe(this, node.getPath());
+                    }
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        }
+
+        void unsubscribe() throws RepositoryException {
+            fso.unsubscribe(this);
+            fso = null;
+
+            if (session.isLive()) {
+                ObservationManager obMgr = session.getWorkspace().getObservationManager();
+                obMgr.removeEventListener(this);
+            }
+            session = null;
         }
 
         UserSession getSession() {
@@ -302,41 +350,6 @@ public class JcrObservationManager implements ObservationManager {
             }
         }
 
-        boolean listenToFacetSearch() {
-            // subscribe when listening to deep tree structures;
-            // there will/might be facetsearches in there.
-            if (isDeep) {
-                if (nodeTypes == null) {
-                    return true;
-                }
-                for (String type : nodeTypes) {
-                    if (type.equals(HippoNodeType.NT_DOCUMENT)) {
-                        return true;
-                    }
-                }
-            }
-
-            // subscribe when target has a facetsearch as an ancestor
-            try {
-                Node node = getRoot();
-                while (node.getDepth() > 0) {
-                    if (node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
-                        return true;
-                    }
-                    node = node.getParent();
-                }
-
-                for (Node item : getReferencedNodes()) {
-                    if (item.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
-                        return true;
-                    }
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-            return false;
-        }
-
         boolean isVirtual(Node node) throws RepositoryException {
             if (node instanceof HippoNode) {
                 try {
@@ -367,7 +380,7 @@ public class JcrObservationManager implements ObservationManager {
             }
             return false;
         }
-        
+
         void processPending(NodeIterator iter, List<Node> nodes) throws RepositoryException {
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
@@ -425,9 +438,26 @@ public class JcrObservationManager implements ObservationManager {
 
         synchronized void process() {
             // listeners can be invoked after they have been removed
-            if (obMgr == null) {
+            if (session == null) {
                 log.debug("Listener " + this + " is no longer registerd");
                 return;
+            } else if (!session.isLive()) {
+                events.clear();
+                try {
+                    unsubscribe();
+                } catch (RepositoryException ex) {
+                    log.debug("Failed to unsubscribe");
+                }
+                session = getSession().getJcrSession();
+                if (session != null) {
+                    try {
+                        subscribe();
+                    } catch (RepositoryException x) {
+                        log.error("Failed to re-subscribe");
+                    }
+                } else {
+                    return;
+                }
             }
 
             // process pending changes
