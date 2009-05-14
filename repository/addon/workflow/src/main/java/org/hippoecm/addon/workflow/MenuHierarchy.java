@@ -54,7 +54,7 @@ class MenuHierarchy {
                     continue;
                 }
                 if(action.getId().equals("info")) {
-                    put(action);
+                    // processed in second round
                 } else if(action.getId().equals("edit")) {
                     put(action);
                 } else if(action.getId().equals("delete")) {
@@ -86,6 +86,18 @@ class MenuHierarchy {
                 put(action);
             }
         }
+        if(submenus.containsKey("default")) {
+            MenuHierarchy submenu = submenus.get("default");
+            put(new ActionDescription("spacer"));
+            for(ActionDescription action : submenu.items) {
+                if(!action.isVisible()) {
+                    continue;
+                }
+                if(action.getId().equals("info")) {
+                    put(action);
+                }
+            }
+        }
     }
 
     public void flatten() {
@@ -106,16 +118,33 @@ class MenuHierarchy {
         List<Component> list = new LinkedList<Component>();
         if (context instanceof MenuBar) {
             for (ActionDescription item : items) {
-                list.add(new MenuAction("item", item));
+                if (!(item.getId().equals("info") || item.getId().equals("spacer"))) {
+                    list.add(new MenuAction("item", item));
+                }
             }
-             for (Map.Entry<String, MenuHierarchy> submenu : submenus.entrySet()) {
+            for (Map.Entry<String, MenuHierarchy> submenu : submenus.entrySet()) {
                 list.add(new MenuButton("item", submenu.getKey(), submenu.getValue()));
             }
-       } else {
+            for (ActionDescription item : items) {
+                if (item.getId().equals("info")) {
+                    list.add(new MenuLabel("item", item));
+                } else if(item.getId().equals("spacer")) {
+                    list.add(new MenuSpacer("item"));
+                }
+            }
+        } else {
             for (ActionDescription item : items) {
                 list.add(new MenuItem("item", item));
             }
         }
         return list;
+    }
+
+    int size(MenuComponent context) {
+        if (context instanceof MenuBar) {
+            return items.size() + submenus.size();
+        } else {
+            return items.size();
+        }
     }
 }
