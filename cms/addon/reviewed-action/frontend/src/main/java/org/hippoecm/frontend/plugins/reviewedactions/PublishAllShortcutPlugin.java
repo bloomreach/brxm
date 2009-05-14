@@ -32,6 +32,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -97,13 +98,20 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
         private IPluginConfig config;
 
         public Dialog(IPluginConfig config) {
-            setOkLabel(new Model("Execute"));
             this.config = config;
 
             if (config.containsKey("mode")) {
                 mode = config.getString("mode", MODE_PUBLISH);
             }
 
+            if (mode.equals(MODE_PUBLISH)) {
+                setOkLabel(new ResourceModel("button-publish"));
+            } else if (mode.equals(MODE_DEPUBLISH)) {
+                setOkLabel(new ResourceModel("button-depublish"));
+            } else {
+                setOkLabel(new ResourceModel("button-execute"));
+            }
+            
             try {
                 Session session = ((UserSession) getSession()).getJcrSession();
                 QueryManager qMgr = session.getWorkspace().getQueryManager();
