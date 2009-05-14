@@ -36,11 +36,20 @@
       <artifactId>hippo-ecm-package-war</artifactId>
       <type>war</type>
     </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon.toolkit-cnd</groupId>
+      <artifactId>hst-addon-cnd_7_0</artifactId>
+      <type>jar</type>
+    </dependency>
+    
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
       <artifactId>hst-addon-repository</artifactId>
       <type>jar</type>
-    </dependency><!--
+    </dependency>
+    
+    <!--
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
       <artifactId>hst-addon-configuration-editor-frontend</artifactId>
@@ -51,7 +60,9 @@
       <artifactId>hst-addon-configuration-editor-repository</artifactId>
       <type>jar</type>
     </dependency>
-    --><dependency>
+    -->
+    
+    <dependency>
       <groupId>${groupId}</groupId>
       <artifactId>${rootArtifactId}-content</artifactId>
       <version>${version}</version>

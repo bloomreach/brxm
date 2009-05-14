@@ -115,12 +115,21 @@
       <artifactId>hippo-ecm-repository-engine</artifactId>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon.toolkit-cnd</groupId>
+      <artifactId>hst-addon-cnd_7_0</artifactId>
+      <version>${pom.version}</version>
+      <scope>test</scope>   
+    </dependency>
+    
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
       <artifactId>hst-addon-repository</artifactId>
       <version>${pom.version}</version>
       <scope>test</scope>      
     </dependency>
+    
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
       <artifactId>hst-addon-testcontents</artifactId>
@@ -142,12 +151,12 @@
       <testResource>
         <directory>src/test/resources</directory>
       </testResource>
-      <testResource>
+      <!--<testResource>
         <directory>..</directory>
         <includes>
           <include>*.properties</include>
         </includes>
-      </testResource>
+      </testResource>-->
     </testResources>
   </build>
 
