@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
+import java.util.Iterator;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,6 +31,10 @@ import org.hippoecm.frontend.editor.model.AbstractProvider;
 import org.hippoecm.frontend.editor.model.ValueTemplateProvider;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -46,10 +52,14 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
 
     static final Logger log = LoggerFactory.getLogger(PropertyFieldPlugin.class);
 
+    private JcrNodeModel nodeModel;
+    private JcrPropertyModel propertyModel;
+    private IObserver propertyObserver;
+
     public PropertyFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        updateProvider();
+        nodeModel = (JcrNodeModel) getModel();
 
         // use caption for backwards compatibility; i18n should use field name
         IModel nameModel;
@@ -61,20 +71,52 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
         add(new Label("name", nameModel));
 
         Label required = new Label("required", "*");
-        if (field != null && !field.isMandatory()) {
-            required.setVisible(false);
+        if (field != null) {
+            subscribe();
+            if (!field.isMandatory()) {
+                required.setVisible(false);
+            }
         }
         add(required);
 
         add(createAddLink());
+
+        updateProvider();
+    }
+
+    protected void subscribe() {
+        if (!field.getPath().equals("*")) {
+            JcrItemModel itemModel = new JcrItemModel(((JcrNodeModel) getModel()).getItemModel().getPath() + "/"
+                    + field.getPath());
+            propertyModel = new JcrPropertyModel(itemModel);
+            getPluginContext().registerService(propertyObserver = new IObserver() {
+                private static final long serialVersionUID = 1L;
+
+                public IObservable getObservable() {
+                    return propertyModel;
+                }
+
+                public void onEvent(Iterator<? extends IEvent> events) {
+                    updateProvider();
+                    redraw();
+                }
+
+            }, IObserver.class.getName());
+        }
+    }
+
+    protected void unsubscribe() {
+        if (!field.getPath().equals("*")) {
+            getPluginContext().unregisterService(propertyObserver, IObserver.class.getName());
+            propertyModel = null;
+        }
     }
 
     @Override
     protected AbstractProvider<JcrPropertyValueModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
             JcrNodeModel nodeModel) {
         if (!descriptor.getPath().equals("*")) {
-            JcrItemModel itemModel = new JcrItemModel(nodeModel.getItemModel().getPath() + "/" + descriptor.getPath());
-            ValueTemplateProvider provider = new ValueTemplateProvider(descriptor, type, itemModel);
+            ValueTemplateProvider provider = new ValueTemplateProvider(descriptor, type, propertyModel.getItemModel());
             if (ITemplateEngine.EDIT_MODE.equals(mode) && !descriptor.isMultiple() && provider.size() == 0) {
                 provider.addNew();
             }
@@ -85,8 +127,24 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
 
     @Override
     public void onModelChanged() {
-        replace(createAddLink());
-        redraw();
+        // filter out changes in the node model itself.
+        // The property model observation takes care of that.
+        if (!nodeModel.equals(getModel())) {
+            if (field != null) {
+                unsubscribe();
+                subscribe();
+            }
+            replace(createAddLink());
+            redraw();
+        }
+    }
+
+    @Override
+    protected void onDetach() {
+        if (propertyModel != null) {
+            propertyModel.detach();
+        }
+        super.onDetach();
     }
 
     @Override

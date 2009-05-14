@@ -74,8 +74,10 @@ public class EditorPlugin extends RenderPlugin implements IValidateService {
 
     @Override
     public void onModelChanged() {
-        form.destroy();
-        replace(form = newForm());
+        if (!form.getModel().equals(getModel())) {
+            form.destroy();
+            replace(form = newForm());
+        }
     }
 
     @Override

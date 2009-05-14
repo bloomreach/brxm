@@ -72,6 +72,23 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         fieldName = config.getString(FieldPlugin.FIELD);
         if (fieldName == null) {
             log.error("No field was specified in the configuration");
+        } else {
+            ITemplateEngine engine = getTemplateEngine();
+            if (engine != null) {
+                ITypeDescriptor type;
+                try {
+                    if (typeName == null) {
+                        type = engine.getType(getModel());
+                    } else {
+                        type = engine.getType(typeName);
+                    }
+                    field = type.getField(fieldName);
+                } catch (TemplateEngineException tee) {
+                    log.error("Could not resolve field", tee);
+                }
+            } else {
+                log.error("No template engine available");
+            }
         }
     }
 
@@ -91,27 +108,14 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
 
     protected void updateProvider() {
         ITemplateEngine engine = getTemplateEngine();
-        if (engine != null) {
+        if (engine != null && field != null) {
             P model = (P) getModel();
             try {
-                field = null;
-
-                ITypeDescriptor type;
-                if (typeName == null) {
-                    type = engine.getType(model);
-                } else {
-                    type = engine.getType(typeName);
-                }
-                field = type.getField(fieldName);
-                if (field != null) {
-                    ITypeDescriptor subType = engine.getType(field.getType());
-                    provider = newProvider(field, subType, model);
-                    if (provider != null) {
-                        controller.stop();
-                        controller.start(provider);
-                    }
-                } else {
-                    log.warn("Unknown field {} in type {}", fieldName, type.getName());
+                ITypeDescriptor subType = engine.getType(field.getType());
+                provider = newProvider(field, subType, model);
+                if (provider != null) {
+                    controller.stop();
+                    controller.start(provider);
                 }
             } catch (TemplateEngineException ex) {
                 log.warn("Unable to obtain type descriptor for " + model, ex);

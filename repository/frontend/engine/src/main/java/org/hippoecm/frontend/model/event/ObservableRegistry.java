@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.model.event;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.Page;
@@ -40,11 +39,13 @@ public class ObservableRegistry implements IPlugin {
         private static final long serialVersionUID = 1L;
 
         List<IObserver> observers;
+        List<IObserver> registered;
         IObservable observable;
 
         ObservationContext(IObservable observable) {
             this.observable = observable;
             this.observers = new ArrayList<IObserver>();
+            this.registered = new ArrayList<IObserver>();
             observable.setObservationContext(this);
         }
 
@@ -63,6 +64,12 @@ public class ObservableRegistry implements IPlugin {
             return !observers.isEmpty();
         }
 
+        void dispose() {
+            for (IObserver observer : registered) {
+                removeObserver(observer);
+            }
+        }
+
         public void notifyObservers(EventCollection<? extends IEvent> events) {
             for (IObserver observer : new ArrayList<IObserver>(observers)) {
                 if (observers.contains(observer)) {
@@ -74,6 +81,16 @@ public class ObservableRegistry implements IPlugin {
 
         public Page getPage() {
             return pluginContext.getService(Home.class.getName(), Page.class);
+        }
+
+        public void registerObserver(IObserver observer) {
+            ObservableRegistry.this.addObserver(observer);
+            registered.add(observer);
+        }
+
+        public void unregisterObserver(IObserver observer) {
+            registered.remove(observer);
+            ObservableRegistry.this.removeObserver(observer);
         }
 
     }
@@ -91,30 +108,39 @@ public class ObservableRegistry implements IPlugin {
 
             @Override
             protected void onServiceAdded(IObserver service, String name) {
-                IObservable observable = service.getObservable();
-                ObservationContext obContext = getContext(observable);
-                if (obContext == null) {
-                    obContext = new ObservationContext(observable);
-                    obContext.observable.startObservation();
-                    addContext(obContext);
-                }
-                obContext.addObserver(service);
+                addObserver(service);
             }
 
             @Override
             protected void onRemoveService(IObserver service, String name) {
-                IObservable observable = service.getObservable();
-                ObservationContext obContext = getContext(observable);
-                obContext.removeObserver(service);
-                if (!obContext.hasObservers()) {
-                    obContext.observable.stopObservation();
-                    removeContext(obContext);
-                }
+                removeObserver(service);
             }
 
         }, IObserver.class.getName());
     }
 
+    void addObserver(IObserver service) {
+        IObservable observable = service.getObservable();
+        ObservationContext obContext = getContext(observable);
+        if (obContext == null) {
+            obContext = new ObservationContext(observable);
+            obContext.observable.startObservation();
+            contexts.add(obContext);
+        }
+        obContext.addObserver(service);
+    }
+    
+    void removeObserver(IObserver service) {
+        IObservable observable = service.getObservable();
+        ObservationContext obContext = getContext(observable);
+        obContext.removeObserver(service);
+        if (!obContext.hasObservers()) {
+            obContext.observable.stopObservation();
+            contexts.remove(obContext);
+            obContext.dispose();
+        }
+    }
+    
     ObservationContext getContext(IObservable observable) {
         for (ObservationContext context : contexts) {
             if (context.observable.equals(observable)) {
@@ -122,14 +148,6 @@ public class ObservableRegistry implements IPlugin {
             }
         }
         return null;
-    }
-
-    void addContext(ObservationContext context) {
-        contexts.add(context);
-    }
-
-    void removeContext(ObservationContext context) {
-        contexts.remove(context);
     }
 
     public void startObservation() {

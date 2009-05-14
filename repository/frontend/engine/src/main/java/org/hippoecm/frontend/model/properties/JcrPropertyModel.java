@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
+import javax.jcr.observation.Event;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -35,16 +36,36 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.ItemModelWrapper;
 import org.hippoecm.frontend.model.JcrItemModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.EventCollection;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.event.JcrEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider {
+public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider, IObservable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(ItemModelWrapper.class);
+
+    private class IndexedValue {
+        protected Value value;
+        protected int index;
+
+        IndexedValue(Value value, int index) {
+            this.index = index;
+            this.value = value;
+        }
+    }
+
+    private IObservationContext obContext;
+    private IObserver observer;
 
     //  Constructor
     public JcrPropertyModel(JcrItemModel model) {
@@ -160,14 +181,53 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
         return result;
     }
 
-    private class IndexedValue {
-        protected Value value;
-        protected int index;
+    public void setObservationContext(IObservationContext context) {
+        this.obContext = context;
+    }
 
-        IndexedValue(Value value, int index) {
-            this.index = index;
-            this.value = value;
-        }
+    public void startObservation() {
+        observer = new IObserver() {
+            private static final long serialVersionUID = 1L;
+
+            public IObservable getObservable() {
+                return new JcrNodeModel(getItemModel().getParentModel());
+            }
+
+            public void onEvent(Iterator<? extends IEvent> events) {
+                EventCollection<JcrEvent> filtered = new EventCollection<JcrEvent>();
+                while (events.hasNext()) {
+                    JcrEvent jcrEvent = (JcrEvent) events.next();
+                    Event event = jcrEvent.getEvent();
+                    try {
+                        switch (event.getType()) {
+                        case 0:
+                            filtered.add(jcrEvent);
+                            break;
+                        case Event.PROPERTY_ADDED:
+                        case Event.PROPERTY_REMOVED:
+                        case Event.PROPERTY_CHANGED:
+                            String path = event.getPath();
+                            JcrItemModel eventModel = new JcrItemModel(path);
+                            if (eventModel.equals(itemModel)) {
+                                filtered.add(jcrEvent);
+                            }
+                        }
+                    } catch (RepositoryException ex) {
+                        log.error("Error filtering event", ex);
+                    }
+                }
+                if (filtered.size() > 0) {
+                    obContext.notifyObservers(filtered);
+                }
+            }
+
+        };
+        obContext.registerObserver(observer);
+    }
+
+    public void stopObservation() {
+        obContext.unregisterObserver(observer);
+        observer = null;
     }
 
     // override Object
