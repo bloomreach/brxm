@@ -272,6 +272,51 @@ public class ObservationTest extends TestCase {
         session.save();
     }
 
+    class TreeObservable implements IObservable {
+        private static final long serialVersionUID = 1L;
+
+        private IObservationContext observationContext;
+        private JcrEventListener listener;
+
+        public void setObservationContext(IObservationContext context) {
+            this.observationContext = context;
+        }
+
+        public void startObservation() {
+            listener = new JcrEventListener(observationContext, Event.NODE_ADDED | Event.NODE_REMOVED, "/", true, null,
+                    null);
+            listener.start();
+        }
+
+        public void stopObservation() {
+            if (listener != null) {
+                listener.stop();
+                listener = null;
+            }
+        }
+
+    }
+
+    @Test
+    public void testInSessionEventTypes() throws Exception {
+        Node root = session.getRootNode();
+        Node testNode = root.addNode("test", "nt:unstructured");
+        session.save();
+
+        List<IEvent> events = new LinkedList<IEvent>();
+        IObserver observer = new TestObserver(new TreeObservable(), events);
+        context.registerService(observer, IObserver.class.getName());
+
+        Node newNode = testNode.addNode("new", "nt:unstructured");
+        home.processEvents();
+        assertEquals(1, events.size());
+        JcrEvent jcrEvent = (JcrEvent) events.get(0);
+        Event event = jcrEvent.getEvent();
+        assertEquals(0, event.getType());
+        assertEquals(testNode.getPath(), event.getPath());
+
+    }
+
     @Test
     public void testInterSessionCommunication() throws Exception {
         Node root = session.getRootNode();
@@ -345,7 +390,7 @@ public class ObservationTest extends TestCase {
 
             public void unregisterObserver(IObserver observer) {
                 // TODO Auto-generated method stub
-                
+
             }
 
         }, Event.NODE_ADDED, "/", false, null, null);
@@ -412,12 +457,12 @@ public class ObservationTest extends TestCase {
 
             public void registerObserver(IObserver observer) {
                 // TODO Auto-generated method stub
-                
+
             }
 
             public void unregisterObserver(IObserver observer) {
                 // TODO Auto-generated method stub
-                
+
             }
 
         }, Event.NODE_ADDED | Event.NODE_REMOVED, "/test/sink", true, null, null);
