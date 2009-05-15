@@ -132,26 +132,20 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         }
 
         protected void execute(WorkflowDescriptorModel<T> model) throws Exception {
-            try {
-                WorkflowDescriptor descriptor = (WorkflowDescriptor) model.getObject();
-                WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
-                javax.jcr.Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
-                session.save();
-                session.refresh(true);
-                Workflow workflow = manager.getWorkflow(descriptor);
-                String message = execute((T) workflow);
-                if (message != null) {
-                    throw new WorkflowException(message);
-                }
-                session.refresh(false);
-            } finally {
-                /*
-                IJcrService jcrService = plugin.getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
-                if (jcrService != null) {
-                    jcrService.flush(handle);
-                }
-                */
+            WorkflowDescriptor descriptor = (WorkflowDescriptor) model.getObject();
+            WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
+            javax.jcr.Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+            session.save();
+            session.refresh(true);
+            Workflow workflow = manager.getWorkflow(descriptor);
+            String message = execute((T) workflow);
+            if (message != null) {
+                throw new WorkflowException(message);
             }
+
+            // workflow may have closed existing session
+            session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+            session.refresh(false);
         }
 
         protected String execute(T workflow) throws Exception {
