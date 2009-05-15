@@ -242,7 +242,7 @@
       <sv:value>hst-editor-views</sv:value>
     </sv:property>
     <sv:property sv:name="editor.root" sv:type="String">
-      <sv:value>/testpreview</sv:value>
+      <sv:value>/preview</sv:value>
     </sv:property>
     <sv:property sv:name="cluster.name" sv:type="String">
       <sv:value>hst-editor-navigator</sv:value>
