@@ -69,14 +69,11 @@ public abstract class JcrTree extends Tree {
             Node node = ((IJcrTreeNode) treeNode).getNodeModel().getNode();
             if (node != null) {
                 try {
+                    result = node.getName();
                     if ((node instanceof HippoNode) && !node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
-                        HippoNode hippoNode = (HippoNode) node;
-                        result = hippoNode.getDisplayName();
                         if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                             result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
                         }
-                    } else {
-                        result = node.getName();
                     }
                 } catch (RepositoryException e) {
                     result = e.getMessage();

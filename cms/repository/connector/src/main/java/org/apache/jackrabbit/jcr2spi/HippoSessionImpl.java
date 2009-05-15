@@ -15,89 +15,32 @@
  */
 package org.apache.jackrabbit.jcr2spi;
 
-import org.apache.commons.collections.map.ReferenceMap;
-import org.apache.jackrabbit.commons.AbstractSession;
-import org.apache.jackrabbit.jcr2spi.config.CacheBehaviour;
-import org.apache.jackrabbit.jcr2spi.config.RepositoryConfig;
-import org.apache.jackrabbit.jcr2spi.hierarchy.HierarchyEntry;
-import org.apache.jackrabbit.jcr2spi.hierarchy.HierarchyManager;
-import org.apache.jackrabbit.jcr2spi.hierarchy.NodeEntry;
-import org.apache.jackrabbit.jcr2spi.lock.LockManager;
-import org.apache.jackrabbit.jcr2spi.nodetype.EffectiveNodeTypeProvider;
-import org.apache.jackrabbit.jcr2spi.nodetype.ItemDefinitionProvider;
-import org.apache.jackrabbit.jcr2spi.nodetype.NodeTypeManagerImpl;
-import org.apache.jackrabbit.jcr2spi.operation.Move;
-import org.apache.jackrabbit.jcr2spi.operation.Operation;
-import org.apache.jackrabbit.jcr2spi.security.AccessManager;
-import org.apache.jackrabbit.jcr2spi.state.ItemStateFactory;
-import org.apache.jackrabbit.jcr2spi.state.ItemStateValidator;
-import org.apache.jackrabbit.jcr2spi.state.NodeState;
-import org.apache.jackrabbit.jcr2spi.state.PropertyState;
-import org.apache.jackrabbit.jcr2spi.state.SessionItemStateManager;
-import org.apache.jackrabbit.jcr2spi.state.HippoSessionItemStateManager;
-import org.apache.jackrabbit.jcr2spi.state.Status;
-import org.apache.jackrabbit.jcr2spi.state.UpdatableItemStateManager;
-import org.apache.jackrabbit.jcr2spi.version.VersionManager;
-import org.apache.jackrabbit.jcr2spi.xml.ImportHandler;
-import org.apache.jackrabbit.jcr2spi.xml.Importer;
-import org.apache.jackrabbit.jcr2spi.xml.SessionImporter;
-import org.apache.jackrabbit.spi.IdFactory;
-import org.apache.jackrabbit.spi.NameFactory;
-import org.apache.jackrabbit.spi.NodeId;
-import org.apache.jackrabbit.spi.Path;
-import org.apache.jackrabbit.spi.PathFactory;
-import org.apache.jackrabbit.spi.QValueFactory;
-import org.apache.jackrabbit.spi.SessionInfo;
-import org.apache.jackrabbit.spi.XASessionInfo;
-import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
-import org.apache.jackrabbit.spi.commons.conversion.NameException;
-import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
-import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
-import org.apache.jackrabbit.spi.commons.conversion.PathResolver;
-import org.apache.jackrabbit.spi.commons.name.NameConstants;
-import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
-import org.apache.jackrabbit.spi.commons.value.ValueFactoryQImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
-import javax.jcr.Credentials;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.InvalidSerializedDataException;
-import javax.jcr.Item;
-import javax.jcr.ItemExistsException;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.ValueFactory;
-import javax.jcr.Workspace;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.Version;
-import javax.jcr.version.VersionException;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.AccessControlException;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+
+import org.apache.jackrabbit.jcr2spi.config.RepositoryConfig;
+import org.apache.jackrabbit.jcr2spi.hierarchy.HierarchyManager;
+import org.apache.jackrabbit.jcr2spi.state.HippoSessionItemStateManager;
 import org.apache.jackrabbit.jcr2spi.state.ItemState;
+import org.apache.jackrabbit.jcr2spi.state.ItemStateFactory;
+import org.apache.jackrabbit.jcr2spi.state.NodeState;
+import org.apache.jackrabbit.jcr2spi.state.SessionItemStateManager;
+import org.apache.jackrabbit.jcr2spi.state.UpdatableItemStateManager;
+import org.apache.jackrabbit.spi.SessionInfo;
+import org.apache.jackrabbit.spi.XASessionInfo;
+import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <code>HippoSessionImpl</code>...
@@ -162,7 +105,7 @@ public class HippoSessionImpl extends SessionImpl implements NamespaceResolver, 
             target = getHierarchyManager().getRootEntry().getNodeState();
         }
         Set affected = sessionItemStateManager.pendingChanges(target);
-        Set<Node> nodes = new LinkedHashSet<Node>();
+        Set<Node> nodes = new HashSet<Node>();
         for(Iterator iter = affected.iterator(); iter.hasNext(); ) {
             ItemState state = (ItemState) iter.next();
             if (!state.isValid()) {
@@ -176,14 +119,25 @@ public class HippoSessionImpl extends SessionImpl implements NamespaceResolver, 
             Node candidate = (Node) itemManager.getItem(state.getHierarchyEntry());
             if(nodeType != null && !candidate.isNodeType(nodeType))
                 continue;
-            try {
-                if(!propChange && node != null && (node.isSame(candidate) || node.isSame(node.getParent())))
-                    continue;
-            } catch (ItemNotFoundException infe) {
-                // ignore root node
+            if(!propChange && node != null && node.equals(candidate))
                 continue;
-            }
+
             nodes.add(candidate);
+        }
+        if (prune) {
+            for (Iterator<Node> iter = nodes.iterator(); iter.hasNext();) {
+                Node ancestor = iter.next();
+                while (ancestor.getDepth() > 0) {
+                    ancestor = ancestor.getParent();
+                    if (node != null && node.equals(ancestor)) {
+                        break;
+                    }
+                    if (nodes.contains(ancestor)) {
+                        iter.remove();
+                        break;
+                    }
+                }
+            }
         }
         return new SetNodeIterator(nodes);
     }
