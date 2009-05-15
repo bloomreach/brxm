@@ -35,7 +35,19 @@ The first formally released version must be 2.01.01 because of the current
 numbering scheme
 </p>
 
+<subsection name="Prerequisites">
+
+<p>
+This description is based on maven 2.1.0, which should be taken as
+prerequisite.  A good prerequisite is to use a cleaned out maven repository,
+although this will greatly affect the release time.  Upon a first upgrade of
+maven to 2.1.0 you should do this, and this is to be performed later also on a
+regular basis.
+</p>
+
+</subsection>
 <subsection name="Preparing a release">
+
 <p>
 Before doing a release you should make sure you have a Jira issue.
 Maintaining a release in Jira is not part of this description.
@@ -55,6 +67,13 @@ cd hippo-ecm
 rm -rf ~/.m2/repository/org/hippoecm
 mvn install
 </source>
+
+<!-- A shortcut is to do a "mvn -DskipTests install" instead of doing a full
+     "mvn install", however strongly recommend doing a full install at least
+     once to make sure all the tests are running properly.
+     Note that the release procedure below REQUIRES that a "mvn install"
+     was performed.
+-->
 
 <p>
 Then cleanup everything again.
@@ -85,7 +104,71 @@ updated links in the documentation.
 </p>
 
 </subsection>
+<subsection name="Update release information in the root pom.xml">
+
+<p>
+As a conveniance method, certain information that would otherwise need to be
+given on the command like as arguments (like <code>-Dtag</code>,
+<code>-DscmCommentPrefix</code>) is specified in the root pom.xml.
+</p>
+
+<p>
+Modify the root <code>pom.xml</code> and update the section which starts with
+</p>
+<source>
+  &lt;plugin&gt;
+    &lt;inherited&gt;true&lt;/inherited&gt;
+    &lt;artifactId&gt;maven-release-plugin&lt;/artifactId&gt;
+</source>
+
+<p>
+In this section there are two entries that need updating:
+</p>
+<dl>
+<dt>scmCommentPrefix</dt>
+<dd>This is the Jira key of an <em>open</em> issue which is relevant for
+performing the release, as described inthe beginning of this description.  The
+string specified may not contain any spaces, must specifiy a relevant Jira key
+and must end with a colon.  Better to use just the Jira key followed by a
+colon.</dd>
+<dt>tag</dt>
+<dd>The tag name to be used in SVN.  See the Hippo conventions for how this
+key must be specified, which in general will
+be <code>Tag-HREPTWO-v2_xx_yy</code> where xx and yy are the two digits
+numbers (using leading 0 if necessary) for the version and minor version to be
+used.  Note that dots are replaced by underscore signs, otherwise the tag name
+is the same as specified in the Hippo conventions.  The tag created in svn
+will be:
+</dd>
+</dl>
+<source>
+http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_xx_yy/
+</source>
+
+<p>
+Note that for releasing 2.06, the <code>scmCommentPrefix</code> is already
+specified correctly, and for the next release (candidate) the <code>tag</code>
+parameter is also already correct.
+</p>
+
+<!-- A shortcut, which is a very bad thing to do because it violates the most
+     important release guidelines normally agreed upon, is to also modify the
+     preparationGoals parameter.  If you change this from "clean install" to
+     "clean" no unit tests are run during the release procedure.  This has an
+     enormous effect is release time, but is very dangerous and has led to
+     serious release issues in the past.
+-->
+
+<p>
+When having modified the pom.xml, commit the changes to SVN.
+</p>
+
+</subsection>
 <subsection name="Releasing in subversion">
+
+<!-- A shortcut, which is fairly okay to do is to skip the dry-run
+     alltogether, pick up the procedure after the svn revert .
+-->
 
 <p>
 Now prepare for a release, which will enter the right version numbers in
@@ -95,18 +178,10 @@ be committed.
 
 <p>
 The following maven call will perform this release preparation.
-The argument given for the tag needs to be completed.  For
-pre-initial-release versions you only need to change the M0 to M in
-the string <code>Release-HREPTWO-v2_01_00_M0</code> followed by the
-milestone number.  You need to replace dots by an underscore sign.
 </p>
 
 <source>
-mvn release:prepare \
-    -DallowTimestampedSnapshots=true \
-    -DautoVersionSubmodules=true \
-    -Dtag=Tag-HREPTWO-v2_01_02 \
-    -DdryRun=true
+mvn release:prepare -DdryRun=true
 </source>
 
 <p>
@@ -134,21 +209,53 @@ If everything looks sound, cleanup and do the actual release preparation:
 <source>
 mvn release:clean
 svn --recursive revert .
-mvn release:prepare \
-    -DallowTimestampedSnapshots=true \
-    -DautoVersionSubmodules=true \
-    -Dtag=Tag-HREPTWO-v2_02_00 \
-    -DscmCommentPrefix="HREPTWO-1910:" \
-    -DdevelopmentVersion=2.01.04-SNAPSHOT -DreleaseVersion=2.01.03
+mvn release:prepare
 </source>
 
 <p>
-Again release the tag should be set to the same value as before and
-while executing the same values need to be entered.  You should replace
-the number in <code>HREPTWO-0</code> with the Jira issue tag number you
-started out with in this description.  Note that you cannot use
-spaces in the scmCommentPrefix due to limitations of the maven release
-plugin.
+It is useless to specify a <code>-DdevelopmentVersion</code>
+or <code>-DreleaseVersion</code> on the comment line, the release plugin asks
+for these numbers on the comment line anyway, and does give proper defaults.
+</p>
+
+<p>
+When the release:prepare command runs, it will ask after a while for the
+release and development version.  The defaults presented are the correct
+values to use normally.  When having pressed enter twice the actual release
+will be made which takes quite amount of time due to the unit tests to be run.
+</p>
+
+<p>
+The release plugin however fails due to a bug in the maven release plugin.  It
+fails with the message that a certain pom.xml already exists in svn.  This
+error is to be ignored, and a simple workaround for this release plugin bug is
+available.  After the failure do update the svn and continue the release as
+such:
+</p>
+
+<source>
+svn up
+mvn release:prepare -Dresume=true
+</source>
+
+<p>
+This will then complete the release in subversion correctly.
+</p>
+
+<p>
+Note that the current install uses the maven release plugin version
+2.0-beta-8, there is a newer version 2.0-beta-9 available which should fix the
+bug which leads to the initial failure of releasing and requires you to do a
+&quot;svn up&quot; to continue.  However this new version 2.0-beta-9 has a
+different bug which causes the scmCommentPrefix to be ignored.  Given our
+settings for committing in subversion (where commits without Jira issues are
+blocked), this makes it impossible to use the 2.0-beta-9 version.<br/>
+Therefore the remote tagging and commitByProject commands do not resolve any
+issues at this time.
+</p>
+
+<p>
+Therefore the remote
 </p>
 
 </subsection>
@@ -159,8 +266,8 @@ First checkout the tagged version of hippo-ecm:
 </p>
 
 <source>
-svn checkout 'http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Release-HREPTWO-v2_01_00_M0' hippo-ecm-M0
-cd hippo-ecm-M0
+svn checkout 'http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_03' hippo-ecm-2.06.03
+cd hippo-ecm-2.06.03
 </source>
 
 <p>
