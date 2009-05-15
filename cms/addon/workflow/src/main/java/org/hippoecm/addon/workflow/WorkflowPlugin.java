@@ -19,6 +19,10 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.model.IModel;
+
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -65,14 +69,30 @@ public final class WorkflowPlugin extends AbstractWorkflowPlugin {
         onModelChanged();
     }
 
+    // FIXME, oldModel is necessary for workaround in onModelChanged
+    private IModel oldModel = null;
+
     @Override
     protected void onModelChanged() {
         super.onModelChanged();
         Set<Node> nodeSet = new LinkedHashSet<Node>();
-        if(getModel() instanceof JcrNodeModel) {
+        if (getModel() instanceof JcrNodeModel) {
             Node node = ((JcrNodeModel)getModel()).getNode();
-            if(node != null) {
-                nodeSet.add(node);
+            if (node != null) {
+                try {
+                    // FIXME workaround when editing a document a save on the nodes takes place; this fix makes it impossible
+                    // for usages of this workflow container class to update the state of the document.  This could
+                    // occur for instance when publishing a document from within an edit screen, but would be applicable
+                    // to other usages as well (viewing a request, for instance).  However these cases do not exist at this time.
+                    if(oldModel != null && oldModel instanceof JcrNodeModel && node.isSame(((JcrNodeModel)oldModel).getNode())) {
+                        return;
+                    }
+                    nodeSet.add(node);
+                    oldModel = getModel();
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage(), ex);
+                    oldModel = null;
+                }
             }
         }
         MenuHierarchy menu = buildMenu(nodeSet);
