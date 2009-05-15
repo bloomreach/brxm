@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -206,30 +207,26 @@ public class FolderShortcutPlugin extends RenderPlugin {
             editServiceRef = context.getReference(context.getService(config.getString(IEditorManager.EDITOR_ID),
                     IEditorManager.class));
 
-            add(typelabel = new Label("typelabel", new StringResourceModel("document-type", FolderShortcutPlugin.this,
-                    null)));
+            add(typelabel = new Label("typelabel", new StringResourceModel("document-type", this, null)));
 
             String workflowCategory = config.getString("workflow.categories");
             Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
             WorkflowDescriptor folderWorkflowDescriptor = null;
             try {
+                if (folder == null) {
+                    folder = jcrSession.getRootNode().getNode(
+                            defaultFolder.startsWith("/") ? defaultFolder.substring(1) : defaultFolder);
+                }
+
                 WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
-                folderWorkflowDescriptor = (folder != null ? manager.getWorkflowDescriptor(workflowCategory, folder)
-                        : null);
+                folderWorkflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, folder);
                 Workflow workflow = (folderWorkflowDescriptor != null ? manager.getWorkflow(folderWorkflowDescriptor)
                         : null);
                 if (workflow instanceof FolderWorkflow) {
                     templates = ((FolderWorkflow) workflow).list();
                 } else {
-                    folder = jcrSession.getRootNode().getNode(
-                            defaultFolder.startsWith("/") ? defaultFolder.substring(1) : defaultFolder);
-                    workflow = manager.getWorkflow(workflowCategory, folder);
-                    if (workflow instanceof FolderWorkflow) {
-                        FolderWorkflow folderWorkflow = (FolderWorkflow) workflow;
-                        templates = folderWorkflow.list();
-                    } else {
-                        folder = null;
-                    }
+                    folder = null;
+                    templates = Collections.emptyMap();
                 }
 
                 if (optionSelectFirst) {

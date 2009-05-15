@@ -18,10 +18,8 @@ package org.hippoecm.frontend.plugins.cms.browse.tree;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.addon.workflow.ContextWorkflowPlugin;
@@ -109,18 +107,7 @@ public class FolderTreePlugin extends RenderPlugin {
 
         tree.setRootLess(config.getBoolean("rootless"));
 
-        Component addLink = null;
-        if(config.getBoolean("rootless")) {
-            addLink = this.newPlugin("id", "module.addfolder");
-            if(addLink != null) {
-                addLink.setModel(rootModel);
-            }
-        }
-        if(addLink == null) {
-            addLink = new Label("id");
-            addLink.setVisible(false);
-        }
-        add(addLink);
+        addExtensionPoint("extension.addfolder");
 
         onModelChanged();
     }
