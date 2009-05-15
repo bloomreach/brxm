@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -87,8 +88,10 @@ public class JcrItemModel extends LoadableDetachableModel {
                     } else {
                         return node.getPath() + "/" + relPath;
                     }
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
+                } catch (ItemNotFoundException e) {
+                    log.warn("Node not found with uuid: " + uuid);
+                } catch (RepositoryException e) {
+                    log.error("Error while fetching node with uuid: "+ uuid, e);
                 }
             }
         }
@@ -143,7 +146,13 @@ public class JcrItemModel extends LoadableDetachableModel {
         try {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             if (uuid != null) {
-                Node node = session.getNodeByUUID(uuid);
+                Node node = null;
+                try {
+                    node = session.getNodeByUUID(uuid);
+                } catch (ItemNotFoundException e) {
+                    log.warn("Node not found with uuid: " + uuid);
+                    return null;
+                }
                 if (relPath == null) {
                     return node;
                 }
