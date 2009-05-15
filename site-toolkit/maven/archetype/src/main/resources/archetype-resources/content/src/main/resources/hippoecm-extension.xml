@@ -55,7 +55,7 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="hst-content">
+  <sv:node sv:name="default-ecm-content">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -63,7 +63,7 @@
       <sv:value>10053</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hst-content.xml</sv:value>
+      <sv:value>default-ecm-content.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/</sv:value>
