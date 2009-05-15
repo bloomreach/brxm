@@ -1,7 +1,7 @@
 #set( $symbol_pound = '#' )
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
-package ${package}.hstconfiguration.components;
+package ${package}.components;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -15,21 +15,12 @@ public class Home extends BaseHstComponent {
 
     public static final Logger log = LoggerFactory.getLogger(Home.class);
 
-    
-    
-    @Override
-    public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        super.doAction(request, response);
-
-    }
-
-
-
+ 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
 
         super.doBeforeRender(request, response);
-        HippoBean n = this.getContentNode(request);
+        HippoBean n = this.getContentBean(request);
         
         if(n == null) {
             return;

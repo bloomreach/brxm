@@ -38,7 +38,7 @@
 				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:componentclassname" sv:type="String">
-				<sv:value>${package}.hstconfiguration.components.LeftMenu</sv:value>
+				<sv:value>${package}.components.LeftMenu</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:template" sv:type="String">
 				<sv:value>leftmenu</sv:value>
@@ -49,7 +49,7 @@
 				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:componentclassname" sv:type="String">
-				<sv:value>${package}.hstconfiguration.components.About</sv:value>
+				<sv:value>${package}.components.About</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:template" sv:type="String">
 				<sv:value>about</sv:value>
@@ -76,7 +76,7 @@
 				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:componentclassname" sv:type="String">
-				<sv:value>${package}.hstconfiguration.components.LeftMenu</sv:value>
+				<sv:value>${package}.components.LeftMenu</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:template" sv:type="String">
 				<sv:value>leftmenu</sv:value>
@@ -87,7 +87,7 @@
 				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:componentclassname" sv:type="String">
-				<sv:value>${package}.hstconfiguration.components.Home</sv:value>
+				<sv:value>${package}.components.Home</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:template" sv:type="String">
 				<sv:value>homepage</sv:value>
