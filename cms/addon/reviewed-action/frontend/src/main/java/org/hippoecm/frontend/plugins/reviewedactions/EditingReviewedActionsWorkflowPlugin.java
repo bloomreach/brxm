@@ -72,7 +72,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
         if (config.getString(IValidateService.VALIDATE_ID) != null) {
             context.registerService(this, config.getString(IValidateService.VALIDATE_ID));
         } else {
-            log.warn("No validator id {} defined", IValidateService.VALIDATE_ID);
+            log.info("No validator id {} defined", IValidateService.VALIDATE_ID);
         }
 
         final CompatibilityWorkflowPlugin plugin = this;
