@@ -48,6 +48,7 @@
 - hst:componentconfigurationid (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
+- hst:statuscode (long)
 + * (hst:sitemapitem)
 
 [hst:sitemap] orderable
