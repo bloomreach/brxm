@@ -120,7 +120,6 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
                 // as there can be multiple root virtual hosts with the same name, the rootVirtualHosts are stored in the map
                 // with their id, hence, we cannot get them directly, but have to test them all
                 if(hostNameSegments[position].equals(virtualHost.getName())) {
-                    
                     VirtualHost host = traverseInToHost(virtualHost, hostNameSegments, position);
                     if(host == null) {
                         // try next root virtual host where the name matches
@@ -138,7 +137,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
                 }
             }
         }
-        log.warn("");
+        log.warn("The host hostName '{}' and pathInfo '{}' cannot be matched for the configured virtual hosts");
         return null;
     }
     
@@ -189,12 +188,13 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
            Node virtualHostNode = nodes.nextNode();
            if(virtualHostNode == null) {continue;}
            try {
-               VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode);
+               VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, (VirtualHostService)null);
                this.rootVirtualHosts.put(virtualHost.getId(), virtualHost);
            } catch (ServiceException e) {
                log.warn("Unable to initialize VirtualHost for '{}'. Skipping. {}", virtualHostNode.getPath(), e);
            }
        }
+       
     }
 
     public Service[] getChildServices() {

@@ -54,17 +54,61 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     private Mapping[] mappings;
     
 
-    public VirtualHostService(VirtualHosts virtualHosts,Node virtualHostNode) throws ServiceException{
+    public VirtualHostService(VirtualHostsService virtualHosts,Node virtualHostNode, VirtualHostService parentHost) throws ServiceException{
         super(virtualHostNode);
         this.virtualHosts = virtualHosts;
         this.id = this.getValueProvider().getPath();
         this.jcrPath = this.id;
-        this.siteName = this.getValueProvider().getString(Configuration.VIRTUALHOST_PROPERTY_SITENAME);
-        this.portNumber = this.getValueProvider().getLong(Configuration.VIRTUALHOST_PROPERTY_PORT).intValue();
-        this.portVisible = this.getValueProvider().getBoolean(Configuration.VIRTUALHOST_PROPERTY_SHOWPORT);
-        this.contextPathInUrl = this.getValueProvider().getBoolean(Configuration.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH);
-        this.hstMappings = this.getValueProvider().getStrings(Configuration.VIRTUALHOST_PROPERTY_MAPPING);
-        this.mappings = createMappings();
+        
+        if(this.getValueProvider().hasProperty(Configuration.VIRTUALHOST_PROPERTY_SITENAME)) {
+            this.siteName = this.getValueProvider().getString(Configuration.VIRTUALHOST_PROPERTY_SITENAME);
+        } else {
+            if(parentHost != null) {
+                this.siteName = parentHost.siteName;
+            } 
+        }
+        if(this.getValueProvider().hasProperty(Configuration.VIRTUALHOST_PROPERTY_PORT)) {
+            this.portNumber = this.getValueProvider().getLong(Configuration.VIRTUALHOST_PROPERTY_PORT).intValue();
+        } else {
+            // try to get the one from the parent
+            if(parentHost != null) {
+                this.portNumber = parentHost.portNumber;
+            } else {
+                this.portNumber = virtualHosts.getPortNumber();
+            }
+        }
+        if(this.getValueProvider().hasProperty(Configuration.VIRTUALHOST_PROPERTY_SHOWPORT)) {
+            this.portVisible = this.getValueProvider().getBoolean(Configuration.VIRTUALHOST_PROPERTY_SHOWPORT);
+        } else {
+            // try to get the one from the parent
+            if(parentHost != null) {
+                this.portVisible = parentHost.portVisible;
+            } else {
+                this.portVisible = virtualHosts.isPortVisible();
+            }
+        }
+        if(this.getValueProvider().hasProperty(Configuration.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH)) {
+            this.contextPathInUrl = this.getValueProvider().getBoolean(Configuration.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH);
+        } else {
+            // try to get the one from the parent
+            if(parentHost != null) {
+                this.contextPathInUrl = parentHost.contextPathInUrl;
+            } else {
+                this.contextPathInUrl = virtualHosts.isContextPathInUrl();
+            }
+        }
+        
+        if(this.getValueProvider().hasProperty(Configuration.VIRTUALHOST_PROPERTY_MAPPING)) {
+            this.hstMappings = this.getValueProvider().getStrings(Configuration.VIRTUALHOST_PROPERTY_MAPPING);
+            this.mappings = createMappings();
+        } else {
+         // try to get the one from the parent
+            if(parentHost != null) {
+                this.hstMappings = parentHost.hstMappings;
+                this.mappings = parentHost.mappings;
+            }  
+        }
+        
         String fullName = this.getValueProvider().getName();
         String[] nameSegments = fullName.split("\\.");
         if(nameSegments.length > 1) {
@@ -86,7 +130,7 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             while(childHosts.hasNext()) {
                 Node childHostNode = childHosts.nextNode();
                 if(childHostNode == null) {continue;}
-                VirtualHostService childHost = new VirtualHostService(virtualHosts, childHostNode);
+                VirtualHostService childHost = new VirtualHostService(virtualHosts, childHostNode, this);
                 this.childVirtualHosts.put(childHost.getName(), childHost);
             }
         } catch (RepositoryException e) {
@@ -116,10 +160,10 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
       
     }
 
-
-
-
     private Mapping[] createMappings() {
+        if(hstMappings == null) {
+            return new Mapping[0];
+        }
         List<Mapping> mappingsList = new ArrayList<Mapping>();
         for(String mapping : hstMappings) {
             try {

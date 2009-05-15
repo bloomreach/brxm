@@ -25,6 +25,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.core.hosting.VirtualHosts;
 import org.hippoecm.hst.core.hosting.VirtualHostsManager;
 import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.logging.Logger;
@@ -70,7 +71,8 @@ public class HstVirtualHostsFilter implements Filter {
             String pathInfo = req.getRequestURI().substring(req.getContextPath().length());
             
             VirtualHostsManager virtualHostManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
-            if(virtualHostManager.getVirtualHosts().isExcluded(pathInfo)) {
+            VirtualHosts vHosts = virtualHostManager.getVirtualHosts();
+            if(vHosts.isExcluded(pathInfo)) {
                 chain.doFilter(request, response);
                 return;
             }
@@ -80,7 +82,7 @@ public class HstVirtualHostsFilter implements Filter {
                 
                 
                 
-                MatchedMapping matchedMapping = virtualHostManager.getVirtualHosts().findMapping(req.getServerName(), pathInfo);
+                MatchedMapping matchedMapping = vHosts.findMapping(req.getServerName(), pathInfo);
                 
                  if(matchedMapping != null) {
                     /*
