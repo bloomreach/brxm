@@ -167,7 +167,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             } else {
                 this.propertyMap.addUnAvailableProperty(propertyName);
             }
-            return b;
+            return bool;
         } catch (RepositoryException e) {
             log.warn("Repository Exception during check if property exists: ", e);
         }
