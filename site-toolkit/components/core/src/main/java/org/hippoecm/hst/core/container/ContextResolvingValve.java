@@ -46,7 +46,7 @@ public class ContextResolvingValve extends AbstractValve
             matchedMapping = this.virtualHostsManager.getVirtualHosts().findMapping(hostName, baseURL.getServletPath() + baseURL.getPathInfo());   
             ((HstRequestContextImpl)requestContext).setMatchedMapping(matchedMapping);
             if (matchedMapping == null) {
-                throw new ContainerException("No host mapping for " + hostName);
+                throw new ContainerException("No proper configuration found for host : " + hostName);
             }
         }
         
@@ -74,7 +74,6 @@ public class ContextResolvingValve extends AbstractValve
         if (resolvedSiteMapItem == null) {
             throw new ContainerNotFoundException("No match for " + pathInfo);
         }
-        
         if (resolvedSiteMapItem.getStatusCode() > 0) {
             
             try {
@@ -82,6 +81,7 @@ public class ContextResolvingValve extends AbstractValve
                     log.debug("The resolved sitemap item for {} has error status: {}", pathInfo, resolvedSiteMapItem.getStatusCode());
                 }           
                 servletResponse.sendError(resolvedSiteMapItem.getStatusCode());
+                
             } catch (IOException e) {
                 if (log.isDebugEnabled()) {
                     log.warn("Exception invocation on sendError().", e);
