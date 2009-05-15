@@ -26,6 +26,13 @@
     <constructor-arg value="${writable.repository.user.name}" />
     <constructor-arg value="${writable.repository.password}" />
   </bean>
+  
+  <!--
+  <bean id="javax.jcr.Credentials.expiration" class="javax.jcr.SimpleCredentials">
+    <constructor-arg value="${expiration.repository.user.name}" />
+    <constructor-arg value="${expiration.repository.password}" />
+  </bean>
+  -->
       
   <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.MultipleRepositoryImpl">
     <!-- Delegating session pool repositories -->
@@ -33,6 +40,9 @@
       <map>
         <entry key-ref="javax.jcr.Credentials.default" value-ref="javax.jcr.Repository.default" />
         <entry key-ref="javax.jcr.Credentials.writable" value-ref="javax.jcr.Repository.writable" />
+        <!--
+        <entry key-ref="javax.jcr.Credentials.expiration" value-ref="javax.jcr.Repository.expiration" />
+        -->
       </map>
     </constructor-arg>
     <!-- The default credentials for login() without credentials parameter. -->
@@ -78,6 +88,31 @@
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
   </bean>
+  
+  <!--
+    By default, disable refreshment on passivate.
+    Instead, try late refreshing for each session by an event listener. 
+  -->
+  <!--
+  <bean id="javax.jcr.Repository.expiration" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
+        init-method="initialize" destroy-method="close">
+    <property name="repositoryAddress" value="${default.repository.address}" />
+    <property name="defaultCredentialsUserID" value="${default.repository.user.name}" />
+    <property name="defaultCredentialsPassword" value="${default.repository.password}" />
+    <property name="maxActive" value="250" />
+    <property name="maxIdle" value="5" />
+    <property name="minIdle" value="0" />
+    <property name="initialSize" value="0" />
+    <property name="maxWait" value="10000" />
+    <property name="testOnBorrow" value="true" />
+    <property name="testOnReturn" value="false" />
+    <property name="testWhileIdle" value="false" />
+    <property name="timeBetweenEvictionRunsMillis" value="60000" />
+    <property name="numTestsPerEvictionRun" value="1" />
+    <property name="minEvictableIdleTimeMillis" value="60000" />
+    <property name="refreshOnPassivate" value="false" />
+  </bean>
+  -->
   
 </beans>
 

@@ -31,8 +31,9 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
     }
 
     public final Session decorate(Session session) {
+        PooledSession pooledSessionProxy = null;
         ProxyFactory factory = new ProxyFactory();
-        Interceptor interceptor = getInterceptor();
+        PooledSessionInterceptor interceptor = new PooledSessionInterceptor();
         
         ClassLoader sessionClassloader = session.getClass().getClassLoader();
         ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
@@ -42,24 +43,26 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 Thread.currentThread().setContextClassLoader(sessionClassloader);
             }
             
-            return (Session) factory.createInterceptorProxy(session.getClass().getClassLoader(), session, interceptor, new Class [] { Session.class });
+            pooledSessionProxy = (PooledSession) factory.createInterceptorProxy(session.getClass().getClassLoader(), session, interceptor, new Class [] { PooledSession.class });
+            interceptor.setPooledSessionProxy(pooledSessionProxy);
         } finally {
             if (sessionClassloader != currentClassloader) {
                 Thread.currentThread().setContextClassLoader(currentClassloader);
             }
         }
+        
+        return pooledSessionProxy;
     }
 
     public void setPoolingRepository(PoolingRepository poolingRepository) {
         this.poolingRepository = poolingRepository;
     }
 
-    protected Interceptor getInterceptor() {
-        return new PooledSessionInterceptor();
-    }
-
     protected class PooledSessionInterceptor implements Interceptor {
+        
         private boolean alreadyReturned;
+        private long lastRefreshed;
+        private PooledSession pooledSessionProxy;
 
         public Object intercept(Invocation invocation) throws Throwable {
             Object ret = null;
@@ -71,9 +74,11 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 
                 if ("logout".equals(methodName)) {
                     // when logout(), it acturally returns the session to the pool
-                    Session session = (Session) invocation.getProxy();
                     this.alreadyReturned = true;
-                    poolingRepository.returnSession(session);
+                    poolingRepository.returnSession(pooledSessionProxy);
+                } else if ("logoutSession".equals(methodName)) {
+                    Session session = (Session) invocation.getProxy();
+                    session.logout();
                 } else if ("getRepository".equals(methodName)) {
                     // when getRepository(), it actually returns the session pooling repository
                     ret = poolingRepository;
@@ -82,12 +87,21 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                     // from another session pool repository based on the credentials.
                     Credentials credentials = (Credentials) invocation.getArguments()[0];
                     ret = poolingRepository.impersonate(credentials);
+                } else if ("refresh".equals(methodName)) {
+                    ret = invocation.proceed();
+                    lastRefreshed = System.currentTimeMillis();
+                } else if ("lastRefreshed".equals(methodName)) {
+                    ret = new Long(lastRefreshed);
                 } else {
                     ret = invocation.proceed();
                 }
             }
 
             return ret;
+        }
+        
+        public void setPooledSessionProxy(PooledSession pooledSessionProxy) {
+            this.pooledSessionProxy = pooledSessionProxy;
         }
     }
 

@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.apache.commons.pool.PoolUtils;
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
@@ -52,6 +53,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     
     protected boolean refreshOnPassivate = true;
     protected boolean keepChangesOnRefresh = false;
+    protected long sessionsRefreshPendingTimeMillis; 
     protected ResourceLifecycleManagement pooledSessionLifecycleManagement;
     protected MultipleRepository multipleRepository;
 
@@ -119,6 +121,14 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     public boolean getKeepChangesOnRefresh() {
         return this.keepChangesOnRefresh;
     }
+    
+    public void setSessionsRefreshPendingAfter(long sessionsRefreshPendingTimeMillis) {
+        this.sessionsRefreshPendingTimeMillis = sessionsRefreshPendingTimeMillis;
+    }
+    
+    public long getSessionsRefreshPendingAfter() {
+        return this.sessionsRefreshPendingTimeMillis;
+    }
 
     public void setSessionDecorator(SessionDecorator sessionDecorator) {
         this.sessionDecorator = sessionDecorator;
@@ -182,10 +192,6 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
             throw new NoAvailableSessionException("No session is available now. Probably the session pool was exhasuted.");
         } catch (Exception e) {
             throw new LoginException("Failed to borrow session from the pool.", e);
-        }
-
-        if (session != null && this.sessionDecorator != null) {
-            session = this.sessionDecorator.decorate(session);
         }
 
         return session;
@@ -392,7 +398,6 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         }
         
         sessionPool.setWhenExhaustedAction(whenExhaustedActionFlag);
-        
         sessionPool.setMaxWait(maxWait);
         sessionPool.setTestOnBorrow(testOnBorrow);
         sessionPool.setTestOnReturn(testOnReturn);
@@ -401,8 +406,8 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         sessionPool.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
         sessionPool.setTestWhileIdle(testWhileIdle);
 
-        for (int i = 0; i < initialSize; i++) {
-            sessionPool.addObject();
+        if (initialSize > 0) {
+            PoolUtils.prefill(sessionPool, initialSize);
         }
     }
 
@@ -807,6 +812,16 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     private class SessionFactory implements PoolableObjectFactory {
         
         public void activateObject(Object object) throws Exception {
+            // If sessionRefreshPendingAfter is set to specific time millis,
+            // each session should be refreshed if it is not refreshed after the time millis.
+            if (sessionsRefreshPendingTimeMillis > 0L && object instanceof PooledSession) {
+                PooledSession session = (PooledSession) object;
+                
+                if (session.lastRefreshed() < sessionsRefreshPendingTimeMillis) {  
+                    session.refresh(keepChangesOnRefresh);
+                }
+            }
+            
             // If client retrieves a session, then register it as a disposable. 
             if (pooledSessionLifecycleManagement != null && pooledSessionLifecycleManagement.isActive()) {
                 pooledSessionLifecycleManagement.registerResource(object);
@@ -817,13 +832,23 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
             Session session = (Session) object;
 
             try {
-                session.logout();
+                if (session instanceof PooledSession) {
+                    ((PooledSession) session).logoutSession();
+                } else {
+                    session.logout();
+                }
             } catch (Exception e) {
             }
         }
 
         public Object makeObject() throws Exception {
-            return getRepository().login(defaultCredentials);
+            Session session = getRepository().login(defaultCredentials);
+            
+            if (session != null && sessionDecorator != null) {
+                session = sessionDecorator.decorate(session);
+            }
+            
+            return session;
         }
 
         public void passivateObject(Object object) throws Exception {

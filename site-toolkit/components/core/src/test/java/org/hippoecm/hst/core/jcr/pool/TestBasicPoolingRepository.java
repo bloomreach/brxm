@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.jcr.pool;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -120,6 +121,42 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
         } finally {
             if (session != null)
                 session.logout();
+        }
+    }
+    
+    @Test
+    public void testSessionsRefreshed() throws Exception {
+        Repository repository = poolingRepository;
+
+        Session session = null;
+
+        try {
+            session = repository.login();
+            assertTrue("session is not a PooledSession.", session instanceof PooledSession);
+            assertFalse("The session's lastRefreshed should be non-positive number by default.", 
+                        ((PooledSession) session).lastRefreshed() > 0);
+        } finally {
+            if (session != null) {
+                session.logout();
+            }
+        }
+        
+        session = null;
+
+        try {
+            long sessionsRefreshPendingTimeMillis = System.currentTimeMillis();
+            poolingRepository.setSessionsRefreshPendingAfter(sessionsRefreshPendingTimeMillis);
+            
+            session = repository.login();
+
+            long lastRefreshed = ((PooledSession) session).lastRefreshed();
+            assertTrue("The session does not seem to be refreshed. sessionsRefreshPendingTimeMillis: " + sessionsRefreshPendingTimeMillis + ", lastRefreshed: " + lastRefreshed, 
+                        lastRefreshed >= sessionsRefreshPendingTimeMillis);
+        } finally {
+            poolingRepository.setSessionsRefreshPendingAfter(0);
+            if (session != null) {
+                session.logout();
+            }
         }
     }
     

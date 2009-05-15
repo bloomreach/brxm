@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,13 +35,30 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 public class TestContainerURLProvider extends AbstractSpringTestCase {
 
+    protected HstURLFactory urlFactory;
     protected HstContainerURLProvider urlProvider;
     
     @Before
     public void setUp() throws Exception {
         super.setUp();
 
-        this.urlProvider = getComponent(HstContainerURLProvider.class.getName());
+        this.urlFactory = getComponent(HstURLFactory.class.getName());
+        this.urlProvider = this.urlFactory.getServletUrlProvider();
+    }
+    
+    @Test
+    public void testBasicCotnainerURL() throws UnsupportedEncodingException, ContainerException {
+        HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
+        HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
+
+        ((MockHttpServletRequest) request).setParameter("param1", "value1");
+        ((MockHttpServletRequest) request).setParameter("param2", "value2");
+        
+        HstContainerURL containerURL = this.urlProvider.parseURL(request, response);
+
+        assertNull("action window reference namespace is not null.", containerURL.getActionWindowReferenceNamespace());
+        assertNull("resource window reference namespace is not null.", containerURL.getResourceWindowReferenceNamespace());
+        assertEquals("The path info is wrong: " + containerURL.getPathInfo(), "/news/2008/08", containerURL.getPathInfo());
     }
     
     @Test
@@ -59,28 +77,14 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         actionURLPathInfo = actionURLPathInfo.substring("/site/content".length());
         ((MockHttpServletRequest) request).setPathInfo(actionURLPathInfo);
         
-        HstContainerURL containerURL = this.urlProvider.parseURL(request, response);
-        
-        assertNotNull("action window reference namespace is null.", containerURL.getActionWindowReferenceNamespace());
-        assertNull("resource window reference namespace is not null.", containerURL.getResourceWindowReferenceNamespace());
+        assertNotNull("action window reference namespace is null.", actionURL.getActionWindowReferenceNamespace());
+        assertNull("resource window reference namespace is not null.", actionURL.getResourceWindowReferenceNamespace());
 
-        Map<String, String []> actionParams = (Map<String, String []>) containerURL.getActionParameterMap();
+        Map<String, String []> actionParams = (Map<String, String []>) actionURL.getActionParameterMap();
         assertNotNull("action param map is null.", actionParams);
         assertFalse("action param map is empty.", actionParams.isEmpty());
         assertEquals("the first action parameter is not 'ap1'.", "one", actionParams.get("ap1")[0]);
         assertEquals("the second action parameter is not 'ap2'.", "two", actionParams.get("ap2")[0]);
-        
-        assertEquals("The path info is wrong: " + containerURL.getPathInfo(), "/news/2008/08", containerURL.getPathInfo());
-        
-        Map<String, String []> params = (Map<String, String []>) containerURL.getParameterMap();
-        assertNotNull("param map is null.", params);
-        assertFalse("param map is empty.", params.isEmpty());
-        assertEquals("the first parameter is not 'value1'.", "value1", params.get("param1")[0]);
-        assertEquals("the second parameter is not 'value2'.", "value2", params.get("param2")[0]);
-        
-        String urlString = this.urlProvider.toURLString(containerURL);
-        assertTrue("The url is wrong: " + urlString, urlString.contains("param1=value1"));
-        assertTrue("The url is wrong: " + urlString, urlString.contains("param2=value2"));
     }
     
     @Test
@@ -98,23 +102,9 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         resourceURLPathInfo = resourceURLPathInfo.substring("/site/content".length());
         ((MockHttpServletRequest) request).setPathInfo(resourceURLPathInfo);
         
-        HstContainerURL containerURL = this.urlProvider.parseURL(request, response);
-        
-        assertNull("action window reference namespace is not null.", containerURL.getActionWindowReferenceNamespace());
-        assertNotNull("resource window reference namespace is null.", containerURL.getResourceWindowReferenceNamespace());
-        
-        assertEquals("resource id is wrong.", "myresource001", containerURL.getResourceId());
-
-        assertEquals("The path info is wrong.", "/news/2008/08", containerURL.getPathInfo());
-        
-        Map<String, String []> params = (Map<String, String []>) containerURL.getParameterMap();
-        assertNotNull("param map is null.", params);
-        assertFalse("param map is empty.", params.isEmpty());
-        assertEquals("the first parameter is not 'value1'.", "value1", params.get("param1")[0]);
-        assertEquals("the second parameter is not 'value2'.", "value2", params.get("param2")[0]);
-        
-        String urlString = this.urlProvider.toURLString(containerURL);
-        assertTrue("The url is wrong: " + urlString, urlString.contains("param1=value1"));
-        assertTrue("The url is wrong: " + urlString, urlString.contains("param2=value2"));
+        assertNull("action window reference namespace is not null.", resourceURL.getActionWindowReferenceNamespace());
+        assertNotNull("resource window reference namespace is null.", resourceURL.getResourceWindowReferenceNamespace());
+        assertEquals("resource id is wrong.", "myresource001", resourceURL.getResourceId());
+        assertEquals("The path info is wrong.", "/news/2008/08", resourceURL.getPathInfo());
     }
 }

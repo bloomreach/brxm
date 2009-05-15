@@ -91,4 +91,12 @@ public interface PoolingRepository extends Repository {
      */
     public Session impersonate(Credentials credentials) throws LoginException, RepositoryException;
 
+    /**
+     * Sets time millis to have each session be refreshed on activation if the session
+     * is not refreshed after the specified time millis.
+     * 
+     * @param sessionsRefreshPendingTimeMillis
+     */
+    public void setSessionsRefreshPendingAfter(long sessionsRefreshPendingTimeMillis);
+    
 }
