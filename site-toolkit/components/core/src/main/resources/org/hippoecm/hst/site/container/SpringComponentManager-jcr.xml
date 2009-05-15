@@ -28,9 +28,9 @@
   </bean>
   
   <!--
-  <bean id="javax.jcr.Credentials.expiration" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="${expiration.repository.user.name}" />
-    <constructor-arg value="${expiration.repository.password}" />
+  <bean id="javax.jcr.Credentials.event.based" class="javax.jcr.SimpleCredentials">
+    <constructor-arg value="${event.based.repository.user.name}" />
+    <constructor-arg value="${event.based.repository.password}" />
   </bean>
   -->
       
@@ -94,11 +94,11 @@
     Instead, try late refreshing for each session by an event listener. 
   -->
   <!--
-  <bean id="javax.jcr.Repository.expiration" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
+  <bean id="javax.jcr.Repository.event.based" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
         init-method="initialize" destroy-method="close">
-    <property name="repositoryAddress" value="${default.repository.address}" />
-    <property name="defaultCredentialsUserID" value="${default.repository.user.name}" />
-    <property name="defaultCredentialsPassword" value="${default.repository.password}" />
+    <property name="repositoryAddress" value="${event.based.repository.address}" />
+    <property name="defaultCredentialsUserID" value="${event.based.repository.user.name}" />
+    <property name="defaultCredentialsPassword" value="${event.based.repository.password}" />
     <property name="maxActive" value="250" />
     <property name="maxIdle" value="5" />
     <property name="minIdle" value="0" />

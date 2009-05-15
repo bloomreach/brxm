@@ -87,7 +87,7 @@
           <property name="propertyAddedEnabled" value="true" />
           <property name="propertyChangedEnabled" value="true" />
           <property name="propertyRemovedEnabled" value="true" />
-          <property name="absolutePath" value="${expiration.repository.path}" />
+          <property name="absolutePath" value="${event.based.repository.path}" />
           <property name="deep" value="true" />
           <property name="uuids">
             <null/>
@@ -100,7 +100,7 @@
             <bean class="org.hippoecm.hst.org.hippoecm.hst.core.jcr.pool.PoolingRepositorySessionsRefreshEventListener">
               <property name="poolingRepositoris">
                 <list>
-                  <ref bean="javax.jcr.Repository.expiration" />
+                  <ref bean="javax.jcr.Repository.event.based" />
                 </list>
               </property>  
             </bean>
