@@ -49,19 +49,18 @@
       <type>jar</type>
     </dependency>
     
-    <!--
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
       <artifactId>hst-addon-configuration-editor-frontend</artifactId>
       <type>jar</type>
     </dependency>
+    
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
       <artifactId>hst-addon-configuration-editor-repository</artifactId>
       <type>jar</type>
     </dependency>
-    -->
-    
+  
     <dependency>
       <groupId>${groupId}</groupId>
       <artifactId>${rootArtifactId}-content</artifactId>
