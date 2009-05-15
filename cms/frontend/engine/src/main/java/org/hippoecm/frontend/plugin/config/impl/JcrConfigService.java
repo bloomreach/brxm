@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceFactory;
@@ -110,6 +111,11 @@ public class JcrConfigService implements IServiceFactory<IPluginConfigService> {
 
         public void detach() {
             model.detach();
+            for (IClusterConfig cluster : cache.values()) {
+                if (cluster instanceof IDetachable) {
+                    ((IDetachable) cluster).detach();
+                }
+            }
         }
 
     }

@@ -127,13 +127,10 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                             /* String[] nodes = */
                             workflow.updateModel(cnd, cargo);
                             sessionModel.getSession().save();
-                            sessionModel.flush();
-                        } catch (RepositoryException ex) {
+                        } finally {
                             // log out; the session model will log in again.
                             // Sessions cache path resolver information, which is incorrect after remapping the prefix.
                             sessionModel.flush();
-
-                            throw ex;
                         }
                     } else {
                         log.warn("no remodeling workflow available on selected node");
