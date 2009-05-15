@@ -138,6 +138,7 @@ public class ObjectConverterImpl implements ObjectConverter {
                     // take the first fallback type
                     proxyInterfacesOrDelegateeClass = this.jcrPrimaryNodeTypeClassPairs.get(fallBackJcrPrimaryNodeType);
                     if(proxyInterfacesOrDelegateeClass != null) {
+                    	log.debug("No bean found for {}, using fallback class  {} instead", jcrPrimaryNodeType, proxyInterfacesOrDelegateeClass);
                         break;
                     }
                 }
