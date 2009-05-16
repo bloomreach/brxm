@@ -83,11 +83,9 @@ public class HippoFolder extends HippoItem implements HippoFolderBean{
         List<HippoDocumentBean> documents = getDocuments(sorted);
         if(from < 0) {from = 0;}
         if(from > documents.size()) {return new ArrayList<HippoDocumentBean>();}
-        
-        if(documents.size() == 0) {
-            return documents.subList(0, 0);
+        if(to > documents.size()){
+        	to = documents.size();
         }
-        if(to >= documents.size()) {to = documents.size() -1;}
         return documents.subList(from, to);
     }
     
