@@ -506,6 +506,9 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>false</sv:value>
       </sv:property>
+      <sv:property sv:name="extension.addfolder" sv:type="String">
+        <sv:value>${cluster.id}.addfolder</sv:value>
+      </sv:property>
       <sv:node sv:name="module.workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
