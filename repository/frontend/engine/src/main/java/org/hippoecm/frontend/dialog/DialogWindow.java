@@ -91,6 +91,15 @@ public class DialogWindow extends PersistentModalWindow implements IDialogServic
         super.onBeforeRender();
     }
 
+    @Override
+    public boolean isShown() { 
+        if (shown == null) {
+            return false;
+        } else {
+            return super.isShown();
+        }
+    }
+    
     private void internalShow(Dialog dialog) {
         shown = dialog;
         dialog.setDialogService(this);
