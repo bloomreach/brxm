@@ -207,6 +207,22 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
         }
         return defaultValue;
     }
+    
+    public long getLong(String key) throws StringValueConversionException {
+        return getLong(key, 0);
+    }
+
+    public long getLong(String key, long defaultValue) throws StringValueConversionException {
+        try {
+            Property property = getProperty(key);
+            if (property != null) {
+                return property.getLong();
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return defaultValue;
+    }
 
     public String getKey(String key) {
         try {
@@ -302,16 +318,6 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
     }
 
     public Duration getDuration(String key) throws StringValueConversionException {
-        // TODO implement me
-        throw new UnsupportedOperationException("not implemented yet");
-    }
-
-    public long getLong(String key) throws StringValueConversionException {
-        // TODO implement me
-        throw new UnsupportedOperationException("not implemented yet");
-    }
-
-    public long getLong(String key, long defaultValue) throws StringValueConversionException {
         // TODO implement me
         throw new UnsupportedOperationException("not implemented yet");
     }

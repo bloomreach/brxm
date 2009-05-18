@@ -19,7 +19,16 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.3'>
+<frontend='http://www.hippoecm.org/frontend/nt/1.4'>
 <frontendtest='http://www.hippoecm.org/test/nt/1.0'>
+
+[frontendtest:typed] > frontend:pluginconfig
+- frontendtest:l1 (long)
+- frontendtest:l2 (long)
+- frontendtest:d1 (double)
+- frontendtest:d2 (double)
+- frontendtest:b1 (boolean)
+- frontendtest:b2 (boolean)
 
 [frontendtest:document] > hippo:document
 - *
