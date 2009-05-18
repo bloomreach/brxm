@@ -16,6 +16,9 @@
 package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 
@@ -28,22 +31,33 @@ class MenuItem extends Panel {
     public MenuItem(String id, final ActionDescription wf) {
         super(id);
 
+        AjaxLink link = new AjaxLink("link") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                wf.run();
+            }
+        };
+        add(link);
+        
         Component fragment = wf.getFragment("text");
         if (fragment instanceof ActionDescription.ActionDisplay) {
             ((ActionDescription.ActionDisplay)fragment).substantiate();
-            add(fragment);
+            link.add(fragment);
         } else if (fragment instanceof Fragment) {
-            add(fragment);
+            link.add(fragment);
         } else {
+            link.add(new Label("text").setVisible(false));
             // wf.setVisible(true);
         }
 
         fragment = wf.getFragment("icon");
         if (fragment instanceof ActionDescription.ActionDisplay) {
             ((ActionDescription.ActionDisplay)fragment).substantiate();
-            add(fragment);
+            link.add(fragment);
         } else if (fragment instanceof Fragment) {
-            add(fragment);
+            link.add(fragment);
         }
     }
 }

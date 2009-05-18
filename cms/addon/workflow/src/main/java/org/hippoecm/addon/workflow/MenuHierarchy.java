@@ -88,7 +88,11 @@ class MenuHierarchy {
         }
         if(submenus.containsKey("default")) {
             MenuHierarchy submenu = submenus.get("default");
-            put(new ActionDescription("spacer"));
+            put(new ActionDescription("spacer") {
+                @Override
+                public void invoke() {
+                }
+            });
             for(ActionDescription action : submenu.items) {
                 if(!action.isVisible()) {
                     continue;

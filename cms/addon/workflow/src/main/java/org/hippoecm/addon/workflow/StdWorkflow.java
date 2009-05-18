@@ -89,8 +89,6 @@ public abstract class StdWorkflow extends ActionDescription {
         return new ResourceReference(StdWorkflow.class, "workflow-16.png");
     }
 
-    protected abstract void invoke();
-    
     public static abstract class Compatibility extends StdWorkflow {
         RenderPlugin enclosingPlugin;
         IPluginContext pluginContext;
