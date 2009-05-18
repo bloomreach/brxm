@@ -25,45 +25,24 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.observation.Event;
 
-import org.hippoecm.frontend.HippoTester;
-import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.JcrEvent;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugin.impl.PluginContext;
-import org.hippoecm.repository.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class JcrPropertyModelTest extends TestCase {
+public class JcrPropertyModelTest extends PluginTest {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
-
-    Node root;
-    HippoTester tester;
-    Home home;
-    IPluginContext context;
 
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
-        root = session.getRootNode();
-        tester = new HippoTester(new JcrSessionModel(null) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected Object load() {
-                return session;
-            }
-        });
-        home = (Home) tester.startPage(Home.class);
-        context = new PluginContext(home.getPluginManager(), new JavaPluginConfig("test"));
+        super.setUp();
     }
 
     @Override

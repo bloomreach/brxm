@@ -21,32 +21,19 @@ import static org.junit.Assert.assertTrue;
 
 import javax.jcr.Node;
 
-import org.hippoecm.frontend.HippoTester;
-import org.hippoecm.repository.TestCase;
+import org.hippoecm.frontend.PluginTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class JcrItemModelTest extends TestCase {
+public class JcrItemModelTest extends PluginTest {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
-
-    Node root;
-    HippoTester tester;
 
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
-        root = session.getRootNode();
-        tester = new HippoTester(new JcrSessionModel(null) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected Object load() {
-                return session;
-            }
-        });
+        super.setUp();
     }
 
     @Override

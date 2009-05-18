@@ -59,7 +59,7 @@ public class PluginFactory implements IClusterable {
         } else {
             ClassLoader loader = ((UserSession) Session.get()).getClassLoader();
             if (loader == null) {
-                log.warn("Unable to retrieve repository classloader, falling back to default classloader.");
+                log.info("Unable to retrieve repository classloader, falling back to default classloader.");
                 loader = getClass().getClassLoader();
             }
             try {

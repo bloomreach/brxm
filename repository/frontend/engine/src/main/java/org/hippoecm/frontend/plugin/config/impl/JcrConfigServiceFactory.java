@@ -33,17 +33,17 @@ import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrConfigService implements IServiceFactory<IPluginConfigService> {
+public class JcrConfigServiceFactory implements IServiceFactory<IPluginConfigService> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(JcrConfigService.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrConfigServiceFactory.class);
 
     private JcrNodeModel model;
     private String defaultKey;
 
-    public JcrConfigService(JcrNodeModel model, String defaultKey) {
+    public JcrConfigServiceFactory(JcrNodeModel model, String defaultKey) {
         this.model = model;
         this.defaultKey = defaultKey;
     }

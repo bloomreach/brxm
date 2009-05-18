@@ -41,7 +41,7 @@
   <!-- ====================================================================== -->
 
   <category additivity="true" name="org.hippoecm.frontend">
-    <level value="debug"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
   
@@ -49,7 +49,27 @@
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
-  
+
+  <category additivity="true" name="org.apache.jackrabbit">
+    <level value="warn"/>
+    <appender-ref ref="root"/>
+  </category>
+
+  <category additivity="true" name="org.apache.wicket">
+    <level value="warn"/>
+    <appender-ref ref="root"/>
+  </category>
+
+  <category additivity="true" name="org.quartz">
+    <level value="warn"/>
+    <appender-ref ref="root"/>
+  </category>
+
+  <category additivity="true" name="org.apache.jackrabbit.core.query.lucene">
+    <level value="error"/>
+    <appender-ref ref="root"/>
+  </category>
+
   <root>
     <level value="info"/>
     <appender-ref ref="console"/>

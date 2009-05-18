@@ -44,6 +44,18 @@
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
       <version>2.06.04-SNAPSHOT</version>
     </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-frontend-engine-test</artifactId>
+      <version>2.06.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
