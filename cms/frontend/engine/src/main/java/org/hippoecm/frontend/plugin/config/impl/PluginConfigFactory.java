@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.Application;
@@ -24,12 +22,10 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.WebApplicationHelper;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceFactory;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,68 +39,30 @@ public class PluginConfigFactory implements IServiceFactory<IPluginConfigService
 
     private IServiceFactory<IPluginConfigService> pluginConfigServiceFactory;
 
-    public PluginConfigFactory(JcrSessionModel sessionModel) {
+    public PluginConfigFactory(JcrSessionModel sessionModel, IApplicationFactory defaultFactory) {
+        IApplicationFactory  builtinFactory = new BuiltinApplicationFactory();
+
+        String appName = WebApplicationHelper.getConfigurationParameter((WebApplication) Application.get(),
+                "config", null);
+        Session session = sessionModel.getSession();
+        ValueMap credentials = sessionModel.getCredentials();
+        if (Main.DEFAULT_CREDENTIALS.equals(credentials)) {
+            appName = "login";
+        }
+
         IServiceFactory<IPluginConfigService> baseService;
-        try {
-            Session session = sessionModel.getSession();
-            ValueMap credentials = sessionModel.getCredentials();
-            if (session == null || !session.isLive()) {
-                baseService = new Factory(new JavaConfigService("login"));
-            } else if (Main.DEFAULT_CREDENTIALS.equals(credentials)) {
-                String configPath = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
-                        + "login";
-                if (session.itemExists(configPath)) {
-                    Node applicationNode = (Node) session.getItem(configPath);
-                    if (applicationNode.hasNodes()) {
-                        Node clusterNode = applicationNode.getNodes().nextNode();
-                        baseService = new JcrConfigService(new JcrNodeModel(applicationNode), clusterNode.getName());
-                    } else {
-                        log.error("Application configuration '" + applicationNode.getName()
-                                + "' contains no plugin cluster");
-                        baseService = new Factory(new JavaConfigService("login"));
-                    }
-                } else {
-                    baseService = new Factory(new JavaConfigService("login"));
-                }
-            } else {
-                String config = WebApplicationHelper.getConfigurationParameter((WebApplication) Application.get(),
-                        "config", null);
-                if (config == null) {
-                    String configPath = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
-                    Node configNode = (Node) session.getItem(configPath);
-                    if (configNode.hasNodes()) {
-                        Node applicationNode = configNode.getNodes().nextNode();
-                        if (applicationNode.hasNodes()) {
-                            Node clusterNode = applicationNode.getNodes().nextNode();
-                            baseService = new JcrConfigService(new JcrNodeModel(applicationNode), clusterNode.getName());
-                        } else {
-                            log.error("Application configuration '" + applicationNode.getName()
-                                    + "' contains no plugin cluster");
-                            baseService = new Factory(new JavaConfigService("console"));
-                        }
-                    } else {
-                        baseService = new Factory(new JavaConfigService("console"));
-                    }
-                } else {
-                    String configPath = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH
-                            + "/" + config;
-                    if (session.itemExists(configPath)) {
-                        Node applicationNode = (Node) session.getItem(configPath);
-                        if (applicationNode.hasNodes()) {
-                            Node clusterNode = applicationNode.getNodes().nextNode();
-                            baseService = new JcrConfigService(new JcrNodeModel(applicationNode), clusterNode.getName());
-                        } else {
-                            log.error("Application configuration '" + applicationNode.getName()
-                                    + "' contains no plugin cluster");
-                            baseService = new Factory(new JavaConfigService("console"));
-                        }
-                    } else {
-                        baseService = new Factory(new JavaConfigService("console"));
-                    }
-                }
+        if (session == null || !session.isLive()) {
+            baseService = builtinFactory.getApplication("login");
+        } else if (appName == null) {
+            baseService = defaultFactory.getDefaultApplication();
+            if (baseService == null) {
+                baseService = builtinFactory.getDefaultApplication();
             }
-        } catch (RepositoryException e) {
-            baseService = new Factory(new JavaConfigService("login"));
+        } else {
+            baseService = defaultFactory.getApplication(appName);
+            if (baseService == null) {
+                baseService = builtinFactory.getDefaultApplication();
+            }
         }
         pluginConfigServiceFactory = baseService;
     }
@@ -123,27 +81,6 @@ public class PluginConfigFactory implements IServiceFactory<IPluginConfigService
 
     public void releaseService(IPluginContext context, IPluginConfigService service) {
         pluginConfigServiceFactory.releaseService(context, service);
-    }
-
-    private class Factory implements IServiceFactory<IPluginConfigService> {
-        private static final long serialVersionUID = 1L;
-
-        IPluginConfigService service;
-
-        Factory(IPluginConfigService service) {
-            this.service = service;
-        }
-
-        public IPluginConfigService getService(IPluginContext context) {
-            return service;
-        }
-
-        public Class<? extends IPluginConfigService> getServiceClass() {
-            return IPluginConfigService.class;
-        }
-
-        public void releaseService(IPluginContext context, IPluginConfigService service) {
-        }
     }
 
 }

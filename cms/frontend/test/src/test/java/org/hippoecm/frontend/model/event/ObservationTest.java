@@ -190,7 +190,6 @@ public class ObservationTest extends TestCase {
 
         // in-session event
         home.processEvents();
-        System.err.println("number of events: " + events.size());
         assertEquals(1, events.size());
 
         // shouldn't receive new event on next processing

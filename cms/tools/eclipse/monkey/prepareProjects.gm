@@ -25,13 +25,14 @@ addProjectDependency('hippo-ecm-package-war', 'hippo-ecm-frontend-application');
 removeClasspathEntry('hippo-ecm-frontend-engine', 'src/test/resources');
 removeClasspathEntry('hippo-ecm-repository-engine', 'src/test/resources');
 removeClasspathEntry('hippo-ecm-addon-standards-frontend', 'src/test/resources');
-removeClasspathEntry('hippo-ecm-addon-xinha-frontend', 'src/test/java');
-removeClasspathEntry('hippo-ecm-addon-xinha-frontend', 'src/test/resources');
+removeClasspathEntry('hippo-ecm-addon-editor', 'src/test/resources');
 removeClasspathEntry('hippo-ecm-addon-yui', 'src/test/resources');
+removeClasspathEntry('hippo-ecm-addon-xinha-frontend', 'src/test/resources');
 removeClasspathEntry('hippo-ecm-addon-eavesdrop', 'src/test/resources');
 removeClasspathEntry('hippo-ecm-addon-faceteddate-repository', 'src/test/resources');
 
 removeProjectDependency('hippo-ecm-addon-xinha-frontend', 'hippo-ecm-frontend-engine-test');
+removeProjectDependency('hippo-ecm-addon-cms-edit', 'hippo-ecm-frontend-engine-test');
 
 println "\n$metadata.menuName finished";
 

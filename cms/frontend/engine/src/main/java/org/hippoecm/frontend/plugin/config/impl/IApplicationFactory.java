@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,14 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend;
+package org.hippoecm.frontend.plugin.config.impl;
 
-import junit.framework.TestCase;
+import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.plugin.IServiceFactory;
+import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 
-public class DummyTest extends TestCase {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+public interface IApplicationFactory extends IClusterable {
 
-    public void test() {
-    }
+    IServiceFactory<IPluginConfigService> getDefaultApplication();
+
+    IServiceFactory<IPluginConfigService> getApplication(String name);
 }

@@ -26,6 +26,7 @@ import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.dialog.DialogService;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.model.event.ObservableRegistry;
@@ -33,13 +34,16 @@ import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.PluginConfigFactory;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.frontend.plugin.impl.PluginManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class Home extends WebPage implements IServiceTracker<IRenderService>, IRenderService, IContextMenuManager {
     @SuppressWarnings("unused")
@@ -57,6 +61,10 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     private ContextMenuBehavior contextMenuBehavior;
 
     public Home() {
+        this(new JcrApplicationFactory(new JcrNodeModel("/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH)));
+    }
+
+    public Home(IApplicationFactory appFactory) {
         add(new EmptyPanel("root"));
 
         mgr = new PluginManager(this);
@@ -66,7 +74,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         context.registerTracker(this, "service.root");
 
         JcrSessionModel sessionModel = ((UserSession) getSession()).getJcrSessionModel();
-        PluginConfigFactory configFactory = new PluginConfigFactory(sessionModel);
+        PluginConfigFactory configFactory = new PluginConfigFactory(sessionModel, appFactory);
         pluginConfigService = configFactory.getPluginConfigService(context);
         context.registerService(configFactory, IPluginConfigService.class.getName());
 

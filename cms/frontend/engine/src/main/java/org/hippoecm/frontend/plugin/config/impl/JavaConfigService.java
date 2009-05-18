@@ -20,105 +20,53 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 
-class JavaConfigService implements IPluginConfigService {
+public class JavaConfigService implements IPluginConfigService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private Map<String, IClusterConfig> builtinConfigs;
+    private Map<String, IClusterConfig> configs;
 
     private String defaultCluster;
 
-    JavaConfigService(String defaultCluster) {
+    public JavaConfigService(String defaultCluster) {
         this.defaultCluster = defaultCluster;
-        builtinConfigs = new HashMap<String, IClusterConfig>();
-        builtinConfigs.put("login", initLogin());
-        builtinConfigs.put("console", initConsole());
+        configs = new HashMap<String, IClusterConfig>();
     }
 
     public IClusterConfig getCluster(String key) {
-        return builtinConfigs.get(key);
+        return configs.get(key);
     }
 
     public IClusterConfig getDefaultCluster() {
-        return builtinConfigs.get(defaultCluster);
+        return configs.get(defaultCluster);
     }
 
     public void detach() {
+        for (IClusterConfig config : configs.values()) {
+            if (config instanceof IDetachable) {
+                ((IDetachable) config).detach();
+            }
+        }
     }
 
-    private IClusterConfig initLogin() {
-        JavaClusterConfig plugins = new JavaClusterConfig();
-
-        IPluginConfig config = new JavaPluginConfig("login");
-        config.put("plugin.class", "org.hippoecm.frontend.plugins.login.LoginPlugin");
-        config.put("wicket.id", "service.root");
-        plugins.addPlugin(config);
-
-        return plugins;
-    }
-
-    private IClusterConfig initConsole() {
-        JavaClusterConfig plugins = new JavaClusterConfig();
-
-        IPluginConfig config = new JavaPluginConfig("root");
-        config.put("plugin.class", "org.hippoecm.frontend.plugins.console.RootPlugin");
-        config.put("wicket.id", "service.root");
-        config.put("wicket.dialog", "service.dialog");
-        config.put("wicket.model", "service.model");
-
-        String[] extensions = new String[] { "extension.browser", "extension.breadcrumb", "extension.editor", "extension.logout", "extension.menu" };
-        config.put("wicket.extensions", extensions);
-
-        config.put("extension.browser", "service.browser");
-        config.put("extension.breadcrumb", "service.breadcrumb");
-        config.put("extension.editor", "service.editor");
-        config.put("extension.menu", "service.menu");
-        config.put("extension.logout", "service.logout");
-        plugins.addPlugin(config);
-
-        config = new JavaPluginConfig("browser");
-        config.put("plugin.class", "org.hippoecm.frontend.plugins.console.browser.BrowserPlugin");
-        config.put("wicket.id", "service.browser");
-        config.put("wicket.model", "service.model");
-        plugins.addPlugin(config);
-
-        config = new JavaPluginConfig("breadcrumb");
-        config.put("plugin.class", "org.hippoecm.frontend.plugins.console.breadcrumb.BreadcrumbPlugin");
-        config.put("wicket.id", "service.breadcrumb");
-        config.put("wicket.model", "service.model");
-        plugins.addPlugin(config);
-
-        config = new JavaPluginConfig("editor");
-        config.put("plugin.class", "org.hippoecm.frontend.plugins.console.editor.EditorPlugin");
-        config.put("wicket.id", "service.editor");
-        config.put("wicket.model", "service.model");
-        plugins.addPlugin(config);
-
-        config = new JavaPluginConfig("menu");
-        config.put("plugin.class", "org.hippoecm.frontend.plugins.console.menu.MenuPlugin");
-        config.put("wicket.id", "service.menu");
-        config.put("wicket.model", "service.model");
-        config.put("wicket.dialog", "service.dialog");
-        plugins.addPlugin(config);
-
-        config = new JavaPluginConfig("logout");
-        config.put("plugin.class", "org.hippoecm.frontend.plugins.logout.LogoutPlugin");
-        config.put("wicket.id", "service.logout");
-        config.put("wicket.model", "service.model");
-        config.put("wicket.dialog", "service.logout.dialog");
-        plugins.addPlugin(config);
-
-        return plugins;
+    public void addClusterConfig(String name, IClusterConfig configuration) {
+        configs.put(name, configuration);
     }
 
     public List<String> listClusters(String folder) {
-        return new ArrayList<String>();
+        List<String> result = new ArrayList<String>();
+        for (String name : configs.keySet()) {
+            if (name.startsWith(folder + "/")) {
+                result.add(name);
+            }
+        }
+        return result;
     }
 
 }
