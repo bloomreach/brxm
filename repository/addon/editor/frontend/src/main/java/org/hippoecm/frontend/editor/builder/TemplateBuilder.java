@@ -274,7 +274,10 @@ public class TemplateBuilder implements IDetachable, IObservable {
             prototype = prototypeStore.getPrototype(type, true);
             if (prototype == null) {
                 if (readonly) {
-                    throw new BuilderException("No prototype found");
+                    prototype = prototypeStore.getPrototype(type, false);
+                    if (prototype == null) {
+                        throw new BuilderException("No prototype found");
+                    }
                 } else {
                     prototype = prototypeStore.createPrototype(type, true);
                     if (prototype == null) {
