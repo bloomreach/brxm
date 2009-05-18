@@ -194,6 +194,9 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
 
     // FIXME: fragale code, reference (although weak) to all other sessions
     private Object wrap(final Object object) throws RepositoryException {
+        if (object == null) {
+            return null;
+        }
         Class[] interfaces = object.getClass().getInterfaces();
         InvocationHandler handler = new InvocationHandler() {
 
