@@ -532,6 +532,9 @@
     <sv:property sv:name="ignore.chars" sv:type="String">
       <sv:value>*</sv:value>
     </sv:property>
+    <sv:property sv:name="wildcard.search" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
     <sv:property sv:name="exclude.primary.types" sv:type="String">
       <sv:value>nt:frozenNode</sv:value>
       <sv:value>hippogallery:exampleImageSet</sv:value>
@@ -547,7 +550,10 @@
         <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="min.query.length" sv:type="String">
-        <sv:value>2</sv:value>
+        <sv:value>1</sv:value>
+      </sv:property>
+      <sv:property sv:name="query.delay" sv:type="Double">
+        <sv:value>3</sv:value>
       </sv:property>
       <sv:property sv:name="container.id" sv:type="String">
         <sv:value>searchBoxContainer</sv:value>
