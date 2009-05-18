@@ -35,7 +35,6 @@ import java.util.Set;
 import javax.jcr.Node;
 
 import org.apache.wicket.util.lang.Objects;
-import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
@@ -67,19 +66,35 @@ public class PluginConfigTest extends TestCase {
                 "a", "b",
             "/config/sub", "frontend:pluginconfig",
                 "c", "d",
+            "/config/typed", "frontendtest:typed",
+                "d1", "3.0",
+                "d2", "3",
+                "l1", "1",
+                "l2", "-1",
+                "b1", "true",
+                "b2", "false",
             "/cluster", "frontend:plugincluster",
             "/cluster/plugin", "frontend:plugin",
                 "c", "d",
                 "x", "${cluster.id}",
             "/cluster/plugin/sub", "frontend:pluginconfig",
                 "a", "b",
-                "y", "${cluster.id}" };
+                "y", "${cluster.id}",
+            "/cluster/plugin/sub/typed", "frontendtest:typed",
+                "d1", "3.0",
+                "d2", "3",
+                "l1", "1",
+                "l2", "-1",
+                "b1", "true",
+                "b2", "false"};
 
     @Before
     public void setUp() throws Exception {
         super.setUp(true);
         root = session.getRootNode();
         HippoTester tester = new HippoTester(new JcrSessionModel(null) {
+            private static final long serialVersionUID = 1L;
+            
             @Override
             protected Object load() {
                 return session;
@@ -96,7 +111,7 @@ public class PluginConfigTest extends TestCase {
     @SuppressWarnings("unchecked")
     public void testMap() throws Exception {
         build(session, content);
-
+        
         IHippoMap map = new JcrMap(new JcrNodeModel(root.getNode("map")));
         assertEquals("b", map.get("a"));
 
@@ -172,12 +187,14 @@ public class PluginConfigTest extends TestCase {
     @Test
     public void testConfig() throws Exception {
         build(session, content);
-
+        
         IPluginConfig config = getPluginConfig();
         assertEquals("b", config.getString("a"));
 
         IPluginConfig subConfig = config.getPluginConfig("sub");
         assertEquals("d", subConfig.getString("c"));
+        
+        testTypedConfig(config.getPluginConfig("typed"));
 
         config.put("e", "f");
         assertEquals("f", config.getString("e"));
@@ -187,6 +204,20 @@ public class PluginConfigTest extends TestCase {
         config.put("x", subConfig);
         subConfig = config.getPluginConfig("x");
         assertEquals("test", subConfig.getString("test"));
+    }
+
+    private void testTypedConfig(IPluginConfig config) {
+        assertEquals(3.0d, config.getDouble("d1"), 0d);
+        assertEquals(3.0d, config.getDouble("d2"), 0d);
+        
+        assertEquals(1, config.getInt("l1"));
+        assertEquals(-1, config.getInt("l2"));
+
+        assertEquals(1l, config.getLong("l1"));
+        assertEquals(-1l, config.getLong("l2"));
+        
+        assertTrue(config.getBoolean("b1"));
+        assertFalse(config.getBoolean("b2"));
     }
 
     protected IClusterConfig getClusterConfig() throws Exception {
@@ -212,6 +243,8 @@ public class PluginConfigTest extends TestCase {
         IPluginConfig subConfig = pluginConfig.getPluginConfig("sub");
         assertEquals("b", subConfig.getString("a"));
         assertEquals("${cluster.id}", subConfig.getString("y"));
+        
+        testTypedConfig(subConfig.getPluginConfig("typed"));
     }
 
     @Test
@@ -256,6 +289,8 @@ public class PluginConfigTest extends TestCase {
         IPluginConfig subConfig = pluginConfig.getPluginConfig("sub");
         assertEquals("b", subConfig.getString("a"));
         assertEquals("cluster", subConfig.getString("y"));
+        
+        testTypedConfig(subConfig.getPluginConfig("typed"));
     }
 
     @Test
@@ -276,6 +311,8 @@ public class PluginConfigTest extends TestCase {
         IPluginConfig subConfig = copy.getPluginConfig("sub");
         assertEquals("d", subConfig.getString("c"));
 
+        testTypedConfig(copy.getPluginConfig("typed"));
+        
         copy.put("e", "f");
         assertEquals("f", copy.getString("e"));
         assertEquals("f", original.getString("e"));
@@ -296,7 +333,9 @@ public class PluginConfigTest extends TestCase {
 
         IPluginConfig subConfig = copy.getPluginConfig("sub");
         assertEquals("d", subConfig.getString("c"));
-
+        
+        testTypedConfig(copy.getPluginConfig("typed"));
+        
         copy.put("e", "f");
         assertEquals("f", copy.getString("e"));
         assertEquals("f", original.getString("e"));

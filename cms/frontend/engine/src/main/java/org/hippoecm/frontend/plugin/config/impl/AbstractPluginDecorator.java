@@ -199,14 +199,23 @@ public abstract class AbstractPluginDecorator extends AbstractMap implements IPl
      * @see IValueMap#getDouble(String)
      */
     public final double getDouble(final String key) throws StringValueConversionException {
-        return getStringValue(key).toDouble();
+        return getDouble(key, 0d);
     }
 
     /**
      * @see IValueMap#getDouble(String, double)
      */
     public final double getDouble(final String key, final double defaultValue) throws StringValueConversionException {
-        return getStringValue(key).toDouble(defaultValue);
+        final String value = getString(key);
+        return value != null ? parseDouble(value) : defaultValue;
+    }
+
+    private double parseDouble(String value) throws StringValueConversionException{
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException nfe) {
+            throw new StringValueConversionException("Failed to convert String to Double", nfe);
+        }
     }
 
     /**
