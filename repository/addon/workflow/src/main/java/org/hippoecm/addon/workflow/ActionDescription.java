@@ -22,7 +22,7 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 
-public class ActionDescription extends Panel {
+public abstract class ActionDescription extends Panel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -64,4 +64,11 @@ public class ActionDescription extends Panel {
         else
             return super.get(id);
     }
+
+    public void run() {
+        invoke();
+    }
+
+    protected abstract void invoke();
+
 }
