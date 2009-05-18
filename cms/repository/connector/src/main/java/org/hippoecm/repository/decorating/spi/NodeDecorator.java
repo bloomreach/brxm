@@ -38,10 +38,6 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
         return getCanonicalNode(session, remoteSession, this);
     }
 
-    public String getDisplayName() throws RepositoryException {
-        return getDisplayName(session, remoteSession, this);
-    }
-
     static Node getCanonicalNode(Session session, HippoSession remoteSession, Node node) throws RepositoryException {
         if (node.isNew()) {
             return node;
@@ -64,8 +60,4 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
         return session.getRootNode().getNode(node.getPath().substring(1));
     }
 
-    static String getDisplayName(Session session, HippoSession remoteSession, Node node) throws RepositoryException {
-        node = remoteSession.getRootNode().getNode(node.getPath().substring(1));
-        return ((HippoNode)node).getDisplayName();
-    }
 }

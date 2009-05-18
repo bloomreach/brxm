@@ -38,7 +38,4 @@ public class VersionHistoryDecorator extends org.hippoecm.repository.decorating.
         return NodeDecorator.getCanonicalNode(session, remoteSession, node);
     }
 
-    public String getDisplayName() throws RepositoryException {
-        return NodeDecorator.getDisplayName(session, remoteSession, node);
-    }
 }

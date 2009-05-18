@@ -75,7 +75,7 @@ public class NodeListWidgetPlugin extends RenderPlugin {
                 throw new IllegalArgumentException("Node path is not available", e);
             }
             try {
-                this.displayName = node.getDisplayName();
+                this.displayName = node.getName();
             } catch (RepositoryException e) {
                 throw new IllegalArgumentException("Node displayname is not available", e);
             }

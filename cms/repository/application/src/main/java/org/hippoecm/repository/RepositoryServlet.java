@@ -57,7 +57,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.jackrabbit.util.Base64;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
@@ -382,7 +381,7 @@ public class RepositoryServlet extends HttpServlet {
                     childPath += "/" + URLEncoder.encode(childElts.nextToken(), "UTF-8");
                 }
                 writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath() + childPath + "/" + "\">");
-                String displayName = StringEscapeUtils.escapeHtml(NodeNameCodec.decode(((HippoNode)child).getDisplayName()));
+                String displayName = StringEscapeUtils.escapeHtml(NodeNameCodec.decode(child.getName()));
                 if (child.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     writer.print(displayName + " [" + child.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]");
                 } else {

@@ -36,7 +36,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,12 +123,7 @@ public class NodeActionsPlugin extends RenderPlugin {
             Node node = nodeModel.getNode();
             try {
                 if (node.isNew()) {
-                    String displayName;
-                    if (node instanceof HippoNode) {
-                        displayName = ((HippoNode) node).getDisplayName();
-                    } else {
-                        displayName = node.getName();
-                    }
+                    String displayName = node.getName();
                     node.remove();
                     info("User " + displayName + " removed");
                 }
