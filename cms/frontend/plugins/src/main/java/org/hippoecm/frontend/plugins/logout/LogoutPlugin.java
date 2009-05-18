@@ -37,7 +37,9 @@ public class LogoutPlugin extends RenderPlugin {
 
         UserSession session = (UserSession) getSession();
         ValueMap credentials = session.getCredentials();
-        username = credentials.getString("username");
+        if (credentials != null) {
+            username = credentials.getString("username");
+        }
 
         add(new Label("username", new PropertyModel(this, "username")));
         add(new LogoutLink("logout-link", context));
