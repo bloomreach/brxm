@@ -15,16 +15,10 @@
  */
 package org.hippoecm.repository.impl;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.ReferentialIntegrityException;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Node;
-import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.version.Version;
-import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
-import javax.jcr.version.VersionIterator;
 
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
@@ -45,9 +39,5 @@ public class VersionHistoryDecorator extends org.hippoecm.repository.decorating.
         } else {
             return null;
         }
-    }
-
-    public String getDisplayName() throws RepositoryException {
-        return NodeDecorator.getDisplayName(versionHistory);
     }
 }

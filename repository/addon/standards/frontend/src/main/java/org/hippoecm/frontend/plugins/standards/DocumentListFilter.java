@@ -25,7 +25,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -179,10 +178,7 @@ public class DocumentListFilter implements IClusterable {
     }
 
     public String getDisplayName(Node node) throws RepositoryException {
-        String displayName = ((HippoNode)node).getDisplayName();
-        if (displayName == null) {
-            displayName = node.getName();
-        }
+        String displayName = node.getName();
         for (Iterator<FilterDefinition> iter = filters.iterator(); iter.hasNext(); ) {
             FilterDefinition def = iter.next();
             if (def.match(currentState, node)) {

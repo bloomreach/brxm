@@ -43,13 +43,6 @@ public class ClientServicingNode extends ClientNode implements HippoNode {
         this.remote = remote;
     }
 
-    public String getDisplayName() throws RepositoryException {
-        try {
-            return remote.getDisplayName();
-        } catch (RemoteException ex) {
-            throw new RemoteRepositoryException(ex);
-        }
-    }
     public Node getCanonicalNode() throws RepositoryException {
         try {
             RemoteNode remoteCanonical = remote.getCanonicalNode();

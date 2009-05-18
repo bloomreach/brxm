@@ -15,14 +15,13 @@
  */
 package org.hippoecm.repository.decorating.server;
 
-import javax.jcr.Node;
 import java.rmi.RemoteException;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.server.ServerNode;
-
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.decorating.remote.RemoteServicingNode;
 
@@ -35,10 +34,6 @@ public class ServerServicingNode extends ServerNode implements RemoteServicingNo
     public ServerServicingNode(HippoNode node, RemoteServicingAdapterFactory factory) throws RemoteException {
         super(node, factory);
         this.node = node;
-    }
-
-    public String getDisplayName() throws RepositoryException, RemoteException {
-        return node.getDisplayName();
     }
 
     public RemoteNode getCanonicalNode() throws RepositoryException, RemoteException {

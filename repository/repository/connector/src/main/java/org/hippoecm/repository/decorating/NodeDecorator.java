@@ -63,8 +63,6 @@ public abstract class NodeDecorator extends ItemDecorator implements HippoNode {
 
     public abstract Node getCanonicalNode() throws RepositoryException;
 
-    public abstract String getDisplayName() throws RepositoryException;
-
     public static Node unwrap(Node node) {
         if (node instanceof NodeDecorator) {
             node = (Node) ((NodeDecorator) node).unwrap();

@@ -52,7 +52,6 @@ import org.hippoecm.frontend.plugins.yui.autocomplete.AutoCompleteSettings;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
@@ -272,7 +271,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
                         Row row = it.nextRow();
                         try {
                             String path = row.getValue("jcr:path").getString();
-                            HippoNode node = (HippoNode) session.getItem(path);
+                            Node node = (Node) session.getItem(path);
 
                             String state;
                             if (node.hasProperty("hippostd:state")) {
@@ -286,7 +285,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
                             }
 
                             String excerpt = row.getValue("rep:excerpt()").getString();
-                            String displayName = NodeNameCodec.decode(node.getDisplayName());
+                            String displayName = NodeNameCodec.decode(node.getName());
                             String url = node.getPath();
 
                             resultList.add(new ResultItem(displayName, url, state, excerpt));

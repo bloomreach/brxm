@@ -26,6 +26,5 @@ import org.apache.jackrabbit.rmi.remote.RemoteNode;
 public interface RemoteServicingNode extends RemoteNode, Remote, Serializable {
     final static String SVN_ID = "$Id$";
 
-    public String getDisplayName() throws RepositoryException, RemoteException;
     public RemoteNode getCanonicalNode() throws RepositoryException, RemoteException;
 }

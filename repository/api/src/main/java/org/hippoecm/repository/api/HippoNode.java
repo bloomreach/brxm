@@ -56,17 +56,6 @@ public interface HippoNode extends Node {
     public Node getCanonicalNode() throws RepositoryException;
 
     /**
-     * Returns a human representational name for the information represented
-     * by this node.  In case there is no specific resolution to a human
-     * representation this name should return the same value as getName().
-     * This method should not return <code>null</code>.
-     *
-     * @returns a string which represents a human readable representation of
-     * the name of the node
-     */
-    public String getDisplayName() throws RepositoryException;
-
-    /**
      * Obtains an iterator over the set of nodes that potentially contain
      * changes, starting (and not including) this node.
      * Only nodes for which <code>Node.isNodeType(nodeType)</code> returns

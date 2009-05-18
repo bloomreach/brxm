@@ -47,7 +47,4 @@ public class VersionDecorator extends org.hippoecm.repository.decorating.Version
         }
     }
 
-    public String getDisplayName() throws RepositoryException {
-        return NodeDecorator.getDisplayName(version);
-    }
 }
