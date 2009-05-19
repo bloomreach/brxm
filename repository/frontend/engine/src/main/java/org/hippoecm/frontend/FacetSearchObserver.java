@@ -73,7 +73,7 @@ public class FacetSearchObserver implements EventListener {
             }
 
             obMgr.addEventListener(this, Event.NODE_ADDED | Event.NODE_REMOVED, "/", true, null,
-                    new String[] { HippoNodeType.NT_FACETSEARCH }, false);
+                    new String[] { "hippo:document" }, false);
         } catch (RepositoryException ex) {
             log.error("Failure to subscribe to facetsearch nodes", ex);
         }
@@ -134,16 +134,16 @@ public class FacetSearchObserver implements EventListener {
                     switch (event.getType()) {
                     case Event.NODE_ADDED:
                         Node node = session.getRootNode().getNode(path.substring(1));
-                        String uuid = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                        String docbase = session.getNodeByUUID(uuid).getPath();
-                        listeners.put(path, addFacetSearchListener(obMgr, docbase, node));
+                        if (node.isNodeType("hippo:facetsearch")) {
+                            String uuid = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                            String docbase = session.getNodeByUUID(uuid).getPath();
+                            listeners.put(path, addFacetSearchListener(obMgr, docbase, node));
+                        }
                         break;
                     case Event.NODE_REMOVED:
                         EventListener listener = listeners.remove(path);
                         if (listener != null) {
                             obMgr.removeEventListener(listener);
-                        } else {
-                            log.warn("No listener found for removed facetsearch at " + path);
                         }
                         break;
                     default:

@@ -41,17 +41,17 @@
   <!-- ====================================================================== -->
 
   <category additivity="true" name="org.hippoecm.frontend">
-    <level value="warn"/>
+    <level value="info"/>
     <appender-ref ref="console"/>
   </category>
   
   <category additivity="true" name="org.hippoecm.repository">
-    <level value="warn"/>
+    <level value="info"/>
     <appender-ref ref="root"/>
   </category>
 
   <category additivity="true" name="org.apache.jackrabbit">
-    <level value="warn"/>
+    <level value="info"/>
     <appender-ref ref="root"/>
   </category>
 
@@ -66,7 +66,7 @@
   </category>
 
   <category additivity="true" name="org.apache.jackrabbit.core.query.lucene">
-    <level value="error"/>
+    <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
 

@@ -45,7 +45,6 @@ import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNode;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ObservationTest extends TestCase {
@@ -422,7 +421,7 @@ public class ObservationTest extends TestCase {
         assertEquals(1, copy.count);
     }
 
-    @Ignore
+    @Test
     /**
      * test whether events are received on facet search nodes
      */
@@ -434,7 +433,7 @@ public class ObservationTest extends TestCase {
         source.addMixin("mix:referenceable");
         session.save();
 
-        Node sink = test.addNode("sink", "nt:unstructured");
+        Node sink = test.addNode("sink", "frontendtest:document");
         Node search = sink.addNode("search", "hippo:facetsearch");
         search.setProperty("hippo:facets", new String[] { "facet" });
         search.setProperty("hippo:queryname", "test");
@@ -475,16 +474,13 @@ public class ObservationTest extends TestCase {
         session.save();
         session.refresh(false);
 
-        // wait for index
-        Thread.sleep(300);
+        // basic facetsearch assertion
+        Node result = sink.getNode("search/xyz/hippo:resultset/xyz");
+        assertTrue(((HippoNode) result).getCanonicalNode().isSame(xyz));
 
         // event should have been received
         home.processEvents();
         assertEquals(1, events.size());
-
-        // basic facetsearch assertion
-        Node result = sink.getNode("search/xyz/hippo:resultset/xyz");
-        assertTrue(((HippoNode) result).getCanonicalNode().isSame(xyz));
 
         session.save();
     }
