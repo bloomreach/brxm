@@ -84,14 +84,6 @@ public class DialogWindow extends PersistentModalWindow implements IDialogServic
     }
 
     @Override
-    protected void onBeforeRender() {
-        if (shown != null && !isShown()) {
-            show();
-        }
-        super.onBeforeRender();
-    }
-
-    @Override
     public boolean isShown() { 
         if (shown == null) {
             return false;
