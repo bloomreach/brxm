@@ -51,8 +51,8 @@ public interface Filter extends BaseFilter{
     
     void addJCRExpression(String jcrExpression);
     
-    void addOrFilter(BaseFilter filter);
+    Filter addOrFilter(BaseFilter filter);
 
-    void addAndFilter(BaseFilter filter);
+    Filter addAndFilter(BaseFilter filter);
 
 }
