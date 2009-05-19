@@ -142,4 +142,18 @@ public class CanonicalPathTest extends TestCase {
         assertNotNull(canonical);
         assertEquals("/test/content/nodes", canonical.getPath());
     }
+
+    /**
+     * Asserts that nodes that have been moved have a canonical node
+     */
+    @Test
+    public void testMovedNodeHasCanonical() throws RepositoryException {
+        Node node = traverse(session, "/test/content/nodes");
+        node.getSession().move(node.getPath(), node.getParent().getPath() + "/newnodes");
+        assertNotNull(node);
+        assertTrue(node instanceof HippoNode);
+        Node canonical = ((HippoNode)node).getCanonicalNode();
+        assertNotNull(canonical);
+        assertEquals("/test/content/newnodes", canonical.getPath());
+    }
 }
