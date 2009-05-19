@@ -711,11 +711,13 @@ public class JcrObservationManager implements ObservationManager {
                     // do the refresh
                     for (String path : paths) {
                         log.info("Refreshing {}, keeping changes", path);
-                        session.getRootNode().getNode(path.substring(1)).refresh(true);
+                        try {
+                            session.getRootNode().getNode(path.substring(1)).refresh(true);
+                        } catch (PathNotFoundException ex) {
+                            log.error("Could not find path for event, discarding event and continue", ex);
+                        }
                     }
                 }
-            } catch (PathNotFoundException ex) {
-                log.error("Could not find path for event", ex);
             } catch (RepositoryException ex) {
                 log.error("Failed to refresh session", ex);
             }
