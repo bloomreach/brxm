@@ -20,6 +20,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.IModel;
@@ -27,12 +28,17 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
+import org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SaveDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(ContentImportDialog.class);
 
     protected boolean hasPendingChanges;
     protected MenuPlugin plugin;
@@ -62,8 +68,8 @@ public class SaveDialog extends AbstractDialog {
                 setOkVisible(false);
             }
         } catch (RepositoryException e) {
+            log.error("Error while rendering save dialog", e);
             message = new Label("message", "exception: " + e.getMessage());
-            e.printStackTrace();
             setOkVisible(false);
         }
         add(message);
@@ -72,13 +78,10 @@ public class SaveDialog extends AbstractDialog {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
-            Node rootNode = nodeModel.getNode().getSession().getRootNode();
-            if (hasPendingChanges) {
-                rootNode.getSession().save();
-            }
-        } catch (RepositoryException ex) {
-            error(ex.getMessage());
+            ((UserSession) Session.get()).getJcrSession().save();
+        } catch (RepositoryException e) {
+            log.error("Error while saving content from the console", e);
+            error(e.getClass().getName()+": "+e.getMessage());
         }
     }
 
