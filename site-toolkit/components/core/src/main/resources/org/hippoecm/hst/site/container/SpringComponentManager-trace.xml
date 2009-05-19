@@ -14,8 +14,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:lang="http://www.springframework.org/schema/lang" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-2.5.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
   <!-- A wrapping LoggerFactory component which can be used as a centralized logging management. -->
   <bean id="org.hippoecm.hst.logging.LoggerFactory" class="org.hippoecm.hst.core.logging.Slf4jLoggerFactory">
@@ -26,6 +31,20 @@
     <constructor-arg><value>500</value></constructor-arg>
     <property name="levelByName" value="DEBUG" />
   </bean>
+  
+  <!-- Profiling -->
+  <bean id="componentInvokerProfiler" class="org.hippoecm.hst.core.logging.HstComponentInvokerProfiler">
+    <constructor-arg><ref bean="org.hippoecm.hst.logging.LoggerFactory"/></constructor-arg>
+  </bean>  
+  
+  <aop:config>
+    <aop:aspect ref="componentInvokerProfiler">
+      <aop:pointcut id="theExecutionOfComponentInvokerMethod"
+                    expression="execution(* org.hippoecm.hst.core.container.HstComponentInvoker.*(org.hippoecm.hst.core.container.HstContainerConfig, javax.servlet.ServletRequest, javax.servlet.ServletResponse))" />
+      <aop:around pointcut-ref="theExecutionOfComponentInvokerMethod"
+                  method="profile" />
+    </aop:aspect>
+  </aop:config>
 
 </beans>
 

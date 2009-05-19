@@ -170,7 +170,7 @@ public class TraceToolSlf4jLogger implements Logger {
     }
     
     private void addTraceToolLogEvent(Level level, String format, Object [] argArray) {
-        String message = MessageFormatter.format(format, argArray);
+        String message = MessageFormatter.arrayFormat(format, argArray);
         LogEvent event = new LogEventImpl(logger.getName(), level, message);
         traceToolLogEventBuffer.add(event);
     }
