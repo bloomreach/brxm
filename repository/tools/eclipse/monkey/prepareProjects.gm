@@ -26,8 +26,10 @@ removeClasspathEntry('hippo-ecm-frontend-engine', 'src/test/resources');
 removeClasspathEntry('hippo-ecm-repository-engine', 'src/test/resources');
 removeClasspathEntry('hippo-ecm-addon-standards-frontend', 'src/test/resources');
 removeClasspathEntry('hippo-ecm-addon-editor', 'src/test/resources');
+removeClasspathEntry('hippo-ecm-addon-cms-edit', 'src/test/java');
 removeClasspathEntry('hippo-ecm-addon-yui', 'src/test/resources');
 removeClasspathEntry('hippo-ecm-addon-xinha-frontend', 'src/test/resources');
+removeClasspathEntry('hippo-ecm-addon-xinha-frontend', 'src/test/java');
 removeClasspathEntry('hippo-ecm-addon-eavesdrop', 'src/test/resources');
 removeClasspathEntry('hippo-ecm-addon-faceteddate-repository', 'src/test/resources');
 
