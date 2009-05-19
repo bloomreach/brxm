@@ -45,6 +45,7 @@ import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNode;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ObservationTest extends TestCase {
@@ -421,7 +422,7 @@ public class ObservationTest extends TestCase {
         assertEquals(1, copy.count);
     }
 
-    @Test
+    @Ignore
     /**
      * test whether events are received on facet search nodes
      */
