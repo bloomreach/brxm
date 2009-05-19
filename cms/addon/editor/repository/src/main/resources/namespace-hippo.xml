@@ -660,7 +660,7 @@
           <sv:value>hippo:query</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:language" sv:type="String">
-          <sv:value>XPath</sv:value>
+          <sv:value>xpath</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:statement" sv:type="String">
           <sv:value/>
