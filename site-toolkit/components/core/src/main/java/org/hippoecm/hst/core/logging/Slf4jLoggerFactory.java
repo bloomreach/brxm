@@ -15,13 +15,47 @@
  */
 package org.hippoecm.hst.core.logging;
 
+import org.hippoecm.hst.logging.LogEventBuffer;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.logging.LoggerFactory;
+import org.hippoecm.hst.site.HstServices;
 
 public class Slf4jLoggerFactory implements LoggerFactory {
     
+    enum RuntimeMode {
+        UNKNOWN_MODE,
+        DEVELOPMENT_MODE,
+        PRODUCTION_MODE
+    }
+    
+    private RuntimeMode runtimeMode = RuntimeMode.UNKNOWN_MODE;
+    
+    private LogEventBuffer traceToolLogEventBuffer;
+    
+    public void setTraceToolLogEventBuffer(LogEventBuffer traceToolLogEventBuffer) {
+        this.traceToolLogEventBuffer = traceToolLogEventBuffer;
+    }
+    
     public Logger getLogger(String name) {
-        return new Slf4jLogger(org.slf4j.LoggerFactory.getLogger(name));
+        Logger logger = null;
+
+        if (runtimeMode == RuntimeMode.UNKNOWN_MODE) {
+            if (HstServices.isAvailable()) {
+                if (HstServices.getComponentManager().getContainerConfiguration().isDevelopmentMode()) {
+                    runtimeMode = RuntimeMode.DEVELOPMENT_MODE;
+                } else {
+                    runtimeMode = RuntimeMode.PRODUCTION_MODE;
+                }
+            }
+        }
+        
+        if (runtimeMode == RuntimeMode.DEVELOPMENT_MODE) {
+            logger = new TraceToolSlf4jLogger(traceToolLogEventBuffer, org.slf4j.LoggerFactory.getLogger(name));
+        } else {
+            logger = new Slf4jLogger(org.slf4j.LoggerFactory.getLogger(name));
+        }
+        
+        return logger;
     }
 
 }

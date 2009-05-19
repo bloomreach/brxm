@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -30,6 +30,9 @@ import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 
+import org.apache.commons.collections.list.TreeList;
+import org.hippoecm.hst.util.DefaultKeyValue;
+import org.hippoecm.hst.util.KeyValue;
 import org.w3c.dom.Element;
 
 /**
@@ -62,7 +65,7 @@ public abstract class AbstractHstResponseState implements HstResponseState {
     protected PrintWriter printWriter;
     protected Map<String, List<String>> headers;
     protected List<Cookie> cookies;
-    protected Map<Element, String> headElements;
+    protected List<KeyValue<String, Element>> headElements;
     protected boolean committed;
     protected boolean hasStatus;
     protected boolean hasError;
@@ -509,12 +512,29 @@ public abstract class AbstractHstResponseState implements HstResponseState {
             if (response instanceof HstResponse) {
                 ((HstResponse) response).addHeadElement(element, keyHint);
             } else {
-                if (headElements == null) {
-                    headElements = new HashMap<Element, String>();
+                if (this.headElements == null) {
+                    // org.apache.commons.collections.list.TreeList is well-optimized for
+                    // fast insertions at any index in the list.
+                    // Refer to description in the javadoc for details.
+                    this.headElements = new TreeList();
                 }
 
-                if (keyHint == null || !headElements.containsValue(keyHint)) {
-                    headElements.put(element, keyHint);
+                if (element == null) {
+                    if (keyHint != null) {
+                        KeyValue<String, Element> kvPair = new DefaultKeyValue<String, Element>(keyHint, null, true);
+                        this.headElements.remove(kvPair);
+                    } else {
+                        // If element is null and keyHint is null, remove all head elements.
+                        this.headElements.clear();
+                    }
+                    
+                    return;
+                }
+                
+                KeyValue<String, Element> kvPair = new DefaultKeyValue<String, Element>(keyHint, element, true);
+                
+                if (!this.headElements.contains(kvPair)) {
+                    this.headElements.add(kvPair);
                 }
             }
         }
@@ -523,20 +543,21 @@ public abstract class AbstractHstResponseState implements HstResponseState {
     public boolean containsHeadElement(String keyHint) {
         boolean containing = false;
         
-        if (headElements != null && keyHint != null) {
-            containing = headElements.containsValue(keyHint);
+        if (this.headElements != null && keyHint != null) {
+            KeyValue<String, Element> kvPair = new DefaultKeyValue<String, Element>(keyHint, null, true);
+            containing = this.headElements.contains(kvPair);
         }
         
         return containing;
     }
 
     public List<Element> getHeadElements() {
-        List<Element> elements = null;
+        List<Element> elements = new LinkedList<Element>();
         
-        if (headElements != null) {
-            elements = new ArrayList<Element>(headElements.keySet());
-        } else {
-            elements = Collections.emptyList();
+        if (this.headElements != null) {
+            for (KeyValue<String, Element> kv : this.headElements) {
+                elements.add(kv.getValue());
+            }
         }
         
         return elements;
@@ -628,8 +649,8 @@ public abstract class AbstractHstResponseState implements HstResponseState {
             }
 
             if (headElements != null) {
-                for (Map.Entry<Element, String> entry : headElements.entrySet()) {
-                    addResponseHeadElement(entry.getKey(), entry.getValue());
+                for (KeyValue<String, Element> entry : headElements) {
+                    addResponseHeadElement(entry.getValue(), entry.getKey());
                 }
                 
                 headElements = null;

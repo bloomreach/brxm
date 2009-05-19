@@ -37,7 +37,16 @@ public class ResourceServingValve extends AbstractValve {
 
         if (!context.getServletResponse().isCommitted() && requestContext.getBaseURL().getResourceWindowReferenceNamespace() != null) {
             HstContainerURL baseURL = requestContext.getBaseURL();
-            HstComponentWindow window = findResourceServingWindow(context.getRootComponentWindow(), baseURL.getResourceWindowReferenceNamespace());
+            String resourceWindowRef = baseURL.getResourceWindowReferenceNamespace();
+            HstComponentWindow window = null;
+            
+            if (getContainerConfiguration().isDevelopmentMode() && resourceWindowRef.endsWith(getTraceToolComponentName())) {
+                window = createTraceToolComponent(context, requestContext, null);
+            }
+            
+            if (window == null) {
+                window = findResourceServingWindow(context.getRootComponentWindow(), resourceWindowRef);
+            }
             
             if (window != null) {
                 HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.RESOURCE_PHASE);

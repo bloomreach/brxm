@@ -17,5 +17,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
+  <!-- A wrapping LoggerFactory component which can be used as a centralized logging management. -->
+  <bean id="org.hippoecm.hst.logging.LoggerFactory" class="org.hippoecm.hst.core.logging.Slf4jLoggerFactory">
+    <property name="traceToolLogEventBuffer" ref="hstTraceToolLogEventBuffer" />
+  </bean>
+  
+  <bean id="hstTraceToolLogEventBuffer" class="org.hippoecm.hst.core.logging.CircularFIFOLogEventBuffer">
+    <constructor-arg><value>500</value></constructor-arg>
+    <property name="levelByName" value="DEBUG" />
+  </bean>
+
 </beans>
 

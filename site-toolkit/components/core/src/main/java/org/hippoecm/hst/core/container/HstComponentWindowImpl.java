@@ -127,7 +127,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
         return this.responseState;
     }
     
-    protected void addChildWindow(HstComponentWindow child) {
+    public void addChildWindow(HstComponentWindow child) {
         if (this.childWindowMap == null) {
             this.childWindowMap = new HashMap<String, HstComponentWindow>();
         }

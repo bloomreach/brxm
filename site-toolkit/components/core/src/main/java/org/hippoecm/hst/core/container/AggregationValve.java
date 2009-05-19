@@ -36,13 +36,14 @@ import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class AggregationValve extends AbstractValve {
-
+    
     @Override
     public void invoke(ValveContext context) throws ContainerException {
 
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
         HttpServletResponse servletResponse = (HttpServletResponse) context.getServletResponse();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
+        boolean isDevelopmentMode = getContainerConfiguration().isDevelopmentMode();
         
         if (!context.getServletResponse().isCommitted() && requestContext.getBaseURL().getResourceWindowReferenceNamespace() == null) {
             HstComponentWindow rootWindow = context.getRootComponentWindow();
@@ -72,8 +73,21 @@ public class AggregationValve extends AbstractValve {
                 // to avoid recursive invocation from now, just make a list by hierarchical order.
                 List<HstComponentWindow> sortedComponentWindowList = new LinkedList<HstComponentWindow>();
                 sortComponentWindowsByHierarchy(rootWindow, sortedComponentWindowList);
+                
+                // create and add a window for trace tool
+                HstComponentWindow traceToolWindow = null;
+                if (isDevelopmentMode && !sortedComponentWindowList.isEmpty()) {
+                    HstComponentWindow lastChildWindow = sortedComponentWindowList.get(sortedComponentWindowList.size() - 1);
+                    traceToolWindow = createTraceToolComponent(context, requestContext, lastChildWindow);
+                    ((HstComponentWindowImpl) lastChildWindow).addChildWindow(traceToolWindow);
+                    createHstRequestResponseForWindows(traceToolWindow, requestContext, 
+                            requestMap.get(lastChildWindow), responseMap.get(lastChildWindow), 
+                            requestMap, responseMap, topParentResponse);
+                    sortedComponentWindowList.add(traceToolWindow);
+                }
+                
                 HstComponentWindow [] sortedComponentWindows = sortedComponentWindowList.toArray(new HstComponentWindow[0]);
-
+                
                 HstContainerConfig requestContainerConfig = context.getRequestContainerConfig();
                 // process doBeforeRender() of each component as sorted order, parent first.
                 processWindowsBeforeRender(requestContainerConfig, sortedComponentWindows, requestMap, responseMap);
@@ -116,13 +130,13 @@ public class AggregationValve extends AbstractValve {
                 } else {
 
                     // process doRender() of each component as reversed sort order, child first.
-                    processWindowsRender(requestContainerConfig, sortedComponentWindows, requestMap, responseMap);
+                    processWindowsRender(requestContainerConfig, sortedComponentWindows, requestMap, responseMap, isDevelopmentMode, traceToolWindow);
     
                     if (log.isWarnEnabled()) {
                         // log warnings of each component execution as reversed sort order, child first.
                         logWarningsForEachComponentWindow(sortedComponentWindows);
                     }
-    
+                    
                     try {
                         // flush root component window content.
                         // note that the child component's contents are already flushed into the root component's response state.
@@ -212,16 +226,32 @@ public class AggregationValve extends AbstractValve {
             final HstContainerConfig requestContainerConfig, 
             final HstComponentWindow [] sortedComponentWindows,
             final Map<HstComponentWindow, HstRequest> requestMap, 
-            final Map<HstComponentWindow, HstResponse> responseMap)
+            final Map<HstComponentWindow, HstResponse> responseMap,
+            final boolean isDevelopmentMode,
+            final HstComponentWindow traceToolWindow)
             throws ContainerException {
+
+        boolean traceToolWindowFlushed = false;
 
         for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
             HstComponentWindow window = sortedComponentWindows[i];
             HstRequest request = requestMap.get(window);
             HstResponse response = responseMap.get(window);
             getComponentInvoker().invokeRender(requestContainerConfig, request, response);
+            
+            if (isDevelopmentMode && !traceToolWindowFlushed && window != traceToolWindow) {
+                try {
+                    traceToolWindowFlushed = true;
+                    traceToolWindow.getResponseState().flush();
+                } catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Exception during flushing the traceToolWindow's response state.", e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Exception during flushing the traceToolWindow's response state.");
+                    }                    
+                }
+            }
         }
-
     }
 
     protected void logWarningsForEachComponentWindow(HstComponentWindow [] sortedComponentWindows) {
@@ -242,5 +272,5 @@ public class AggregationValve extends AbstractValve {
             }
         }
     }
-
+    
 }
