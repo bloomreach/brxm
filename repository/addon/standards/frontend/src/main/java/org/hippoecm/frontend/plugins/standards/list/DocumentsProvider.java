@@ -48,24 +48,26 @@ public class DocumentsProvider extends SortableDataProvider {
 
     public DocumentsProvider(JcrNodeModel model, DocumentListFilter filter, Map<String, Comparator<IModel>> comparators) {
         this.comparators = comparators;
-
+        List<IModel> documents = new ArrayList<IModel>();
         Node node = model.getNode();
-        try {
-            List<IModel> documents = new ArrayList<IModel>();
-            NodeIterator subNodes = filter.filter(node, node.getNodes());
-            while (subNodes.hasNext()) {
-                Node subNode = subNodes.nextNode();
-                //Skip deleted documents
-                if (subNode.isNodeType(HippoNodeType.NT_HANDLE) && !subNode.hasNode(subNode.getName())) {
-                    continue;
+        if (node != null) {
+            try {
+                NodeIterator subNodes = filter.filter(node, node.getNodes());
+                while (subNodes.hasNext()) {
+                    Node subNode = subNodes.nextNode();
+                    //Skip deleted documents
+                    if (subNode.isNodeType(HippoNodeType.NT_HANDLE) && !subNode.hasNode(subNode.getName())) {
+                        continue;
+                    }
+                    documents.add(new JcrNodeModel(subNode));
                 }
-                documents.add(new JcrNodeModel(subNode));
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
             }
-            entries = Collections.unmodifiableList(documents);
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
+        } else {
+            log.info("Jcr node in JcrNodeModel is null, returning empty list");
         }
-
+        entries = Collections.unmodifiableList(documents);
     }
 
     public Iterator<IModel> iterator(int first, int count) {
