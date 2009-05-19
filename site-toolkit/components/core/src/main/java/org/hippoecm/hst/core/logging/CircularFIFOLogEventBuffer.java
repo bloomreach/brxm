@@ -101,4 +101,8 @@ public class CircularFIFOLogEventBuffer implements LogEventBuffer {
         return this.logLevel;
     }
 
+    public String getLevelName() {
+        return this.logLevel.toString();
+    }
+    
 }

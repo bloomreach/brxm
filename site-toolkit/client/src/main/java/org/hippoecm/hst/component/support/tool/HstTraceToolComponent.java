@@ -26,7 +26,6 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 public class HstTraceToolComponent extends GenericHstComponent {
     
     protected String renderPath = "/WEB-INF/jsp/tracetool.jsp";
-    protected String logResourcePath = "/WEB-INF/jsp/tracetool-log.jsp";
     
     public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
         super.init(servletConfig, componentConfig);
@@ -36,12 +35,6 @@ public class HstTraceToolComponent extends GenericHstComponent {
         if (param != null) {
             this.renderPath = param;
         }
-        
-        param = servletConfig.getInitParameter("hst.tracetool.log.resource.path");
-        
-        if (param != null) {
-            this.logResourcePath = param;
-        }
     }
 
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
@@ -50,9 +43,18 @@ public class HstTraceToolComponent extends GenericHstComponent {
  
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
         String resourceId = request.getResourceID();
+        String resourceRenderPath = null;
         
-        if ("log".equals(resourceId)) {
-            response.setServeResourcePath(this.logResourcePath);
+        int offset = this.renderPath.lastIndexOf(".jsp");
+        
+        if (offset >= 0) {
+            resourceRenderPath = this.renderPath.substring(0, offset) + "-" + resourceId + ".jsp";
+        } else {
+            resourceRenderPath = this.renderPath + "/" + resourceId;
+        }
+        
+        if (resourceRenderPath != null) {
+            response.setServeResourcePath(resourceRenderPath);
         }
     }
     

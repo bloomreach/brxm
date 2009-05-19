@@ -85,9 +85,21 @@ public interface LogEventBuffer {
     void setLevel(LogEvent.Level level);
     
     /**
+     * Sets log level by its name to store.
+     * @param level
+     */
+    void setLevelByName(String levelName);
+    
+    /**
      * Returns log level
      * @return
      */
     LogEvent.Level getLevel();
 
+    /**
+     * Returns log level name
+     * @return
+     */
+    String getLevelName();
+    
 }
