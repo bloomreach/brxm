@@ -95,8 +95,10 @@ public class ListDataTable extends DataTable {
     }
 
     public void destroy() {
-        for (IObserver observer : observers.values()) {
-            context.unregisterService(observer, IObserver.class.getName());
+        if (observers != null && context != null) {
+            for (IObserver observer : observers.values()) {
+                context.unregisterService(observer, IObserver.class.getName());
+            }
         }
         observers = null;
         context = null;
