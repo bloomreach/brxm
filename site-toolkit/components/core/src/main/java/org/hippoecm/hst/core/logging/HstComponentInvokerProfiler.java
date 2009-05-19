@@ -50,6 +50,9 @@ public class HstComponentInvokerProfiler {
                     HstContainerURL url = hstRequestContext.getBaseURL();
                     pathInfo = url.getPathInfo();
                     refNamespace = hstRequest.getReferenceNamespace();
+                    if ("".equals(refNamespace)) {
+                        refNamespace = "root";
+                    }
                 }
                 
                 return call.proceed();
