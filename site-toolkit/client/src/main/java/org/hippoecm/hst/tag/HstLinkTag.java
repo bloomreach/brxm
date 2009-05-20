@@ -146,12 +146,8 @@ public class HstLinkTag extends TagSupport {
             // TODO make sure the DomainMapping/Hosting is used to know whether to include the context path & servletpath HSTTWO-431
             // only add the current servletpath for HstLink and not for static links HSTTWO-378
             
-            if (this.link != null) {
-                url.insert(0, request.getContextPath() + request.getServletPath());
-            } else {
-                url.insert(0, request.getContextPath());
-            }
-            
+            // for static resources like css or js. No servlet path is included
+            url.insert(0, request.getContextPath());
             urlString = url.toString();
         }
     
