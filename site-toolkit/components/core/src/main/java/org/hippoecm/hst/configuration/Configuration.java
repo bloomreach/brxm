@@ -49,6 +49,7 @@ public class Configuration {
     public final static String SITEMAPITEM_PROPERTY_VALUE =  "hst:value";
     public final static String SITEMAPITEM_PROPERTY_ROLES =  "hst:roles";
     public final static String SITEMAPITEM_PROPERTY_STATUSCODE =  "hst:statuscode";
+    public final static String SITEMAPITEM_PROPERTY_ERRORCODE =  "hst:errorcode";
     public final static String SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH =  "hst:relativecontentpath";
     public final static String SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID =  "hst:componentconfigurationid";
 

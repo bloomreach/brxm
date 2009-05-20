@@ -49,6 +49,7 @@
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:statuscode (long)
+- hst:errorcode (long)
 + * (hst:sitemapitem)
 
 [hst:sitemap] orderable

@@ -141,4 +141,12 @@ public interface HstSiteMapItem {
      * @return if a status code is set, return this, otherwise <code>0</code>
      */
     int getStatusCode();
+    
+    /**
+     * A <code>HstSiteMapItem</code> can specify an error-code. If an error-code
+     * is specified, the framework will invoke a sendError(int code) where the code is the value returned
+     * by this method . <code>0</code> is return is non is specified. 
+     * @return if an error code is set, return this, otherwise <code>0</code>
+     */
+    public int getErrorCode();
 }

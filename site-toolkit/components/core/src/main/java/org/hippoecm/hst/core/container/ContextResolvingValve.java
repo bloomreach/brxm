@@ -74,13 +74,13 @@ public class ContextResolvingValve extends AbstractValve
         if (resolvedSiteMapItem == null) {
             throw new ContainerNotFoundException("No match for " + pathInfo);
         }
-        if (resolvedSiteMapItem.getStatusCode() > 0) {
+        if (resolvedSiteMapItem.getErrorCode() > 0) {
             
             try {
                 if (log.isDebugEnabled()) {
-                    log.debug("The resolved sitemap item for {} has error status: {}", pathInfo, resolvedSiteMapItem.getStatusCode());
+                    log.debug("The resolved sitemap item for {} has error status: {}", pathInfo, resolvedSiteMapItem.getErrorCode());
                 }           
-                servletResponse.sendError(resolvedSiteMapItem.getStatusCode());
+                servletResponse.sendError(resolvedSiteMapItem.getErrorCode());
                 
             } catch (IOException e) {
                 if (log.isDebugEnabled()) {

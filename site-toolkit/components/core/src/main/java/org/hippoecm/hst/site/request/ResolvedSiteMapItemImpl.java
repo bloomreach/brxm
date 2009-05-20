@@ -67,9 +67,13 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
        relativeContentPath = (String)pp.resolveProperty("relativeContentPath", hstSiteMapItem.getRelativeContentPath());
 
     }
-    
+
     public int getStatusCode(){
         return this.hstSiteMapItem.getStatusCode();
+    }
+
+    public int getErrorCode(){
+        return this.hstSiteMapItem.getErrorCode();
     }
     
     public HstSiteMapItem getHstSiteMapItem() {
