@@ -67,6 +67,15 @@
       <version>${version}</version>
       <type>jar</type>
     </dependency>
+    
+    <!-- workaround for HSTTWO-554 -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-gotolink</artifactId>
+      <type>jar</type>
+      <version>${hippoecm.version}</version>
+    </dependency>     
+    
   </dependencies>
 
   <build>
