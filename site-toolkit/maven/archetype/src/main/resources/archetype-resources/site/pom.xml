@@ -167,6 +167,8 @@
         <artifactId>maven-jetty-plugin</artifactId>
         <version>6.1.10</version>
         <configuration>
+          <stopPort>9967</stopPort>
+          <stopKey>stopSiteJetty</stopKey>
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <webAppConfig>            
             <contextPath>/site</contextPath>
