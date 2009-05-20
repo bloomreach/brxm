@@ -27,6 +27,7 @@ import org.dom4j.Element;
 import org.dom4j.dom.DOMDocumentFactory;
 import org.dom4j.io.SAXReader;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.container.ContainerConstants;
 
 public class HeadContributionTag extends BodyTagSupport {
 
@@ -37,11 +38,8 @@ public class HeadContributionTag extends BodyTagSupport {
     protected org.w3c.dom.Element element;
     
     public int doEndTag() throws JspException {
-        HstResponse hstResponse = null;
-
-        if (pageContext.getResponse() instanceof HstResponse) {
-            hstResponse = (HstResponse) pageContext.getResponse();
-        }
+        // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
+        HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
 
         if (hstResponse == null) {
             return SKIP_BODY;

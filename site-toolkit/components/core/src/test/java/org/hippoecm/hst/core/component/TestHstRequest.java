@@ -97,21 +97,9 @@ public class TestHstRequest extends AbstractSpringTestCase {
         assertEquals("something", hstRequestForHeadWindow.getAttribute("javax.portlet.request"));
         assertEquals("something", hstRequestForBodyWindow.getAttribute("javax.portlet.request"));
         
-        SortedSet servletRequestAttrs = getSortedAttributeNames(this.servletRequest);
-        assertEquals("servletRequest attributes size is not 3: " + servletRequestAttrs, 3, servletRequestAttrs.size());
-        
-        SortedSet rootRequestAttrs = getSortedAttributeNames(hstRequestForRootWindow);
-        assertEquals("rootRequestAttrs attributes size is not 4: " + rootRequestAttrs, 4, rootRequestAttrs.size());
-        
-        SortedSet headRequestAttrs = getSortedAttributeNames(hstRequestForHeadWindow);
-        assertEquals("headRequestAttrs attributes size is not 4: " + headRequestAttrs, 4, headRequestAttrs.size());
-
-        SortedSet bodyRequestAttrs = getSortedAttributeNames(hstRequestForBodyWindow);
-        assertEquals("bodyRequestAttrs attributes size is not 4: " + bodyRequestAttrs, 4, bodyRequestAttrs.size());
-        
         // Remove an attribute from bodyWindow
         hstRequestForBodyWindow.removeAttribute("name");
-        assertNull("The name attribute of body window request is still available!", hstRequestForBodyWindow.getAttribute("name"));
+        assertNull("The name attribute of body window request is still available! name: " + hstRequestForBodyWindow.getAttribute("name"), hstRequestForBodyWindow.getAttribute("name"));
     }
     
     private SortedSet getSortedAttributeNames(HttpServletRequest request) {

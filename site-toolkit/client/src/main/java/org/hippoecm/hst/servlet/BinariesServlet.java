@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -230,8 +231,11 @@ public class BinariesServlet extends HttpServlet {
     private Session getSession(HttpServletRequest request) throws LoginException, RepositoryException {
         Session session = null;
         
-        if (request instanceof HstRequest) {
-            session = ((HstRequest) request).getRequestContext().getSession();
+        // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
+        HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
+        
+        if (hstRequest != null) {
+            session = hstRequest.getRequestContext().getSession();
         } else {
             if (this.repository == null) {
                 if (HstServices.isAvailable()) {
@@ -253,7 +257,10 @@ public class BinariesServlet extends HttpServlet {
     }
     
     private void releaseSession(HttpServletRequest request, Session session) {
-        if (!(request instanceof HstRequest)) {
+        // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
+        HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
+
+        if (hstRequest == null) {
             try {
                 session.logout();
             } catch (Exception e) {
@@ -264,8 +271,11 @@ public class BinariesServlet extends HttpServlet {
     private String getResourceRelPath(HttpServletRequest request) {
         String path = null;
         
-        if (request instanceof HstRequest) {
-            path = ((HstRequest) request).getResourceID();
+        // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
+        HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
+        
+        if (hstRequest != null) {
+            path = hstRequest.getResourceID();
         }
 
         if (path == null) {

@@ -33,6 +33,7 @@ import javax.servlet.jsp.tagext.VariableInfo;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.PathUtils;
@@ -91,6 +92,11 @@ public class HstLinkTag extends TagSupport {
         
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
+
+        // if hst request/esponse is retrieved, then this servlet has been dispatched by hst component.
+        HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
+        HstResponse hstResponse = (HstResponse) request.getAttribute(ContainerConstants.HST_RESPONSE);
+        
         String characterEncoding = response.getCharacterEncoding();
         
         if (characterEncoding == null) {
@@ -104,11 +110,11 @@ public class HstLinkTag extends TagSupport {
                 log.warn("Cannot get a link for a detached node");
                 return EVAL_PAGE;
             }
-            if(!(request instanceof HstRequest)){
+            if(hstRequest == null){
                 log.warn("Cannot only get links for HstRequest");
                 return EVAL_PAGE;
             }
-            HstRequestContext reqContext = ((HstRequest)request).getRequestContext();
+            HstRequestContext reqContext = hstRequest.getRequestContext();
             this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), reqContext.getResolvedSiteMapItem());
         }
         
@@ -134,8 +140,8 @@ public class HstLinkTag extends TagSupport {
         
         String urlString = null;
         
-        if (this.path == null && response instanceof HstResponse) {
-            urlString = ((HstResponse) response).createNavigationalURL(url.toString()).toString();
+        if (this.path == null && hstResponse != null) {
+            urlString = hstResponse.createNavigationalURL(url.toString()).toString();
         } else {
             // TODO make sure the DomainMapping/Hosting is used to know whether to include the context path & servletpath HSTTWO-431
             // only add the current servletpath for HstLink and not for static links HSTTWO-378

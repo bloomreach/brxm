@@ -208,7 +208,13 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
             value = getAttributeMap().get(name);
             
             if (value == null) {
-                value = super.getAttribute(name);
+                String prefix = getFullNamespacePrefix(this.componentWindow.getReferenceNamespace(), false);
+                
+                value = super.getAttribute(prefix + name);
+                
+                if (value == null) {
+                    value = super.getAttribute(name);
+                }
             }
         }
         
@@ -227,6 +233,8 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
             super.setAttribute(name, value);
         } else {
             getAttributeMap().put(name, value);
+            String prefix = getFullNamespacePrefix(this.componentWindow.getReferenceNamespace(), false);
+            super.setAttribute(prefix + name, value);
         }
     }
 
@@ -241,11 +249,8 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         } else {
             Object value = getAttributeMap().remove(name);
             
-            // Remove attribute from the servlet request
-            // if no attribute was removed from the this local request attributes.
-            if (value == null) {
-                super.removeAttribute(name);
-            }
+            String prefix = getFullNamespacePrefix(this.componentWindow.getReferenceNamespace(), false);
+            super.removeAttribute(prefix + name);
         }
     }
     
@@ -266,9 +271,14 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     }
     
     protected String getFullNamespacePrefix(String referenceNamespace) {
-        if(referenceNamespace == null || "".equals(referenceNamespace)) {
+        return getFullNamespacePrefix(referenceNamespace, true);
+    }
+
+    protected String getFullNamespacePrefix(String referenceNamespace, boolean noSeparatorForEmpty) {
+        if (noSeparatorForEmpty && (referenceNamespace == null || "".equals(referenceNamespace))) {
             return "";
         }
+        
         String prefix = referenceNamespace + this.parameterNameComponentSeparator;
         return prefix;
     }
@@ -279,7 +289,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         if (CONTAINER_ATTR_NAME_PREFIXES == null) {
             synchronized (HstRequestImpl.class) {
                 if (CONTAINER_ATTR_NAME_PREFIXES == null) {
-                    ArrayList containerAttrNamePrefixes = new ArrayList(Arrays.asList("javax."));
+                    ArrayList<String> containerAttrNamePrefixes = new ArrayList<String>(Arrays.asList("javax.", "org.hippoecm.hst.container."));
                     ContainerConfiguration containerConfiguration = this.requestContext.getContainerConfiguration();
                     
                     if (containerConfiguration != null) {

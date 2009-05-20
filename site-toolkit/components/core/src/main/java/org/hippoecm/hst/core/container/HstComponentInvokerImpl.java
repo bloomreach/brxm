@@ -139,7 +139,14 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             dispatchUrl = ((HstRequestImpl) hstRequest).getComponentWindow().getRenderPath();
         }
         
-        invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, dispatchUrl, window);
+        ServletRequest wrappedRequest = ((HstRequestImpl) hstRequest).getRequest();
+        
+        try {
+            setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
+            invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, dispatchUrl, window);
+        } finally {
+            removeHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
+        }
         
         if (window.hasComponentExceptions()) {
             renderErrorInformation(window, hstResponse);
@@ -204,7 +211,14 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             dispatchUrl = window.getRenderPath();
         }
         
-        invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, dispatchUrl, window);
+        ServletRequest wrappedRequest = ((HstRequestImpl) hstRequest).getRequest();
+        
+        try {
+            setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
+            invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, dispatchUrl, window);
+        } finally {
+            removeHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
+        }
 
         if (window.hasComponentExceptions()) {
             renderErrorInformation(window, hstResponse);
@@ -307,6 +321,20 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         } else {
             return null;
         }
+    }
+    
+    private void setHstObjectAttributesForServlet(ServletRequest servletRequest, HstRequest hstRequest, HstResponse hstResponse) {
+        // Needs to set hst request/response into attribute map
+        // because hst request/response can be wrapped so it's not possible to use casting
+        // in the servlet side such as tag library.
+        servletRequest.setAttribute(ContainerConstants.HST_REQUEST, hstRequest);
+        servletRequest.setAttribute(ContainerConstants.HST_RESPONSE, hstResponse);
+    }
+    
+    private void removeHstObjectAttributesForServlet(ServletRequest servletRequest, HstRequest hstRequest, HstResponse hstResponse) {
+        // Removes hst request/response into attribute map after dispatching
+        servletRequest.removeAttribute(ContainerConstants.HST_REQUEST);
+        servletRequest.removeAttribute(ContainerConstants.HST_RESPONSE);
     }
     
 }

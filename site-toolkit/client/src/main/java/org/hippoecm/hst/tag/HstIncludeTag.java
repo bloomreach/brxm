@@ -22,6 +22,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.container.ContainerConstants;
 
 /**
  * Abstract supporting class for Hst URL tags (action, redner and resource)
@@ -48,12 +49,13 @@ public class HstIncludeTag extends TagSupport {
     @Override
     public int doEndTag() throws JspException{
 
-        HttpServletResponse response = (HttpServletResponse) this.pageContext.getResponse();
+        // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
+        HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
         
-        if (response instanceof HstResponse) {
+        if (hstResponse != null) {
             try {
                 this.pageContext.getOut().flush();
-                ((HstResponse) response).flushChildContent(this.ref);
+                hstResponse.flushChildContent(this.ref);
             } catch (IOException e) {
             }
         }

@@ -29,6 +29,7 @@ import org.dom4j.io.DOMReader;
 import org.dom4j.io.HTMLWriter;
 import org.dom4j.io.OutputFormat;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.container.ContainerConstants;
 
 public class HeadContributionsTag extends TagSupport {
 
@@ -48,12 +49,9 @@ public class HeadContributionsTag extends TagSupport {
     }
     
     public int doEndTag() throws JspException {
-        HstResponse hstResponse = null;
+        // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
+        HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
         
-        if (pageContext.getResponse() instanceof HstResponse) {
-            hstResponse = (HstResponse) pageContext.getResponse();
-        }
-
         if (hstResponse != null) {
             List<org.w3c.dom.Element> headElements = hstResponse.getHeadElements();
             

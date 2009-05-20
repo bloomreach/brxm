@@ -22,6 +22,7 @@ import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.core.container.ContainerConstants;
 
 public class HstActionURLTag extends BaseHstURLTag {
 
@@ -33,9 +34,12 @@ public class HstActionURLTag extends BaseHstURLTag {
     protected HstURL getUrl() {
         if (this.url == null) {
             HttpServletResponse servletResponse = (HttpServletResponse) this.pageContext.getResponse();
+
+            // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
+            HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
             
-            if (servletResponse instanceof HstResponse) {
-                this.url = ((HstResponse) servletResponse).createActionURL();
+            if (hstResponse != null) {
+                this.url = hstResponse.createActionURL();
             }
         }
         

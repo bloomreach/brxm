@@ -23,6 +23,18 @@ package org.hippoecm.hst.core.container;
 public interface ContainerConstants {
 
     /**
+     * The key used to bind the <code>HstRequest</code> to the underlying
+     * <code>HttpServletRequest</code>.
+     */
+    String HST_REQUEST = "org.hippoecm.hst.container.request";
+
+    /**
+     * The key used to bind the <code>HstResponse</code> to the underlying
+     * <code>HttpServletRequest</code>.
+     */
+    String HST_RESPONSE = "org.hippoecm.hst.container.response";
+
+    /**
      * The context namespace attribute name
      */
     String CONTEXT_NAMESPACE_ATTRIBUTE = "org.hippoecm.hst.container.context.namespace";

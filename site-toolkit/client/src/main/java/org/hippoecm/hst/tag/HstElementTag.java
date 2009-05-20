@@ -26,6 +26,7 @@ import javax.servlet.jsp.tagext.VariableInfo;
 import org.dom4j.dom.DOMDocument;
 import org.dom4j.dom.DOMElement;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -63,8 +64,11 @@ public class HstElementTag extends BodyTagSupport {
         HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
 
         if (name != null && !"".equals(name)) {
-            if (response instanceof HstResponse) {
-                element = ((HstResponse) response).createElement(name);
+            // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
+            HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
+
+            if (hstResponse != null) {
+                element = hstResponse.createElement(name);
             } else {
                 element = new DOMElement(name)
                 {

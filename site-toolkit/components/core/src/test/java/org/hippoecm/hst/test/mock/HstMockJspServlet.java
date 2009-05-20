@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 
 public class HstMockJspServlet extends HttpServlet {
@@ -50,8 +51,12 @@ public class HstMockJspServlet extends HttpServlet {
         out.println("START:" + content);
 
         // add children here.
-        if (req instanceof HstRequest) {
-            HstComponentWindow myWindow = ((HstRequestImpl) req).getComponentWindow();
+
+        // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
+        HstRequest hstRequest = (HstRequest) req.getAttribute(ContainerConstants.HST_REQUEST);
+
+        if (hstRequest != null) {
+            HstComponentWindow myWindow = ((HstRequestImpl) hstRequest).getComponentWindow();
             Map<String, HstComponentWindow> childWindowMap = myWindow.getChildWindowMap();
             
             if (childWindowMap != null) {
