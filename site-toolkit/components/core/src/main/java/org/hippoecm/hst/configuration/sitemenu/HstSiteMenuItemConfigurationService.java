@@ -43,6 +43,7 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     private String name;
     private List<HstSiteMenuItemConfiguration> childItems = new ArrayList<HstSiteMenuItemConfiguration>();
     private String siteMapItemPath;
+    private String externalLink;
     private int depth;
     private boolean repositoryBased;
     private Map<String, Object> properties;
@@ -61,19 +62,12 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
 
     private void init(Node siteMenuItem, HstSiteMap hstSiteMap) throws ServiceException{
         try {
-            if(siteMenuItem.hasProperty(Configuration.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)) {
+            if(siteMenuItem.hasProperty(Configuration.SITEMENUITEM_PROPERTY_EXTERNALLINK)) {
+                this.externalLink = siteMenuItem.getProperty(Configuration.SITEMENUITEM_PROPERTY_EXTERNALLINK).getString();
+            }else if(siteMenuItem.hasProperty(Configuration.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)) {
                // siteMapItemPath can be an exact path to a sitemap item, but can also be a path to a sitemap item containing wildcards.
                this.siteMapItemPath = siteMenuItem.getProperty(Configuration.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM).getString();
-               NodeIterator siteMenuIt = siteMenuItem.getNodes();
-               while(siteMenuIt.hasNext()){
-                   Node childSiteMenuItem = siteMenuIt.nextNode();
-                   if(childSiteMenuItem == null) {
-                       continue;
-                   }
-                   
-                   HstSiteMenuItemConfiguration child = new HstSiteMenuItemConfigurationService(childSiteMenuItem, this, this.hstSiteMenuConfiguration);
-                   childItems.add(child);
-               }
+               
             } else {
                log.info("HstSiteMenuItemConfiguration cannot be used for linking because no associated HstSiteMapItem present"); 
             }
@@ -96,6 +90,18 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
             // fetch all properties from the sitemenu item node and put this in the propertyMap
             ValueProvider provider = new JCRValueProviderImpl(siteMenuItem);
             this.properties = provider.getProperties();
+            
+
+            NodeIterator siteMenuIt = siteMenuItem.getNodes();
+            while(siteMenuIt.hasNext()){
+                Node childSiteMenuItem = siteMenuIt.nextNode();
+                if(childSiteMenuItem == null) {
+                    continue;
+                }
+                
+                HstSiteMenuItemConfiguration child = new HstSiteMenuItemConfigurationService(childSiteMenuItem, this, this.hstSiteMenuConfiguration);
+                childItems.add(child);
+            }
             
         } catch (RepositoryException e) {
             throw new ServiceException("ServiceException while initializing HstSiteMenuItemConfiguration.", e);
@@ -122,6 +128,9 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
         return this.siteMapItemPath;
     }
 
+    public String getExternalLink() {
+        return this.externalLink;
+    }
     public int getDepth() {
         return this.depth;
     }
@@ -133,5 +142,6 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     public Map<String, Object> getProperties() {
         return properties;
     }
+
 
 }

@@ -53,6 +53,7 @@ public class EditableMenuItemImpl extends AbstractMenuItem implements EditableMe
        this.repositoryBased = siteMenuItem.isRepositoryBased();
        this.properties = siteMenuItem.getProperties();
        this.hstLink = siteMenuItem.getHstLink();
+       this.externalLink = siteMenuItem.getExternalLink();
        this.expanded = siteMenuItem.isExpanded();
        this.selected = siteMenuItem.isSelected();
        

@@ -34,12 +34,14 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
     private HstLinkCreator linkCreator;
     private HstSite hstSite;
     private String hstSiteMapItemPath;
+    private String externalLink;
     
     public HstSiteMenuItemImpl(HstSiteMenu hstSiteMenu, HstSiteMenuItem parent, HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration, HstRequestContext hstRequestContext) {
         this.hstSiteMenu = hstSiteMenu;
         this.parent = parent;
         this.hstSite = hstSiteMenuItemConfiguration.getHstSiteMenuConfiguration().getSiteMenusConfiguration().getSite();
         this.hstSiteMapItemPath = hstSiteMenuItemConfiguration.getSiteMapItemPath();
+        this.externalLink = hstSiteMenuItemConfiguration.getExternalLink();
         this.linkCreator = hstRequestContext.getHstLinkCreator();
         this.name = hstSiteMenuItemConfiguration.getName();
         this.depth = hstSiteMenuItemConfiguration.getDepth();
@@ -83,7 +85,14 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
 
     // laze loaded
     public HstLink getHstLink() {
+        if(this.hstSiteMapItemPath == null) {
+            return null;
+        }
         return linkCreator.create(this.hstSiteMapItemPath, this.hstSite);
+    }
+    
+    public String getExternalLink() {
+        return this.externalLink;
     }
 
     public HstSiteMenuItem getParentItem() {
@@ -125,5 +134,4 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
         return this.properties;
     }
 
-    
 }

@@ -36,6 +36,13 @@ public interface CommonMenuItem {
      */
     HstLink getHstLink();
     
+    /**
+     * When this method does not return null, then by default {@ #getHstLink()} will return <code>null</code> even if the sitemenu item
+     * has a sitemap reference path defined
+     * @return an external (http/https etc) link or <code>null</code> if no external link is defined
+     */
+    String getExternalLink();
+    
 
     /**
      * @return the <code>{@link ResolvedSiteMapItem}</code> belonging to this SiteMenuItem or <code>null</code> if it cannot be resolved 

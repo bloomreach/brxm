@@ -39,6 +39,13 @@ public interface HstSiteMenuItemConfiguration extends Serializable{
     String getSiteMapItemPath();
     
     /**
+     * When a sitemenu item has an external link (http://...) configured, it is retrieved by this method. When no external link is configured, <code>null</code> is 
+     * returned. When an external link is configured, the {@ #getSiteMapItemPath()} is ignored
+     * @return the configured external link or <code>null</code> if non is configured
+     */
+    String getExternalLink();
+    
+    /**
      * @return the container <code>HstSiteMenuConfiguration</code> of this <code>HstSiteMenuItemConfiguration</code>
      */
     HstSiteMenuConfiguration getHstSiteMenuConfiguration();

@@ -33,6 +33,7 @@ public abstract class AbstractMenuItem implements CommonMenuItem{
     protected boolean repositoryBased;
     protected Map<String, Object> properties;
     protected HstLink hstLink;
+    protected String externalLink;
     protected String name;
     protected boolean expanded;
     protected boolean selected;
@@ -51,6 +52,10 @@ public abstract class AbstractMenuItem implements CommonMenuItem{
 
     public HstLink getHstLink() {
         return hstLink;
+    }
+    
+    public String getExternalLink(){
+        return this.externalLink;
     }
 
     public String getName() {

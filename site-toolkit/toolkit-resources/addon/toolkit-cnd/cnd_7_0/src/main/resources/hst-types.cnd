@@ -57,6 +57,7 @@
 
 [hst:sitemenuitem] orderable
 - hst:referencesitemapitem (string)
+- hst:externallink (string)
 - hst:foldersonly (boolean)
 - hst:repobased (boolean)
 - hst:depth (long)

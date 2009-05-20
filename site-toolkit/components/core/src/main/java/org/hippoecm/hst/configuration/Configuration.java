@@ -58,6 +58,7 @@ public class Configuration {
     
 
     public final static String SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM =  "hst:referencesitemapitem";
+    public final static String SITEMENUITEM_PROPERTY_EXTERNALLINK =  "hst:externallink";
     public final static String SITEMENUITEM_PROPERTY_FOLDERSONLY =  "hst:foldersonly";
     public final static String SITEMENUITEM_PROPERTY_REPOBASED =  "hst:repobased";
     public final static String SITEMENUITEM_PROPERTY_DEPTH =  "hst:depth";

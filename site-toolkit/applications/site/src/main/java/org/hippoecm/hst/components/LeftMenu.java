@@ -36,8 +36,8 @@ public class LeftMenu extends BaseHstComponent {
         
         EditableMenu editable = menu.getEditableMenu();
         EditableMenuItem item = editable.getDeepestExpandedItem();
-
-        if (item.isRepositoryBased() && item.getDepth() > 0) {
+        
+        if (item != null && item.isRepositoryBased() && item.getDepth() > 0) {
             HippoBean deepestMenuBean = this.getBeanForResolvedSiteMapItem(request, item.resolveToSiteMapItem(request));
 
             if (deepestMenuBean.isHippoFolderBean()) {
@@ -50,7 +50,5 @@ public class LeftMenu extends BaseHstComponent {
         request.setAttribute("menu", editable);
 
     }
-
-    
 
 }
