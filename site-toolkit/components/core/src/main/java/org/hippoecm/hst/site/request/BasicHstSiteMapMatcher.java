@@ -236,6 +236,11 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         public int getStatusCode(){
             return 0;
         }
+
+        public int getErrorCode() {
+            return 0;
+        }
+
         
         public String getPathInfo() {
             return null;
