@@ -71,35 +71,36 @@
 		<load-on-startup>2</load-on-startup>
 	</servlet>
 
-	<servlet>
-		<servlet-name>BinariesServlet</servlet-name>
-		<servlet-class>org.hippoecm.hst.servlet.BinariesServlet</servlet-class>
-	</servlet>
-    <!-- 
-    <servlet> <servlet-name>StaticResourceServlet</servlet-name>
-		<servlet-class>${package}.servlet.StaticResourceServlet</servlet-class>
-	</servlet>
-    -->
-	  <servlet-mapping>
+    <servlet>
+        <servlet-name>BinariesServlet</servlet-name>
+        <servlet-class>org.hippoecm.hst.servlet.BinariesServlet</servlet-class>
+    </servlet>
+  
+    <servlet>
+        <servlet-name>StaticResourceServlet</servlet-name>
+        <servlet-class>org.hippoecm.hst.servlet.StaticResourceServlet</servlet-class>
+    </servlet>
+    
+	<servlet-mapping>
 	    <servlet-name>HstContainerServlet</servlet-name>
 	    <url-pattern>/preview/*</url-pattern>
-	  </servlet-mapping>
-
-
-	  <servlet-mapping>
-	    <servlet-name>HstContainerServlet</servlet-name>
-	    <url-pattern>/live/*</url-pattern>
-	  </servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>BinariesServlet</servlet-name>
-		<url-pattern>/binaries/*</url-pattern>
 	</servlet-mapping>
-	
-	<!--
-		<servlet-mapping> <servlet-name>StaticResourceServlet</servlet-name>
-		<url-pattern>/staticresource</url-pattern> </servlet-mapping>
-	-->
+
+
+    <servlet-mapping>
+        <servlet-name>HstContainerServlet</servlet-name>
+        <url-pattern>/live/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>BinariesServlet</servlet-name>
+        <url-pattern>/binaries/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>StaticResourceServlet</servlet-name>
+        <url-pattern>/staticresource/*</url-pattern>
+    </servlet-mapping>
 
 	<error-page>
 		<error-code>404</error-code>
