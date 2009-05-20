@@ -211,7 +211,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="caption" sv:type="String">
-            <sv:value>Summay</sv:value>
+            <sv:value>Summary</sv:value>
           </sv:property>
           <sv:property sv:name="engine" sv:type="String">
             <sv:value>${symbol_dollar}{engine}</sv:value>
