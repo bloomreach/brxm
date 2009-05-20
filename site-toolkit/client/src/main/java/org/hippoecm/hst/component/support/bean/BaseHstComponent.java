@@ -231,9 +231,9 @@ public class BaseHstComponent extends GenericHstComponent {
 
     public ObjectConverter getObjectConverter() {
         // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
-        Map<String, Class> jcrPrimaryNodeTypeClassPairs = new HashMap<String, Class>();
-        List<Class> annotatedClasses = getAnnotatedClassNames();
-        for (Class c : annotatedClasses) {
+        Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs = new HashMap<String, Class<? extends HippoBean>>();
+        List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClassNames();
+        for (Class<? extends HippoBean> c : annotatedClasses) {
             addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, c, false);
         }
         // below the default present mapped mappings
@@ -260,7 +260,7 @@ public class BaseHstComponent extends GenericHstComponent {
         return new String[] { "hippo:facetselect", "hippo:document" };
     }
     
-    private static void addJcrPrimaryNodeTypeClassPair(Map<String, Class> jcrPrimaryNodeTypeClassPairs,
+    private static void addJcrPrimaryNodeTypeClassPair(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs,
             Class clazz, boolean builtinType) {
         String jcrPrimaryNodeType = null;
 
@@ -285,9 +285,9 @@ public class BaseHstComponent extends GenericHstComponent {
         jcrPrimaryNodeTypeClassPairs.put(jcrPrimaryNodeType,clazz);
     }
 
-    private List<Class> getAnnotatedClassNames() {
+    private List<Class<? extends HippoBean>> getAnnotatedClassNames() {
         List<String> classNames = new ArrayList<String>();
-        List<Class> annotatedClasses = new ArrayList<Class>();
+        List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
 
         String param = getServletConfig().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
         String ocmAnnotatedClassesResourcePath = (param != null ? param : DEFAULT_BEANS_ANNOTATED_CLASSES_CONF);

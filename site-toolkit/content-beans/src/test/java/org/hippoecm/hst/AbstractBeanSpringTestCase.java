@@ -26,6 +26,7 @@ import org.hippoecm.hst.content.beans.SimpleTextPage;
 import org.hippoecm.hst.content.beans.SimpleTextPageCopy;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.ObjectConverterImpl;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDirectory;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoFacetSearch;
@@ -96,7 +97,7 @@ public abstract class AbstractBeanSpringTestCase
     protected ObjectConverter getObjectConverter() {
         
         // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
-        Map<String, Class> jcrPrimaryNodeTypeClassPairs = new HashMap<String, Class>();
+        Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs = new HashMap<String, Class<? extends HippoBean>>();
 
 
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, SimpleTextPage.class, false);
@@ -116,7 +117,7 @@ public abstract class AbstractBeanSpringTestCase
         return objectConverter;
     }
     
-    private static void addJcrPrimaryNodeTypeClassPair(Map<String, Class> jcrPrimaryNodeTypeClassPairs, Class clazz, boolean builtinType) {
+    private static void addJcrPrimaryNodeTypeClassPair(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs, Class clazz, boolean builtinType) {
         String jcrPrimaryNodeType = null;
         if (clazz.isAnnotationPresent(Node.class)) {
             Node anno = (Node) clazz.getAnnotation(Node.class);

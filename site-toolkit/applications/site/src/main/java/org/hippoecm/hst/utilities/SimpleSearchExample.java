@@ -29,10 +29,8 @@ public class SimpleSearchExample {
         if(query != null && !"".equals(query)) {
             // do the search
             try {
-                HstQuery hstQuery = base.getQueryManager().createQuery(request.getRequestContext(), base.getSiteContentBaseNode(request));
-                
-                base.getQueryManager().createQuery(request.getRequestContext(), base.getSiteContentBaseNode(request));
-                
+                HstQuery hstQuery = base.getQueryManager().createQuery(request.getRequestContext(), base.getSiteContentBaseBean(request), NewsPage.class);
+               
                 hstQuery.addOrderByDescending("testproject:title");
                 hstQuery.addOrderByAscending("testproject:date");
                 
@@ -40,20 +38,21 @@ public class SimpleSearchExample {
                 filtera.addContains(".",  query);
                 
                 // example of chaining filters
+                /*
                 Filter filterb = new FilterImpl();
                 filterb.addContains(".",  "Day5Article ");
                
                 Filter filter2 = new FilterImpl();
                 
                 filter2.addAndFilter(filtera.addOrFilter(filterb));
+                */
                 
                 hstQuery.setFilter(filtera);
                 
-                if(false) {
-                    // example how you could add a filter based on primary type of a node
-                    BaseFilter nt = new PrimaryNodeTypeFilterImpl("testproject:newspage");
-                    filtera.addAndFilter(nt);
-                }
+                // example how you could add a filter based on primary type of a node
+                //    BaseFilter nt = new PrimaryNodeTypeFilterImpl("testproject:newspage");
+                //    filtera.addAndFilter(nt);
+                
                 
                 HstQueryResult queryResult = hstQuery.execute();
                 

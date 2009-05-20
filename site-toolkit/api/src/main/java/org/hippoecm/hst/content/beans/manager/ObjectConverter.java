@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 
 /**
  * Convert any kind of beans into JCR nodes & properties.
@@ -46,6 +47,8 @@ public interface ObjectConverter
      * @param jcrPrimaryNodeType
      * @return the annotated <code>Class</code> for this jcrPrimaryNodeType or <code>null</code> if no annotated class can be found
      */
-    Class getAnnotatedClassFor(String jcrPrimaryNodeType);
+    Class<? extends HippoBean> getAnnotatedClassFor(String jcrPrimaryNodeType);
+    
+    String getPrimaryNodeTypeNameFor(Class<? extends HippoBean> hippoBean);
     
 }

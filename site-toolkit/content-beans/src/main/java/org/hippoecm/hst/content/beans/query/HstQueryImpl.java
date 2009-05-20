@@ -31,6 +31,7 @@ import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.exceptions.ScopeException;
 import org.hippoecm.hst.content.beans.query.filter.BaseFilter;
 import org.hippoecm.hst.content.beans.query.filter.HstCtxWhereFilter;
+import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.LoggerFactory;
@@ -47,11 +48,13 @@ public class HstQueryImpl implements HstQuery {
     private BaseFilter filter;
     private Node scope;
     private List<String> orderByList = new ArrayList<String>();
+    private NodeTypeFilter nodeTypeFilter;
 
-    public HstQueryImpl(HstRequestContext hstRequestContext, ObjectConverter objectConverter, Node scope) {
+    public HstQueryImpl(HstRequestContext hstRequestContext, ObjectConverter objectConverter, Node scope, NodeTypeFilter nodeTypeFilter) {
         this.hstRequestContext = hstRequestContext;
         this.objectConverter = objectConverter;
         this.scope = scope;
+        this.nodeTypeFilter = nodeTypeFilter; 
     }
 
    
@@ -92,13 +95,22 @@ public class HstQueryImpl implements HstQuery {
             query.append("(").append(ctxWhereFilter.getJcrExpression()).append(")");
         }
         
-        if(this.getFilter() != null && this.getFilter().getJcrExpression() != null) {
-           if(query.length() == 0) {
-               query.append(this.getFilter().getJcrExpression());
-           } else {
-               query.append(" and (").append(this.getFilter().getJcrExpression()).append(")");
-           }
-        }
+        String jcrExpression;
+        if(this.getFilter() != null && (jcrExpression = this.getFilter().getJcrExpression()) != null) {
+            if(query.length() == 0) {
+                query.append(jcrExpression);
+            } else {
+                query.append(" and (").append(jcrExpression).append(")");
+            }
+         }
+        
+        if(this.nodeTypeFilter != null && (jcrExpression = this.nodeTypeFilter.getJcrExpression()) != null) {
+            if(query.length() == 0) {
+                query.append(jcrExpression);
+            } else {
+                query.append(" and (").append(jcrExpression).append(")");
+            }
+         }
         
         query.insert(0, "//*[");
         query.append("]");

@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.content.beans.query;
 
+import java.util.List;
+
 import javax.jcr.Node;
 
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
@@ -37,4 +39,16 @@ public interface HstQueryManager {
      * @return a new <code>{@link HstQuery}</code> with scope 
      */
     HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope) throws QueryException;
+    
+    /**
+     * 
+     * @param hstRequestContext
+     * @param scope
+     * @param varargs filterBean
+     * @return a new <code>{@link HstQuery}</code> with scope and filter on jcr primary nodetype of the filterBean
+     * @throws QueryException
+     */
+    public HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope, Class<? extends HippoBean>... filterBean) throws QueryException;
+    
+
 }
