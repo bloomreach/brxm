@@ -240,7 +240,12 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
     public void mergeParameters(HstContainerURL containerURL, String referenceNamespace, Map<String, String []> parameterMap) {
         if (referenceNamespace != null) {
             for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
-                String name = referenceNamespace + this.parameterNameComponentSeparator + entry.getKey();
+                String name;
+                if("".equals(referenceNamespace)) {
+                     name = referenceNamespace + entry.getKey();
+                } else {
+                     name = referenceNamespace + this.parameterNameComponentSeparator + entry.getKey();
+                }
                 String [] values = entry.getValue();
                 
                 if (values == null || values.length == 0) {
