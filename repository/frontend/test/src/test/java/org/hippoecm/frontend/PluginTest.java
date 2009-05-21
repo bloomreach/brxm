@@ -67,6 +67,11 @@ public abstract class PluginTest extends TestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp(false);
+        while (session.getRootNode().hasNode("config")) {
+            session.getRootNode().getNode("config").remove();
+            session.save();
+            session.refresh(false);
+        }
         root = session.getRootNode();
         build(session, config);
 
@@ -85,6 +90,13 @@ public abstract class PluginTest extends TestCase {
 
     @After
     public void teardown() throws Exception {
+        if (session != null) {
+            session.refresh(false);
+            while (session.getRootNode().hasNode("config")) {
+                session.getRootNode().getNode("config").remove();
+                session.save();
+            }
+        }
         super.tearDown();
     }
 
