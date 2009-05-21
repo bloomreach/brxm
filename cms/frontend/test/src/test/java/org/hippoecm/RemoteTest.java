@@ -29,26 +29,26 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 
-@RunWith(RemoteSPITest.class)
+@RunWith(RemoteTest.class)
 @Suite.SuiteClasses({
     org.hippoecm.frontend.config.PluginConfigTest.class,
-    //org.hippoecm.frontend.model.JcrItemModelTest.class,
+    org.hippoecm.frontend.model.JcrItemModelTest.class,
     org.hippoecm.frontend.model.JcrPropertyModelTest.class,
     //org.hippoecm.frontend.model.event.ObservationTest.class,
     org.hippoecm.frontend.model.ocm.JcrObjectTest.class,
     org.hippoecm.frontend.plugin.ServiceFactoryTest.class
 
 })
-public class RemoteSPITest extends Suite
+public class RemoteTest extends Suite
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    public RemoteSPITest(Class<?> klass) throws InitializationError {
+    public RemoteTest(Class<?> klass) throws InitializationError {
         super(klass);
     }
 
-    protected RemoteSPITest(Class<?> klass, Class<?>[] annotatedClasses) throws InitializationError {
+    protected RemoteTest(Class<?> klass, Class<?>[] annotatedClasses) throws InitializationError {
         super(klass, annotatedClasses);
     }
 
@@ -60,7 +60,7 @@ public class RemoteSPITest extends Suite
             backgroundServer = new HippoRepositoryServer();
             backgroundServer.run(true);
             Thread.sleep(3000);
-            server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository/spi");
+            server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
             TestCase.setRepository(server);
 
             super.run(notifier);
