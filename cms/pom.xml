@@ -92,6 +92,9 @@
     <cglib.version>2.1_3</cglib.version>
     <lucene.version>2.2.0</lucene.version>
     <wicket.version>1.3.5</wicket.version>
+
+    <!-- use UTF-8 encoding for filtered file copy -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <licenses>
