@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.FormComponent;
@@ -26,6 +27,8 @@ public abstract class AjaxUpdatingWidget extends Panel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private FormComponent focus;
+
     public AjaxUpdatingWidget(String id, IModel model) {
         super(id, model);
     }
@@ -34,7 +37,7 @@ public abstract class AjaxUpdatingWidget extends Panel {
      * Adds an ajax updating form component
      */
     protected void addFormField(FormComponent component) {
-        add(component);
+        add(focus = component);
         component.setOutputMarkupId(true);
         component.add(new AjaxFormComponentUpdatingBehavior("onChange") {
             private static final long serialVersionUID = 1L;
@@ -45,6 +48,10 @@ public abstract class AjaxUpdatingWidget extends Panel {
             }
         });
 
+    }
+
+    public Component getFocusComponent() {
+        return focus;
     }
 
     // callback for subclasses
