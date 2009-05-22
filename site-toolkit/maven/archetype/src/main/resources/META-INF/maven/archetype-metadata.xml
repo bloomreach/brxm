@@ -50,6 +50,13 @@
             <include>**/*.jsp</include>
             <include>**/*.xml</include>
             <include>**/*.properties</include>
+            <include>**/*.psml</include>
+          </includes>
+        </fileSet>
+        <fileSet filtered="false" encoding="UTF-8">
+          <directory></directory>
+          <includes>
+            <include>build.properties-sample</include>
           </includes>
         </fileSet>
         <fileSet filtered="false" encoding="UTF-8">

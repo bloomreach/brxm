@@ -32,7 +32,7 @@
     <javax.jcr.version>1.0</javax.jcr.version>
     <jta.version>1.1</jta.version>
     
-    <slf4j.version>1.4.3</slf4j.version>
+    <slf4j.version>1.5.6</slf4j.version>
     <log4j.version>1.2.13</log4j.version>
     
     <junit.version>4.5</junit.version>
@@ -114,7 +114,13 @@
         <artifactId>slf4j-api</artifactId>
         <version>${dollar}{slf4j.version}</version>
       </dependency>
-    
+      
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+        <version>${dollar}{slf4j.version}</version>
+      </dependency>
+      
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
@@ -164,6 +170,20 @@
       <dependency>
         <groupId>org.onehippo.ecm.hst</groupId>
         <artifactId>hst-commons</artifactId>
+        <version>${dollar}{hst.version}</version>
+        <type>jar</type>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.onehippo.ecm.hst</groupId>
+        <artifactId>hst-content-beans</artifactId>
+        <version>${dollar}{hst.version}</version>
+        <type>jar</type>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.onehippo.ecm.hst</groupId>
+        <artifactId>hst-ocm</artifactId>
         <version>${dollar}{hst.version}</version>
         <type>jar</type>
       </dependency>

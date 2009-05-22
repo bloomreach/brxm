@@ -30,8 +30,8 @@
   <groupId>${groupId}</groupId>
   <packaging>war</packaging>
 
- <dependencies>
-     <!-- Dependencies needed to be able to send mail -->
+  <dependencies>
+    <!-- Dependencies needed to be able to send mail -->
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
@@ -44,116 +44,109 @@
       <version>1.1</version>
       <scope>provided</scope>
     </dependency>   
-   <dependency>
-     <groupId>javax.servlet</groupId>
-     <artifactId>servlet-api</artifactId>
-     <scope>provided</scope>
-     <version>${dollar}{servlet-api.version}</version>
-   </dependency>
-   <dependency>
-     <groupId>javax.servlet</groupId>
-     <artifactId>jstl</artifactId>
-     <scope>runtime</scope>
-     <version>${dollar}{jstl.version}</version>
-   </dependency>
-   <dependency>
-     <groupId>taglibs</groupId>
-     <artifactId>standard</artifactId>
-     <scope>runtime</scope>
-     <version>${dollar}{taglibs.version}</version>
-   </dependency>
-  <dependency>
-    <groupId>xml-apis</groupId>
-    <artifactId>xml-apis</artifactId>
-    <version>${dollar}{xml-apis.version}</version>
-  </dependency>
-  <dependency>
-    <groupId>xerces</groupId>
-    <artifactId>xercesImpl</artifactId>
-    <version>${dollar}{xerces.version}</version>
-  </dependency>
-  <dependency>
-    <groupId>xerces</groupId>
-    <artifactId>xerces</artifactId>
-    <version>${dollar}{xerces.version}</version>
-  </dependency>
-  <dependency>
-    <groupId>xalan</groupId>
-    <artifactId>xalan</artifactId>
-    <version>${dollar}{xalan.version}</version>
-  </dependency>
-  <dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-api</artifactId>
-    <version>1.4.3</version>
-  </dependency>
-  <dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-log4j12</artifactId>
-    <version>1.4.3</version>
-    <scope>runtime</scope>
-  </dependency>
-  <dependency>
-    <groupId>log4j</groupId>
-    <artifactId>log4j</artifactId>
-    <version>1.2.13</version>
-    <scope>runtime</scope>
-  </dependency>
-  <dependency>
-    <groupId>org.springframework</groupId>
-    <artifactId>spring-core</artifactId>
-    <version>${dollar}{spring.version}</version>
-  </dependency>
-  <dependency>
-    <groupId>org.springframework</groupId>
-    <artifactId>spring-web</artifactId>
-    <version>${dollar}{spring.version}</version>
-  </dependency>
-  <dependency>
-    <groupId>org.onehippo.ecm.hst</groupId>
-    <artifactId>hst-api</artifactId>
-    <version>${dollar}{hst.version}</version>
-    <!--
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
-    -->
-  </dependency>
-  <dependency>
-    <groupId>org.onehippo.ecm.hst</groupId>
-    <artifactId>hst-commons</artifactId>
-    <version>${dollar}{hst.version}</version>
-    <!--
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>taglibs</groupId>
+      <artifactId>standard</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xerces</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-api</artifactId>
+      <!--
+        <scope>provided</scope>
+      -->
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-commons</artifactId>
+      <!--
+        <scope>provided</scope>
+      -->
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.components</groupId>
+      <artifactId>hst-core</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-client</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-content-beans</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-ocm</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
       <scope>provided</scope>
-    -->
-  </dependency>
-  <dependency>
-    <groupId>org.onehippo.ecm.hst.components</groupId>
-    <artifactId>hst-core</artifactId>
-    <version>${dollar}{hst.version}</version>
-  </dependency>
-  <dependency>
-    <groupId>org.onehippo.ecm.hst</groupId>
-    <artifactId>hst-client</artifactId>
-    <version>${dollar}{hst.version}</version>
-  </dependency>
+      <version>1.1</version>
+    </dependency>
   
-   <dependency>
-     <groupId>org.onehippo.ecm.hst</groupId>
-     <artifactId>hst-ocm</artifactId>
-     <version>${dollar}{hst.version}</version>
-   </dependency>
-  
-   <dependency>
-     <groupId>org.apache.geronimo.specs</groupId>
-     <artifactId>geronimo-jta_1.1_spec</artifactId>
-     <scope>provided</scope>
-     <version>1.1</version>
-   </dependency>
-
-   <dependency>
-     <groupId>commons-lang</groupId>
-     <artifactId>commons-lang</artifactId>
-     <version>2.4</version>
-   </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.4</version>
+    </dependency>
    
   </dependencies>
   
@@ -292,13 +285,13 @@
                     <echo>Replacing HST Shared Libraries.</echo>
                     <copy file="${dollar}{settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${dollar}{tomcat.hst.shared.lib}/jcr-1.0.jar" />
                     <copy file="${dollar}{settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${dollar}{tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
-                    <copy file="../../api/target/hst-api-${dollar}{project.version}.jar" tofile="${dollar}{tomcat.hst.shared.lib}/hst-api-${dollar}{project.version}.jar" />
-                    <copy file="../../commons/target/hst-commons-${dollar}{project.version}.jar" tofile="${dollar}{tomcat.hst.shared.lib}/hst-commons-${dollar}{project.version}.jar" />
+                    <copy file="${dollar}{settings.localRepository}/org/onehippo/ecm/hst/hst-api/${dollar}{hst.version}/hst-api-${dollar}{hst.version}.jar" tofile="${dollar}{tomcat.hst.shared.lib}/hst-api-${dollar}{project.version}.jar" />
+                    <copy file="${dollar}{settings.localRepository}/org/onehippo/ecm/hst/hst-commons/${dollar}{hst.version}/hst-commons-${dollar}{hst.version}.jar" tofile="${dollar}{tomcat.hst.shared.lib}/hst-commons-${dollar}{project.version}.jar" />
                     
                     <echo>Replacing cms web application into tomcat.</echo>
                     <delete dir="${dollar}{tomcat.hst.cms.webapp}" />
                     <mkdir dir="${dollar}{tomcat.hst.cms.webapp}" />
-                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.00.01.war" dest="${dollar}{tomcat.hst.cms.webapp}" />
+                    <unwar src="../cms/target/${rootArtifactId}-cms-${dollar}{project.version}.war" dest="${dollar}{tomcat.hst.cms.webapp}" />
                                       
                     <echo>Replacing site web application into tomcat.</echo>
                     <delete dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.artifactId}" />
@@ -335,5 +328,189 @@
         </plugins>
       </build>
     </profile>
+    
+    <profile>
+      <id>jetspeed</id>
+      
+      <dependencies>
+        <dependency>
+          <groupId>javax.jcr</groupId>
+          <artifactId>jcr</artifactId>
+          <version>${dollar}{javax.jcr.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst</groupId>
+          <artifactId>hst-api</artifactId>
+          <version>${dollar}{hst.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst</groupId>
+          <artifactId>hst-commons</artifactId>
+          <version>${dollar}{hst.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+          <version>[1.1.1,)</version>
+          <scope>test</scope>        
+        </dependency>
+      </dependencies>
+      
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>1.0-alpha-1</version>
+            <executions>
+              <execution>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>read-project-properties</goal>
+                </goals>
+                <configuration>
+                  <quiet>true</quiet>
+                  <files>
+                    <file>build.properties</file>
+                  </files>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.2</version>
+            <executions>
+              <execution>
+                <id>deploy-to-jetspeed</id>
+                <phase>install</phase>
+                <configuration>
+                  <tasks>
+
+                    <echo>Replacing HST Shared Libraries.</echo>
+                    <copy file="${dollar}{settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/jcr-1.0.jar" />
+                    <copy file="${dollar}{settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
+                    <copy file="${dollar}{settings.localRepository}/org/onehippo/ecm/hst/hst-api/${dollar}{hst.version}/hst-api-${dollar}{hst.version}.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/hst-api-${dollar}{project.version}.jar" />
+                    <copy file="${dollar}{settings.localRepository}/org/onehippo/ecm/hst/hst-commons/${dollar}{hst.version}/hst-commons-${dollar}{hst.version}.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/hst-commons-${dollar}{project.version}.jar" />
+
+                    <echo>Replacing cms web application into Jetspeed.</echo>
+                    <delete dir="${dollar}{jetspeed.hst.cms.webapp}" />
+                    <mkdir dir="${dollar}{jetspeed.hst.cms.webapp}" />
+                    <unwar src="../cms/target/${rootArtifactId}-cms-${dollar}{project.version}.war" dest="${dollar}{jetspeed.hst.cms.webapp}" />
+                                      
+                    <echo>Replacing site portlet application into jetspeed.</echo>
+                    <delete dir="${dollar}{jetspeed.server.home}/webapps/${dollar}{project.artifactId}" />
+                    <delete file="${dollar}{jetspeed.server.home}/webapps/${dollar}{project.artifactId}.war" />
+                    <delete file="${dollar}{jetspeed.portal.webapp}/WEB-INF/deploy/${dollar}{project.artifactId}.war" />
+                    <copy file="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}.war" tofile="${dollar}{jetspeed.portal.webapp}/WEB-INF/deploy/${dollar}{project.artifactId}.war" />
+                    
+                    <echo>Copy core libaries into jetspeed</echo>
+                    <copy todir="${dollar}{jetspeed.portal.webapp}/WEB-INF/lib">
+                      <fileset dir="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}/WEB-INF/lib">
+                        <include name="commons-proxy-*.jar" />
+                      </fileset>
+                      <fileset dir="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}/WEB-INF/lib">
+                        <exclude name="commons-*.jar" />
+                        <exclude name="hst-client-*.jar" />
+                        <exclude name="jstl-*.jar" />
+                        <exclude name="slf4j-*.jar" />
+                        <exclude name="log4j-*.jar" />
+                        <exclude name="standard-*.jar" />
+                        <exclude name="spring-*.jar" />
+                        <exclude name="xml-apis-*.jar" />
+                        <exclude name="xercesImpl-*.jar" />
+                        <exclude name="xalan-*.jar" />
+                        <exclude name="jdo2-*.jar" />
+                        <exclude name="jpox-*.jar" />
+                      </fileset>
+                    </copy>
+
+                    <echo>Copy hst configuration into jetspeed</echo>
+                    <copy todir="${dollar}{jetspeed.portal.webapp}/WEB-INF">
+                      <fileset dir="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}/WEB-INF">
+                        <include name="hst*.properties" />
+                        <include name="hst*.xml" />
+                      </fileset>
+                    </copy>
+                    
+                    <echo>Copy example psml page into jetspeed</echo>
+                    <copy todir="${dollar}{jetspeed.portal.webapp}/WEB-INF/pages">
+                      <fileset dir="src/main/webapp/WEB-INF/portal-pages">
+                        <include name="**/*.psml" />
+                      </fileset>
+                    </copy>
+                                        
+                    <echo><![CDATA[
+========================================================================
+[Notice]
+
+Thank you for trying jetspeed profile.
+
+Deploying artifacts are done, but you need to edit two web.xml files.
+
+First, add the following servlet definition in /jetspeed/WEB-INF/web.xml
+
+  <servlet>
+    <servlet-name>HstSiteConfigServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
+    <init-param>
+      <param-name>forceful.reinit</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+
+And, start the Jetspeed to auto-deploy site portlet application.
+If the /site portlet application is deployed into your /webapps directory,
+then stop the Jetspeed, 
+and comment out the following servlet in /site/WEB-INF/web.xml:
+
+  <!--
+  <servlet>
+    <servlet-name>HstSiteConfigServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  -->
+
+Finally, restart your Jetspeed and visit the following page:
+
+http://localhost:8080/jetspeed/portal/
+
+And, click `HST-2 Demo' menu!
+
+========================================================================
+                    ]]></echo>
+                    
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>javax.jcr</groupId>
+                <artifactId>jcr</artifactId>
+                <version>${dollar}{javax.jcr.version}</version>
+              </dependency>
+              <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jta_1.1_spec</artifactId>
+                <version>${dollar}{jta.version}</version>
+                <scope>runtime</scope>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    
   </profiles>
 </project>
