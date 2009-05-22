@@ -112,10 +112,10 @@ public class ActionValve extends AbstractValve
                             HstContainerURLProvider urlProvider = getUrlFactory().getPortletUrlProvider();
                             // TODO: Use the context relative HST url path to pass to portlet later.
                             //responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL));
-                            responseState.sendRedirect(urlProvider.toURLString(baseURL));
+                            responseState.sendRedirect(urlProvider.toURLString(baseURL, requestContext));
                         } else {
                             HstContainerURLProvider urlProvider = getUrlFactory().getServletUrlProvider();
-                            responseState.sendRedirect(urlProvider.toURLString(baseURL));
+                            responseState.sendRedirect(urlProvider.toURLString(baseURL, requestContext));
                         }
                     } catch (UnsupportedEncodingException e) {
                         throw new ContainerException(e);

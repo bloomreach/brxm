@@ -53,7 +53,7 @@ public class MatchedMappingImpl implements MatchedMapping{
             return pathInfo;
         }
     }
-  
+    
     public boolean isURIMapped() {
         return this.uriMapped;
     }

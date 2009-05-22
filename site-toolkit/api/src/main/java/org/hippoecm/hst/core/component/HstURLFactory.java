@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.component;
 
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 
 /**
@@ -50,5 +51,16 @@ public interface HstURLFactory {
      * @return HstContainerURLProvider
      */
     HstURL createURL(String type, String referenceNamespace, HstContainerURL base);
+    
+    /**
+     * Returns HstURL for the HstURL type with reference namespace based on the base container URL
+     * 
+     * @param type the HstURL type. It should one of {@link HstURL#ACTION_TYPE}, {@link HstURL#RENDER_TYPE} or {@link HstURL#RESOURCE_TYPE}.
+     * @param referenceNamespace the reference namespace of the HstComponent's window.
+     * @param base the base HstContainer URL
+     * @param requestContext the current HstRequestContext
+     * @return HstContainerURLProvider
+     */
+    HstURL createURL(String type, String referenceNamespace, HstContainerURL base, HstRequestContext requestContext);
     
 }

@@ -93,37 +93,16 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
     
     public HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, String pathInfo) {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
         
         String contextPath = request.getContextPath();
         String servletPath = request.getServletPath();
         
         if (requestContext != null) {
             HstContainerURL baseURL = requestContext.getBaseURL();
-            
+
             if (baseURL != null) {
-                if(requestContext.getMatchedMapping() != null) {
-                    MatchedMapping matchedMapping = requestContext.getMatchedMapping();
-                    
-                    if(matchedMapping.isURIMapped() && matchedMapping.getMapping() != null) {
-                        // TODO check the virtual host whether to include the contextpath
-                        contextPath = baseURL.getContextPath();
-                        // as the external url is mapped, get the external 'fake' servletpath
-                        servletPath = matchedMapping.getMapping().getUriPrefix();
-                        if(servletPath == null) {
-                            servletPath = "";
-                        }
-                        if(servletPath.endsWith("/")) {
-                            servletPath = servletPath.substring(0, servletPath.length() -1 );
-                        }
-                    } else {
-                        contextPath = baseURL.getContextPath();
-                        servletPath = baseURL.getServletPath();
-                    }
-                } else {
-                    contextPath = baseURL.getContextPath();
-                    servletPath = baseURL.getServletPath();
-                }
+                contextPath = baseURL.getContextPath();
+                servletPath = baseURL.getServletPath();
             }
         }
         
@@ -265,7 +244,7 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         return url.toString();
     }
     
-    public abstract String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException, ContainerException;
+    public abstract String toURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException;
     
     protected String buildHstURLPath(HstContainerURL containerURL) throws UnsupportedEncodingException {
         String characterEncoding = containerURL.getCharacterEncoding();

@@ -24,6 +24,7 @@ import java.util.Map;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstURLImpl implements HstURL {
     
@@ -33,10 +34,12 @@ public class HstURLImpl implements HstURL {
     protected Map<String, String[]> parameterMap = new HashMap<String, String[]>();
     protected String resourceID;
     protected HstContainerURLProvider urlProvider;
+    protected transient HstRequestContext requestContext;
     
-    public HstURLImpl(String type, HstContainerURLProvider urlProvider) {
+    public HstURLImpl(String type, HstContainerURLProvider urlProvider, HstRequestContext requestContext) {
         this.type = type;
         this.urlProvider = urlProvider;
+        this.requestContext = requestContext;
     }
 
     public Map<String, String[]> getParameterMap() {
@@ -97,7 +100,7 @@ public class HstURLImpl implements HstURL {
         HstContainerURL containerURL = this.urlProvider.createURL(this.baseContainerURL, this);
         
         try {
-            return this.urlProvider.toURLString(containerURL);
+            return this.urlProvider.toURLString(containerURL, requestContext);
         } catch (UnsupportedEncodingException e) {
             throw new HstComponentException(e);
         } catch (ContainerException e) {

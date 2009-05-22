@@ -73,7 +73,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         actionURL.setActionWindowReferenceNamespace("b");
         actionURL.setActionParameter("ap1", "one");
         actionURL.setActionParameter("ap2", "two");
-        String actionURLPathInfo = this.urlProvider.toURLString(actionURL);
+        String actionURLPathInfo = this.urlProvider.toURLString(actionURL, null);
         actionURLPathInfo = actionURLPathInfo.substring("/site/content".length());
         ((MockHttpServletRequest) request).setPathInfo(actionURLPathInfo);
         
@@ -98,7 +98,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         HstContainerURL resourceURL = this.urlProvider.parseURL(request, response);
         resourceURL.setResourceWindowReferenceNamespace("b");
         resourceURL.setResourceId("myresource001");
-        String resourceURLPathInfo = this.urlProvider.toURLString(resourceURL);
+        String resourceURLPathInfo = this.urlProvider.toURLString(resourceURL, null);
         resourceURLPathInfo = resourceURLPathInfo.substring("/site/content".length());
         ((MockHttpServletRequest) request).setPathInfo(resourceURLPathInfo);
         

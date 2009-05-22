@@ -31,6 +31,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.utils.SimpleHmlStringParser;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
@@ -89,12 +90,11 @@ public class HstHtmlTag extends TagSupport {
             
         String html = hippoHtml.getContent();
        
-        if(hippoHtml.getNode() instanceof HippoNode) {
-            html = SimpleHmlStringParser.parse((HippoNode)hippoHtml.getNode(), html, request, response);
+        if(hippoHtml.getNode() instanceof HippoNode && response instanceof HstResponse) {
+            html = SimpleHmlStringParser.parse((HippoNode)hippoHtml.getNode(), html, request, (HstResponse)response);
         } else {
-            log.warn("Do not know how to linkrewrite for non HippoNode's");
+            log.warn("Node should be a HippoNode and response a HstResponse");
         }
-        
         
         if (var == null) {
             try {               

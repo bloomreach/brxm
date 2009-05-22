@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.component;
 
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstURLFactoryImpl implements HstURLFactory {
     
@@ -39,10 +40,19 @@ public class HstURLFactoryImpl implements HstURLFactory {
         return this.portletUrlProvider;
     }
     
-    public HstURL createURL(String type, String referenceNamespace, HstContainerURL baseContainerURL) {
-        HstURLImpl url = new HstURLImpl(type, baseContainerURL.isViaPortlet() ? this.portletUrlProvider : this.servletUrlProvider);
+    public HstURL createURL(String type, String referenceNamespace, HstContainerURL containerURL) {
+        HstURLImpl url = new HstURLImpl(type, containerURL.isViaPortlet() ? this.portletUrlProvider : this.servletUrlProvider, null);
         url.setReferenceNamespace(referenceNamespace);
-        url.setBaseContainerURL(baseContainerURL);
+        
+        url.setBaseContainerURL(containerURL);
+        return url;
+    }
+    
+    public HstURL createURL(String type, String referenceNamespace, HstContainerURL containerURL, HstRequestContext requestContext) {
+        HstURLImpl url = new HstURLImpl(type, requestContext.getBaseURL().isViaPortlet() ? this.portletUrlProvider : this.servletUrlProvider, requestContext);
+        url.setReferenceNamespace(referenceNamespace);
+        // if container url == null, use the requestContext baseUrl
+        url.setBaseContainerURL(containerURL == null ? requestContext.getBaseURL() : containerURL);
         return url;
     }
 

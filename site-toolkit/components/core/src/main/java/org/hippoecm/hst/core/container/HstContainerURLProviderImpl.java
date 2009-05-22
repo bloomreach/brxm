@@ -17,15 +17,63 @@ package org.hippoecm.hst.core.container;
 
 import java.io.UnsupportedEncodingException;
 
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.MatchedMapping;
+
 public class HstContainerURLProviderImpl extends AbstractHstContainerURLProvider {
     
     @Override
-    public String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException, ContainerException {
+    public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
         String path = buildHstURLPath(containerURL);
+        String externalContextPath = null;
+        String externalServletPath = null;
+        
+        if(requestContext != null) {
+            // do stuff
+            if (requestContext != null) {
+                HstContainerURL baseURL = requestContext.getBaseURL();
+
+                if (baseURL != null) {
+                    if (requestContext.getMatchedMapping() != null && path != null) {
+                        MatchedMapping matchedMapping = requestContext.getMatchedMapping();
+                        if (matchedMapping.getMapping() != null) {
+                            if (matchedMapping.getMapping().getVirtualHost().isContextPathInUrl()) {
+                                externalContextPath = baseURL.getContextPath();
+                            } else {
+                                externalContextPath = "";
+                            }
+                            
+                            if(matchedMapping.getMapping().getVirtualHost().getVirtualHosts().isExcluded(path)) {
+                                // if the path is an excluded path defined in virtual hosting (for example /binaries), we do not include
+                                // a servletpath in the url
+                                externalServletPath = "";
+                            } else {
+                                // as the external url is mapped, get the external 'fake' servletpath
+                                externalServletPath = matchedMapping.getMapping().getUriPrefix();
+                                if (externalServletPath == null) {
+                                    externalServletPath = "";
+                                }
+                            }
+                            if (externalServletPath.endsWith("/")) {
+                                externalServletPath = externalServletPath.substring(0, externalServletPath.length() - 1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
         
         StringBuilder url = new StringBuilder(100);
-        url.append(containerURL.getContextPath());
-        url.append(containerURL.getServletPath());
+        if(externalContextPath == null) {
+            url.append(containerURL.getContextPath());
+        } else {
+            url.append(externalContextPath);
+        }
+        if(externalServletPath == null) {
+            url.append(containerURL.getServletPath());
+        } else {
+            url.append(externalServletPath);
+        }
         url.append(path);
         
         return url.toString();

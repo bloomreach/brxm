@@ -28,8 +28,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.provider.jcr.JCRUtilities;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -47,7 +49,7 @@ public class SimpleHmlStringParser {
     public static final String SRC_ATTR_NAME = "src=\"";
     public static final String ATTR_END = "\"";
 
-    public static String parse(HippoNode node, String html, HttpServletRequest request, HttpServletResponse response) {
+    public static String parse(HippoNode node, String html, HttpServletRequest request, HstResponse response) {
         // only create if really needed
         StringBuffer sb = null;
         
@@ -83,13 +85,7 @@ public class SimpleHmlStringParser {
                     } else {
                         String url = getHref(documentPath,node, reqContext, response);
                         if(url != null) {
-                            if(request.getContextPath() != null) {
-                                sb.append(request.getContextPath());
-                            } 
-                            if(request.getServletPath() != null) {
-                                sb.append(request.getServletPath());
-                            } 
-                            sb.append(url);
+                            sb.append(response.createNavigationalURL(url).toString());
                         } else {
                            log.warn("Skip href because url is null"); 
                         }
@@ -140,9 +136,7 @@ public class SimpleHmlStringParser {
                     } else {
                         String translatedSrc = getSrcLink(srcPath, node, reqContext, response);
                         if(translatedSrc != null) {
-                            if(request.getContextPath() != null) {
-                                sb.append(request.getContextPath());
-                            }
+                            translatedSrc = response.createNavigationalURL(translatedSrc).toString();
                             sb.append(translatedSrc);
                         } else {
                             log.warn("Could not translate image src. Skip src");
@@ -237,20 +231,15 @@ public class SimpleHmlStringParser {
         }
 
         try {
-            Session session = reqContext.getSession();
-            if (path.startsWith("/") && reqContext.getSession().itemExists(path)) {
-                // TODO resolve these binaries though they should not be absolute in the first place
+            if (path.startsWith("/")) {
+                log.warn("Cannot resolve absolute locations. Return null");
+                return null;
             }
 
-            String[] pathEls = path.split("/");
-
-            if (node.hasNode(pathEls[0])) {
-                Node facetSelect = node.getNode(pathEls[0]);
-                if (facetSelect.isNodeType(HippoNodeType.NT_FACETSELECT)
-                        && facetSelect.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
-                    String uuid = facetSelect.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                    Node deref = session.getNodeByUUID(uuid);
-                    
+            if (node.hasNode(path)) {
+                Node binary = node.getNode(path);
+                Node deref = JCRUtilities.getCanonical(binary);
+                if(deref != null) {
                     String derefedPath  = PathUtils.normalizePath(deref.getPath());
                     StringBuffer srcLink = new StringBuffer("/binaries");
                     
@@ -258,27 +247,12 @@ public class SimpleHmlStringParser {
                         String enc = response.encodeURL(elem);
                         srcLink.append("/").append(enc);
                     }
-                    
-                    if (pathEls.length > 1) {
-                        int i = 0;
-                        while(++i < pathEls.length) {
-                            String enc = response.encodeURL(pathEls[i]);
-                            srcLink.append("/").append(enc);
-                        }
-                        return srcLink.toString();
-                    } else {
-                        // did not point to some resource...return just the location of the handle
-                        return srcLink.toString();
-                    }
-
+                    return srcLink.toString();
                 } else {
-                    log.warn("Expected node of nodetype " + HippoNodeType.NT_FACETSELECT
-                            + ". Cannot translate binary link");
+                    log.warn("Cannot find canonical node for binary. Return null");
+                    return null;
                 }
-            } else {
-                log.warn("Expected to find facetselect node '" + pathEls[0]
-                        + "' but not found. Unable to translate binary link");
-            }
+            } 
         } catch (PathNotFoundException e) {
             log.warn("Unable to rewrite src '{}' to proper url : '{}'. Return null", path, e.getMessage());
         } catch (ValueFormatException e) {

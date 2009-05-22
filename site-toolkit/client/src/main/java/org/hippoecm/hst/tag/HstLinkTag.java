@@ -138,19 +138,8 @@ public class HstLinkTag extends TagSupport {
             url.append("/").append(enc);
         }
         
-        String urlString = null;
-        
-        if (this.path == null && hstResponse != null) {
-            urlString = hstResponse.createNavigationalURL(url.toString()).toString();
-        } else {
-            // TODO make sure the DomainMapping/Hosting is used to know whether to include the context path & servletpath HSTTWO-431
-            // only add the current servletpath for HstLink and not for static links HSTTWO-378
-            
-            // for static resources like css or js. No servlet path is included
-            url.insert(0, request.getContextPath());
-            urlString = url.toString();
-        }
-    
+        String urlString = hstResponse.createNavigationalURL(url.toString()).toString();
+      
         String customParams =  getCustomParameters(request, response);
         if(customParams != null) {
             urlString += customParams;

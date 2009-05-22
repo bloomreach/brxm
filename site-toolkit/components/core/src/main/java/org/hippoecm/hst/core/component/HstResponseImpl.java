@@ -61,22 +61,22 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     }
     
     public HstURL createRenderURL() {
-        return this.requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, this.componentWindow.getReferenceNamespace(), this.requestContext.getBaseURL());
+        return this.requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, this.componentWindow.getReferenceNamespace(), null, this.requestContext);
     }
     
     public HstURL createNavigationalURL(String pathInfo) {
         HstContainerURL navURL = this.requestContext.getURLFactory().getServletUrlProvider().parseURL(this.request, this.response, this.requestContext, pathInfo);
         navURL.setParameters(null);
-        HstURL navRenderURL = this.requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL);
+        HstURL navRenderURL = this.requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, this.requestContext);
         return navRenderURL;
     }
     
     public HstURL createActionURL() {
-        return this.requestContext.getURLFactory().createURL(HstURL.ACTION_TYPE, this.componentWindow.getReferenceNamespace(), this.requestContext.getBaseURL());
+        return this.requestContext.getURLFactory().createURL(HstURL.ACTION_TYPE, this.componentWindow.getReferenceNamespace(), null, this.requestContext);
     }
 
     public HstURL createResourceURL() {
-        return this.requestContext.getURLFactory().createURL(HstURL.RESOURCE_TYPE, this.componentWindow.getReferenceNamespace(), this.requestContext.getBaseURL());
+        return this.requestContext.getURLFactory().createURL(HstURL.RESOURCE_TYPE, this.componentWindow.getReferenceNamespace(), null,  this.requestContext);
     }
     
     public String getNamespace() {

@@ -102,10 +102,11 @@ public interface HstContainerURLProvider {
      * Stringifying the containerURL as a full URL string.
      * 
      * @param containerURL
+     * @param requestContext
      * @return
      * @throws UnsupportedEncodingException
      * @throws ContainerException
      */
-    String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException, ContainerException;
+    String toURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException;
     
 }

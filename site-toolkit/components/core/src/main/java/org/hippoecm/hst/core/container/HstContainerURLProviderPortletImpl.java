@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.beanutils.MethodUtils;
 import org.hippoecm.hst.container.HstContainerPortlet;
 import org.hippoecm.hst.container.HstContainerPortletContext;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLProvider {
     
@@ -31,7 +32,7 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
     }
     
     @Override
-    public String toURLString(HstContainerURL containerURL) throws UnsupportedEncodingException, ContainerException {
+    public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
         StringBuilder path = new StringBuilder(100);
         String pathInfo = buildHstURLPath(containerURL);
         path.append(containerURL.getServletPath());

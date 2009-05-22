@@ -74,10 +74,7 @@ public class HstVirtualHostsFilter implements Filter {
             if (request.getAttribute(FILTER_DONE_KEY) == null) {
                 request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
                 
-                
-                
                 MatchedMapping matchedMapping = vHosts.findMapping(req.getServerName(), pathInfo);
-                
                  if(matchedMapping != null) {
                     /*
                      * put the matched Mapping temporarily on the request, as we do not yet have a HstRequestContext. When the

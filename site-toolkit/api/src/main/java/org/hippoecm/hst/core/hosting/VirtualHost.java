@@ -49,5 +49,22 @@ public interface VirtualHost {
      */
     VirtualHosts getVirtualHosts();
     
+    /**
+     * 
+     * @return <code>true</code> when the created url should have the contextpath in it
+     */
+    boolean isContextPathInUrl();
     
+    /**
+     * 
+     * @return <code>true</code> when an externalized (starting with http/https) should contain a port number
+     */
+    boolean isPortVisible();
+
+    /**
+     * 
+     * @return when {@link #isPortVisible()} returns <code>true</code> this method returns the port number of the externalized url
+     */
+    int getPortNumber();
+
 }
