@@ -17,22 +17,18 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-
 import java.util.Date;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -44,6 +40,7 @@ import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
@@ -53,6 +50,8 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -154,10 +153,22 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                     }
                 }
                 return new WorkflowAction.WorkflowDialog(new StringResourceModel("delete-message", FullReviewedActionsWorkflowPlugin.this, null, new Object[] {documentName})) {
+
                     @Override
                     public IModel getTitle() {
                         return new StringResourceModel("delete-label", FullReviewedActionsWorkflowPlugin.this, null);
-                    }};
+                    }
+
+                    @Override
+                    public IValueMap getProperties() {
+                        return SMALL;
+                    }
+
+                    @Override
+                    protected void init() {
+                        setFocusOnCancel();
+                    }
+                };
             }
             @Override
             protected String execute(Workflow wf) throws Exception {
@@ -222,44 +233,53 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
         add(moveAction = new WorkflowAction("move", new StringResourceModel("move-label", this, null)) {
             public String name;
             public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) { };
+            
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "move-16.png");
             }
+            
             @Override
             protected Dialog createRequestDialog() {
-                name = "";
+                name = getInputNodeName();
                 return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title", FullReviewedActionsWorkflowPlugin.this, null), new StringResourceModel("move-text", FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "name"), destination);
             }
+            
             @Override
             protected String execute(Workflow wf) throws Exception {
                 if(name == null || name.trim().equals("")) {
                     throw new WorkflowException("No name for destination given");
                 }
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.move(new Document(destination.getNodeModel().getNode().getUUID()), NodeNameCodec.encode(name, true));
+                String nodeName = NodeNameCodec.encode(name, true);
+                workflow.move(new Document(destination.getNodeModel().getNode().getUUID()), nodeName);
+                browseTo(new JcrNodeModel(destination.getNodeModel().getItemModel().getPath() + "/" + nodeName));
                 return null;
             }
         });
 
         add(renameAction = new WorkflowAction("rename", new StringResourceModel("rename-label", this, null)) {
             public String name;
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "rename-16.png");
             }
+
             @Override
             protected Dialog createRequestDialog() {
-                name = "";
+                name = getInputNodeName();
                 return new WorkflowAction.NameDialog(new StringResourceModel("rename-title", FullReviewedActionsWorkflowPlugin.this, null), new StringResourceModel("rename-text", FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "name"));
             }
+            
             @Override
             protected String execute(Workflow wf) throws Exception {
                 if(name == null || name.trim().equals("")) {
                     throw new WorkflowException("No name for destination given");
                 }
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.rename(NodeNameCodec.encode(name, true));
+                String nodeName = NodeNameCodec.encode(name, true);
+                workflow.rename(nodeName);
                 return null;
             }
         });
@@ -267,15 +287,18 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
         add(copyAction = new WorkflowAction("copy", new StringResourceModel("copy-label", this, null)) {
             public String name;
             public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) { };
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "copy-16.png");
             }
+
             @Override
             protected Dialog createRequestDialog() {
-                name = "";
+                name = getInputNodeName();
                 return new WorkflowAction.DestinationDialog(new StringResourceModel("copy-title", FullReviewedActionsWorkflowPlugin.this, null), new StringResourceModel("copy-text", FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "name"), destination);
             }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
                 if(name == null || name.trim().equals("")) {
@@ -339,4 +362,34 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             log.error(ex.getMessage(), ex);
         }
     }
+
+    /**
+     * Get the name of the node this workflow operates on
+     * 
+     * @return The name of the node that the workflow operates on or an empty String if an error occurs
+     * @throws RepositoryException
+     */
+    private String getInputNodeName() {
+        WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getModel();
+        try {
+            return new NodeTranslator(new JcrNodeModel(workflowDescriptorModel.getNode())).getNodeName().getObject().toString();
+        } catch (RepositoryException e) {
+            log.error("Error translating node name", e);
+        }
+        return "";
+    }
+
+    /**
+     * Use the IBrowseService to select the node referenced by parameter path
+     * 
+     * @param nodeModel Absolute path of node to browse to
+     * @throws RepositoryException
+     */
+    private void browseTo(JcrNodeModel nodeModel) throws RepositoryException {
+        //refresh session before IBrowseService.browse is called
+        ((UserSession) org.apache.wicket.Session.get()).getJcrSession().refresh(false);
+        
+        getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class).browse(nodeModel);
+    }
+
 }

@@ -26,9 +26,6 @@ import java.util.TreeMap;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
@@ -42,9 +39,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
@@ -71,6 +67,8 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWorkflow> {
     @SuppressWarnings("unused")
@@ -102,10 +100,23 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                     messageModel = new StringResourceModel("delete-message", FolderWorkflowPlugin.this, null);
                 }
                 return new WorkflowAction.WorkflowDialog(messageModel) {
+
                     @Override
                     public IModel getTitle() {
                         return new StringResourceModel("delete-title", FolderWorkflowPlugin.this, null);
-                    }};
+                    }
+
+                    @Override
+                    public IValueMap getProperties() {
+                        return SMALL;
+                    }
+
+                    @Override
+                    protected void init() {
+                        setFocusOnCancel();
+                    }
+
+                };
             }
             @Override
             public void execute(WorkflowDescriptorModel model) throws Exception {
@@ -128,6 +139,12 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             @Override
             protected Dialog createRequestDialog() {
                 name = "";
+                WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getModel();
+                try {
+                    name = new NodeTranslator(new JcrNodeModel(workflowDescriptorModel.getNode())).getNodeName().getObject().toString();
+                } catch (RepositoryException e) {
+                    log.error("Error translating node name", e);
+                }
                 return new WorkflowAction.NameDialog(new StringResourceModel("rename-title", FolderWorkflowPlugin.this, null), new StringResourceModel("rename-text", FolderWorkflowPlugin.this, null), new PropertyModel(this, "name"));
             }
             @Override
@@ -310,7 +327,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
             TextField text = new TextField("name", nameModel);
             text.setRequired(true);
-            text.setLabel(new StringResourceModel("name-label", FolderWorkflowPlugin.this, null));;
+            text.setLabel(new StringResourceModel("name-label", FolderWorkflowPlugin.this, null));
+            setFocus(text);
             add(text);
 
             add(typelabel= new Label("typelabel", new StringResourceModel("document-type", FolderWorkflowPlugin.this, null)));
@@ -352,5 +370,11 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
         public IModel getTitle() {
             return title;
         }
+
+        @Override
+        public IValueMap getProperties() {
+            return MEDIUM;
+        }
+
     }
 }

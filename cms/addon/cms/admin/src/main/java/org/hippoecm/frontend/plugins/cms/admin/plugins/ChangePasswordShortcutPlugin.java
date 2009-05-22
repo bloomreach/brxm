@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -203,11 +204,8 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         public Dialog(final IPluginContext context, final IPluginConfig config) {
             setOkLabel(new StringResourceModel("change-label", ChangePasswordShortcutPlugin.this, null));
 
-            feedback = new FeedbackPanel("feedback");
-            replace(feedback);
-
+            replace(feedback = new FeedbackPanel("feedback"));
             feedback.setOutputMarkupId(true);
-            add(feedback);
 
             currentWidget = new PasswordWidget("current-password", new PropertyModel(ChangePasswordShortcutPlugin.this,
                     "currentPassword"), new StringResourceModel("old-password-label",
@@ -215,6 +213,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             currentWidget.setResetPassword(true);
             currentWidget.setOutputMarkupId(true);
             add(currentWidget);
+            setFocus(currentWidget);
 
             final PasswordWidget newWidget = new PasswordWidget("new-password", new PropertyModel(
                     ChangePasswordShortcutPlugin.this, "newPassword"), new StringResourceModel("new-password-label",
@@ -276,6 +275,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
             // empty the current password
             currentPassword = "";
+            setFocus(currentWidget);
             AjaxRequestTarget target = AjaxRequestTarget.get();
             if (target != null) {
                 target.addComponent(currentWidget);
@@ -284,6 +284,11 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
         public IModel getTitle() {
             return new StringResourceModel("change-password-label", ChangePasswordShortcutPlugin.this, null);
+        }
+
+        @Override
+        public IValueMap getProperties() {
+            return SMALL;
         }
     }
 

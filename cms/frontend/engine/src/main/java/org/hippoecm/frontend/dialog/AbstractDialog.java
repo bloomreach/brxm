@@ -61,6 +61,7 @@ import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,6 +71,10 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
+    
+    protected final static IValueMap SMALL = new ValueMap("width=380,height=250");
+    protected final static IValueMap MEDIUM = new ValueMap("width=475,height=250");
+    protected final static IValueMap LARGE = new ValueMap("width=855,height=490");
 
     @SuppressWarnings("unchecked")
     private class Container extends Panel implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
@@ -440,6 +445,10 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
     protected void setOkLabel(IModel label) {
         ok.setLabel(label);
     }
+    
+    protected void setFocusOnOk() {
+        setFocus(ok.getButton());
+    }
 
     protected void setCancelEnabled(boolean isset) {
         cancel.setEnabled(isset);
@@ -457,6 +466,11 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         cancel.setLabel(label);
     }
 
+    protected void setFocusOnCancel() {
+        setFocus(cancel.getButton());
+    }
+
+    
     public void setDialogService(IDialogService dialogService) {
         this.dialogService = dialogService;
     }
@@ -510,11 +524,6 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         return container;
     }
 
-    public Component setFocusComponent(Component c) {
-        this.focusComponent = c;
-        return c;
-    }
-
     public void render(PluginRequestTarget target) {
         if (target != null) {
             target.addComponent(feedback);
@@ -535,7 +544,23 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
     }
 
     public IValueMap getProperties() {
-        return new ValueMap();
+        return LARGE;
+    }
+
+    public Component setFocus(Component c) {
+        if(focusComponent != null) {
+            return c;
+        }
+
+        if(!c.getOutputMarkupId()) {
+            c.setOutputMarkupId(true);
+        }
+        return focusComponent = c;
+    }
+
+    public AjaxUpdatingWidget setFocus(AjaxUpdatingWidget widget) {
+        setFocus(widget.getFocusComponent());
+        return widget;
     }
 
 }

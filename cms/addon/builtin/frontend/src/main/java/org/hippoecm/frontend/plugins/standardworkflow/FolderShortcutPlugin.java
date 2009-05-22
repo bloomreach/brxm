@@ -37,6 +37,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -263,14 +264,14 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 folder = null;
             }
 
-            add(new TextFieldWidget("name", new PropertyModel(this, "name")) {
+            add(setFocus(new TextFieldWidget("name", new PropertyModel(this, "name")) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     evaluateChoices();
                 }
-            });
+            }));
 
             add(new Label("message", new Model("")));
 
@@ -405,6 +406,11 @@ public class FolderShortcutPlugin extends RenderPlugin {
             } catch (Exception ex) {
                 error(ex.getMessage());
             }
+        }
+        
+        @Override
+        public IValueMap getProperties() {
+            return MEDIUM;
         }
     }
 }

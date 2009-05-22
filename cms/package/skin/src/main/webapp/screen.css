@@ -108,6 +108,7 @@ padding: 2px;
 .hippo-login-panel-copyright{color: #999999; padding-bottom: 20px; text-align: center; margin-top: 23px; background: url("images/loginbottom.png") no-repeat bottom center}
 
 /* Login feedback */
+
 .hippo-login-feedback ul {
 text-align: left;
 margin-left: 60px; 
@@ -126,6 +127,27 @@ height: 35px;
 padding-top: 8px;
 }
 .hippo-login-feedback ul li{list-style-type: disc}
+
+/* Hippo Modal feedback */
+
+.hippo-modal-feedback ul {
+  margin-top: 5px;
+text-align: left;
+margin-left: 45px; 
+margin-right: 45px; 
+border: 1px solid #69849f; 
+color: #69849f;
+background-color: #fff8d5; 
+margin-bottom: 15px; 
+font-weight: bold;
+background-image: url("images/icons/dialog-information-32.png");
+background-repeat: no-repeat;
+background-position: 10px 5px;
+padding-left: 70px;
+min-height: 35px;
+padding-top: 8px;
+}
+.hippo-modal-feedback ul li{list-style-type: disc}
 
 
 /* Wicket Ajaxloader */
@@ -427,8 +449,11 @@ padding-top: 8px;
 
 /* Windows */
 /* ================================================ */
-.hippo-window{padding: 25px; background: none}
+.hippo-window{background: none}
 .hippo-window .hippo-root{background: none}
+
+.hippo-window .hippo-root table.modal-contents { margin: 10px 25px 0px 25px; }
+.hippo-window .hippo-root table.modal-contents td { padding: 2px 5px 2px 5px; }
 
 .hippo-window h1, .hippo-window h1{margin-bottom: 10px; font-size: 16px;}
 .hippo-window-buttons{text-align: right; position: absolute; right: 15px; bottom: 15px; }
@@ -436,11 +461,17 @@ padding-top: 8px;
 
 .hippo-window-buttons input{} 
 /* forms inside windows */
+table.hippo-window-form{width: 100%;}
+
 .hippo-window-form {background: #f4f4f4; padding: 5px;}
 .hippo-window-form td input{background: white; border: 1px solid #afafaf; padding: 3px; line-height: 18px;}
 .hippo-window-form td{padding: 5px;}
 .hippo-window-form .hippo-form-select{width: 300px;}
 
+.hippo-window .notification {
+ display: block;
+ padding: 25px;
+}
 
 /* Dialogs, mini windows that ask a question */
 .hippo-window-dialog{background-position: 10px 10px; background-repeat: no-repeat; padding: 5px; padding-left: 75px; padding-top: 20px; min-height: 200px;}
@@ -497,7 +528,7 @@ background-image:url(images/box-blue2.png);}
 .hippo-picker-navigation{background: url("images/silver4.png") repeat-x; height: 20px; width: 635px; border-bottom: 1px solid #afafaf; margin-left: 194px; padding-top: 2px; padding-bottom: 2px; padding-left: 2px;}
 .hippo-picker-list-details tr.hippo-list-paging td div {margin-top: 10px}
 .hippo-picker-navigation-buttons{background: url("images/hippo-picker-navigation-back.png") repeat-x;}
-.hippo-picker-navigation-buttons input{float: left; padding: 0px; height: 22px; width: 24px; font-size: 11px; background: url("images/hippo-picker-navigation-buttons-back.png") no-repeat; background-position: 0px -20px; border: none; margin: 0px; text-indent: -9999px;}
+.hippo-window-form td div.hippo-picker-navigation-buttons input{float: left; padding: 0px; height: 22px; width: 24px; font-size: 11px; background: url("images/hippo-picker-navigation-buttons-back.png") no-repeat; background-position: 0px -20px; border: none; margin: 0px; text-indent: -9999px;}
 
 .hippo-picker-navigation-breadcrumbs {float: left; margin-left: 2px; background-image: url("images/hippo-picker-navigation-breadcrumb.png"); background-position: left 20px; padding-left: 15px;}
 .hippo-picker-navigation-breadcrumbs li {display: block; float: left;}

@@ -20,6 +20,7 @@ import java.util.Map;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
@@ -27,7 +28,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
-
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -170,10 +171,16 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                     notification.setVisible(false);
                 }
                 add(notification);
+                notification.add(new AttributeAppender("class", new Model("notification"), " "));
 
                 // FIXME: refactor the plugin so that we can use a service instead here
                 IPluginContext context = getPluginContext();
                 translator = new SearchingTranslatorPlugin(context, null);
+
+                init();
+            }   
+
+            protected void init() {
             }
 
             public String getString(Map<String, String> criteria) {
@@ -211,12 +218,20 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 super();
                 this.title = title;
                 add(new Label("question", question));
-                add(new TextFieldWidget("value", nameModel));
+
+                TextFieldWidget textfield; 
+                add(textfield = new TextFieldWidget("value", nameModel));
+                setFocus(textfield.getFocusComponent());
             }
 
             @Override
             public IModel getTitle() {
                 return title;
+            }
+
+            @Override
+            public IValueMap getProperties() {
+                return SMALL;
             }
         }
 
@@ -262,6 +277,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 dialogRenderer = context.getService(decorated.getString("wicket.id"), IRenderService.class);
                 dialogRenderer.bind(null, "picker");
                 add(dialogRenderer.getComponent());
+                setFocusOnCancel();
             }
 
             @Override
@@ -283,6 +299,11 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             @Override
             public IModel getTitle() {
                 return title;
+            }
+
+            @Override
+            public IValueMap getProperties() {
+                return LARGE;
             }
         }
 
@@ -309,6 +330,12 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 now.setDefaultFormProcessing(false);
                 now.setModel(new ResourceModel("now", "Now"));
                 addButton(now);
+                setFocusOnCancel();
+            }
+
+            @Override
+            public IValueMap getProperties() {
+                return MEDIUM;
             }
         }
     }
