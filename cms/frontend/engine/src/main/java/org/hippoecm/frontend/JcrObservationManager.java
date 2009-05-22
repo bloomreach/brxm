@@ -333,15 +333,17 @@ public class JcrObservationManager implements ObservationManager {
             }
         }
 
-        List<Node> getReferencedNodes() throws RepositoryException {
+        List<Node> getReferencedNodes() {
             if (uuids != null) {
                 Session session = getSession().getJcrSession();
                 ArrayList<Node> list = new ArrayList<Node>(uuids.size());
                 for (String id : uuids) {
                     try {
                         list.add(session.getNodeByUUID(id));
-                    } catch (ItemNotFoundException infe) {
-                        log.warn("Could not dereference uuid {}", id);
+                    } catch (ItemNotFoundException e) {
+                        log.warn("Could not dereference uuid {} : {}", id, e.getMessage());
+                    } catch (RepositoryException e) {
+                        log.warn("Could not dereference uuid {} : {}", id, e.getMessage());
                     }
                 }
                 return list;
@@ -360,37 +362,44 @@ public class JcrObservationManager implements ObservationManager {
                     if (!canonical.isSame(node)) {
                         return true;
                     }
-                } catch (ItemNotFoundException ex) {
+                } catch (ItemNotFoundException e) {
+                    log.debug("Item not found, assuming node was virtual: " + e.getMessage());
                     return true;
                 }
             }
             return false;
         }
 
-        boolean isVisible(Node node) throws RepositoryException {
-            String path = node.getPath();
-            if ((isDeep && path.startsWith(this.path)) || path.equals(this.path)) {
-                if (uuids != null) {
-                    if (node.isNodeType("mix:referenceable") && uuids.contains(node.getUUID())) {
+        boolean isVisible(Node node) {
+            try {
+                String path = node.getPath();
+                if ((isDeep && path.startsWith(this.path)) || path.equals(this.path)) {
+                    if (uuids != null) {
+                        if (node.isNodeType("mix:referenceable") && uuids.contains(node.getUUID())) {
+                            return true;
+                        }
+                    } else {
                         return true;
                     }
-                } else {
-                    return true;
                 }
+            } catch (RepositoryException e) {
+                log.warn("Unable to determine if node is visible, defaulting to false: " + e.getMessage());
             }
             return false;
         }
 
-        void processPending(NodeIterator iter, List<Node> nodes) throws RepositoryException {
+        void processPending(NodeIterator iter, List<Node> nodes) {
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
-                if (isVisible(node)) {
-                    nodes.add(node);
+                if (node != null) {
+                    if (isVisible(node)) {
+                        nodes.add(node);
+                    }
                 }
             }
         }
 
-        void expandNew(final List<Node> nodes) throws RepositoryException {
+        void expandNew(final List<Node> nodes) {
             for (Node node : new ArrayList<Node>(nodes)) {
                 if (node.isNew()) {
                     ItemVisitor visitor = new TraversingItemVisitor() {
@@ -415,24 +424,29 @@ public class JcrObservationManager implements ObservationManager {
                         }
 
                     };
-                    visitor.visit(node);
+                    try {
+                        visitor.visit(node);
+                    } catch (RepositoryException e) {
+                        log.warn("Error during visiting node", e);
+                    }
                 }
             }
         }
 
         synchronized void getChanges(Set<String> paths) {
-            try {
-                if (events.size() > 0) {
-                    for (Event event : events) {
-                        String path = event.getPath();
+            if (events.size() > 0) {
+                for (Event event : events) {
+                    String path;
+                    try {
+                        path = event.getPath();
                         if (event.getType() != 0) {
                             path = path.substring(0, path.lastIndexOf('/'));
                         }
                         paths.add(path);
+                    } catch (RepositoryException e) {
+                        log.warn("Failed to get path from event", e);
                     }
                 }
-            } catch (RepositoryException ex) {
-
             }
         }
 
@@ -461,10 +475,11 @@ public class JcrObservationManager implements ObservationManager {
             }
 
             // process pending changes
+            Node root = null;
+            List<Node> nodes = new LinkedList<Node>();
             if (!isvirtual) {
                 try {
-                    List<Node> nodes = new LinkedList<Node>();
-                    Node root = getRoot();
+                    root = getRoot();
                     if (nodeTypes == null) {
                         if ((root.isModified() || root.isNew()) && isVisible(root)) {
                             nodes.add(root);
@@ -477,9 +492,13 @@ public class JcrObservationManager implements ObservationManager {
                     } else {
                         if ((root.isModified() || root.isNew()) && isVisible(root)) {
                             for (String type : nodeTypes) {
-                                if (root.isNodeType(type)) {
-                                    nodes.add(root);
-                                    break;
+                                try {
+                                    if (root.isNodeType(type)) {
+                                        nodes.add(root);
+                                        break;
+                                    }
+                                } catch (RepositoryException e) {
+                                    log.debug("Unable to determine if node is of type " + type, e);
                                 }
                             }
                         }
@@ -491,28 +510,43 @@ public class JcrObservationManager implements ObservationManager {
                             }
                         }
                     }
-                    for (Node node : getReferencedNodes()) {
-                        if (nodeTypes == null) {
-                            if (node.isModified() || node.isNew()) {
-                                nodes.add(node);
-                            }
-                        } else {
-                            if (node.isModified() || node.isNew()) {
-                                for (String type : nodeTypes) {
-                                    if (node.isNodeType(type)) {
-                                        nodes.add(node);
+                } catch (PathNotFoundException ex) {
+                    log.warn("Root node no longer exists: " + ex.getMessage());
+                    dispose();
+                    return;
+                } catch (RepositoryException ex) {
+                    log.error("Failed to parse pending changes", ex);
+                    dispose();
+                    return;
+                }
+
+                for (Node node : getReferencedNodes()) {
+                    if (nodeTypes == null) {
+                        if (node.isModified() || node.isNew()) {
+                            nodes.add(node);
+                        }
+                    } else {
+                        if (node.isModified() || node.isNew()) {
+                            for (String type : nodeTypes) {
+                                try {
+                                    if (root.isNodeType(type)) {
+                                        nodes.add(root);
                                         break;
                                     }
+                                } catch (RepositoryException e) {
+                                    log.debug("Unable to determine if node is of type " + type, e);
                                 }
                             }
                         }
                     }
+                }
 
-                    expandNew(nodes);
+                expandNew(nodes);
 
-                    List<String> paths = new LinkedList<String>();
-                    for (Node node : nodes) {
-                        String path;
+                List<String> paths = new LinkedList<String>();
+                for (Node node : nodes) {
+                    String path;
+                    try {
                         path = node.getPath();
                         paths.add(path);
                         if (pending.containsKey(path)) {
@@ -525,22 +559,16 @@ public class JcrObservationManager implements ObservationManager {
                             pending.put(path, cache);
                             events.add(cache.new NodeEvent(null, 0));
                         }
+                    } catch (RepositoryException e) {
+                        log.warn("Failed to process node", e);
                     }
+                }
 
-                    for (String path : new ArrayList<String>(pending.keySet())) {
-                        if (!paths.contains(path)) {
-                            NodeCache cache = pending.remove(path);
-                            events.add(cache.new NodeEvent(null, 0));
-                        }
+                for (String path : new ArrayList<String>(pending.keySet())) {
+                    if (!paths.contains(path)) {
+                        NodeCache cache = pending.remove(path);
+                        events.add(cache.new NodeEvent(null, 0));
                     }
-                } catch (PathNotFoundException ex) {
-                    log.warn("Root node no longer exists: " + ex.getMessage());
-                    dispose();
-                    return;
-                } catch (RepositoryException ex) {
-                    log.error("Failed to parse pending changes", ex);
-                    dispose();
-                    return;
                 }
             }
 
