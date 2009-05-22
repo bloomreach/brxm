@@ -52,9 +52,10 @@
             <include>**/*.properties</include>
           </includes>
         </fileSet>
-        <fileSet encoding="UTF-8">
+        <fileSet filtered="false" encoding="UTF-8">
           <directory>src/main/webapp</directory>
           <includes>
+            <include>**/WEB-INF/jsp/tracetool*.jsp</include>
             <include>**/*.gif</include>
             <include>**/*.css</include>
           </includes>
