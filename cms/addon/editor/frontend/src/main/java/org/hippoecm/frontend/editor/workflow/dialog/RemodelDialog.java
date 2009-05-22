@@ -18,6 +18,7 @@ package org.hippoecm.frontend.editor.workflow.dialog;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -37,7 +38,7 @@ public class RemodelDialog extends CompatibilityWorkflowPlugin.WorkflowAction.Wo
     WorkflowDescriptorModel model;
 
     public RemodelDialog(CompatibilityWorkflowPlugin.WorkflowAction action, WorkflowDescriptorModel model) {
-        action . super();
+        action.super();
         this.model = model;
 
         if (model == null) {
@@ -64,5 +65,10 @@ public class RemodelDialog extends CompatibilityWorkflowPlugin.WorkflowAction.Wo
 
     void remodel() throws Exception {
         onOk();
+    }
+
+    @Override
+    public IValueMap getProperties() {
+        return SMALL;
     }
 }

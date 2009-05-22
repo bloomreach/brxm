@@ -18,6 +18,7 @@ package org.hippoecm.frontend.editor.workflow;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.editor.repository.TemplateEditorWorkflow;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
@@ -61,13 +62,18 @@ public class NamespaceWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
         public NamespaceDialog(CompatibilityWorkflowPlugin.WorkflowAction action) {
             action.super();
-            add(new TextFieldWidget("prefix", new PropertyModel(action, "prefix")));
+            add(setFocus(new TextFieldWidget("prefix", new PropertyModel(action, "prefix"))));
             add(new TextFieldWidget("url", new PropertyModel(action, "url")));
         }
 
         @Override
         public IModel getTitle() {
             return new StringResourceModel("create-namespace", NamespaceWorkflowPlugin.this, null);
+        }
+
+        @Override
+        public IValueMap getProperties() {
+            return SMALL;
         }
     }
 }

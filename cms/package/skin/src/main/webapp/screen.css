@@ -457,7 +457,7 @@ padding-top: 8px;
 
 .hippo-window h1, .hippo-window h1{margin-bottom: 10px; font-size: 16px;}
 .hippo-window-buttons{text-align: right; position: absolute; right: 15px; bottom: 15px; }
-.hippo-window .wicketExtensionsWizardInnerTable .wicketExtensionsWizardButtonBar{}
+.hippo-window .wicketExtensionsWizardInnerTable .wicketExtensionsWizardButtonBar{ padding-top: 10px;}
 
 .hippo-window-buttons input{} 
 /* forms inside windows */
@@ -472,6 +472,8 @@ table.hippo-window-form{width: 100%;}
  display: block;
  padding: 25px;
 }
+
+.hippo-window .hippo-dialog-container {padding:10px;}
 
 /* Dialogs, mini windows that ask a question */
 .hippo-window-dialog{background-position: 10px 10px; background-repeat: no-repeat; padding: 5px; padding-left: 75px; padding-top: 20px; min-height: 200px;}

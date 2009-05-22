@@ -15,15 +15,17 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <label for="upload">
-      <wicket:message key="select-file-label"/>
-    </label>
-    <input class="hippo-select-file" size="62" wicket:id="input" id="upload" type="file"/>
-    <wicket:enclosure child="form:type">
-      <label for="typeselect">
-        <wicket:message key="file-type-label"/>
+    <div class="hippo-dialog-container">
+      <label for="upload">
+        <wicket:message key="select-file-label"/>
       </label>
-      <select wicket:id="type" id="typeselect"/>
-    </wicket:enclosure>
+      <input class="hippo-select-file" size="50" wicket:id="input" id="upload" type="file"/>
+      <wicket:enclosure child="form:type">
+        <label for="typeselect">
+          <wicket:message key="file-type-label"/>
+        </label>
+        <select wicket:id="type" id="typeselect"/>
+      </wicket:enclosure>
+    </div>  
   </wicket:extend>
 </html>

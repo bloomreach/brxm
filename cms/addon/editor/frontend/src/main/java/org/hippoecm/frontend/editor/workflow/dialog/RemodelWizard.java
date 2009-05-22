@@ -108,7 +108,6 @@ public class RemodelWizard extends Wizard {
             add(new CancelLink("cancel", wizard));
             add(new FinishLink("finish", wizard));
         }
-
     }
 
 }
