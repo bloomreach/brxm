@@ -742,7 +742,7 @@ public class JcrObservationManager implements ObservationManager {
                         try {
                             session.getRootNode().getNode(path.substring(1)).refresh(true);
                         } catch (PathNotFoundException ex) {
-                            log.error("Could not find path for event, discarding event and continue", ex);
+                            log.error("Could not find path " + path + " for event, discarding event and continue: " + ex.getMessage());
                         }
                     }
                 }
