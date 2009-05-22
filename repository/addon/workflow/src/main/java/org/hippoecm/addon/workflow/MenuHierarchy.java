@@ -70,7 +70,7 @@ class MenuHierarchy {
                 } else if(action.getId().equals("cancel") || action.getId().equals("accept") || action.getId().equals("reject")) {
                     put(new String[] { "request" }, action);
                 } else {
-                    put(new String[] { "miscelleneous" }, action);
+                    put(new String[] { "miscellaneous" }, action);
                 }
             }
         }
