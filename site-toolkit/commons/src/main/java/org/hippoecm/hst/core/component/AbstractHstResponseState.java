@@ -30,7 +30,6 @@ import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 
-import org.apache.commons.collections.list.TreeList;
 import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.KeyValue;
 import org.w3c.dom.Element;
@@ -513,10 +512,7 @@ public abstract class AbstractHstResponseState implements HstResponseState {
                 ((HstResponse) response).addHeadElement(element, keyHint);
             } else {
                 if (this.headElements == null) {
-                    // org.apache.commons.collections.list.TreeList is well-optimized for
-                    // fast insertions at any index in the list.
-                    // Refer to description in the javadoc for details.
-                    this.headElements = new TreeList();
+                    this.headElements = new ArrayList<KeyValue<String, Element>>();
                 }
 
                 if (element == null) {

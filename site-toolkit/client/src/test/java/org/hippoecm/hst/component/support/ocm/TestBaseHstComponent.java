@@ -38,10 +38,12 @@ import org.hippoecm.hst.mock.MockHstRequest;
 import org.hippoecm.hst.mock.MockHstRequestContext;
 import org.hippoecm.hst.test.AbstractClientSpringTestCase;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
 
+@Ignore
 public class TestBaseHstComponent extends AbstractClientSpringTestCase {
 
     protected ServletContext servletContext;

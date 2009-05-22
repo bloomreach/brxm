@@ -73,6 +73,8 @@ public class HstSiteConfigServlet extends HttpServlet {
     protected ComponentManager componentManager;
     
     protected boolean initialized;
+    
+    protected boolean checkRepositoriesRunning;
     protected boolean allRepositoriesAvailable;
     
     protected Configuration configuration;
@@ -80,8 +82,8 @@ public class HstSiteConfigServlet extends HttpServlet {
     // -------------------------------------------------------------------
     // I N I T I A L I Z A T I O N
     // -------------------------------------------------------------------
-    private static final String INIT_START_MSG = "HST Site Starting Initialization...";
-    private static final String INIT_DONE_MSG = "HST Site Initialization complete, Ready to service requests.";
+    private static final String INIT_START_MSG = "HstSiteConfigServlet Starting Initialization...";
+    private static final String INIT_DONE_MSG = "HstSiteConfigServlet Initialization complete, Ready to service requests.";
     
     protected Map<String [], Boolean> repositoryCheckingStatus = new HashMap<String [], Boolean>();
 
@@ -94,7 +96,7 @@ public class HstSiteConfigServlet extends HttpServlet {
         
         this.configuration = getConfiguration(config);
 
-        boolean checkRepositoriesRunning = this.configuration.getBoolean(CHECK_REPOSITORIES_RUNNING_INIT_PARAM);
+        checkRepositoriesRunning = this.configuration.getBoolean(CHECK_REPOSITORIES_RUNNING_INIT_PARAM);
         
         if (!checkRepositoriesRunning) {
             doInit(config);
@@ -147,17 +149,29 @@ public class HstSiteConfigServlet extends HttpServlet {
 
         try {
             log.info(INIT_START_MSG);
-            log.info("HSTSiteServlet attempting to create the Component manager...");
+            
+            ComponentManager oldComponentManager = HstServices.getComponentManager();
+            if (oldComponentManager != null) {
+                log.info("HstSiteConfigServlet attempting to stop the old component manager...");
+                try {
+                    HstServices.setComponentManager(null);
+                    oldComponentManager.stop();
+                    oldComponentManager.close();
+                } catch (Exception ce) {
+                }
+            }
+            
+            log.info("HstSiteConfigServlet attempting to create the Component manager...");
             this.componentManager = new SpringComponentManager(this.configuration);
             log.info("HSTSiteServlet attempting to start the Component Manager...");
             this.componentManager.initialize();
             this.componentManager.start();
             HstServices.setComponentManager(this.componentManager);
             
-            log.info("HSTSiteServlet has successfuly started the Component Manager....");
+            log.info("HstSiteConfigServlet has successfuly started the Component Manager....");
             this.initialized = true;
             log.info(INIT_DONE_MSG);
-        } catch (Throwable e) {
+        } catch (Throwable th) {
             if (this.componentManager != null) {
                 try { 
                     this.componentManager.stop();
@@ -167,7 +181,7 @@ public class HstSiteConfigServlet extends HttpServlet {
             }
             // save the exception to complain loudly later :-)
             final String msg = "HSTSite: init() failed.";
-            log.error(msg, e);
+            log.error(msg, th);
         }
     }
 
