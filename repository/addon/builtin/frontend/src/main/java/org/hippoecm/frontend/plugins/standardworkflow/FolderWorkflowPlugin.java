@@ -79,7 +79,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
     private static Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
 
     private WorkflowAction reorderAction;
-    
+
     public FolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
@@ -90,13 +90,16 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "delete-16.png");
             }
+
             @Override
             protected Dialog createRequestDialog() {
                 StringResourceModel messageModel;
                 try {
-                    IModel folderName = new NodeTranslator(new JcrNodeModel(((WorkflowDescriptorModel)FolderWorkflowPlugin.this.getModel()).getNode())).getNodeName();
-                    messageModel = new StringResourceModel("delete-message-extended", FolderWorkflowPlugin.this, null, new Object[]{folderName});
-                } catch(RepositoryException ex) {
+                    IModel folderName = new NodeTranslator(new JcrNodeModel(
+                            ((WorkflowDescriptorModel) FolderWorkflowPlugin.this.getModel()).getNode())).getNodeName();
+                    messageModel = new StringResourceModel("delete-message-extended", FolderWorkflowPlugin.this, null,
+                            new Object[] { folderName });
+                } catch (RepositoryException ex) {
                     messageModel = new StringResourceModel("delete-message", FolderWorkflowPlugin.this, null);
                 }
                 return new WorkflowAction.WorkflowDialog(messageModel) {
@@ -118,57 +121,60 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
                 };
             }
+
             @Override
             public void execute(WorkflowDescriptorModel model) throws Exception {
                 // FIXME: this assumes that folders are always embedded in other folders
                 // and there is some logic here to look up the parent.  The real solution is
                 // in the visual component to merge two workflows.
                 Node node = model.getNode();
-                WorkflowManager manager = ((UserSession)Session.get()).getWorkflowManager();
-                FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow("embedded", node.getParent());
+                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
                 workflow.delete(node.getName() + "[" + node.getIndex() + "]");
             }
         });
 
         add(new WorkflowAction("rename", new StringResourceModel("rename-title", this, null)) {
             public String name;
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "rename-16.png");
             }
+
             @Override
             protected Dialog createRequestDialog() {
-                name = "";
-                WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getModel();
-                try {
-                    name = new NodeTranslator(new JcrNodeModel(workflowDescriptorModel.getNode())).getNodeName().getObject().toString();
-                } catch (RepositoryException e) {
-                    log.error("Error translating node name", e);
-                }
-                return new WorkflowAction.NameDialog(new StringResourceModel("rename-title", FolderWorkflowPlugin.this, null), new StringResourceModel("rename-text", FolderWorkflowPlugin.this, null), new PropertyModel(this, "name"));
+                name = getInputNodeName();
+                return new WorkflowAction.NameDialog(new StringResourceModel("rename-title", FolderWorkflowPlugin.this,
+                        null), new StringResourceModel("rename-text", FolderWorkflowPlugin.this, null),
+                        new PropertyModel(this, "name"));
             }
+
             @Override
             protected void execute(WorkflowDescriptorModel model) throws Exception {
                 // FIXME: this assumes that folders are always embedded in other folders
                 // and there is some logic here to look up the parent.  The real solution is
                 // in the visual component to merge two workflows.
                 Node node = model.getNode();
-                WorkflowManager manager = ((UserSession)Session.get()).getWorkflowManager();
-                FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow("embedded", node.getParent());
+                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
                 workflow.rename(node.getName() + "[" + node.getIndex() + "]", NodeNameCodec.encode(name, true));
             }
         });
 
         add(reorderAction = new WorkflowAction("reorder", new StringResourceModel("reorder-folder", this, null)) {
             public List<String> order = new LinkedList<String>();
+
             @Override
             protected Dialog createRequestDialog() {
-                return new ReorderDialog(this, config, (WorkflowDescriptorModel)FolderWorkflowPlugin.this.getModel(), order);
+                return new ReorderDialog(this, config, (WorkflowDescriptorModel) FolderWorkflowPlugin.this.getModel(),
+                        order);
             }
+
             @Override
             protected void execute(WorkflowDescriptorModel model) throws Exception {
-                WorkflowManager manager = ((UserSession)Session.get()).getWorkflowManager();
-                FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow((WorkflowDescriptor)model.getObject());
+                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow((WorkflowDescriptor) model.getObject());
                 workflow.reorder(order);
             }
         });
@@ -178,7 +184,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
     @Override
     public String getString(Map<String, String> keys) {
-        Map<String,String> criteria = new TreeMap<String,String>(keys);
+        Map<String, String> criteria = new TreeMap<String, String>(keys);
         ITranslateService translator = new SearchingTranslatorPlugin(getPluginContext(), null);
         criteria.put("hippo:workflow", FolderWorkflow.class.getName());
         return translator.translate(criteria);
@@ -196,25 +202,30 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
                 Workflow workflow = manager.getWorkflow(descriptor);
                 FolderWorkflow folderWorkflow = (FolderWorkflow) workflow;
-                Map<String,Serializable> hints = folderWorkflow.hints();
+                Map<String, Serializable> hints = folderWorkflow.hints();
 
-                if(hints.containsKey("reorder") && hints.get("reorder") instanceof Boolean) {
-                    reorderAction.setVisible(((Boolean)hints.get("reorder")).booleanValue());
+                if (hints.containsKey("reorder") && hints.get("reorder") instanceof Boolean) {
+                    reorderAction.setVisible(((Boolean) hints.get("reorder")).booleanValue());
                 }
-                
+
                 final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
                 for (final String category : prototypes.keySet()) {
-                    String categoryLabel = new StringResourceModel("add-category", this, null, new Object[] { new StringResourceModel(category, this, null) }).getString();
-                    list.add(new WorkflowAction("id", categoryLabel, new ResourceReference(getClass(), "document-new-16.png")) {
+                    String categoryLabel = new StringResourceModel("add-category", this, null,
+                            new Object[] { new StringResourceModel(category, this, null) }).getString();
+                    list.add(new WorkflowAction("id", categoryLabel, new ResourceReference(getClass(),
+                            "document-new-16.png")) {
                         public String prototype;
                         public String targetName;
+
                         @Override
                         protected Dialog createRequestDialog() {
-                            return new FolderWorkflowDialog(this, new Model(category), category, prototypes.get(category));
+                            return new FolderWorkflowDialog(this, new Model(category), category, prototypes
+                                    .get(category));
                         }
+
                         @Override
                         protected String execute(FolderWorkflow wf) throws Exception {
-                            FolderWorkflow workflow = (FolderWorkflow) wf;
+                            FolderWorkflow workflow = wf;
                             if (prototype == null) {
                                 throw new IllegalArgumentException("You need to select a type");
                             }
@@ -258,26 +269,31 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             log.error(ex.getClass().getName() + ": " + ex.getMessage());
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     public void select(JcrNodeModel nodeModel) {
-        IBrowseService<JcrNodeModel> browser = getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class);
-        IEditorManager editor = getPluginContext().getService(getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
+        IBrowseService<JcrNodeModel> browser = getPluginContext().getService(
+                getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class);
+        IEditorManager editor = getPluginContext().getService(getPluginConfig().getString(IEditorManager.EDITOR_ID),
+                IEditorManager.class);
         try {
             if (nodeModel.getNode() != null
-                    && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) || nodeModel.getNode().isNodeType(HippoNodeType.NT_HANDLE))) {
+                    && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) || nodeModel.getNode().isNodeType(
+                            HippoNodeType.NT_HANDLE))) {
                 if (browser != null) {
                     browser.browse(nodeModel);
                 }
-                if (!nodeModel.getNode().isNodeType("hippostd:folder") && !nodeModel.getNode().isNodeType("hippostd:directory")) {
+                if (!nodeModel.getNode().isNodeType("hippostd:folder")
+                        && !nodeModel.getNode().isNodeType("hippostd:directory")) {
                     if (editor != null) {
                         JcrNodeModel editNodeModel = nodeModel;
                         Node editNodeModelNode = nodeModel.getNode();
                         if (editNodeModelNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                             editNodeModelNode = editNodeModelNode.getNode(editNodeModelNode.getName());
                         }
-                        javax.jcr.Session session = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
-                        WorkflowManager workflowManager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
+                        javax.jcr.Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+                        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace())
+                                .getWorkflowManager();
                         Workflow workflow = workflowManager.getWorkflow("editing", editNodeModelNode);
                         try {
                             if (workflow instanceof EditableWorkflow) {
@@ -285,7 +301,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                                 Document editableDocument = editableWorkflow.obtainEditableInstance();
                                 if (editableDocument != null) {
                                     session.refresh(true);
-                                    editNodeModel = new JcrNodeModel(session.getNodeByUUID(editableDocument.getIdentity()));
+                                    editNodeModel = new JcrNodeModel(session.getNodeByUUID(editableDocument
+                                            .getIdentity()));
                                 } else {
                                     editNodeModel = null;
                                 }
@@ -331,15 +348,18 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             setFocus(text);
             add(text);
 
-            add(typelabel= new Label("typelabel", new StringResourceModel("document-type", FolderWorkflowPlugin.this, null)));
+            add(typelabel = new Label("typelabel", new StringResourceModel("document-type", FolderWorkflowPlugin.this,
+                    null)));
 
             if (prototypes.size() > 1) {
                 final List<String> prototypesList = new LinkedList<String>(prototypes);
                 DropDownChoice folderChoice;
-                add(folderChoice = new DropDownChoice("prototype", prototypeModel, prototypesList, new TypeChoiceRenderer(this)));
+                add(folderChoice = new DropDownChoice("prototype", prototypeModel, prototypesList,
+                        new TypeChoiceRenderer(this)));
                 folderChoice.setNullValid(false);
                 folderChoice.setRequired(true);
-                folderChoice.setLabel(new StringResourceModel("document-type", FolderWorkflowPlugin.this, null));;
+                folderChoice.setLabel(new StringResourceModel("document-type", FolderWorkflowPlugin.this, null));
+                ;
                 // while not a prototype chosen, disable ok button
                 Component notypes;
                 add(notypes = new EmptyPanel("notypes"));
@@ -360,7 +380,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 add(component = new EmptyPanel("prototype"));
                 component.setVisible(false);
                 prototypeModel.setObject(null);
-                add(new Label("notypes", "There are no types available for : [" + category + "] First create document types please."));
+                add(new Label("notypes", "There are no types available for : [" + category
+                        + "] First create document types please."));
                 text.setVisible(false);
                 typelabel.setVisible(false);
             }

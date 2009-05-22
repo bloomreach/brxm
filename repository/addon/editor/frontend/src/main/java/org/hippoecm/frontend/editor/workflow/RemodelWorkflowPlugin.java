@@ -19,12 +19,12 @@ import java.io.Serializable;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
@@ -110,7 +110,7 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                             }
                         }
                     }
-                    
+
                     Object cargo = NamespaceUpdater.toCargo(update);
 
                     sessionModel.getSession().save();
@@ -149,12 +149,17 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
         public CreateTypeDialog(CompatibilityWorkflowPlugin.WorkflowAction action) {
             action.super();
-            add(new TextFieldWidget("name", new PropertyModel(action, "name")));
+            add(setFocus(new TextFieldWidget("name", new PropertyModel(action, "name"))));
         }
 
         @Override
         public IModel getTitle() {
             return new StringResourceModel("create-type", RemodelWorkflowPlugin.this, null);
+        }
+
+        @Override
+        public IValueMap getProperties() {
+            return SMALL;
         }
     }
 

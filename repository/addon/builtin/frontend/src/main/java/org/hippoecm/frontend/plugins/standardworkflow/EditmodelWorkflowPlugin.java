@@ -20,12 +20,12 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.validation.validator.PatternValidator;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -152,19 +152,20 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
-            MarkupContainer widget = new TextFieldWidget("name", model);
+            TextFieldWidget widget = new TextFieldWidget("name", model);
             ((FormComponent) widget.get("widget")).add(new PatternValidator("[a-z]+"));
             add(widget);
-        }
-
-        @Override
-        protected void onOk() {
-            super.onOk();
+            setFocus(widget);
         }
 
         @Override
         public IModel getTitle() {
             return new StringResourceModel("copy-model", this, null);
+        }
+
+        @Override
+        public IValueMap getProperties() {
+            return SMALL;
         }
     }
 }

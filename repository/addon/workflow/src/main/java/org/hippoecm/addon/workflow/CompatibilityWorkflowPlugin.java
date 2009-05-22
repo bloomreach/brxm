@@ -17,6 +17,8 @@ package org.hippoecm.addon.workflow;
 
 import java.util.Map;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -36,6 +38,7 @@ import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.SearchingTranslatorPlugin;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.NodeModelWrapper;
@@ -153,6 +156,23 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             throw new WorkflowException("unsupported operation");
         }
 
+        /**
+         * Get the name of the node this workflow operates on
+         * 
+         * @return The name of the node that the workflow operates on or an empty String if an error occurs
+         * @throws RepositoryException
+         */
+        protected String getInputNodeName() {
+            WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) getModel();
+            try {
+                return new NodeTranslator(new JcrNodeModel(workflowDescriptorModel.getNode())).getNodeName()
+                        .getObject().toString();
+            } catch (RepositoryException e) {
+                log.error("Error translating node name", e);
+            }
+            return "";
+        }
+
         @Deprecated
         public class WorkflowDialog extends AbstractDialog implements IStringResourceProvider {
 
@@ -178,7 +198,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 translator = new SearchingTranslatorPlugin(context, null);
 
                 init();
-            }   
+            }
 
             protected void init() {
             }
@@ -219,7 +239,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 this.title = title;
                 add(new Label("question", question));
 
-                TextFieldWidget textfield; 
+                TextFieldWidget textfield;
                 add(textfield = new TextFieldWidget("value", nameModel));
                 setFocus(textfield.getFocusComponent());
             }

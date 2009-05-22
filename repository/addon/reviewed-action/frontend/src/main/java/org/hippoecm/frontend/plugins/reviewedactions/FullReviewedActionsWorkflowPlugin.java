@@ -81,8 +81,10 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
         add(infoAction = new StdWorkflow("info", "info") {
             @Override
             protected IModel getTitle() {
-                return translator.getValueName("hippostd:stateSummary", new PropertyModel(FullReviewedActionsWorkflowPlugin.this, "stateSummary"));
+                return translator.getValueName("hippostd:stateSummary", new PropertyModel(
+                        FullReviewedActionsWorkflowPlugin.this, "stateSummary"));
             }
+
             @Override
             protected void invoke() {
             }
@@ -93,13 +95,15 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "edit-16.png");
             }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
                 ((UserSession) getSession()).getJcrSession().refresh(true);
                 Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
-                IEditorManager editorMgr = getPluginContext().getService(getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
+                IEditorManager editorMgr = getPluginContext().getService(
+                        getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
                 if (editorMgr != null) {
                     editorMgr.openEditor(new JcrNodeModel(docNode));
                 } else {
@@ -109,11 +113,13 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
         });
 
-        add(publishAction = new WorkflowAction("publish", new StringResourceModel("publish-label", this, null).getString(), null) {
+        add(publishAction = new WorkflowAction("publish", new StringResourceModel("publish-label", this, null)
+                .getString(), null) {
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "publish-16.png");
             }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
@@ -122,11 +128,13 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
         });
 
-        add(depublishAction = new WorkflowAction("depublish", new StringResourceModel("depublish-label", this, null).getString(), null) {
+        add(depublishAction = new WorkflowAction("depublish", new StringResourceModel("depublish-label", this, null)
+                .getString(), null) {
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "unplublish-16.png");
             }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
@@ -135,24 +143,30 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
         });
 
-        add(deleteAction = new WorkflowAction("delete", new StringResourceModel("delete-label", this, null).getString(), null) {
+        add(deleteAction = new WorkflowAction("delete",
+                new StringResourceModel("delete-label", this, null).getString(), null) {
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "delete-16.png");
             }
+
             @Override
             protected Dialog createRequestDialog() {
                 IModel documentName;
                 try {
-                    documentName = (new NodeTranslator(new JcrNodeModel(((WorkflowDescriptorModel)FullReviewedActionsWorkflowPlugin.this.getModel()).getNode()))).getNodeName();
-                } catch(RepositoryException ex) {
+                    documentName = (new NodeTranslator(new JcrNodeModel(
+                            ((WorkflowDescriptorModel) FullReviewedActionsWorkflowPlugin.this.getModel()).getNode())))
+                            .getNodeName();
+                } catch (RepositoryException ex) {
                     try {
-                        documentName = new Model(((WorkflowDescriptorModel)FullReviewedActionsWorkflowPlugin.this.getModel()).getNode().getName());
-                    } catch(RepositoryException e) {
+                        documentName = new Model(((WorkflowDescriptorModel) FullReviewedActionsWorkflowPlugin.this
+                                .getModel()).getNode().getName());
+                    } catch (RepositoryException e) {
                         documentName = new StringResourceModel("unknown", FullReviewedActionsWorkflowPlugin.this, null);
                     }
                 }
-                return new WorkflowAction.WorkflowDialog(new StringResourceModel("delete-message", FullReviewedActionsWorkflowPlugin.this, null, new Object[] {documentName})) {
+                return new WorkflowAction.WorkflowDialog(new StringResourceModel("delete-message",
+                        FullReviewedActionsWorkflowPlugin.this, null, new Object[] { documentName })) {
 
                     @Override
                     public IModel getTitle() {
@@ -170,6 +184,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                     }
                 };
             }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
@@ -178,23 +193,30 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
         });
 
-        add(schedulePublishAction = new WorkflowAction("schedulePublish", new StringResourceModel("schedule-publish-label", this, null).getString(), null) {
+        add(schedulePublishAction = new WorkflowAction("schedulePublish", new StringResourceModel(
+                "schedule-publish-label", this, null).getString(), null) {
             public Date date = new Date();
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "publish-schedule-16.png");
             }
+
             @Override
             protected Dialog createRequestDialog() {
-                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-publish-text", FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "date")) {
+                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-publish-text",
+                        FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "date")) {
                     @Override
                     public IModel getTitle() {
-                        return new StringResourceModel("schedule-publish-title", FullReviewedActionsWorkflowPlugin.this, null);
-                    }};
+                        return new StringResourceModel("schedule-publish-title",
+                                FullReviewedActionsWorkflowPlugin.this, null);
+                    }
+                };
             }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow)wf;
+                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 if (date != null) {
                     workflow.publish(date);
                 } else {
@@ -204,23 +226,30 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
         });
 
-        add(scheduleDepublishAction = new WorkflowAction("scheduleDepublish", new StringResourceModel("schedule-depublish-label", this, null).getString(), null) {
+        add(scheduleDepublishAction = new WorkflowAction("scheduleDepublish", new StringResourceModel(
+                "schedule-depublish-label", this, null).getString(), null) {
             public Date date = new Date();
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "unpublish-scheduled-16.png");
             }
+
             @Override
             protected Dialog createRequestDialog() {
-                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-depublish-text", FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "date")) {
+                return new WorkflowAction.DateDialog(new StringResourceModel("schedule-depublish-text",
+                        FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "date")) {
                     @Override
                     public IModel getTitle() {
-                        return new StringResourceModel("schedule-depublish-title", FullReviewedActionsWorkflowPlugin.this, null);
-                    }};
+                        return new StringResourceModel("schedule-depublish-title",
+                                FullReviewedActionsWorkflowPlugin.this, null);
+                    }
+                };
             }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow)wf;
+                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 if (date != null) {
                     workflow.depublish(date);
                 } else {
@@ -232,22 +261,25 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
         add(moveAction = new WorkflowAction("move", new StringResourceModel("move-label", this, null)) {
             public String name;
-            public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) { };
-            
+            public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) {
+            };
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "move-16.png");
             }
-            
+
             @Override
             protected Dialog createRequestDialog() {
                 name = getInputNodeName();
-                return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title", FullReviewedActionsWorkflowPlugin.this, null), new StringResourceModel("move-text", FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "name"), destination);
+                return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title",
+                        FullReviewedActionsWorkflowPlugin.this, null), new StringResourceModel("move-text",
+                        FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "name"), destination);
             }
-            
+
             @Override
             protected String execute(Workflow wf) throws Exception {
-                if(name == null || name.trim().equals("")) {
+                if (name == null || name.trim().equals("")) {
                     throw new WorkflowException("No name for destination given");
                 }
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
@@ -269,12 +301,14 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             @Override
             protected Dialog createRequestDialog() {
                 name = getInputNodeName();
-                return new WorkflowAction.NameDialog(new StringResourceModel("rename-title", FullReviewedActionsWorkflowPlugin.this, null), new StringResourceModel("rename-text", FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "name"));
+                return new WorkflowAction.NameDialog(new StringResourceModel("rename-title",
+                        FullReviewedActionsWorkflowPlugin.this, null), new StringResourceModel("rename-text",
+                        FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "name"));
             }
-            
+
             @Override
             protected String execute(Workflow wf) throws Exception {
-                if(name == null || name.trim().equals("")) {
+                if (name == null || name.trim().equals("")) {
                     throw new WorkflowException("No name for destination given");
                 }
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
@@ -286,7 +320,8 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
         add(copyAction = new WorkflowAction("copy", new StringResourceModel("copy-label", this, null)) {
             public String name;
-            public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) { };
+            public NodeModelWrapper destination = new NodeModelWrapper(new JcrNodeModel("/")) {
+            };
 
             @Override
             protected ResourceReference getIcon() {
@@ -296,16 +331,19 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             @Override
             protected Dialog createRequestDialog() {
                 name = getInputNodeName();
-                return new WorkflowAction.DestinationDialog(new StringResourceModel("copy-title", FullReviewedActionsWorkflowPlugin.this, null), new StringResourceModel("copy-text", FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "name"), destination);
+                return new WorkflowAction.DestinationDialog(new StringResourceModel("copy-title",
+                        FullReviewedActionsWorkflowPlugin.this, null), new StringResourceModel("copy-text",
+                        FullReviewedActionsWorkflowPlugin.this, null), new PropertyModel(this, "name"), destination);
             }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                if(name == null || name.trim().equals("")) {
+                if (name == null || name.trim().equals("")) {
                     throw new WorkflowException("No name for destination given");
                 }
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.copy(new Document(destination.getNodeModel().getNode().getUUID()), NodeNameCodec.encode(name, true));
+                workflow.copy(new Document(destination.getNodeModel().getNode().getUUID()), NodeNameCodec.encode(name,
+                        true));
                 return null;
             }
         });
@@ -317,40 +355,49 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
     protected void onModelChanged() {
         super.onModelChanged();
         try {
-            WorkflowManager manager = ((UserSession)org.apache.wicket.Session.get()).getWorkflowManager();
-            WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getModel();
-            WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor)getModelObject();
-            if(workflowDescriptor != null) {
+            WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
+            WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) getModel();
+            WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor) getModelObject();
+            if (workflowDescriptor != null) {
                 Node documentNode = workflowDescriptorModel.getNode();
-                if(documentNode != null && documentNode.hasProperty("hippostd:stateSummary")) {
+                if (documentNode != null && documentNode.hasProperty("hippostd:stateSummary")) {
                     stateSummary = documentNode.getProperty("hippostd:stateSummary").getString();
                 }
                 Workflow workflow = manager.getWorkflow(workflowDescriptor);
                 Map<String, Serializable> info = workflow.hints();
-                if (info.containsKey("obtainEditableInstanceobtainEditableInstance") && info.get("obtainEditableInstanceobtainEditableInstance") instanceof Boolean && !((Boolean)info.get("obtainEditableInstanceobtainEditableInstance")).booleanValue()) {
-                     editAction.setVisible(false);
+                if (info.containsKey("obtainEditableInstanceobtainEditableInstance")
+                        && info.get("obtainEditableInstanceobtainEditableInstance") instanceof Boolean
+                        && !((Boolean) info.get("obtainEditableInstanceobtainEditableInstance")).booleanValue()) {
+                    editAction.setVisible(false);
                 }
-                if (info.containsKey("publish") && info.get("publish") instanceof Boolean && !((Boolean)info.get("publish")).booleanValue()) {
-                   publishAction.setVisible(false);
+                if (info.containsKey("publish") && info.get("publish") instanceof Boolean
+                        && !((Boolean) info.get("publish")).booleanValue()) {
+                    publishAction.setVisible(false);
                     schedulePublishAction.setVisible(false);
                 }
-                if (info.containsKey("depublish") && info.get("depublish") instanceof Boolean && !((Boolean)info.get("depublish")).booleanValue()) {
+                if (info.containsKey("depublish") && info.get("depublish") instanceof Boolean
+                        && !((Boolean) info.get("depublish")).booleanValue()) {
                     depublishAction.setVisible(false);
                     scheduleDepublishAction.setVisible(false);
                 }
-                if (info.containsKey("delete") && info.get("delete") instanceof Boolean && !((Boolean)info.get("delete")).booleanValue()) {
+                if (info.containsKey("delete") && info.get("delete") instanceof Boolean
+                        && !((Boolean) info.get("delete")).booleanValue()) {
                     deleteAction.setVisible(false);
                 }
-                if (info.containsKey("rename") && info.get("rename") instanceof Boolean && !((Boolean)info.get("rename")).booleanValue()) {
+                if (info.containsKey("rename") && info.get("rename") instanceof Boolean
+                        && !((Boolean) info.get("rename")).booleanValue()) {
                     renameAction.setVisible(false);
                 }
-                if (info.containsKey("move") && info.get("move") instanceof Boolean && !((Boolean)info.get("move")).booleanValue()) {
+                if (info.containsKey("move") && info.get("move") instanceof Boolean
+                        && !((Boolean) info.get("move")).booleanValue()) {
                     moveAction.setVisible(false);
                 }
-                if (info.containsKey("copy") && info.get("copy") instanceof Boolean && !((Boolean)info.get("copy")).booleanValue()) {
+                if (info.containsKey("copy") && info.get("copy") instanceof Boolean
+                        && !((Boolean) info.get("copy")).booleanValue()) {
                     copyAction.setVisible(false);
                 }
-                if (info.containsKey("status") && info.get("status") instanceof Boolean && !((Boolean)info.get("status")).booleanValue()) {
+                if (info.containsKey("status") && info.get("status") instanceof Boolean
+                        && !((Boolean) info.get("status")).booleanValue()) {
                     infoAction.setVisible(false);
                 }
             }
@@ -369,16 +416,15 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
      * @return The name of the node that the workflow operates on or an empty String if an error occurs
      * @throws RepositoryException
      */
-    private String getInputNodeName() {
-        WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getModel();
-        try {
-            return new NodeTranslator(new JcrNodeModel(workflowDescriptorModel.getNode())).getNodeName().getObject().toString();
-        } catch (RepositoryException e) {
-            log.error("Error translating node name", e);
-        }
-        return "";
-    }
-
+    //    private String getInputNodeName() {
+    //        WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getModel();
+    //        try {
+    //            return new NodeTranslator(new JcrNodeModel(workflowDescriptorModel.getNode())).getNodeName().getObject().toString();
+    //        } catch (RepositoryException e) {
+    //            log.error("Error translating node name", e);
+    //        }
+    //        return "";
+    //    }
     /**
      * Use the IBrowseService to select the node referenced by parameter path
      * 
@@ -388,8 +434,9 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
     private void browseTo(JcrNodeModel nodeModel) throws RepositoryException {
         //refresh session before IBrowseService.browse is called
         ((UserSession) org.apache.wicket.Session.get()).getJcrSession().refresh(false);
-        
-        getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class).browse(nodeModel);
+
+        getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class)
+                .browse(nodeModel);
     }
 
 }

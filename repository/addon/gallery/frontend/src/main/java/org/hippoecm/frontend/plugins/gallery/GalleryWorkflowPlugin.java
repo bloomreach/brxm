@@ -19,13 +19,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.List;
+
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
@@ -37,8 +35,7 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
@@ -52,6 +49,8 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.gallery.GalleryWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -71,6 +70,7 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
             setOutputMarkupId(true);
             setNonAjaxSubmit();
             add(uploadField = new FileUploadField("input"));
+            setFocus(uploadField);
 
             List<String> galleryTypes = null;
             try {
@@ -111,6 +111,11 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
 
         public IModel getTitle() {
             return new StringResourceModel(GalleryWorkflowPlugin.this.getPluginConfig().getString("option.text", ""), GalleryWorkflowPlugin.this, null);
+        }
+        
+        @Override
+        public IValueMap getProperties() {
+            return MEDIUM;
         }
 
         @Override
