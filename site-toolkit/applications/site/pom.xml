@@ -442,6 +442,10 @@ First, add the following servlet definition in /jetspeed/WEB-INF/web.xml
   <servlet>
     <servlet-name>HstSiteConfigServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
+    <init-param>
+      <param-name>forceful.reinit</param-name>
+      <param-value>true</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
   

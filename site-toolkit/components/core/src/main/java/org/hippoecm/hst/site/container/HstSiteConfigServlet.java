@@ -64,6 +64,8 @@ public class HstSiteConfigServlet extends HttpServlet {
 
     private static final String CHECK_REPOSITORIES_RUNNING_INIT_PARAM = "check.repositories.running"; 
     
+    private static final String FORCEFUL_REINIT_PARAM = "forceful.reinit";
+    
     private static final String REPOSITORY_ADDRESS_PARAM_SUFFIX = ".repository.address";
 
     private final static Logger log = LoggerFactory.getLogger(HstSiteConfigServlet.class);
@@ -74,6 +76,7 @@ public class HstSiteConfigServlet extends HttpServlet {
     
     protected boolean initialized;
     
+    protected boolean forecefulReinitialization;
     protected boolean checkRepositoriesRunning;
     protected boolean allRepositoriesAvailable;
     
@@ -93,13 +96,26 @@ public class HstSiteConfigServlet extends HttpServlet {
     @Override
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
+
+        // If the forceful re-initialization option is not turned on
+        // and the component manager were intialized in other web application,
+        // then just skip the following.
+        // If this servlet is initialized inside a site web application 
+        // and other web application already initialized the component manager,
+        // then the followings are to be skipped.
+        forecefulReinitialization = Boolean.parseBoolean(config.getInitParameter(FORCEFUL_REINIT_PARAM));
+        if (!forecefulReinitialization && HstServices.isAvailable()) {
+            return;
+        }
+        // If it is not available or it is forceful re-initialization mode from the web app (like portal webapp)
+        // then the initialization will go on from here.
         
         this.configuration = getConfiguration(config);
 
         checkRepositoriesRunning = this.configuration.getBoolean(CHECK_REPOSITORIES_RUNNING_INIT_PARAM);
         
         if (!checkRepositoriesRunning) {
-            doInit(config);
+            initializeComponentManager(config);
         } else {
             this.allRepositoriesAvailable = false;
             this.repositoryCheckingStatus.clear();
@@ -135,7 +151,7 @@ public class HstSiteConfigServlet extends HttpServlet {
                         }
                         
                         if (allRepositoriesAvailable) {
-                            doInit(config);
+                            initializeComponentManager(config);
                         }
                     }
                 };
@@ -145,7 +161,7 @@ public class HstSiteConfigServlet extends HttpServlet {
         }
     }
     
-    protected synchronized void doInit(ServletConfig config) {
+    protected synchronized void initializeComponentManager(ServletConfig config) {
 
         try {
             log.info(INIT_START_MSG);
@@ -188,7 +204,7 @@ public class HstSiteConfigServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 
         if (!this.initialized) {
-            doInit(getServletConfig());
+            initializeComponentManager(getServletConfig());
         }
         
     }

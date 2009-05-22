@@ -34,7 +34,7 @@ public class HstServices {
     
     public static void setComponentManager(ComponentManager compManager) {
         HstServices.componentManager = compManager;
-        HstServices.available = true;
+        HstServices.available = (HstServices.componentManager != null);
     }
     
     public static ComponentManager getComponentManager() {
