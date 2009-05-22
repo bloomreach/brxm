@@ -17,11 +17,17 @@ package org.hippoecm.hst.site;
 
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.HstRequestProcessor;
+import org.hippoecm.hst.logging.Logger;
+import org.hippoecm.hst.logging.LoggerFactory;
+import org.hippoecm.hst.util.NOOPLogger;
 
 public class HstServices {
     
+    private static final String LOGGER_FACTORY_COMPONENT_NAME = LoggerFactory.class.getName();
+    
     private static boolean available;
     private static ComponentManager componentManager;
+    private static NOOPLogger noopLogger = new NOOPLogger();
 
     private HstServices() {
     }
@@ -41,6 +47,14 @@ public class HstServices {
     
     public static HstRequestProcessor getRequestProcessor() {
         return componentManager.getComponent(HstRequestProcessor.class.getName());
+    }
+    
+    public static Logger getLogger(String loggerName) {
+        if (isAvailable()) {
+            return ((LoggerFactory) getComponentManager().getComponent(LOGGER_FACTORY_COMPONENT_NAME)).getLogger(loggerName);
+        } else {
+            return noopLogger;
+        }
     }
     
 }

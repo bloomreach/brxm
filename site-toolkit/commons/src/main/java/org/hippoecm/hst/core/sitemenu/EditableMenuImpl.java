@@ -18,7 +18,7 @@ package org.hippoecm.hst.core.sitemenu;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EditableMenuImpl extends AbstractMenu implements EditableMenu{
+public class EditableMenuImpl extends AbstractMenu implements EditableMenu {
 
     private static final long serialVersionUID = 1L;
 

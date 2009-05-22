@@ -21,12 +21,10 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.hst.site.HstServices;
 
 public abstract class AbstractMenuItem implements CommonMenuItem{
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractMenuItem.class);
     private ResolvedSiteMapItemWrapper resolvedSiteMapItem;
     
     protected int depth;
@@ -75,7 +73,7 @@ public abstract class AbstractMenuItem implements CommonMenuItem{
             return resolvedSiteMapItem.resolvedItem;
         }
         if(this.getHstLink() == null || this.getHstLink().getPath() == null || "".equals(this.getHstLink().getPath())) {
-            log.warn("Cannot resolve to sitemap item because HstLink is null or empty. Return null"); 
+            HstServices.getLogger(getClass().getName()).warn("Cannot resolve to sitemap item because HstLink is null or empty. Return null"); 
             return null;
         }
         HstRequestContext ctx = request.getRequestContext();

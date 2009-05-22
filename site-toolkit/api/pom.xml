@@ -46,6 +46,15 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-connector</artifactId>
     </dependency>
+    
+    <!-- To exclude slf4j depedency explicitly. 
+         hst-commons must not depends on slf4j because it is deployed to shared lib directory. -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
   </dependencies>
 
   <build>

@@ -18,14 +18,12 @@ package org.hippoecm.hst.core.sitemenu;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.hst.site.HstServices;
+
 public class EditableMenuItemImpl extends AbstractMenuItem implements EditableMenuItem {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(EditableMenuItemImpl.class);
-    
     private EditableMenu editableMenu;
     private List<EditableMenuItem> childMenuItems = new ArrayList<EditableMenuItem>();;
     private EditableMenuItem parentItem;
@@ -37,7 +35,7 @@ public class EditableMenuItemImpl extends AbstractMenuItem implements EditableMe
     
     public EditableMenuItemImpl(EditableMenuItem parentItem){
         if(parentItem == null) {
-            log.error("Cannot add a Editable menu item when parent item is null");
+            HstServices.getLogger(getClass().getName()).error("Cannot add a Editable menu item when parent item is null");
             return;
         }
         this.parentItem = parentItem;

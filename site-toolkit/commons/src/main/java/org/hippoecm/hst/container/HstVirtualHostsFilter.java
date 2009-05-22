@@ -29,14 +29,12 @@ import org.hippoecm.hst.core.hosting.VirtualHosts;
 import org.hippoecm.hst.core.hosting.VirtualHostsManager;
 import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.logging.Logger;
-import org.hippoecm.hst.logging.LoggerFactory;
 import org.hippoecm.hst.site.HstServices;
 
 public class HstVirtualHostsFilter implements Filter {
 
     private static final long serialVersionUID = 1L;
     
-    private static final String LOGGER_FACTORY_COMPONENT_NAME = LoggerFactory.class.getName();
     private static final String LOGGER_CATEGORY_NAME = HstVirtualHostsFilter.class.getName();
 
     private final static String FILTER_DONE_KEY = "filter.done_"+HstVirtualHostsFilter.class.getName();
@@ -52,7 +50,7 @@ public class HstVirtualHostsFilter implements Filter {
         
         HttpServletRequest req = (HttpServletRequest)request;
         
-        Logger logger = null;
+        Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
         
         try {
             if (!HstServices.isAvailable()) {
@@ -62,11 +60,7 @@ public class HstVirtualHostsFilter implements Filter {
                 return;
             }
             
-            LoggerFactory loggerFactory = HstServices.getComponentManager().getComponent(LOGGER_FACTORY_COMPONENT_NAME);
-            logger = loggerFactory.getLogger(LOGGER_CATEGORY_NAME);
-            
             if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
-            
             
             String pathInfo = req.getRequestURI().substring(req.getContextPath().length());
             
