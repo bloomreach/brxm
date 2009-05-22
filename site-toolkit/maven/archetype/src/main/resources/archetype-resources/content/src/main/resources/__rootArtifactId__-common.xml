@@ -79,17 +79,6 @@
           <sv:value>&lt;p&gt;Now go ahead and build your own website!&lt;/p&gt; 
           </sv:value>
         </sv:property>
-        <sv:node sv:name="hippo_roadahead.png">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:facetselect</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:docbase" sv:type="String">
-            <sv:value>6d09f372-050b-46d7-922e-4283b79d374a</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:facets" sv:type="String"/>
-          <sv:property sv:name="hippo:modes" sv:type="String"/>
-          <sv:property sv:name="hippo:values" sv:type="String"/>
-        </sv:node>
       </sv:node>
     </sv:node>
   </sv:node>
