@@ -84,10 +84,8 @@ public class StaticResourceServlet extends HttpServlet {
             
             bos.flush();
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Exception during writing content: {}", e.getMessage(), e);
-            } else if (log.isWarnEnabled()) {
-                log.warn("Exception during writing content: {}", e.getMessage());
+            if (log.isWarnEnabled()) {
+                log.warn("Exception during writing content of {}: {}", path, e.getMessage());
             }
         } finally {
             if (bos != null) try { bos.close(); } catch (Exception ce) { }
