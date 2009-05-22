@@ -242,7 +242,7 @@
                   <version>1.3.0</version>
                   <type>zip</type>
                   <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}/${project.build.finalName}/javascript</outputDirectory>
+                  <outputDirectory>${dollar}{project.build.directory}/${dollar}{project.build.finalName}/javascript</outputDirectory>
                   <includes>**/*</includes>
                 </artifactItem>
               </artifactItems>

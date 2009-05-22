@@ -43,6 +43,9 @@
         </fileSet>
         <fileSet filtered="true" encoding="UTF-8">
           <directory>src/main/webapp</directory>
+          <excludes>
+            <exclude>**/WEB-INF/jsp/tracetool*.jsp</exclude>
+          </excludes>
           <includes>
             <include>**/*.jsp</include>
             <include>**/*.xml</include>

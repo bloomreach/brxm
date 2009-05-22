@@ -73,7 +73,7 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-gotolink</artifactId>
       <type>jar</type>
-      <version>${hippoecm.version}</version>
+      <version>${dollar}{hippoecm.version}</version>
     </dependency>     
     
   </dependencies>
