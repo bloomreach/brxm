@@ -50,13 +50,13 @@
     <appender-ref ref="root"/>
   </category>
 
-  <category additivity="false" name="org.jpox.util">
+  <category additivity="false" name="JPOX">
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
 
-  <category additivity="false" name="org.jpox">
-    <level value="warn"/>
+  <category additivity="false" name="JPOX.Plugin">
+    <level value="error"/>
     <appender-ref ref="root"/>
   </category>
 
