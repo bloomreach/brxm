@@ -159,8 +159,8 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                             return new Object();
                         }
                     } catch (Exception ex) {
-                        ex.printStackTrace();
                         log.error(ex.getMessage());
+                        return new Object();
                     }
                     return null;
                 } else {
