@@ -35,18 +35,20 @@
         <sv:value>/images/</sv:value>
     </sv:property>
     <sv:property sv:name="hst:suffixexclusions" sv:type="String">
-        <sv:value>.pdf</sv:value>
-        <sv:value>.ico</sv:value>
+        <sv:value>.do</sv:value>
+        <sv:value>.jsp</sv:value>
         <sv:value>.css</sv:value>
         <sv:value>.js</sv:value>
+        <sv:value>.pdf</sv:value>
+        <sv:value>.ico</sv:value>
         <sv:value>.gif</sv:value>
         <sv:value>.GIF</sv:value>
         <sv:value>.jpg</sv:value>
         <sv:value>.jpeg</sv:value>
-        <sv:value>.do</sv:value>
-        <sv:value>.jsp</sv:value>
         <sv:value>.JPEG</sv:value>
         <sv:value>.JPG</sv:value>
+        <sv:value>.png</sv:value>
+        <sv:value>.PNG</sv:value>
     </sv:property>
     
     <sv:node sv:name="127.0.0.1">

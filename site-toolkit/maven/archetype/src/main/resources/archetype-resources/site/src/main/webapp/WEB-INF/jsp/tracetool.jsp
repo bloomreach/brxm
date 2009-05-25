@@ -22,20 +22,19 @@ LogEventBuffer traceLogEventBuffer = (LogEventBuffer) HstServices.getComponentMa
 String traceLogLevelName = traceLogEventBuffer.getLevelName();
 %>
 
-<hst:link var="dojoPath" path="/staticresource/javascript/dojo-1.3.0"/>
-
 <hst:element var="hstTraceToolStyles" name="style">
   <hst:attribute name="type" value="text/css" />
-  @import url("${dojoPath}/dijit/themes/tundra/tundra.css");
-  @import url("${dojoPath}/dojox/layout/resources/FloatingPane.css");
-  @import url("${dojoPath}/dojox/layout/resources/ResizeHandle.css");
+  @import url('<hst:link path="/javascript/dojo-1.3.0/dijit/themes/tundra/tundra.css"/>');
+  @import url('<hst:link path="/javascript/dojo-1.3.0/dojox/layout/resources/FloatingPane.css"/>');
+  @import url('<hst:link path="/javascript/dojo-1.3.0/dojox/layout/resources/ResizeHandle.css"/>');
 </hst:element>
 <hst:head-contribution keyHint="hstTraceToolStyles" element="${hstTraceToolStyles}" />
 
+<hst:link var="dojoPath" path="/javascript/dojo-1.3.0/dojo/dojo.js"/>
 <hst:element var="hstTraceToolDojoInclude" name="script">
   <hst:attribute name="language" value="javascript" />
   <hst:attribute name="type" value="text/javascript" />
-  <hst:attribute name="src" value="${dojoPath}/dojo/dojo.js" />
+  <hst:attribute name="src" value="${dojoPath}" />
   <hst:attribute name="djConfig" value="parseOnLoad: true" />
 </hst:element>
 <hst:head-contribution keyHint="hstTraceToolDojoInclude" element="${hstTraceToolDojoInclude}" />
