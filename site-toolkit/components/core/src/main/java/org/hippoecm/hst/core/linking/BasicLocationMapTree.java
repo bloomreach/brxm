@@ -42,7 +42,8 @@ public class BasicLocationMapTree implements LocationMapTree{
     private Map<String, LocationMapTreeItem> children = new HashMap<String, LocationMapTreeItem>();
     private String canonicalSiteContentPath;
     private Map<String, ResolvedLocationMapTreeItem> cache;
-   
+    
+    @SuppressWarnings("unchecked")
     public BasicLocationMapTree(String canonicalSiteContentPath) {
         this.cache = Collections.synchronizedMap(new LRUMap(DEFAULT_CACHE_SIZE));
         this.canonicalSiteContentPath = canonicalSiteContentPath;

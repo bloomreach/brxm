@@ -112,4 +112,18 @@ public interface HstLinkCreator {
      * @return HstLink
      */
     HstLink create(HstSite hstSite, String toSiteMapItemId);
+    
+    /**
+     * Binaries frequently have a different linkrewriting mechanism. If this method returns <code>true</code> the location is a
+     * binary location. 
+     * @param path
+     * @return <code>true</code> when the path points to a binary location
+     */
+    boolean isBinaryLocation(String path);
+    
+    /**
+     * @return The prefix that is used for binary locations. The returned binaries prefix is relative to <code>/</code> and 
+     * does not include the <code>/</code> itself. If no binaries prefix is configured, <code>""</code> will be returned
+     */ 
+    String getBinariesPrefix();
 }

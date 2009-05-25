@@ -25,8 +25,16 @@
   </bean>
   
   <bean id="org.hippoecm.hst.core.linking.HstLinkCreator" 
-    class="org.hippoecm.hst.core.linking.BasicHstLinkCreator">                                    
+    class="org.hippoecm.hst.core.linking.BasicHstLinkCreator">   
+    <property name="binariesPrefix" value="/binaries" />            
+    <property name="binaryLocations">
+      <list>
+        <value>/content/gallery/</value>
+        <value>/content/assets/</value>
+      </list>
+    </property>           
   </bean> 
+  
   
   
 </beans>

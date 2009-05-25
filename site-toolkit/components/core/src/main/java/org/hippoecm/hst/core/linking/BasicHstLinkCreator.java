@@ -39,7 +39,17 @@ public class BasicHstLinkCreator implements HstLinkCreator {
 
     private static final Logger log = LoggerFactory.getLogger(BasicHstLinkCreator.class);
 
+    private String[] binaryLocations;
+    private String binariesPrefix;
    
+    public void setBinariesPrefix(String binariesPrefix){
+        this.binariesPrefix = PathUtils.normalizePath(binariesPrefix);
+    }
+    
+    public void setBinaryLocations(String[] binaryLocations) {
+        this.binaryLocations = binaryLocations;
+    }
+    
     /**
      * If the uuid points to a node that is of type hippo:document and it is below a hippo:handle, we will
      * rewrite the link wrt hippo:handle, because a handle is the umbrella of a document.
@@ -141,10 +151,10 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         HstSiteMap hstSiteMap = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap();
         HstSiteService hstSite = (HstSiteService)hstSiteMap.getSite(); 
         
-        // TODO make this configurable behavior instead of hardcoded. Also it should work for subsite galleries, see HSTTWO-454
-        if(path.startsWith("/content/gallery") || path.startsWith("/content/assets")) {
-            log.debug("Binary path, return hstLink prefixing this path with '/binaries'");
-            return new HstLinkImpl("binaries"+path, hstSite);
+        
+        if(isBinaryLocation(path)) {
+            log.debug("Binary path, return hstLink prefixing this path with '{}'", this.getBinariesPrefix());
+            return new HstLinkImpl(this.getBinariesPrefix()+path, hstSite);
         }
         
         if(hstSite.getLocationMapTree() instanceof BasicLocationMapTree) {
@@ -249,6 +259,22 @@ public class BasicHstLinkCreator implements HstLinkCreator {
             path.append("/").append(relPath);
         }
         return path.toString();
+    }
+
+    public String getBinariesPrefix() {
+        return this.binariesPrefix == null ? "" : this.binariesPrefix;
+    }
+
+    public boolean isBinaryLocation(String path) {
+        if(binaryLocations == null || path == null) {
+            return false;
+        }
+        for(String prefix : this.binaryLocations) {
+            if(path.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

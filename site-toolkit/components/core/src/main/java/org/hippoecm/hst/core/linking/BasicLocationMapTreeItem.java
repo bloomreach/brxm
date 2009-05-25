@@ -22,13 +22,9 @@ import java.util.Map;
 
 import org.hippoecm.hst.configuration.Configuration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class BasicLocationMapTreeItem implements LocationMapTreeItem{
 
-    private final static Logger log = LoggerFactory.getLogger(BasicLocationMapTreeItem.class);
-    
     private List<HstSiteMapItem> hstSiteMapItems = new ArrayList<HstSiteMapItem>();
     
     private Map<String, LocationMapTreeItem> children = new HashMap<String, LocationMapTreeItem>();

@@ -241,7 +241,14 @@ public class SimpleHmlStringParser {
                 Node deref = JCRUtilities.getCanonical(binary);
                 if(deref != null) {
                     String derefedPath  = PathUtils.normalizePath(deref.getPath());
-                    StringBuffer srcLink = new StringBuffer("/binaries");
+                    StringBuffer srcLink = new StringBuffer();
+                    String binariesPrefix = reqContext.getHstLinkCreator().getBinariesPrefix();
+                    if(binariesPrefix == null || "".equals(binariesPrefix)) {
+                       // nothing
+                    } else {
+                        srcLink.append("/").append(binariesPrefix);
+                    }
+                    
                     
                     for(String elem : derefedPath.split("/")) {
                         String enc = response.encodeURL(elem);
