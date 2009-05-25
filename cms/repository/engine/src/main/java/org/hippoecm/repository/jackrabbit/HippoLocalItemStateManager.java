@@ -245,22 +245,11 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
             if(!virtualNodes.containsKey(id)) {
                 edit();
                 NodeState nodeState;
-                if(state != null) {
-                    nodeState = (NodeState) state;
-                    if(isEnabled()) {
-                        nodeState = ((HippoNodeId)id).populate(nodeState);
-                    } else {
-                        // keep nodestate as is
-                    }
+                nodeState = (NodeState) state;
+                if(isEnabled()) {
+                    nodeState = ((HippoNodeId)id).populate(nodeState);
                 } else {
-                    if(isEnabled()) {
-                        nodeState = ((HippoNodeId)id).populate();
-                    } else {
-                        nodeState = populate((HippoNodeId)id);
-                    }
-                }
-                if (nodeState == null) {
-                    throw new NoSuchItemStateException(id.toString());
+                    // keep nodestate as is
                 }
 
                 Name nodeTypeName = nodeState.getNodeTypeName();
@@ -273,7 +262,7 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
                         state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
                     } catch(RepositoryException ex) {
                         log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                        return null;
+                        throw new ItemStateException("Failed to populate node state", ex);
                     }
                 }
                 virtualNodes.put((HippoNodeId)id, nodeState);
@@ -297,7 +286,7 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
                         return nodeState;
                     } catch(RepositoryException ex) {
                         log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                        return null;
+                        throw new ItemStateException("Failed to populate node state", ex);
                     }
                 }
             }
@@ -335,6 +324,9 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
             NodeState nodeState;
             if (isEnabled()) {
                 nodeState = ((HippoNodeId)id).populate();
+                if (nodeState == null) {
+                    throw new NoSuchItemStateException("Populating node failed");
+                }
             } else {
                 nodeState = populate((HippoNodeId)id);
             }
@@ -357,7 +349,7 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
                         state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
                     } catch(RepositoryException ex) {
                         log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                        return null;
+                        throw new ItemStateException("Failed to populate node");
                     }
                 }
 
