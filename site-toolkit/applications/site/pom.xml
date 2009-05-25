@@ -111,13 +111,11 @@
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-api</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-commons</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
@@ -183,19 +181,6 @@
             <scope>runtime</scope>
           </dependency>
           
-          <!-- Provides a simple SLF4J for Jetty container itself.  -->
-          <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>runtime</scope>
-          </dependency>
-          
           <!-- Shared Libraries
           The followings will be located in shared lib folder in the servlet container. -->
           <dependency>
@@ -208,18 +193,6 @@
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
             <version>${javax.jcr.version}</version>
-            <scope>runtime</scope>
-          </dependency>
-          <dependency>
-            <groupId>org.onehippo.ecm.hst</groupId>
-            <artifactId>hst-api</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-          </dependency>
-          <dependency>
-            <groupId>org.onehippo.ecm.hst</groupId>
-            <artifactId>hst-commons</artifactId>
-            <version>${project.version}</version>
             <scope>runtime</scope>
           </dependency>
           
@@ -304,8 +277,6 @@
                     <echo>Replacing HST Shared Libraries.</echo>
                     <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${tomcat.hst.shared.lib}/jcr-1.0.jar" />
                     <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
-                    <copy file="../../api/target/hst-api-${project.version}.jar" tofile="${tomcat.hst.shared.lib}/hst-api-${project.version}.jar" />
-                    <copy file="../../commons/target/hst-commons-${project.version}.jar" tofile="${tomcat.hst.shared.lib}/hst-commons-${project.version}.jar" />
                     
                     <echo>Replacing cms web application into tomcat.</echo>
                     <delete dir="${tomcat.hst.cms.webapp}" />
@@ -344,6 +315,22 @@
 
     <profile>
       <id>jetspeed</id>
+      
+      <dependencies>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst</groupId>
+          <artifactId>hst-api</artifactId>
+          <version>${project.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst</groupId>
+          <artifactId>hst-commons</artifactId>
+          <version>${project.version}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      
       <build>
         <plugins>
           <plugin>
