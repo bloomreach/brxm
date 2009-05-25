@@ -18,9 +18,10 @@ package org.hippoecm.frontend.plugins.yui.javascript;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public abstract class Setting<K> {
+public abstract class Setting<K> implements IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
