@@ -214,7 +214,7 @@
         <executions>
           <execution>
             <id>unpack</id>
-            <phase>package</phase>
+            <phase>process-resources</phase>
             <goals>
               <goal>unpack</goal>
             </goals>
@@ -275,18 +275,18 @@
                   <tasks>
 
                     <echo>Replacing HST Shared Libraries.</echo>
-                    <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${tomcat.hst.shared.lib}/jcr-1.0.jar" />
-                    <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
+                    <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${tomcat.hst.shared.lib}/jcr-1.0.jar" overwrite="true" />
+                    <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" overwrite="true" />
                     
                     <echo>Replacing cms web application into tomcat.</echo>
                     <delete dir="${tomcat.hst.cms.webapp}" />
                     <mkdir dir="${tomcat.hst.cms.webapp}" />
-                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.01.00.war" dest="${tomcat.hst.cms.webapp}" />
+                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.01.00.war" dest="${tomcat.hst.cms.webapp}" overwrite="true" />
                                       
                     <echo>Replacing site web application into tomcat.</echo>
                     <delete dir="${tomcat.server.home}/webapps/${project.artifactId}" />
                     <mkdir dir="${tomcat.server.home}/webapps/${project.artifactId}" />
-                    <unwar src="${project.build.directory}/${project.artifactId}-${project.version}.war" dest="${tomcat.server.home}/webapps/${project.artifactId}" />
+                    <unwar src="${project.build.directory}/${project.artifactId}-${project.version}.war" dest="${tomcat.server.home}/webapps/${project.artifactId}" overwrite="true" />
                     
                   </tasks>
                 </configuration>
@@ -364,24 +364,24 @@
                   <tasks>
 
                     <echo>Replacing HST Shared Libraries.</echo>
-                    <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${jetspeed.hst.shared.lib}/jcr-1.0.jar" />
-                    <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${jetspeed.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
-                    <copy file="../../api/target/hst-api-${project.version}.jar" tofile="${jetspeed.hst.shared.lib}/hst-api-${project.version}.jar" />
-                    <copy file="../../commons/target/hst-commons-${project.version}.jar" tofile="${jetspeed.hst.shared.lib}/hst-commons-${project.version}.jar" />
+                    <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${jetspeed.hst.shared.lib}/jcr-1.0.jar" overwrite="true" />
+                    <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${jetspeed.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" overwrite="true" />
+                    <copy file="../../api/target/hst-api-${project.version}.jar" tofile="${jetspeed.hst.shared.lib}/hst-api-${project.version}.jar" overwrite="true" />
+                    <copy file="../../commons/target/hst-commons-${project.version}.jar" tofile="${jetspeed.hst.shared.lib}/hst-commons-${project.version}.jar" overwrite="true" />
                     
                     <echo>Replacing cms web application into jetspeed.</echo>
                     <delete dir="${jetspeed.hst.cms.webapp}" />
                     <mkdir dir="${jetspeed.hst.cms.webapp}" />
-                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.01.00.war" dest="${jetspeed.hst.cms.webapp}" />
+                    <unwar src="../../maven/archetype/target/gettingstarted/cms/target/gettingstarted-cms-1.01.00.war" dest="${jetspeed.hst.cms.webapp}" overwrite="true" />
                                       
                     <echo>Replacing site portlet application into jetspeed.</echo>
                     <delete dir="${jetspeed.server.home}/webapps/${project.artifactId}" />
                     <delete file="${jetspeed.server.home}/webapps/${project.artifactId}.war" />
                     <delete file="${jetspeed.portal.webapp}/WEB-INF/deploy/${project.artifactId}.war" />
-                    <copy file="${project.build.directory}/${project.artifactId}-${project.version}.war" tofile="${jetspeed.portal.webapp}/WEB-INF/deploy/${project.artifactId}.war" />
+                    <copy file="${project.build.directory}/${project.artifactId}-${project.version}.war" tofile="${jetspeed.portal.webapp}/WEB-INF/deploy/${project.artifactId}.war" overwrite="true" />
                     
                     <echo>Copy core libaries into jetspeed</echo>
-                    <copy todir="${jetspeed.portal.webapp}/WEB-INF/lib">
+                    <copy todir="${jetspeed.portal.webapp}/WEB-INF/lib" overwrite="true">
                       <fileset dir="${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/lib">
                         <include name="commons-proxy-*.jar" />
                       </fileset>
@@ -402,7 +402,7 @@
                     </copy>
 
                     <echo>Copy hst configuration into jetspeed</echo>
-                    <copy todir="${jetspeed.portal.webapp}/WEB-INF">
+                    <copy todir="${jetspeed.portal.webapp}/WEB-INF" overwrite="true">
                       <fileset dir="${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF">
                         <include name="hst*.properties" />
                         <include name="hst*.xml" />
@@ -410,7 +410,7 @@
                     </copy>
                     
                     <echo>Copy example psml page into jetspeed</echo>
-                    <copy todir="${jetspeed.portal.webapp}/WEB-INF/pages">
+                    <copy todir="${jetspeed.portal.webapp}/WEB-INF/pages" overwrite="true">
                       <fileset dir="src/main/webapp/WEB-INF/portal-pages">
                         <include name="**/*.psml" />
                       </fileset>

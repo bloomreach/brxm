@@ -217,7 +217,7 @@
         <executions>
           <execution>
             <id>unpack</id>
-            <phase>package</phase>
+            <phase>process-resources</phase>
             <goals>
               <goal>unpack</goal>
             </goals>
@@ -277,18 +277,18 @@
                   <tasks>
 
                     <echo>Replacing HST Shared Libraries.</echo>
-                    <copy file="${dollar}{settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${dollar}{tomcat.hst.shared.lib}/jcr-1.0.jar" />
-                    <copy file="${dollar}{settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${dollar}{tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
+                    <copy file="${dollar}{settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${dollar}{tomcat.hst.shared.lib}/jcr-1.0.jar" overwrite="true" />
+                    <copy file="${dollar}{settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${dollar}{tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" overwrite="true" />
                     
                     <echo>Replacing cms web application into tomcat.</echo>
                     <delete dir="${dollar}{tomcat.hst.cms.webapp}" />
                     <mkdir dir="${dollar}{tomcat.hst.cms.webapp}" />
-                    <unwar src="../cms/target/${rootArtifactId}-cms-${dollar}{project.version}.war" dest="${dollar}{tomcat.hst.cms.webapp}" />
+                    <unwar src="../cms/target/${rootArtifactId}-cms-${dollar}{project.version}.war" dest="${dollar}{tomcat.hst.cms.webapp}" overwrite="true" />
                                       
                     <echo>Replacing site web application into tomcat.</echo>
                     <delete dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.artifactId}" />
                     <mkdir dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.artifactId}" />
-                    <unwar src="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}.war" dest="${dollar}{tomcat.server.home}/webapps/${dollar}{project.artifactId}" />
+                    <unwar src="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}.war" dest="${dollar}{tomcat.server.home}/webapps/${dollar}{project.artifactId}" overwrite="true" />
                     <delete>
                       <fileset dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.artifactId}/WEB-INF/lib">
                         <include name="jcr-*.jar" />
@@ -382,25 +382,25 @@
                   <tasks>
 
                     <echo>Replacing HST Shared Libraries.</echo>
-                    <copy file="${dollar}{settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/jcr-1.0.jar" />
-                    <copy file="${dollar}{settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" />
-                    <copy file="${dollar}{settings.localRepository}/org/onehippo/ecm/hst/hst-api/${dollar}{hst.version}/hst-api-${dollar}{hst.version}.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/hst-api-${dollar}{project.version}.jar" />
-                    <copy file="${dollar}{settings.localRepository}/org/onehippo/ecm/hst/hst-commons/${dollar}{hst.version}/hst-commons-${dollar}{hst.version}.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/hst-commons-${dollar}{project.version}.jar" />
+                    <copy file="${dollar}{settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/jcr-1.0.jar" overwrite="true" />
+                    <copy file="${dollar}{settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" overwrite="true" />
+                    <copy file="${dollar}{settings.localRepository}/org/onehippo/ecm/hst/hst-api/${dollar}{hst.version}/hst-api-${dollar}{hst.version}.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/hst-api-${dollar}{project.version}.jar" overwrite="true" />
+                    <copy file="${dollar}{settings.localRepository}/org/onehippo/ecm/hst/hst-commons/${dollar}{hst.version}/hst-commons-${dollar}{hst.version}.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/hst-commons-${dollar}{project.version}.jar" overwrite="true" />
 
                     <echo>Replacing cms web application into Jetspeed.</echo>
                     <delete dir="${dollar}{jetspeed.hst.cms.webapp}" />
                     <mkdir dir="${dollar}{jetspeed.hst.cms.webapp}" />
-                    <unwar src="../cms/target/${rootArtifactId}-cms-${dollar}{project.version}.war" dest="${dollar}{jetspeed.hst.cms.webapp}" />
+                    <unwar src="../cms/target/${rootArtifactId}-cms-${dollar}{project.version}.war" dest="${dollar}{jetspeed.hst.cms.webapp}" overwrite="true" />
                                       
                     <echo>Replacing site portlet application into jetspeed.</echo>
                     <delete dir="${dollar}{jetspeed.server.home}/webapps/${dollar}{project.artifactId}" />
                     <delete file="${dollar}{jetspeed.server.home}/webapps/${dollar}{project.artifactId}.war" />
                     <delete file="${dollar}{jetspeed.portal.webapp}/WEB-INF/deploy/${dollar}{project.artifactId}.war" />
-                    <copy file="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}.war" tofile="${dollar}{jetspeed.portal.webapp}/WEB-INF/deploy/${dollar}{project.artifactId}.war" />
+                    <copy file="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}.war" tofile="${dollar}{jetspeed.portal.webapp}/WEB-INF/deploy/${dollar}{project.artifactId}.war" overwrite="true" />
                     
                     <echo>Copy core libaries into jetspeed</echo>
                     <copy todir="${dollar}{jetspeed.portal.webapp}/WEB-INF/lib">
-                      <fileset dir="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}/WEB-INF/lib">
+                      <fileset dir="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}/WEB-INF/lib" overwrite="true">
                         <include name="commons-proxy-*.jar" />
                       </fileset>
                       <fileset dir="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}/WEB-INF/lib">
@@ -420,7 +420,7 @@
                     </copy>
 
                     <echo>Copy hst configuration into jetspeed</echo>
-                    <copy todir="${dollar}{jetspeed.portal.webapp}/WEB-INF">
+                    <copy todir="${dollar}{jetspeed.portal.webapp}/WEB-INF" overwrite="true">
                       <fileset dir="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}/WEB-INF">
                         <include name="hst*.properties" />
                         <include name="hst*.xml" />
@@ -428,7 +428,7 @@
                     </copy>
                     
                     <echo>Copy example psml page into jetspeed</echo>
-                    <copy todir="${dollar}{jetspeed.portal.webapp}/WEB-INF/pages">
+                    <copy todir="${dollar}{jetspeed.portal.webapp}/WEB-INF/pages" overwrite="true">
                       <fileset dir="src/main/webapp/WEB-INF/portal-pages">
                         <include name="**/*.psml" />
                       </fileset>
