@@ -181,19 +181,20 @@ public class SimpleHmlStringParser {
                 Node facetSelectNode = node.getNode(path);
                 if (facetSelectNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                     Node deref = JCRUtilities.getDeref(facetSelectNode);
-                    
-                    HstLink link = reqContext.getHstLinkCreator().create(deref, reqContext.getResolvedSiteMapItem());
-                    
-                    if(link == null) {
-                        log.warn("Unable to create a link for '{}'. Return orginal path", path);
-                    } else {
-                        StringBuffer href = new StringBuffer();
-                        for(String elem : link.getPathElements()) {
-                            String enc = response.encodeURL(elem);
-                            href.append("/").append(enc);
+                    if(deref != null) {
+                        HstLink link = reqContext.getHstLinkCreator().create(deref, reqContext.getResolvedSiteMapItem());
+                        
+                        if(link == null) {
+                            log.warn("Unable to create a link for '{}'. Return orginal path", path);
+                        } else {
+                            StringBuffer href = new StringBuffer();
+                            for(String elem : link.getPathElements()) {
+                                String enc = response.encodeURL(elem);
+                                href.append("/").append(enc);
+                            }
+                            log.debug("Rewrote internal link '{}' to link '{}'", path, href.toString());
+                            return href.toString();
                         }
-                        log.debug("Rewrote internal link '{}' to link '{}'", path, href.toString());
-                        return href.toString();
                     }
                 } else {
                     log.warn("relative node as link, but the node is not a facetselect. Unable to rewrite this to a URL. Return '{}'", path);
