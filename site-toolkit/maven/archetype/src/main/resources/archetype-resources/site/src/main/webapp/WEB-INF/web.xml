@@ -74,6 +74,16 @@
     <servlet>
         <servlet-name>BinariesServlet</servlet-name>
         <servlet-class>org.hippoecm.hst.servlet.BinariesServlet</servlet-class>
+    	<!-- 
+    		If you are not using hippogallery:exampleImageSet you might want to define your
+    		own primaryitem location. If you leave the primaryitem altogether, then, when the binary location
+    		is not pointing at an actual jcr resource, we'll try to serve the jcr primaryitem in case this points
+    		to a resource
+    	 -->
+    	<init-param>
+    		<param-name>primaryitem</param-name>
+    		<param-value>hippogallery:picture</param-value>
+    	</init-param>
     </servlet>
   
     <servlet>

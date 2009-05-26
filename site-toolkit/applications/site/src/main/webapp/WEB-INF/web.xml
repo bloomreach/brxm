@@ -87,6 +87,10 @@
   <servlet>
     <servlet-name>BinariesServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.servlet.BinariesServlet</servlet-class>
+    <init-param>
+      <param-name>primaryitem</param-name>
+      <param-value>hippogallery:picture</param-value>
+    </init-param>
   </servlet>
   
   <servlet>

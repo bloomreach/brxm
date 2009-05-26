@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 public class BinariesServlet extends HttpServlet {
 
     public static final String BASE_BINARIES_CONTENT_PATH_INIT_PARAM = "baseBinariesContentPath";
+    public static final String PRIMARYITEM_INIT_PARAM = "primaryitem";
     public static final String DEFAULT_BASE_BINARIES_CONTENT_PATH = "";
 
     private static final long serialVersionUID = 1L;
@@ -61,6 +62,8 @@ public class BinariesServlet extends HttpServlet {
     
     protected String baseBinariesContentPath = DEFAULT_BASE_BINARIES_CONTENT_PATH;
 
+    protected String primaryItem;
+    
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -70,6 +73,9 @@ public class BinariesServlet extends HttpServlet {
         if (param != null) {
             this.baseBinariesContentPath = param;
         }
+        
+        primaryItem = config.getInitParameter(PRIMARYITEM_INIT_PARAM);
+        
     }
 
     @Override
@@ -118,7 +124,6 @@ public class BinariesServlet extends HttpServlet {
             }
 
             Node node = (Node) item;
-            
             if(node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 try {
                 node = node.getNode(node.getName());
@@ -131,13 +136,19 @@ public class BinariesServlet extends HttpServlet {
             
             if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                 try {
-                    Item resource = node.getPrimaryItem();
-                    
-                    if (resource.isNode() && ((Node) resource).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                        node = (Node) resource;
+                    if(primaryItem != null && node.hasNode(primaryItem)) {
+                        node = node.getNode(primaryItem);
                     } else {
-                        if (log.isWarnEnabled()) {
-                            log.warn("expected a hippo:resource node as primary item.");
+                        // fallback to the jcr primaryitem as we do not have a specific resource pointed at, and do not have
+                        // a primary item configured in the web.xml, or a primary item that does not exist
+                        log.debug("Show jcr primaryitem for resource");
+                        Item resource = node.getPrimaryItem();
+                        if (resource.isNode() && ((Node) resource).isNodeType(HippoNodeType.NT_RESOURCE)) {
+                            node = (Node) resource;
+                        } else {
+                            if (log.isWarnEnabled()) {
+                                log.warn("expected a hippo:resource node as primary item.");
+                            }
                         }
                     }
                 } catch (ItemNotFoundException e) {
