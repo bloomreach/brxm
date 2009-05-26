@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.core.util.HttpUtils;
 import org.hippoecm.hst.core.util.Path;
 import org.slf4j.Logger;
@@ -317,6 +318,65 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         }
         
         return url.toString();
+    }
+    
+    protected String getVirtualizedContextPath(HstContainerURL containerURL, HstRequestContext requestContext, String path) {
+        String virtualizedContextPath = containerURL.getContextPath();
+        
+        if (requestContext != null) {
+            if (requestContext != null) {
+                HstContainerURL baseURL = requestContext.getBaseURL();
+
+                if (baseURL != null) {
+                    if (requestContext.getMatchedMapping() != null && path != null) {
+                        MatchedMapping matchedMapping = requestContext.getMatchedMapping();
+                        if (matchedMapping.getMapping() != null) {
+                            if (matchedMapping.getMapping().getVirtualHost().isContextPathInUrl()) {
+                                virtualizedContextPath = baseURL.getContextPath();
+                            } else {
+                                virtualizedContextPath = "";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return virtualizedContextPath;
+    }
+    
+    protected String getVirtualizedServletPath(HstContainerURL containerURL, HstRequestContext requestContext, String path) {
+        String virtualizedServletPath = containerURL.getServletPath();
+        
+        if (requestContext != null) {
+            if (requestContext != null) {
+                HstContainerURL baseURL = requestContext.getBaseURL();
+
+                if (baseURL != null) {
+                    if (requestContext.getMatchedMapping() != null && path != null) {
+                        MatchedMapping matchedMapping = requestContext.getMatchedMapping();
+                        if (matchedMapping.getMapping() != null) {
+                            if (matchedMapping.getMapping().getVirtualHost().getVirtualHosts().isExcluded(path)) {
+                                // if the path is an excluded path defined in virtual hosting (for example /binaries), we do not include
+                                // a servletpath in the url
+                                virtualizedServletPath = "";
+                            } else {
+                                // as the external url is mapped, get the external 'fake' servletpath
+                                virtualizedServletPath = matchedMapping.getMapping().getUriPrefix();
+                                if (virtualizedServletPath == null) {
+                                    virtualizedServletPath = "";
+                                }
+                            }
+                            if (virtualizedServletPath.endsWith("/")) {
+                                virtualizedServletPath = virtualizedServletPath.substring(0, virtualizedServletPath.length() - 1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return virtualizedServletPath;
     }
 
 }

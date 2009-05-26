@@ -33,13 +33,37 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
     
     @Override
     public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
+        String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();
+        boolean containerResource = ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace);
+        
         StringBuilder path = new StringBuilder(100);
-        String pathInfo = buildHstURLPath(containerURL);
-        path.append(containerURL.getServletPath());
+        String pathInfo = null;
+        
+        if (!this.portletResourceURLEnabled && containerResource) {
+            String oldServletPath = containerURL.getServletPath();
+            String oldPathInfo = containerURL.getPathInfo();
+            String resourcePath = containerURL.getResourceId();
+            
+            try {
+                containerURL.setResourceWindowReferenceNamespace(null);
+                ((HstContainerURLImpl) containerURL).setPathInfo(resourcePath);
+                pathInfo = buildHstURLPath(containerURL);
+            } finally {
+                containerURL.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
+                ((HstContainerURLImpl) containerURL).setServletPath(oldServletPath);
+                ((HstContainerURLImpl) containerURL).setPathInfo(oldPathInfo);
+            }
+            
+            path.append(getVirtualizedServletPath(containerURL, requestContext, pathInfo));
+        } else {
+            pathInfo = buildHstURLPath(containerURL);
+            path.append(containerURL.getServletPath());
+        }
+        
         path.append(pathInfo);
         
-        if (!this.portletResourceURLEnabled && containerURL.getResourceWindowReferenceNamespace() != null) {
-            path.insert(0, containerURL.getContextPath());
+        if (!this.portletResourceURLEnabled && resourceWindowReferenceNamespace != null) {
+            path.insert(0, getVirtualizedContextPath(containerURL, requestContext, pathInfo));
             return path.toString();
         }
         
@@ -49,7 +73,7 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
         try {
             if (containerURL.getActionWindowReferenceNamespace() != null) {
                 portletURL = MethodUtils.invokeMethod(response, "createActionURL", null);
-            } else if (containerURL.getResourceWindowReferenceNamespace() != null) {
+            } else if (resourceWindowReferenceNamespace != null) {
                 portletURL = MethodUtils.invokeMethod(response, "createResourceURL", null);
             } else {
                 portletURL = MethodUtils.invokeMethod(response, "createRenderURL", null);
