@@ -14,53 +14,54 @@
  * limitations under the License.
  */
 
-if (typeof Hippo == 'undefined') {
-	Hippo = new Object();
+if (typeof(Hippo) == 'undefined') {
+    Hippo = new Object();
 }
+
 if (!Hippo.OnChangeTrigger) { // Ensure only one trigger exists
     ( function() {
-    	var vars = {
-    		onChangeId : null,
-    		lastOnChangeId : null,
-    	};
+        var vars = {
+            onChangeId : null,
+            lastOnChangeId : null
+        };
 
-		var preCallHandler = function() {
-			var self = vars; // debugging friendlyness
-    		if (vars.onChangeId != null) {
-    			// set onChangeElement to null to prevent recursion
-    			vars.lastOnChangeId = vars.onChangeId;
-    			vars.onChangeId = null;
-    			if (Wicket.$(vars.lastOnChangeId) != null) {
-    				Wicket.$(vars.lastOnChangeId).onchange();
-    			}
-    		}
-		};
+        var preCallHandler = function() {
+            var self = vars; // debugging friendliness
+            if (vars.onChangeId != null) {
+                // set onChangeElement to null to prevent recursion
+                vars.lastOnChangeId = vars.onChangeId;
+                vars.onChangeId = null;
+                if (Wicket.$(vars.lastOnChangeId) != null) {
+                    Wicket.$(vars.lastOnChangeId).onchange();
+                }
+            }
+        };
 
-		var postCallHandler = function() {
-			var self = vars; // debugging friendlyness
-    		if (vars.lastOnChangeId != null) {
-    			if (Wicket.$(vars.lastOnChangeId) != null) {
-    				vars.onChangeId = vars.lastOnChangeId;
-    			}
-    			vars.lastOnChangeId = null;
-    		}
-    	};
+        var postCallHandler = function() {
+            var self = vars; // debugging friendliness
+            if (vars.lastOnChangeId != null) {
+                if (Wicket.$(vars.lastOnChangeId) != null) {
+                    vars.onChangeId = vars.lastOnChangeId;
+                }
+                vars.lastOnChangeId = null;
+            }
+        };
 
-    	Wicket.Ajax.registerPreCallHandler(preCallHandler);
-    	Wicket.Ajax.registerPostCallHandler(postCallHandler);
+        Wicket.Ajax.registerPreCallHandler(preCallHandler);
+        //Wicket.Ajax.registerPostCallHandler(postCallHandler);
 
-    	// interface to request onchange notifications
-    	Hippo.OnChangeTrigger = {
+        // interface to request onchange notifications
+        Hippo.OnChangeTrigger = {
 
-    		setOnChangeListener : function(id) {
-    			var self = vars;
-				if (typeof(id) != "undefined") {
-					vars.onChangeId = id;
-				} else {
-					vars.onChangeId = null;
-				}
-			}
-    	};
+            setOnChangeListener : function(id) {
+                var self = vars;
+                if (typeof(id) != "undefined") {
+                    vars.onChangeId = id;
+                } else {
+                    vars.onChangeId = null;
+                }
+            }
+        };
 
-    } )()
+    } )();
 }
