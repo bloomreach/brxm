@@ -384,8 +384,8 @@
                     <echo>Replacing HST Shared Libraries.</echo>
                     <copy file="${dollar}{settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/jcr-1.0.jar" overwrite="true" />
                     <copy file="${dollar}{settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" overwrite="true" />
-                    <copy file="${dollar}{settings.localRepository}/org/onehippo/ecm/hst/hst-api/${dollar}{hst.version}/hst-api-${dollar}{hst.version}.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/hst-api-${dollar}{project.version}.jar" overwrite="true" />
-                    <copy file="${dollar}{settings.localRepository}/org/onehippo/ecm/hst/hst-commons/${dollar}{hst.version}/hst-commons-${dollar}{hst.version}.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/hst-commons-${dollar}{project.version}.jar" overwrite="true" />
+                    <copy file="${dollar}{settings.localRepository}/org/onehippo/ecm/hst/hst-api/${dollar}{hst.version}/hst-api-${dollar}{hst.version}.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/hst-api-${dollar}{hst.version}.jar" overwrite="true" />
+                    <copy file="${dollar}{settings.localRepository}/org/onehippo/ecm/hst/hst-commons/${dollar}{hst.version}/hst-commons-${dollar}{hst.version}.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/hst-commons-${dollar}{hst.version}.jar" overwrite="true" />
 
                     <echo>Replacing cms web application into Jetspeed.</echo>
                     <delete dir="${dollar}{jetspeed.hst.cms.webapp}" />
