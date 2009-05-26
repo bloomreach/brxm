@@ -132,7 +132,10 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
                log.warn("Skipping template '{}' because missing '{}' property", template.getPath(), Configuration.TEMPLATE_PROPERTY_RENDERPATH);
                continue;
            }
-           templateRenderMap.put(template.getName(), template.getProperty(Configuration.TEMPLATE_PROPERTY_RENDERPATH).getString());
+           String renderpath = template.getProperty(Configuration.TEMPLATE_PROPERTY_RENDERPATH).getString();
+           if(renderpath != null && ! "".equals(renderpath)) {
+               templateRenderMap.put(template.getName(), renderpath.trim());
+           }
        }
         
        this.componentsConfigurationService = new HstComponentsConfigurationService(configurationNode, templateRenderMap); 
