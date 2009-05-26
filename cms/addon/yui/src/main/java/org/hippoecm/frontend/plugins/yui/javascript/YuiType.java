@@ -19,10 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.wicket.IClusterable;
 
-public final class YuiType {
+public final class YuiType implements IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    private static final long serialVersionUID = 1L;
 
     private List<Setting> properties = new ArrayList<Setting>();
 
