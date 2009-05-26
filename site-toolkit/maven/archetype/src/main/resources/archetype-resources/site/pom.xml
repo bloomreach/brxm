@@ -399,8 +399,8 @@
                     <copy file="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}.war" tofile="${dollar}{jetspeed.portal.webapp}/WEB-INF/deploy/${dollar}{project.artifactId}.war" overwrite="true" />
                     
                     <echo>Copy core libaries into jetspeed</echo>
-                    <copy todir="${dollar}{jetspeed.portal.webapp}/WEB-INF/lib">
-                      <fileset dir="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}/WEB-INF/lib" overwrite="true">
+                    <copy todir="${dollar}{jetspeed.portal.webapp}/WEB-INF/lib" overwrite="true">
+                      <fileset dir="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}/WEB-INF/lib">
                         <include name="commons-proxy-*.jar" />
                       </fileset>
                       <fileset dir="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}/WEB-INF/lib">
