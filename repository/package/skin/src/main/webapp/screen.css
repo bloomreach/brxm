@@ -660,6 +660,11 @@ table tr.selected span.document-16, .document-16{background-image:url("images/ic
 table tr.selected span.folder-16, .folder-16{background-image:url("images/icons/folder-16.png")}
 table tr.selected span.folder-open-16, .folder-open-16{background-image:url("images/icons/folder-open-16.png")}
 
+/* mimetypes icons for virtual trees */
+table tr.selected span.document-virtual-16, .document-virtual-16{background-image:url("images/icons/document-16.png")}
+table tr.selected span.folder-virtual-16, .folder-virtual-16{background-image:url("images/icons/folder-virtual-16.gif")}
+table tr.selected span.folder-virtual-open-16, .folder-virtual-open-16{background-image:url("images/icons/folder-virtual-open-16.gif")}
+
 /* Accordion */
 .hippo-accordion-unit{background: #f4f4f4;}
 /* change the tree if he's inside an accordion */
