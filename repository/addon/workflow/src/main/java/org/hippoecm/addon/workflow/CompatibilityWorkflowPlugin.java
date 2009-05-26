@@ -174,7 +174,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         }
 
         @Deprecated
-        public class WorkflowDialog extends AbstractDialog implements IStringResourceProvider {
+        public class WorkflowDialog extends AbstractDialog {
 
             private static final long serialVersionUID = 1L;
             private ITranslateService translator;
@@ -192,19 +192,10 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 }
                 add(notification);
                 notification.add(new AttributeAppender("class", new Model("notification"), " "));
-
-                // FIXME: refactor the plugin so that we can use a service instead here
-                IPluginContext context = getPluginContext();
-                translator = new SearchingTranslatorPlugin(context, null);
-
                 init();
             }
 
             protected void init() {
-            }
-
-            public String getString(Map<String, String> criteria) {
-                return translator.translate(criteria);
             }
 
             @Override
