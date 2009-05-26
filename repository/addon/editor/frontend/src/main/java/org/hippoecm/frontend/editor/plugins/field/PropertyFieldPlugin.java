@@ -54,6 +54,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
 
     private JcrNodeModel nodeModel;
     private JcrPropertyModel propertyModel;
+    private int nrValues;
     private IObserver propertyObserver;
 
     public PropertyFieldPlugin(IPluginContext context, IPluginConfig config) {
@@ -89,6 +90,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
             JcrItemModel itemModel = new JcrItemModel(((JcrNodeModel) getModel()).getItemModel().getPath() + "/"
                     + field.getPath());
             propertyModel = new JcrPropertyModel(itemModel);
+            nrValues = propertyModel.size();
             getPluginContext().registerService(propertyObserver = new IObserver() {
                 private static final long serialVersionUID = 1L;
 
@@ -97,8 +99,11 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
                 }
 
                 public void onEvent(Iterator<? extends IEvent> events) {
-                    updateProvider();
-                    redraw();
+                    if (propertyModel.size() != nrValues) { //Only redraw if number of properties has changed.
+                        nrValues = propertyModel.size();
+                        updateProvider();
+                        redraw();
+                    }
                 }
 
             }, IObserver.class.getName());
