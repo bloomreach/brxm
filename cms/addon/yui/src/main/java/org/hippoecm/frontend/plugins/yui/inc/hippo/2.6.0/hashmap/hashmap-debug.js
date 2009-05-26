@@ -76,7 +76,7 @@ Array.prototype.removeAt = _removeAt;
                 YAHOO.log(msg, "error", "HashMap");
                 throw new Error(msg)
             }
-             return this.values[index];
+            return this.values[index];
         },
         
         remove : function(key) {

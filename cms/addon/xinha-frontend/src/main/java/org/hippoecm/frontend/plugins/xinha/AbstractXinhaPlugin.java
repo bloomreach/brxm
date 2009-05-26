@@ -60,6 +60,10 @@ import org.hippoecm.frontend.plugins.xinha.dialog.links.InternalLinkBehavior;
 import org.hippoecm.frontend.plugins.xinha.dragdrop.XinhaDropBehavior;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImageService;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLinkService;
+import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
+import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
+import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
@@ -340,7 +344,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 boolean save = Boolean.valueOf(requestCycle.getRequest().getParameter("save")).booleanValue();
                 if (save) {
                     editor.processInput();
-                    target.appendJavascript(XINHA_SAVED_FLAG);
+                    //target.appendJavascript(XINHA_SAVED_FLAG);
                 }
 
                 String browse = requestCycle.getRequest().getParameter("browse");
@@ -394,7 +398,23 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         editor.add(postBehavior);
 
         add(this.new XinhaHeaderContributor());
+        add(new EditorManagerBehavior(YuiPluginHelper.getManager(getPluginContext())));
+
         return editor;
+    }
+
+    class EditorManagerBehavior extends AbstractYuiBehavior {
+        private static final long serialVersionUID = 1L;
+
+        public EditorManagerBehavior(IYuiManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public void addHeaderContribution(IYuiContext context) {
+            context.addModule(XinhaNamespace.NS, "editormanager");
+        }
+
     }
 
     //Move this to editorBehaviour?

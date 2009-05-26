@@ -60,7 +60,7 @@ public class PageLayoutBehavior extends AbstractYuiAjaxBehavior implements IWire
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(HippoNamespace.NS, "layoutmanager");
         context.addTemplate(template);
-        context.addOnload("YAHOO.hippo.LayoutManager.render()");
+        context.addOnDomLoad("YAHOO.hippo.LayoutManager.render()");
     }
 
     @Override
