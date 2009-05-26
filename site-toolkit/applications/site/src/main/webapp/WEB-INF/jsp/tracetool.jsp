@@ -23,6 +23,7 @@ String traceLogLevelName = traceLogEventBuffer.getLevelName();
 %>
 
 <hst:element var="hstTraceToolStyles" name="style">
+  <hst:attribute name="id" value="hstTraceToolStyles" />
   <hst:attribute name="type" value="text/css" />
   @import url('<hst:link path="/javascript/dojo-1.3.0/dijit/themes/tundra/tundra.css"/>');
   @import url('<hst:link path="/javascript/dojo-1.3.0/dojox/layout/resources/FloatingPane.css"/>');
@@ -32,6 +33,7 @@ String traceLogLevelName = traceLogEventBuffer.getLevelName();
 
 <hst:link var="dojoPath" path="/javascript/dojo-1.3.0/dojo/dojo.js"/>
 <hst:element var="hstTraceToolDojoInclude" name="script">
+  <hst:attribute name="id" value="hstTraceToolDojoInclude" />
   <hst:attribute name="language" value="javascript" />
   <hst:attribute name="type" value="text/javascript" />
   <hst:attribute name="src" value="${dojoPath}" />
@@ -51,10 +53,10 @@ String traceLogLevelName = traceLogEventBuffer.getLevelName();
 
 <hst:resourceURL var="logResourcePath" resourceId="log" />
 
-<div dojoType="dojox.layout.FloatingPane" id="hstTrace" title="HST Trace" class="tundra"
+<div dojoType="dojox.layout.FloatingPane" title="HST Trace" class="tundra"
      resizable="true" dockable="true" maxable="true" closable="true"
      style="width: 600px; height: 400px; visibility: hidden;">
-  <div id="tabContainer" dojoType="dijit.layout.TabContainer">
+  <div dojoType="dijit.layout.TabContainer">
     <div dojoType="dijit.layout.ContentPane" title="Logs"
          href="${logResourcePath}" preventCache="true" refreshOnShow="true"
          style="font-size: 10px; white-space: pre">
