@@ -35,16 +35,26 @@ public class YuiContext implements IYuiContext {
 
     Set<IHeaderContributor> templates;
     Set<IHeaderContributor> refs;
-    Set<String> onloads;
+    Set<OnLoad> onloads;
     Set<IHeaderContributor> modules;
     YuiHeaderCache cache;
+
+    class OnLoad {
+        String str;
+        boolean win;
+
+        public OnLoad(String str, boolean onWindowLoad) {
+            this.str = str;
+            this.win = onWindowLoad;
+        }
+    }
 
     public YuiContext(YuiHeaderCache cache) {
         this.cache = cache;
         modules = new LinkedHashSet<IHeaderContributor>();
         refs = new LinkedHashSet<IHeaderContributor>();
         templates = new LinkedHashSet<IHeaderContributor>();
-        onloads = new LinkedHashSet<String>();
+        onloads = new LinkedHashSet<OnLoad>();
     }
 
     public void addModule(String module) {
@@ -67,16 +77,20 @@ public class YuiContext implements IYuiContext {
         templates.add(template);
     }
 
-    public void addOnload(String string) {
-        onloads.add(string);
-    }
-
     public void addCssReference(ResourceReference reference) {
         refs.add(cache.getCssReference(reference));
     }
 
     public void addJavascriptReference(ResourceReference reference) {
         refs.add(cache.getJavascriptReference(reference));
+    }
+
+    public void addOnDomLoad(String string) {
+        onloads.add(new OnLoad(string, false));
+    }
+
+    public void addOnWinLoad(String string) {
+        onloads.add(new OnLoad(string, true));
     }
 
     public void renderHead(IHeaderResponse response) {
@@ -112,12 +126,13 @@ public class YuiContext implements IYuiContext {
         }
     }
 
-    public void renderOnloads(Set<String> _onloads, IHeaderResponse response) {
-        for (String onload : _onloads) {
-            //TODO: make configurable
-            response.renderOnDomReadyJavascript(onload);
-            //response.renderOnLoadJavascript(onload);
+    public void renderOnloads(Set<OnLoad> _onloads, IHeaderResponse response) {
+        for (OnLoad onload : _onloads) {
+            if (onload.win) {
+                response.renderOnLoadJavascript(onload.str);
+            } else {
+                response.renderOnDomReadyJavascript(onload.str);
+            }
         }
     }
-
 }

@@ -98,7 +98,7 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
     @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addTemplate(template);
-        context.addOnload("YAHOO.hippo.LayoutManager.render()");
+        context.addOnDomLoad("YAHOO.hippo.LayoutManager.render()");
     }
 
     @Override

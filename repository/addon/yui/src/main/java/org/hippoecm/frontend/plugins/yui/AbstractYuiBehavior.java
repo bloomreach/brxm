@@ -29,11 +29,11 @@ public class AbstractYuiBehavior extends AbstractBehavior {
 
     private IYuiContext _helper;
 
-    public AbstractYuiBehavior(IYuiManager service) {
-        if (service == null) {
+    public AbstractYuiBehavior(IYuiManager manager) {
+        if (manager == null) {
             throw new IllegalStateException("No root yui behavior found, unable to register module dependencies.");
         }
-        _helper = service.newContext();
+        _helper = manager.newContext();
     }
 
     @Override
@@ -48,7 +48,7 @@ public class AbstractYuiBehavior extends AbstractBehavior {
      */
     public void addHeaderContribution(IYuiContext helper) {
     }
-    
+
     /**
      * Don't call super since WicketAjax is loaded by Yui webapp behavior
      * TODO: webapp ajax is configurable, maybe check here and still load it.

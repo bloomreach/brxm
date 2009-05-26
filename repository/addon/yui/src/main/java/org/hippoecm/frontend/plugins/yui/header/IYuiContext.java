@@ -46,7 +46,7 @@ public interface IYuiContext extends IHeaderContributor {
      * @param filename
      * @param parameters
      */
-    void addTemplate(Class<?> clazz, String filename, Map<String, Object> parameters );
+    void addTemplate(Class<?> clazz, String filename, Map<String, Object> parameters);
 
     /**
      *
@@ -64,7 +64,9 @@ public interface IYuiContext extends IHeaderContributor {
      * Add javascript that get's executed on pageLoad
      * @param string String of javascript code that is evaluated on the client
      */
-    void addOnload(String string);
+    void addOnWinLoad(String string);
+
+    void addOnDomLoad(String string);
 
     void addJavascriptReference(ResourceReference reference);
 

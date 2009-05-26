@@ -33,7 +33,7 @@ public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
     protected final DragDropSettings settings;
 
     public AbstractDragDropBehavior(IYuiManager service, DragDropSettings settings) {
-        super(service,  settings);
+        super(service, settings);
         this.settings = settings;
     }
 
@@ -56,7 +56,7 @@ public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
                 return AbstractDragDropBehavior.this.settings;
             }
         });
-        context.addOnload("YAHOO.hippo.DragDropManager.onLoad()");
+        context.addOnDomLoad("YAHOO.hippo.DragDropManager.onLoad()");
     }
 
     @Override
@@ -71,7 +71,6 @@ public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
         buf.append(generateCallbackScript("wicketAjaxGet(myCallbackUrl")).append(" }");
         return buf.toString();
     }
-
 
     /**
      * Return a class from the same package as the javascript file you want to load

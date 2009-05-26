@@ -19,23 +19,13 @@ Xinha.Config.prototype.AutoSave =
 function AutoSave(editor) {
     this.editor = editor;
     this.lConfig = editor.config.AutoSave;
-    this.autoSave = this;
     
-    this.changed = false;
-    this.timeoutId = null;
-
-    this.textarea = this.editor._textArea;
-    this.initial_html = null;
-    
-    var self = this;
-    preCallHandler = function() {
-      if (self.timeoutId != null) {
-        window.clearTimeout(self.timeoutId);
-        self.timeoutId = null;
-        self.save();
-      }
-    }
-    Wicket.Ajax.registerPreCallHandler(preCallHandler);
+//    this.autoSave = this;
+//    this.changed = false;
+//    this.timeoutId = null;
+//
+//    this.textarea = this.editor._textArea;
+//    this.initial_html = null;
 }
 
 AutoSave.prototype._lc = function(string) {
@@ -43,8 +33,63 @@ AutoSave.prototype._lc = function(string) {
 }
 
 AutoSave.prototype.onGenerateOnce = function() {
-    this.initial_html = this.editor.getInnerHTML();
+    YAHOO.hippo.EditorManager.register(this, this.lConfig.timeoutLength);
 }
+
+//Interface
+// - String getId
+// - String getContents
+// - void save
+
+
+AutoSave.prototype.getId = function() {
+    return this.editor._textArea.getAttribute("id");
+}
+
+AutoSave.prototype.getContents = function() {
+    return this.editor.getInnerHTML();
+}
+
+AutoSave.prototype.saveOld = function() {
+    var myId = this.getId();
+    var self = this;
+    var form = this.editor._textArea.form;
+    form.onsubmit();
+    var callbackUrl = this.editor.config.callbackUrl + "&save=true";
+
+    return wicketAjaxPost(callbackUrl, wicketSerialize(Wicket.$(myId)), function() {
+        self.initial_html = self.editor.getInnerHTML();
+        self.changed = false;
+    }, null, function() { return Wicket.$(myId) != null; }, 'hmmmmm|d');
+}
+
+AutoSave.prototype.save = function() {
+    
+    var xmlHttpReq = false;
+    var self = this;
+    // Mozilla/Safari
+    if (window.XMLHttpRequest) {
+        self.xmlHttpReq = new XMLHttpRequest();
+    }
+    // IE
+    else if (window.ActiveXObject) {
+        self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+
+    var form = this.editor._textArea.form;
+    form.onsubmit();
+    var callbackUrl = this.editor.config.callbackUrl + "&save=true";
+
+    self.xmlHttpReq.open('POST', callbackUrl, false);
+    self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    self.xmlHttpReq.onreadystatechange = function() {
+        if (self.xmlHttpReq.readyState == 4) {
+            //console.log('AJAX-UPDATE: ' + self.xmlHttpReq.responseText);
+        }
+    }
+    self.xmlHttpReq.send(wicketSerialize(Wicket.$(this.getId())));
+}
+
 
 AutoSave.prototype.onUpdateToolbar = function() {
   this.checkChanges(null);
@@ -55,31 +100,18 @@ AutoSave.prototype.onKeyPress = function(ev) {
 }
 
 AutoSave.prototype.checkChanges = function(ev) {
-    if(this.timeoutId != null) {
-      window.clearTimeout(this.timeoutId);
-      this.timeoutId = null;
-    }  
-
     if ( ev != null && ev.ctrlKey && this.editor.getKey(ev) == 's') {
-            this.save();
-            Xinha._stopEvent(ev);
-            return true;
+        YAHOO.hippo.EditorManager.resetById(this.getId());
+        this.save();
+        Xinha._stopEvent(ev);
+        return true;
     }
-    else {
-        if (this.changed) {
-          this.setTimer();
-        } else {
-            if (this.getChanged()) { 
-              this.changed = true;
-              this.setTimer();
-            }
-        }
-        return false;
-    }
+    
+    YAHOO.hippo.EditorManager.check(this.getId());   
 }
 
 AutoSave.prototype.onExecCommand = function (cmd) {
-    if (this.changed && cmd == 'undo') { 
+    if (this.changed && cmd == 'undo') {
         if (this.initial_html == this.editor.getInnerHTML()) this.setUnChanged();
         return false;
     }
@@ -87,33 +119,23 @@ AutoSave.prototype.onExecCommand = function (cmd) {
 
 AutoSave.prototype.getChanged = function() {
     if (this.initial_html == null) this.initial_html = this.editor.getInnerHTML();
-    if (this.initial_html != this.editor.getInnerHTML() && this.changed == false) {
+    if (!this.changed && this.initial_html != this.editor.getInnerHTML()) {
         return true;
     }
     else return false;
 }
 
 AutoSave.prototype.setTimer = function() {
-    window.clearTimeout(this.timeoutId);
+    this.clearTimer();
     var self = this;
-    saveContent = function() { self.save() } ;
-    this.timeoutId = window.setTimeout("saveContent()", this.lConfig.timeoutLength);
+    YAHOO.hippo.EditorManager.set(this.editor.id, function() { self.save() }, this.lConfig.timeoutLength);
+}
+
+AutoSave.prototype.clearTimer = function() {
+    YAHOO.hippo.EditorManager.reset(this.editor.id);
 }
 
 AutoSave.prototype.setUnChanged = function() {
     this.changed = false;
 }
         
-AutoSave.prototype.save = function() {
-    var self = this;
-    this.timoutId = null;
-    var form = this.editor._textArea.form;
-    form.onsubmit();
-    var callbackUrl = this.editor.config.callbackUrl + "&save=true";
-    var myId = this.editor._textArea.getAttribute("id");
-
-    return wicketAjaxPost(callbackUrl, wicketSerialize(Wicket.$(myId)), function() {
-        self.initial_html = self.editor.getInnerHTML();
-        self.changed = false;
-    }, null, function() { return Wicket.$(myId) != null; });
-}
