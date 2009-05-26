@@ -50,42 +50,11 @@
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
   
-  <filter>
-    <filter-name>HstVirtualHostsFilter</filter-name>
-    <filter-class>org.hippoecm.hst.container.HstVirtualHostsFilter</filter-class>    
-  </filter>
-  
-  <filter-mapping>
-    <filter-name>HstVirtualHostsFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
-  </filter-mapping>
-  
-  <!-- As a portlet application, the following servlet should be commented out. -->
-  <!--
-  <servlet>
-    <servlet-name>HstSiteConfigServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  -->
-
   <servlet>
     <servlet-name>HstContainerServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.container.HstContainerServlet</servlet-class>
-    <!--
-    HST Application Context Namespace Prefix.
-    This should be unique among multiple HST-based application contexts.
-    -->
-    <!--
-    <init-param>
-      <param-name>hstContextNamespace</param-name>
-      <param-value>news</param-value>
-    </init-param>
-    -->
     <load-on-startup>2</load-on-startup>
   </servlet>
-  
   
   <servlet>
     <servlet-name>BinariesServlet</servlet-name>
@@ -111,12 +80,10 @@
     <url-pattern>/preview/*</url-pattern>
   </servlet-mapping>
 
-
   <servlet-mapping>
     <servlet-name>HstContainerServlet</servlet-name>
     <url-pattern>/live/*</url-pattern>
   </servlet-mapping>
-
 
   <servlet-mapping>
     <servlet-name>BinariesServlet</servlet-name>

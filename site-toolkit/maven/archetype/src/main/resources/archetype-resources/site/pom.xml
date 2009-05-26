@@ -372,6 +372,14 @@
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.0</version>
+            <configuration>
+              <webXml>src/main/webapp/WEB-INF/pa-web.xml</webXml>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
             <version>1.2</version>
             <executions>
@@ -442,7 +450,7 @@ Thank you for trying jetspeed profile.
 
 Deploying artifacts are done, but you need to edit two web.xml files.
 
-First, add the following servlet definition in /jetspeed/WEB-INF/web.xml
+Add the following servlet definition in /jetspeed/WEB-INF/web.xml
 
   <servlet>
     <servlet-name>HstSiteConfigServlet</servlet-name>
@@ -454,21 +462,7 @@ First, add the following servlet definition in /jetspeed/WEB-INF/web.xml
     <load-on-startup>1</load-on-startup>
   </servlet>
   
-
-And, start the Jetspeed to auto-deploy site portlet application.
-If the /site portlet application is deployed into your /webapps directory,
-then stop the Jetspeed, 
-and comment out the following servlet in /site/WEB-INF/web.xml:
-
-  <!--
-  <servlet>
-    <servlet-name>HstSiteConfigServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  -->
-
-Finally, restart your Jetspeed and visit the following page:
+Restart your Jetspeed and visit the following page:
 
 http://localhost:8080/jetspeed/portal/
 
