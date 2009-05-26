@@ -67,10 +67,12 @@ public class Configuration {
     public final static String VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS = "hst:prefixexclusions";
     public final static String VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS = "hst:suffixexclusions";
     public final static String VIRTUALHOSTS_PROPERTY_PORT = "hst:port";
+    public final static String VIRTUALHOSTS_PROPERTY_PROTOCOL = "hst:protocol";
     public final static String VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
 
     public final static String VIRTUALHOST_PROPERTY_SHOWPORT = "hst:showport";
     public final static String VIRTUALHOST_PROPERTY_PORT = "hst:port";
+    public final static String VIRTUALHOST_PROPERTY_PROTOCOL = "hst:protocol";
     public final static String VIRTUALHOST_PROPERTY_SITENAME = "hst:sitename";
     public final static String VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
     public final static String VIRTUALHOST_PROPERTY_MAPPING = "hst:mapping";

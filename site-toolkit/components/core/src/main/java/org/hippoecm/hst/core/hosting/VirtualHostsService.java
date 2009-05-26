@@ -39,12 +39,15 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
 
     private final static String WILDCARD = "_default_";
     
+    public final static String DEFAULT_PROTOCOL = "http";
+    
     private Map<String, VirtualHostService> rootVirtualHosts = new HashMap<String, VirtualHostService>();
     private String defaultSiteName;
     private boolean virtualHostsConfigured;
     private String jcrPath;
     private boolean portVisible;
     private int portNumber;
+    private String protocol;
     private boolean contextPathInUrl;
     private String[] prefixExclusions;
     private String[] suffixExclusions;
@@ -67,7 +70,10 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         this.contextPathInUrl = this.getValueProvider().getBoolean(Configuration.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
         this.prefixExclusions = this.getValueProvider().getStrings(Configuration.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
         this.suffixExclusions = this.getValueProvider().getStrings(Configuration.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
-           
+        this.protocol = this.getValueProvider().getString(Configuration.VIRTUALHOSTS_PROPERTY_PROTOCOL);
+        if(protocol == null || "".equals(protocol)) {
+            this.protocol = DEFAULT_PROTOCOL;
+        }
         try {
             init(virtualHostsNode);
         } catch (RepositoryException e) {
@@ -153,10 +159,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
             public boolean isURIMapped() {
                 return false;
             }
-            public String mapToExternalURI(String pathInfo) {
-                return pathInfo;
-            }
-
+            
             public String mapToInternalURI(String pathInfo) {
                 return pathInfo;
             }
@@ -215,4 +218,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         return contextPathInUrl;
     }
 
+    public String getProtocol(){
+        return this.protocol;
+    }
 }

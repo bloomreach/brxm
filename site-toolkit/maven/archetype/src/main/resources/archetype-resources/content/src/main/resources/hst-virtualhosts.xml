@@ -50,6 +50,9 @@
         <sv:value>.png</sv:value>
         <sv:value>.PNG</sv:value>
     </sv:property>
+    <sv:property sv:name="hst:protocol" sv:type="String">
+        <sv:value>http</sv:value>
+    </sv:property>
     
     <sv:node sv:name="127.0.0.1">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

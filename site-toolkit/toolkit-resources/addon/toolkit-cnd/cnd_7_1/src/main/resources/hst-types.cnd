@@ -98,6 +98,7 @@ hippostd:publishableSummary, hippostd:languageable
 - hst:port (long)
 - hst:showcontextpath (boolean)
 - hst:showport(boolean)
+- hst:protocol (string)
 
 [hst:virtualhosts]
 - hst:port (long)
@@ -105,6 +106,7 @@ hippostd:publishableSummary, hippostd:languageable
 - hst:showport(boolean)
 - hst:prefixexclusions (string) multiple
 - hst:suffixexclusions (string) multiple
+- hst:protocol (string)
 + * (hst:virtualhost)
 
 

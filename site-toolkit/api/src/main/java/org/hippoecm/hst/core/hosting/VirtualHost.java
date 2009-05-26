@@ -66,5 +66,10 @@ public interface VirtualHost {
      * @return when {@link #isPortVisible()} returns <code>true</code> this method returns the port number of the externalized url
      */
     int getPortNumber();
+    
+    /**
+     * @return the protocol to use for creating external urls, for example http / https
+     */
+    String getProtocol();
 
 }

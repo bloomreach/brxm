@@ -50,6 +50,7 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
     private boolean portVisible;
     private int portNumber;
     private boolean contextPathInUrl;
+    private String protocol;
     private String[] hstMappings;
     private Mapping[] mappings;
     
@@ -107,6 +108,20 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
                 this.hstMappings = parentHost.hstMappings;
                 this.mappings = parentHost.mappings;
             }  
+        }
+        
+        if(this.getValueProvider().hasProperty(Configuration.VIRTUALHOST_PROPERTY_PROTOCOL)) {
+            this.protocol = this.getValueProvider().getString(Configuration.VIRTUALHOST_PROPERTY_PROTOCOL);
+            if(this.protocol == null || "".equals(this.protocol)) {
+                this.protocol = VirtualHostsService.DEFAULT_PROTOCOL;
+            }
+        } else {
+           // try to get the one from the parent
+            if(parentHost != null) {
+                this.protocol = parentHost.protocol;
+            } else {
+                this.protocol = virtualHosts.getProtocol();
+            }
         }
         
         String fullName = this.getValueProvider().getName();
@@ -213,6 +228,10 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
 
     public boolean isContextPathInUrl() {
         return contextPathInUrl;
+    }
+    
+    public String getProtocol(){
+        return this.protocol;
     }
     
     public VirtualHosts getVirtualHosts() {
