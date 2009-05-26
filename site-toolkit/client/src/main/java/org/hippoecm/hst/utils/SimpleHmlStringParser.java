@@ -177,13 +177,10 @@ public class SimpleHmlStringParser {
             return path;
         } else {
             // relative node, most likely a facetselect node:
-            String uuid = null;
             try {
                 Node facetSelectNode = node.getNode(path);
                 if (facetSelectNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                    uuid = facetSelectNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                    Session session = reqContext.getSession();
-                    Node deref = session.getNodeByUUID(uuid);
+                    Node deref = JCRUtilities.getDeref(facetSelectNode);
                     
                     HstLink link = reqContext.getHstLinkCreator().create(deref, reqContext.getResolvedSiteMapItem());
                     
@@ -238,7 +235,12 @@ public class SimpleHmlStringParser {
 
             if (node.hasNode(path)) {
                 Node binary = node.getNode(path);
-                Node deref = JCRUtilities.getCanonical(binary);
+                Node deref;
+                if(binary.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                    deref = JCRUtilities.getDeref(binary);
+                } else {
+                    deref = JCRUtilities.getCanonical(binary);
+                }
                 if(deref != null) {
                     String derefedPath  = PathUtils.normalizePath(deref.getPath());
                     StringBuffer srcLink = new StringBuffer();
