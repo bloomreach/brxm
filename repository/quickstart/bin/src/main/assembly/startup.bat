@@ -67,7 +67,7 @@ set INVMODE=0
 set CLASSPATH="%BASEDIR%"\lib\classes
 for %%j in (lib\*.jar) do set CLASSPATH=%%j;!CLASSPATH!
 
-java %JAVA_OPTS% %EXTRA_JVM_ARGUMENTS% -classpath %CLASSPATH_PREFIX%;%CLASSPATH% -Dapp.name="app" -Dbasedir="%BASEDIR%" org.hippoecm.Main lib\*.war %CMD_LINE_ARGS%
+java %JAVA_OPTS% %EXTRA_JVM_ARGUMENTS% -classpath %CLASSPATH_PREFIX%;%CLASSPATH% -Dapp.name="app" -Drepo.path=%REPO% -Dbasedir="%BASEDIR%" org.hippoecm.Main lib\*.war %CMD_LINE_ARGS%
 goto end
 
 :error
