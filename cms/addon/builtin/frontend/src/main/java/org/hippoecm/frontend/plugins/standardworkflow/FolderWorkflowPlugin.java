@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -36,7 +35,6 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
@@ -44,7 +42,6 @@ import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
-import org.hippoecm.frontend.i18n.SearchingTranslatorPlugin;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -53,7 +50,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditorManager;
-import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AbstractView;
@@ -183,14 +179,6 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
     }
 
     @Override
-    public String getString(Map<String, String> keys) {
-        Map<String, String> criteria = new TreeMap<String, String>(keys);
-        ITranslateService translator = new SearchingTranslatorPlugin(getPluginContext(), null);
-        criteria.put("hippo:workflow", FolderWorkflow.class.getName());
-        return translator.translate(criteria);
-    }
-
-    @Override
     public void onModelChanged() {
         try {
             IModel model = getModel();
@@ -219,7 +207,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
                         @Override
                         protected Dialog createRequestDialog() {
-                            return new FolderWorkflowDialog(this, new Model(category), category, prototypes
+                            return new FolderWorkflowDialog(this, new StringResourceModel(category, FolderWorkflowPlugin.this, null), category, prototypes
                                     .get(category));
                         }
 
@@ -359,7 +347,6 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 folderChoice.setNullValid(false);
                 folderChoice.setRequired(true);
                 folderChoice.setLabel(new StringResourceModel("document-type", FolderWorkflowPlugin.this, null));
-                ;
                 // while not a prototype chosen, disable ok button
                 Component notypes;
                 add(notypes = new EmptyPanel("notypes"));
