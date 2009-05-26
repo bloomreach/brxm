@@ -28,6 +28,7 @@
     <packaging>pom</packaging>
 
     <modules>
+      <module>cms</module>
       <module>site</module>
     </modules>
 
