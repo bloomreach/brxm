@@ -695,7 +695,7 @@ font-weight: bold;
 .hippo-accordion-unit h2 a.focus:hover{background-position: 0px -48px}
 .hippo-accordion-unit h2 a.focus:active{background-position: 0px -72px}
 
-.hippo-accordion-unit-add { display: block; background: url("images/addfolder.png") no-repeat right bottom; padding-right: 25px; padding-bottom: 5px; padding-top: 20px; margin-bottom: 10px; text-align: right; }
+.hippo-accordion-unit-add { display: block; background: url("images/addfolder.png") no-repeat left bottom; padding-left: 30px; padding-bottom: 5px; padding-top: 20px; margin-bottom: 10px; text-align: left; margin-left: 5px; }
 
 /* Hippo tree addition */
 
