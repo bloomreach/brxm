@@ -332,6 +332,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
             TextField text = new TextField("name", nameModel);
             text.setRequired(true);
+            System.out.println("NULL?? " +  FolderWorkflowPlugin.this);
             text.setLabel(new StringResourceModel("name-label", FolderWorkflowPlugin.this, null));
             setFocus(text);
             add(text);
