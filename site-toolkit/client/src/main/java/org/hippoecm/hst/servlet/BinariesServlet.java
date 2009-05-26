@@ -141,7 +141,7 @@ public class BinariesServlet extends HttpServlet {
                     } else {
                         // fallback to the jcr primaryitem as we do not have a specific resource pointed at, and do not have
                         // a primary item configured in the web.xml, or a primary item that does not exist
-                        log.debug("Show jcr primaryitem for resource");
+                        log.debug("Show jcr primaryitem for resource at '{}'", node.getPath());
                         Item resource = node.getPrimaryItem();
                         if (resource.isNode() && ((Node) resource).isNodeType(HippoNodeType.NT_RESOURCE)) {
                             node = (Node) resource;
