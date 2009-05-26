@@ -11,7 +11,7 @@ public final class HstContainerPortletContext {
         tlResponse.set(response);
     }
     
-    public static final <T> T getCurrerntRequest() {
+    public static final <T> T getCurrentRequest() {
         return (T) tlRequest.get();
     }
     

@@ -58,11 +58,19 @@ public interface HstResponse extends HttpServletResponse {
     HstURL createActionURL();
 
     /**
-     * Creates a HST Resource URL targeting the HstComponent.
+     * Creates a HST Resource URL targeting the current HstComponent.
      *  
      * @return
      */
     HstURL createResourceURL();
+    
+    /**
+     * Creates a HST Resource URL targeting the HstComponent indicated by referenceNamespace.
+     * 
+     * @param referenceNamespace
+     * @return
+     */
+    HstURL createResourceURL(String referenceNamespace);
 
     /**
      * The value returned by this method should be prefixed or appended to elements, 

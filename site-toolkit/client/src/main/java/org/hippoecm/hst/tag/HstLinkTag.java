@@ -33,6 +33,7 @@ import javax.servlet.jsp.tagext.VariableInfo;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -124,7 +125,10 @@ public class HstLinkTag extends TagSupport {
             pathElements = link.getPathElements();
         }
         
+        boolean containerResource = false;
+        
         if (this.path != null) {
+            containerResource = true;
             path = PathUtils.normalizePath(path);
             pathElements = path.split("/");
         }
@@ -133,18 +137,26 @@ public class HstLinkTag extends TagSupport {
             log.warn("Unable to rewrite link. Return EVAL_PAGE");
             return EVAL_PAGE;
         }
+        
         for(String elem : pathElements) {
             String enc = response.encodeURL(elem);
             url.append("/").append(enc);
         }
         
-        String urlString = hstResponse.createNavigationalURL(url.toString()).toString();
-      
-        String customParams =  getCustomParameters(request, response);
-        if(customParams != null) {
-            urlString += customParams;
-        }
+        String urlString = null;
         
+        if (containerResource) {
+            HstURL hstUrl = hstResponse.createResourceURL(ContainerConstants.CONTAINER_REFERENCE_NAMESPACE);
+            hstUrl.setResourceID(url.toString());
+            urlString = hstUrl.toString();
+        } else {
+            urlString = hstResponse.createNavigationalURL(url.toString()).toString();
+      
+            String customParams =  getCustomParameters(request, response);
+            if(customParams != null) {
+                urlString += customParams;
+            }
+        }
         
         if (var == null) {
             try {               

@@ -24,7 +24,25 @@ public class HstContainerURLProviderImpl extends AbstractHstContainerURLProvider
     
     @Override
     public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
-        String path = buildHstURLPath(containerURL);
+        String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();
+        String contextPath = containerURL.getContextPath();
+        String servletPath = containerURL.getServletPath();
+        String path = null;
+        
+        if (ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace)) {
+            String oldPathInfo = containerURL.getPathInfo();
+            try {
+                containerURL.setResourceWindowReferenceNamespace(null);
+                ((HstContainerURLImpl) containerURL).setPathInfo(containerURL.getResourceId());
+                path = buildHstURLPath(containerURL);
+            } finally {
+                containerURL.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
+                ((HstContainerURLImpl) containerURL).setPathInfo(oldPathInfo);
+            }
+        } else {
+            path = buildHstURLPath(containerURL);
+        }
+        
         String externalContextPath = null;
         String externalServletPath = null;
         
@@ -64,16 +82,19 @@ public class HstContainerURLProviderImpl extends AbstractHstContainerURLProvider
         }
         
         StringBuilder url = new StringBuilder(100);
+        
         if(externalContextPath == null) {
-            url.append(containerURL.getContextPath());
+            url.append(contextPath);
         } else {
             url.append(externalContextPath);
         }
+        
         if(externalServletPath == null) {
-            url.append(containerURL.getServletPath());
+            url.append(servletPath);
         } else {
             url.append(externalServletPath);
         }
+        
         url.append(path);
         
         return url.toString();

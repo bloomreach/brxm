@@ -33,6 +33,11 @@ public interface ContainerConstants {
      * <code>HttpServletRequest</code>.
      */
     String HST_RESPONSE = "org.hippoecm.hst.container.response";
+    
+    /**
+     * The reference namespace for container managed resource url.
+     */
+    String CONTAINER_REFERENCE_NAMESPACE = "org.hippoecm.hst.container.reference.namespace";
 
     /**
      * The context namespace attribute name
