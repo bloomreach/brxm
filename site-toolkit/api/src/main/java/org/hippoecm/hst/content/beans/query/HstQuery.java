@@ -17,6 +17,7 @@ package org.hippoecm.hst.content.beans.query;
 
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.filter.BaseFilter;
+import org.hippoecm.hst.content.beans.query.filter.Filter;
 
 public interface HstQuery {
 
@@ -24,6 +25,12 @@ public interface HstQuery {
 
     BaseFilter getFilter();
 
+    /**
+     * 
+     * @return a new empty Filter
+     */
+    Filter createFilter();
+    
     /**
      * Sets the limit of search results
      * @param offset

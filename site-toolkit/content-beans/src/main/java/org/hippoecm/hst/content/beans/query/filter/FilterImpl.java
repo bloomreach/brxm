@@ -1,14 +1,21 @@
 package org.hippoecm.hst.content.beans.query.filter;
 
-import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
-
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+
+import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class FilterImpl implements Filter{
 
-    StringBuilder jcrExpressionBuilder;
+    private HstRequestContext hstRequestContext; 
+    private StringBuilder jcrExpressionBuilder;
     /**
      * AND and OR filters are evaluated at the end when #getJcrExpression is called.
      * This allows us to change those filters even after those are added to filter
@@ -17,8 +24,8 @@ public class FilterImpl implements Filter{
      */
     private List<FilterTypeWrapper> childFilters = new ArrayList<FilterTypeWrapper>();
     
-    public FilterImpl(){
-        
+    public FilterImpl(HstRequestContext hstRequestContext){
+        this.hstRequestContext = hstRequestContext;
     }
 
     public void addContains(String scope, String fullTextSearch) throws FilterException{
@@ -162,15 +169,33 @@ public class FilterImpl implements Filter{
             }
         }
     }
+    
 
-    // TODO support for Long, Int, Boolean, Calendar, etc etc
-    private String getStringValue(String fieldAttributeName, Object value) throws FilterException{
-        if(value instanceof String) {
-            return "'" + value + "'";
+
+    public String getStringValue(String fieldAttributeName, Object value) throws FilterException{
+        if(value instanceof String || value instanceof Boolean || value instanceof Long || value instanceof Double) {
+            return "'" + value.toString() + "'";
+        } else if(value instanceof Calendar){
+            return getCalendarWhereXpath((Calendar)value);
+            
+        } else if(value instanceof Date){
+            Calendar cal = new GregorianCalendar();
+            cal.setTime((Date)value);
+            return getCalendarWhereXpath(cal);
         }
         throw new FilterException("Unsupported Object type '"+value.getClass().getName()+"' to query on.");
     }
     
+    public String getCalendarWhereXpath(Calendar value) throws FilterException{
+        try {
+            // TODO : is this a repository roundtrip over rmi? If so, cache locally created values?
+            Value val =  this.hstRequestContext.getSession().getValueFactory().createValue(value);
+            return "xs:dateTime('"+val.getString() + "')";
+         } catch (RepositoryException e) {
+             throw new FilterException("Repository Exception: " , e);
+         }
+    }
+
     /**
      * BaseFilter wrapper so we can distinguish between AND and or filters.
      * 

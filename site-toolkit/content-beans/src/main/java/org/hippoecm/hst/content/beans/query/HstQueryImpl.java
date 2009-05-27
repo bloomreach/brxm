@@ -30,6 +30,8 @@ import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.exceptions.ScopeException;
 import org.hippoecm.hst.content.beans.query.filter.BaseFilter;
+import org.hippoecm.hst.content.beans.query.filter.Filter;
+import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.hst.content.beans.query.filter.HstCtxWhereFilter;
 import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -65,6 +67,13 @@ public class HstQueryImpl implements HstQuery {
     public void addOrderByDescending(String fieldNameAttribute) {
         orderByList.add("@"+fieldNameAttribute + " descending");
     }
+    
+
+    public Filter createFilter() {
+        return new FilterImpl(this.hstRequestContext);
+    }
+
+
     
     public BaseFilter getFilter() {
         return this.filter;
@@ -159,6 +168,5 @@ public class HstQueryImpl implements HstQuery {
         }
         return null;
     }
-
 
 }

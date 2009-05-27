@@ -1,18 +1,18 @@
 package org.hippoecm.hst.utilities;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.hippoecm.hst.beans.NewsPage;
-import org.hippoecm.hst.beans.TextPage;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
-import org.hippoecm.hst.content.beans.query.filter.BaseFilter;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
-import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
-import org.hippoecm.hst.content.beans.query.filter.PrimaryNodeTypeFilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -34,8 +34,20 @@ public class SimpleSearchExample {
                 hstQuery.addOrderByDescending("testproject:title");
                 hstQuery.addOrderByAscending("testproject:date");
                 
-                Filter filtera = new FilterImpl();
+                Filter filtera = hstQuery.createFilter();
                 filtera.addContains(".",  query);
+  
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("nl"));
+                Date lower = null;
+                Date upper = null;;
+                try {
+                     lower = formatter.parse("22/04/2007");
+                     upper = formatter.parse("22/04/2009");
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                filtera.addBetween("testproject:date", lower, upper);
+             
                 
                 // example of chaining filters
                 /*
