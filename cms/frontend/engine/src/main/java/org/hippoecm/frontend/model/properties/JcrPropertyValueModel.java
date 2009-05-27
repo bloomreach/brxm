@@ -49,36 +49,68 @@ public class JcrPropertyValueModel extends Model {
     // dynamically reload value
     private transient boolean loaded = false;
     private transient Value value;
+    private transient PropertyDefinition propertyDefinition;
 
     private JcrPropertyModel propertyModel;
+    private boolean isMultiple = false;
     private int index = NO_INDEX;
-    private int type = PropertyType.UNDEFINED;
 
     public JcrPropertyValueModel(JcrPropertyModel propertyModel) throws RepositoryException {
-        PropertyDefinition pdef = null;
         this.propertyModel = propertyModel;
-        if (propertyModel.getItemModel().exists()) {
-            pdef = propertyModel.getProperty().getDefinition();
-        } else {
-            // property doesn't exist, try to find pdef in the node definition
-            pdef = propertyModel.getDefinition(PropertyType.UNDEFINED, false);
-            if (pdef == null) {
-                pdef = propertyModel.getDefinition(PropertyType.UNDEFINED, true);
-            }
-        }
-        if (pdef != null) {
-            type = pdef.getRequiredType();
-            if (pdef.isMultiple()) {
-                index = 0;
-            }
-        } else {
-            log.warn("No property definition found for {}", propertyModel);
-        }
+        setPropertyDefinition();
+        setIsMultiple();
     }
 
     public JcrPropertyValueModel(int index, Value value, JcrPropertyModel propertyModel) throws RepositoryException {
         this(propertyModel);
         setIndex(index);
+    }
+
+    private void setPropertyDefinition() {
+        if (propertyModel.getItemModel().exists()) {
+            try {
+                propertyDefinition = propertyModel.getProperty().getDefinition();
+            } catch (RepositoryException e) {
+                log.warn("Unable to determine property definition for {}", propertyModel, e);
+            }
+        } else {
+            // property doesn't exist, try to find pdef in the node definition
+            propertyDefinition = propertyModel.getDefinition(PropertyType.UNDEFINED, false);
+            if (propertyDefinition == null) {
+                propertyDefinition = propertyModel.getDefinition(PropertyType.UNDEFINED, true);
+            }
+        }
+        if (propertyDefinition == null) {
+            log.warn("No property definition found for {}", propertyModel);
+        }
+    }
+
+    private void setIsMultiple() {
+        // set defaults
+        isMultiple = false;
+        index = NO_INDEX;
+
+        // try to determine real values
+        if (propertyDefinition != null) {
+            //type = propertyDefinition.getRequiredType();
+            if (propertyDefinition.isMultiple()) {
+                isMultiple = true;
+                index = 0;
+            }
+        }
+    }
+
+    public int getType() {
+        // set defaults
+        int type = PropertyType.UNDEFINED;
+        
+        // try to determine real value
+        if (value != null) {
+            type = value.getType();
+        } else if (propertyDefinition != null) {
+            propertyDefinition.getRequiredType();
+        }
+        return type;
     }
 
     public int getIndex() {
@@ -96,13 +128,12 @@ public class JcrPropertyValueModel extends Model {
 
     public void setValue(Value value) {
         load();
-
         this.value = value;
 
         try {
             Property prop = propertyModel.getProperty();
-            if (prop != null) {
-                if (prop.getDefinition().isMultiple()) {
+            if (propertyDefinition != null) {
+                if (isMultiple) {
                     Value[] oldValues = prop.getValues();
                     Value[] newValues = new Value[oldValues.length];
                     for (int i = 0; i < oldValues.length; i++) {
@@ -135,7 +166,6 @@ public class JcrPropertyValueModel extends Model {
                     } else {
                         node.setProperty(name, value);
                     }
-                    this.type = pdef.getRequiredType();
                 } else {
                     log.warn("No definition found for property");
                 }
@@ -150,10 +180,6 @@ public class JcrPropertyValueModel extends Model {
         try {
             load();
             if (value != null) {
-                if (value.getType() != type) {
-                    log.warn("Internal type '{}' not equal to value type '{}'", PropertyType.nameFromValue(type),
-                            PropertyType.nameFromValue(value.getType()));
-                }
                 switch (value.getType()) {
                 case PropertyType.BOOLEAN:
                     return value.getBoolean();
@@ -178,6 +204,7 @@ public class JcrPropertyValueModel extends Model {
         load();
         try {
             ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
+            int type = getType();
             switch (type) {
             case PropertyType.BOOLEAN:
                 value = factory.createValue((Boolean) object);
@@ -201,16 +228,49 @@ public class JcrPropertyValueModel extends Model {
             log.info(ex.getMessage());
             return;
         }
-
         setValue(value);
     }
 
     @Override
     public void detach() {
-        value = null;
         loaded = false;
+        value = null;
+        propertyDefinition = null;
         propertyModel.detach();
         super.detach();
+    }
+
+    public void setIndex(int index) {
+        if (!isMultiple) {
+            return;
+        }
+        this.index = index;
+    }
+
+    private void load() {
+        if (!loaded) {
+            try {
+                Property prop = propertyModel.getProperty();
+                setPropertyDefinition();
+                setIsMultiple();
+                if (propertyDefinition != null) {
+                    if (isMultiple) {
+                        Value[] values = prop.getValues();
+                        if (index < values.length) {
+                            value = values[index];
+                        } else {
+                            value = null;
+                        }
+                    } else {
+                        value = prop.getValue();
+                    }
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+                value = null;
+            }
+            loaded = true;
+        }
     }
 
     // override Object
@@ -239,40 +299,4 @@ public class JcrPropertyValueModel extends Model {
         return new HashCodeBuilder(33, 113).append(propertyModel).append(index).toHashCode();
     }
 
-    public void setIndex(int index) {
-        if (this.index == NO_INDEX) {
-            // not a multi valued property
-            return;
-        }
-        PropertyDefinition pdef = propertyModel.getDefinition(PropertyType.UNDEFINED, index != NO_INDEX);
-        if (pdef != null && pdef.isMultiple()) {
-            this.index = index;
-        } else {
-            this.index = NO_INDEX;
-        }
-    }
-
-    private void load() {
-        if (!loaded) {
-            try {
-                Property prop = propertyModel.getProperty();
-                if (prop != null) {
-                    if (index == NO_INDEX) {
-                        value = prop.getValue();
-                    } else {
-                        Value[] values = prop.getValues();
-                        if (index < values.length) {
-                            value = values[index];
-                        } else {
-                            value = null;
-                        }
-                    }
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-                value = null;
-            }
-            loaded = true;
-        }
-    }
 }
