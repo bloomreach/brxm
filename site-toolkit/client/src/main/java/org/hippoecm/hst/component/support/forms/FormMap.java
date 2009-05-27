@@ -50,6 +50,10 @@ public class FormMap {
         }
     }
     
+    public FormMap(Map<String, String> paramMap) {
+        formMap.putAll(paramMap);
+    }
+    
     public void addFormField(String fieldName, String fieldValue) {
         formMap.put(fieldName, fieldValue);
     }
