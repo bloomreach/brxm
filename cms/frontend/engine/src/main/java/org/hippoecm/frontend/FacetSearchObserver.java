@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.Event;
@@ -133,7 +134,14 @@ public class FacetSearchObserver implements EventListener {
                     String path = event.getPath();
                     switch (event.getType()) {
                     case Event.NODE_ADDED:
-                        Node node = session.getRootNode().getNode(path.substring(1));
+                        Node node;
+                        try {
+                            node = session.getRootNode().getNode(path.substring(1));
+                        } catch (PathNotFoundException e) {
+                            // TODO: ISSUE-2584, this should be part of the async event listeners
+                            log.debug("Node not found because the session/node is not yet refreshed: " + path);
+                            break;
+                        }
                         if (node.isNodeType("hippo:facetsearch")) {
                             String uuid = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                             String docbase = session.getNodeByUUID(uuid).getPath();
