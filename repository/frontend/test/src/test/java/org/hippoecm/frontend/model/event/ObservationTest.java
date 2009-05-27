@@ -31,7 +31,6 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.observation.Event;
 
-import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.Home;
@@ -202,7 +201,7 @@ public class ObservationTest extends TestCase {
         home.processEvents();
 
         // "out-of-session" event
-        assertEquals(3, events.size());
+        assertEquals(2, events.size());
 
         context.unregisterService(observer, IObserver.class.getName());
 
@@ -214,7 +213,7 @@ public class ObservationTest extends TestCase {
         Thread.sleep(1000);
         home.processEvents();
 
-        assertEquals(3, events.size());
+        assertEquals(2, events.size());
     }
 
     @Test
@@ -228,13 +227,16 @@ public class ObservationTest extends TestCase {
 
         home.processEvents();
 
-        assertEquals(1, events.size());
+        assertEquals(0, events.size());
 
         test.addNode("sub", "nt:unstructured");
 
         home.processEvents();
 
-        assertEquals(3, events.size());
+        assertEquals(2, events.size());
+        Event event = ((JcrEvent) events.get(0)).getEvent();
+        assertEquals(Event.NODE_ADDED, event.getType());
+        assertEquals("/test/sub[1]", event.getPath());
     }
 
     @Test
@@ -308,12 +310,19 @@ public class ObservationTest extends TestCase {
 
         Node newNode = testNode.addNode("new", "nt:unstructured");
         home.processEvents();
-        assertEquals(1, events.size());
-        JcrEvent jcrEvent = (JcrEvent) events.get(0);
-        Event event = jcrEvent.getEvent();
-        assertEquals(0, event.getType());
-        assertEquals(testNode.getPath(), event.getPath());
-
+        assertEquals(2, events.size());
+        {
+            JcrEvent jcrEvent = (JcrEvent) events.get(0);
+            Event event = jcrEvent.getEvent();
+            assertEquals(Event.PROPERTY_ADDED, event.getType());
+            assertEquals(testNode.getPath() + "/jcr:primaryType", event.getPath());
+        }
+        {
+            JcrEvent jcrEvent = (JcrEvent) events.get(1);
+            Event event = jcrEvent.getEvent();
+            assertEquals(Event.NODE_ADDED, event.getType());
+            assertEquals("/test/new[1]", event.getPath());
+        }
     }
 
     @Test
@@ -373,10 +382,6 @@ public class ObservationTest extends TestCase {
         int count = 0;
         JcrEventListener listener = new JcrEventListener(new IObservationContext() {
             private static final long serialVersionUID = 1L;
-
-            public Page getPage() {
-                return null;
-            }
 
             public void notifyObservers(EventCollection<? extends IEvent> event) {
                 count++;
@@ -444,10 +449,6 @@ public class ObservationTest extends TestCase {
         JcrEventListener listener = new JcrEventListener(new IObservationContext() {
             private static final long serialVersionUID = 1L;
 
-            public Page getPage() {
-                return home;
-            }
-
             public void notifyObservers(EventCollection<? extends IEvent> collection) {
                 for (IEvent event : collection) {
                     events.add(event);
@@ -505,7 +506,26 @@ public class ObservationTest extends TestCase {
         subNode = testNode.addNode("abc");
 
         home.processEvents();
-        assertEquals(1, events.size());
+        assertEquals(0, events.size());
     }
 
+    @Test
+    public void testFixedNodeMonitor() throws Exception {
+        Node testNode = session.getRootNode().addNode("test");
+        session.save();
+
+        List<IEvent> events = new LinkedList<IEvent>();
+        JcrNodeModel model = new JcrNodeModel(testNode);
+        IObserver observer = new TestObserver(model, events);
+        context.registerService(observer, IObserver.class.getName());
+
+        home.processEvents();
+        testNode.setProperty("a", "b");
+        
+        home.processEvents();
+        assertEquals(1, events.size());
+        JcrEvent jcrEvent = (JcrEvent) events.get(0);
+        assertEquals(Event.PROPERTY_ADDED, jcrEvent.getEvent().getType());
+    }
+    
 }

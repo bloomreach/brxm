@@ -122,7 +122,9 @@ public class JcrObservationManager implements ObservationManager {
 
             properties = new HashMap<String, Object>();
             nodes = new LinkedList<String>();
-
+        }
+        
+        void init(Node node) throws RepositoryException {
             process(node, properties, nodes);
         }
 
@@ -200,6 +202,7 @@ public class JcrObservationManager implements ObservationManager {
         boolean noLocal;
 
         boolean isvirtual;
+        List<String> fixed;
         Map<String, NodeCache> pending;
         List<Event> events;
         Session session;
@@ -248,6 +251,22 @@ public class JcrObservationManager implements ObservationManager {
                 subscribe();
             } else {
                 log.error("No jcr session bound to wicket session");
+            }
+
+            fixed = new ArrayList<String>();
+            if (!isDeep) {
+                Node root = getRoot();
+                NodeCache cache = new NodeCache(root);
+                cache.init(root);
+                pending.put(absPath, cache);
+                fixed.add(absPath);
+            } else if (uuids != null) {
+                for (Node node : getReferencedNodes()) {
+                    NodeCache cache = new NodeCache(node);
+                    cache.init(node);
+                    pending.put(node.getPath(), cache);
+                    fixed.add(node.getPath());
+                }
             }
         }
 
@@ -549,15 +568,19 @@ public class JcrObservationManager implements ObservationManager {
                     try {
                         path = node.getPath();
                         paths.add(path);
+                        NodeCache cache;
                         if (pending.containsKey(path)) {
-                            Iterator<Event> iter = pending.get(path).update(node);
-                            while (iter.hasNext()) {
-                                events.add(iter.next());
-                            }
+                            cache = pending.get(path);
                         } else {
-                            NodeCache cache = new NodeCache(node);
+                            if (uuids != null) {
+                                log.debug("New cache entry for " + path + ", listener " + this.path + " uuids: " + uuids);
+                            }
+                            cache = new NodeCache(node);
                             pending.put(path, cache);
-                            events.add(cache.new NodeEvent(null, 0));
+                        }
+                        Iterator<Event> iter = cache.update(node);
+                        while (iter.hasNext()) {
+                            events.add(iter.next());
                         }
                     } catch (RepositoryException e) {
                         log.warn("Failed to process node", e);
@@ -566,8 +589,23 @@ public class JcrObservationManager implements ObservationManager {
 
                 for (String path : new ArrayList<String>(pending.keySet())) {
                     if (!paths.contains(path)) {
-                        NodeCache cache = pending.remove(path);
-                        events.add(cache.new NodeEvent(null, 0));
+                        if (!fixed.contains(path)) {
+                            pending.remove(path);
+                        } else {
+                            // update fixed nodes
+                            try {
+                                Node node = (Node) session.getItem(path);
+                                pending.get(path).init(node);
+                            } catch (ItemNotFoundException ex) {
+                                log.warn("Fixed (monitored) node was not found at " + path);
+                                fixed.remove(path);
+                                pending.remove(path);
+                            } catch (RepositoryException ex) {
+                                log.warn("Fixed (monitored) node ("+ path+") error", ex);
+                                fixed.remove(path);
+                                pending.remove(path);
+                            }
+                        }
                     }
                 }
             }
@@ -615,10 +653,10 @@ public class JcrObservationManager implements ObservationManager {
                     } else {
                         log.info("Listener disappeared during processing");
                     }
-                    events.clear();
                 } catch (RuntimeException ex) {
                     log.error("Error occured when processing event", ex);
                 }
+                events.clear();
             }
         }
 
