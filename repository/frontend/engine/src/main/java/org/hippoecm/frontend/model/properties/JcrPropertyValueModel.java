@@ -39,55 +39,53 @@ import org.slf4j.LoggerFactory;
 
 public class JcrPropertyValueModel extends Model {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(JcrPropertyValueModel.class);
-    static public int NO_INDEX = -1;
+    private static final Logger log = LoggerFactory.getLogger(JcrPropertyValueModel.class);
+    public static final int NO_INDEX = -1;
 
     // dynamically reload value
     private transient boolean loaded = false;
     private transient Value value;
 
     private JcrPropertyModel propertyModel;
-    private int index;
-    private int type;
+    private int index = NO_INDEX;
+    private int type = PropertyType.UNDEFINED;
 
     public JcrPropertyValueModel(JcrPropertyModel propertyModel) throws RepositoryException {
+        PropertyDefinition pdef = null;
         this.propertyModel = propertyModel;
         if (propertyModel.getItemModel().exists()) {
-            PropertyDefinition pdef = propertyModel.getProperty().getDefinition();
-            this.type = pdef.getRequiredType();
-            this.index = pdef.isMultiple() ? 0 : NO_INDEX;
+            pdef = propertyModel.getProperty().getDefinition();
         } else {
-            PropertyDefinition pdef = propertyModel.getDefinition(PropertyType.UNDEFINED, false);
-            if (pdef != null) {
-                this.type = pdef.getRequiredType();
-                this.index = NO_INDEX;
-            } else {
+            // property doesn't exist, try to find pdef in the node definition
+            pdef = propertyModel.getDefinition(PropertyType.UNDEFINED, false);
+            if (pdef == null) {
                 pdef = propertyModel.getDefinition(PropertyType.UNDEFINED, true);
-                if (pdef != null) {
-                    this.type = pdef.getRequiredType();
-                    this.index = NO_INDEX;
-                } else {
-                    this.type = PropertyType.UNDEFINED;
-                    this.index = NO_INDEX;
-                    log.warn("No property definition found for {}", propertyModel);
-                }
             }
+        }
+        if (pdef != null) {
+            type = pdef.getRequiredType();
+            if (pdef.isMultiple()) {
+                index = 0;
+            }
+        } else {
+            log.warn("No property definition found for {}", propertyModel);
         }
     }
 
-    public JcrPropertyValueModel(int index, Value value, JcrPropertyModel propertyModel) {
-        this.propertyModel = propertyModel;
-        this.value = value;
-        this.loaded = true;
-        if (value != null) {
-            type = value.getType();
-        } else {
-            type = PropertyType.UNDEFINED;
-        }
+    public JcrPropertyValueModel(int index, Value value, JcrPropertyModel propertyModel) throws RepositoryException {
+        this(propertyModel);
+//        this.propertyModel = propertyModel;
+//        this.value = value;
+//        this.loaded = true;
+//        if (value != null) {
+//            type = value.getType();
+//        } else {
+//            type = PropertyType.UNDEFINED;
+//        }
         setIndex(index);
     }
 
@@ -246,6 +244,10 @@ public class JcrPropertyValueModel extends Model {
     }
 
     public void setIndex(int index) {
+        if (this.index == NO_INDEX) {
+            // not a multi valued property
+            return;
+        }
         PropertyDefinition pdef = propertyModel.getDefinition(PropertyType.UNDEFINED, index != NO_INDEX);
         if (pdef != null && pdef.isMultiple()) {
             this.index = index;
