@@ -16,9 +16,11 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 
-import org.apache.commons.beanutils.MethodUtils;
+import javax.portlet.BaseURL;
+import javax.portlet.MimeResponse;
+import javax.portlet.PortletResponse;
+
 import org.hippoecm.hst.container.HstContainerPortlet;
 import org.hippoecm.hst.container.HstContainerPortletContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -33,6 +35,8 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
     
     @Override
     public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
+        String urlString = "";
+        
         String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();
         boolean containerResource = ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace);
         
@@ -64,31 +68,31 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
         
         if (!this.portletResourceURLEnabled && resourceWindowReferenceNamespace != null) {
             path.insert(0, getVirtualizedContextPath(containerURL, requestContext, pathInfo));
-            return path.toString();
-        }
-        
-        Object portletURL = null;
-        Object response = HstContainerPortletContext.getCurrentResponse();
-        
-        try {
-            if (containerURL.getActionWindowReferenceNamespace() != null) {
-                portletURL = MethodUtils.invokeMethod(response, "createActionURL", null);
-            } else if (resourceWindowReferenceNamespace != null) {
-                portletURL = MethodUtils.invokeMethod(response, "createResourceURL", null);
-            } else {
-                portletURL = MethodUtils.invokeMethod(response, "createRenderURL", null);
+            urlString = path.toString();
+        } else {
+            urlString = path.toString();
+            
+            BaseURL url = null;
+            PortletResponse response = HstContainerPortletContext.getCurrentResponse();
+            
+            if (response instanceof MimeResponse) {
+                MimeResponse mimeResponse = (MimeResponse) response;
+                
+                if (containerURL.getActionWindowReferenceNamespace() != null) {
+                    url = mimeResponse.createActionURL();
+                } else if (resourceWindowReferenceNamespace != null) {
+                    url = mimeResponse.createResourceURL();
+                } else {
+                    url = mimeResponse.createRenderURL();
+                }
+                
+                url.setParameter(HstContainerPortlet.HST_PATH_PARAM_NAME, path.toString());
+                
+                urlString = url.toString();
             }
-        
-            MethodUtils.invokeMethod(portletURL, "setParameter", new Object [] { HstContainerPortlet.HST_PATH_PARAM_NAME, path.toString() });
-        } catch (NoSuchMethodException e) {
-            throw new ContainerException("Portlet support is not available.", e);
-        } catch (IllegalAccessException e) {
-            throw new ContainerException("Portlet support is not available.", e);
-        } catch (InvocationTargetException e) {
-            throw new ContainerException("Portlet support is not available.", e);
         }
         
-        return portletURL.toString();
+        return urlString;
     }
     
 }

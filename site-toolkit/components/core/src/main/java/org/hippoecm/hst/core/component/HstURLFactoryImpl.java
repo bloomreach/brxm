@@ -17,39 +17,38 @@ package org.hippoecm.hst.core.component;
 
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
+import org.hippoecm.hst.core.container.HstContainerURLProviderProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstURLFactoryImpl implements HstURLFactory {
     
-    protected HstContainerURLProvider servletUrlProvider;
-    protected HstContainerURLProvider portletUrlProvider;
+    protected HstContainerURLProviderProvider urlProviderProvider;
 
-    public void setServletUrlProvider(HstContainerURLProvider servletUrlProvider) {
-        this.servletUrlProvider = servletUrlProvider;
+    public void setUrlProviderProvider(HstContainerURLProviderProvider urlProviderProvider) {
+        this.urlProviderProvider = urlProviderProvider;
+    }
+    
+    public HstContainerURLProviderProvider getUrlProviderProvider() {
+        return this.urlProviderProvider;
     }
     
     public HstContainerURLProvider getServletUrlProvider() {
-        return this.servletUrlProvider;
-    }
-
-    public void setPortletUrlProvider(HstContainerURLProvider portletUrlProvider) {
-        this.portletUrlProvider = portletUrlProvider;
+        return this.urlProviderProvider.getServletUrlProvider();
     }
     
     public HstContainerURLProvider getPortletUrlProvider() {
-        return this.portletUrlProvider;
+        return this.urlProviderProvider.getPortletUrlProvider();
     }
     
     public HstURL createURL(String type, String referenceNamespace, HstContainerURL containerURL) {
-        HstURLImpl url = new HstURLImpl(type, containerURL.isViaPortlet() ? this.portletUrlProvider : this.servletUrlProvider, null);
+        HstURLImpl url = new HstURLImpl(type, containerURL.isViaPortlet() ? getPortletUrlProvider() : getServletUrlProvider(), null);
         url.setReferenceNamespace(referenceNamespace);
-        
         url.setBaseContainerURL(containerURL);
         return url;
     }
     
     public HstURL createURL(String type, String referenceNamespace, HstContainerURL containerURL, HstRequestContext requestContext) {
-        HstURLImpl url = new HstURLImpl(type, requestContext.getBaseURL().isViaPortlet() ? this.portletUrlProvider : this.servletUrlProvider, requestContext);
+        HstURLImpl url = new HstURLImpl(type, requestContext.getBaseURL().isViaPortlet() ? getPortletUrlProvider() : getServletUrlProvider(), requestContext);
         url.setReferenceNamespace(referenceNamespace);
         // if container url == null, use the requestContext baseUrl
         url.setBaseContainerURL(containerURL == null ? requestContext.getBaseURL() : containerURL);
