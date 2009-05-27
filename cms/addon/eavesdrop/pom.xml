@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon</artifactId>
-    <version>2.06.04-SNAPSHOT</version>
+    <version>2.06.04</version>
   </parent>
 
   <name>Eavesdrop</name>
@@ -28,26 +28,26 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/eavesdrop</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/eavesdrop</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/eavesdrop</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_04/addon/eavesdrop</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_04/addon/eavesdrop</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_04/addon/eavesdrop</url>
   </scm>
 
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.06.04-SNAPSHOT</version>
+      <version>2.06.04</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-plugins</artifactId>
-      <version>2.06.04-SNAPSHOT</version>
+      <version>2.06.04</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-connector</artifactId>
-      <version>2.06.04-SNAPSHOT</version>
+      <version>2.06.04</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -57,12 +57,12 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.06.04-SNAPSHOT</version>
+      <version>2.06.04</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.06.04-SNAPSHOT</version>
+      <version>2.06.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
