@@ -150,7 +150,11 @@ public class JcrPropertyValueModel extends Model {
         try {
             load();
             if (value != null) {
-                switch (type) {
+                if (value.getType() != type) {
+                    log.warn("Internal type '{}' not equal to value type '{}'", PropertyType.nameFromValue(type),
+                            PropertyType.nameFromValue(value.getType()));
+                }
+                switch (value.getType()) {
                 case PropertyType.BOOLEAN:
                     return value.getBoolean();
                 case PropertyType.DATE:
