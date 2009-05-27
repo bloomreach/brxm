@@ -95,6 +95,9 @@ class ReferenceEditor extends Panel {
     }
 
     static boolean isReference(JcrPropertyValueModel valueModel) {
+        if (valueModel == null) {
+            return false;
+        }
         try {
             String asString = valueModel.getValue().getString();
             Property property = valueModel.getJcrPropertymodel().getProperty();
