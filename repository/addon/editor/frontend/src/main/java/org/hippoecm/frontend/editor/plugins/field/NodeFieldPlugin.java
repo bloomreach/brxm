@@ -33,7 +33,10 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.model.AbstractProvider;
 import org.hippoecm.frontend.editor.model.NodeTemplateProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.JcrEvent;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -54,8 +57,6 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     public NodeFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        updateProvider();
-
         // use caption for backwards compatibility; i18n should use field name
         String captionKey = field != null ? field.getName() : config.getString("caption");
         add(new Label("name", new StringResourceModel(captionKey, this, null, config.getString("caption"))));
@@ -67,8 +68,10 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
         add(required);
 
         add(createAddLink());
+        
+        updateProvider();
     }
-
+    
     @Override
     protected AbstractProvider<JcrNodeModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
             JcrNodeModel nodeModel) {
@@ -94,13 +97,14 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
 
     @Override
     public void onEvent(Iterator<? extends IEvent> events) {
-        // filter events
+        // filter events    	
         if (field == null) {
             return;
         }
         if (field.getPath().equals("*")) {
             modelChanged();
         }
+        
         while (events.hasNext()) {
             JcrEvent jcrEvent = (JcrEvent) events.next();
             Event event = jcrEvent.getEvent();
@@ -115,6 +119,9 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
                     String name = path.substring(path.lastIndexOf('/'));
                     if (name.indexOf('[') > 0) {
                         name = name.substring(0, name.indexOf('['));
+                    }
+                    if (name.startsWith("/")) {
+                    	name = name.substring(1);
                     }
                     if (name.equals(field.getPath())) {
                         modelChanged();
