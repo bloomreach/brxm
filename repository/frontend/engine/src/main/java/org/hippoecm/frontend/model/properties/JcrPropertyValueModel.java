@@ -78,14 +78,6 @@ public class JcrPropertyValueModel extends Model {
 
     public JcrPropertyValueModel(int index, Value value, JcrPropertyModel propertyModel) throws RepositoryException {
         this(propertyModel);
-//        this.propertyModel = propertyModel;
-//        this.value = value;
-//        this.loaded = true;
-//        if (value != null) {
-//            type = value.getType();
-//        } else {
-//            type = PropertyType.UNDEFINED;
-//        }
         setIndex(index);
     }
 
