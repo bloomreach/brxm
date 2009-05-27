@@ -27,11 +27,13 @@ public class HstNavigationalStateCodecImpl implements HstNavigationalStateCodec 
         } else {
             value = new String(Base64.encodeBase64(value.getBytes()));
         }
-        return value.replace('/', '-').replace('=', '_');
+        
+        return value.replace('/', '-').replace('=', '_').replace('+', '.');
     }
 
     public String decodeParameters(String value, String characterEncoding) throws UnsupportedEncodingException {
-        value = value.replace('-', '/').replace('_', '=');
+        value = value.replace('-', '/').replace('_', '=').replace('.','+');
+        
         if (characterEncoding != null) {
             return new String(Base64.decodeBase64(value.getBytes(characterEncoding)), characterEncoding);
         } else {
