@@ -162,7 +162,12 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider,
 
     public IModel model(Object object) {
         IndexedValue indexedValue = (IndexedValue) object;
-        return new JcrPropertyValueModel(indexedValue.index, indexedValue.value, this);
+        try {
+            return new JcrPropertyValueModel(indexedValue.index, indexedValue.value, this);
+        } catch (RepositoryException e) {
+            log.warn("Unable to create the JcrValueModel", e);
+            return null;
+        }
     }
 
     public int size() {
