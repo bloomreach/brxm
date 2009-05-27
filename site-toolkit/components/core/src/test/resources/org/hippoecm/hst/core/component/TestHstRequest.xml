@@ -17,14 +17,20 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-  <bean id="org.hippoecm.hst.core.container.HstContainerURLProvider"
-        class="org.hippoecm.hst.core.container.HstContainerURLProviderImpl">
+   <bean id="org.hippoecm.hst.core.container.HstNavigationalStateCodec"
+         class="org.hippoecm.hst.core.container.HstNavigationalStateCodecImpl" />
+   
+   <bean id="org.hippoecm.hst.core.container.HstContainerURLProviderProvider"
+        class="org.hippoecm.hst.core.container.HstContainerURLProviderProviderImpl">
+    <property name="urlNamespacePrefix" value="_hn:" />
     <property name="parameterNameComponentSeparator" value=":" />
+    <property name="navigationalStateCodec" ref="org.hippoecm.hst.core.container.HstNavigationalStateCodec" />
+    <property name="portletResourceURLEnabled" value="false" />
   </bean>
 
   <bean id="org.hippoecm.hst.core.component.HstURLFactory"
         class="org.hippoecm.hst.core.component.HstURLFactoryImpl">
-    <property name="servletUrlProvider" ref="org.hippoecm.hst.core.container.HstContainerURLProvider" />
+    <property name="urlProviderProvider" ref="org.hippoecm.hst.core.container.HstContainerURLProviderProvider" />
   </bean>
   
   <bean id="javax.servlet.ServletContext"
