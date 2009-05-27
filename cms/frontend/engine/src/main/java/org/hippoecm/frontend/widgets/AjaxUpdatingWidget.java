@@ -17,6 +17,8 @@ package org.hippoecm.frontend.widgets;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.calldecorator.AjaxPreprocessingCallDecorator;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.markup.ComponentTag;
@@ -45,8 +47,24 @@ public abstract class AjaxUpdatingWidget extends Panel {
             private static final long serialVersionUID = 1L;
 
             @Override
+            protected IAjaxCallDecorator getAjaxCallDecorator() {
+                return new AjaxPreprocessingCallDecorator(super.getAjaxCallDecorator()) {
+                    @Override
+                    public CharSequence decorateScript(CharSequence script) {
+
+                        return "Hippo.OnChangeTrigger.setOnChangeListener(null); " + super.decorateScript(script);
+                    }
+                };
+            }
+
+            @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 AjaxUpdatingWidget.this.onUpdate(target);
+            }
+
+            @Override
+            protected String getChannelName() {
+                return "auc|s";
             }
         });
         component.add(new AbstractBehavior() {
