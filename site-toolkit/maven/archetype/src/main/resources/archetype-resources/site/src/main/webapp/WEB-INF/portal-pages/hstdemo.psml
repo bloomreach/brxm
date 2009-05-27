@@ -26,7 +26,7 @@
       <property layout="TwoColumns" name="column" value="0" />
     </fragment>
 
-    <fragment id="hstdemo-news" type="portlet" name="${artifactId}::SiteHomePortlet">
+    <fragment id="hstdemo-sitehome" type="portlet" name="site::SiteHomePortlet">
       <property layout="TwoColumns" name="row" value="0"/>
       <property layout="TwoColumns" name="column" value="1"/>
     </fragment>

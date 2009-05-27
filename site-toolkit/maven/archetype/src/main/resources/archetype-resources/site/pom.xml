@@ -148,6 +148,7 @@
            
   <build>
     <defaultGoal>package</defaultGoal>
+    <finalName>site</finalName>
     <plugins>
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
@@ -286,11 +287,11 @@
                     <unwar src="../cms/target/${rootArtifactId}-cms-${dollar}{project.version}.war" dest="${dollar}{tomcat.hst.cms.webapp}" overwrite="true" />
                                       
                     <echo>Replacing site web application into tomcat.</echo>
-                    <delete dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.artifactId}" />
-                    <mkdir dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.artifactId}" />
-                    <unwar src="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}.war" dest="${dollar}{tomcat.server.home}/webapps/${dollar}{project.artifactId}" overwrite="true" />
+                    <delete dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}" />
+                    <mkdir dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}" />
+                    <unwar src="${dollar}{project.build.directory}/${dollar}{project.build.finalName}.war" dest="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}" overwrite="true" />
                     <delete>
-                      <fileset dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.artifactId}/WEB-INF/lib">
+                      <fileset dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}/WEB-INF/lib">
                         <include name="jcr-*.jar" />
                       </fileset>
                     </delete>
@@ -401,17 +402,17 @@
                     <unwar src="../cms/target/${rootArtifactId}-cms-${dollar}{project.version}.war" dest="${dollar}{jetspeed.hst.cms.webapp}" overwrite="true" />
                                       
                     <echo>Replacing site portlet application into jetspeed.</echo>
-                    <delete dir="${dollar}{jetspeed.server.home}/webapps/${dollar}{project.artifactId}" />
-                    <delete file="${dollar}{jetspeed.server.home}/webapps/${dollar}{project.artifactId}.war" />
-                    <delete file="${dollar}{jetspeed.portal.webapp}/WEB-INF/deploy/${dollar}{project.artifactId}.war" />
-                    <copy file="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}.war" tofile="${dollar}{jetspeed.portal.webapp}/WEB-INF/deploy/${dollar}{project.artifactId}.war" overwrite="true" />
+                    <delete dir="${dollar}{jetspeed.server.home}/webapps/${dollar}{project.build.finalName}" />
+                    <delete file="${dollar}{jetspeed.server.home}/webapps/${dollar}{project.build.finalName}.war" />
+                    <delete file="${dollar}{jetspeed.portal.webapp}/WEB-INF/deploy/${dollar}{project.build.finalName}.war" />
+                    <copy file="${dollar}{project.build.directory}/${dollar}{project.build.finalName}.war" tofile="${dollar}{jetspeed.portal.webapp}/WEB-INF/deploy/${dollar}{project.build.finalName}.war" overwrite="true" />
                     
                     <echo>Copy core libaries into jetspeed</echo>
                     <copy todir="${dollar}{jetspeed.portal.webapp}/WEB-INF/lib" overwrite="true">
-                      <fileset dir="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}/WEB-INF/lib">
+                      <fileset dir="${dollar}{project.build.directory}/${dollar}{project.build.finalName}/WEB-INF/lib">
                         <include name="commons-proxy-*.jar" />
                       </fileset>
-                      <fileset dir="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}/WEB-INF/lib">
+                      <fileset dir="${dollar}{project.build.directory}/${dollar}{project.build.finalName}/WEB-INF/lib">
                         <exclude name="commons-*.jar" />
                         <exclude name="hst-client-*.jar" />
                         <exclude name="jstl-*.jar" />
@@ -429,7 +430,7 @@
 
                     <echo>Copy hst configuration into jetspeed</echo>
                     <copy todir="${dollar}{jetspeed.portal.webapp}/WEB-INF" overwrite="true">
-                      <fileset dir="${dollar}{project.build.directory}/${dollar}{project.artifactId}-${dollar}{project.version}/WEB-INF">
+                      <fileset dir="${dollar}{project.build.directory}/${dollar}{project.build.finalName}/WEB-INF">
                         <include name="hst*.properties" />
                         <include name="hst*.xml" />
                       </fileset>

@@ -47,6 +47,7 @@
             <exclude>**/WEB-INF/jsp/tracetool*.jsp</exclude>
           </excludes>
           <includes>
+            <include>**/README</include>
             <include>**/*.jsp</include>
             <include>**/*.xml</include>
             <include>**/*.properties</include>
