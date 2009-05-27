@@ -231,25 +231,43 @@ public class AggregationValve extends AbstractValve {
             final HstComponentWindow traceToolWindow)
             throws ContainerException {
 
-        boolean traceToolWindowFlushed = false;
+        if (isDevelopmentMode) {
+            boolean traceToolWindowFlushed = false;
+    
+            for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
+                HstComponentWindow window = sortedComponentWindows[i];
+                HstRequest request = requestMap.get(window);
+                HstResponse response = responseMap.get(window);
 
-        for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
-            HstComponentWindow window = sortedComponentWindows[i];
-            HstRequest request = requestMap.get(window);
-            HstResponse response = responseMap.get(window);
-            getComponentInvoker().invokeRender(requestContainerConfig, request, response);
-            
-            if (isDevelopmentMode && !traceToolWindowFlushed && window != traceToolWindow) {
-                try {
-                    traceToolWindowFlushed = true;
-                    traceToolWindow.getResponseState().flush();
-                } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Exception during flushing the traceToolWindow's response state.", e);
-                    } else if (log.isWarnEnabled()) {
-                        log.warn("Exception during flushing the traceToolWindow's response state.");
-                    }                    
+                if (window == traceToolWindow) {
+                    try {
+                        getComponentInvoker().invokeRender(requestContainerConfig, request, response);
+                    } catch (Throwable th) {
+                        log.warn("Failed to render tracetool: {} - {}", th.toString(), th.getMessage());
+                    }
+                } else {
+                    getComponentInvoker().invokeRender(requestContainerConfig, request, response);
+                    
+                    if (isDevelopmentMode && !traceToolWindowFlushed) {
+                        try {
+                            traceToolWindowFlushed = true;
+                            traceToolWindow.getResponseState().flush();
+                        } catch (Exception e) {
+                            if (log.isDebugEnabled()) {
+                                log.warn("Exception during flushing the traceToolWindow's response state.", e);
+                            } else if (log.isWarnEnabled()) {
+                                log.warn("Exception during flushing the traceToolWindow's response state.");
+                            }                    
+                        }
+                    }
                 }
+            }
+        } else {
+            for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
+                HstComponentWindow window = sortedComponentWindows[i];
+                HstRequest request = requestMap.get(window);
+                HstResponse response = responseMap.get(window);
+                getComponentInvoker().invokeRender(requestContainerConfig, request, response);
             }
         }
     }
