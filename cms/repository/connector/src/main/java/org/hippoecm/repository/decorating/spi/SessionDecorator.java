@@ -22,25 +22,26 @@ import java.io.OutputStream;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.InvalidSerializedDataException;
-import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.version.Version;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
-import javax.jcr.version.VersionHistory;
 
 import org.apache.jackrabbit.api.XASession;
-
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
@@ -63,11 +64,29 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
     public Node copy(Node srcNode, String destAbsNodePath) throws PathNotFoundException, ItemExistsException,
             LockException, VersionException, RepositoryException {
-        Node node = remoteSession.copy(remoteSession.getRootNode().getNode(srcNode.getPath().substring(1)), destAbsNodePath);
-        String path = node.getPath();
-        Node parent = session.getRootNode().getNode(path.substring(1,path.lastIndexOf("/")));
-        parent.refresh(false);
-        return factory.getNodeDecorator(this, parent.getNode(path.substring(path.lastIndexOf("/")+1)));
+        if (destAbsNodePath.startsWith(srcNode.getPath()+"/")) {
+            String msg = srcNode.getPath() + ": Invalid destination path (cannot be descendant of source path)";
+            throw new RepositoryException(msg);
+        }
+
+        while (destAbsNodePath.startsWith("/")) {
+            destAbsNodePath = destAbsNodePath.substring(1);
+        }
+        Node destNode = getRootNode();
+        int p = destAbsNodePath.lastIndexOf("/");
+        if (p > 0) {
+            destNode = destNode.getNode(destAbsNodePath.substring(0, p));
+            destAbsNodePath = destAbsNodePath.substring(p + 1);
+        }
+        try {
+            destNode = destNode.addNode(destAbsNodePath, srcNode.getPrimaryNodeType().getName());
+            copy(srcNode, destNode);
+            return destNode;
+        } catch (ConstraintViolationException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        } catch (NoSuchNodeTypeException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        }
     }
 
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
@@ -112,4 +131,63 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     HippoSession getRemoteSession() {
         return remoteSession;
     }
+
+
+    static void copy(Node srcNode, Node destNode) throws ItemExistsException, LockException, RepositoryException {
+        try {
+            Node canonical = ((HippoNode) srcNode).getCanonicalNode();
+            boolean copyChildren = (canonical != null && canonical.isSame(srcNode));
+
+            NodeType[] mixinNodeTypes = srcNode.getMixinNodeTypes();
+            for (int i = 0; i < mixinNodeTypes.length; i++) {
+                destNode.addMixin(mixinNodeTypes[i].getName());
+            }
+
+            for (PropertyIterator iter = NodeDecorator.unwrap(srcNode).getProperties(); iter.hasNext();) {
+                Property property = iter.nextProperty();
+                PropertyDefinition definition = property.getDefinition();
+                if (!definition.isProtected()) {
+                    if (definition.isMultiple())
+                        destNode.setProperty(property.getName(), property.getValues());
+                    else
+                        destNode.setProperty(property.getName(), property.getValue());
+                }
+            }
+
+            /* Do not copy virtual nodes.  Partial virtual nodes like
+             * HippoNodeType.NT_FACETSELECT and HippoNodeType.NT_FACETSEARCH
+             * should be copied except for their children, even if though they
+             * are half virtual. On save(), the virtual part will be
+             * ignored.
+             */
+            if (copyChildren) {
+                for (NodeIterator iter = srcNode.getNodes(); iter.hasNext();) {
+                    Node node = iter.nextNode();
+                    canonical = ((HippoNode) node).getCanonicalNode();
+                    if (canonical != null && canonical.isSame(node)) {
+                        Node child;
+                        // check if the subnode is autocreated
+                        if (node.getDefinition().isAutoCreated() && destNode.hasNode(node.getName())) {
+                            child = destNode.getNode(node.getName());
+                        } else {
+                            child = destNode.addNode(node.getName(), node.getPrimaryNodeType().getName());
+                        }
+                        copy(node, child);
+                    }
+                }
+            }
+        } catch (PathNotFoundException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        } catch (VersionException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        } catch (ValueFormatException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        } catch (ConstraintViolationException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        } catch (NoSuchNodeTypeException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        }
+    }
+
 }
+
