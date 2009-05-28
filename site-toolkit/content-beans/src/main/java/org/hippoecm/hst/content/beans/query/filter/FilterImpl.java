@@ -173,20 +173,21 @@ public class FilterImpl implements Filter{
 
 
     public String getStringValue(String fieldAttributeName, Object value) throws FilterException{
-        if(value instanceof String || value instanceof Boolean || value instanceof Long || value instanceof Double) {
+        if(value instanceof String || value instanceof Boolean) {
             return "'" + value.toString() + "'";
+        } else if(value instanceof Long || value instanceof Double) {
+            return value.toString();
         } else if(value instanceof Calendar){
-            return getCalendarWhereXpath((Calendar)value);
-            
+            return getCalendarWhereXPath((Calendar)value);
         } else if(value instanceof Date){
             Calendar cal = new GregorianCalendar();
             cal.setTime((Date)value);
-            return getCalendarWhereXpath(cal);
+            return getCalendarWhereXPath(cal);
         }
         throw new FilterException("Unsupported Object type '"+value.getClass().getName()+"' to query on.");
     }
     
-    public String getCalendarWhereXpath(Calendar value) throws FilterException{
+    public String getCalendarWhereXPath(Calendar value) throws FilterException{
         try {
             // TODO : is this a repository roundtrip over rmi? If so, cache locally created values?
             Value val =  this.hstRequestContext.getSession().getValueFactory().createValue(value);
