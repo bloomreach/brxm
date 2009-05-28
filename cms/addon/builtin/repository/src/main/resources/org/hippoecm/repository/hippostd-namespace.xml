@@ -107,7 +107,7 @@
         <sv:value>published</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>gepubliceerd</sv:value>
+        <sv:value>Gepubliceerd</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -124,7 +124,7 @@
         <sv:value>published</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>live</sv:value>
+        <sv:value>Live</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -141,7 +141,7 @@
         <sv:value>unpublished</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>ongepubliceerd</sv:value>
+        <sv:value>Niet gepubliceerd</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -158,7 +158,7 @@
         <sv:value>unpublished</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>unpublished</sv:value>
+        <sv:value>Offline</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -175,7 +175,7 @@
         <sv:value>draft</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>klad</sv:value>
+        <sv:value>Klad</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -192,7 +192,7 @@
         <sv:value>draft</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>draft</sv:value>
+        <sv:value>Draft</sv:value>
       </sv:property>
     </sv:node>
 
@@ -268,7 +268,7 @@
         <sv:value>new</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>status: nieuw</sv:value>
+        <sv:value>Niet gepubliceerd</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -285,7 +285,7 @@
         <sv:value>new</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>state: new</sv:value>
+        <sv:value>Offline</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -302,7 +302,7 @@
         <sv:value>live</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>status: gepubliceerd</sv:value>
+        <sv:value>Gepubliceerd</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -319,7 +319,7 @@
         <sv:value>live</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>state: live</sv:value>
+        <sv:value>Live</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -336,7 +336,7 @@
         <sv:value>review</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>status: ter controle</sv:value>
+        <sv:value>Wacht op goedkeuring</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -353,7 +353,7 @@
         <sv:value>review</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>state: review</sv:value>
+        <sv:value>Under review</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -370,7 +370,7 @@
         <sv:value>changed</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>status: bewerkt</sv:value>
+        <sv:value>Eerdere versie is gepubliceerd</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -387,7 +387,7 @@
         <sv:value>changed</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>state: changed</sv:value>
+        <sv:value>A previous version is live</sv:value>
       </sv:property>
     </sv:node>
 
@@ -451,7 +451,7 @@
         <sv:value>en</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>taggable</sv:value>
+        <sv:value>Taggable</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -462,7 +462,7 @@
         <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>tags toestaan</sv:value>
+        <sv:value>Tags toestaan</sv:value>
       </sv:property>
     </sv:node>
 
