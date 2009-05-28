@@ -406,6 +406,7 @@
       <sv:value>extension.center</sv:value>
       <sv:value>extension.footer</sv:value>
       <sv:value>extension.search</sv:value>
+      <sv:value>extension.feedback</sv:value>
     </sv:property>
     <sv:property sv:name="extension.header" sv:type="String">
       <sv:value>service.header</sv:value>
@@ -418,6 +419,9 @@
     </sv:property>
     <sv:property sv:name="extension.search" sv:type="String">
       <sv:value>service.search</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.feedback" sv:type="String">
+      <sv:value>service.feedback</sv:value>
     </sv:property>
   </sv:node>
   
@@ -510,6 +514,18 @@
     </sv:property>
     <sv:property sv:name="extension.shortcuts" sv:type="String">
       <sv:value>service.browse.shortcuts</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="feedbackPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.root.FeedbackPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.feedback</sv:value>
     </sv:property>
   </sv:node>
 
