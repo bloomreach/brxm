@@ -120,7 +120,7 @@
                             <sv:value>hippo:harddocument</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:date" sv:type="Date">
-                            <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
+                            <sv:value>2009-08-14T10:05:07.580+02:00</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:summary" sv:type="String">
                             <sv:value/>
@@ -186,7 +186,7 @@
                             <sv:value>hippo:harddocument</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:date" sv:type="Date">
-                            <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
+                            <sv:value>2009-08-13T10:05:07.580+02:00</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:summary" sv:type="String">
                             <sv:value>Hippo CMS is a user-friendly content management system for
@@ -307,7 +307,7 @@
                             <sv:value>hippo:harddocument</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:date" sv:type="Date">
-                            <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
+                            <sv:value>2009-08-11T10:05:07.580+02:00</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:summary" sv:type="String">
                             <sv:value/>
@@ -426,7 +426,7 @@
                                         <sv:value>hippo:harddocument</sv:value>
                                     </sv:property>
                                     <sv:property sv:name="testproject:date" sv:type="Date">
-                                        <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
+                                        <sv:value>2009-08-10T10:05:07.580+02:00</sv:value>
                                     </sv:property>
                                     <sv:property sv:name="testproject:summary" sv:type="String">
                                         <sv:value>Summary about Day5Article</sv:value>
@@ -469,7 +469,7 @@
                                     <sv:value>hippo:harddocument</sv:value>
                                 </sv:property>
                                 <sv:property sv:name="testproject:date" sv:type="Date">
-                                    <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
+                                    <sv:value>2009-08-09T10:05:07.580+02:00</sv:value>
                                 </sv:property>
                                 <sv:property sv:name="testproject:summary" sv:type="String">
                                     <sv:value>Summary about AprilNewsArticle</sv:value>
@@ -538,7 +538,7 @@
                             <sv:value>hippo:harddocument</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:date" sv:type="Date">
-                            <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
+                            <sv:value>2009-04-15T10:05:07.580+02:00</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:summary" sv:type="String">
                             <sv:value>Summary about news item 1</sv:value>
@@ -580,7 +580,7 @@
                             <sv:value>hippo:harddocument</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:date" sv:type="Date">
-                            <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
+                            <sv:value>2009-03-15T10:05:07.580+02:00</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:summary" sv:type="String">
                             <sv:value>Summary about news item 2</sv:value>
@@ -622,7 +622,7 @@
                             <sv:value>hippo:harddocument</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:date" sv:type="Date">
-                            <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
+                            <sv:value>2009-02-15T10:05:07.580+02:00</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:summary" sv:type="String">
                             <sv:value>Summary about news item 3</sv:value>
