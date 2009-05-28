@@ -26,7 +26,7 @@
   <name>Hippo Site Toolkit Container CMS Application</name>
   <description>Hippo Site Toolkit Container CMS Application</description>
   <groupId>org.onehippo.ecm.hst.applications</groupId>
-  <artifactId>cms</artifactId>
+  <artifactId>hst-testcms</artifactId>
   <packaging>war</packaging>
 
   <dependencies>
