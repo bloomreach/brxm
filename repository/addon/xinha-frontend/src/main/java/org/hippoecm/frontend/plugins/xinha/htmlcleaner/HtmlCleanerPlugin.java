@@ -33,27 +33,26 @@ public class HtmlCleanerPlugin implements IPlugin, IHtmlCleanerService {
 
     static final Logger log = LoggerFactory.getLogger(HtmlCleanerPlugin.class);
 
-    private IPluginConfig config;
-    private IPluginContext context;
+    private IPluginConfig htmlCleanerConfig;
     private HtmlCleanerTemplate htmlCleanerTemplate;
 
     public HtmlCleanerPlugin(IPluginContext context, final IPluginConfig config) {
-        this.context = context;
-        this.config = config;
+        htmlCleanerConfig = config.getPluginConfig("cleaner.config");
+        if (htmlCleanerConfig != null) {
+            try {
+                context.registerService(this, IHtmlCleanerService.class.getName());
+            } catch (Exception ex) {
+                log.error("Exception whole creating HTMLCleaner template:", ex);
+            }
+        }
     }
 
     public String clean(final String value) throws Exception {
         if (htmlCleanerTemplate == null) {
-            IPluginConfig htmlCleanerConfig = config.getPluginConfig("cleaner.config");
-            if (htmlCleanerConfig != null) {
-                try {
-                    htmlCleanerTemplate = new JCRHtmlCleanerTemplateBuilder().buildTemplate(htmlCleanerConfig);
-                    context.registerService(this, IHtmlCleanerService.class.getName());
-                } catch (Exception ex) {
-                    log.error("Exception whole creating HTMLCleaner template:", ex);
-                }
-            } else {
-                log.error("No html cleaner configuration found; html will not be cleaned up");
+            try {
+                htmlCleanerTemplate = new JCRHtmlCleanerTemplateBuilder().buildTemplate(htmlCleanerConfig);
+            } catch (Exception ex) {
+                log.error("Exception whole creating HTMLCleaner template:", ex);
             }
         }
 
