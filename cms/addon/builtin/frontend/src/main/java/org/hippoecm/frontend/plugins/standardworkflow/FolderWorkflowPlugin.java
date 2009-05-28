@@ -81,6 +81,51 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
         add(new Label("new"));
 
+        add(new WorkflowAction("rename", new StringResourceModel("rename-title", this, null)) {
+            public String name;
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "rename-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                name = getInputNodeName();
+                return new WorkflowAction.NameDialog(new StringResourceModel("rename-title", FolderWorkflowPlugin.this,
+                        null), new StringResourceModel("rename-text", FolderWorkflowPlugin.this, null),
+                        new PropertyModel(this, "name"));
+            }
+
+            @Override
+            protected void execute(WorkflowDescriptorModel model) throws Exception {
+                // FIXME: this assumes that folders are always embedded in other folders
+                // and there is some logic here to look up the parent.  The real solution is
+                // in the visual component to merge two workflows.
+                Node node = model.getNode();
+                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
+                workflow.rename(node.getName() + "[" + node.getIndex() + "]", NodeNameCodec.encode(name, true));
+            }
+        });
+
+        add(reorderAction = new WorkflowAction("reorder", new StringResourceModel("reorder-folder", this, null)) {
+            public List<String> order = new LinkedList<String>();
+
+            @Override
+            protected Dialog createRequestDialog() {
+                return new ReorderDialog(this, config, (WorkflowDescriptorModel) FolderWorkflowPlugin.this.getModel(),
+                        order);
+            }
+
+            @Override
+            protected void execute(WorkflowDescriptorModel model) throws Exception {
+                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow((WorkflowDescriptor) model.getObject());
+                workflow.reorder(order);
+            }
+        });
+
         add(new WorkflowAction("delete", new StringResourceModel("delete-title", this, null)) {
             @Override
             protected ResourceReference getIcon() {
@@ -130,50 +175,6 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             }
         });
 
-        add(new WorkflowAction("rename", new StringResourceModel("rename-title", this, null)) {
-            public String name;
-
-            @Override
-            protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "rename-16.png");
-            }
-
-            @Override
-            protected Dialog createRequestDialog() {
-                name = getInputNodeName();
-                return new WorkflowAction.NameDialog(new StringResourceModel("rename-title", FolderWorkflowPlugin.this,
-                        null), new StringResourceModel("rename-text", FolderWorkflowPlugin.this, null),
-                        new PropertyModel(this, "name"));
-            }
-
-            @Override
-            protected void execute(WorkflowDescriptorModel model) throws Exception {
-                // FIXME: this assumes that folders are always embedded in other folders
-                // and there is some logic here to look up the parent.  The real solution is
-                // in the visual component to merge two workflows.
-                Node node = model.getNode();
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
-                workflow.rename(node.getName() + "[" + node.getIndex() + "]", NodeNameCodec.encode(name, true));
-            }
-        });
-
-        add(reorderAction = new WorkflowAction("reorder", new StringResourceModel("reorder-folder", this, null)) {
-            public List<String> order = new LinkedList<String>();
-
-            @Override
-            protected Dialog createRequestDialog() {
-                return new ReorderDialog(this, config, (WorkflowDescriptorModel) FolderWorkflowPlugin.this.getModel(),
-                        order);
-            }
-
-            @Override
-            protected void execute(WorkflowDescriptorModel model) throws Exception {
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow((WorkflowDescriptor) model.getObject());
-                workflow.reorder(order);
-            }
-        });
 
         onModelChanged();
     }
