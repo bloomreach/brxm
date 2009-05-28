@@ -101,6 +101,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
         }
         if (field.getPath().equals("*")) {
             modelChanged();
+            return;
         }
         
         while (events.hasNext()) {
@@ -114,12 +115,9 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
                 case Event.NODE_ADDED:
                 case Event.NODE_REMOVED:
                     String path = event.getPath();
-                    String name = path.substring(path.lastIndexOf('/'));
+                    String name = path.substring(path.lastIndexOf('/') + 1);
                     if (name.indexOf('[') > 0) {
                         name = name.substring(0, name.indexOf('['));
-                    }
-                    if (name.startsWith("/")) {
-                    	name = name.substring(1);
                     }
                     if (name.equals(field.getPath())) {
                         modelChanged();
