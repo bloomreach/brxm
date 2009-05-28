@@ -35,8 +35,10 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +63,8 @@ public class HstLinkTag extends TagSupport {
     protected String var;
     
     protected String scope;
+    
+    protected boolean external;
 
     protected Boolean escapeXml = true;
         
@@ -151,10 +155,29 @@ public class HstLinkTag extends TagSupport {
             urlString = hstUrl.toString();
         } else {
             urlString = hstResponse.createNavigationalURL(url.toString()).toString();
-      
             String customParams =  getCustomParameters(request, response);
             if(customParams != null) {
                 urlString += customParams;
+            }
+        }
+        
+        if(this.isExternal()) {
+            MatchedMapping mapping;
+            if(( mapping = hstRequest.getRequestContext().getMatchedMapping()) != null) {
+                StringBuilder builder = new StringBuilder();
+                VirtualHost vhost = mapping.getMapping().getVirtualHost();
+                if(vhost.getProtocol() == null) {
+                    builder.append("http");
+                } else {
+                    builder.append(vhost.getProtocol());
+                }
+                builder.append("://").append(request.getServerName());
+                if(vhost.isPortVisible()) {
+                    builder.append(":").append(vhost.getPortNumber());
+                }
+                urlString = builder.toString() + urlString;
+            } else {
+                log.warn("Cannot create external link because there is no virtual host to use");
             }
         }
         
@@ -189,6 +212,7 @@ public class HstLinkTag extends TagSupport {
         scope = null;
         path = null;
         link = null;
+        external = false;
         
         return EVAL_PAGE;
     }
@@ -240,8 +264,16 @@ public class HstLinkTag extends TagSupport {
         return this.path;
     }
     
+    public boolean isExternal(){
+        return this.external;
+    }
+    
     public void setLink(HstLink hstLink) {
         this.link = hstLink;
+    }
+
+    public void setExternal(boolean external) {
+        this.external = external;
     }
     
     public void setPath(String path) {

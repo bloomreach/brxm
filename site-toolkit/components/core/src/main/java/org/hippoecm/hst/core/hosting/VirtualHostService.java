@@ -162,6 +162,7 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         this.jcrPath = virtualHostService.jcrPath;
         this.siteName = virtualHostService.siteName;
         this.portNumber = virtualHostService.portNumber;
+        this.protocol = virtualHostService.protocol;
         this.portVisible = virtualHostService.portVisible;
         this.contextPathInUrl = virtualHostService.contextPathInUrl;
         this.hstMappings = virtualHostService.hstMappings;
