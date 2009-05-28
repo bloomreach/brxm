@@ -28,6 +28,10 @@
   <groupId>org.onehippo.ecm.hst.testsuite</groupId>
   <artifactId>hst-testsuite-site</artifactId>
   <packaging>war</packaging>
+  
+  <properties>
+    <site.log.dir.name>${site.webapp.root}/WEB-INF/logs</site.log.dir.name>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -342,7 +346,7 @@
       <id>jetspeed</id>
       
       <properties>
-        <site.webapp.root>${org.apache.portals.logdir}</site.webapp.root>
+        <site.log.dir.name>${org.apache.portals.logdir}</site.log.dir.name>
       </properties>
 
       <dependencies>
