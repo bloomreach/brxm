@@ -30,6 +30,16 @@
 - frontendtest:b1 (boolean)
 - frontendtest:b2 (boolean)
 
+[frontendtest:model]
+- frontendtest:long (long)
+- frontendtest:longs (long) multiple
+- frontendtest:string (string)
+- frontendtest:strings (string) multiple
+- * (long)
+- * (long) multiple
+- *
+- * multiple
+
 [frontendtest:document] > hippo:document
 - *
 + *

@@ -68,7 +68,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         }
 
         typeName = config.getString(FieldPlugin.TYPE);
-        
+
         fieldName = config.getString(FieldPlugin.FIELD);
         if (fieldName == null) {
             log.error("No field was specified in the configuration");
@@ -162,15 +162,23 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         return controller.findModel(renderer);
     }
 
+    private static class Renderer implements IClusterable {
+        IClusterControl clusterControl;
+        ModelReference modelRef;
+        
+        Renderer(ModelReference model, IClusterControl control) {
+            this.clusterControl = control;
+            this.modelRef = model;
+        }
+    }
+    
     private class TemplateController implements IClusterable {
         private static final long serialVersionUID = 1L;
 
-        private Map<C, IClusterControl> plugins;
-        private Map<C, ModelReference> models;
+        private Map<C, Renderer> childTemplates;
 
         TemplateController() {
-            plugins = new HashMap<C, IClusterControl>();
-            models = new HashMap<C, ModelReference>();
+            childTemplates = new HashMap<C, Renderer>();
         }
 
         void start(AbstractProvider<C> provider) {
@@ -181,15 +189,17 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         }
 
         void stop() {
-            for (Object model : plugins.keySet().toArray()) {
-                removeModel((C) model);
+            for (Map.Entry<C, Renderer> entry : childTemplates.entrySet()) {
+                entry.getValue().modelRef.destroy();
+                entry.getValue().clusterControl.stop();
             }
+            childTemplates.clear();
         }
 
         C findModel(IRenderService renderer) {
-            for (Map.Entry<C, IClusterControl> entry : plugins.entrySet()) {
+            for (Map.Entry<C, Renderer> entry : childTemplates.entrySet()) {
                 IPluginContext context = getPluginContext();
-                String renderId = entry.getValue().getClusterConfig().getString("wicket.id");
+                String renderId = entry.getValue().clusterControl.getClusterConfig().getString("wicket.id");
                 if (renderer == context.getService(renderId, IRenderService.class)) {
                     return entry.getKey();
                 }
@@ -202,28 +212,15 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
                 IClusterControl control = FieldPlugin.this.getTemplate(model);
                 String modelId = control.getClusterConfig().getString(RenderService.MODEL_ID);
                 ModelReference modelService = new ModelReference(modelId, model);
-                models.put(model, modelService);
 
                 modelService.init(getPluginContext());
                 control.start();
-                plugins.put(model, control);
+                childTemplates.put(model, new Renderer(modelService, control));
             } catch (TemplateEngineException ex) {
                 log.error("Failed to open editor for new model", ex);
             }
         }
 
-        private void removeModel(C model) {
-            IClusterControl plugin = plugins.remove(model);
-            if (plugin != null) {
-                plugin.stop();
-            } else {
-                log.warn("Model " + model + " was not found in list of plugins");
-            }
-            ModelReference modelService = models.remove(model);
-            if (modelService != null) {
-                modelService.destroy();
-            }
-        }
     }
 
 }
