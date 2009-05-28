@@ -152,7 +152,7 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider,
                     list.add(new IndexedValue(values[i], i));
                 }
             } else {
-                list.add(new IndexedValue(prop.getValue(), 0));
+                list.add(new IndexedValue(prop.getValue(), JcrPropertyValueModel.NO_INDEX));
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
@@ -162,11 +162,10 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider,
 
     public IModel model(Object object) {
         IndexedValue indexedValue = (IndexedValue) object;
-        try {
+        if (indexedValue.index == JcrPropertyValueModel.NO_INDEX) {
+            return new JcrPropertyValueModel(this);
+        } else {
             return new JcrPropertyValueModel(indexedValue.index, indexedValue.value, this);
-        } catch (RepositoryException e) {
-            log.warn("Unable to create the JcrValueModel", e);
-            return null;
         }
     }
 

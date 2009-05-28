@@ -70,6 +70,7 @@ public class ValueTemplateProvider extends AbstractProvider<JcrPropertyValueMode
                     node.setProperty(path, value);
                     index = JcrPropertyValueModel.NO_INDEX;
                 }
+                getItemModel().detach();
             } else {
                 if (!descriptor.isMultiple()) {
                     log.error("cannot add more than one value to single-valued property");
