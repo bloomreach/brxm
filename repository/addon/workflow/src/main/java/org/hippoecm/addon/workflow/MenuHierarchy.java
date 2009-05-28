@@ -88,11 +88,13 @@ class MenuHierarchy {
         }
         if(submenus.containsKey("default")) {
             MenuHierarchy submenu = submenus.get("default");
+            /* [AC] skipping spacer - not used anywhere yet and it causes esthetical problems with the workflow toolbar
             put(new ActionDescription("spacer") {
                 @Override
                 public void invoke() {
                 }
             });
+            */
             for(ActionDescription action : submenu.items) {
                 if(!action.isVisible()) {
                     continue;

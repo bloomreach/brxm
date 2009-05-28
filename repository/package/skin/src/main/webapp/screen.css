@@ -394,7 +394,7 @@ width: 156px;
 
 /* override from wicket styles */
 .hippo-toolbar-section-button{
-width: 90px; display: block; height: 17px; padding-left: 24px; padding-top: 1px;
+width: 110px; display: block; height: 15px; padding-left: 4px; padding-top: 3px;
 border: 1px solid #e3e3e3;
 background: url("images/hippo-toolbar-menu-item.png") no-repeat right -20px;
 cursor: pointer;
@@ -419,9 +419,9 @@ color: black
 
 .hippo-toolbar-section li.icon-16 div{position: relative}
 
-.menu-action{padding-left: 8px; padding-right: 8px; padding-top: 1px; background-image: none; border: 1px solid #e3e3e3; display: block; cursor: pointer; min-width:100px; height: 17px;}
+.menu-action{padding-left: 8px; padding-right: 8px; padding-top: 4px; background-image: none; border: 1px solid #e3e3e3; display: block; cursor: pointer; min-width:100px; height: 14px;}
 .menu-action:hover{border: 1px solid #000000;background-color: #fff6e0;}
-.menu-action-text{width: 90px; height: 17px; vertical-align: top; padding-top: 0px; margin-top: 0px; clip-rect(0px,0px,15px,100px);}
+.menu-action-text{width: 90px; height: 17px; vertical-align: top; padding-top: 0px; margin-top: 0px; }
 .menu-action-icon{padding-top: 0px;}
 .menu-label{padding-left: 4px; padding-right: 8px; padding-top: 3px; background-image: none; border: 0px solid #e3e3e3; display: block; min-width:100px; height: 17px; white-space: nowrap; }
 .menu-spacer{width:80px;}
