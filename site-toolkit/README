@@ -17,7 +17,7 @@ How to test and build Hippo Site Toolkit
 
 3. Testing
 
-  (1) Start a repository server with test contents.
+  (1) Start a repository server with test contents (/testsuite/cms).
 
   (2) Build and Run Tests
 
@@ -37,11 +37,11 @@ How to test and build Hippo Site Toolkit
   (1) With Embedded Jetty
 
     - Run the example cms repository first.
-    - After Building, run the following command under /applications/site/ folder.
+    - After Building, run the following command under /testsuite/site/ folder.
 
       $ mvn jetty:run-war
   
-    - Visit the page: http://localhost:8085/site/content/news
+    - Visit the page: http://127.0.0.1:8085/site/content/news
     
   (2) With Tomcat
 
@@ -51,7 +51,7 @@ How to test and build Hippo Site Toolkit
   
       $ mvn -P tomcat clean install -DskipTests
   
-    - Visit the page: http://localhost:8080/site/content/news
+    - Visit the page: http://127.0.0.1:8080/site/content/news
     - You can visit cms by http://localhost:8080/cms/
       and console by http://localhost:8080/cms/console.
 
