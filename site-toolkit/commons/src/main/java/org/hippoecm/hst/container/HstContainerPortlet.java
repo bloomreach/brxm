@@ -103,7 +103,7 @@ public class HstContainerPortlet extends GenericPortlet {
     }
 
     protected void processRequest(PortletRequest request, PortletResponse response) throws PortletException, IOException {
-        new HstContainerPortletContext(request, response);
+        HstContainerPortletContext.reset(request, response);
         
         try {
             String hstPathInfo = this.defaultHstPathInfo;
@@ -136,7 +136,7 @@ public class HstContainerPortlet extends GenericPortlet {
                 throw new PortletException("Unsupported Portlet lifecycle: " + request.getAttribute(PortletRequest.LIFECYCLE_PHASE));
             }
         } finally {
-            HstContainerPortletContext.reset();
+            HstContainerPortletContext.reset(null, null);
         }
     }
     

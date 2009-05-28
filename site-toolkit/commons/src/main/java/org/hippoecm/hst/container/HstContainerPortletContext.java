@@ -1,26 +1,25 @@
 package org.hippoecm.hst.container;
 
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
+
 
 public final class HstContainerPortletContext {
     
-    private static final ThreadLocal<Object> tlRequest = new ThreadLocal<Object>();
-    private static final ThreadLocal<Object> tlResponse = new ThreadLocal<Object>();
+    private static final ThreadLocal<PortletRequest> tlRequest = new ThreadLocal<PortletRequest>();
+    private static final ThreadLocal<PortletResponse> tlResponse = new ThreadLocal<PortletResponse>();
 
-    protected HstContainerPortletContext(Object request, Object response) {
-        tlRequest.set(request);
-        tlResponse.set(response);
+    public static final PortletRequest getCurrentRequest() {
+        return tlRequest.get();
     }
     
-    public static final <T> T getCurrentRequest() {
-        return (T) tlRequest.get();
+    public static final PortletResponse getCurrentResponse() {
+        return tlResponse.get();
     }
     
-    public static final <T> T getCurrentResponse() {
-        return (T) tlResponse.get();
+    protected static void reset(PortletRequest portletRequest, PortletResponse portletResponse) {
+        tlRequest.set(portletRequest);
+        tlResponse.set(portletResponse);
     }
     
-    protected static void reset() {
-        tlRequest.set(null);
-        tlResponse.set(null);
-    }
 }
