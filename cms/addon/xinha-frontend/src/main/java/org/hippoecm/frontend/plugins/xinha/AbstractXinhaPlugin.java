@@ -30,13 +30,17 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.Page;
+import org.apache.wicket.Request;
 import org.apache.wicket.RequestCycle;
+import org.apache.wicket.Response;
 import org.apache.wicket.Session;
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.AbstractHeaderContributor;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.ComponentTag;
@@ -47,6 +51,7 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -93,7 +98,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     private final String mode;
     private TextArea editor;
     private Configuration configuration;
-    private AbstractDefaultAjaxBehavior postBehavior;
+    private AbstractAjaxBehavior postBehavior;
 
     private InternalLinkBehavior linkPickerBehavior;
     private ExternalLinkBehavior externalLinkBehavior;
@@ -335,19 +340,43 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             }
         };
 
-        postBehavior = new AbstractDefaultAjaxBehavior() {
+        postBehavior = new AbstractAjaxBehavior() {
             private static final long serialVersionUID = 1L;
 
-            @Override
-            protected void respond(AjaxRequestTarget target) {
-                RequestCycle requestCycle = RequestCycle.get();
-                boolean save = Boolean.valueOf(requestCycle.getRequest().getParameter("save")).booleanValue();
+            public void onRequest() {
+                IRequestTarget requestTarget = new IRequestTarget() {
+                    public void respond(RequestCycle requestCycle) {
+                        WebResponse r = (WebResponse) requestCycle.getResponse();
+
+                        // Determine encoding
+                        final String encoding = Application.get().getRequestCycleSettings()
+                                .getResponseRequestEncoding();
+                        r.setCharacterEncoding(encoding);
+                        r.setContentType("application/json; charset=" + encoding);
+
+                        // Make sure it is not cached
+                        r.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
+                        r.setHeader("Cache-Control", "no-cache, must-revalidate");
+                        r.setHeader("Pragma", "no-cache");
+
+                        handleRequest(requestCycle.getRequest(), r);
+                    }
+
+                    public void detach(RequestCycle requestCycle) {
+                    }
+
+                };
+                RequestCycle.get().setRequestTarget(requestTarget);
+            }
+
+            protected void handleRequest(Request request, Response response) {
+                boolean save = Boolean.valueOf(request.getParameter("save")).booleanValue();
                 if (save) {
                     editor.processInput();
                     //target.appendJavascript(XINHA_SAVED_FLAG);
                 }
 
-                String browse = requestCycle.getRequest().getParameter("browse");
+                String browse = request.getParameter("browse");
                 if (browse != null) {
 
                     if ("".equals(browse)) {
@@ -387,8 +416,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                         log.error(e.getMessage());
                     }
 
-                    target.appendJavascript("[" + sb.toString() + "]");
-
+                    response.write("[" + sb.toString() + "]");
                 }
             }
         };
