@@ -18,13 +18,13 @@
 # Unit testing properties
 development.mode = false
 
-test.default.repository.address = target/storage
-#test.default.repository.address = rmi://127.0.0.1/hipporepository
+#test.default.repository.address = target/storage
+test.default.repository.address = rmi://127.0.0.1/hipporepository
 test.default.repository.user.name = admin
 test.default.repository.password = admin
 
-test.writable.repository.address = target/storage-writable
-#test.writable.repository.address = rmi://127.0.0.1/hipporepository
+#test.writable.repository.address = target/storage-writable
+test.writable.repository.address = rmi://127.0.0.1/hipporepository
 test.writable.repository.user.name = editor
 test.writable.repository.password = editor
 
