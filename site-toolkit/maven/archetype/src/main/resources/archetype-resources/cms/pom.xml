@@ -80,6 +80,7 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
+    <finalName>cms</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

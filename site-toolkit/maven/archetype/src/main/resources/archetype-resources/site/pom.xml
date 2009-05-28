@@ -284,7 +284,7 @@
                     <echo>Replacing cms web application into tomcat.</echo>
                     <delete dir="${dollar}{tomcat.hst.cms.webapp}" />
                     <mkdir dir="${dollar}{tomcat.hst.cms.webapp}" />
-                    <unwar src="../cms/target/${rootArtifactId}-cms-${dollar}{project.version}.war" dest="${dollar}{tomcat.hst.cms.webapp}" overwrite="true" />
+                    <unwar src="../cms/target/cms.war" dest="${dollar}{tomcat.hst.cms.webapp}" overwrite="true" />
                                       
                     <echo>Replacing site web application into tomcat.</echo>
                     <delete dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}" />
@@ -399,7 +399,7 @@
                     <echo>Replacing cms web application into Jetspeed.</echo>
                     <delete dir="${dollar}{jetspeed.hst.cms.webapp}" />
                     <mkdir dir="${dollar}{jetspeed.hst.cms.webapp}" />
-                    <unwar src="../cms/target/${rootArtifactId}-cms-${dollar}{project.version}.war" dest="${dollar}{jetspeed.hst.cms.webapp}" overwrite="true" />
+                    <unwar src="../cms/target/cms.war" dest="${dollar}{jetspeed.hst.cms.webapp}" overwrite="true" />
                                       
                     <echo>Replacing site portlet application into jetspeed.</echo>
                     <delete dir="${dollar}{jetspeed.server.home}/webapps/${dollar}{project.build.finalName}" />

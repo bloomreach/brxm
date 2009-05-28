@@ -684,7 +684,7 @@
         <module>components</module>
         <module>client</module>
         <module>maven</module>
-        <module>applications</module>
+        <module>testsuite</module>
       </modules>
     </profile>
     

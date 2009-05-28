@@ -19,14 +19,14 @@
 
   <parent>
     <groupId>org.onehippo.ecm.hst</groupId>
-    <artifactId>applications</artifactId>
+    <artifactId>testsuite</artifactId>
     <version>2.03.06-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Site Toolkit Container Web Application</name>
-  <description>Hippo Site Toolkit Container Web Application</description>
-  <groupId>org.onehippo.ecm.hst.applications</groupId>
-  <artifactId>hst-testsite</artifactId>
+  <name>Hippo Site Toolkit Test Suite SITE Application</name>
+  <description>Hippo Site Toolkit Test Suite SITE Application</description>
+  <groupId>org.onehippo.ecm.hst.testsuite</groupId>
+  <artifactId>hst-testsuite-site</artifactId>
   <packaging>war</packaging>
 
   <dependencies>
@@ -298,7 +298,7 @@
                     <echo>Replacing cms web application into tomcat.</echo>
                     <delete dir="${tomcat.hst.cms.webapp}" />
                     <mkdir dir="${tomcat.hst.cms.webapp}" />
-                    <unwar src="../cms/target/cms-${project.version}.war" dest="${tomcat.hst.cms.webapp}" overwrite="true" />
+                    <unwar src="../cms/target/cms.war" dest="${tomcat.hst.cms.webapp}" overwrite="true" />
                                       
                     <echo>Replacing site web application into tomcat.</echo>
                     <delete dir="${tomcat.server.home}/webapps/${project.build.finalName}" />
@@ -397,7 +397,7 @@
                     <echo>Replacing cms web application into jetspeed.</echo>
                     <delete dir="${jetspeed.hst.cms.webapp}" />
                     <mkdir dir="${jetspeed.hst.cms.webapp}" />
-                    <unwar src="../cms/target/cms-${project.version}.war" dest="${jetspeed.hst.cms.webapp}" overwrite="true" />
+                    <unwar src="../cms/target/cms.war" dest="${jetspeed.hst.cms.webapp}" overwrite="true" />
                                       
                     <echo>Replacing site portlet application into jetspeed.</echo>
                     <delete dir="${jetspeed.server.home}/webapps/${project.build.finalName}" />

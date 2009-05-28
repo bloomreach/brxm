@@ -17,9 +17,9 @@
     
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.onehippo.ecm.hst</groupId>
-    <artifactId>applications</artifactId>
-    <name>Hippo Site Toolkit Applications</name>
-    <description>Hippo Site Toolkit Applications</description>
+    <artifactId>testsuite</artifactId>
+    <name>Hippo Site Toolkit Test Suite</name>
+    <description>Hippo Site Toolkit Test Suite</description>
     <parent>
       <groupId>org.onehippo.ecm</groupId>
       <artifactId>hst</artifactId>
