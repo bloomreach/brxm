@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.rmi.RemoteException;
+import java.text.DateFormat;
+import java.util.Date;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -51,6 +53,7 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
+import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,18 +92,17 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                         OnCloseDialog.Actions actions = new OnCloseDialog.Actions() {
                             public void revert() {
                                 try {
-                                    WorkflowDescriptor descriptor = (WorkflowDescriptor)plugin.getModelObject();
-                                    WorkflowManager manager = ((UserSession)org.apache.wicket.Session.get()).getWorkflowManager();
-                                    javax.jcr.Session session = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
-                                    Node handleNode = ((WorkflowDescriptorModel)plugin.getModel()).getNode();
+                                    UserSession session = (UserSession) org.apache.wicket.Session.get();
+                                    WorkflowDescriptor descriptor = (WorkflowDescriptor) plugin.getModelObject();
+                                    WorkflowManager manager = session.getWorkflowManager();
+                                    Node handleNode = ((WorkflowDescriptorModel) plugin.getModel()).getNode();
                                     if (handleNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                                         handleNode = handleNode.getParent();
                                     }
                                     handleNode.refresh(false);
                                     handleNode.getSession().refresh(true);
-                                    Workflow workflow = manager.getWorkflow(descriptor);
-                                    ((BasicReviewedActionsWorkflow)workflow).disposeEditableInstance();
-                                    session.refresh(true);
+                                    ((EditableWorkflow) manager.getWorkflow(descriptor)).disposeEditableInstance();
+                                    session.getJcrSession().refresh(true);
                                 } catch (RepositoryException ex) {
                                     log.error("failure while reverting", ex);
                                 } catch (WorkflowException ex) {
@@ -109,16 +111,16 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                                     log.error("failure while reverting", ex);
                                 }
                             }
+
                             public void save() {
                                 try {
-                                    WorkflowDescriptor descriptor = (WorkflowDescriptor)plugin.getModelObject();
-                                    WorkflowManager manager = ((UserSession)org.apache.wicket.Session.get()).getWorkflowManager();
-                                    javax.jcr.Session session = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
-                                    session.save();
-                                    session.refresh(true);
-                                    Workflow workflow = manager.getWorkflow(descriptor);
-                                    ((BasicReviewedActionsWorkflow)workflow).commitEditableInstance();
-                                    session.refresh(false);
+                                    UserSession userSession = (UserSession) org.apache.wicket.Session.get();
+                                    WorkflowDescriptor descriptor = (WorkflowDescriptor) plugin.getModelObject();
+                                    WorkflowManager manager = userSession.getWorkflowManager();
+                                    userSession.getJcrSession().save();
+                                    userSession.getJcrSession().refresh(true);
+                                    ((EditableWorkflow) manager.getWorkflow(descriptor)).disposeEditableInstance();
+                                    userSession.getJcrSession().refresh(false);
                                 } catch (RepositoryException ex) {
                                     log.error("failure while reverting", ex);
                                 } catch (WorkflowException ex) {
@@ -127,6 +129,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                                     log.error("failure while reverting", ex);
                                 }
                             }
+
                             public void close() {
                                 IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
                                 try {
@@ -176,38 +179,43 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
 
-                ((UserSession) Session.get()).getJcrSession().refresh(false);
+                DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+                info(new StringResourceModel("saved", EditingReviewedActionsWorkflowPlugin.this, null,
+                        new Object[] { df.format(new Date()) }).getString());
+
+                UserSession session = (UserSession) Session.get();
+                session.getJcrSession().refresh(false);
 
                 // get new instance of the workflow, previous one may have invalidated itself
                 EditingReviewedActionsWorkflowPlugin.this.getModel().detach();
                 WorkflowDescriptor descriptor = (WorkflowDescriptor) (EditingReviewedActionsWorkflowPlugin.this
                         .getModel().getObject());
-                ((UserSession) Session.get()).getJcrSession().refresh(true);
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                session.getJcrSession().refresh(true);
+                WorkflowManager manager = session.getWorkflowManager();
                 workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow(descriptor);
 
                 Document draft = workflow.obtainEditableInstance();
                 IModelReference ref = context.getService(config.getString("model.id"), IModelReference.class);
-                ref.setModel(new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByUUID(
-                        draft.getIdentity())));
+                ref.setModel(new JcrNodeModel(session.getJcrSession().getNodeByUUID(draft.getIdentity())));
                 return null;
             }
         });
-
 
         add(new WorkflowAction("done", new StringResourceModel("done", this, null, "Done").getString(), null) {
             @Override
             public String execute(Workflow wf) throws Exception {
                 IPluginConfig config = getPluginConfig();
                 IBrowseService browser = context.getService(config.getString("browser.id"), IBrowseService.class);
-                IRenderService browserRenderer = context.getService(config.getString("browser.id"), IRenderService.class);
-                IEditor editor = context.getService(config.getString(IEditorManager.EDITOR_ID),IEditor.class);
+                IRenderService browserRenderer = context.getService(config.getString("browser.id"),
+                        IRenderService.class);
+                IEditor editor = context.getService(config.getString(IEditorManager.EDITOR_ID), IEditor.class);
 
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
                 ((UserSession) Session.get()).getJcrSession().refresh(true);
 
-                browser.browse(new JcrNodeModel(((WorkflowDescriptorModel) EditingReviewedActionsWorkflowPlugin.this.getModel()).getNode()));
+                browser.browse(new JcrNodeModel(((WorkflowDescriptorModel) EditingReviewedActionsWorkflowPlugin.this
+                        .getModel()).getNode()));
 
                 closing = true;
                 editor.close();

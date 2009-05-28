@@ -1098,3 +1098,10 @@ div.hippo-controlpanel-actions-top{border-bottom: 1px solid #afafaf; border-top:
   color: #000;
   padding:3px;
 }
+
+#global-feedback-container {
+  border: 1px solid #e3e3e3;
+  background-color: #FFF6E0;
+  color: #333333;
+  padding-top: 2px;
+}
