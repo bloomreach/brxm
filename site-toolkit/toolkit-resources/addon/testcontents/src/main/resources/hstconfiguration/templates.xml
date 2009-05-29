@@ -112,7 +112,7 @@
             <sv:value>hst:template</sv:value>
         </sv:property>
         <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>/WEB-INF/jsp/spring/contactspring.jsp</sv:value>
+            <sv:value>spring/contactspring.do</sv:value>
         </sv:property>
     </sv:node>
     

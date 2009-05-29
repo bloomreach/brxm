@@ -15,6 +15,39 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
+  <!--
+  In this example, it is assumed that the render path property (hst:renderpath) is set to 
+  'spring/contactspring.do' in the HST configurations in the repository.
+  
+  SimpleUrlHandlerMapping and InternalResourceViewResolver is configured to allow simple JSP page based views,
+  and UrlFilenameViewController is configured to have simple view controller without a controller java class 
+  just for simplicity.
+  
+  Also, you can set the render path property (hst:renderpath) to '/WEB-INF/jsp/spring/contactspring.jsp' directly.
+  In that case, the dispatching to render path is directly done without passing through the spring framework's DispatcherServlet.
+  
+  Note: The DispatcherServlet in web.xml should be configured to have 'cleanupAfterInclude = false' as init parameter when
+        the application is running under portlet/portal environment.
+  -->
+
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+    <property name="prefix" value="/WEB-INF/jsp/"/>
+    <property name="suffix" value=".jsp"/>
+  </bean>
+
+  <bean
+    class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <property name="mappings">
+      <value>
+        /spring/contactspring.do=contactViewController
+      </value>
+    </property>
+  </bean>
+
+  <bean id="contactViewController"
+    class="org.springframework.web.servlet.mvc.UrlFilenameViewController" />
+
   <!-- HST Component Beans -->
   <bean id="contactBean" class="org.hippoecm.hst.components.ContactSpring">
     <property name="mailSender" ref="mailSender" />
