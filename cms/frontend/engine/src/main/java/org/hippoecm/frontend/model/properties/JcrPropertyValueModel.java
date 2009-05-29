@@ -58,13 +58,23 @@ public class JcrPropertyValueModel extends Model {
     private int index = NO_INDEX;
     private int type = NO_TYPE;
 
-    // single-valued constructor
+    /**
+     * single-valued constructor.
+     * 
+     * @param propertyModel 
+     */
     public JcrPropertyValueModel(JcrPropertyModel propertyModel) {
         this.propertyModel = propertyModel;
     }
 
-    // multi-valued property constructor
-    // Can be used for single-valued properties by setting index to NO_INDEX
+    /**
+     * Multi-valued property constructor.
+     * Can be used for single-valued properties by setting index to NO_INDEX
+     * 
+     * @param index
+     * @param value
+     * @param propertyModel 
+     */
     public JcrPropertyValueModel(int index, Value value, JcrPropertyModel propertyModel) {
         this.propertyModel = propertyModel;
         this.value = value;
