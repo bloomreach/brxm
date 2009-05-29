@@ -33,6 +33,7 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
@@ -109,7 +110,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             }
         });
 
-        add(reorderAction = new WorkflowAction("reorder", new StringResourceModel("reorder-folder", this, null)) {
+        add(reorderAction = new WorkflowAction("reorder", new StringResourceModel("reorder-folder", this, null)
+                .getString(), new ResourceReference(getClass(), "reorder-16.png")) {
             public List<String> order = new LinkedList<String>();
 
             @Override
@@ -175,7 +177,6 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             }
         });
 
-
         onModelChanged();
     }
 
@@ -201,15 +202,15 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 for (final String category : prototypes.keySet()) {
                     String categoryLabel = new StringResourceModel("add-category", this, null,
                             new Object[] { new StringResourceModel(category, this, null) }).getString();
-                    list.add(new WorkflowAction("id", categoryLabel, new ResourceReference(getClass(),
-                            "document-new-16.png")) {
+                    list.add(new WorkflowAction("id", categoryLabel, new ResourceReference(getClass(), category
+                            + "-16.png")) {
                         public String prototype;
                         public String targetName;
 
                         @Override
                         protected Dialog createRequestDialog() {
-                            return new FolderWorkflowDialog(this, new StringResourceModel(category, FolderWorkflowPlugin.this, null), category, prototypes
-                                    .get(category));
+                            return new FolderWorkflowDialog(this, new StringResourceModel(category,
+                                    FolderWorkflowPlugin.this, null), category, prototypes.get(category));
                         }
 
                         @Override
@@ -241,7 +242,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 }
 
                 AbstractView add;
-                replace(add = new AbstractView("new", new ListDataProvider(list)) {
+                replace(add = new AbstractView("new", createListDataProvider(list)) {
 
                     @Override
                     protected void populateItem(Item item) {
@@ -257,6 +258,10 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
         } catch (RemoteException ex) {
             log.error(ex.getClass().getName() + ": " + ex.getMessage());
         }
+    }
+
+    protected IDataProvider createListDataProvider(List<StdWorkflow> list) {
+        return new ListDataProvider(list);
     }
 
     @SuppressWarnings("unchecked")

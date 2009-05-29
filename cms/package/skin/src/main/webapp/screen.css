@@ -380,6 +380,11 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
 border: 1px solid #000000;
 }
 
+.hippo-toolbar-section a.menu-action {
+  padding-top: 2px;
+  height: 16px;
+}
+
 /* Dropdown menu */
 /* ================================================ */ 
 .hippo-toolbar-menu-item{
@@ -394,7 +399,7 @@ width: 156px;
 
 /* override from wicket styles */
 .hippo-toolbar-section-button{
-width: 110px; display: block; height: 15px; padding-left: 4px; padding-top: 3px;
+width: 110px; display: block; height: 16px; padding-left: 4px; padding-top: 2px;
 border: 1px solid #e3e3e3;
 background: url("images/hippo-toolbar-menu-item.png") no-repeat right -20px;
 cursor: pointer;
