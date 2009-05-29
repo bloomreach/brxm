@@ -96,6 +96,16 @@ public class JcrPropertyValueModelTest extends PluginTest {
         valueModel.setObject("y");
     }
 
+    @Test
+    public void testIllegalProperty() throws Exception {
+        Node test = this.root.addNode("test", "frontendtest:model");
+        JcrPropertyModel propModel = new JcrPropertyModel(test.getPath() + "/frontendtest:invalid");
+        JcrPropertyValueModel valueModel = new JcrPropertyValueModel(propModel);
+        valueModel.setObject(Boolean.TRUE);
+        valueModel.detach();
+        assertEquals(null, valueModel.getObject());
+    }
+
     protected Value createValue(String value) throws UnsupportedRepositoryOperationException, RepositoryException {
         return session.getValueFactory().createValue(value);
     }

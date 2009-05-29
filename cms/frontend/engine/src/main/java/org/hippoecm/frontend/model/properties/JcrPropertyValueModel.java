@@ -44,7 +44,10 @@ public class JcrPropertyValueModel extends Model {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(JcrPropertyValueModel.class);
+
     public static final int NO_INDEX = -1;
+
+    private static final int NO_TYPE = -1;
 
     // dynamically reload value
     private transient boolean loaded = false;
@@ -53,7 +56,7 @@ public class JcrPropertyValueModel extends Model {
 
     private JcrPropertyModel propertyModel;
     private int index = NO_INDEX;
-    private int type = PropertyType.UNDEFINED;
+    private int type = NO_TYPE;
 
     // single-valued constructor
     public JcrPropertyValueModel(JcrPropertyModel propertyModel) {
@@ -93,7 +96,7 @@ public class JcrPropertyValueModel extends Model {
     }
 
     public int getType() {
-        if (type == PropertyType.UNDEFINED) {
+        if (type == NO_TYPE) {
             // try to determine real value
             if (value != null) {
                 type = value.getType();
@@ -101,6 +104,8 @@ public class JcrPropertyValueModel extends Model {
                 PropertyDefinition def = getPropertyDefinition();
                 if (def != null) {
                     type = def.getRequiredType();
+                } else {
+                    type = PropertyType.UNDEFINED;
                 }
             }
         }
@@ -236,6 +241,9 @@ public class JcrPropertyValueModel extends Model {
 
     public void setIndex(int index) {
         PropertyDefinition pdef = getPropertyDefinition();
+        if (pdef == null) {
+            return;
+        }
         if (!pdef.isMultiple()) {
             throw new IllegalArgumentException("Setting the index on a single valued property");
         }
