@@ -30,6 +30,10 @@
   <groupId>${groupId}</groupId>
   <packaging>war</packaging>
 
+  <properties>
+    <site.log.dir.name>${dollar}{site.webapp.root}/WEB-INF/logs</site.log.dir.name>
+  </properties>
+  
   <dependencies>
     <!-- Dependencies needed to be able to send mail -->
     <dependency>
@@ -153,13 +157,16 @@
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.10</version>
+        <version>6.1.18</version>
         <configuration>
           <stopPort>9967</stopPort>
           <stopKey>stopSiteJetty</stopKey>
           <scanIntervalSeconds>5</scanIntervalSeconds>
-          <webAppConfig>            
+          <webAppConfig>
             <contextPath>/site</contextPath>
+            <baseResource implementation="org.mortbay.resource.ResourceCollection">
+              <resourcesAsCSV>src/main/webapp, ${dollar}{project.build.directory}/${dollar}{project.build.finalName}</resourcesAsCSV>
+            </baseResource>
             <tempDirectory>${dollar}{project.build.directory}/work</tempDirectory>
           </webAppConfig>
           <connectors>
@@ -239,6 +246,14 @@
         </executions>
       </plugin>
     </plugins>
+    
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    
   </build>
   
   <profiles>
@@ -322,6 +337,10 @@
     
     <profile>
       <id>jetspeed</id>
+      
+      <properties>
+        <site.log.dir.name>${dollar}{org.apache.portals.logdir}</site.log.dir.name>
+      </properties>
       
       <dependencies>
         <dependency>
