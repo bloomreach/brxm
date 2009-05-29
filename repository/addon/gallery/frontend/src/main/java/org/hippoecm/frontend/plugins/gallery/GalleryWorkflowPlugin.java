@@ -32,10 +32,12 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
@@ -74,9 +76,11 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
 
             List<String> galleryTypes = null;
             try {
-                WorkflowManager manager = ((UserSession)Session.get()).getWorkflowManager();
-                WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this.getModel();
-                GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(GalleryWorkflowPlugin.this.getPluginConfig().getString("workflow.categories"), workflowDescriptorModel.getNode());
+                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
+                        .getModel();
+                GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(GalleryWorkflowPlugin.this
+                        .getPluginConfig().getString("workflow.categories"), workflowDescriptorModel.getNode());
                 if (workflow == null) {
                     GalleryWorkflowPlugin.log.error("No gallery workflow accessible");
                 } else {
@@ -110,9 +114,10 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
         }
 
         public IModel getTitle() {
-            return new StringResourceModel(GalleryWorkflowPlugin.this.getPluginConfig().getString("option.text", ""), GalleryWorkflowPlugin.this, null);
+            return new StringResourceModel(GalleryWorkflowPlugin.this.getPluginConfig().getString("option.text", ""),
+                    GalleryWorkflowPlugin.this, null);
         }
-        
+
         @Override
         public IValueMap getProperties() {
             return MEDIUM;
@@ -126,40 +131,49 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
                     String filename = upload.getClientFileName();
                     String mimetype = upload.getContentType();
                     InputStream istream = upload.getInputStream();
-                    WorkflowManager manager = ((UserSession)Session.get()).getWorkflowManager();
+                    WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                     try {
-                        WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this.getModel();
-                        GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(GalleryWorkflowPlugin.this.getPluginConfig().getString("workflow.categories"), workflowDescriptorModel.getNode());
+                        WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
+                                .getModel();
+                        GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(GalleryWorkflowPlugin.this
+                                .getPluginConfig().getString("workflow.categories"), workflowDescriptorModel.getNode());
                         Document document = workflow.createGalleryItem(NodeNameCodec.encode(filename, true), type);
-                        Node node = (((UserSession)Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
+                        Node node = (((UserSession) Session.get())).getJcrSession().getNodeByUUID(
+                                document.getIdentity());
                         Item item = node.getPrimaryItem();
                         if (item.isNode()) {
-                            Node primaryChild = (Node)item;
+                            Node primaryChild = (Node) item;
                             if (primaryChild.isNodeType("hippo:resource")) {
                                 primaryChild.setProperty("jcr:mimeType", mimetype);
                                 primaryChild.setProperty("jcr:data", istream);
                             }
                             NodeDefinition[] childDefs = node.getPrimaryNodeType().getChildNodeDefinitions();
                             for (int i = 0; i < childDefs.length; i++) {
-                                if (childDefs[i].getDefaultPrimaryType() != null && childDefs[i].getDefaultPrimaryType().isNodeType("hippo:resource")) {
+                                if (childDefs[i].getDefaultPrimaryType() != null
+                                        && childDefs[i].getDefaultPrimaryType().isNodeType("hippo:resource")) {
                                     if (!node.hasNode(childDefs[i].getName())) {
                                         Node child = node.addNode(childDefs[i].getName());
                                         child.setProperty("jcr:data", primaryChild.getProperty("jcr:data").getStream());
-                                        child.setProperty("jcr:mimeType", primaryChild.getProperty("jcr:mimeType").getString());
-                                        child.setProperty("jcr:lastModified", primaryChild.getProperty("jcr:lastModified").getDate());
+                                        child.setProperty("jcr:mimeType", primaryChild.getProperty("jcr:mimeType")
+                                                .getString());
+                                        child.setProperty("jcr:lastModified", primaryChild.getProperty(
+                                                "jcr:lastModified").getDate());
                                     }
                                 }
                             }
                             // description = ImageInfo.analyse(filename, primaryChild.getProperty("jcr:data").getStream());
-                            makeThumbnail(primaryChild, primaryChild.getProperty("jcr:data").getStream(), primaryChild.getProperty("jcr:mimeType").getString());
+                            makeThumbnail(primaryChild, primaryChild.getProperty("jcr:data").getStream(), primaryChild
+                                    .getProperty("jcr:mimeType").getString());
                             node.getSession().save();
                         }
                     } catch (MappingException ex) {
                         GalleryWorkflowPlugin.log.error(ex.getMessage());
-                        error(new StringResourceModel("workflow-error-label", GalleryWorkflowPlugin.this, null).getString());
+                        error(new StringResourceModel("workflow-error-label", GalleryWorkflowPlugin.this, null)
+                                .getString());
                     } catch (RepositoryException ex) {
                         GalleryWorkflowPlugin.log.error(ex.getMessage());
-                        error(new StringResourceModel("workflow-error-label", GalleryWorkflowPlugin.this, null).getString());
+                        error(new StringResourceModel("workflow-error-label", GalleryWorkflowPlugin.this, null)
+                                .getString());
                     }
                 } catch (IOException ex) {
                     GalleryWorkflowPlugin.log.info("upload of image truncated");
@@ -172,7 +186,8 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
 
         private void makeThumbnail(Node node, InputStream resourceData, String mimeType) throws RepositoryException {
             if (mimeType.startsWith("image")) {
-                int thumbnailSize = GalleryWorkflowPlugin.this.getPluginConfig().getInt("gallery.thumbnail.size", Gallery.DEFAULT_THUMBNAIL_SIZE);
+                int thumbnailSize = GalleryWorkflowPlugin.this.getPluginConfig().getInt("gallery.thumbnail.size",
+                        Gallery.DEFAULT_THUMBNAIL_SIZE);
                 InputStream thumbNail = ImageUtils.createThumbnail(resourceData, thumbnailSize, mimeType);
                 node.setProperty("jcr:data", thumbNail);
             } else {
@@ -184,8 +199,14 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
 
     public GalleryWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+    }
 
-        add(new WorkflowAction("add", new StringResourceModel(config.getString("option.label", "add"), this, null, "Add")) {
+    @Override
+    protected IDataProvider createListDataProvider(List<StdWorkflow> list) {
+        list.add(0, new WorkflowAction("add", new StringResourceModel(getPluginConfig()
+                .getString("option.label", "add"), this, null, "Add")) {
+            private static final long serialVersionUID = 1L;
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "image-add-16.png");
@@ -197,5 +218,7 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
                 return dialog;
             }
         });
+        return super.createListDataProvider(list);
     }
+
 }

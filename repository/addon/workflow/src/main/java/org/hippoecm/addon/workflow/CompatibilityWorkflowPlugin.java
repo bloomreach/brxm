@@ -15,8 +15,6 @@
  */
 package org.hippoecm.addon.workflow;
 
-import java.util.Map;
-
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ResourceReference;
@@ -31,13 +29,11 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
-import org.hippoecm.frontend.i18n.SearchingTranslatorPlugin;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
@@ -87,6 +83,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
         public WorkflowAction(String id, String name, ResourceReference iconModel) {
             super(id, name);
+            this.iconModel = iconModel;
         }
 
         public WorkflowAction(String id, StringResourceModel name) {
