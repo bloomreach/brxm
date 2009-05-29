@@ -27,6 +27,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
@@ -173,7 +174,8 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
 
         }, context.getReference(editor).getServiceId());
 
-        add(new WorkflowAction("save", new StringResourceModel("save", this, null, "Save").getString(), null) {
+        add(new WorkflowAction("save", new StringResourceModel("save", this, null, "Save").getString(),
+                new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-save-16.png")) {
             @Override
             protected String execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
@@ -201,7 +203,8 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
             }
         });
 
-        add(new WorkflowAction("done", new StringResourceModel("done", this, null, "Done").getString(), null) {
+        add(new WorkflowAction("done", new StringResourceModel("done", this, null, "Done").getString(),
+                new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-done-16.png")) {
             @Override
             public String execute(Workflow wf) throws Exception {
                 IPluginConfig config = getPluginConfig();
