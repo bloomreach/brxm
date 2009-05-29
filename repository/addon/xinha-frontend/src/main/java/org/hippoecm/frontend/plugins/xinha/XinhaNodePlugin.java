@@ -44,7 +44,7 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
         try {
             Node node = nodeModel.getNode();
             Property prop = node.getProperty("hippostd:content");
-            return new JcrPropertyValueModel(-1, prop.getValue(), new JcrPropertyModel(prop));
+            return new JcrPropertyValueModel(new JcrPropertyModel(prop));
         } catch(RepositoryException ex) {
             log.error(ex.getMessage());
         }

@@ -49,20 +49,22 @@ public class DatePickerPlugin extends RenderPlugin {
     public DatePickerPlugin(IPluginContext context, IPluginConfig config) throws RepositoryException {
         super(context, config);
 
-        Node dateNode = ((JcrNodeModel)getModel()).getNode();
-        JcrPropertyValueModel valueModel = new JcrPropertyValueModel(0, dateNode.getProperty("hippostd:date").getValue(),
-                                                                        new JcrPropertyModel(dateNode.getProperty("hippostd:date")));
+        Node dateNode = ((JcrNodeModel) getModel()).getNode();
+        JcrPropertyValueModel valueModel = new JcrPropertyValueModel(new JcrPropertyModel(dateNode
+                .getProperty("hippostd:date")));
         MarkupContainer panel;
         add(panel = new WebMarkupContainer("info"));
 
-        panel.add(new Label("weekofyear", dateNode.hasProperty("hippostd:weekofyear") ? dateNode.getProperty("hippostd:weekofyear").getString() : "-"));
-        if(dateNode.hasProperty("hippostd:dayofweek")) {
-            panel.add(new Label("dayofweek", new TypeTranslator(new JcrNodeTypeModel("hippostd:date")).getValueName("hippostd:dayofweek",
-                                                                new Model(dateNode.getProperty("hippostd:dayofweek").getString()))));
+        panel.add(new Label("weekofyear", dateNode.hasProperty("hippostd:weekofyear") ? dateNode.getProperty(
+                "hippostd:weekofyear").getString() : "-"));
+        if (dateNode.hasProperty("hippostd:dayofweek")) {
+            panel.add(new Label("dayofweek", new TypeTranslator(new JcrNodeTypeModel("hippostd:date")).getValueName(
+                    "hippostd:dayofweek", new Model(dateNode.getProperty("hippostd:dayofweek").getString()))));
         } else {
             panel.add(new Label("dayofweek", "-"));
         }
-        panel.add(new Label("dayofyear", dateNode.hasProperty("hippostd:dayofyear") ? dateNode.getProperty("hippostd:dayofyear").getString() : "-"));
+        panel.add(new Label("dayofyear", dateNode.hasProperty("hippostd:dayofyear") ? dateNode.getProperty(
+                "hippostd:dayofyear").getString() : "-"));
 
         if ("edit".equals(config.getString("mode", "view"))) {
             add(new DateFieldWidget("value", valueModel));
