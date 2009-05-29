@@ -132,7 +132,14 @@ public class ObjectConverterImpl implements ObjectConverter {
         Object object = null;
         String jcrPrimaryNodeType;
         String path;
-        try {
+        try { 
+            if(node.isNodeType(HippoNodeType.NT_HANDLE) ) {
+                if(node.hasNode(node.getName())) {
+                    return getObject(node.getNode(node.getName()));
+                } else {
+                    return null;
+                }
+            }
             jcrPrimaryNodeType = node.getPrimaryNodeType().getName();
             Class<? extends HippoBean> proxyInterfacesOrDelegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
           
