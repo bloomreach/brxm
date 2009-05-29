@@ -68,8 +68,15 @@ public class JcrItemModelTest extends PluginTest {
     @Test
     public void testExists() throws Exception {
         Node test = this.root.addNode("test", "nt:unstructured");
+
+        // non-existing prop
         JcrItemModel itemModel = new JcrItemModel(test.getPath() + "/prop");
         assertFalse("JcrItemModel reports that item exists while it doesn't", itemModel.exists());
+
+        // existing node
+        itemModel = new JcrItemModel(test);
+        itemModel.detach();
+        assertTrue("JcrItemModel reports that item doesn't exist while it does", itemModel.exists());
     }
 
     @Test
@@ -78,6 +85,10 @@ public class JcrItemModelTest extends PluginTest {
         JcrItemModel itemModel = new JcrItemModel("/test");
         Node verify = (Node) itemModel.getObject();
         assertTrue("Node found by path is incorrect", test.isSame(verify));
+
+        itemModel.detach();
+        verify = (Node) itemModel.getObject();
+        assertTrue("Node found by path is incorrect after detach", test.isSame(verify));
     }
 
     @Test

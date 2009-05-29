@@ -72,8 +72,8 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     public String getPath() {
         if (absPath == null) {
-            Item item = (Item) getObject();
-            if (item != null) {
+            if (isAttached() && getObject() != null) {
+                Item item = (Item) getObject();
                 try {
                     absPath = item.getPath();
                 } catch (RepositoryException e) {
@@ -85,6 +85,8 @@ public class JcrItemModel extends LoadableDetachableModel {
                     Node node = session.getNodeByUUID(uuid);
                     if (relPath == null) {
                         return node.getPath();
+                    } else if (node.isSame(session.getRootNode())) {
+                        return "/" + relPath;
                     } else {
                         return node.getPath() + "/" + relPath;
                     }

@@ -35,10 +35,6 @@
 - frontendtest:longs (long) multiple
 - frontendtest:string (string)
 - frontendtest:strings (string) multiple
-- * (long)
-- * (long) multiple
-- *
-- * multiple
 
 [frontendtest:document] > hippo:document
 - *
