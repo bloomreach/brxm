@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -28,13 +29,18 @@ public class HstContainerURLProviderImpl extends AbstractHstContainerURLProvider
         
         if (ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace)) {
             String oldPathInfo = containerURL.getPathInfo();
+            String resourcePath = containerURL.getResourceId();
+            Map<String, String[]> oldParamMap = containerURL.getParameterMap();
+
             try {
                 containerURL.setResourceWindowReferenceNamespace(null);
-                ((HstContainerURLImpl) containerURL).setPathInfo(containerURL.getResourceId());
+                ((HstContainerURLImpl) containerURL).setPathInfo(resourcePath);
+                ((HstContainerURLImpl) containerURL).setParameters(null);
                 path = buildHstURLPath(containerURL);
             } finally {
                 containerURL.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
                 ((HstContainerURLImpl) containerURL).setPathInfo(oldPathInfo);
+                ((HstContainerURLImpl) containerURL).setParameters(oldParamMap);
             }
         } else {
             path = buildHstURLPath(containerURL);

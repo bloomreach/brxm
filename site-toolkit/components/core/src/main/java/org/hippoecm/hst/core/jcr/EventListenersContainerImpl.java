@@ -131,22 +131,16 @@ public class EventListenersContainerImpl implements EventListenersContainer {
 
             this.firstInitializationDone = true;
 
-            if (log.isDebugEnabled())
-                log.debug("EventListenersContainer's initialization done.");
+            if (log.isInfoEnabled()) {
+                log.info("EventListenersContainer's initialization done.");
+            }
         } catch (LoginException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Cannot register event listeners because of failure to log on to the repository: {}", e
-                        .getMessage(), e);
-            } else if (log.isWarnEnabled()) {
-                log.warn("Cannot register event listeners because of failure to log on to the repository: {}", e
-                        .getMessage());
+            if (log.isInfoEnabled()) {
+                log.info("The repository is not available: {}. It will try initialization next time.", e.getMessage());
             }
         } catch (RepositoryException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Cannot register event listeners because the repository is not available: {}", e.getMessage(),
-                        e);
-            } else if (log.isWarnEnabled()) {
-                log.warn("Cannot register event listeners because the repository is not available: {}", e.getMessage());
+            if (log.isInfoEnabled()) {
+                log.info("The repository is not available: {}. It will try initialization next time.", e.getMessage());
             }
         }
     }

@@ -324,18 +324,16 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         String virtualizedContextPath = containerURL.getContextPath();
         
         if (requestContext != null) {
-            if (requestContext != null) {
-                HstContainerURL baseURL = requestContext.getBaseURL();
+            HstContainerURL baseURL = requestContext.getBaseURL();
 
-                if (baseURL != null) {
-                    if (requestContext.getMatchedMapping() != null && path != null) {
-                        MatchedMapping matchedMapping = requestContext.getMatchedMapping();
-                        if (matchedMapping.getMapping() != null) {
-                            if (matchedMapping.getMapping().getVirtualHost().isContextPathInUrl()) {
-                                virtualizedContextPath = baseURL.getContextPath();
-                            } else {
-                                virtualizedContextPath = "";
-                            }
+            if (baseURL != null) {
+                if (requestContext.getMatchedMapping() != null && path != null) {
+                    MatchedMapping matchedMapping = requestContext.getMatchedMapping();
+                    if (matchedMapping.getMapping() != null) {
+                        if (matchedMapping.getMapping().getVirtualHost().isContextPathInUrl()) {
+                            virtualizedContextPath = baseURL.getContextPath();
+                        } else {
+                            virtualizedContextPath = "";
                         }
                     }
                 }
@@ -349,27 +347,25 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         String virtualizedServletPath = containerURL.getServletPath();
         
         if (requestContext != null) {
-            if (requestContext != null) {
-                HstContainerURL baseURL = requestContext.getBaseURL();
+            HstContainerURL baseURL = requestContext.getBaseURL();
 
-                if (baseURL != null) {
-                    if (requestContext.getMatchedMapping() != null && path != null) {
-                        MatchedMapping matchedMapping = requestContext.getMatchedMapping();
-                        if (matchedMapping.getMapping() != null) {
-                            if (matchedMapping.getMapping().getVirtualHost().getVirtualHosts().isExcluded(path)) {
-                                // if the path is an excluded path defined in virtual hosting (for example /binaries), we do not include
-                                // a servletpath in the url
+            if (baseURL != null) {
+                if (requestContext.getMatchedMapping() != null && path != null) {
+                    MatchedMapping matchedMapping = requestContext.getMatchedMapping();
+                    if (matchedMapping.getMapping() != null) {
+                        if (matchedMapping.getMapping().getVirtualHost().getVirtualHosts().isExcluded(path)) {
+                            // if the path is an excluded path defined in virtual hosting (for example /binaries), we do not include
+                            // a servletpath in the url
+                            virtualizedServletPath = "";
+                        } else {
+                            // as the external url is mapped, get the external 'fake' servletpath
+                            virtualizedServletPath = matchedMapping.getMapping().getUriPrefix();
+                            if (virtualizedServletPath == null) {
                                 virtualizedServletPath = "";
-                            } else {
-                                // as the external url is mapped, get the external 'fake' servletpath
-                                virtualizedServletPath = matchedMapping.getMapping().getUriPrefix();
-                                if (virtualizedServletPath == null) {
-                                    virtualizedServletPath = "";
-                                }
                             }
-                            if (virtualizedServletPath.endsWith("/")) {
-                                virtualizedServletPath = virtualizedServletPath.substring(0, virtualizedServletPath.length() - 1);
-                            }
+                        }
+                        if (virtualizedServletPath.endsWith("/")) {
+                            virtualizedServletPath = virtualizedServletPath.substring(0, virtualizedServletPath.length() - 1);
                         }
                     }
                 }

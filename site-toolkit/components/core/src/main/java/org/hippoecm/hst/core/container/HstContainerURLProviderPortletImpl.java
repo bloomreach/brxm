@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 import javax.portlet.BaseURL;
 import javax.portlet.MimeResponse;
@@ -44,18 +45,19 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
         String pathInfo = null;
         
         if (!this.portletResourceURLEnabled && containerResource) {
-            String oldServletPath = containerURL.getServletPath();
             String oldPathInfo = containerURL.getPathInfo();
             String resourcePath = containerURL.getResourceId();
+            Map<String, String[]> oldParamMap = containerURL.getParameterMap();
             
             try {
                 containerURL.setResourceWindowReferenceNamespace(null);
                 ((HstContainerURLImpl) containerURL).setPathInfo(resourcePath);
+                ((HstContainerURLImpl) containerURL).setParameters(null);
                 pathInfo = buildHstURLPath(containerURL);
             } finally {
                 containerURL.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
-                ((HstContainerURLImpl) containerURL).setServletPath(oldServletPath);
                 ((HstContainerURLImpl) containerURL).setPathInfo(oldPathInfo);
+                ((HstContainerURLImpl) containerURL).setParameters(oldParamMap);
             }
             
             path.append(getVirtualizedServletPath(containerURL, requestContext, pathInfo));
