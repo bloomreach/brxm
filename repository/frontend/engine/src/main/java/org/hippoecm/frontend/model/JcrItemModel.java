@@ -149,12 +149,7 @@ public class JcrItemModel extends LoadableDetachableModel {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             if (uuid != null) {
                 Node node = null;
-                try {
-                    node = session.getNodeByUUID(uuid);
-                } catch (ItemNotFoundException e) {
-                    log.warn("Node not found with uuid: " + uuid);
-                    return null;
-                }
+                node = session.getNodeByUUID(uuid);
                 if (relPath == null) {
                     return node;
                 }
@@ -163,15 +158,17 @@ public class JcrItemModel extends LoadableDetachableModel {
                 } else {
                     return session.getItem(node.getPath() + "/" + relPath);
                 }
+            } else if (absPath != null) {
+                return session.getItem(absPath);
             } else {
-                if (absPath != null) {
-                    return session.getItem(absPath);
-                } else {
-                    log.debug("Neither path nor uuid present for item model");
-                }
+                log.info("Neither path nor uuid present for item model");
             }
+        } catch (ItemNotFoundException e) {
+            log.info("ItemNotFoundException while loading JcrItemModel for uuid: {}", uuid);
+        } catch (PathNotFoundException e) {
+            log.info("PathNotFoundException while loading JcrItemModel: {}", e.getMessage());
         } catch (RepositoryException e) {
-            log.warn("failed to load " + e.getMessage());
+            log.warn("Failed to load JcrItemModel", e);
         }
         return null;
     }

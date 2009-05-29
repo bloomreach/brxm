@@ -38,8 +38,10 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
@@ -49,8 +51,6 @@ import javax.jcr.util.TraversingItemVisitor;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.hippoecm.frontend.model.properties.JcrPropertyModel;
-import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -113,14 +113,14 @@ public class JcrObservationManager implements ObservationManager {
 
         private String path;
         private String userId;
-        private Map<String, Object> properties;
+        private Map<String, Value[]> properties;
         private List<String> nodes;
 
         NodeCache(Node node) throws RepositoryException {
             this.path = node.getPath();
             this.userId = node.getSession().getUserID();
 
-            properties = new HashMap<String, Object>();
+            properties = new HashMap<String, Value[]>();
             nodes = new LinkedList<String>();
         }
         
@@ -128,21 +128,17 @@ public class JcrObservationManager implements ObservationManager {
             process(node, properties, nodes);
         }
 
-        void process(Node node, Map<String, Object> properties, List<String> nodes) throws RepositoryException {
+        void process(Node node, Map<String, Value[]> properties, List<String> nodes) throws RepositoryException {
             PropertyIterator propIter = node.getProperties();
             while (propIter.hasNext()) {
                 Property property = propIter.nextProperty();
-                JcrPropertyModel propertyModel = new JcrPropertyModel(property);
-                if (property.getDefinition().isMultiple()) {
-                    List<Object> values = new ArrayList<Object>(propertyModel.size());
-                    Iterator<?> iter = propertyModel.iterator(0, propertyModel.size());
-                    while (iter.hasNext()) {
-                        values.add(propertyModel.model(iter.next()).getObject());
+                // skip binaries, to prevent them being pulled from the database
+                if (property.getType() != PropertyType.BINARY) {
+                    if (property.getDefinition().isMultiple()) {
+                        properties.put(property.getName(), property.getValues());
+                    } else {
+                        properties.put(property.getName(), new Value[] { property.getValue() });
                     }
-                    properties.put(property.getName(), values);
-                } else {
-                    JcrPropertyValueModel pvm = new JcrPropertyValueModel(propertyModel);
-                    properties.put(property.getName(), pvm.getObject());
                 }
             }
 
@@ -156,21 +152,30 @@ public class JcrObservationManager implements ObservationManager {
         Iterator<Event> update(Node node) throws RepositoryException {
             List<Event> events = new LinkedList<Event>();
 
-            Map<String, Object> properties = new HashMap<String, Object>();
+            Map<String, Value[]> newProperties = new HashMap<String, Value[]>();
             List<String> nodes = new LinkedList<String>();
-            process(node, properties, nodes);
+            process(node, newProperties, nodes);
 
-            for (Map.Entry<String, Object> entry : this.properties.entrySet()) {
-                if (properties.containsKey(entry.getKey())) {
-                    Object value = properties.get(entry.getKey());
-                    if (!value.equals(entry.getValue())) {
+            for (Map.Entry<String, Value[]> entry : this.properties.entrySet()) {
+                if (newProperties.containsKey(entry.getKey())) {
+                    Value[] oldValues = entry.getValue();
+                    Value[] newValues = newProperties.get(entry.getKey());
+                    if (newValues.length != oldValues.length) {
                         events.add(new NodeEvent(entry.getKey(), Event.PROPERTY_CHANGED));
+                    } else {
+                        for (int i = 0; i < newValues.length; i++) {
+                            if (!newValues[i].equals(oldValues[i])) {
+                                events.add(new NodeEvent(entry.getKey(), Event.PROPERTY_CHANGED));
+                                break;
+                            }
+                        }
+                        
                     }
                 } else {
                     events.add(new NodeEvent(entry.getKey(), Event.PROPERTY_REMOVED));
                 }
             }
-            for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            for (Map.Entry<String, Value[]> entry : newProperties.entrySet()) {
                 if (!this.properties.containsKey(entry.getKey())) {
                     events.add(new NodeEvent(entry.getKey(), Event.PROPERTY_ADDED));
                 }
@@ -187,7 +192,7 @@ public class JcrObservationManager implements ObservationManager {
                 }
             }
 
-            this.properties = properties;
+            this.properties = newProperties;
             this.nodes = nodes;
             return events.iterator();
         }
