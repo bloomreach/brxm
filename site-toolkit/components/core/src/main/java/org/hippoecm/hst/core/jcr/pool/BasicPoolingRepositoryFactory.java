@@ -84,8 +84,6 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
         
         BasicPoolingRepository poolingRepository = new BasicPoolingRepository();
         
-        poolingRepository.setSessionDecorator(new PooledSessionDecoratorProxyFactoryImpl());
-        
         Reference ref = (Reference) obj;
         Enumeration addrs = ref.getAll();
         
@@ -102,8 +100,6 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
                 poolingRepository.setDefaultCredentialsUserID(value);
             } else if (type.equals("defaultCredentialsPassword")) {
                 poolingRepository.setDefaultCredentialsPassword(value.toCharArray());
-            } else if (type.equals("sessionLifecycleManageable") && Boolean.parseBoolean(value)) {
-                poolingRepository.setResourceLifecycleManagement(new PooledSessionResourceManagement());
             } else if (type.equals("maxActive")) {
                 poolingRepository.setMaxActive(Integer.parseInt(value));
             } else if (type.equals("maxIdle")) {
