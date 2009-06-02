@@ -476,7 +476,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
 
         // make sure all parent nodes are readable
         if (!rootNodeId.equals(id)) {
-            if (!canRead(getParentState(nodeState).getNodeId())) {
+            if (!canRead(nodeState.getParentId())) {
                 readAccessCache.put(id, false);
                 return false;
             }
