@@ -599,9 +599,14 @@ public class JcrObservationManager implements ObservationManager {
                         } else {
                             // update fixed nodes
                             try {
-                                Node node = (Node) session.getItem(path);
-                                pending.get(path).init(node);
-                            } catch (ItemNotFoundException ex) {
+                                if (session.itemExists(path)) {
+                                    Node node = (Node) session.getItem(path);
+                                    pending.get(path).init(node);
+                                } else {
+                                    fixed.remove(path);
+                                    pending.remove(path);
+                                }
+                            } catch (PathNotFoundException ex) {
                                 log.warn("Fixed (monitored) node was not found at " + path);
                                 fixed.remove(path);
                                 pending.remove(path);
