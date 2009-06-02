@@ -413,19 +413,15 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
     public boolean canRead(Path absPath) throws PathNotFoundException, RepositoryException {
         checkInitialized();
 
-        // allow everything to the systemuser
+        // allow everything to the system user
         if (isSystem) {
             return true;
         }
 
         // find the id
-        ItemId id = getItemId(absPath);
+        NodeId id = getNodeId(absPath);
 
         try {
-            if (!id.denotesNode()) {
-                return canRead(((PropertyId) id).getParentId());
-            }
-            
             if (canRead((NodeId) id)) {
                 return true;
             }
@@ -848,27 +844,27 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
     }
 
     /**
-     * Get the <code>ItemId</code> for the absolute path. If the absolute path points
-     * to a property return the PropertyId else return the NodeId.
-     * @param absPath the absolute path
+     * Get the <code>NodeId</code> for the absolute path. If the absolute path points
+     * to a property return the NodeId of the parent.
+     * @param String the absolute path
      * @return the NodeState of the node (holding the property)
      * @throws PathNotFoundException
      * @throws RepositoryException
      */
     private ItemId getItemId(String absPath) throws PathNotFoundException, RepositoryException {
         checkInitialized();
-        return getItemId(npRes.getQPath(absPath));
+        return getNodeId(npRes.getQPath(absPath));
     }
 
     /**
-     * Get the <code>ItemId</code> for the absolute path. If the absolute path points
-     * to a property return the PropertyId else return the NodeId.
+     * Get the <code>NodeId</code> for the absolute path. If the absolute path points
+     * to a property return the NodeId of the parent.
      * @param absPath the absolute path
-     * @return the NodeState of the node (holding the property)
+     * @return the NodeId of the node (holding the property)
      * @throws PathNotFoundException
      * @throws RepositoryException
      */
-    private ItemId getItemId(Path absPath) throws PathNotFoundException, RepositoryException {
+    private NodeId getNodeId(Path absPath) throws PathNotFoundException, RepositoryException {
         checkInitialized();
         
         if (!absPath.isAbsolute()) {
@@ -878,14 +874,15 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         NodeId id = hierMgr.resolveNodePath(absPath) ;
         if (id != null) {
             return id;
+        } else {
+            return hierMgr.resolveNodePath(absPath.getAncestor(1));
         }
-        
-        // path could point to a property
-        PropertyId pId = hierMgr.resolvePropertyPath(absPath);
-        if (pId == null) {
-            throw new PathNotFoundException("Unable to find path: " + npRes.getJCRPath(absPath));
-        }
-        return pId;
+//        // path could point to a property
+//        PropertyId pId = hierMgr.resolvePropertyPath(absPath);
+//        if (pId == null) {
+//            throw new PathNotFoundException("Unable to find path: " + npRes.getJCRPath(absPath));
+//        }
+//        return pId;
     }
     
     /**
