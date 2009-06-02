@@ -15,8 +15,8 @@
  */
 package org.apache.jackrabbit.jcr2spi;
 
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
@@ -105,7 +105,7 @@ public class HippoSessionImpl extends SessionImpl implements NamespaceResolver, 
             target = getHierarchyManager().getRootEntry().getNodeState();
         }
         Set affected = sessionItemStateManager.pendingChanges(target);
-        Set<Node> nodes = new HashSet<Node>();
+        Set<Node> nodes = new LinkedHashSet<Node>();
         for(Iterator iter = affected.iterator(); iter.hasNext(); ) {
             ItemState state = (ItemState) iter.next();
             if (!state.isValid()) {
@@ -119,7 +119,7 @@ public class HippoSessionImpl extends SessionImpl implements NamespaceResolver, 
             Node candidate = (Node) itemManager.getItem(state.getHierarchyEntry());
             if(nodeType != null && !candidate.isNodeType(nodeType))
                 continue;
-            if(!propChange && node != null && node.equals(candidate))
+            if(!propChange && node != null && node.isSame(candidate))
                 continue;
 
             nodes.add(candidate);
