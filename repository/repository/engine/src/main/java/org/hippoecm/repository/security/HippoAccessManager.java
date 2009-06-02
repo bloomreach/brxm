@@ -300,7 +300,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
      */
     public boolean isGranted(ItemId id, int permissions) throws RepositoryException {
         checkInitialized();
-        if (permissions != READ) {
+        if (permissions != Permission.READ) {
             log.warn("isGranted(ItemId, int) is DEPRECATED!", new RepositoryException("Use of deprecated method isGranted(ItemId, int)"));
         }
         
@@ -310,8 +310,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
 
         // handle properties
         if (!id.denotesNode()) {
-            if ((permissions & (Permission.REMOVE_NODE | Permission.REMOVE_PROPERTY)) != 0) {
+            if (permissions == Permission.REMOVE_PROPERTY) {
                 // Don't check remove on properties. A write check on the node itself is done.
+                return true;
+            } else if (permissions == Permission.SET_PROPERTY) {
+                // A write check on the parent will be done.
                 return true;
             }
             return isGranted(((PropertyId) id).getParentId(), permissions);
@@ -319,12 +322,15 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
 
         // fast track common read check
         if (permissions == Permission.READ) {
-            // check cache
-            Boolean allowRead = readAccessCache.get(id);
-            if (allowRead != null) {
-                return allowRead.booleanValue();
+            try {
+                if (canRead((NodeId) id)) {
+                    return true;
+                }
+            } catch (NoSuchItemStateException e) {
+                // shouldn't happen, the id was already found
+                log.error("No item id found", e);
+                return false;
             }
-            return canRead(hierMgr.getPath(id));
         }
         
         // not a read, remove node from cache
@@ -415,19 +421,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         // find the id
         ItemId id = getItemId(absPath);
 
-        // check read on the parent node with properties
-        if (!id.denotesNode()) {
-            return canRead(absPath.getAncestor(1));
-        }
-
-        // check parent node which guarantees that all parent nodes of
-        // the current node are readable
-        if (!absPath.denotesRoot()) {
-            if (!canRead(absPath.getAncestor(1))) {
-                return false;
-            }
-        }
-
         try {
             if (canRead((NodeId) id)) {
                 return true;
@@ -468,13 +461,21 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         if (log.isDebugEnabled()) {
             log.debug("Checking canRead for node: {}", npRes.getJCRPath(hierMgr.getPath(id)));
         }
-        
+
         NodeState nodeState = (NodeState) getItemState(id);
         if (nodeState.getStatus() == NodeState.STATUS_NEW) {
             // allow read to new nodes in own session
             // the write check is done on save
             readAccessCache.put(id, true);
             return true;
+        }
+
+        // make sure all parent nodes are readable
+        if (id != rootNodeId) {
+            if (!canRead(getParentState(nodeState).getNodeId())) {
+                readAccessCache.put(id, false);
+                return false;
+            }
         }
 
         Set<FacetAuthPrincipal> faps = subject.getPrincipals(FacetAuthPrincipal.class);
