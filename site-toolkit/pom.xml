@@ -555,6 +555,12 @@
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-repository-connector</artifactId>
         <version>${hippoecm.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl104-over-slf4j</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       
       <dependency>
