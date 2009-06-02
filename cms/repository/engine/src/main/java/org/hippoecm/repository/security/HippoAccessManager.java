@@ -422,6 +422,10 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         ItemId id = getItemId(absPath);
 
         try {
+            if (!id.denotesNode()) {
+                return canRead(((PropertyId) id).getParentId());
+            }
+            
             if (canRead((NodeId) id)) {
                 return true;
             }
@@ -471,7 +475,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         }
 
         // make sure all parent nodes are readable
-        if (id != rootNodeId) {
+        if (!rootNodeId.equals(id)) {
             if (!canRead(getParentState(nodeState).getNodeId())) {
                 readAccessCache.put(id, false);
                 return false;
