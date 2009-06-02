@@ -30,21 +30,21 @@ public class ServiceTracker<S extends IClusterable> implements IServiceTracker<S
         this.clazz = clazz;
     }
 
-    public void addService(IClusterable service, String name) {
+    public void addService(S service, String name) {
         if (clazz.isInstance(service)) {
-            onServiceAdded((S) service, name);
+            onServiceAdded(service, name);
         }
     }
 
-    public void removeService(IClusterable service, String name) {
+    public void removeService(S service, String name) {
         if (clazz.isInstance(service)) {
-            onRemoveService((S) service, name);
+            onRemoveService(service, name);
         }
     }
 
-    public void updateService(IClusterable service, String name) {
+    public void updateService(S service, String name) {
         if (clazz.isInstance(service)) {
-            onServiceChanged((S) service, name);
+            onServiceChanged(service, name);
         }
     }
 
