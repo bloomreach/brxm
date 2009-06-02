@@ -27,13 +27,12 @@ import javax.naming.spi.ObjectFactory;
 /**
  * JNDI Resource Factory for {@link BasicPoolingRepository}
  * 
- * JNDI Resource can be configured like the following for Tomcat:
+ * JNDI Resource can be configured in the application context descriptor like the following for Tomcat:
  * 
  * <code><pre>
- * 
- * <Context ...>
+ * &lt;Context ...>
  *   ...
- *   <Resource name="jcr/MyReposicoty" auth="Container"
+ *   &lt;Resource name="jcr/MyRepository" auth="Container"
  *             type="javax.jcr.Repository"
  *             factory="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepositoryFactory"
  *             repositoryAddress="rmi://127.0.0.1:1099/hipporepository"
@@ -51,7 +50,31 @@ import javax.naming.spi.ObjectFactory;
  *             numTestsPerEvictionRun="1"
  *             minEvictableIdleTimeMillis="60000" />
  *   ...
- * </Context>
+ * &lt;/Context>
+ * </pre></code>
+ * <BR/>
+ * In addition, you should modify the web application deployment descriptor (/WEB-INF/web.xml) to
+ * declare the JNDI name under which you will look up preconfigured repository in the above like the following:
+ * <code><pre>
+ * &lt;resource-ref>
+ *   &lt;description>JCR Repository&lt;/description>
+ *   &lt;res-ref-name>jcr/MyRepository&lt;/res-ref-name>
+ *   &lt;res-type>javax.jcr.Repository&lt;/res-type>
+ *   &lt;res-auth>Container&lt;/res-auth>
+ * &lt;/resource-ref>
+ * </pre></code>
+ * <BR/>
+ * Finally, you can write codes in a JSP page to test it like the following example:
+ * <code><pre>
+ * &lt;%@ page language="java" import="javax.jcr.*, javax.naming.*" %>
+ * &lt;%
+ * Context initCtx = new InitialContext();
+ * Context envCtx = (Context) initCtx.lookup("java:comp/env");
+ * Repository repository = (Repository) envCtx.lookup("jcr/MyRepository");
+ * Session jcrSession = repository.login();
+ * // do something...
+ * jcrSession.logout();
+ * %>
  * </pre></code>
  */
 public class BasicPoolingRepositoryFactory implements ObjectFactory {
