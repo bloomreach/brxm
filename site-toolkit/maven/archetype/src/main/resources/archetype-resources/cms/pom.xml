@@ -31,6 +31,29 @@
   <packaging>war</packaging>
 
   <dependencies>
+  
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+  
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-package-war</artifactId>
@@ -99,6 +122,11 @@
             <overlay>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-package-war</artifactId>
+              <excludes>
+                <exclude>WEB-INF/lib/*slf4j*.jar</exclude>
+                <exclude>WEB-INF/lib/log4j*.jar</exclude>
+                <exclude>WEB-INF/lib/commons-logging-*.jar</exclude>
+              </excludes>
             </overlay>
           </overlays>
         </configuration>
