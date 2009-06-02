@@ -41,6 +41,7 @@ import org.apache.jackrabbit.api.jsr283.security.AccessControlManager;
 import org.apache.jackrabbit.api.jsr283.security.AccessControlPolicy;
 import org.apache.jackrabbit.api.jsr283.security.AccessControlPolicyIterator;
 import org.apache.jackrabbit.api.jsr283.security.Privilege;
+import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
@@ -67,7 +68,6 @@ import org.apache.jackrabbit.spi.commons.conversion.PathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.jackrabbit.HippoHierarchyManager;
 import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
 import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetRule;
@@ -106,7 +106,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
     /**
      * hierarchy manager used for ACL-based access control model
      */
-    private HippoHierarchyManager hierMgr;
+    private HierarchyManager hierMgr;
 
     /**
      * The session item state manager used for fetching transient and attic item states
@@ -215,7 +215,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             itemMgr = (HippoSessionItemStateManager) ((HippoAMContext) context).getSessionItemStateManager();
         }
         
-        hierMgr = (HippoHierarchyManager) itemMgr.getAtticAwareHierarchyMgr();
+        hierMgr = itemMgr.getAtticAwareHierarchyMgr();
         
         // Shortcuts for checks
         isSystem = !subject.getPrincipals(SystemPrincipal.class).isEmpty();
@@ -877,12 +877,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         } else {
             return hierMgr.resolveNodePath(absPath.getAncestor(1));
         }
-//        // path could point to a property
-//        PropertyId pId = hierMgr.resolvePropertyPath(absPath);
-//        if (pId == null) {
-//            throw new PathNotFoundException("Unable to find path: " + npRes.getJCRPath(absPath));
-//        }
-//        return pId;
     }
     
     /**
@@ -899,7 +893,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         }
         try {
             if (itemMgr.hasItemState(id)) {
-                return hierMgr.getItemState(id);
+                return itemMgr.getItemState(id);
             } else if (itemMgr.hasTransientItemState(id)) {
                 return itemMgr.getTransientItemState(id);
             } else if (itemMgr.hasTransientItemStateInAttic(id)) {
