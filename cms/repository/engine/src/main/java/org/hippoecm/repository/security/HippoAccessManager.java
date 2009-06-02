@@ -312,7 +312,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         if (!id.denotesNode()) {
             if ((permissions & (Permission.REMOVE_NODE | Permission.REMOVE_PROPERTY)) != 0) {
                 // Don't check remove on properties. A write check on the node itself is done.
-                Thread.dumpStack();
                 return true;
             }
             return isGranted(((PropertyId) id).getParentId(), permissions);
