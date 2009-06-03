@@ -109,6 +109,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
     private HierarchyManager hierMgr;
 
     /**
+     * Attic aware hierarchy manager used for ACL-based access control model
+     */
+    private HierarchyManager zombieHierMgr;
+
+    /**
      * The session item state manager used for fetching transient and attic item states
      */
     private HippoSessionItemStateManager itemMgr;
@@ -210,12 +215,14 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         }
         subject = context.getSubject();
         npRes = context.getNamePathResolver();
+        
         if (context instanceof HippoAMContext) {
             ntMgr = ((HippoAMContext) context).getNodeTypeManager();
             itemMgr = (HippoSessionItemStateManager) ((HippoAMContext) context).getSessionItemStateManager();
         }
-        
-        hierMgr = itemMgr.getAtticAwareHierarchyMgr();
+
+        hierMgr = itemMgr.getHierarchyMgr();
+        zombieHierMgr = itemMgr.getAtticAwareHierarchyMgr();
         
         // Shortcuts for checks
         isSystem = !subject.getPrincipals(SystemPrincipal.class).isEmpty();
@@ -866,24 +873,37 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
      */
     private NodeId getNodeId(Path absPath) throws PathNotFoundException, RepositoryException {
         checkInitialized();
-        
+
         if (!absPath.isAbsolute()) {
             throw new RepositoryException("Absolute path expected, got " + npRes.getJCRPath(absPath));
         }
-        
-        NodeId id = hierMgr.resolveNodePath(absPath) ;
+
+        NodeId id = hierMgr.resolveNodePath(absPath);
         if (id != null) {
             return id;
-        } else {
-            // try parent 
-            id = hierMgr.resolveNodePath(absPath.getAncestor(1));
-            if (id != null) {
-                return id;
-            }
         }
-        throw new PathNotFoundException("Unable to resolve the node id from the path " + npRes.getJCRPath(absPath) + " in " + hierMgr.getClass().getName());
+
+        // not in the normal hierarchy manager try the attic aware as fallback, because it's way slower
+        id = zombieHierMgr.resolveNodePath(absPath);
+        if (id != null) {
+            return id;
+        }
+
+        // try parent 
+        id = hierMgr.resolveNodePath(absPath.getAncestor(1));
+        if (id != null) {
+            return id;
+        }
+
+        // try zombie parent 
+        id = zombieHierMgr.resolveNodePath(absPath.getAncestor(1));
+        if (id != null) {
+            return id;
+        }
+        throw new PathNotFoundException("Unable to resolve the node id from the path " + npRes.getJCRPath(absPath)
+                + " in " + hierMgr.getClass().getName() + " or in " + zombieHierMgr.getClass().getName());
     }
-    
+
     /**
      * Try to get a state from the item manager by first checking the normal states,
      * then checking the transient states and last checking the attic state.
@@ -931,8 +951,12 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             throw new NoSuchItemStateException("RootNode doesn't have a parent state.");
         }
         try {
-            // for nodeState's from the attic the parentId() is null, so use path resolving to find parent
-            return (NodeState) getItemState(hierMgr.resolveNodePath(hierMgr.getPath(nodeState.getId()).getAncestor(1)));
+            NodeId id = nodeState.getParentId();
+            if (id == null) {
+                // for nodeState's from the attic the parentId() is null, so use path resolving to find parent
+                return (NodeState) getItemState(zombieHierMgr.resolveNodePath(zombieHierMgr.getPath(nodeState.getId()).getAncestor(1)));
+            }
+            return (NodeState) getItemState(id);
         } catch (RepositoryException e) {
             throw new NoSuchItemStateException("Unable to find parent nodeState of node: " + nodeState.getId(), e);
         }
