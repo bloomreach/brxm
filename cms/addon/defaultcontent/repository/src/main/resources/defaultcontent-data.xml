@@ -31,7 +31,7 @@
   </sv:property>
   <sv:node sv:name="documents" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippostd:directory</sv:value>
+      <sv:value>hippostd:folder</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:harddocument</sv:value>
