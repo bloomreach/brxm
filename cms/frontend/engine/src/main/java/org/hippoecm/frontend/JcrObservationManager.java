@@ -296,6 +296,9 @@ public class JcrObservationManager implements ObservationManager {
             }
             obMgr.addEventListener(this, eventTypes, path, isDeep, uuid, nodeTypes, noLocal);
 
+            /*
+             * FIXME HREPTWO-2655 workaround, disable the facet search observer.
+             *
             fso = getSession().getJcrSessionModel().getFacetSearchObserver();
 
             // subscribe when listening to deep tree structures;
@@ -331,10 +334,13 @@ public class JcrObservationManager implements ObservationManager {
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
+            */
         }
 
         void unsubscribe() throws RepositoryException {
-            fso.unsubscribe(this);
+            if(fso != null) {
+                fso.unsubscribe(this);
+            }
             fso = null;
 
             if (session.isLive()) {
