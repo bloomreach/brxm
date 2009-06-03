@@ -242,7 +242,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         
         if (disp == null) {
             if (log.isWarnEnabled()) {
-                log.warn("The dispatch url is null. window reference namespace: " + window.getReferenceNamespace());
+                log.warn("The request dispatcher for {} is null. window reference namespace: {}", dispatchUrl, window.getReferenceNamespace());
             }
             window.addComponentExcpetion(new HstComponentException("The dispatch url is null."));
         } else {

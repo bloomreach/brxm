@@ -17,6 +17,7 @@ package org.hippoecm.hst.components;
 
 import org.hippoecm.hst.component.support.forms.BaseFormHstComponent;
 import org.hippoecm.hst.component.support.forms.FormMap;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -68,6 +69,15 @@ public class ContactSpring extends BaseFormHstComponent {
             
             try {
                 this.mailSender.send(msg);
+                
+                // possible do a redirect to a thankyou page: do not use directly response.sendRedirect;
+                HstSiteMapItem item = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getChild("thankyou");
+                
+                if (item != null) {
+                    this.sendRedirect(request, response, item.getId());
+                } else {
+                    log.warn("Cannot redirect because siteMapItem not found. ");
+                }
             } catch (Exception e) {
                 formMap.addMessage("email", "Failed to send email: " + e);
             }

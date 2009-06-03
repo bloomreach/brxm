@@ -178,6 +178,23 @@
         </sv:node>
     </sv:node>
     
+    <sv:node sv:name="contactdispatchpage">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:referencecomponent" sv:type="String">
+            <sv:value>hst:pages/basepage</sv:value>
+        </sv:property>
+        <sv:node sv:name="body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:component</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencecomponent" sv:type="String">
+                <sv:value>hst:components/contactdispatchform</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+    
     <sv:node sv:name="thankyou">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>
