@@ -875,8 +875,13 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         if (id != null) {
             return id;
         } else {
-            return hierMgr.resolveNodePath(absPath.getAncestor(1));
+            // try parent 
+            id = hierMgr.resolveNodePath(absPath.getAncestor(1));
+            if (id != null) {
+                return id;
+            }
         }
+        throw new PathNotFoundException("Unable to resolve the node id from the path " + npRes.getJCRPath(absPath) + " in " + hierMgr.getClass().getName());
     }
     
     /**
