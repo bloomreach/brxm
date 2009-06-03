@@ -15,12 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class EditorFactory implements IClusterable {
     @SuppressWarnings("unused")
@@ -28,22 +31,36 @@ public class EditorFactory implements IClusterable {
 
     private static final long serialVersionUID = 1L;
 
-    public static final Logger log = LoggerFactory.getLogger(EditorFactory.class);
-
     private IPluginConfig config;
     private IPluginContext context;
-    private String cluster;
     private EditorManagerPlugin manager;
 
-    public EditorFactory(EditorManagerPlugin manager, IPluginContext context, String cluster, IPluginConfig config) {
+    public EditorFactory(EditorManagerPlugin manager, IPluginContext context, IPluginConfig config) {
         this.manager = manager;
         this.context = context;
-        this.cluster = cluster;
         this.config = config;
     }
 
-    public CmsEditor newEditor(final IModel model) throws CmsEditorException {
-        return new CmsEditor(manager, context, cluster, config, model);
+    public AbstractCmsEditor<JcrNodeModel> newEditor(final JcrNodeModel nodeModel, IEditor.Mode mode) throws CmsEditorException {
+        Node node = nodeModel.getNode();
+        try {
+            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                if (node.hasNode(node.getName())) {
+                    Node doc = node.getNode(node.getName());
+                    if (doc.isNodeType("hippostd:publishable")) {
+                        return new HippostdPublishableEditor(manager, context, config, nodeModel);
+                    } else {
+                        return new DefaultCmsEditor(manager, context, config, nodeModel, mode);
+                    }
+                } else {
+                    throw new CmsEditorException("Document has been deleted");
+                }
+            } else {
+                return new DefaultCmsEditor(manager, context, config, nodeModel, mode);
+            }
+        } catch (RepositoryException e) {
+            throw new CmsEditorException("Could not determine type of editor required", e);
+        }
     }
 
 }

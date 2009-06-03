@@ -32,16 +32,19 @@ public class EventCollection<T extends IEvent> implements Iterable<T>, Serializa
         this.events = new ArrayList<T>();
     }
 
+    public EventCollection(Iterator<? extends T> eventIter) {
+        this.events = new ArrayList<T>();
+        while (eventIter.hasNext()) {
+            events.add(eventIter.next());
+        }
+    }
+
     public void add(T event) {
         events.add(event);
     }
 
     public int size() {
         return events.size();
-    }
-
-    public EventCollection(List<T> events) {
-        this.events = new ArrayList<T>(events);
     }
 
     public Iterator<T> iterator() {

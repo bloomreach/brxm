@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.i18n.model;
 
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
@@ -29,6 +30,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.model.event.EventCollection;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,8 +88,11 @@ public class NodeTranslator extends NodeModelWrapper {
         }
     }
 
-    private class NodeNameModel extends LoadableDetachableModel {
+    private class NodeNameModel extends LoadableDetachableModel implements IObservable {
         private static final long serialVersionUID = 1L;
+
+        private IObservationContext obContext;
+        private IObserver observer;
 
         @Override
         protected Object load() {
@@ -115,12 +124,36 @@ public class NodeTranslator extends NodeModelWrapper {
         void innerDetach() {
             super.onDetach();
         }
-        
+
         @Override
         public void onDetach() {
             NodeTranslator.this.detach();
         }
-        
+
+        public void setObservationContext(IObservationContext context) {
+            this.obContext = context;
+        }
+
+        public void startObservation() {
+            final JcrNodeModel parentModel = nodeModel.getParentModel();
+            obContext.registerObserver(observer = new IObserver() {
+                private static final long serialVersionUID = 1L;
+
+                public IObservable getObservable() {
+                    return parentModel;
+                }
+
+                public void onEvent(Iterator<? extends IEvent> events) {
+                    obContext.notifyObservers(new EventCollection<IEvent>(events));
+                }
+
+            });
+        }
+
+        public void stopObservation() {
+            obContext.unregisterObserver(observer);
+        }
+
     }
 
     private class Property implements IDetachable {

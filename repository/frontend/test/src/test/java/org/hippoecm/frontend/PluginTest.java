@@ -17,6 +17,7 @@ package org.hippoecm.frontend;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.IPlugin;
@@ -34,6 +35,8 @@ public abstract class PluginTest extends TestCase {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
+    protected static ValueMap CREDENTIALS = new ValueMap("username=" + SYSTEMUSER_ID + ",password=" + SYSTEMUSER_PASSWORD.toString());
+    
     protected static IPluginContext context;
 
     public static class DummyPlugin implements IPlugin {
@@ -75,7 +78,7 @@ public abstract class PluginTest extends TestCase {
         root = session.getRootNode();
         build(session, config);
 
-        tester = new HippoTester(new JcrSessionModel(null) {
+        tester = new HippoTester(new JcrSessionModel(CREDENTIALS) {
             private static final long serialVersionUID = 1L;
 
             @Override

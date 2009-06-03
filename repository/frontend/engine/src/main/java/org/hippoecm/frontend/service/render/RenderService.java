@@ -56,7 +56,7 @@ public class RenderService extends AbstractRenderService {
     protected class ExtensionPoint extends AbstractRenderService.ExtensionPoint {
         private static final long serialVersionUID = 1L;
 
-        ExtensionPoint(String extension) {
+        protected ExtensionPoint(String extension) {
             super(extension);
         }
 

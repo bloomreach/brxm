@@ -19,15 +19,22 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
 public interface IEditor extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
+
+    enum Mode {
+        VIEW, EDIT
+    }
+
+    Mode getMode();
+
+    void setMode(Mode mode) throws EditorException;
 
     /**
      * Requests that the editor be closed.
      * @throws EditorException when the editor is in a state where it cannot be closed.
      */
     void close() throws EditorException;
-    
+
     IModel getModel();
 
 }

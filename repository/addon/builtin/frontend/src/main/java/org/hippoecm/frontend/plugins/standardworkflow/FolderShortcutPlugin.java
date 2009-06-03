@@ -48,6 +48,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -159,7 +160,10 @@ public class FolderShortcutPlugin extends RenderPlugin {
                                 }
                             }
                             if (editNodeModel != null) {
-                                editorMgr.openEditor(editNodeModel);
+                                IEditor editor = editorMgr.getEditor(editNodeModel);
+                                if (editor == null) {
+                                    editorMgr.openEditor(editNodeModel);
+                                }
                             }
                         } catch (WorkflowException ex) {
                             log.error("Cannot auto-edit document", ex);

@@ -33,20 +33,15 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.OnCloseDialog;
 import org.hippoecm.frontend.service.EditorException;
-import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
-import org.hippoecm.frontend.service.IEditorManager;
-import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.Workflow;
@@ -196,9 +191,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 WorkflowManager manager = session.getWorkflowManager();
                 workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow(descriptor);
 
-                Document draft = workflow.obtainEditableInstance();
-                IModelReference ref = context.getService(config.getString("model.id"), IModelReference.class);
-                ref.setModel(new JcrNodeModel(session.getJcrSession().getNodeByUUID(draft.getIdentity())));
+                /* Document draft = */ workflow.obtainEditableInstance();
                 return null;
             }
         });
@@ -207,22 +200,9 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-done-16.png")) {
             @Override
             public String execute(Workflow wf) throws Exception {
-                IPluginConfig config = getPluginConfig();
-                IBrowseService browser = context.getService(config.getString("browser.id"), IBrowseService.class);
-                IRenderService browserRenderer = context.getService(config.getString("browser.id"),
-                        IRenderService.class);
-                IEditor editor = context.getService(config.getString(IEditorManager.EDITOR_ID), IEditor.class);
-
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
                 ((UserSession) Session.get()).getJcrSession().refresh(true);
-
-                browser.browse(new JcrNodeModel(((WorkflowDescriptorModel) EditingReviewedActionsWorkflowPlugin.this
-                        .getModel()).getNode()));
-
-                closing = true;
-                editor.close();
-                browserRenderer.focus(null);
                 return null;
             }
         });
