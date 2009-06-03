@@ -19,6 +19,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -39,7 +40,9 @@ public class YuiContext implements IYuiContext {
     Set<IHeaderContributor> modules;
     YuiHeaderCache cache;
 
-    class OnLoad {
+    class OnLoad implements IClusterable {
+        private static final long serialVersionUID = 1L;
+
         String str;
         boolean win;
 
