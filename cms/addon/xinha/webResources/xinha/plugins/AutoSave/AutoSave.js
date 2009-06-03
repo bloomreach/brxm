@@ -138,4 +138,16 @@ AutoSave.prototype.clearTimer = function() {
 AutoSave.prototype.setUnChanged = function() {
     this.changed = false;
 }
-        
+ 
+/**
+ * Explicitly replace <p> </p> with general-purpose space (U+0020) with a <p> </p> including a non-breaking space (U+00A0)
+ * to prevent the browser from not rendering these paragraphs
+ * 
+ */
+AutoSave.prototype.inwardHtml = function(html) {
+    this.imgRE = new RegExp('<p> <\/p>', 'gi');
+    html = html.replace(this.imgRE, function(m) {
+        return '<p>&nbsp;</p>';
+    });
+    return html;
+}

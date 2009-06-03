@@ -55,6 +55,21 @@
         <sv:value>include</sv:value>
         <sv:value>query-and-include</sv:value>
       </sv:property>
+      
+      <!-- Sometimes you want an element to contain only a single whitespace, preferably a non-breaking space. -->
+      <sv:node sv:name="hippohtmlcleaner:allowedSingleWhitespaceElement">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippohtmlcleaner:allowedSingleWhitespaceElement</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippohtmlcleaner:name" sv:type="String">
+          <sv:value>p</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippohtmlcleaner:forceNonBreakingSpace" sv:type="Boolean">
+          <sv:value>true</sv:value>
+        </sv:property>
+
+      </sv:node>
+      
       <!-- Lists the allowed elements and their allowed attributes.
               
               For the correct worker of the cleaner, some elements cannot be removed,
