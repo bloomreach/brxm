@@ -26,14 +26,17 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceForwarder extends ServiceTracker<IClusterable> {
+/**
+ * Utility class to forward services from one name to another one.
+ */
+public final class ServiceForwarder extends ServiceTracker<IClusterable> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(ServiceForwarder.class.getName());
-    
+
     private static final ThreadLocal<Set<StackEntry>> threadLocal = new ThreadLocal<Set<StackEntry>>();
 
     private static class StackEntry {
@@ -45,6 +48,7 @@ public class ServiceForwarder extends ServiceTracker<IClusterable> {
             this.service = service;
         }
 
+        @Override
         public boolean equals(Object that) {
             if (!(that instanceof StackEntry)) {
                 return false;
@@ -53,6 +57,7 @@ public class ServiceForwarder extends ServiceTracker<IClusterable> {
             return new EqualsBuilder().append(seThat.name, this.name).append(seThat.service, this.service).isEquals();
         }
 
+        @Override
         public int hashCode() {
             return (service.hashCode() << 4) + name.hashCode();
         }
@@ -63,7 +68,7 @@ public class ServiceForwarder extends ServiceTracker<IClusterable> {
     private String target;
     private List<IClusterable> forwarded;
 
-    ServiceForwarder(PluginManager mgr, Class<?> clazz, String source, String target) {
+    ServiceForwarder(PluginManager mgr, Class<IClusterable> clazz, String source, String target) {
         super(clazz);
 
         this.pluginMgr = mgr;

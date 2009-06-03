@@ -50,6 +50,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
@@ -268,7 +269,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
     public void select(JcrNodeModel nodeModel) {
         IBrowseService<JcrNodeModel> browser = getPluginContext().getService(
                 getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class);
-        IEditorManager editor = getPluginContext().getService(getPluginConfig().getString(IEditorManager.EDITOR_ID),
+        IEditorManager editorMgr = getPluginContext().getService(getPluginConfig().getString(IEditorManager.EDITOR_ID),
                 IEditorManager.class);
         try {
             if (nodeModel.getNode() != null
@@ -279,7 +280,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 }
                 if (!nodeModel.getNode().isNodeType("hippostd:folder")
                         && !nodeModel.getNode().isNodeType("hippostd:directory")) {
-                    if (editor != null) {
+                    if (editorMgr != null) {
                         JcrNodeModel editNodeModel = nodeModel;
                         Node editNodeModelNode = nodeModel.getNode();
                         if (editNodeModelNode.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -302,7 +303,10 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                                 }
                             }
                             if (editNodeModel != null) {
-                                editor.openEditor(editNodeModel);
+                                IEditor editor = editorMgr.getEditor(editNodeModel);
+                                if (editor == null) {
+                                    editorMgr.openEditor(editNodeModel);
+                                }
                             }
                         } catch (WorkflowException ex) {
                             log.error("Cannot auto-edit document", ex);

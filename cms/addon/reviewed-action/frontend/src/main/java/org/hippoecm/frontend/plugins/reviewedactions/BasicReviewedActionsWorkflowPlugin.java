@@ -40,6 +40,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
@@ -95,7 +96,11 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
                 IEditorManager editorMgr = getPluginContext().getService(
                         getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
                 if (editorMgr != null) {
-                    editorMgr.openEditor(new JcrNodeModel(docNode));
+                    JcrNodeModel docModel = new JcrNodeModel(docNode);
+                    IEditor editor = editorMgr.getEditor(docModel);
+                    if (editor == null) {
+                        editorMgr.openEditor(docModel);
+                    }
                 } else {
                     log.warn("No editor found to edit {}", docNode.getPath());
                 }

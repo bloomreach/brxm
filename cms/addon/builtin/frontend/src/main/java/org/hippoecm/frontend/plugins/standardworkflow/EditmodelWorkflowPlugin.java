@@ -72,7 +72,12 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                                     IEditorManager.class);
                             if (editorMgr != null) {
                                 JcrNodeModel nodeModel = new JcrNodeModel(itemModel);
-                                editorMgr.openEditor(nodeModel);
+                                IEditor editor = editorMgr.getEditor(nodeModel);
+                                if (editor == null) {
+                                    editorMgr.openEditor(nodeModel);
+                                } else {
+                                    editor.setMode(IEditor.Mode.EDIT);
+                                }
                             } else {
                                 log.warn("No view service found");
                             }

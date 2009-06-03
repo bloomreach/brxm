@@ -21,14 +21,10 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EditPerspective extends Perspective {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
-    private static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
 
     private static final long serialVersionUID = 1L;
 

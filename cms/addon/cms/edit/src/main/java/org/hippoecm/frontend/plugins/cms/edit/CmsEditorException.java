@@ -24,4 +24,8 @@ class CmsEditorException extends Exception {
     CmsEditorException(String reason) {
         super(reason);
     }
+
+    CmsEditorException(String reason, Throwable cause) {
+        super(reason, cause);
+    }
 }

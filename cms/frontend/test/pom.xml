@@ -22,7 +22,7 @@
   </parent>
 
   <name>Frontend engine test</name>
-  <description>Wicket component library for use by Hippo ECM frontend applications and components</description>
+  <description>Library with test base classes for Hippo ECM frontend plugins</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-frontend-engine-test</artifactId>
   <packaging>jar</packaging>

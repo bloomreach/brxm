@@ -96,6 +96,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
                     }
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
+                    return new Object();
                 }
                 return null;
             }
@@ -106,16 +107,14 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
             @Override
             protected String execute(Workflow workflow) throws Exception {
                 doSave();
-                IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
-                editor.close();
                 return null;
             }});
-        add(new WorkflowAction("revert", new StringResourceModel("revert", this, null)) {
+        add(new WorkflowAction("done", new StringResourceModel("done", this, null)) {
             @Override
             protected String execute(Workflow workflow) throws Exception {
-                doRevert();
+                doSave();
                 IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
-                editor.close();
+                editor.setMode(IEditor.Mode.VIEW);
                 return null;
             }});
     }
