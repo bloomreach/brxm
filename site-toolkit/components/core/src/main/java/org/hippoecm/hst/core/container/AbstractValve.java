@@ -3,6 +3,7 @@ package org.hippoecm.hst.core.container;
 import java.util.Map;
 import java.util.SortedMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -139,7 +140,7 @@ public abstract class AbstractValve implements Valve
     }
     
     public void setTraceToolComponentName(String traceToolComponentName) {
-        this.traceToolComponentName = traceToolComponentName;
+        this.traceToolComponentName = StringUtils.trim(traceToolComponentName);
     }
     
     public String getTraceToolComponentName() {
@@ -147,7 +148,7 @@ public abstract class AbstractValve implements Valve
     }
 
     public void setTraceToolComponentClassName(String traceToolComponentClassName) {
-        this.traceToolComponentClassName = traceToolComponentClassName;
+        this.traceToolComponentClassName = StringUtils.trim(traceToolComponentClassName);
     }
     
     public String getTraceToolComponentClassName() {
@@ -156,29 +157,30 @@ public abstract class AbstractValve implements Valve
 
     protected HstComponentWindow createTraceToolComponent(ValveContext context, HstRequestContext requestContext, HstComponentWindow parentWindow) {
         HstComponentWindow traceToolComponentWindow = null;
-        
-        try {
-            final String traceCompName = getTraceToolComponentName();
-            final String traceToolCompClassName = getTraceToolComponentClassName();
-            
-            HstComponentConfiguration compConfig = new HstComponentConfiguration() {
-                public SortedMap<String, HstComponentConfiguration> getChildren() { return null; }
-                public String getComponentClassName() { return traceToolCompClassName; }
-                public String getId() { return traceCompName; }
-                public String getName() { return traceCompName; }
-                public String getParameter(String name) { return null; }
-                public Map<String, String> getParameters() { return null; }
-                public String getReferenceName() { return traceCompName; }
-                public String getRenderPath() { return null; }
-                public String getServeResourcePath() { return null; }
-            };
-            
-            traceToolComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, compConfig, getComponentFactory(), parentWindow);
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to create hstTraceTool component windows: {}", e.getMessage(), e);
-            } else if (log.isWarnEnabled()) {
-                log.warn("Failed to create hstTraceTool component windows: {}", e.getMessage());
+        final String traceCompName = getTraceToolComponentName();
+        final String traceToolCompClassName = getTraceToolComponentClassName();
+
+        if (traceToolCompClassName != null && !"".equals(traceToolCompClassName)) {
+            try {
+                HstComponentConfiguration compConfig = new HstComponentConfiguration() {
+                    public SortedMap<String, HstComponentConfiguration> getChildren() { return null; }
+                    public String getComponentClassName() { return traceToolCompClassName; }
+                    public String getId() { return traceCompName; }
+                    public String getName() { return traceCompName; }
+                    public String getParameter(String name) { return null; }
+                    public Map<String, String> getParameters() { return null; }
+                    public String getReferenceName() { return traceCompName; }
+                    public String getRenderPath() { return null; }
+                    public String getServeResourcePath() { return null; }
+                };
+                
+                traceToolComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, compConfig, getComponentFactory(), parentWindow);
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to create hstTraceTool component windows: {}", e.getMessage(), e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Failed to create hstTraceTool component windows: {}", e.getMessage());
+                }
             }
         }
         

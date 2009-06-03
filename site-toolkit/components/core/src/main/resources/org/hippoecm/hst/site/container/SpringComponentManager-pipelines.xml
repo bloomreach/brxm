@@ -51,6 +51,7 @@
     <property name="linkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator" />
     <property name="siteMenusManager" ref="org.hippoecm.hst.core.sitemenu.HstSiteMenusManager" />
     <property name="ctxWhereClauseComputer" ref="org.hippoecm.hst.core.search.HstCtxWhereClauseComputer" />
+    <property name="traceToolComponentClassName" value="${trace.tool.component.class}" />
   </bean>
 
   <!-- Pre-processing valves -->

@@ -79,11 +79,14 @@ public class AggregationValve extends AbstractValve {
                 if (isDevelopmentMode && !sortedComponentWindowList.isEmpty()) {
                     HstComponentWindow lastChildWindow = sortedComponentWindowList.get(sortedComponentWindowList.size() - 1);
                     traceToolWindow = createTraceToolComponent(context, requestContext, lastChildWindow);
-                    ((HstComponentWindowImpl) lastChildWindow).addChildWindow(traceToolWindow);
-                    createHstRequestResponseForWindows(traceToolWindow, requestContext, 
-                            requestMap.get(lastChildWindow), responseMap.get(lastChildWindow), 
-                            requestMap, responseMap, topParentResponse);
-                    sortedComponentWindowList.add(traceToolWindow);
+                    
+                    if (traceToolWindow != null) {
+                        ((HstComponentWindowImpl) lastChildWindow).addChildWindow(traceToolWindow);
+                        createHstRequestResponseForWindows(traceToolWindow, requestContext, 
+                                requestMap.get(lastChildWindow), responseMap.get(lastChildWindow), 
+                                requestMap, responseMap, topParentResponse);
+                        sortedComponentWindowList.add(traceToolWindow);
+                    }
                 }
                 
                 HstComponentWindow [] sortedComponentWindows = sortedComponentWindowList.toArray(new HstComponentWindow[0]);
@@ -251,7 +254,9 @@ public class AggregationValve extends AbstractValve {
                     if (isDevelopmentMode && !traceToolWindowFlushed) {
                         try {
                             traceToolWindowFlushed = true;
-                            traceToolWindow.getResponseState().flush();
+                            if (traceToolWindow != null) {
+                                traceToolWindow.getResponseState().flush();
+                            }
                         } catch (Exception e) {
                             if (log.isDebugEnabled()) {
                                 log.warn("Exception during flushing the traceToolWindow's response state.", e);

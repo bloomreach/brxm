@@ -22,5 +22,12 @@
                            http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-2.5.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
+  <!-- Default properties. The following properties can be overriden by external properties. e.g., hst-config.properties -->
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="ignoreUnresolvablePlaceholders" value="true" />
+    <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_FALLBACK" />
+    <property name="location" value="classpath:/org/hippoecm/hst/site/container/SpringComponentManager.properties" />
+  </bean>
+
 </beans>
 
