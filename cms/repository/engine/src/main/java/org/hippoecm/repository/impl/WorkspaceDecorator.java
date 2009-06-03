@@ -214,20 +214,26 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
             destination.save();
         }
     }
+
+    @Override
     public void copy(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
         super.copy(srcAbsPath, destAbsPath);
         touch(destAbsPath);
     }
 
+    @Override
     public void copy(String srcWorkspace, String srcAbsPath, String destAbsPath) throws NoSuchWorkspaceException, ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
         super.copy(srcWorkspace, srcAbsPath, destAbsPath);
         touch(destAbsPath);
     }
 
+    @Override
     public void clone(String srcWorkspace, String srcAbsPath, String destAbsPath, boolean removeExisting) throws NoSuchWorkspaceException, ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
         super.clone(srcWorkspace, srcAbsPath, destAbsPath, removeExisting);
         touch(destAbsPath);
     }
+
+    @Override
     public void move(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
         super.move(srcAbsPath, destAbsPath);
         touch(destAbsPath);
