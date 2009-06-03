@@ -878,24 +878,30 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             throw new RepositoryException("Absolute path expected, got " + npRes.getJCRPath(absPath));
         }
 
-        NodeId id = hierMgr.resolveNodePath(absPath);
-        if (id != null) {
-            return id;
+        try {
+            NodeId id = hierMgr.resolveNodePath(absPath);
+            if (id != null) {
+                return id;
+            }
+            // try parent, probably a property
+            id = hierMgr.resolveNodePath(absPath.getAncestor(1));
+            if (id != null) {
+                return id;
+            }
+        } catch (RepositoryException e) {
+            // the org.apache.jackrabbit.core.state.NoSuchItemStateException is wrapped in a RepositoryException
+            // so if the node is only available in the attic this is expected
+            if (log.isDebugEnabled()) {
+                log.debug("Error while looking up node, intentionally ignored: " + npRes.getJCRPath(absPath), e);
+            }
         }
 
         // not in the normal hierarchy manager try the attic aware as fallback, because it's way slower
-        id = zombieHierMgr.resolveNodePath(absPath);
+        NodeId id = zombieHierMgr.resolveNodePath(absPath);
         if (id != null) {
             return id;
         }
-
-        // try parent 
-        id = hierMgr.resolveNodePath(absPath.getAncestor(1));
-        if (id != null) {
-            return id;
-        }
-
-        // try zombie parent 
+        // try zombie parent, probably a property
         id = zombieHierMgr.resolveNodePath(absPath.getAncestor(1));
         if (id != null) {
             return id;
