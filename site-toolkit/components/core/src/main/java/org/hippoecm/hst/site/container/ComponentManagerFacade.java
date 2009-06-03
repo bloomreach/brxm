@@ -54,5 +54,9 @@ public class ComponentManagerFacade implements ComponentManagerAware, ComponentM
     public void stop() {
         this.componentManager.stop();
     }
+
+    public void setConfigurationResources(String[] configurationResources) {
+        this.componentManager.setConfigurationResources(configurationResources);
+    }
     
 }

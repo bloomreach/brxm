@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.site.HstServices;
@@ -39,11 +40,29 @@ public class HstContainerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
     public static final String CONTEXT_NAMESPACE_INIT_PARAM = "hstContextNamespace";
+    
+    public static final String CLIENT_COMPONENT_MANAGER_CLASS_INIT_PARAM = "clientComponentManagerClass";
+    
+    public static final String CLIENT_COMPONENT_MANAGER_CONFIGURATIONS_INIT_PARAM = "clientComponentManagerConfigurations";
+
+    public static final String CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM = "clientComponentManagerContextAttributeName";
 
     protected HstContainerConfig requestContainerConfig;
     
     protected String contextNamespace;
     
+    protected String clientComponentManagerClassName;
+    
+    protected String [] clientComponentManagerConfigurations;
+    
+    protected boolean initialized;
+    
+    protected ComponentManager clientComponentManager;
+    
+    protected String clientComponentManagerContextAttributeName = HstContainerServlet.class.getName() + ".clientComponentManager";
+    
+    
+    @Override
     public void init(ServletConfig config) throws ServletException {
         
         super.init(config);
@@ -54,6 +73,80 @@ public class HstContainerServlet extends HttpServlet {
             this.contextNamespace = config.getServletContext().getInitParameter(CONTEXT_NAMESPACE_INIT_PARAM);
         }
 
+        String param = config.getInitParameter(CLIENT_COMPONENT_MANAGER_CLASS_INIT_PARAM);
+        
+        if (param != null) {
+            clientComponentManagerClassName = param;
+        }
+        
+        param = config.getInitParameter(CLIENT_COMPONENT_MANAGER_CONFIGURATIONS_INIT_PARAM);
+        
+        if (param != null) {
+            String [] configs = param.split(",");
+            
+            for (int i = 0; i < configs.length; i++) {
+                configs[i] = configs[i].trim();
+            }
+            
+            clientComponentManagerConfigurations = configs;
+        }
+        
+        param = config.getInitParameter(CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM);
+        
+        if (param != null) {
+            clientComponentManagerContextAttributeName = param;
+        }
+        
+        initialized = false;
+        
+        if (HstServices.isAvailable()) {
+            doInit(config);
+        }
+    }
+    
+    protected synchronized void doInit(ServletConfig config) {
+        if (initialized) {
+            return;
+        }
+        
+        if (clientComponentManager != null) {
+            try {
+                clientComponentManager.stop();
+                clientComponentManager.close();
+            } catch (Exception e) {
+            } finally {
+                clientComponentManager = null;
+            }
+        }
+        
+        try {
+            if (clientComponentManagerClassName != null && clientComponentManagerConfigurations != null && clientComponentManagerConfigurations.length > 0) {
+                clientComponentManager = (ComponentManager) Thread.currentThread().getContextClassLoader().loadClass(clientComponentManagerClassName).newInstance();
+                clientComponentManager.setConfigurationResources(clientComponentManagerConfigurations);
+                clientComponentManager.initialize();
+                clientComponentManager.start();
+                config.getServletContext().setAttribute(clientComponentManagerContextAttributeName, clientComponentManager);
+            }
+        } catch (Throwable th) {
+            log("Invalid client component manager class or configuration: " + th);
+        } finally {
+            initialized = true;
+        }
+    }
+    
+    @Override
+    public void destroy() {
+        initialized = false;
+
+        if (clientComponentManager != null) {
+            try{
+                clientComponentManager.stop();
+                clientComponentManager.close();
+            } catch (Exception e) {
+            } finally {
+                clientComponentManager = null;
+            }
+        }
     }
     
     // -------------------------------------------------------------------
@@ -63,6 +156,7 @@ public class HstContainerServlet extends HttpServlet {
     /**
      * The primary method invoked when the servlet is executed.
      */
+    @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 
         try {
@@ -73,6 +167,10 @@ public class HstContainerServlet extends HttpServlet {
                 res.flushBuffer();
                 
                 return;
+            }
+            
+            if (!initialized) {
+                doInit(getServletConfig());
             }
             
             if (this.requestContainerConfig == null) {
@@ -92,6 +190,7 @@ public class HstContainerServlet extends HttpServlet {
     
     }
 
+    @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         doGet(req, res);
     }
