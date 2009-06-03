@@ -898,21 +898,20 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
                 return itemMgr.getTransientItemState(id);
             } else if (itemMgr.hasTransientItemStateInAttic(id)) {
                 return itemMgr.getAtticItemState(id);
+            } else {
+                String msg = "Item state not found in normal, transient or attic: " + id;
+                NoSuchItemStateException e = new NoSuchItemStateException(msg);
+                log.info(msg);
+                if (log.isDebugEnabled()) {
+                    log.debug(msg,e);
+                }
+                throw e;
             }
-        } catch (NoSuchItemStateException ex) {
-            throw ex;
         } catch (ItemStateException e) {
             String msg = "invalid item id: " + id;
             log.error(msg, e);
             throw new RepositoryException(msg, e);
         }
-        String msg = "Item state not found in normal, transient or attic: " + id;
-        if (log.isDebugEnabled()) {
-            log.debug(msg);
-            Thread.dumpStack();
-            itemMgr.dump(System.err);
-        }
-        throw new NoSuchItemStateException(msg);
     }
 
     /**
