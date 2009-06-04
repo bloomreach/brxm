@@ -16,8 +16,12 @@
 package org.hippoecm.hst.component.support;
 
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -57,51 +61,120 @@ public class SimpleDispatcherHstComponent extends GenericHstComponent {
     public static final String BEFORE_RESOURCE_PHASE = "BEFORE_RESOURCE_PHASE";
     
     /**
-     * Default dispatch path for every invocation. If you set this parameter in the configuration,
+     * The parameter name for the default dispatch path for every invocation. If you set this parameter in the configuration,
      * the servlet indicated by this path should handle everything by itself.
      */
     public static final String DISPATCH_PATH_PARAM_NAME = "dispatch-path";
     
     /**
-     * The dispatch path for <CODE>BEFORE_RENDER_PHASE</CODE>.
+     * The parameter name for the dispatch path for <CODE>BEFORE_RENDER_PHASE</CODE>.
      * This component would dispatch to this path in its {@link #doBeforeRender(HstRequest, HstResponse)}.
      */
     public static final String BEFORE_RENDER_PATH_PARAM_NAME = "before-render-path";
 
     /**
-     * The dispatch path for <CODE>RENDER_PHASE</CODE>.
+     * The parameter name for the dispatch path for <CODE>RENDER_PHASE</CODE>.
      * This component would dispatch to this path in its {@link #doRender(HstRequest, HstResponse)}.
      */
     public static final String RENDER_PATH_PARAM_NAME = "render-path";
     
     /**
-     * The dispatch path for <CODE>ACTION_PHASE</CODE>.
+     * The parameter name for the dispatch path for <CODE>ACTION_PHASE</CODE>.
      * This component would dispatch to this path in its {@link #doAction(HstRequest, HstResponse)}.
      */
     public static final String ACTION_PATH_PARAM_NAME = "action-path";
     
     /**
-     * The dispatch path for <CODE>BEFORE_RESOURCE_PHASE</CODE>.
+     * The parameter name for the dispatch path for <CODE>BEFORE_RESOURCE_PHASE</CODE>.
      * This component would dispatch to this path in its {@link #doBeforeResource(HstRequest, HstResponse)}.
      */
     public static final String BEFORE_RESOURCE_PATH_PARAM_NAME = "before-resource-path";
     
     /**
-     * The dispatch path for <CODE>RESOURCE_PHASE</CODE>.
+     * The parameter name for the dispatch path for <CODE>RESOURCE_PHASE</CODE>.
      * This component would dispatch to this path in its {@link #doServeResource(HstRequest, HstResponse)}.
      */
     public static final String RESOURCE_PATH_PARAM_NAME = "resource-path";
     
+    /**
+     * The parameter name for the flag if the request attributes set during action phase are passed into render phase.
+     */
+    public static final String SHARED_REQUEST_ATTRIBUTES_PARAM_NAME = "shared-request-attributes";
+    
+    /**
+     * The parameter name for the session attribute name by which the request attributes during action phase are stored temporarily
+     * to pass the attributes to request of the following render phase. 
+     */
+    public static final String SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME_PARAM_NAME = "shared-request-attributes-session-attribute-name";
+    
+    /**
+     * The default session attribute name to store shared request attributes during action phase.
+     */
+    public static final String DEFAULT_SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME = SimpleDispatcherHstComponent.class.getName() + ".shared.request.attributes";
+    
+    
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
         doDispatch(getDispatchPathParameter(request, request.getLifecyclePhase()), request, response);
+        
+        if (Boolean.parseBoolean(getParameter(SHARED_REQUEST_ATTRIBUTES_PARAM_NAME, request, null))) {
+            String sharedAttributeName = getParameter(SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME_PARAM_NAME, request, DEFAULT_SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME);
+            Map<String, Object> sharedAttrMap = new HashMap<String, Object>();
+            String attrName = null;
+            Object attrValue = null;
+            
+            for (Enumeration attrNames = request.getAttributeNames(); attrNames.hasMoreElements(); ) {
+                attrName = (String) attrNames.nextElement();
+                
+                if (!attrName.startsWith("javax.")) {
+                    attrValue = request.getAttribute(attrName);
+                    
+                    if (attrValue != null) {
+                        sharedAttrMap.put(attrName, attrValue);
+                    }
+                }
+            }
+            
+            request.getSession(true).setAttribute(sharedAttributeName, sharedAttrMap);
+        }
     }
     
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
+        request.setAttribute(LIFECYCLE_PHASE_ATTRIBUTE, BEFORE_RENDER_PHASE);
+
+        String dispatchPath = getDispatchPathParameter(request, request.getLifecyclePhase());
+        
+        if (dispatchPath != null) {
+            response.setRenderPath(dispatchPath);
+        }
+
+        if (Boolean.parseBoolean(getParameter(SHARED_REQUEST_ATTRIBUTES_PARAM_NAME, request, null))) {
+            HttpSession session = request.getSession(false);
+            
+            if (session != null) {
+                String sharedAttributeName = getParameter(SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME_PARAM_NAME, request, DEFAULT_SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME);
+                Map<String, Object> sharedAttrMap = (Map<String, Object>) session.getAttribute(sharedAttributeName);
+                
+                if (sharedAttrMap != null) {
+                    String attrName = null;
+                    Object attrValue = null;
+                    
+                    for (Map.Entry<String, Object> entry : sharedAttrMap.entrySet()) {
+                        attrName = entry.getKey();
+                        attrValue = request.getAttribute(attrName);
+                        
+                        if (attrValue == null) {
+                            request.setAttribute(attrName, entry.getValue());
+                        }
+                    }
+                    
+                    session.removeAttribute(sharedAttributeName);
+                }
+            }
+        }
+
         try {
-            request.setAttribute(LIFECYCLE_PHASE_ATTRIBUTE, BEFORE_RENDER_PHASE);
-            response.setRenderPath(getDispatchPathParameter(request, request.getLifecyclePhase()));
             doDispatch(getDispatchPathParameter(request, BEFORE_RENDER_PHASE), request, response);
         } finally {
             request.removeAttribute(LIFECYCLE_PHASE_ATTRIBUTE);
@@ -110,9 +183,15 @@ public class SimpleDispatcherHstComponent extends GenericHstComponent {
     
     @Override
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
+        request.setAttribute(LIFECYCLE_PHASE_ATTRIBUTE, BEFORE_RESOURCE_PHASE);
+        
+        String dispatchPath = getDispatchPathParameter(request, request.getLifecyclePhase());
+        
+        if (dispatchPath != null) {
+            response.setServeResourcePath(dispatchPath);
+        }
+
         try {
-            request.setAttribute(LIFECYCLE_PHASE_ATTRIBUTE, BEFORE_RESOURCE_PHASE);
-            response.setServeResourcePath(getDispatchPathParameter(request, request.getLifecyclePhase()));
             doDispatch(getDispatchPathParameter(request, BEFORE_RESOURCE_PHASE), request, response);
         } finally {
             request.removeAttribute(LIFECYCLE_PHASE_ATTRIBUTE);
@@ -141,19 +220,19 @@ public class SimpleDispatcherHstComponent extends GenericHstComponent {
         String dispatchPath = null;
         
         if (BEFORE_RENDER_PHASE.equals(lifecyclePhase)) {
-            dispatchPath = getParameter(BEFORE_RENDER_PATH_PARAM_NAME, request);
+            dispatchPath = getParameter(BEFORE_RENDER_PATH_PARAM_NAME, request, null);
         } else if (HstRequest.RENDER_PHASE.equals(lifecyclePhase)) {
-            dispatchPath = getParameter(RENDER_PATH_PARAM_NAME, request);
+            dispatchPath = getParameter(RENDER_PATH_PARAM_NAME, request, null);
         } else if (HstRequest.ACTION_PHASE.equals(lifecyclePhase)) {
-            dispatchPath = getParameter(ACTION_PATH_PARAM_NAME, request);
+            dispatchPath = getParameter(ACTION_PATH_PARAM_NAME, request, null);
         } else if (BEFORE_RESOURCE_PHASE.equals(lifecyclePhase)) {
-            dispatchPath = getParameter(BEFORE_RESOURCE_PATH_PARAM_NAME, request);
+            dispatchPath = getParameter(BEFORE_RESOURCE_PATH_PARAM_NAME, request, null);
         } else if (HstRequest.RESOURCE_PHASE.equals(lifecyclePhase)) {
-            dispatchPath = getParameter(RESOURCE_PATH_PARAM_NAME, request);
+            dispatchPath = getParameter(RESOURCE_PATH_PARAM_NAME, request, null);
         }
         
         if (dispatchPath == null) {
-            dispatchPath = getParameter(DISPATCH_PATH_PARAM_NAME, request);
+            dispatchPath = getParameter(DISPATCH_PATH_PARAM_NAME, request, null);
         }
         
         if (dispatchPath != null) {
@@ -165,8 +244,9 @@ public class SimpleDispatcherHstComponent extends GenericHstComponent {
         return dispatchPath;
     }
     
-    protected String getParameter(String name, HstRequest request) {
-        return (String) this.getComponentConfiguration().getParameter(name, request.getRequestContext().getResolvedSiteMapItem());
+    protected String getParameter(String name, HstRequest request, String defaultValue) {
+        String value = (String) this.getComponentConfiguration().getParameter(name, request.getRequestContext().getResolvedSiteMapItem());
+        return (value != null ? value : defaultValue);
     }
     
 }
