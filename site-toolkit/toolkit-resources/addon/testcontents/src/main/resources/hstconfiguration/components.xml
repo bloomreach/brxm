@@ -114,7 +114,7 @@
             <sv:value>org.hippoecm.hst.component.support.SimpleDispatcherHstComponent</sv:value>
         </sv:property>
         <sv:property sv:name="hst:parameternames" sv:type="String">
-            <sv:value>dispatch-url</sv:value>
+            <sv:value>dispatch-path</sv:value>
         </sv:property>
         <sv:property sv:name="hst:parametervalues" sv:type="String">
             <sv:value>jsp/components/contactdispatch.jsp</sv:value>

@@ -17,17 +17,15 @@ package org.hippoecm.hst.component.support;
 
 import java.io.IOException;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.request.ComponentConfiguration;
 
 /**
- * A bridge component which simply delegates all invocation to the dispatch url.
+ * A bridge component which simply delegates all invocation to the dispatch path.
  * So, the dispatched servlet should do every necessary things.
  * <P>
  * The dispatched servlet can detect which lifecycle phase of the current request is by retrieving request attribute.
@@ -54,33 +52,53 @@ public class SimpleDispatcherHstComponent extends GenericHstComponent {
     public static final String BEFORE_RENDER_PHASE = "BEFORE_RENDER_PHASE";
     public static final String BEFORE_RESOURCE_PHASE = "BEFORE_RESOURCE_PHASE";
     
-    protected String dispatchUrlParamName = "dispatch-url";
+    /**
+     * Default dispatch path for every invocation. If you set this parameter in the configuration,
+     * the servlet indicated by this path should handle everything by itself.
+     */
+    public static final String DISPATCH_PATH_PARAM_NAME = "dispatch-path";
     
-    @Override
-    public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
-        super.init(servletConfig, componentConfig);
-        
-        String param = servletConfig.getInitParameter("dispatch-url-param-name");
-        
-        if (param != null) {
-            dispatchUrlParamName = param;
-        }
-    }
+    /**
+     * The dispatch path for <CODE>BEFORE_RENDER_PHASE</CODE>.
+     * This component would dispatch to this path in its {@link #doBeforeRender(HstRequest, HstResponse)}.
+     */
+    public static final String BEFORE_RENDER_PATH_PARAM_NAME = "before-render-path";
+
+    /**
+     * The dispatch path for <CODE>RENDER_PHASE</CODE>.
+     * This component would dispatch to this path in its {@link #doRender(HstRequest, HstResponse)}.
+     */
+    public static final String RENDER_PATH_PARAM_NAME = "render-path";
+    
+    /**
+     * The dispatch path for <CODE>ACTION_PHASE</CODE>.
+     * This component would dispatch to this path in its {@link #doAction(HstRequest, HstResponse)}.
+     */
+    public static final String ACTION_PATH_PARAM_NAME = "action-path";
+    
+    /**
+     * The dispatch path for <CODE>BEFORE_RESOURCE_PHASE</CODE>.
+     * This component would dispatch to this path in its {@link #doBeforeResource(HstRequest, HstResponse)}.
+     */
+    public static final String BEFORE_RESOURCE_PATH_PARAM_NAME = "before-resource-path";
+    
+    /**
+     * The dispatch path for <CODE>RESOURCE_PHASE</CODE>.
+     * This component would dispatch to this path in its {@link #doServeResource(HstRequest, HstResponse)}.
+     */
+    public static final String RESOURCE_PATH_PARAM_NAME = "resource-path";
     
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        String dispatchUrl = getDispatchUrlParameter(request);
-        doDispatch(dispatchUrl, request, response);
+        doDispatch(getDispatchPathParameter(request, request.getLifecyclePhase()), request, response);
     }
     
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-        String dispatchUrl = getDispatchUrlParameter(request);
-        
         try {
             request.setAttribute(LIFECYCLE_PHASE_ATTRIBUTE, BEFORE_RENDER_PHASE);
-            response.setRenderPath(dispatchUrl);
-            doDispatch(dispatchUrl, request, response);
+            response.setRenderPath(getDispatchPathParameter(request, request.getLifecyclePhase()));
+            doDispatch(getDispatchPathParameter(request, BEFORE_RENDER_PHASE), request, response);
         } finally {
             request.removeAttribute(LIFECYCLE_PHASE_ATTRIBUTE);
         }
@@ -88,41 +106,53 @@ public class SimpleDispatcherHstComponent extends GenericHstComponent {
     
     @Override
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
-        String dispatchUrl = getDispatchUrlParameter(request);
-        
         try {
             request.setAttribute(LIFECYCLE_PHASE_ATTRIBUTE, BEFORE_RESOURCE_PHASE);
-            response.setServeResourcePath(dispatchUrl);
-            doDispatch(dispatchUrl, request, response);
+            response.setServeResourcePath(getDispatchPathParameter(request, request.getLifecyclePhase()));
+            doDispatch(getDispatchPathParameter(request, BEFORE_RESOURCE_PHASE), request, response);
         } finally {
             request.removeAttribute(LIFECYCLE_PHASE_ATTRIBUTE);
         }
     }
     
-    protected void doDispatch(String dispatchUrl, HstRequest request, HstResponse response) throws HstComponentException {
-        if (dispatchUrl == null) {
-            throw new HstComponentException("The dispatch url is null.");
-        }
-        
-        try {
-            getServletConfig().getServletContext().getRequestDispatcher(dispatchUrl).include(request, response);
-        } catch (ServletException e) {
-            throw new HstComponentException(e);
-        } catch (IOException e) {
-            throw new HstComponentException(e);
+    protected void doDispatch(String dispatchPath, HstRequest request, HstResponse response) throws HstComponentException {
+        if (dispatchPath != null) {
+            try {
+                getServletConfig().getServletContext().getRequestDispatcher(dispatchPath).include(request, response);
+            } catch (ServletException e) {
+                throw new HstComponentException(e);
+            } catch (IOException e) {
+                throw new HstComponentException(e);
+            }
         }
     }
     
-    protected String getDispatchUrlParameter(HstRequest request) {
-        String dispatchUrl = getParameter(dispatchUrlParamName, request);
+    protected String getDispatchPathParameter(HstRequest request, String lifecyclePhase) {
+        String dispatchPath = null;
         
-        if (dispatchUrl != null) {
-            if (dispatchUrl.charAt(0) != '/') {
-                dispatchUrl = new StringBuilder(dispatchUrl.length() + 1).append('/').append(dispatchUrl).toString();
+        if (BEFORE_RENDER_PHASE.equals(lifecyclePhase)) {
+            dispatchPath = getParameter(BEFORE_RENDER_PATH_PARAM_NAME, request);
+        } else if (HstRequest.RENDER_PHASE.equals(lifecyclePhase)) {
+            dispatchPath = getParameter(RENDER_PATH_PARAM_NAME, request);
+        } else if (HstRequest.ACTION_PHASE.equals(lifecyclePhase)) {
+            dispatchPath = getParameter(ACTION_PATH_PARAM_NAME, request);
+        } else if (BEFORE_RESOURCE_PHASE.equals(lifecyclePhase)) {
+            dispatchPath = getParameter(BEFORE_RESOURCE_PATH_PARAM_NAME, request);
+        } else if (HstRequest.RESOURCE_PHASE.equals(lifecyclePhase)) {
+            dispatchPath = getParameter(RESOURCE_PATH_PARAM_NAME, request);
+        }
+        
+        if (dispatchPath == null) {
+            dispatchPath = getParameter(DISPATCH_PATH_PARAM_NAME, request);
+        }
+        
+        if (dispatchPath != null) {
+            if (dispatchPath.charAt(0) != '/') {
+                dispatchPath = new StringBuilder(dispatchPath.length() + 1).append('/').append(dispatchPath).toString();
             }
         }
         
-        return dispatchUrl;
+        return dispatchPath;
     }
     
     protected String getParameter(String name, HstRequest request) {
