@@ -1,0 +1,8 @@
+<'demosite'='http://www.hippoecm.org/hst/nt/demosite/1.0'>
+<'hippostd'='http://www.hippoecm.org/hippostd/nt/1.3'>
+<'hippo'='http://www.hippoecm.org/nt/1.3'>
+
+[demosite:textpage] > hippostd:publishable, hippostd:publishableSummary, hippo:document
+  - demosite:summary (string)
+  - demosite:title (string)
+  + demosite:body (hippostd:html)

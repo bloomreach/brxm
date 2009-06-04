@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		Copyright 2008 Hippo Licensed under the Apache License, Version 2.0
+		(the "License"); you may not use this file except in compliance with
+		the License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+		applicable law or agreed to in writing, software distributed under the
+		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied. See the License for
+		the specific language governing permissions and limitations under the
+		License.
+	-->
+<sv:node sv:name="hst:templates" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+	<sv:property sv:name="jcr:primaryType" sv:type="Name">
+		<sv:value>hst:templates</sv:value>
+	</sv:property>
+	<sv:node sv:name="webpage">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:containers" sv:type="String">
+			<sv:value>header</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/templates/webpage.jsp</sv:value>
+		</sv:property>
+	</sv:node>
+	<sv:node sv:name="header">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/components/header/header.jsp</sv:value>
+		</sv:property>
+	</sv:node>
+	<sv:node sv:name="threecolumnlayout">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:containers" sv:type="String">
+			<sv:value>content</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/components/layout/threecolumnlayout.jsp</sv:value>
+		</sv:property>
+	</sv:node>
+	<sv:node sv:name="leftmenu">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/components/main/leftmenu.jsp</sv:value>
+		</sv:property>
+	</sv:node>
+	<sv:node sv:name="contentoverview">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/components/main/contentlist.jsp</sv:value>
+		</sv:property>
+	</sv:node>
+	<sv:node sv:name="contentdetail">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/components/main/detailcontent.jsp</sv:value>
+		</sv:property>
+	</sv:node>
+	<sv:node sv:name="right">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/components/main/right.jsp</sv:value>
+		</sv:property>
+	</sv:node>
+	<sv:node sv:name="homepage">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/components/main/home.jsp</sv:value>
+		</sv:property>
+	</sv:node>
+	<sv:node sv:name="homelayout">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/components/layout/homelayout.jsp</sv:value>
+		</sv:property>
+	</sv:node>
+	<sv:node sv:name="homenav">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/components/main/homenav.jsp</sv:value>
+		</sv:property>
+	</sv:node>
+	<sv:node sv:name="about">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/components/main/message.jsp</sv:value>
+		</sv:property>
+	</sv:node>
+</sv:node>
