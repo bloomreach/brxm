@@ -107,9 +107,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>contactdispatch</sv:value>
-        </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.component.support.SimpleDispatcherHstComponent</sv:value>
         </sv:property>
@@ -121,6 +118,24 @@
         </sv:property>
     </sv:node>
 
+     <sv:node sv:name="contactspringmvcform">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:template" sv:type="String">
+            <sv:value>contactspringmvc</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentclassname" sv:type="String">
+            <sv:value>org.hippoecm.hst.component.support.SimpleDispatcherHstComponent</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:parameternames" sv:type="String">
+            <sv:value>action-path</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:parametervalues" sv:type="String">
+            <sv:value>spring/contactspringmvc.do</sv:value>
+        </sv:property>
+    </sv:node>
+    
     <sv:node sv:name="leftmenu">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>

@@ -23,6 +23,8 @@ import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A bridge component which simply delegates all invocation to the dispatch path.
@@ -46,6 +48,8 @@ import org.hippoecm.hst.core.component.HstResponse;
  * @version $Id$
  */
 public class SimpleDispatcherHstComponent extends GenericHstComponent {
+
+    private static Logger log = LoggerFactory.getLogger(SimpleDispatcherHstComponent.class);
     
     public static final String LIFECYCLE_PHASE_ATTRIBUTE = SimpleDispatcherHstComponent.class.getName() + ".lifecycle.phase";
     
@@ -123,6 +127,12 @@ public class SimpleDispatcherHstComponent extends GenericHstComponent {
                 throw new HstComponentException(e);
             } catch (IOException e) {
                 throw new HstComponentException(e);
+            }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("The dispatch path is null. The lifecycle phase is {} and the dispatch lifecycle phase is {}", 
+                        request.getLifecyclePhase(), 
+                        request.getAttribute(LIFECYCLE_PHASE_ATTRIBUTE));
             }
         }
     }

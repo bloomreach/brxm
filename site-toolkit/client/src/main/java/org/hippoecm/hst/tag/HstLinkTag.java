@@ -102,6 +102,14 @@ public class HstLinkTag extends TagSupport {
         HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
         HstResponse hstResponse = (HstResponse) request.getAttribute(ContainerConstants.HST_RESPONSE);
         
+        if (hstRequest == null && pageContext.getRequest() instanceof HstRequest) {
+            hstRequest = (HstRequest) pageContext.getRequest();
+        }
+
+        if (hstResponse == null && pageContext.getResponse() instanceof HstResponse) {
+            hstResponse = (HstResponse) pageContext.getResponse();
+        }
+
         String characterEncoding = response.getCharacterEncoding();
         
         if (characterEncoding == null) {

@@ -63,6 +63,14 @@
                 <sv:value>contact-dispatch</sv:value>
             </sv:property>
         </sv:node>
+        <sv:node sv:name="Contact-SpringMVC">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>testproject:sitemenuitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+                <sv:value>contact-springmvc</sv:value>
+            </sv:property>
+        </sv:node>
         <sv:node sv:name="Search">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>testproject:sitemenuitem</sv:value>

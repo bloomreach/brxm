@@ -67,6 +67,10 @@ public class HstElementTag extends BodyTagSupport {
             // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
             HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
 
+            if (hstResponse == null && pageContext.getResponse() instanceof HstResponse) {
+                hstResponse = (HstResponse) pageContext.getResponse();
+            }
+
             if (hstResponse != null) {
                 element = hstResponse.createElement(name);
             } else {

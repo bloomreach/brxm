@@ -30,6 +30,14 @@
         the application is running under portlet/portal environment.
   -->
 
+  <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+    <property name="basenames">
+      <list>
+        <value>springmvc/exceptions</value>
+      </list>
+    </property>
+  </bean>
+
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
     <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
     <property name="prefix" value="/WEB-INF/jsp/"/>
@@ -40,7 +48,8 @@
     class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     <property name="mappings">
       <value>
-        /spring/contactspring.do=contactViewController
+        /spring/contactspring.do = contactViewController
+        /spring/contactspringmvc.do = contactFormController
       </value>
     </property>
   </bean>
@@ -62,6 +71,22 @@
   <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
     <property name="host" value="mail.mycompany.com"/>
   </bean>
-  
+
+  <!-- Spring Web MVC Integration Example -->
+  <bean id="contactFormController" class="org.hippoecm.hst.springmvc.ContactFormController">
+    <property name="mailSender" ref="mailSender" />
+    <property name="templateMessage" ref="templateMessage" />
+    <property name="formView" value="spring/contactspringmvc-form"/>
+    <property name="commandName" value="contactMessage"/>
+    <property name="commandClass" value="org.hippoecm.hst.springmvc.ContactMessageBean"/>
+    <property name="sessionForm" value="true"/>
+    <property name="validateOnBinding" value="true"/>
+    <property name="validators">
+      <list>
+        <bean class="org.hippoecm.hst.springmvc.ContactMessageValidator">
+        </bean>
+      </list>
+    </property>
+  </bean>
 
 </beans>

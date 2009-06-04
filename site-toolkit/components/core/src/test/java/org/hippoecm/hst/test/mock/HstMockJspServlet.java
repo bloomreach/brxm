@@ -55,6 +55,10 @@ public class HstMockJspServlet extends HttpServlet {
         // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
         HstRequest hstRequest = (HstRequest) req.getAttribute(ContainerConstants.HST_REQUEST);
 
+        if (hstRequest == null && req instanceof HstRequest) {
+            hstRequest = (HstRequest) req;
+        }
+
         if (hstRequest != null) {
             HstComponentWindow myWindow = ((HstRequestImpl) hstRequest).getComponentWindow();
             Map<String, HstComponentWindow> childWindowMap = myWindow.getChildWindowMap();

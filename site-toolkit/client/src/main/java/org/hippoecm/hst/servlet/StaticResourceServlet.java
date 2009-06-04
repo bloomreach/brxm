@@ -101,6 +101,10 @@ public class StaticResourceServlet extends HttpServlet {
         // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
         HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
 
+        if (hstRequest == null && request instanceof HstRequest) {
+            hstRequest = (HstRequest) request;
+        }
+
         if (hstRequest != null) {
             path = hstRequest.getResourceID();
         }

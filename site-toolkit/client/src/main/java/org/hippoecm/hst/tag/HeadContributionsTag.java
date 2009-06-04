@@ -52,6 +52,10 @@ public class HeadContributionsTag extends TagSupport {
         // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
         HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
         
+        if (hstResponse == null && pageContext.getResponse() instanceof HstResponse) {
+            hstResponse = (HstResponse) pageContext.getResponse();
+        }
+        
         if (hstResponse != null) {
             List<org.w3c.dom.Element> headElements = hstResponse.getHeadElements();
             

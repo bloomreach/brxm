@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.PathUtils;
@@ -245,6 +246,10 @@ public class BinariesServlet extends HttpServlet {
         // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
         HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
         
+        if (hstRequest == null && request instanceof HstRequest) {
+            hstRequest = (HstRequest) request;
+        }
+        
         if (hstRequest != null) {
             session = hstRequest.getRequestContext().getSession();
         } else {
@@ -270,6 +275,10 @@ public class BinariesServlet extends HttpServlet {
     private void releaseSession(HttpServletRequest request, Session session) {
         // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
         HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
+        
+        if (hstRequest == null && request instanceof HstRequest) {
+            hstRequest = (HstRequest) request;
+        }
 
         if (hstRequest == null) {
             try {
@@ -284,6 +293,10 @@ public class BinariesServlet extends HttpServlet {
         
         // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
         HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
+        
+        if (hstRequest == null && request instanceof HstRequest) {
+            hstRequest = (HstRequest) request;
+        }
         
         if (hstRequest != null) {
             path = hstRequest.getResourceID();

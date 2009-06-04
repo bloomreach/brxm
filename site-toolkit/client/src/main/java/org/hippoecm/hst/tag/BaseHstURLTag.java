@@ -59,12 +59,6 @@ public abstract class BaseHstURLTag extends TagSupport {
     @Override
     public int doStartTag() throws JspException{
         
-        HstURL url = getUrl();
-        
-        if(url == null){
-            throw new IllegalStateException("internal error: url not set");
-        }
-        
         if (var != null) {
             pageContext.removeAttribute(var, PageContext.PAGE_SCOPE);
         }
@@ -81,7 +75,7 @@ public abstract class BaseHstURLTag extends TagSupport {
         
         HstURL url = getUrl();
         
-        if(url == null){
+        if (url == null) {
             throw new IllegalStateException("internal error: url not set");
         }
         
