@@ -1,4 +1,4 @@
-package org.example.components;
+package org.hippoecm.hst.demo.components;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.standard.HippoBean;

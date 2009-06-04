@@ -15,5 +15,5 @@
     limitations under the License.
 -->
 <hst-content-beans>
-    <annotated-class>org.example.beans.TextPage</annotated-class>
+    <annotated-class>org.hippoecm.hst.demo.beans.TextPage</annotated-class>
 </hst-content-beans>

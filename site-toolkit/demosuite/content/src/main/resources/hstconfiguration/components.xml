@@ -35,7 +35,7 @@
 				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:componentclassname" sv:type="String">
-				<sv:value>org.example.components.LeftMenu</sv:value>
+				<sv:value>org.hippoecm.hst.demo.components.LeftMenu</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:template" sv:type="String">
 				<sv:value>leftmenu</sv:value>
@@ -46,7 +46,7 @@
 				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:componentclassname" sv:type="String">
-				<sv:value>org.example.components.About</sv:value>
+				<sv:value>org.hippoecm.hst.demo.components.About</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:template" sv:type="String">
 				<sv:value>about</sv:value>
@@ -73,7 +73,7 @@
 				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:componentclassname" sv:type="String">
-				<sv:value>org.example.components.LeftMenu</sv:value>
+				<sv:value>org.hippoecm.hst.demo.components.LeftMenu</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:template" sv:type="String">
 				<sv:value>leftmenu</sv:value>
@@ -84,7 +84,7 @@
 				<sv:value>hst:component</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:componentclassname" sv:type="String">
-				<sv:value>org.example.components.Home</sv:value>
+				<sv:value>org.hippoecm.hst.demo.components.Home</sv:value>
 			</sv:property>
 			<sv:property sv:name="hst:template" sv:type="String">
 				<sv:value>homepage</sv:value>
