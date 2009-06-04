@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="/hstdemo.psml" hidden="false">
+
+  <title>HST-2 Demo</title>
+  <short-title>HST-2 Demo</short-title>
+
+  <fragment id="hstdemo" type="layout" name="jetspeed-layouts::VelocityTwoColumns2575">
+
+    <fragment id="hstdemo-locale" type="portlet" name="j2-admin::LocaleSelector">
+      <property layout="TwoColumns" name="row" value="0" />
+      <property layout="TwoColumns" name="column" value="0" />
+    </fragment>
+    <fragment id="hstdemo-weather" type="portlet" name="demo::WeatherPortlet">
+        <property layout="TwoColumns" name="row" value="1"/>
+        <property layout="TwoColumns" name="column" value="0"/>
+    </fragment>
+    <fragment id="hstdemo-pickanum" type="portlet" name="demo::PickANumberPortlet" >
+      <property layout="TwoColumns" name="row" value="2" />
+      <property layout="TwoColumns" name="column" value="0" />
+    </fragment>
+    <fragment id="hstdemo-bookmark" type="portlet" name="demo::BookmarkPortlet">
+      <property layout="TwoColumns" name="row" value="3" />
+      <property layout="TwoColumns" name="column" value="0" />
+    </fragment>
+
+    <fragment id="hstdemo-sitehome" type="portlet" name="site::SiteHomePortlet">
+      <property layout="TwoColumns" name="row" value="0"/>
+      <property layout="TwoColumns" name="column" value="1"/>
+    </fragment>
+    <fragment id="hstdemo-onehippo" type="portlet" name="webcontent::IFramePortlet">
+      <property layout="TwoColumns" name="row" value="1" />
+      <property layout="TwoColumns" name="column" value="1" />
+      <preference name="SRC">
+        <value>http://www.onehippo.org</value>
+      </preference>
+    </fragment>
+
+  </fragment>
+
+  <security-constraints>
+    <security-constraints-ref>public-view</security-constraints-ref>
+  </security-constraints>
+
+</page>
