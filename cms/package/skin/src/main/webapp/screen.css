@@ -780,13 +780,14 @@ font-size: 12px; line-height: 18px; background: transparent; border: none; color
 .hippo-editor-field-html .htmlarea .statusBar{display: none}
 .hippo-editor-field-html .htmlarea tr td{vertical-align: top;}
 .hippo-editor-field-html .htmlarea tr td select{margin-top: 2px; font-size: 11px;}
-.hippo-editor-field-html .htmlarea .toolbar {background: none; border: none; border-bottom: 0px solid #B2B2B2; padding:0px; padding-bottom: 2px}
+.hippo-editor-field-html .htmlarea .toolbar {background: white; border: none; border-bottom: 0px solid #B2B2B2; padding:0px; padding-bottom: 2px}
 .hippo-editor-field-html .htmlarea .toolbar .button{background: none; border: none}
 .hippo-editor-field-html .htmlarea .toolbar a.button:hover {border:1px solid #335500; padding:0; background-image:url(hover.png);}
 .hippo-editor-field-html .htmlarea .toolbar select{background: white; border: 1px solid #e3e3e3;}
 .hippo-editor-field-html .htmlarea .toolbar select option{padding: 1px; background: transparent}
 .hippo-editor-field-html .htmlarea .toolbar div{margin-bottom:0px;padding:0px;margin: 0px;}
 .hippo-editor-field-html .htmlarea .xinha_iframe {margin-top: 3px;}
+.hippo-editor-field-html .htmlarea .xinha_fullscreen {margin-top: 0px; border: 1px solid #e3e3e3;}
 
 /* Xinha modal windows */
 /*div.wicket-modal div.link-picker select { margin-bottom:10px;}

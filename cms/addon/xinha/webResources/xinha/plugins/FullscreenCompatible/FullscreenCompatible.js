@@ -144,7 +144,18 @@ Xinha.prototype._fullscreenCompatible = function()
     {
       ancestor.style.position = ancestor._xinha_fullScreenOldPosition;
       ancestor._xinha_fullScreenOldPosition = null;
+
+      if(ancestor.className == 'yui-layout-doc') {
+          for(var i=0; i < ancestor.childNodes.length; i++) {
+              var c = ancestor.childNodes[i];
+              c.style.position = c._xinha_fullScreenOldPosition;
+              c._xinha_fullScreenOldPosition = null;
+          }
+      }
     }
+    
+    this._iframe.className = this._iframe.classNameOld;
+    this._iframe.classNameOld = null;
     
     if ( Xinha.ie_version < 7 )
     {
@@ -163,7 +174,7 @@ Xinha.prototype._fullscreenCompatible = function()
 
   }
   else
-  {
+  {//Maximize
       
     // Get the current Scroll Positions
     this._unScroll =
@@ -176,7 +187,6 @@ Xinha.prototype._fullscreenCompatible = function()
         this._parentNode = this._htmlArea.parentNode;
         this._htmlArea.parentNode.removeChild(this._htmlArea);
         document.body.appendChild(this._htmlArea);
-        
     } 
     // Make all ancestors position = static
     var ancestor = this._htmlArea;
@@ -184,8 +194,19 @@ Xinha.prototype._fullscreenCompatible = function()
     {
       ancestor._xinha_fullScreenOldPosition = ancestor.style.position;
       ancestor.style.position = 'static';
-
+      
+      if(ancestor.className == 'yui-layout-doc') {
+          for(var i=0; i < ancestor.childNodes.length; i++) {
+              var c = ancestor.childNodes[i];
+              c._xinha_fullScreenOldPosition = ancestor.style.position;
+              c.style.position = 'static';
+          }
+      }
     }
+    
+    this._iframe.classNameOld = this._iframe.className;
+    this._iframe.className = 'xinha_fullscreen'; 
+    
     // very ugly bug in IE < 7 shows select boxes through elements that are positioned over them
     if ( Xinha.ie_version < 7 )
     {
