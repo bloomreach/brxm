@@ -710,7 +710,14 @@ font-weight: bold;
 .hippo-accordion-unit h2 a.focus:hover{background-position: 0px -48px}
 .hippo-accordion-unit h2 a.focus:active{background-position: 0px -72px}
 
+/* Show add-root button in tree*/
 .hippo-accordion-unit-add { display: block; background: url("images/addfolder.png") no-repeat left bottom; padding-left: 30px; padding-bottom: 5px; padding-top: 5px; margin-bottom: 10px; text-align: left; margin-left: 5px; }
+
+/* But hide it in pickers */
+.wicket-modal .hippo-accordion-unit-add { display: none; }
+
+/* Hide the context-menu-left-click-icon as well */
+.wicket-modal .hippo-tree-dropdown-icon-container {display: none;}
 
 /* Hippo tree addition */
 
@@ -718,11 +725,6 @@ font-weight: bold;
 .hippo-tree-dropdown-icon {display: block; width: 18px; height: 18px; float: right; margin-right: 4px; background: transparent;}
 .hippo-tree-dropdown-icon:hover {background-position: 0px 18px;}
 
-/*AB*/
-.hippo-tree-dropdown{visibility: hidden;}
-.hippo-tree-dropdown li a{color: #000;}
-
-.hippo-tree-dropdown .hippo-toolbar-menu-item{}
 
 /* Document Preview Plugin */
 /* ================================================ */

@@ -53,6 +53,14 @@ body{padding: 15px;}
 .hippo-console-tree-add  li span em{font-weight: bold; color: white; font-style: normal} 
 .hippo-console-tree-add-delete a:hover{background: red;}
 
+.hippo-console-tree .hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container, 
+.hippo-console-tree .hippo-tree div.wicket-tree div.row-selected:hover .hippo-tree-dropdown-icon-container {
+  background: transparent; 
+}
+
+.hippo-console-tree .hippo-tree-dropdown-icon:hover {background-position: 0px 0px;}
+ 
+
 .hippo-console-tree-sorter li span em, .hippo-console-tree-sorter a{padding-left: 25px; padding-right: 25px; background: #abd5ff}
 
 .hippo-console-menu{}
