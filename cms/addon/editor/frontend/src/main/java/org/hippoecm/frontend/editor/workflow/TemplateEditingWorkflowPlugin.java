@@ -37,6 +37,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IValidateService;
@@ -128,6 +129,15 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
         model.getNode().refresh(false);
     }
 
+    void closeEditor() {
+        IEditor editor = getPluginContext().getService(getPluginConfig().getString("editor.id"), IEditor.class);
+        try {
+            editor.close();
+        } catch (EditorException e) {
+            log.error("Could not close editor", e);
+        }
+    }
+
     public boolean hasError() {
         if (!validated) {
             validate();
@@ -201,6 +211,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
                     try {
                         doRevert();
                         closeDialog();
+                        closeEditor();
                     } catch (Exception ex) {
                         exceptionLabel.setModel(new Model(ex.getMessage()));
                         target.addComponent(exceptionLabel);
@@ -218,6 +229,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
                     try {
                         doSave();
                         closeDialog();
+                        closeEditor();
                     } catch (Exception ex) {
                         exceptionLabel.setModel(new Model(ex.getMessage()));
                         target.addComponent(exceptionLabel);
