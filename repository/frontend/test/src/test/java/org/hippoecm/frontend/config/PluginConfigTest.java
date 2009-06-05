@@ -295,6 +295,27 @@ public class PluginConfigTest extends PluginTest {
     }
 
     @Test
+    public void testWrappedSerialization() throws Exception {
+        build(session, content);
+
+        IPluginConfig original = new JavaPluginConfig(getPluginConfig());
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(os);
+        oos.writeObject(original);
+
+        InputStream is = new ByteArrayInputStream(os.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(is);
+        IPluginConfig copy = (IPluginConfig) ois.readObject();
+        assertEquals("b", copy.getString("a"));
+
+        IPluginConfig subConfig = copy.getPluginConfig("sub");
+        assertEquals("d", subConfig.getString("c"));
+
+        testTypedConfig(copy.getPluginConfig("typed"));
+    }
+
+    @Test
     public void testCloning() throws Exception {
         build(session, content);
 
