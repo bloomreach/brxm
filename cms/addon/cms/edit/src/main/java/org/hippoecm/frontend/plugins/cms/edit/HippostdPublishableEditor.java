@@ -43,6 +43,7 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
     private static final Logger log = LoggerFactory.getLogger(HippostdPublishableEditor.class);
 
     private IObserver handleObserver;
+    private JcrNodeModel editorModel;
 
     HippostdPublishableEditor(final EditorManagerPlugin manager, IPluginContext context, IPluginConfig config,
             JcrNodeModel model) throws CmsEditorException {
@@ -65,6 +66,7 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
         super.start();
         try {
             final JcrNodeModel handle = getModel();
+            editorModel = getEditorModel();
             if (handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
                 getPluginContext().registerService(handleObserver = new IObserver() {
                     private static final long serialVersionUID = 1L;
@@ -76,11 +78,16 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
                     public void onEvent(Iterator<? extends IEvent> event) {
                         try {
                             setMode(getMode(handle));
+                            JcrNodeModel newModel = getEditorModel();
+                            if (!newModel.equals(editorModel)) {
+                                stop();
+                                start();
+                            }
                             return;
                         } catch (EditorException ex) {
-                            log.warn("Could not reset editor mode", ex);
+                            log.warn("Could not update editor", ex);
                         } catch (CmsEditorException ex) {
-                            log.warn("Could not reset editor mode", ex);
+                            log.warn("Could not update editor", ex);
                         }
 
                         try {
@@ -130,7 +137,6 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
                 for (NodeIterator iter = handleNode.getNodes(); iter.hasNext();) {
                     Node child = iter.nextNode();
                     if (child.getName().equals(handleNode.getName())) {
-                        // FIXME: This has knowledge of hippostd reviewed actions, which within this new context wrong
                         if (child.hasProperty("hippostd:state")) {
                             String state = child.getProperty("hippostd:state").getString();
                             if (state.equals("unpublished")) {
@@ -163,7 +169,6 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
                 for (NodeIterator iter = handleNode.getNodes(); iter.hasNext();) {
                     Node child = iter.nextNode();
                     if (child.getName().equals(handleNode.getName())) {
-                        // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
                         if (child.hasProperty("hippostd:state")
                                 && child.getProperty("hippostd:state").getString().equals("draft")
                                 && child.getProperty("hippostd:holder").getString().equals(user)) {
