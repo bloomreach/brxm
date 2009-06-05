@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.AbstractList;
 import java.util.AbstractMap;
@@ -80,6 +81,27 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
         public Object setValue(Object value) {
             return JcrPluginConfig.this.put(key, value);
         }
+    }
+
+    private class SerializableList extends AbstractList implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private List upstream;
+
+        SerializableList(List upstream) {
+            this.upstream = upstream;
+        }
+
+        @Override
+        public Object get(int index) {
+            return filter(upstream.get(index));
+        }
+
+        @Override
+        public int size() {
+            return upstream.size();
+        }
+
     }
 
     protected final JcrNodeModel nodeModel;
@@ -207,7 +229,7 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
         }
         return defaultValue;
     }
-    
+
     public long getLong(String key) throws StringValueConversionException {
         return getLong(key, 0);
     }
@@ -448,19 +470,7 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
             JcrMap map = (JcrMap) value;
             return wrapConfig(map.getNode());
         } else if (value instanceof List) {
-            final List list = (List) value;
-            return new AbstractList() {
-
-                @Override
-                public Object get(int index) {
-                    return filter(list.get(index));
-                }
-
-                @Override
-                public int size() {
-                    return list.size();
-                }
-            };
+            return new SerializableList((List) value);
         }
         return value;
     }
