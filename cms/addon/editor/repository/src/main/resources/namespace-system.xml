@@ -443,7 +443,7 @@
         <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Lange integer</sv:value>
+        <sv:value>Geheel getal</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -540,7 +540,7 @@
         <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Double</sv:value>
+        <sv:value>Getal</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">

@@ -186,7 +186,7 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippostd:templates</sv:value>
       </sv:property>
-      <sv:node sv:name="Folder">
+      <sv:node sv:name="hippostd:folder">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippostd:folder</sv:value>
         </sv:property>
@@ -199,7 +199,7 @@
           <sv:value>new-document</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="Unordered folder">
+      <sv:node sv:name="hippostd:directory">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippostd:directory</sv:value>
         </sv:property>
@@ -240,83 +240,6 @@
       <sv:property sv:name="hippo:workflow" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
       </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippostd:translations">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippostd:translations</sv:value>
-      </sv:property>
-      <sv:node sv:name="Folder">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:base</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:translated</sv:value>
-        </sv:property>
-        <sv:node sv:name="hippo:translation">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:translation</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>folder</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:workflow" sv:type="String">
-            <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hippo:translation">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:translation</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>nl</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>map</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:workflow" sv:type="String">
-            <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="Unordered folder">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:base</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:translated</sv:value>
-        </sv:property>
-        <sv:node sv:name="hippo:translation">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:translation</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>unordered folder</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:workflow" sv:type="String">
-            <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hippo:translation">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:translation</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>nl</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>ongeordende map</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:workflow" sv:type="String">
-            <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
     </sv:node>
   </sv:node>
 
