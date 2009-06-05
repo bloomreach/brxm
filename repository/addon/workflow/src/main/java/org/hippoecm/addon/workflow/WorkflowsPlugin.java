@@ -40,6 +40,8 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
 
     private final IModelReference modelReference;
 
+    private IObserver handleObserver = null;
+
     public WorkflowsPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
@@ -74,6 +76,10 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
         super.onModelChanged();
         Set<Node> nodeSet = new LinkedHashSet<Node>();
         MenuHierarchy menu = null;
+        if (handleObserver != null) {
+            getPluginContext().unregisterService(handleObserver, IObserver.class.getName());
+            handleObserver = null;
+        }
         try {
             if (getModel() instanceof JcrNodeModel) {
                 Node node = ((JcrNodeModel)getModel()).getNode();
@@ -86,6 +92,15 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
                                 nodeSet.add(node);
                             }
                         }
+                        final JcrNodeModel handleModel = new JcrNodeModel(handle);
+                        getPluginContext().registerService(handleObserver = new IObserver() {
+                            public IObservable getObservable() {
+                                return handleModel;
+                            }
+                            public void onEvent(Iterator<? extends IEvent> event) {
+                                onModelChanged();
+                            }
+                        }, IObserver.class.getName());
                     } else {
                         nodeSet.add(node);
                     }

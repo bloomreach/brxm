@@ -122,6 +122,9 @@ class BrowserObserver implements IObserver, IDetachable {
 
     private JcrNodeModel getEditorModel(JcrNodeModel nodeModel) throws RepositoryException {
         // find physical node
+        if (nodeModel == null) {
+	    return null;
+        }
         Node node = nodeModel.getNode();
         if (node == null) {
             return null;
