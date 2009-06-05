@@ -22,7 +22,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -38,7 +37,7 @@ import org.hippoecm.frontend.service.IBrowseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractBrowseView implements IBrowseService, IDetachable {
+public abstract class AbstractBrowseView implements IBrowseService<JcrNodeModel>, IDetachable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -64,7 +63,9 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
         }
 
         browseService = new BrowseService(context, config, document);
-        final IModelReference folderReference = context.getService(config.getString("model.folder"),
+
+        @SuppressWarnings("unchecked")
+        final IModelReference<JcrNodeModel> folderReference = context.getService(config.getString("model.folder"),
                 IModelReference.class);
         if (folderReference != null) {
             context.registerService(new IObserver() {
@@ -82,9 +83,10 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
         }
 
         @SuppressWarnings("unchecked")
-        IModelReference<IModel> modelService = context.getService(config.getString("model.folder"), IModelReference.class);
+        IModelReference<JcrNodeModel> modelService = context.getService(config.getString("model.folder"),
+                IModelReference.class);
         if (modelService != null) {
-            IModel model = modelService.getModel();
+            JcrNodeModel model = modelService.getModel();
             onFolderChanged(model);
         }
     }
@@ -114,32 +116,28 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
         return false;
     }
 
-    protected void onFolderChanged(IModel model) {
-        if (model instanceof JcrNodeModel) {
-            boolean shown = false;
-            try {
-                Node node = ((JcrNodeModel) model).getNode();
-                if (node == null) {
-                    return;
+    protected void onFolderChanged(JcrNodeModel model) {
+        boolean shown = false;
+        try {
+            Node node = ((JcrNodeModel) model).getNode();
+            if (node == null) {
+                return;
+            }
+            Node root = node.getSession().getRootNode();
+            IPluginConfigService pluginConfig = context.getService(IPluginConfigService.class.getName(),
+                    IPluginConfigService.class);
+            do {
+                shown = showFolder(node, pluginConfig.listClusters(config.getString(VIEWERS)));
+                if (!node.isSame(root)) {
+                    node = node.getParent();
+                } else {
+                    break;
                 }
-                Node root = node.getSession().getRootNode();
-                IPluginConfigService pluginConfig = context.getService(IPluginConfigService.class.getName(),
-                        IPluginConfigService.class);
-                do {
-                    shown = showFolder(node, pluginConfig.listClusters(config.getString(VIEWERS)));
-                    if (!node.isSame(root)) {
-                        node = node.getParent();
-                    } else {
-                        break;
-                    }
-                } while (!shown);
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-            if (!shown) {
-                resetViewer();
-            }
-        } else {
+            } while (!shown);
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        if (!shown) {
             resetViewer();
         }
     }
@@ -152,7 +150,7 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
         }
     }
 
-    public void browse(IModel model) {
+    public void browse(JcrNodeModel model) {
         browseService.browse(model);
         onBrowse();
     }
