@@ -39,17 +39,16 @@ public class FieldEditor extends Panel {
 
         this.type = type;
         this.edit = edit;
-        
-        final IFieldDescriptor descriptor = (IFieldDescriptor) getModelObject();
+
         addFormField(new TextField("path", new IModel() {
             private static final long serialVersionUID = 1L;
 
             public Object getObject() {
-                return descriptor.getPath();
+                return getDescriptor().getPath();
             }
 
             public void setObject(Object object) {
-                descriptor.setPath((String) object);
+                getDescriptor().setPath((String) object);
             }
 
             public void detach() {
@@ -59,12 +58,12 @@ public class FieldEditor extends Panel {
             private static final long serialVersionUID = 1L;
 
             public Object getObject() {
-                return descriptor == null ? null : new Boolean(descriptor.isMandatory());
+                return getDescriptor() == null ? null : new Boolean(getDescriptor().isMandatory());
             }
 
             public void setObject(Object object) {
                 Boolean bool = (Boolean) object;
-                descriptor.setMandatory(bool);
+                getDescriptor().setMandatory(bool);
             }
 
             public void detach() {
@@ -74,12 +73,12 @@ public class FieldEditor extends Panel {
             private static final long serialVersionUID = 1L;
 
             public Object getObject() {
-                return descriptor == null ? null : new Boolean(descriptor.isMultiple());
+                return getDescriptor() == null ? null : new Boolean(getDescriptor().isMultiple());
             }
 
             public void setObject(Object object) {
                 Boolean bool = (Boolean) object;
-                descriptor.setMultiple(bool);
+                getDescriptor().setMultiple(bool);
             }
 
             public void detach() {
@@ -89,12 +88,12 @@ public class FieldEditor extends Panel {
             private static final long serialVersionUID = 1L;
 
             public Object getObject() {
-                return descriptor == null ? null : new Boolean(descriptor.isOrdered());
+                return getDescriptor() == null ? null : new Boolean(getDescriptor().isOrdered());
             }
 
             public void setObject(Object object) {
                 Boolean bool = (Boolean) object;
-                descriptor.setOrdered(bool);
+                getDescriptor().setOrdered(bool);
             }
 
             public void detach() {
@@ -104,13 +103,13 @@ public class FieldEditor extends Panel {
             private static final long serialVersionUID = 1L;
 
             public Object getObject() {
-                return descriptor == null ? null : new Boolean(descriptor.isPrimary());
+                return getDescriptor() == null ? null : new Boolean(getDescriptor().isPrimary());
             }
 
             public void setObject(Object object) {
                 Boolean bool = (Boolean) object;
                 if (bool) {
-                    FieldEditor.this.type.setPrimary(descriptor.getName());
+                    FieldEditor.this.type.setPrimary(getDescriptor().getName());
                 }
             }
 
@@ -124,6 +123,10 @@ public class FieldEditor extends Panel {
                 return FieldEditor.this.type != null;
             }
         });
+    }
+
+    IFieldDescriptor getDescriptor() {
+        return (IFieldDescriptor) getModelObject();
     }
 
     void setType(ITypeDescriptor type) {
@@ -144,7 +147,7 @@ public class FieldEditor extends Panel {
             component.setOutputMarkupId(true);
             component.add(new AjaxFormComponentUpdatingBehavior("onChange") {
                 private static final long serialVersionUID = 1L;
-    
+
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     FieldEditor.this.onUpdate(target);

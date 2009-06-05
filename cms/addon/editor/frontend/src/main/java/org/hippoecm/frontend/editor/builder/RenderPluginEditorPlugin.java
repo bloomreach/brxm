@@ -89,6 +89,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
                 }
             }
         }.setVisible(editable));
+
         add(new AjaxLink("down") {
             private static final long serialVersionUID = 1L;
 
@@ -117,6 +118,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
                 }
             }
         }.setVisible(editable));
+
         add(new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;
 
