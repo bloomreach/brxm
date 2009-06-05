@@ -74,7 +74,7 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
     
     protected final static IValueMap SMALL = new ValueMap("width=380,height=250");
     protected final static IValueMap MEDIUM = new ValueMap("width=475,height=250");
-    protected final static IValueMap LARGE = new ValueMap("width=855,height=490");
+    protected final static IValueMap LARGE = new ValueMap("width=855,height=445");
 
     @SuppressWarnings("unchecked")
     private class Container extends Panel implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
