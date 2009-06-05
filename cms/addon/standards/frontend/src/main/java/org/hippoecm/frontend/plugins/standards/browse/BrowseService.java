@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standards.browse;
 
-import java.util.Iterator;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -24,9 +22,6 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
-import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
-import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -35,7 +30,19 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BrowseService implements IBrowseService<IModel>, IRefreshable, IDetachable {
+/**
+ * An implementation of IBrowseService that also exposes two model services,
+ * for document and folder, that represent the state of the "browser".
+ * <p>
+ * The IBrowseService interface should be used by plugins that do not form
+ * part of the "browser".  The model services should be used by plugins that do.
+ * <p>
+ * The folder and document models are always JcrNodeModel instances, though the
+ * nodes may not exist.  When the document node is null, this implies that no
+ * document is selected from the folder.  Setting the folder node to null is
+ * not supported.
+ */
+public class BrowseService implements IBrowseService<JcrNodeModel>, IRefreshable, IDetachable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -56,13 +63,39 @@ public class BrowseService implements IBrowseService<IModel>, IRefreshable, IDet
 
         @Override
         public void setModel(JcrNodeModel model) {
-            selectDocument(model);
+            if (model == null) {
+                throw new IllegalArgumentException("invalid model null");
+            }
+            browse(model);
         }
     }
 
+    private class FolderModelService extends ModelReference<JcrNodeModel> {
+        private static final long serialVersionUID = 1L;
+
+        FolderModelService(IPluginConfig config, JcrNodeModel document) {
+            super(config.getString("model.folder"), document);
+        }
+
+        public void updateModel(JcrNodeModel model) {
+            super.setModel(model);
+        }
+
+        @Override
+        public void setModel(JcrNodeModel model) {
+            if (model == null) {
+                throw new IllegalArgumentException("invalid folder model null");
+            } else if (model.getNode() == null) {
+                throw new IllegalArgumentException("invalid folder node null");
+            }
+            selectFolder(model);
+        }
+
+    }
+    
     private JcrNodeModel folder;
     private String path;
-    private ModelReference<JcrNodeModel> folderService;
+    private FolderModelService folderService;
     private DocumentModelService documentService;
 
     public BrowseService(final IPluginContext context, final IPluginConfig config, JcrNodeModel document) {
@@ -70,34 +103,13 @@ public class BrowseService implements IBrowseService<IModel>, IRefreshable, IDet
         document = findDocument(document);
 
         context.registerService(this, config.getString(IBrowseService.BROWSER_ID, BrowseService.class.getName()));
-
         context.registerService(this, IRefreshable.class.getName());
 
-        if (config.getString("model.document") != null) {
-            documentService = new DocumentModelService(config, document);
-            documentService.init(context);
-        } else {
-            log.error("no document model service (model.document) specified");
-        }
+        documentService = new DocumentModelService(config, document);
+        documentService.init(context);
 
-        if (config.getString("model.folder") != null) {
-            folderService = new ModelReference<JcrNodeModel>(config.getString("model.folder"), folder);
-            folderService.init(context);
-            context.registerService(new IObserver() {
-                private static final long serialVersionUID = 1L;
-
-                public IObservable getObservable() {
-                    return folderService;
-                }
-
-                public void onEvent(Iterator<? extends IEvent> event) {
-                    selectFolder(folderService.getModel());
-                }
-
-            }, IObserver.class.getName());
-        } else {
-            log.error("no folder model service (model.folder) specified");
-        }
+        folderService = new FolderModelService(config, folder);
+        folderService.init(context);
     }
 
     public void selectFolder(IModel model) {
@@ -105,62 +117,51 @@ public class BrowseService implements IBrowseService<IModel>, IRefreshable, IDet
             folder = (JcrNodeModel) model;
 
             documentService.updateModel(new JcrNodeModel((Node) null));
+            folderService.updateModel(folder);
         }
     }
 
-    public void selectDocument(JcrNodeModel model) {
-        browse(model);
-    }
-
-    public void setFolderModel(JcrNodeModel nodeModel) {
-        folderService.setModel(nodeModel);
-    }
-
-    public void updateDocumentModel(JcrNodeModel nodeModel) {
-        documentService.updateModel(nodeModel);
-    }
-
-    public void browse(IModel model) {
-        if (model instanceof JcrNodeModel) {
-            JcrNodeModel document = findDocument((JcrNodeModel) model);
-            if (folder != null) {
-                updateDocumentModel(document);
-                setFolderModel(folder);
-            } else {
-                log.warn("No folder found for model {}", model);
-            }
+    public void browse(JcrNodeModel model) {
+        if (!(model instanceof JcrNodeModel)) {
+            throw new IllegalArgumentException("invalid model type");
+        }
+        JcrNodeModel document = findDocument((JcrNodeModel) model);
+        if (folder != null) {
+            documentService.updateModel(document);
+            folderService.updateModel(folder);
         } else {
-            updateDocumentModel(null);
+            log.warn("No folder found for model {}", model);
         }
     }
 
     public void refresh() {
-        JcrNodeModel nodeModel = documentService.getModel();
-        if (nodeModel == null) {
-            nodeModel = folderService.getModel();
-        }
-
-        if (!nodeModel.getItemModel().exists() && path != null) {
-            // detect move/delete of ancestor
-            nodeModel = new JcrNodeModel(path);
-            boolean hasChanged = false;
-            while (!nodeModel.getItemModel().exists() && path.length() > 0) {
-                path = path.substring(0, path.lastIndexOf('/'));
-                nodeModel = new JcrNodeModel(path);
-                hasChanged = true;
-            }
-            if (hasChanged && nodeModel != null) {
-                browse(nodeModel);
+        if (path != null) {
+            JcrNodeModel nodeModel = documentService.getModel();
+            if (!nodeModel.getItemModel().exists()) {
+                nodeModel = folderService.getModel();
+                if (!nodeModel.getItemModel().exists()) {
+                    // detect move/delete of ancestor
+                    nodeModel = new JcrNodeModel(path);
+                    boolean hasChanged = false;
+                    while (!nodeModel.getItemModel().exists() && path.length() > 0) {
+                        path = path.substring(0, path.lastIndexOf('/'));
+                        nodeModel = new JcrNodeModel(path);
+                        hasChanged = true;
+                    }
+                    if (hasChanged && nodeModel != null) {
+                        browse(nodeModel);
+                    }
+                }
             }
         }
     }
 
     public void detach() {
         JcrNodeModel nodeModel = documentService.getModel();
-        if (nodeModel == null) {
+        if (!nodeModel.getItemModel().exists()) {
             nodeModel = folderService.getModel();
         }
-        if (nodeModel != null) {
+        if (nodeModel.getItemModel().exists()) {
             path = nodeModel.getItemModel().getPath();
         }
 
@@ -169,11 +170,11 @@ public class BrowseService implements IBrowseService<IModel>, IRefreshable, IDet
     }
 
     private JcrNodeModel findDocument(JcrNodeModel document) {
-        if (document == null) {
-            return null;
-        } else if (document.getNode() == null || isFolder(document)) {
+        if (document.getNode() == null) {
+            return document;
+        } else if (isFolder(document)) {
             folder = document;
-            document = null;
+            document = new JcrNodeModel((Node) null);
         } else {
             folder = getParent(document);
             while (!isFolder(folder)) {
@@ -186,22 +187,23 @@ public class BrowseService implements IBrowseService<IModel>, IRefreshable, IDet
 
     private JcrNodeModel getParent(JcrNodeModel model) {
         JcrNodeModel parentModel = model.getParentModel();
-        if (parentModel != null) {
-            try {
-                // skip facetresult nodes in hierarchy
-                Node parent = parentModel.getNode();
-                if (parent.isNodeType(HippoNodeType.NT_FACETRESULT)) {
-                    return new JcrNodeModel(parent.getParent());
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
+        if (parentModel == null) {
+            return new JcrNodeModel((Node) null);
+        }
+        try {
+            // skip facetresult nodes in hierarchy
+            Node parent = parentModel.getNode();
+            if (parent.isNodeType(HippoNodeType.NT_FACETRESULT)) {
+                return new JcrNodeModel(parent.getParent());
             }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
         }
         return parentModel;
     }
 
     private boolean isFolder(JcrNodeModel nodeModel) {
-        if (nodeModel != null) {
+        if (nodeModel.getNode() != null) {
             try {
                 Node node = nodeModel.getNode();
                 if (node.isNodeType("hippostd:folder") || node.isNodeType("hippostd:directory")
@@ -216,5 +218,5 @@ public class BrowseService implements IBrowseService<IModel>, IRefreshable, IDet
         }
         return true;
     }
-
+    
 }
