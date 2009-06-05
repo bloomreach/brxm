@@ -22,7 +22,7 @@ public class Archive extends BaseHstComponent {
     
     private static PageableCollection<SearchResult<HippoBean>> EMPTY_RESULTS = new PageableCollection<SearchResult<HippoBean>>(0);
     
-    public static final int DEFAULT_PAGE_SIZE = 10;
+    public static final int DEFAULT_PAGE_SIZE = 5;
     
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {

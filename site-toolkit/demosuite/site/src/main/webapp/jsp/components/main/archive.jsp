@@ -31,9 +31,14 @@
         <c:forEach var="bean" items="${searchResults.items}" varStatus="indexer">
             <hst:link var="link" hippobean="${bean.item}"/>                         
         <ul class="list-overview">
-            <li class="title"><a href="${link}">${bean.title}</a></li>
-            <li class="text">
-                <p>${bean.text}</p>
+            <li class="title">
+                <a href="${link}">${bean.title}</a>
+                <div>
+                    <p>${bean.date.time}</p>
+                    <p>${bean.text}</p>
+                </div>
+            </li>
+            
             </li>
         </ul>
         </c:forEach>
