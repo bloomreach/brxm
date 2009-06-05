@@ -80,8 +80,12 @@
     <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
     <resources>
       <resource>
-    <filtering>false</filtering>
-    <directory>${basedir}/src/main/java</directory>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
         <includes>
           <include>**/*.html</include>
           <include>**/*.css</include>
