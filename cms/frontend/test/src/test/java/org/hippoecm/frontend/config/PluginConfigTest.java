@@ -35,9 +35,8 @@ import java.util.Set;
 import javax.jcr.Node;
 
 import org.apache.wicket.util.lang.Objects;
-import org.hippoecm.frontend.HippoTester;
+import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.map.HippoMap;
 import org.hippoecm.frontend.model.map.IHippoMap;
 import org.hippoecm.frontend.model.map.JcrMap;
@@ -47,40 +46,36 @@ import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
-import org.hippoecm.repository.TestCase;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-public class PluginConfigTest extends TestCase {
+public class PluginConfigTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    Node root, cleanerConfigNode;
-
     String[] content = new String[] {
-            "/map", "nt:unstructured",
+            "/test", "nt:unstructured",
+            "/test/map", "nt:unstructured",
                 "a", "b",
                 "c", "d",
-            "/config", "frontend:pluginconfig",
+            "/test/config", "frontend:pluginconfig",
                 "a", "b",
-            "/config/sub", "frontend:pluginconfig",
+            "/test/config/sub", "frontend:pluginconfig",
                 "c", "d",
-            "/config/typed", "frontendtest:typed",
+            "/test/config/typed", "frontendtest:typed",
                 "d1", "3.0",
                 "d2", "3",
                 "l1", "1",
                 "l2", "-1",
                 "b1", "true",
                 "b2", "false",
-            "/cluster", "frontend:plugincluster",
-            "/cluster/plugin", "frontend:plugin",
+            "/test/cluster", "frontend:plugincluster",
+            "/test/cluster/plugin", "frontend:plugin",
                 "c", "d",
                 "x", "${cluster.id}",
-            "/cluster/plugin/sub", "frontend:pluginconfig",
+            "/test/cluster/plugin/sub", "frontend:pluginconfig",
                 "a", "b",
                 "y", "${cluster.id}",
-            "/cluster/plugin/sub/typed", "frontendtest:typed",
+            "/test/cluster/plugin/sub/typed", "frontendtest:typed",
                 "d1", "3.0",
                 "d2", "3",
                 "l1", "1",
@@ -88,31 +83,12 @@ public class PluginConfigTest extends TestCase {
                 "b1", "true",
                 "b2", "false"};
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp(true);
-        root = session.getRootNode();
-        HippoTester tester = new HippoTester(new JcrSessionModel(null) {
-            private static final long serialVersionUID = 1L;
-            
-            @Override
-            protected Object load() {
-                return session;
-            }
-        });
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     @Test
     @SuppressWarnings("unchecked")
     public void testMap() throws Exception {
         build(session, content);
         
-        IHippoMap map = new JcrMap(new JcrNodeModel(root.getNode("map")));
+        IHippoMap map = new JcrMap(new JcrNodeModel(root.getNode("test/map")));
         assertEquals("b", map.get("a"));
 
         Set set = map.entrySet();
@@ -181,7 +157,7 @@ public class PluginConfigTest extends TestCase {
     }
 
     protected IPluginConfig getPluginConfig() throws Exception {
-        return new JcrPluginConfig(new JcrNodeModel(root.getNode("config")));
+        return new JcrPluginConfig(new JcrNodeModel(root.getNode("test/config")));
     }
 
     @Test
@@ -221,7 +197,7 @@ public class PluginConfigTest extends TestCase {
     }
 
     protected IClusterConfig getClusterConfig() throws Exception {
-        return new JcrClusterConfig(new JcrNodeModel(root.getNode("cluster")), null);
+        return new JcrClusterConfig(new JcrNodeModel(root.getNode("test/cluster")), null);
     }
 
     @Test
@@ -257,7 +233,7 @@ public class PluginConfigTest extends TestCase {
         
         assertEquals(2, plugins.size());
 
-        Node node = root.getNode("cluster/abc");
+        Node node = root.getNode("test/cluster/abc");
         assertEquals("frontend:plugin", node.getPrimaryNodeType().getName());
 
         IPluginConfig first = plugins.set(0, plugins.remove(1));

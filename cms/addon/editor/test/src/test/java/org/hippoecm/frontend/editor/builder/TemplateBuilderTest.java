@@ -24,54 +24,20 @@ import java.util.Map;
 
 import javax.jcr.Node;
 
-import org.hippoecm.frontend.HippoTester;
-import org.hippoecm.frontend.Home;
-import org.hippoecm.frontend.Main;
+import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrSessionModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IClusterConfigListener;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor.ITypeListener;
-import org.hippoecm.repository.TestCase;
-import org.junit.After;
 import org.junit.Test;
 
-public class TemplateBuilderTest extends TestCase {
+public class TemplateBuilderTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: ";
-
-    HippoTester tester;
-    Home home;
-    IPluginContext context;
-    JcrSessionModel sessionModel;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp(true);
-        sessionModel = new JcrSessionModel(Main.DEFAULT_CREDENTIALS) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected Object load() {
-                return session;
-            }
-        };
-        tester = new HippoTester(sessionModel);
-        home = (Home) tester.startPage(Home.class);
-        context = new PluginContext(home.getPluginManager(), new JavaPluginConfig("test"));
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
 
     @Test
     /**

@@ -17,6 +17,8 @@ package org.hippoecm.frontend;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
@@ -40,6 +42,8 @@ public abstract class PluginTest extends TestCase {
     protected static IPluginContext context;
 
     public static class DummyPlugin implements IPlugin {
+        private static final long serialVersionUID = 1L;
+
         public DummyPlugin(IPluginContext context, IPluginConfig config) {
             PluginTest.context = context;
         }
@@ -67,6 +71,7 @@ public abstract class PluginTest extends TestCase {
         tearDownClass(true);
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp(false);
@@ -77,7 +82,9 @@ public abstract class PluginTest extends TestCase {
         }
         root = session.getRootNode();
         build(session, config);
+        session.save();
 
+        JcrApplicationFactory jcrAppFactory = new JcrApplicationFactory(new JcrNodeModel("/config"));
         tester = new HippoTester(new JcrSessionModel(CREDENTIALS) {
             private static final long serialVersionUID = 1L;
 
@@ -85,14 +92,15 @@ public abstract class PluginTest extends TestCase {
             protected Object load() {
                 return session;
             }
-        });
 
-        JcrApplicationFactory jcrAppFactory = new JcrApplicationFactory(new JcrNodeModel("/config"));
-        home = (Home) tester.startPage(new Home(jcrAppFactory));
+        }, jcrAppFactory);
+
+        home = tester.startPluginPage();
     }
 
     @After
     public void teardown() throws Exception {
+        tester.destroy();
         if (session != null) {
             session.refresh(false);
             while (session.getRootNode().hasNode("config")) {
@@ -103,10 +111,16 @@ public abstract class PluginTest extends TestCase {
         super.tearDown();
     }
 
-    protected void startContext() {
-        
+    protected void refreshPage() {
+        WebRequestCycle requestCycle = tester.setupRequestAndResponse(true);;
+        HippoTester.callOnBeginRequest(requestCycle);
+        AjaxRequestTarget target = new PluginRequestTarget(home);
+        requestCycle.setRequestTarget(target);
+
+        // process the request target
+        tester.processRequestCycle(requestCycle);
     }
-    
+
     protected IPluginContext start(IPluginConfig config) {
         return home.getPluginManager().start(config);
     }

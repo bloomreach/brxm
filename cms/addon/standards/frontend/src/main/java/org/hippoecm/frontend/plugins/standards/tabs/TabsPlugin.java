@@ -25,6 +25,9 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -112,6 +115,7 @@ public class TabsPlugin extends RenderPlugin {
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
+        tabbedPanel.render(target);
         for (Tab tabbie : tabs) {
             tabbie.renderer.render(target);
         }
@@ -165,17 +169,53 @@ public class TabsPlugin extends RenderPlugin {
         return null;
     }
 
-    class Tab implements ITab {
+    class Tab implements ITab, IObserver {
         private static final long serialVersionUID = 1L;
 
+        ServiceTracker<ITitleDecorator> decoratorTracker;
+        ITitleDecorator decorator;
+        IModel titleModel;
         IRenderService renderer;
         int lastSelected;
 
         Tab(IRenderService renderer) {
             this.renderer = renderer;
+
+            IPluginContext context = getPluginContext();
+            String serviceId = context.getReference(renderer).getServiceId();
+            decoratorTracker = new ServiceTracker<ITitleDecorator>(ITitleDecorator.class) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onServiceAdded(ITitleDecorator service, String name) {
+                    decorator = service;
+                    if (titleModel instanceof IObservable) {
+                        getPluginContext().unregisterService(Tab.this, IObserver.class.getName());
+                        titleModel = null;
+                    }
+                    tabbedPanel.redraw();
+                }
+
+                @Override
+                protected void onRemoveService(ITitleDecorator service, String name) {
+                    if (decorator == service) {
+                        if (titleModel instanceof IObservable) {
+                            getPluginContext().unregisterService(Tab.this, IObserver.class.getName());
+                            titleModel = null;
+                        }
+                        decorator = null;
+                        tabbedPanel.redraw();
+                    }
+                }
+            };
+            context.registerTracker(decoratorTracker, serviceId);
         }
 
         void destroy() {
+            IPluginContext context = getPluginContext();
+            String serviceId = context.getReference(renderer).getServiceId();
+            context.unregisterTracker(decoratorTracker, serviceId);
+
             if (tabs.size() > 0) {
                 // look for previously selected tab
                 int lastCount = 0;
@@ -195,13 +235,25 @@ public class TabsPlugin extends RenderPlugin {
             }
         }
 
+        public IObservable getObservable() {
+            return (IObservable) titleModel;
+        }
+
+        public void onEvent(Iterator<? extends IEvent> events) {
+            tabbedPanel.redraw();
+        }
+
         // implement ITab interface
 
         public IModel getTitle() {
-            IServiceReference<IRenderService> reference = getPluginContext().getReference(renderer);
-            ITitleDecorator decorator = getPluginContext().getService(reference.getServiceId(), ITitleDecorator.class);
-            if (decorator != null) {
-                IModel titleModel = decorator.getTitle();
+            if (titleModel == null && decorator != null) {
+                titleModel = decorator.getTitle();
+                if (titleModel instanceof IObservable) {
+                    IPluginContext context = getPluginContext();
+                    context.registerService(this, IObserver.class.getName());
+                }
+            }
+            if (titleModel != null) {
                 String fulltitle = (String) titleModel.getObject();
                 int length = fulltitle.length();
                 String appendix = (length < (maxTabLength + 1) ? "" : "..");
@@ -239,6 +291,9 @@ public class TabsPlugin extends RenderPlugin {
 
         void detach() {
             ((Panel) renderer).detach();
+            if (titleModel != null) {
+                titleModel.detach();
+            }
         }
     }
 }
