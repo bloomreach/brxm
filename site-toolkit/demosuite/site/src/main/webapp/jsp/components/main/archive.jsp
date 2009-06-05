@@ -19,7 +19,36 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<div>
-  archive
+<c:set var="nextpage" value="${searchResults.next}"/>
+<c:set var="offset" value="${(searchResults.currentPage -1) * searchResults.pageSize}"/>
+<c:set var="prevpage" value="${searchResults.previous}"/>
+<c:set var="firstpage" value="${searchResults.startPage}"/>
+<c:set var="lastpage" value="${searchResults.endPage}"/>
+<div id="yui-main">
+        <h1>Archive</h1>
+        <h2>Displaying ${searchResults.startOffset} - ${searchResults.endOffset} of ${searchResults.total} results</h2>
+        
+        <c:forEach var="bean" items="${searchResults.items}" varStatus="indexer">
+            <hst:link var="link" hippobean="${bean.item}"/>                         
+        <ul class="list-overview">
+            <li class="title"><a href="${link}">${bean.title}</a></li>
+            <li class="text">
+                <p>${bean.text}</p>
+            </li>
+        </ul>
+        </c:forEach>
+        <ul id="paging-nav">
+            <c:forEach var="pageNr" items="${searchResults.pageNumbersArray}" varStatus="status">
+                <c:set var="active" value="" />
+                <c:if test="${searchResults.currentPage == pageNr}">
+                      <c:set var="active" value=" class=\"active\"" />
+                </c:if>
+                <hst:renderURL var="pagelink">
+                    <hst:param name="page" value="${pageNr}" />
+                    <hst:param name="query" value="${query}" />
+                </hst:renderURL>
+                <li${active}><a href="${pagelink}" title="${pageNr}">${pageNr}</a></li>
+            </c:forEach>
+        </ul>
+    
 </div>
-

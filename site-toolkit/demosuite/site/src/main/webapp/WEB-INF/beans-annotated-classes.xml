@@ -16,4 +16,5 @@
 -->
 <hst-content-beans>
     <annotated-class>org.hippoecm.hst.demo.beans.TextPage</annotated-class>
+    <annotated-class>org.hippoecm.hst.demo.beans.NewsPage</annotated-class>
 </hst-content-beans>
