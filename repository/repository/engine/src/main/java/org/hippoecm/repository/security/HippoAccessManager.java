@@ -878,13 +878,19 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             throw new RepositoryException("Absolute path expected, got " + npRes.getJCRPath(absPath));
         }
 
+        if (absPath.denotesRoot()) {
+            return rootNodeId;
+        }
+        
         try {
-            NodeId id = hierMgr.resolveNodePath(absPath);
-            if (id != null) {
+            // try property first
+            PropertyId pId = hierMgr.resolvePropertyPath(absPath);
+            if (pId != null) {
+                NodeId id = pId.getParentId();
                 return id;
             }
-            // try parent, probably a property
-            id = hierMgr.resolveNodePath(absPath.getAncestor(1));
+            
+            NodeId id = hierMgr.resolveNodePath(absPath);
             if (id != null) {
                 return id;
             }
@@ -896,13 +902,15 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             }
         }
 
-        // not in the normal hierarchy manager try the attic aware as fallback, because it's way slower
-        NodeId id = zombieHierMgr.resolveNodePath(absPath);
-        if (id != null) {
+        // try zombie parent, probably a property
+        PropertyId pId = zombieHierMgr.resolvePropertyPath(absPath);
+        if (pId != null) {
+            NodeId id = pId.getParentId();
             return id;
         }
-        // try zombie parent, probably a property
-        id = zombieHierMgr.resolveNodePath(absPath.getAncestor(1));
+        
+        // not in the normal hierarchy manager try the attic aware as fallback, because it's way slower
+        NodeId id = zombieHierMgr.resolveNodePath(absPath);
         if (id != null) {
             return id;
         }
