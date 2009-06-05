@@ -21,10 +21,21 @@ import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
+/**
+ * An example form controller extending SimpleFormController.
+ * <P>
+ * This example demonstrates the usual simple form controller usage provided by spring web mvc framework.
+ * If the property, 'redirectOnSuccess', is set to true, this controller returns a <CODE>RedirectView</CODE>.
+ * Otherwise, this returns the success view by default.
+ * </P>
+ * 
+ * @version $Id$
+ */
 public class ContactFormController extends SimpleFormController {
 
     private MailSender mailSender;
     private SimpleMailMessage templateMessage;
+    private boolean redirectOnSuccess;
     
     public void setMailSender(MailSender mailSender) {
         this.mailSender = mailSender;
@@ -34,20 +45,34 @@ public class ContactFormController extends SimpleFormController {
         this.templateMessage = templateMessage;
     }
     
+    public void setRedirectOnSuccess(boolean redirectOnSuccess) {
+        this.redirectOnSuccess = redirectOnSuccess;
+    }
+
+    protected void sendContactMessage(ContactMessageBean messageBean) throws Exception {
+        SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
+        msg.setFrom(messageBean.getEmail());
+        msg.setText(messageBean.getMessage());
+        mailSender.send(msg);
+    }
+    
+    @Override
+    protected void doSubmitAction(Object command) throws Exception {
+        if (redirectOnSuccess) {
+            super.doSubmitAction(command);
+        } else {
+            sendContactMessage((ContactMessageBean) command);
+        }
+    }
+
     @Override
     protected ModelAndView onSubmit(Object command, BindException errors) throws Exception {
-        ModelAndView mv = null;
-        
-        ContactMessageBean bean = (ContactMessageBean) command;
-        
-        SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
-        msg.setFrom(bean.getEmail());
-        msg.setText(bean.getMessage());
-        mailSender.send(msg);
-        
-        mv = new ModelAndView(new SiteMapItemRedirectView("thankyou", true));
-        
-        return mv;
+        if (!redirectOnSuccess) {
+            return super.onSubmit(command, errors);
+        } else {
+            sendContactMessage((ContactMessageBean) command);
+            return new ModelAndView(new SiteMapItemRedirectView("thankyou", true));
+        }
     }
     
 }

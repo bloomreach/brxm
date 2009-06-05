@@ -77,9 +77,9 @@
     <property name="mailSender" ref="mailSender" />
     <property name="templateMessage" ref="templateMessage" />
     <property name="formView" value="spring/contactspringmvc-form"/>
+    <property name="successView" value="spring/contactspringmvc-success"/>
     <property name="commandName" value="contactMessage"/>
     <property name="commandClass" value="org.hippoecm.hst.springmvc.ContactMessageBean"/>
-    <property name="sessionForm" value="true"/>
     <property name="validateOnBinding" value="true"/>
     <property name="validators">
       <list>

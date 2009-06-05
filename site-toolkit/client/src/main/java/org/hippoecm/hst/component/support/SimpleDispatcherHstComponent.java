@@ -105,12 +105,12 @@ public class SimpleDispatcherHstComponent extends GenericHstComponent {
      * The parameter name for the session attribute name by which the request attributes during action phase are stored temporarily
      * to pass the attributes to request of the following render phase. 
      */
-    public static final String SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME_PARAM_NAME = "shared-request-attributes-session-attribute-name";
+    public static final String SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME_PREFIX_PARAM_NAME = "shared-request-attributes-session-attribute-name-prefix";
     
     /**
-     * The default session attribute name to store shared request attributes during action phase.
+     * The default session attribute name prefix to store shared request attributes during action phase.
      */
-    public static final String DEFAULT_SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME = SimpleDispatcherHstComponent.class.getName() + ".shared.request.attributes";
+    public static final String DEFAULT_SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME_PREFIX = SimpleDispatcherHstComponent.class.getName() + ".shared.request.attributes-";
     
     
     @Override
@@ -118,7 +118,8 @@ public class SimpleDispatcherHstComponent extends GenericHstComponent {
         doDispatch(getDispatchPathParameter(request, request.getLifecyclePhase()), request, response);
         
         if (Boolean.parseBoolean(getParameter(SHARED_REQUEST_ATTRIBUTES_PARAM_NAME, request, null))) {
-            String sharedAttributeName = getParameter(SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME_PARAM_NAME, request, DEFAULT_SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME);
+            String sharedAttributeNamePrefix = getParameter(SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME_PREFIX_PARAM_NAME, request, DEFAULT_SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME_PREFIX);
+            String sharedAttributeName = sharedAttributeNamePrefix + response.getNamespace();
             Map<String, Object> sharedAttrMap = new HashMap<String, Object>();
             String attrName = null;
             Object attrValue = null;
@@ -153,7 +154,8 @@ public class SimpleDispatcherHstComponent extends GenericHstComponent {
             HttpSession session = request.getSession(false);
             
             if (session != null) {
-                String sharedAttributeName = getParameter(SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME_PARAM_NAME, request, DEFAULT_SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME);
+                String sharedAttributeNamePrefix = getParameter(SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME_PREFIX_PARAM_NAME, request, DEFAULT_SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME_PREFIX);
+                String sharedAttributeName = sharedAttributeNamePrefix + response.getNamespace();
                 Map<String, Object> sharedAttrMap = (Map<String, Object>) session.getAttribute(sharedAttributeName);
                 
                 if (sharedAttrMap != null) {
