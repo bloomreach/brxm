@@ -1,0 +1,1120 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<sv:node sv:name="news" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippostd:directory</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+    <sv:value>hippo:harddocument</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippostd:foldertype" sv:type="String">
+    <sv:value>new-folder</sv:value>
+    <sv:value>new-document</sv:value>
+  </sv:property>
+  <sv:node sv:name="2009" >
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippostd:directory</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:harddocument</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:foldertype" sv:type="String">
+      <sv:value>new-folder</sv:value>
+      <sv:value>new-document</sv:value>
+    </sv:property>
+    <sv:node sv:name="January" >
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippostd:directory</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:foldertype" sv:type="String">
+        <sv:value>new-folder</sv:value>
+        <sv:value>new-document</sv:value>
+      </sv:property>
+      <sv:node sv:name="NewsItem1 jan 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem1 jan 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem1 jan 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-01-14T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem1 jan 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem1 jan 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem2 jan 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem2 jan 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem2 jan 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-01-15T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem2 jan 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem2 jan 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem4 jan 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem4 jan 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem4 jan 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-01-17T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem4 jan 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem4 jan 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem5 jan 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem5 jan 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem5 jan 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-01-18T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem5 jan 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem5 jan 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem6 jan 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem6 jan 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem6 jan 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-01-19T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem6 jan 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem6 jan 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem7 jan 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem7 jan 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem7 jan 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-01-20T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem7 jan 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem7 jan 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem8 jan 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem8 jan 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem8 jan 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-01-21T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem8 jan 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem8 jan 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem9 jan 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem9 jan 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem9 jan 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-01-22T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem9 jan 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem9 jan 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem10 jan 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem10 jan 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem10 jan 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-01-23T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem10 jan 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem10 jan 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem11 jan 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem11 jan 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem11 jan 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-01-23T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem11 jan 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem11 jan 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="February" >
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippostd:directory</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:foldertype" sv:type="String">
+        <sv:value>new-folder</sv:value>
+        <sv:value>new-document</sv:value>
+      </sv:property>
+      <sv:node sv:name="NewsItem1 feb 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem1 feb 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem1 feb 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-02-01T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem1 feb 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem1 feb 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem2 feb 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem2 feb 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem2 feb 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-02-02T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem2 feb 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem2 feb 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem3 feb 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem3 feb 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem3 feb 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-02-03T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem3 feb 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem3 feb 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem4 feb 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem4 feb 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem4 feb 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-02-04T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem4 feb 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem4 feb 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="March" >
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippostd:directory</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:foldertype" sv:type="String">
+        <sv:value>new-folder</sv:value>
+        <sv:value>new-document</sv:value>
+      </sv:property>
+      <sv:node sv:name="NewsItem1 march 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem1 march 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem1 march 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-03-08T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem1 march 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem1 march 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem2 march 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem2 march 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem2 march 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-03-09T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem2 march 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem2 march 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem3 march 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem3 march 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem3 march 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-03-11T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem3 march 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem3 march 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem4 march 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem4 march 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem4 march 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-03-14T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem4 march 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem4 march 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem5 march 09">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem5 march 09">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem5 march 09</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2009-03-19T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem5 march 09</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem5 march 09
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="2008">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippostd:directory</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:harddocument</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:foldertype" sv:type="String">
+      <sv:value>new-folder</sv:value>
+      <sv:value>new-document</sv:value>
+    </sv:property>
+    <sv:node sv:name="January" >
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippostd:directory</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:foldertype" sv:type="String">
+        <sv:value>new-folder</sv:value>
+        <sv:value>new-document</sv:value>
+      </sv:property>
+      <sv:node sv:name="NewsItem1 jan 08">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem1 jan 08">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem1 jan 08</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2008-01-19T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem1 jan 08</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem1 jan 08
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem2 jan 08">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem2 jan 08">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem2 jan 08</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2008-01-21T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem2 jan 08</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem2 jan 08
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem3 jan 08">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem3 jan 08">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem3 jan 08</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2008-01-24T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem3 jan 08</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem3 jan 08
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="NewsItem4 jan 08">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="NewsItem4 jan 08">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>demosite:newspage</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:summary" sv:type="String">
+            <sv:value>Summary NewsItem4 jan 08</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:date" sv:type="Date">
+            <sv:value>2008-01-29T10:05:07.580+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="demosite:title" sv:type="String">
+            <sv:value>Title NewsItem4 jan 08</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>Body content NewsItem4 jan 08
+              </sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+</sv:node>

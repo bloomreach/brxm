@@ -15,9 +15,18 @@
  */
 package org.hippoecm.hst.demo.beans;
 
+import java.util.Calendar;
+
 import org.hippoecm.hst.content.beans.Node;
 
-@Node(jcrType="demosite:textpage")
-public class TextPage extends GeneralPage{
+@Node(jcrType="demosite:newspage")
+public class NewsPage extends TextPage{
 
+    @Override
+    public Calendar getDate() {
+        
+        return getProperty("demosite:date");
+    }
+
+ 
 }

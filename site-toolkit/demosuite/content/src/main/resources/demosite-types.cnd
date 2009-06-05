@@ -6,3 +6,6 @@
   - demosite:summary (string)
   - demosite:title (string)
   + demosite:body (hippostd:html)
+  
+[demosite:newspage] > demosite:textpage
+  - demosite:date (date)

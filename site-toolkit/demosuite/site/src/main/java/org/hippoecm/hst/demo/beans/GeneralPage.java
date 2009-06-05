@@ -15,15 +15,31 @@
  */
 package org.hippoecm.hst.demo.beans;
 
+import java.util.Calendar;
+
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
 public class GeneralPage extends HippoDocument {
 
+    
     public String getTitle() {
         return getProperty("demosite:title");
     }
     
     public String getSummary() {
         return getProperty("demosite:summary");
+    }
+
+    public HippoHtml getHtml(){
+        return getHippoHtml("demosite:body");    
+    }
+    
+    /*
+     * to be overridden by beans having a date. By having it in the generalpage as well, 
+     * the jsp el can always try a var.date without getting an expression language exception
+     */  
+    public Calendar getDate() {
+        return null;
     }
 }

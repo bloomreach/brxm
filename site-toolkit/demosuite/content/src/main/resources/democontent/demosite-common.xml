@@ -10,12 +10,7 @@
     <sv:value>101cc297-3d17-43b5-aa70-d443f87b00d2</sv:value>
   </sv:property>
   <sv:property sv:name="hippo:paths" sv:type="String">
-    <sv:value>101cc297-3d17-43b5-aa70-d443f87b00d2</sv:value>
-    <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-    <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-    <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
   </sv:property>
-  <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
     <sv:value>new-folder</sv:value>
     <sv:value>new-document</sv:value>
@@ -41,15 +36,6 @@
         <sv:value>143140f9-1e75-457f-a782-381cd4eade7c</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:paths" sv:type="String">
-        <sv:value>143140f9-1e75-457f-a782-381cd4eade7c</sv:value>
-        <sv:value>120c9e06-2bac-4997-9ba2-ba90d8280cac</sv:value>
-        <sv:value>101cc297-3d17-43b5-aa70-d443f87b00d2</sv:value>
-        <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-        <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-        <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>common/homepage</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>admin</sv:value>
@@ -98,15 +84,6 @@
         <sv:value>133bc73d-84c8-48d9-b0e9-220f78a5062a</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:paths" sv:type="String">
-        <sv:value>133bc73d-84c8-48d9-b0e9-220f78a5062a</sv:value>
-        <sv:value>c30cab27-5317-44f0-a9eb-977f87e0d904</sv:value>
-        <sv:value>101cc297-3d17-43b5-aa70-d443f87b00d2</sv:value>
-        <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-        <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-        <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>common/About Us</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>admin</sv:value>

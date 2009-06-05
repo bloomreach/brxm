@@ -20,8 +20,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <div>
-  <h2>${document.title}</h2>
-  <p>${document.summary}</p>
-  <p><hst:html hippohtml="${document.html}"/></p>
+  archive
 </div>
 

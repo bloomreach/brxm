@@ -3,4 +3,4 @@
 <%@ page trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
-<h1>HST Website</h1>
+<h1>HST DEMO Website</h1>

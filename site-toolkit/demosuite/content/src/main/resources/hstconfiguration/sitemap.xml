@@ -39,5 +39,38 @@
             <sv:value>common/About Us</sv:value>
         </sv:property>
     </sv:node>
+    <sv:node sv:name="news">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+            <sv:value>hst:pages/newsarchive</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+            <sv:value>news</sv:value>
+        </sv:property>
+        <sv:node sv:name="_any_">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemapitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                <sv:value>hst:pages/newsarchive</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+                <sv:value>news/${1}</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="_any_.html">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemapitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                <sv:value>hst:pages/detailpage</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+                <sv:value>news/${1}</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
 </sv:node>
 
