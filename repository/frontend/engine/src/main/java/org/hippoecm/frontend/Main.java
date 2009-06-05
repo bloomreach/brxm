@@ -32,7 +32,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.Page;
 import org.apache.wicket.Request;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -41,12 +40,9 @@ import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authorization.IAuthorizationStrategy;
 import org.apache.wicket.protocol.http.HttpSessionStore;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.protocol.http.WebRequestCycleProcessor;
 import org.apache.wicket.request.IRequestCycleProcessor;
 import org.apache.wicket.request.RequestParameters;
 import org.apache.wicket.request.target.coding.AbstractRequestTargetUrlCodingStrategy;
-import org.apache.wicket.request.target.component.BookmarkablePageRequestTarget;
-import org.apache.wicket.request.target.component.IPageRequestTarget;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.session.ISessionStore;
 import org.apache.wicket.settings.IExceptionSettings;
@@ -277,31 +273,7 @@ public class Main extends WebApplication {
 
     @Override
     protected IRequestCycleProcessor newRequestCycleProcessor() {
-        return new WebRequestCycleProcessor() {
-            @Override
-            public void processEvents(RequestCycle requestCycle) {
-                super.processEvents(requestCycle);
-
-                IRequestTarget target = requestCycle.getRequestTarget();
-                if (target instanceof IPageRequestTarget) {
-                    Page page = ((IPageRequestTarget) target).getPage();
-                    if (page instanceof Home) {
-                        ((Home) page).processEvents();
-                        
-                        if (target instanceof PluginRequestTarget) {
-                            ((Home) page).render((PluginRequestTarget) target);
-                        } else {
-                            ((Home) page).render((PluginRequestTarget) null);
-                        }
-                    }
-                } else if (target instanceof BookmarkablePageRequestTarget) {
-                    Page page = ((BookmarkablePageRequestTarget) target).getPage();
-                    if (page instanceof Home) {
-                        ((Home) page).render((PluginRequestTarget) null);
-                    }
-                }
-            }
-        };
+        return new PluginRequestCycleProcessor();
     }
 
     public String getConfigurationParameter(String parameterName, String defaultValue) {

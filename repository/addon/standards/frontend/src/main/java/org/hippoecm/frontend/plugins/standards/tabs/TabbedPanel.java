@@ -34,6 +34,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.PluginRequestTarget;
 
 public class TabbedPanel extends WebMarkupContainer {
     @SuppressWarnings("unused")
@@ -46,6 +47,7 @@ public class TabbedPanel extends WebMarkupContainer {
     private final TabsPlugin plugin;
 
     private final List<TabsPlugin.Tab> tabs;
+    private transient boolean redraw = false;
 
     public TabbedPanel(String id, TabsPlugin plugin, List<TabsPlugin.Tab> tabs) {
         super(id, new Model(new Integer(-1)));
@@ -168,6 +170,19 @@ public class TabbedPanel extends WebMarkupContainer {
         return true;
     }
 
+    public void redraw() {
+        redraw = true;
+    }
+    
+    public void render(PluginRequestTarget target) {
+        if (redraw) {
+            if (target != null) {
+                target.addComponent(get("tabs-container"));
+            }
+            redraw = false;
+        }
+    }
+    
     // @see org.apache.wicket.Component#onAttach()
     protected void onBeforeRender() {
         super.onBeforeRender();

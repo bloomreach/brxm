@@ -24,46 +24,16 @@ import nl.hippo.htmlcleaner.ElementDescriptor;
 import nl.hippo.htmlcleaner.HtmlCleanerTemplate;
 import nl.hippo.htmlcleaner.OutputElementDescriptor;
 
-import org.hippoecm.frontend.HippoTester;
-import org.hippoecm.frontend.Main;
+import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.htmlcleaner.JCRHtmlCleanerTemplateBuilder;
-import org.hippoecm.repository.TestCase;
-import org.hippoecm.repository.api.WorkflowManager;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-public class HtmlCleanerConfigTest extends TestCase {
+public class HtmlCleanerConfigTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
-    Node root, cleanerConfigNode;
-    WorkflowManager manager;
-    HippoTester tester;
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp(true);
-        root = session.getRootNode();
-        JcrSessionModel sessionModel = new JcrSessionModel(Main.DEFAULT_CREDENTIALS) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected Object load() {
-                return session;
-            }
-        };
-        tester = new HippoTester(sessionModel);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
 
     protected IPluginConfig getPluginConfig() throws Exception {
         Node cleanerConfigNode = root.getNode("cleaner.config");

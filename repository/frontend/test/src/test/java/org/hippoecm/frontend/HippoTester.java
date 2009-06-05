@@ -16,32 +16,59 @@
 package org.hippoecm.frontend;
 
 import org.apache.wicket.Request;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
+import org.apache.wicket.request.IRequestCycleProcessor;
 import org.apache.wicket.util.tester.WicketTester;
 import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.session.UserSession;
 
 public class HippoTester extends WicketTester {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private IApplicationFactory appFactory;
+
     public HippoTester() {
         this(new JcrSessionModel(null) {
+            private static final long serialVersionUID = 1L;
+
             @Override
             protected Object load() {
                 return null;
             }
-        });
+        }, null);
     }
 
-    public HippoTester(final JcrSessionModel sessionModel) {
+    public Home startPluginPage() {
+        Home home;
+        RequestCycle rc = createRequestCycle();
+        if (appFactory != null) {
+            home = (Home) super.startPage(new Home(appFactory));
+        } else {
+            home = (Home) super.startPage(Home.class);
+        }
+        rc.detach();
+        return home;
+    }
+    
+    public HippoTester(final JcrSessionModel sessionModel, IApplicationFactory jcrAppFactory) {
         super(new NonPageCachingDummyWebApplication() {
+
+            @Override
+            protected IRequestCycleProcessor newRequestCycleProcessor() {
+                return new PluginRequestCycleProcessor();
+            }
+
             @Override
             public Session newSession(Request request, Response response) {
                 return new UserSession(request, sessionModel);
             }
         });
+
+        this.appFactory = jcrAppFactory;
     }
 
 }
