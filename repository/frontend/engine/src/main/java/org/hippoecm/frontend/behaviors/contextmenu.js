@@ -99,9 +99,23 @@
         var x = region.right - 12;
         var y = region.top + 5;
         
+        var menuHeight = 120; //middle ground fallback
+        var uls = YUID.getElementsByClassName('hippo-toolbar-menu-item', 'ul', YUID.get(id));
+        if(uls.length > 0) {
+            var r = YUID.getRegion(uls[0]);
+            menuHeight = r.bottom - r.top;
+        }
+
+        var viewHeight = YUID.getViewportHeight();
+        var middle = region.bottom - ((region.bottom - region.top)/2);
+        if(middle + menuHeight > viewHeight) {
+            y -= menuHeight - 10;
+        }
         container.appendChild(YUID.get(id));
+        
         YUID.setXY(container, [x,y]);
-        YUID.setStyle(id, 'visibility', 'visible');	    
+        YUID.setStyle(id, 'visibility', 'visible');
+        	    
 	}
 
 })();

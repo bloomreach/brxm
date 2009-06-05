@@ -60,10 +60,11 @@ public abstract class JcrTree extends Tree {
         treeState.expandNode((TreeNode) treeModel.getRoot());
     }
 
+    @Override
     protected abstract void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode);
 
     @Override
-    public String renderNode(TreeNode treeNode) {
+    public String renderNode(TreeNode treeNode, int level) {
         String result = "unknown";
         if (treeNode instanceof IJcrTreeNode) {
             Node node = ((IJcrTreeNode) treeNode).getNodeModel().getNode();
@@ -92,6 +93,7 @@ public abstract class JcrTree extends Tree {
      *            The node
      * @return The package resource reference
      */
+    @Override
     protected ResourceReference getNodeIcon(TreeNode node) {
         if (node instanceof IJcrTreeNode && isVirtual((IJcrTreeNode) node)) {
             if (node.isLeaf()) {

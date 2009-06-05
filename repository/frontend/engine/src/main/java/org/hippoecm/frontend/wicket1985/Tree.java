@@ -81,7 +81,7 @@ public class Tree extends DefaultAbstractTree
 	 * @param item
 	 * @param level
 	 */
-	protected void populateTreeItem(WebMarkupContainer item, int level)
+	protected void populateTreeItem(WebMarkupContainer item, final int level)
 	{
 		final TreeNode node = (TreeNode)item.getModelObject();
 
@@ -100,9 +100,11 @@ public class Tree extends DefaultAbstractTree
 
 			public Object getObject()
 			{
-				return renderNode(node);
+				return renderNode(node, level);
 			}
 		}));
+		
+        decorateNodeLink(nodeLink, node, level);
                 
                 MarkupContainer contextContent = newContextContent(item, "contextContent", node);
                 item.add(contextContent);
@@ -135,15 +137,21 @@ public class Tree extends DefaultAbstractTree
 			}
 		});
 	}
-
+	
 	/**
+	 * Override this method to decorate the nodeLink
+	 */
+	protected void decorateNodeLink(MarkupContainer nodeLink, TreeNode node, int level) {
+    }
+
+    /**
 	 * This method is called for every node to get it's string representation.
 	 * 
 	 * @param node
 	 *            The tree node to get the string representation of
 	 * @return The string representation
 	 */
-	protected String renderNode(TreeNode node)
+	protected String renderNode(TreeNode node, int level)
 	{
 		return node.toString();
 	}

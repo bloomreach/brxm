@@ -52,6 +52,9 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>true</sv:value>
       </sv:property>
+      <sv:property sv:name="nodename.max.length" sv:type="Long">
+        <sv:value>23</sv:value>
+      </sv:property>
       <sv:property sv:name="extension.addfolder" sv:type="String">
         <sv:value>${cluster.id}.addfolder</sv:value>
       </sv:property>
@@ -201,6 +204,9 @@
       </sv:property>
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="nodename.max.length" sv:type="Long">
+        <sv:value>23</sv:value>
       </sv:property>
       <sv:property sv:name="extension.addfolder" sv:type="String">
         <sv:value>${cluster.id}.addfolder</sv:value>
@@ -357,6 +363,9 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>true</sv:value>
       </sv:property>
+      <sv:property sv:name="nodename.max.length" sv:type="Long">
+        <sv:value>23</sv:value>
+      </sv:property>
       <sv:property sv:name="extension.addfolder" sv:type="String">
         <sv:value>${cluster.id}.addfolder</sv:value>
       </sv:property>
@@ -505,6 +514,9 @@
       </sv:property>
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="nodename.max.length" sv:type="Long">
+        <sv:value>23</sv:value>
       </sv:property>
       <sv:property sv:name="extension.addfolder" sv:type="String">
         <sv:value>${cluster.id}.addfolder</sv:value>
