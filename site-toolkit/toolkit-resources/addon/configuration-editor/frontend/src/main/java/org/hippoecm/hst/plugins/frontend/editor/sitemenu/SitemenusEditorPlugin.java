@@ -31,7 +31,7 @@ import org.hippoecm.hst.plugins.frontend.editor.domain.SitemenuItem;
 public class SitemenusEditorPlugin extends EditorPlugin<Sitemenu> {
     private static final long serialVersionUID = 1L;
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: SitemapEditorPlugin.java 17644 2009-05-05 12:40:34Z abogaart $";
+    private final static String SVN_ID = "$Id$";
 
     public SitemenusEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);

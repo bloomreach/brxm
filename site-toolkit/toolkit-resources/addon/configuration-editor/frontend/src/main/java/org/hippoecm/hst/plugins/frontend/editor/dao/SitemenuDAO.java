@@ -31,7 +31,7 @@ public class SitemenuDAO extends EditorDAO<Sitemenu> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: SitemapItemDAO.java 17644 2009-05-05 12:40:34Z abogaart $";
+    private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(SitemenuDAO.class);
 
