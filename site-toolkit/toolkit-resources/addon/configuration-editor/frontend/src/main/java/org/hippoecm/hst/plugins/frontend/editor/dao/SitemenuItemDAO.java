@@ -67,9 +67,15 @@ public class SitemenuItemDAO extends EditorDAO<SitemenuItem> {
     protected void persist(SitemenuItem k, JcrNodeModel model) {
         HstContext ctx = getHstContext();
 
-        //Set matcher value as nodeName
+        //Set matcher value as nodeName if it's not already the same
         String newName = k.getName();
-        k.setModel(JcrUtilities.rename(model, newName));
+        try {
+            if(!k.getName().equals(model.getNode().getName())){
+                k.setModel(JcrUtilities.rename(model, newName));    
+            }            
+        } catch (RepositoryException e) {
+            log.warn("Exception occured while trying to get name from model: ",e.getMessage());
+        }
 
         //save contentPath
         JcrUtilities.updateProperty(model, SITEMAP_PROPERTY, k.getSitemapReference());

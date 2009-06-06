@@ -23,14 +23,10 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.validation.validator.UrlValidator;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
@@ -40,12 +36,9 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.editor.BasicEditorPlugin;
 import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
-import org.hippoecm.hst.plugins.frontend.editor.dao.SitemapItemDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.SitemenuItemDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dialogs.HstContentPickerDialog;
-import org.hippoecm.hst.plugins.frontend.editor.domain.SitemapItem;
 import org.hippoecm.hst.plugins.frontend.editor.domain.SitemenuItem;
-import org.hippoecm.hst.plugins.frontend.editor.validators.UniqueSitemapItemValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,6 +105,11 @@ public class SitemenuItemEditorPlugin extends BasicEditorPlugin<SitemenuItem> {
         TextField sitemapReference = new TextField("sitemapReference");
         sitemapReference.setOutputMarkupId(true);
         form.add(sitemapReference);
+        
+        TextField externalLink = new TextField("externalLink");
+        externalLink.setOutputMarkupId(true);
+        externalLink.add(new UrlValidator());
+        form.add(externalLink);
     }
 
     //FIXME: This is a nasty hack
