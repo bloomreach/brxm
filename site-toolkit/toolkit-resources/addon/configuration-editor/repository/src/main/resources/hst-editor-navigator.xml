@@ -58,12 +58,14 @@
       <sv:value>extension.pages</sv:value>
       <sv:value>extension.components</sv:value>
       <sv:value>extension.templates</sv:value>
+      <sv:value>extension.sitemenus</sv:value>
     </sv:property>
     <sv:property sv:name="headers" sv:type="String">
       <sv:value>section-sitemap</sv:value>
       <sv:value>section-pages</sv:value>
       <sv:value>section-components</sv:value>
       <sv:value>section-templates</sv:value>
+      <sv:value>section-sitemenus</sv:value>
     </sv:property>
     <sv:property sv:name="extension.sitemap" sv:type="String">
       <sv:value>${cluster.id}.tree.sitemap</sv:value>
@@ -76,6 +78,9 @@
     </sv:property>
     <sv:property sv:name="extension.templates" sv:type="String">
       <sv:value>${cluster.id}.tree.templates</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.sitemenus" sv:type="String">
+      <sv:value>${cluster.id}.tree.sitemenus</sv:value>
     </sv:property>
   </sv:node>
   
@@ -159,7 +164,29 @@
       <sv:value>${path}/hst:templates</sv:value>
     </sv:property>
     <sv:property sv:name="rootless" sv:type="String">
+      <sv:value>false</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="sitemenusBrowser">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>${cluster.id}.tree.sitemenus</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>${wicket.model}</sv:value>
+    </sv:property>
+    <sv:property sv:name="path" sv:type="String">
+      <sv:value>${path}/hst:sitemenus</sv:value>
+    </sv:property>
+    <sv:property sv:name="rootless" sv:type="String">
       <sv:value>true</sv:value>
     </sv:property>
   </sv:node>
+  
 </sv:node>  

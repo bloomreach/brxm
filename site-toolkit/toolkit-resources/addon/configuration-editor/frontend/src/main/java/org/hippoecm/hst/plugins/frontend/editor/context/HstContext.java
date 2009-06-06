@@ -30,6 +30,7 @@ public class HstContext implements IDetachable {
 
     public HstSiteContext site;
     public HstSitemapContext sitemap;
+    public HstSitemenuContext sitemenu;
     public HstTemplateContext template;
     public HstPageContext page;
     public HstComponentContext component;
@@ -46,7 +47,7 @@ public class HstContext implements IDetachable {
             site = new HstSiteContext(root);
             config = new HstConfigurationContext(site.getModel());
             content = new HstContentContext(site.getModel());
-
+            sitemenu = new HstSitemenuContext(config.getModel());
             sitemap = new HstSitemapContext(config.getModel());
             template = new HstTemplateContext(config.getModel());
             page = new HstPageContext(config.getModel());
@@ -236,6 +237,34 @@ public class HstContext implements IDetachable {
             return selectedPage;
         }
 
+    }
+
+    
+    public class HstSitemenuContext extends HstModelContext {
+        private static final long serialVersionUID = 1L;
+
+        public HstSitemenuContext(JcrNodeModel model) throws RepositoryException {
+            super(model);
+        }
+
+        public static final String HST_SITEMENUS = "hst:sitemenus";
+
+        @Override
+        public void init(JcrNodeModel model) throws RepositoryException {
+            this.model = new JcrNodeModel(model.getNode().getNode(HST_SITEMENUS));
+        }
+
+        public String decodeReferenceName(String name) {
+            if (name.startsWith("hst:sitemenus/")) {
+                return name.substring("hst:sitemenus/".length() + 1);
+            }
+            return "";
+        }
+
+        public String encodeReferenceName(String name) {
+            return "hst:sitemenus/" + name;
+        }
+        
     }
 
     public class HstComponentContext extends HstModelContext {
