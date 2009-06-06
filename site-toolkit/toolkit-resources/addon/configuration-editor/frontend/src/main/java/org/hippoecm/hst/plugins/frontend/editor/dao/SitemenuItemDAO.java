@@ -22,26 +22,41 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.editor.context.HstContext;
-import org.hippoecm.hst.plugins.frontend.editor.domain.SitemapItem;
 import org.hippoecm.hst.plugins.frontend.editor.domain.SitemenuItem;
 import org.hippoecm.hst.plugins.frontend.util.JcrUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * DAO of the SitemenuItem
+ */
 public class SitemenuItemDAO extends EditorDAO<SitemenuItem> {
+    
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: SitemapItemDAO.java 17644 2009-05-05 12:40:34Z abogaart $";
 
+    /** The logger. */
     static final Logger log = LoggerFactory.getLogger(SitemenuItemDAO.class);
 
+    /** SITEMAP_PROPERTY represents the jcr propertyname of the referenced sitemap item. */
     private static final String SITEMAP_PROPERTY = "hst:referencesitemapitem";
 
+    /**
+     * Instantiates a new sitemenu item dao.
+     * 
+     * @param context the context
+     * @param config the config
+     */
     public SitemenuItemDAO(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
 
+    /* (non-Javadoc)
+     * @see org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO#load(org.hippoecm.frontend.model.JcrNodeModel)
+     */
     @Override
     public SitemenuItem load(JcrNodeModel model) {
         SitemenuItem item = new SitemenuItem(model);
@@ -63,6 +78,9 @@ public class SitemenuItemDAO extends EditorDAO<SitemenuItem> {
         return item;
     }
 
+    /* (non-Javadoc)
+     * @see org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO#persist(org.hippoecm.hst.plugins.frontend.editor.domain.EditorBean, org.hippoecm.frontend.model.JcrNodeModel)
+     */
     @Override
     protected void persist(SitemenuItem k, JcrNodeModel model) {
         HstContext ctx = getHstContext();
