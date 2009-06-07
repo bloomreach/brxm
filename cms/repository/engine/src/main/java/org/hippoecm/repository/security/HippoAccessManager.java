@@ -510,7 +510,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         try {
             PathResolver resolver = new ParsingPathResolver(PathFactoryImpl.getInstance(), npRes);
             Path path = resolver.getQPath("/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH
-                    + "/" + HippoNodeType.ACCESSMANAGER_PATH + "" + HippoNodeType.HIPPO_PERMISSIONCACHESIZE);
+                    + "/" + HippoNodeType.ACCESSMANAGER_PATH + "/" + HippoNodeType.HIPPO_PERMISSIONCACHESIZE);
             PropertyId confId = hierMgr.resolvePropertyPath(path);
             if (confId != null) {
                 PropertyState state = (PropertyState) getItemState(confId);
