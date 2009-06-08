@@ -36,8 +36,10 @@ public class HstURLImpl implements HstURL {
     protected HstContainerURLProvider urlProvider;
     protected transient HstRequestContext requestContext;
     
-    public HstURLImpl(String type, HstContainerURLProvider urlProvider, HstRequestContext requestContext) {
+    public HstURLImpl(String type, HstContainerURL baseContainerURL, String referenceNamespace, HstContainerURLProvider urlProvider, HstRequestContext requestContext) {
         this.type = type;
+        this.baseContainerURL = baseContainerURL;
+        this.referenceNamespace = referenceNamespace;
         this.urlProvider = urlProvider;
         this.requestContext = requestContext;
     }
@@ -80,14 +82,6 @@ public class HstURLImpl implements HstURL {
         return this.resourceID;
     }
 
-    public void setReferenceNamespace(String referenceNamespace) {
-        this.referenceNamespace = referenceNamespace;
-    }
-    
-    public void setBaseContainerURL(HstContainerURL baseContainerURL) {
-        this.baseContainerURL = baseContainerURL;
-    }
-    
     public void write(Writer out) throws IOException {
         out.write(toString());
     }

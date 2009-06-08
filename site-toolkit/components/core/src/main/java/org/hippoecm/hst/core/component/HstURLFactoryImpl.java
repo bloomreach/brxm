@@ -41,18 +41,13 @@ public class HstURLFactoryImpl implements HstURLFactory {
     }
     
     public HstURL createURL(String type, String referenceNamespace, HstContainerURL containerURL) {
-        HstURLImpl url = new HstURLImpl(type, containerURL.isViaPortlet() ? getPortletUrlProvider() : getServletUrlProvider(), null);
-        url.setReferenceNamespace(referenceNamespace);
-        url.setBaseContainerURL(containerURL);
-        return url;
+        return new HstURLImpl(type, containerURL, referenceNamespace, containerURL.isViaPortlet() ? getPortletUrlProvider() : getServletUrlProvider(), null);
     }
     
     public HstURL createURL(String type, String referenceNamespace, HstContainerURL containerURL, HstRequestContext requestContext) {
-        HstURLImpl url = new HstURLImpl(type, requestContext.getBaseURL().isViaPortlet() ? getPortletUrlProvider() : getServletUrlProvider(), requestContext);
-        url.setReferenceNamespace(referenceNamespace);
         // if container url == null, use the requestContext baseUrl
-        url.setBaseContainerURL(containerURL == null ? requestContext.getBaseURL() : containerURL);
-        return url;
+        HstContainerURL baseContainerURL = (containerURL == null ? requestContext.getBaseURL() : containerURL);
+        return new HstURLImpl(type, baseContainerURL, referenceNamespace, requestContext.getBaseURL().isViaPortlet() ? getPortletUrlProvider() : getServletUrlProvider(), requestContext);
     }
 
 }
