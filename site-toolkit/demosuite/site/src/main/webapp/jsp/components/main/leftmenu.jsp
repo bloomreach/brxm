@@ -20,62 +20,83 @@
 
 <div>
   <ul class="sitenav">
-    <c:forEach var="item" items="${menu.siteMenuItems}">
-        <li>
-            <c:choose >
-                <c:when test="${item.selected}">
-                    <b>${item.name}</b>
-                </c:when>
-                <c:otherwise>
-                    <hst:link var="link" link="${item.hstLink}"/>
-                    <a href="${link}">
-                        ${item.name}
-                    </a>
-                </c:otherwise>
-            </c:choose>
-            <c:if test="${item.expanded}">
-            <ul>
-                <c:forEach var="subitem" items="${item.childMenuItems}">
-                    <c:choose >
-                    <c:when test="${subitem.selected}">
-                        <li>
-                        <b>${subitem.name}</b>
-                        </li>
-                    </c:when>
-                    <c:otherwise>
-                        <hst:link var="link" link="${subitem.hstLink}"/>
-                        <li>
-                        <a href="${link}">
-                            ${subitem.name}
-                        </a>
-                        </li>
-                    </c:otherwise>
-                    </c:choose>
-                        <c:if test="${subitem.expanded}">
-                        <ul>
-                        <c:forEach var="subsubitem" items="${subitem.childMenuItems}">
-                            <c:choose >
-                            <c:when test="${subsubitem.selected}">
-                                <li>
-                                <b>${subsubitem.name}</b>
-                                </li>
-                            </c:when>
-                            <c:otherwise>
-                                <hst:link var="link" link="${subsubitem.hstLink}"/>
-    <li>
-                                <a href="${link}">
-                                    ${subsubitem.name}
-                                </a>
-                                </li>
-                            </c:otherwise>
-                            </c:choose>
-                        </c:forEach>
-                        </ul>
-                        </c:if>
-                </c:forEach>
-            </ul>
-            </c:if>
-    </li>
-    </c:forEach>
-  </ul>
+  <c:forEach var="item" items="${menu.menuItems}">
+  <li>
+      <c:choose >
+          <c:when test="${item.selected}">
+              <b>${item.name}</b>
+          </c:when>
+          <c:otherwise>
+              <hst:link var="link" link="${item.hstLink}" />
+              <a href="${link}">
+                  ${item.name}
+              </a>
+          </c:otherwise>
+      </c:choose>
+      <c:if test="${item.expanded}">
+      <ul>
+          <c:forEach var="subitem" items="${item.childMenuItems}">
+              <c:choose >
+              <c:when test="${subitem.selected}">
+                  <li>
+                  <b>${subitem.name}</b>
+                  </li>
+              </c:when>
+              <c:otherwise>
+                  <hst:link var="link" link="${subitem.hstLink}"/>
+                  <li>
+                  <a href="${link}">
+                      ${subitem.name}
+                  </a>
+                  </li>
+              </c:otherwise>
+              </c:choose>
+                  <c:if test="${subitem.expanded}">
+                      <ul>
+                      <c:forEach var="subsubitem" items="${subitem.childMenuItems}">
+                          <c:choose >
+                          <c:when test="${subsubitem.selected}">
+                              <li>
+                              <b>${subsubitem.name}</b>
+                              </li>
+                          </c:when>
+                          <c:otherwise>
+                              <hst:link var="link" link="${subsubitem.hstLink}"/>
+                              <li>
+                              <a href="${link}">
+                                  ${subsubitem.name}
+                              </a>
+                              </li>
+                          </c:otherwise>
+                          </c:choose>
+                          <c:if test="${subitem.expanded}">
+                          <ul>
+                              <c:forEach var="subsubsubitem" items="${subsubitem.childMenuItems}">
+                                  <c:choose >
+                                  <c:when test="${subsubsubitem.selected}">
+                                      <li>
+                                      <b>${subsubsubitem.name}</b>
+                                      </li>
+                                  </c:when>
+                                  <c:otherwise>
+                                      <hst:link var="link" link="${subsubsubitem.hstLink}"/>
+                                      <li>
+                                      <a href="${link}">
+                                          ${subsubsubitem.name}
+                                      </a>
+                                      </li>
+                                  </c:otherwise>
+                                  </c:choose>
+                              </c:forEach>
+                          </ul>
+                      </c:if>
+                      </c:forEach>
+                      </ul>
+                  </c:if>
+          </c:forEach>
+      </ul>
+      </c:if>
+  </li>
+</c:forEach>
+</ul>
 </div>
