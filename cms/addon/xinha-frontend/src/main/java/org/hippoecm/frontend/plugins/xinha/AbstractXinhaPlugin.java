@@ -259,8 +259,11 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             }
 
             JcrPropertyValueModel propertyValueModel = getValueModel();
-            String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
-            configuration.addProperty("prefix", XinhaUtil.encode(BINARIES_PREFIX + nodePath));
+            // getValueModel regularly returns null, if so, skip the image/binary link
+            if (propertyValueModel != null) {
+                String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
+                configuration.addProperty("prefix", XinhaUtil.encode(BINARIES_PREFIX + nodePath));
+            }
 
             IPluginContext context = getPluginContext();
             XinhaEditorBehavior sharedBehavior = context.getService(XinhaEditorBehavior.class.getName(),
