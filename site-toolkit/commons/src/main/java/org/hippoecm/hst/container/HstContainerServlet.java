@@ -67,19 +67,15 @@ public class HstContainerServlet extends HttpServlet {
         
         super.init(config);
         
-        this.contextNamespace = config.getInitParameter(CONTEXT_NAMESPACE_INIT_PARAM);
+        this.contextNamespace = getConfigOrContextInitParameter(CONTEXT_NAMESPACE_INIT_PARAM, null);
         
-        if (this.contextNamespace == null) {
-            this.contextNamespace = config.getServletContext().getInitParameter(CONTEXT_NAMESPACE_INIT_PARAM);
-        }
-
-        String param = config.getInitParameter(CLIENT_COMPONENT_MANAGER_CLASS_INIT_PARAM);
+        String param = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CLASS_INIT_PARAM, null);
         
         if (param != null) {
             clientComponentManagerClassName = param;
         }
         
-        param = config.getInitParameter(CLIENT_COMPONENT_MANAGER_CONFIGURATIONS_INIT_PARAM);
+        param = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONFIGURATIONS_INIT_PARAM, null);
         
         if (param != null) {
             String [] configs = param.split(",");
@@ -91,7 +87,7 @@ public class HstContainerServlet extends HttpServlet {
             clientComponentManagerConfigurations = configs;
         }
         
-        param = config.getInitParameter(CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM);
+        param = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM, null);
         
         if (param != null) {
             clientComponentManagerContextAttributeName = param;
@@ -195,4 +191,18 @@ public class HstContainerServlet extends HttpServlet {
         doGet(req, res);
     }
 
+    private String getConfigOrContextInitParameter(String paramName, String defaultValue) {
+        String value = getServletConfig().getInitParameter(paramName);
+        
+        if (value == null) {
+            value = getServletConfig().getServletContext().getInitParameter(paramName);
+        }
+        
+        if (value == null) {
+            value = defaultValue;
+        }
+        
+        return (value != null ? value.trim() : null);
+    }
+    
 }

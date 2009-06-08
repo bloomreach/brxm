@@ -17,6 +17,7 @@ package org.hippoecm.hst.site.container;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -103,7 +104,7 @@ public class HstSiteConfigServlet extends HttpServlet {
         // If this servlet is initialized inside a site web application 
         // and other web application already initialized the component manager,
         // then the followings are to be skipped.
-        forecefulReinitialization = Boolean.parseBoolean(config.getInitParameter(FORCEFUL_REINIT_PARAM));
+        forecefulReinitialization = Boolean.parseBoolean(getConfigOrContextInitParameter(FORCEFUL_REINIT_PARAM, null));
         if (!forecefulReinitialization && HstServices.isAvailable()) {
             return;
         }
@@ -325,34 +326,84 @@ public class HstSiteConfigServlet extends HttpServlet {
         ConfigurationFactory factory = new ConfigurationFactory();
 
         // check if we have an commons configuration xml config file
-        String hstConfigurationFilePath = servletConfig.getInitParameter(HST_CONFIGURATION_PARAM);
+        String hstConfigurationFilePath = getConfigOrContextInitParameter(HST_CONFIGURATION_PARAM, "/WEB-INF/" + HST_CONFIGURATION_XML);
         
-        if (hstConfigurationFilePath == null) {
-            hstConfigurationFilePath = "/WEB-INF/" + HST_CONFIGURATION_XML;
-        }
-
         try {
-            String absolutePath = servletConfig.getServletContext().getRealPath(hstConfigurationFilePath);
-            File hstConfigurationFile = new File(absolutePath);
+            File hstConfigurationFile = null;
             
-            if (hstConfigurationFile.isFile()) {
-                factory.setConfigurationFileName(absolutePath);
+            if (hstConfigurationFilePath.startsWith("file:")) {
+                hstConfigurationFile = new File(URI.create(hstConfigurationFilePath));
+            } else {
+                String realPath = null;
+                try {
+                    realPath = servletConfig.getServletContext().getRealPath(hstConfigurationFilePath);
+                } catch (Exception re) {
+                }
+                
+                if (realPath != null) {
+                    hstConfigurationFile = new File(realPath);
+                } else {
+                    if (log.isDebugEnabled()) {
+                        log.debug("The file does not exist on the context relative path: {}", hstConfigurationFilePath);
+                    }
+                }
+            }
+            
+            if (hstConfigurationFile != null && hstConfigurationFile.isFile()) {
+                factory.setConfigurationFileName(hstConfigurationFile.getCanonicalPath());
                 configuration = factory.getConfiguration();
             } else {
                 // no xml config found, try the properties file alternative
-                String hstConfigPropFilePath = servletConfig.getInitParameter(HST_CONFIG_PROPERTIES_PARAM);
-
-                if (hstConfigPropFilePath == null) {
-                    hstConfigPropFilePath = servletConfig.getServletContext().getRealPath("/WEB-INF/" + HST_CONFIG_PROPERTIES);
+                String hstConfigPropFilePath = getConfigOrContextInitParameter(HST_CONFIG_PROPERTIES_PARAM, "/WEB-INF/" + HST_CONFIG_PROPERTIES);
+                File hstConfigPropFile = null;
+                
+                if (hstConfigPropFilePath.startsWith("file:")) {
+                    hstConfigPropFile = new File(URI.create(hstConfigPropFilePath));
+                } else {
+                    String realPath = null;
+                    try {
+                        realPath = servletConfig.getServletContext().getRealPath(hstConfigPropFilePath);
+                    } catch (Exception re) {
+                    }
+                    
+                    if (realPath != null) {
+                        hstConfigPropFile = new File(realPath);
+                    } else {
+                        if (log.isWarnEnabled()) {
+                            log.warn("The file does not exist on the context relative path: {}", hstConfigPropFilePath);
+                        }
+                    }
                 }
-
-                configuration = new PropertiesConfiguration(new File(hstConfigPropFilePath));
+                
+                if (hstConfigPropFile != null && hstConfigPropFile.isFile()) {
+                    configuration = new PropertiesConfiguration(hstConfigPropFile);
+                }
             }
         } catch (ConfigurationException e) {
             throw new ServletException(e);
+        } catch (IOException e) {
+            throw new ServletException(e);
+        }
+        
+        if (configuration == null) {
+            configuration = new PropertiesConfiguration();
         }
 
         return configuration;
+    }
+    
+    protected String getConfigOrContextInitParameter(String paramName, String defaultValue) {
+        String value = getServletConfig().getInitParameter(paramName);
+        
+        if (value == null) {
+            value = getServletConfig().getServletContext().getInitParameter(paramName);
+        }
+        
+        if (value == null) {
+            value = defaultValue;
+        }
+        
+        return (value != null ? value.trim() : null);
     }
     
 }
