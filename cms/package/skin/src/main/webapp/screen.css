@@ -685,7 +685,7 @@ table tr.selected span.folder-virtual-open-16, .folder-virtual-open-16{backgroun
 /* change the tree if he's inside an accordion */
 .hippo-accordion-unit .hippo-tree .wicket-tree{min-height: 100px; margin-bottom: 0px; padding-left: 0px; padding-top: 0px; }
 
-.hippo-accordion-unit h2{background-image: url("images/accordion-unit-back2png"); background-repeat: repeat-x}
+.hippo-accordion-unit h2{background-image: url("images/accordion-unit-back2.png"); background-repeat: repeat-x}
 
 .hippo-accordion-unit h2 a{
 background-image: url("images/accordion-unit-back.png"); 
