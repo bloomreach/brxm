@@ -43,6 +43,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoSession;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -119,10 +120,12 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         return context.getServices(RENDERERS, IRenderService.class);
     }
 
-    final static String[] content = {
+    final static String[] content1 = {
             "/test", "nt:unstructured",
                 "/test/content", "nt:unstructured",
-                    "jcr:mixinTypes", "mix:referenceable",
+                    "jcr:mixinTypes", "mix:referenceable"
+    };
+    final static String[] content2 = {
                 "/test/facetsearch", "hippo:facetsearch",
                     "hippo:docbase", "/test/content",
                     "hippo:queryname", "state",
@@ -153,7 +156,7 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
                     "wicket.model", "${wicket.model}",
                 "/config/test-app/preview/filter", "frontend:plugin",
                     "plugin.class", CloseFilter.class.getName(),
-                    "editor.id", "${editor.id}",
+                    "editor.id", "${editor.id}"
     };
 
     final static String[] testdocument = new String[] {
@@ -162,7 +165,7 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
                 "/${name}/${name}", "cmstest:document",
                     "jcr:mixinTypes", "hippo:harddocument",
                     "hippostd:state", "unpublished",
-                    "hippostd:stateSummary", "new",
+                    "hippostd:stateSummary", "new"
     };
 
     protected static String[] instantiate(String[] content, Map<String, String> parameters) {
@@ -203,12 +206,21 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        build(session, content);
+        build(session, content1);
+        session.save();
+        build(session, content2);
+        session.save();
 
         modelReference = new ModelReference("model", new JcrNodeModel((Node) null));
         modelReference.init(context);
 
         config = new JcrPluginConfig(new JcrNodeModel("/test/plugin"));
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     protected void createDocument(String name) throws RepositoryException {
