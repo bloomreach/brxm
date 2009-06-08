@@ -49,6 +49,89 @@ import org.slf4j.LoggerFactory;
  * from the each HST-based applications.
  * Under portal environment, this servlet may not be used because the portal itself can 
  * initialize all the necessary component for each HST-based portlet application.
+ * <P>
+ * The configuration could be set by a properties file or an xml file.
+ * If you would set the configuration by a properties file, you can set an init parameter 
+ * named 'hst-config-properties' for the servlet config or for the servlet context. 
+ * </P>
+ * <P>
+ * <EM>The parameter value for the properties file or the xml file is regarded as a web application
+ * context relative path if the path does not start with 'file:'.
+ * So, you should use a 'file:' prefixed URI for the path parameter value if you want to set a physical file path.</EM>
+ * </P>
+ * <P>
+ * For example, you can add an init parameter named 'hst-config-properties' for this servlet config
+ * like the following:
+ * <PRE><CODE>
+ *   &lt;servlet>
+ *    &lt;servlet-name>HstSiteConfigServlet&lt;/servlet-name>
+ *    &lt;servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet&lt;/servlet-class>
+ *    &lt;init-param>
+ *      &lt;param-name>hst-config-properties&lt;/param-name>
+ *      &lt;param-value>/WEB-INF/hst-config.properties&lt;/param-value>
+ *    &lt;/init-param>
+ *    &lt;load-on-startup>1&lt;/load-on-startup>
+ *  &lt;/servlet>
+ * </CODE></PRE>
+ * <BR/>
+ * Also, you can set context init parameter instead of the config init parameter like the following: 
+ * <PRE><CODE>
+ *  &lt;context-param>
+ *    &lt;param-name>hst-config-properties&lt;/param-name>
+ *    &lt;param-value>/WEB-INF/hst-config.properties&lt;/param-value>
+ *  &lt;/context-param>
+ *  &lt;!-- SNIP -->
+ *  &lt;servlet>
+ *    &lt;servlet-name>HstSiteConfigServlet&lt;/servlet-name>
+ *    &lt;servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet&lt;/servlet-class>
+ *    &lt;load-on-startup>1&lt;/load-on-startup>
+ *  &lt;/servlet>
+ * </CODE></PRE>
+ * The servlet will retrieve the config init parameter first and it will retrieve the context init parameter
+ * when the config init parameter is not set.
+ * <BR/>
+ * If you don't provide the init parameter named 'hst-config-properties' at all, the value is set to 
+ * '/WEB-INF/hst-config.properties' by default.
+ * </P>
+ * <P>
+ * Also, the configuration can be set by an XML file which is of the XML configuration format of
+ * <A href="http://commons.apache.org/configuration/">Apache Commons Configuration</A>.
+ * If you want to set the configuration by the Apache Commons Configuration XML file, you should provide
+ * an init parameter named 'hst-configuration' for servlet config or servlet context. For example,
+ * <PRE><CODE>
+ *   &lt;servlet>
+ *    &lt;servlet-name>HstSiteConfigServlet&lt;/servlet-name>
+ *    &lt;servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet&lt;/servlet-class>
+ *    &lt;init-param>
+ *      &lt;param-name>hst-configuration&lt;/param-name>
+ *      &lt;param-value>/WEB-INF/hst-configuration.xml&lt;/param-value>
+ *    &lt;/init-param>
+ *    &lt;load-on-startup>1&lt;/load-on-startup>
+ *  &lt;/servlet>
+ * </CODE></PRE>
+ * Also, you can set context init parameter instead of the config init parameter like the following:
+ * <PRE><CODE>
+ *  &lt;context-param>
+ *    &lt;param-name>hst-configuration&lt;/param-name>
+ *    &lt;param-value>/WEB-INF/hst-configuration.xml&lt;/param-value>
+ *  &lt;/context-param>
+ *  &lt;!-- SNIP -->
+ *  &lt;servlet>
+ *    &lt;servlet-name>HstSiteConfigServlet&lt;/servlet-name>
+ *    &lt;servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet&lt;/servlet-class>
+ *    &lt;load-on-startup>1&lt;/load-on-startup>
+ *  &lt;/servlet>
+ * </CODE></PRE>
+ * The servlet will retrieve the config init parameter first and it will retrieve the context init parameter
+ * when the config init parameter is not set.
+ * <BR/>
+ * If you don't provide the init parameter named 'hst-config-properties' at all, the value is set to 
+ * '/WEB-INF/hst-configuration.xml' by default.
+ * <BR/>
+ * <EM>The parameter value for the properties file or the xml file is regarded as a web application
+ * context relative path if the path does not start with 'file:'.
+ * So, you should use a 'file:' prefixed URI for the path parameter value if you want to set a physical file path.</EM>
+ * </P>
  * 
  * @author <a href="mailto:w.ko@onehippo.com">Woonsan Ko</a>
  * @version $Id$
