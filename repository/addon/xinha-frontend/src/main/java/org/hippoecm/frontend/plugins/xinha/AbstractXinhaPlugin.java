@@ -51,6 +51,8 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -313,8 +315,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 try {
                     valueModel.setObject(clean((String) value));
                 } catch (Exception e) {
-                    error(e.getMessage());
-                    log.error("Exception caught while setting object value:", e);
+                    error(new ResourceModel("error-while-cleaning-conent", "An error occured while cleaning the content"));
+                    log.error("Exception caught during editor creation while cleaning value: " + value, e);
                 }
             }
 
