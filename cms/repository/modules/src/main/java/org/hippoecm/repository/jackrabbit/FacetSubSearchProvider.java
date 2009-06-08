@@ -47,6 +47,7 @@ public class FacetSubSearchProvider extends AbstractFacetSearchProvider
         register(null, virtualNodeName);
     }
 
+    @Override
     public NodeState populate(NodeState state) throws RepositoryException {
         super.populate(state);
 

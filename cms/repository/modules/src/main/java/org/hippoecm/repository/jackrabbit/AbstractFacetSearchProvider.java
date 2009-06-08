@@ -151,12 +151,12 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
                 Matcher matcher = facetPropertyPattern.matcher(search[i]);
                 if (matcher.matches() && matcher.groupCount() == 2) {
                     try {
-                        currentFacetQuery.put(resolveName(matcher.group(1)).toString(), matcher.group(2));
+                        currentFacetQuery.put(resolvePath(matcher.group(1)).toString(), matcher.group(2));
                     } catch (IllegalNameException ex) {
-                        // FIXME: log a very serious error
+                        log.error("intermediate facet search broken", ex);
                         return state;
                     } catch (NamespaceException ex) {
-                        // FIXME: log a very serious error
+                        log.error("intermediate facet search broken", ex);
                         return state;
                     }
                 }
