@@ -691,6 +691,7 @@
         <module>client</module>
         <module>maven</module>
         <module>testsuite</module>
+        <module>demosuite</module>
       </modules>
     </profile>
     
