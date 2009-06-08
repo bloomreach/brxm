@@ -154,13 +154,15 @@ public class NodeTemplateProvider extends AbstractProvider<JcrNodeModel> {
         elements = new LinkedList<JcrNodeModel>();
         try {
             Node node = (Node) getItemModel().getObject();
-            // expand the name-pattern
-            NodeIterator iterator = node.getNodes(descriptor.getPath());
-            while (iterator.hasNext()) {
-                Node child = iterator.nextNode();
-                // add child if it is not excluded.
-                // TODO: filter on node type
-                addTemplate(new JcrItemModel(child));
+            if (node != null) {
+                // expand the name-pattern
+                NodeIterator iterator = node.getNodes(descriptor.getPath());
+                while (iterator.hasNext()) {
+                    Node child = iterator.nextNode();
+                    // add child if it is not excluded.
+                    // TODO: filter on node type
+                    addTemplate(new JcrItemModel(child));
+                }
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
