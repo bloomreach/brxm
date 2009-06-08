@@ -69,9 +69,13 @@ public class NodeTemplateProvider extends AbstractProvider<JcrNodeModel> {
         if (prototype != null) {
             try {
                 Node parent = (Node) getItemModel().getObject();
-                HippoSession session = (HippoSession) ((UserSession) Session.get()).getJcrSession();
-                Node node = session.copy(prototype.getNode(), parent.getPath() + "/" + descriptor.getPath());
-                elements.addLast(new JcrNodeModel(node));
+                if (parent != null) {
+                    HippoSession session = (HippoSession) ((UserSession) Session.get()).getJcrSession();
+                    Node node = session.copy(prototype.getNode(), parent.getPath() + "/" + descriptor.getPath());
+                    elements.addLast(new JcrNodeModel(node));
+                } else {
+                    log.warn("No parent available to initialize child node");
+                }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
