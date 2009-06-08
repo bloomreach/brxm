@@ -61,20 +61,10 @@ public abstract class PluginTest extends TestCase {
     protected HippoTester tester;
     protected Home home;
 
-    @BeforeClass
-    public static void startRepository() throws Exception {
-        setRepository(HippoRepositoryFactory.getHippoRepository());
-    }
-
-    @AfterClass
-    public static void stopRepository() throws Exception {
-        tearDownClass(true);
-    }
-
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp(false);
+        super.setUp(true);
         while (session.getRootNode().hasNode("config")) {
             session.getRootNode().getNode("config").remove();
             session.save();

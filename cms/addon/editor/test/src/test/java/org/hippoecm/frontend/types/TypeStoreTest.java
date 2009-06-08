@@ -38,7 +38,7 @@ public class TypeStoreTest extends PluginTest {
         assertEquals("test:test", type.getName());
 
         Map<String, IFieldDescriptor> fields = type.getFields();
-        assertTrue(fields.size() == 2);
+        assertEquals(2, fields.size());
         assertTrue(fields.keySet().contains("title"));
         assertTrue(fields.keySet().contains("child"));
 
@@ -55,7 +55,7 @@ public class TypeStoreTest extends PluginTest {
         assertEquals("test:test2", type.getName());
 
         Map<String, IFieldDescriptor> fields = type.getFields();
-        assertTrue(fields.size() == 2);
+        assertEquals(2, fields.size());
         assertTrue(fields.keySet().contains("test:title"));
         assertTrue(fields.keySet().contains("test:child"));
 
@@ -84,7 +84,7 @@ public class TypeStoreTest extends PluginTest {
         assertEquals("test:test2", type.getName());
 
         Map<String, IFieldDescriptor> fields = type.getFields();
-        assertTrue(fields.size() == 2);
+        assertEquals(2, fields.size());
         Set<String> expected = new HashSet<String>();
         expected.add("test:title");
         expected.add("test:child");
