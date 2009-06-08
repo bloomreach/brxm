@@ -1124,3 +1124,7 @@ div.hippo-controlpanel-actions-top{border-bottom: 1px solid #afafaf; border-top:
   color: #333333;
   padding-top: 2px;
 }
+
+table.hippo-defaultcontent td {
+  vertical-align: top;
+}
