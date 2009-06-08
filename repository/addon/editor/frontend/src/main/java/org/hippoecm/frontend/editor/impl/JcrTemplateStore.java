@@ -167,7 +167,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
                 return new JcrClusterConfig(new JcrNodeModel(node), context);
             }
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error("Error while fetching template for type: " + type, ex);
         }
         return null;
     }
