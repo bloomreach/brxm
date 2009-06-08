@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -33,6 +37,26 @@ class DefaultCmsEditor extends AbstractCmsEditor<JcrNodeModel> {
     DefaultCmsEditor(EditorManagerPlugin manager, IPluginContext context, IPluginConfig config, JcrNodeModel model,
             Mode mode) throws CmsEditorException {
         super(manager, context, config, model, mode);
+    }
+
+    @Override
+    protected JcrNodeModel getEditorModel() {
+        JcrNodeModel model = super.getEditorModel();
+        try {
+            Node node = model.getNode();
+            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                if (node.hasNode(node.getName())) {
+                    return new JcrNodeModel(node.getNode(node.getName()));
+                } else {
+                    return null;
+                }
+            } else {
+                return model;
+            }
+        } catch (RepositoryException ex) {
+            log.warn("cannot obtain proper editable document from handle", ex);
+            return null;
+        }
     }
 
     @Override
