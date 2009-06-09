@@ -33,6 +33,7 @@ import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -90,6 +91,8 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                     IEditor editor = editorMgr.getEditor(docModel);
                     if (editor == null) {
                         editorMgr.openEditor(docModel);
+                    } else {
+                        editor.setMode(Mode.EDIT);
                     }
                 } else {
                     log.warn("No editor found to edit {}", docNode.getPath());
