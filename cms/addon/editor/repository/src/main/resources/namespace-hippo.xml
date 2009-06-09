@@ -262,7 +262,6 @@
             <sv:value>hippo:resource</sv:value>
             <sv:value>hippo:query</sv:value>
             <sv:value>hippo:facetselect</sv:value>
-            <sv:value>hippostd:date</sv:value>
             <sv:value>Double</sv:value>
             <sv:value>Long</sv:value>
           </sv:property>
