@@ -57,7 +57,6 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
             final IModel model) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        addFeedbackPanel();
         
         this.model = model;
         final User user = (User) model.getObject();
@@ -83,7 +82,6 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
                     log.error("Failed to add memberships", e);
                 }
                 target.addComponent(SetMembershipsPanel.this);
-                target.addComponent(getFeedbackPanel());
             }
 
         };
@@ -158,7 +156,6 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
                         log.error("Failed to remove memberships", e);
                     }
                     target.addComponent(SetMembershipsPanel.this);
-                    target.addComponent(getFeedbackPanel());
                 }
             });
         }

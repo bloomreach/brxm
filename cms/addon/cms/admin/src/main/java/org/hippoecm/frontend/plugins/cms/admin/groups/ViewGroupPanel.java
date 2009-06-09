@@ -53,7 +53,6 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             final IModel model) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        addFeedbackPanel();
         
         this.model = model;
         final Group group = (Group) model.getObject();
@@ -99,7 +98,6 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                                 return "group-delete-text";
                             }
                         });
-                target.addComponent(getFeedbackPanel());
             }
         });
     }

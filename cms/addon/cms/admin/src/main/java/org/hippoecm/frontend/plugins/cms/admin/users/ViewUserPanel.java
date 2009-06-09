@@ -61,7 +61,6 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
             final IModel model) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        addFeedbackPanel();
         
         this.model = model;
         final User user = (User) model.getObject();
@@ -132,7 +131,6 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
                             @Override
                             protected void onOk() {
                                 deleteUser(model);
-                                target.addComponent(getFeedbackPanel());
                             }
 
                             @Override

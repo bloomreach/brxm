@@ -53,7 +53,6 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
     public CreateGroupPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        addFeedbackPanel();
         
         // add form with markup id setter so it can be updated via ajax
         form = new Form("form", new CompoundPropertyModel(groupModel));
@@ -87,12 +86,7 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
                 } catch (RepositoryException e) {
                     Session.get().warn(getString("group-create-failed", groupModel));
                     log.error("Unable to create group '" + groupname + "' : ", e);
-                    target.addComponent(getFeedbackPanel());
                 }
-            }
-            @Override
-            protected void onError(AjaxRequestTarget target, Form form) {
-                target.addComponent(getFeedbackPanel());
             }
         });
 

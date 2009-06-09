@@ -57,7 +57,6 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
     public ListUsersPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        addFeedbackPanel();
 
         add(new AjaxBreadCrumbPanelLink("create-user", context, this, CreateUserPanel.class));
         

@@ -78,7 +78,7 @@ public class FeedbackPlugin extends RenderPlugin {
 
             String t = "YAHOO.namespace('hippo.container'); YAHOO.hippo.container.status ="
                     + "new YAHOO.widget.Overlay(\"global-feedback-container\", { xy:[693,77], " + "visible:false,"
-                    + "zIndex:1000," + "width:\"210px\", height: \"16px\","
+                    + "zIndex:1000, height: \"16px\","
                     + "effect:{effect:YAHOO.widget.ContainerEffect.FADE,duration:0.25} } );";
 
             t += "YAHOO.hippo.container.status.render(document.body);";
