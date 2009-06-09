@@ -138,6 +138,28 @@
       </sv:property>
     </sv:node>
   </sv:node>
+  <sv:node sv:name="hippohtmlcleaner-allowedsinglewhitespaceelement">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:domainrule</sv:value>
+    </sv:property>
+    <sv:node sv:name="type-hippohtmlcleaner-allowedsinglewhitespaceelement">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetrule</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:facet" sv:type="String">
+        <sv:value>jcr:primaryType</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>Name</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:value" sv:type="String">
+        <sv:value>hippohtmlcleaner:allowedSingleWhitespaceElement</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:equals" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
 
     <sv:node sv:name="hippo:authrole">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
