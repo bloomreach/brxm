@@ -169,7 +169,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
 
                     @Override
                     public Object getObject() {
-                        return format.parse(nodeItem.name);
+                        return (nodeItem.name != null ? format.parse(nodeItem.name) : null);
                     }
 
                 }));
@@ -210,11 +210,12 @@ public class BreadcrumbPlugin extends RenderPlugin {
 
         public NodeItem(JcrNodeModel model, boolean enabled) {
             try {
-                this.name = model.getNode().getName();
+                if (model != null && model.getNode() != null) {
+                    this.name = model.getNode().getName();
+                }
             } catch (RepositoryException e) {
                 String path = model.getItemModel().getPath();
                 this.name = path.substring(path.lastIndexOf('/'));
-
                 log.warn("Error retrieving name from node[" + path + "]");
             }
             this.model = model;
@@ -222,7 +223,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
         }
 
         public String getDecodedName() {
-            return NodeNameCodec.decode(name);
+            return (name != null ? NodeNameCodec.decode(name) : null);
         }
     }
 
