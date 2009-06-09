@@ -56,8 +56,11 @@ import org.slf4j.LoggerFactory;
  * </P>
  * <P>
  * <EM>The parameter value for the properties file or the xml file is regarded as a web application
- * context relative path if the path does not start with 'file:'.
- * So, you should use a 'file:' prefixed URI for the path parameter value if you want to set a physical file path.</EM>
+ * context relative path or file system relative path if the path does not start with 'file:'.
+ * So, you should use a 'file:' prefixed URI for the path parameter value if you want to set an absolute path.
+ * When the path starts with a leading slash ('/'), the path is regarded as a servlet context relative path.
+ * If the path does not start with 'file:' nor with a leading slash ('/'), it is regarded as a relative path of the file system.
+ * </EM>
  * </P>
  * <P>
  * For example, you can add an init parameter named 'hst-config-properties' for this servlet config
@@ -122,6 +125,20 @@ import org.slf4j.LoggerFactory;
  *    &lt;load-on-startup>1&lt;/load-on-startup>
  *  &lt;/servlet>
  * </CODE></PRE>
+ * <BR/>
+ * For your information, you can configure the <CODE>/WEB-INF/hst-configuration.xml</CODE> file like the following example.
+ * In this example, you can see that system properties can be aggregated, multiple properties files can be added and 
+ * system property values can be used to configure other properties file paths as well: 
+ * <PRE><CODE>
+ * &lt;?xml version='1.0'?>
+ * &lt;configuration>
+ *   &lt;system/>
+ *   &lt;properties fileName='${catalina.home}/conf/hst-config-1.properties'/>
+ *   &lt;properties fileName='${catalina.home}/conf/hst-config-2.properties'/>
+ * &lt;/configuration>
+ * </CODE></PRE>
+ * <EM>Please refer to the documentation of <A href="http://commons.apache.org/configuration/">Apache Commons Configuration</A> for details.</EM>
+ * <BR/>
  * The servlet will retrieve the config init parameter first and it will retrieve the context init parameter
  * when the config init parameter is not set.
  * <BR/>
@@ -129,8 +146,11 @@ import org.slf4j.LoggerFactory;
  * '/WEB-INF/hst-configuration.xml' by default.
  * <BR/>
  * <EM>The parameter value for the properties file or the xml file is regarded as a web application
- * context relative path if the path does not start with 'file:'.
- * So, you should use a 'file:' prefixed URI for the path parameter value if you want to set a physical file path.</EM>
+ * context relative path or file system relative path if the path does not start with 'file:'.
+ * So, you should use a 'file:' prefixed URI for the path parameter value if you want to set an absolute path.
+ * When the path starts with a leading slash ('/'), the path is regarded as a servlet context relative path.
+ * If the path does not start with 'file:' nor with a leading slash ('/'), it is regarded as a relative path of the file system.
+ * </EM>
  * </P>
  * 
  * @author <a href="mailto:w.ko@onehippo.com">Woonsan Ko</a>
@@ -412,25 +432,7 @@ public class HstSiteConfigServlet extends HttpServlet {
         String hstConfigurationFilePath = getConfigOrContextInitParameter(HST_CONFIGURATION_PARAM, "/WEB-INF/" + HST_CONFIGURATION_XML);
         
         try {
-            File hstConfigurationFile = null;
-            
-            if (hstConfigurationFilePath.startsWith("file:")) {
-                hstConfigurationFile = new File(URI.create(hstConfigurationFilePath));
-            } else {
-                String realPath = null;
-                try {
-                    realPath = servletConfig.getServletContext().getRealPath(hstConfigurationFilePath);
-                } catch (Exception re) {
-                }
-                
-                if (realPath != null) {
-                    hstConfigurationFile = new File(realPath);
-                } else {
-                    if (log.isDebugEnabled()) {
-                        log.debug("The file does not exist on the context relative path: {}", hstConfigurationFilePath);
-                    }
-                }
-            }
+            File hstConfigurationFile = getResourceFile(hstConfigurationFilePath);
             
             if (hstConfigurationFile != null && hstConfigurationFile.isFile()) {
                 factory.setConfigurationFileName(hstConfigurationFile.getCanonicalPath());
@@ -441,32 +443,22 @@ public class HstSiteConfigServlet extends HttpServlet {
                 }
             } else {
                 // no xml config found, try the properties file alternative
-                String hstConfigPropFilePath = getConfigOrContextInitParameter(HST_CONFIG_PROPERTIES_PARAM, "/WEB-INF/" + HST_CONFIG_PROPERTIES);
-                File hstConfigPropFile = null;
-                
-                if (hstConfigPropFilePath.startsWith("file:")) {
-                    hstConfigPropFile = new File(URI.create(hstConfigPropFilePath));
-                } else {
-                    String realPath = null;
-                    try {
-                        realPath = servletConfig.getServletContext().getRealPath(hstConfigPropFilePath);
-                    } catch (Exception re) {
-                    }
-                    
-                    if (realPath != null) {
-                        hstConfigPropFile = new File(realPath);
-                    } else {
-                        if (log.isWarnEnabled()) {
-                            log.warn("The file does not exist on the context relative path: {}", hstConfigPropFilePath);
-                        }
-                    }
+                if (log.isDebugEnabled()) {
+                    log.debug("The file does not exist: {}", hstConfigurationFilePath);
                 }
+                
+                String hstConfigPropFilePath = getConfigOrContextInitParameter(HST_CONFIG_PROPERTIES_PARAM, "/WEB-INF/" + HST_CONFIG_PROPERTIES);
+                File hstConfigPropFile = getResourceFile(hstConfigPropFilePath);
                 
                 if (hstConfigPropFile != null && hstConfigPropFile.isFile()) {
                     configuration = new PropertiesConfiguration(hstConfigPropFile);
 
                     if (log.isInfoEnabled()) {
                         log.info("Using HST Configuration Properties File: {}", hstConfigPropFile.getCanonicalPath());
+                    }
+                } else {
+                    if (log.isWarnEnabled()) {
+                        log.warn("The file does not exist: {}", hstConfigPropFilePath);
                     }
                 }
             }
@@ -495,6 +487,43 @@ public class HstSiteConfigServlet extends HttpServlet {
         }
         
         return (value != null ? value.trim() : null);
+    }
+    
+    /**
+     * Returns the physical resource file object.
+     * <P>
+     * <UL>
+     * <LI>When the resourcePath starts with 'file:', it is assumed as an absolute file URI path.</LI>
+     * <LI>When the resourcePath starts with a leading slash ('/'), it is assumed as a servlet context relative path.</LI>
+     * <LI>When the resourcePath does not starts with 'file' nor with a leading slash ('/'), it is assumed as a relative path of the file system.</LI>  
+     * </UL>
+     * </P>
+     * @param resourcePath
+     * @return
+     */
+    protected File getResourceFile(String resourcePath) {
+        File resourceFile = null;
+        
+        if (resourcePath != null) {
+            if (resourcePath.startsWith("file:")) {
+                resourceFile = new File(URI.create(resourcePath));
+            } else if (resourcePath.startsWith("/")) {
+                String realPath = null;
+                
+                try {
+                    realPath = getServletConfig().getServletContext().getRealPath(resourcePath);
+                } catch (Exception re) {
+                }
+                
+                if (realPath != null) {
+                    resourceFile = new File(realPath);
+                }
+            } else {
+                resourceFile = new File(resourcePath);
+            }
+        }
+        
+        return resourceFile;
     }
     
 }

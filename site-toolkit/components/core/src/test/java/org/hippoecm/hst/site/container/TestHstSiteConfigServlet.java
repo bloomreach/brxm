@@ -39,26 +39,32 @@ public class TestHstSiteConfigServlet {
         "<?xml version='1.0'?>\n" +
         "<configuration>\n" +
         "  <system/>\n" +
+        "  <properties fileName='${currentWorkingDirectory}/target/test-hst-config.properties'/>" +
         "</configuration>";
+    
+    private MockServletContext servletContext = null;
+    private MockServletConfig servletConfig = null;
     
     @Before
     public void setUp() throws Exception {
         FileUtils.writeStringToFile(new File("target/test-hst-config.properties"), SIMPLE_PROPS);
         FileUtils.writeStringToFile(new File("target/test-hst-config.xml"), SIMPLE_XMLCONF);
+        System.setProperty("currentWorkingDirectory", new File(".").getCanonicalPath());
         System.setProperty("test.xml.config.foo", "bar");
+        servletContext = new MockServletContext("target", new FileSystemResourceLoader());
+        servletConfig = new MockServletConfig(servletContext);
     }
     
     @After
     public void tearDown() throws Exception {
         FileUtils.deleteQuietly(new File("target/test-hst-config.properties"));
         FileUtils.deleteQuietly(new File("target/test-hst-config.xml"));
+        System.setProperty("currentWorkingDirectory", "");
         System.setProperty("test.xml.config.foo", "");
     }
     
     @Test
     public void testGetConfigurationWithFileURI() throws Exception {
-        MockServletContext servletContext = new MockServletContext("target", new FileSystemResourceLoader());
-        MockServletConfig servletConfig = new MockServletConfig(servletContext);
         File confFile = new File("target/test-hst-config.properties");
         servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, confFile.toURI().toString());
         HstSiteConfigServlet siteConfigServlet = new HstSiteConfigServletForTest(servletConfig);
@@ -67,9 +73,23 @@ public class TestHstSiteConfigServlet {
     }
     
     @Test
+    public void testGetConfigurationWithRelativePath1() throws Exception {
+        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "target/test-hst-config.properties");
+        HstSiteConfigServlet siteConfigServlet = new HstSiteConfigServletForTest(servletConfig);
+        Configuration configuration = siteConfigServlet.getConfiguration(servletConfig);
+        assertEquals("test-hst-config-project", configuration.getString("default.sites.name"));
+    }
+    
+    @Test
+    public void testGetConfigurationWithRelativePath2() throws Exception {
+        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "./target/test-hst-config.properties");
+        HstSiteConfigServlet siteConfigServlet = new HstSiteConfigServletForTest(servletConfig);
+        Configuration configuration = siteConfigServlet.getConfiguration(servletConfig);
+        assertEquals("test-hst-config-project", configuration.getString("default.sites.name"));
+    }
+    
+    @Test
     public void testGetConfigurationWithFileURIAndContextParam() throws Exception {
-        MockServletContext servletContext = new MockServletContext("target", new FileSystemResourceLoader());
-        MockServletConfig servletConfig = new MockServletConfig(servletContext);
         File confFile = new File("target/test-hst-config.properties");
         servletContext.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, confFile.toURI().toString());
         HstSiteConfigServlet siteConfigServlet = new HstSiteConfigServletForTest(servletConfig);
@@ -79,8 +99,6 @@ public class TestHstSiteConfigServlet {
     
     @Test
     public void testGetConfigurationWithContextRelativePath() throws Exception {
-        MockServletContext servletContext = new MockServletContext("target", new FileSystemResourceLoader());
-        MockServletConfig servletConfig = new MockServletConfig(servletContext);
         servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config.properties");
         HstSiteConfigServlet siteConfigServlet = new HstSiteConfigServletForTest(servletConfig);
         Configuration configuration = siteConfigServlet.getConfiguration(servletConfig);
@@ -89,8 +107,6 @@ public class TestHstSiteConfigServlet {
     
     @Test
     public void testGetConfigurationWithContextRelativePathAndContextParam() throws Exception {
-        MockServletContext servletContext = new MockServletContext("target", new FileSystemResourceLoader());
-        MockServletConfig servletConfig = new MockServletConfig(servletContext);
         servletContext.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config.properties");
         HstSiteConfigServlet siteConfigServlet = new HstSiteConfigServletForTest(servletConfig);
         Configuration configuration = siteConfigServlet.getConfiguration(servletConfig);
@@ -99,43 +115,57 @@ public class TestHstSiteConfigServlet {
     
     @Test
     public void testGetConfigurationWithXmlFileURI() throws Exception {
-        MockServletContext servletContext = new MockServletContext("target", new FileSystemResourceLoader());
-        MockServletConfig servletConfig = new MockServletConfig(servletContext);
         File confFile = new File("target/test-hst-config.xml");
         servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIGURATION_PARAM, confFile.toURI().toString());
         HstSiteConfigServlet siteConfigServlet = new HstSiteConfigServletForTest(servletConfig);
         Configuration configuration = siteConfigServlet.getConfiguration(servletConfig);
+        assertEquals("test-hst-config-project", configuration.getString("default.sites.name"));
+        assertEquals("bar", configuration.getString("test.xml.config.foo"));
+    }
+    
+    @Test
+    public void testGetConfigurationWithXmlRelativePath1() throws Exception {
+        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIGURATION_PARAM, "target/test-hst-config.xml");
+        HstSiteConfigServlet siteConfigServlet = new HstSiteConfigServletForTest(servletConfig);
+        Configuration configuration = siteConfigServlet.getConfiguration(servletConfig);
+        assertEquals("test-hst-config-project", configuration.getString("default.sites.name"));
+        assertEquals("bar", configuration.getString("test.xml.config.foo"));
+    }
+    
+    @Test
+    public void testGetConfigurationWithXmlRelativePath2() throws Exception {
+        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIGURATION_PARAM, "./target/test-hst-config.xml");
+        HstSiteConfigServlet siteConfigServlet = new HstSiteConfigServletForTest(servletConfig);
+        Configuration configuration = siteConfigServlet.getConfiguration(servletConfig);
+        assertEquals("test-hst-config-project", configuration.getString("default.sites.name"));
         assertEquals("bar", configuration.getString("test.xml.config.foo"));
     }
     
     @Test
     public void testGetConfigurationWithXmlFileURIAndContextParam() throws Exception {
-        MockServletContext servletContext = new MockServletContext("target", new FileSystemResourceLoader());
-        MockServletConfig servletConfig = new MockServletConfig(servletContext);
         File confFile = new File("target/test-hst-config.xml");
         servletContext.addInitParameter(HstSiteConfigServlet.HST_CONFIGURATION_PARAM, confFile.toURI().toString());
         HstSiteConfigServlet siteConfigServlet = new HstSiteConfigServletForTest(servletConfig);
         Configuration configuration = siteConfigServlet.getConfiguration(servletConfig);
+        assertEquals("test-hst-config-project", configuration.getString("default.sites.name"));
         assertEquals("bar", configuration.getString("test.xml.config.foo"));
     }
     
     @Test
     public void testGetConfigurationWithXmlContextRelativePath() throws Exception {
-        MockServletContext servletContext = new MockServletContext("target", new FileSystemResourceLoader());
-        MockServletConfig servletConfig = new MockServletConfig(servletContext);
         servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIGURATION_PARAM, "/test-hst-config.xml");
         HstSiteConfigServlet siteConfigServlet = new HstSiteConfigServletForTest(servletConfig);
         Configuration configuration = siteConfigServlet.getConfiguration(servletConfig);
+        assertEquals("test-hst-config-project", configuration.getString("default.sites.name"));
         assertEquals("bar", configuration.getString("test.xml.config.foo"));
     }
     
     @Test
     public void testGetConfigurationWithXmlContextRelativePathAndContextParam() throws Exception {
-        MockServletContext servletContext = new MockServletContext("target", new FileSystemResourceLoader());
-        MockServletConfig servletConfig = new MockServletConfig(servletContext);
         servletContext.addInitParameter(HstSiteConfigServlet.HST_CONFIGURATION_PARAM, "/test-hst-config.xml");
         HstSiteConfigServlet siteConfigServlet = new HstSiteConfigServletForTest(servletConfig);
         Configuration configuration = siteConfigServlet.getConfiguration(servletConfig);
+        assertEquals("test-hst-config-project", configuration.getString("default.sites.name"));
         assertEquals("bar", configuration.getString("test.xml.config.foo"));
     }
     
