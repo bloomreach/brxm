@@ -18,14 +18,12 @@ package org.hippoecm.frontend.plugins.cms.browse.tree;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.addon.workflow.ContextWorkflowPlugin;
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -37,6 +35,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.FolderTreeNode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.util.MaxLengthNodeNameFormatter;
 import org.hippoecm.frontend.widgets.JcrTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,64 +146,24 @@ public class FolderTreePlugin extends RenderPlugin {
         }
     }
 
-    /**
-     * The Class TreeNodeTranslator 
-     */
-    class TreeNodeTranslator implements IClusterable {
+    class TreeNodeTranslator extends MaxLengthNodeNameFormatter {
         private static final long serialVersionUID = 1L;
 
-        int maxLength;
-        String splitter;
-        int splitterLength;
-        int indentLength;
-
-        public TreeNodeTranslator() {
-            this(-1, "..", 3);
-        }
-        
-        public TreeNodeTranslator(int maxLength, String split, int indentLength) {
-            this.maxLength = maxLength;
-            this.splitterLength = split.length();
-            this.splitter = split;
-            this.indentLength = indentLength;
-        }
-
         public TreeNodeTranslator(IPluginConfig config) {
-            this(config.getInt("nodename.max.length", -1), config.getString("nodename.splitter", ".."), config.getInt("nodename.indent.length", 3));
+            super(config.getInt("nodename.max.length", -1), config.getString("nodename.splitter", ".."), config.getInt(
+                    "nodename.indent.length", 3));
         }
 
         public String getName(TreeNode treeNode) {
-            JcrNodeModel nodeModel = ((IJcrTreeNode) treeNode).getNodeModel();
-            return (String) new NodeTranslator(nodeModel).getNodeName().getObject();
+            return getName(((IJcrTreeNode) treeNode).getNodeModel());
         }
 
-        public boolean isNameTooLong(TreeNode treeNode, int indent) {
-            String name = getName(treeNode);
-            int max = maxLength - (indent * indentLength);
-            return name.length() - max > 0;
+        public boolean isTooLong(TreeNode treeNode, int indent) {
+            return isTooLong(getName(treeNode), indent);
         }
 
         public String getMaxLengthName(TreeNode treeNode, int indent) {
-            String name = getName(treeNode);
-            if (maxLength == -1)
-                return name;
-
-            String result = name;
-            int max = maxLength - (indent * indentLength);
-            int diff = name.length() - max;
-
-            if (diff > 0) {
-                int splitDiff = splitterLength / 2 + splitterLength % 2;
-                int start = (max / 2) - splitDiff;
-                int end = name.length() - (max - start);
-                result = name.substring(0, start);
-                for (int i = 0; i < splitterLength; i++) {
-                    result += '.';
-                }
-                result += name.substring(end);
-            }
-            return result;
+            return parse(getName(treeNode), indent);
         }
-
     }
 }
