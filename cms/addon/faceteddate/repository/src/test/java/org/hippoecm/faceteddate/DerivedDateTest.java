@@ -159,4 +159,26 @@ public class DerivedDateTest extends TestCase {
 
         assertNotNull(traverse(session, "/test/search/" + date.get(Calendar.DAY_OF_MONTH) + "/hippo:resultset/doc"));
     }
+
+    @Test
+    public void testSearchMultiLevel() throws Exception {
+        root.addNode("docs","nt:unstructured").addMixin("mix:referenceable");
+        Node doc = root.getNode("docs").addNode("doc", "hippo:datedocument1");
+        doc.addMixin("hippo:harddocument");
+        doc = doc.addNode("hippo:d");
+        doc.addMixin("mix:referenceable");
+        doc.setProperty("hippostd:date", date);
+        session.save();
+
+        Node search = root.addNode("search", "hippo:facetsearch");
+        search.setProperty("hippo:queryname", "test");
+        search.setProperty("hippo:docbase", root.getNode("docs").getUUID());
+        search.setProperty("hippo:facets", new String[] { "hippo:d/hippostd:dayofmonth", "hippo:d/hippostd:year" });
+        session.save();
+
+        search = root.getNode("search");
+        Utilities.dump(System.err, search);
+
+        assertNotNull(traverse(session, "/test/search/" + date.get(Calendar.DAY_OF_MONTH) + "/" + date.get(Calendar.YEAR) + "/hippo:resultset/doc"));
+    }
 }
