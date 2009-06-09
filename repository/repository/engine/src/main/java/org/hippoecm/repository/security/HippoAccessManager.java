@@ -429,7 +429,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         NodeId id = getNodeId(absPath);
 
         try {
-            if (canRead((NodeId) id)) {
+            if (canRead(id)) {
                 return true;
             }
         } catch (NoSuchItemStateException e) {
