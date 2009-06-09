@@ -17,8 +17,12 @@ package org.hippoecm.hst.core.logging;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.hippoecm.hst.logging.LogEvent;
 import org.junit.Test;
@@ -26,6 +30,8 @@ import org.junit.Test;
 public class TestLogEventBuffer {
 
     private static final int LOG_EVENT_BUFFER_SIZE = 10;
+    
+    private List<Exception> exceptions = Collections.synchronizedList(new LinkedList<Exception>());
     
     @Test
     public void testCircularFIFOLogEventBuffer() {
@@ -87,6 +93,50 @@ public class TestLogEventBuffer {
             }
         }
         
+    }
+    
+    @Test
+    public void testCircularFIFOLogEventBufferThreadSafety() throws Exception {
+        final CircularFIFOLogEventBuffer logEventBuffer = new CircularFIFOLogEventBuffer(LOG_EVENT_BUFFER_SIZE);
+        
+        for (int i = 0; i < LOG_EVENT_BUFFER_SIZE; i++) {
+            logEventBuffer.add(new LogEventImpl("testlog", LogEvent.Level.DEBUG, "test message"));
+        }
+        
+        
+        Thread [] workers = new Thread[100];
+        for (int i = 0; i < workers.length; i++) {
+            workers[i] = new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        for (int j = 0; j < 100; j++) {
+                            logEventBuffer.add(new LogEventImpl("testlog", LogEvent.Level.DEBUG, "test message"));
+                        }
+                    } catch (Exception e) {
+                        exceptions.add(e);
+                    }
+                }
+            });
+        }
+        
+        for (int i = 0; i < workers.length; i++) {
+            workers[i].start();
+        }
+        
+        try {
+            for (int i = 0; i < workers.length; i++) {
+                workers[i].join();
+            }
+        } catch (InterruptedException e) {
+        }
+        
+        if (!exceptions.isEmpty()) {
+            StringBuilder exInfo = new StringBuilder();
+            for (Exception ex : exceptions) {
+                exInfo.append("    " + ex.toString() + " " + ex.getMessage() + "\n");
+            }
+            fail("Failed to add buffer for some reasons:\n" + exInfo + "\n");
+        }
     }
     
 }
