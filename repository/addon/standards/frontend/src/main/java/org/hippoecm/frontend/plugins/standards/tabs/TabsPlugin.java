@@ -59,11 +59,12 @@ public class TabsPlugin extends RenderPlugin {
     private List<Tab> tabs;
     private ServiceTracker<IRenderService> tabsTracker;
     private int selectCount;
+    private boolean openleft = false;
 
     public TabsPlugin(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
 
-        maxTabLength = properties.getInt(MAX_TAB_TITLE_LENGTH, 9);
+        maxTabLength = properties.getInt(MAX_TAB_TITLE_LENGTH, 12);
 
         tabs = new ArrayList<Tab>();
         add(tabbedPanel = new TabbedPanel("tabs", TabsPlugin.this, tabs));
@@ -73,6 +74,10 @@ public class TabsPlugin extends RenderPlugin {
         IPluginConfig panelConfig = new JavaPluginConfig();
         panelConfig.put("wicket.id", properties.getString(TAB_ID));
         panelConfig.put("wicket.behavior", properties.getString("tabbedpanel.behavior"));
+        
+        if(properties.containsKey("tabbedpanel.openleft")) {
+            openleft = properties.getBoolean("tabbedpanel.openleft");
+        }
 
         emptyPanel = new RenderService(context, panelConfig);
         context.registerService(emptyPanel, properties.getString(TAB_ID));
@@ -87,9 +92,14 @@ public class TabsPlugin extends RenderPlugin {
                 service.bind(TabsPlugin.this, TabbedPanel.TAB_PANEL_ID);
                 if (service != emptyPanel) {
                     Tab tabbie = new Tab(service);
-                    tabs.add(tabbie);
-                    if (tabs.size() == 1) {
+                    if (openleft) {
+                        tabs.add(0, tabbie);
                         tabbedPanel.setSelectedTab(0);
+                    } else {
+                        tabs.add(tabbie);
+                        if (tabs.size() == 1) {
+                            tabbedPanel.setSelectedTab(0);
+                        }
                     }
                 }
                 redraw();
@@ -254,11 +264,10 @@ public class TabsPlugin extends RenderPlugin {
                 }
             }
             if (titleModel != null) {
-                String fulltitle = (String) titleModel.getObject();
-                int length = fulltitle.length();
-                String appendix = (length < (maxTabLength + 1) ? "" : "..");
-                length = (length < maxTabLength ? length : maxTabLength);
-                String title = fulltitle.substring(0, length) + appendix;
+                String title = (String) titleModel.getObject();
+                if(title.length() > maxTabLength) {
+                    title = title.substring(0, maxTabLength-2) + ".."; // leave space for two .. then add them
+                }
                 return new Model(title);
             }
             return new Model("title");
