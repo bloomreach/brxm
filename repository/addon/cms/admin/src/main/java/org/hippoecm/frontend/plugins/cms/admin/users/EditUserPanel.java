@@ -51,7 +51,6 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
     public EditUserPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel, final IModel model) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        addFeedbackPanel();
         
         this.model = model;
 
@@ -97,12 +96,7 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
                 } catch (RepositoryException e) {
                     Session.get().warn(getString("user-save-failed", model));
                     log.error("Unable to save user '" + username + "' : ", e);
-                    target.addComponent(getFeedbackPanel());
                 }
-            }
-            @Override
-            protected void onError(AjaxRequestTarget target, Form form) {
-                target.addComponent(getFeedbackPanel());
             }
         });
 

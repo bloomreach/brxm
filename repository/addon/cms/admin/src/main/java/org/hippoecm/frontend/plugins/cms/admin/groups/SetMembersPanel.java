@@ -60,7 +60,6 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
             final IModel model) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        addFeedbackPanel();
         
         this.model = model;
         final Group group = (Group) model.getObject();
@@ -100,7 +99,6 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
                             log.error("Failed to add member", e);
                         }
                         target.addComponent(SetMembersPanel.this);
-                        target.addComponent(getFeedbackPanel());
                     }
                 };
                 item.add(action);
@@ -144,7 +142,6 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
                         log.error("Failed to remove memberships", e);
                     }
                     target.addComponent(SetMembersPanel.this);
-                    target.addComponent(getFeedbackPanel());
                 }
             });
         }

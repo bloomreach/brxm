@@ -51,7 +51,6 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
     public SetPasswordPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel, final IModel model) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        addFeedbackPanel();
         
         this.model = model;
         final User user = (User) model.getObject();
@@ -92,12 +91,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
                 } catch (RepositoryException e) {
                     Session.get().warn(getString("user-save-failed", model));
                     log.error("Unable to set password for user '" + username + "' : ", e);
-                    target.addComponent(getFeedbackPanel());
                 }
-            }
-            @Override
-            protected void onError(AjaxRequestTarget target, Form form) {
-                target.addComponent(getFeedbackPanel());
             }
         });
 

@@ -61,8 +61,6 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
     public CreateUserPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        
-        addFeedbackPanel();
 
         // add form with markup id setter so it can be updated via ajax
         form = new Form("form", new CompoundPropertyModel(userModel));
@@ -120,13 +118,7 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
                 } catch (RepositoryException e) {
                     Session.get().warn(getString("user-create-failed", userModel));
                     log.error("Unable to create user '" + username + "' : ", e);
-                    target.addComponent(getFeedbackPanel());
                 }
-            }
-            
-            @Override
-            protected void onError(AjaxRequestTarget target, Form form) {
-                target.addComponent(getFeedbackPanel());
             }
         });
         

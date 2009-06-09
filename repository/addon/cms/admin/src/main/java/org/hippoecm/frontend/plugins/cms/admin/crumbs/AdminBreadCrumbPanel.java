@@ -33,21 +33,4 @@ public abstract class AdminBreadCrumbPanel extends BreadCrumbPanel implements IA
     public String getTitle() {
         return (String) getTitle(this).getObject();
     }
-
-    /**
-     * Call this method to add a default feedback panel
-     */
-    public void addFeedbackPanel() {
-        feedback = new FeedbackPanel("feedback");
-        feedback.setOutputMarkupId(true);
-        add(feedback);
-    }
-    
-    /**
-     * get the feedback panel, might be null
-     * @return the feedback panel or null if not set
-     */
-    public FeedbackPanel getFeedbackPanel() {
-        return feedback;
-    }
 }

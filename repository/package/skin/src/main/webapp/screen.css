@@ -1125,6 +1125,11 @@ div.hippo-controlpanel-actions-top{border-bottom: 1px solid #afafaf; border-top:
   padding-top: 2px;
 }
 
+li.feedbackPanelERROR {
+  margin: 5px;
+  display: inline;
+}
+
 table.hippo-defaultcontent td {
   vertical-align: top;
 }

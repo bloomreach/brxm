@@ -55,7 +55,6 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
     public ListGroupsPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        addFeedbackPanel();
 
         add(new AjaxBreadCrumbPanelLink("create-group", context, this, CreateGroupPanel.class));
 
