@@ -61,13 +61,13 @@ public class ValueTemplateProvider extends AbstractProvider<JcrPropertyValueMode
             int index;
             Value value = type.createValue();
             Node node = (Node) getItemModel().getParentModel().getObject();
-            String path = getItemModel().getPath().substring(node.getPath().length() + 1);
-            if (!node.hasProperty(path)) {
+            String relPath = getItemModel().getPath().substring(node.getPath().length() + 1);
+            if (!node.hasProperty(relPath)) {
                 if (descriptor.isMultiple()) {
-                    node.setProperty(path, new Value[] { value });
+                    node.setProperty(relPath, new Value[] { value });
                     index = 0;
                 } else {
-                    node.setProperty(path, value);
+                    node.setProperty(relPath, value);
                     index = JcrPropertyValueModel.NO_INDEX;
                 }
                 getItemModel().detach();
@@ -77,7 +77,7 @@ public class ValueTemplateProvider extends AbstractProvider<JcrPropertyValueMode
                     return;
                 }
 
-                Property property = node.getProperty(path);
+                Property property = node.getProperty(relPath);
                 if (property.getDefinition().isMultiple()) {
                     Value[] oldValues = property.getValues();
                     Value[] newValues = new Value[oldValues.length + 1];
@@ -85,7 +85,7 @@ public class ValueTemplateProvider extends AbstractProvider<JcrPropertyValueMode
                         newValues[i] = oldValues[i];
                     }
                     newValues[oldValues.length] = value;
-                    node.setProperty(path, newValues);
+                    node.setProperty(relPath, newValues);
                     index = oldValues.length;
                 } else {
                     Value old = property.getValue();
@@ -98,7 +98,7 @@ public class ValueTemplateProvider extends AbstractProvider<JcrPropertyValueMode
             }
             elements.addLast(new JcrPropertyValueModel(index, value, new JcrPropertyModel(getItemModel())));
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
     }
 

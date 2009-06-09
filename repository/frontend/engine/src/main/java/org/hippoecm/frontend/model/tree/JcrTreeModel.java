@@ -56,7 +56,7 @@ public class JcrTreeModel extends DefaultTreeModel implements IJcrTreeModel, IOb
         if (nodeModel != null) {
             String basePath = root.getNodeModel().getItemModel().getPath();
             String path = nodeModel.getItemModel().getPath();
-            if (path.startsWith(basePath)) {
+            if (path != null && path.startsWith(basePath)) {
                 String[] elements = StringUtils.split(path.substring(basePath.length()), '/');
                 List<Object> nodes = new LinkedList<Object>();
                 nodes.add(node);
