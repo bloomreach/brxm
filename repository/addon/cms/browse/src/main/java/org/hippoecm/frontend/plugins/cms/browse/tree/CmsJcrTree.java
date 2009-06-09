@@ -93,7 +93,7 @@ public abstract class CmsJcrTree extends JcrTree {
 
     @Override
     protected void decorateNodeLink(MarkupContainer nodeLink, TreeNode node, int level) {
-        if (treeNodeTranslator.isNameTooLong(node, level)) {
+        if (treeNodeTranslator.isTooLong(node, level)) {
             nodeLink.add(new AttributeAppender("title", true, new Model(treeNodeTranslator.getName(node)), " "));
         }
     }

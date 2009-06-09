@@ -33,6 +33,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -44,6 +45,8 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.util.MaxLengthStringFormatter;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +60,8 @@ public class BreadcrumbPlugin extends RenderPlugin {
 
     private final Set<String> roots;
     private final AjaxButton up;
+
+    private MaxLengthStringFormatter format;
 
     public BreadcrumbPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -108,6 +113,9 @@ public class BreadcrumbPlugin extends RenderPlugin {
             up.setEnabled(false);
         }
         add(up);
+
+        format = new MaxLengthStringFormatter(config.getInt("crumb.max.length", 10), config.getString("crumb.splitter",
+                ".."), 0);
     }
 
     protected void update(JcrNodeModel model) {
@@ -155,17 +163,28 @@ public class BreadcrumbPlugin extends RenderPlugin {
                     }
 
                 };
-                link.add(new Label("name", new Model(nodeItem.name)));
+
+                link.add(new Label("name", new AbstractReadOnlyModel() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public Object getObject() {
+                        return format.parse(nodeItem.name);
+                    }
+
+                }));
+                link.add(new AttributeAppender("title", true, new Model(nodeItem.getDecodedName()), " "));
+
                 link.setEnabled(nodeItem.enabled);
                 item.add(link);
-                
+
                 IModel css = new Model() {
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     public String getObject() {
                         String css = nodeItem.enabled ? "enabled" : "disabled";
-                        
+
                         if (list.size() == 1) {
                             css += " firstlast";
                         } else if (item.getIndex() == 0) {
@@ -200,6 +219,10 @@ public class BreadcrumbPlugin extends RenderPlugin {
             }
             this.model = model;
             this.enabled = enabled;
+        }
+
+        public String getDecodedName() {
+            return NodeNameCodec.decode(name);
         }
     }
 
