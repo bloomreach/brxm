@@ -1089,6 +1089,9 @@
     <sv:property sv:name="tabbedpanel.behavior" sv:type="String">
       <sv:value>service.behavior.editor.tabs.center</sv:value>
     </sv:property>
+    <sv:property sv:name="tabbedpanel.openleft" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
   </sv:node>
 
   <sv:node sv:name="tabbedEditorLayout">
