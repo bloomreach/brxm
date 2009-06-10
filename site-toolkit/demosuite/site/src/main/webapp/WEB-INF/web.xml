@@ -32,22 +32,22 @@
 		<param-value>site.webapp.root</param-value>
 	</context-param>
 
+    <filter>
+        <filter-name>HstVirtualHostsFilter</filter-name>
+        <filter-class>org.hippoecm.hst.container.HstVirtualHostsFilter</filter-class>    
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>HstVirtualHostsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+    
 	<!-- Spring Log4j Configuring Listener -->
 	<listener>
 		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
 	</listener>
 
-	<filter>
-		<filter-name>HstVirtualHostsFilter</filter-name>
-		<filter-class>org.hippoecm.hst.container.HstVirtualHostsFilter</filter-class>    
-	</filter>
-	
-	<filter-mapping>
-		<filter-name>HstVirtualHostsFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-	</filter-mapping>
-	
 	<servlet>
 		<servlet-name>HstSiteConfigServlet</servlet-name>
 		<servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
@@ -124,6 +124,11 @@
         <url-pattern>/staticresource/*</url-pattern>
     </servlet-mapping>
 
+    <!-- The Usual Welcome File List -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
 	<error-page>
 		<error-code>404</error-code>
 		<location>/jsp/ErrorPage404.jsp</location>
@@ -154,10 +159,5 @@
 		<location>/jsp/ErrorPage500.jsp</location>
 	</error-page>
   
-	<!-- The Usual Welcome File List -->
-	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
-	</welcome-file-list>
-
 </web-app>
 

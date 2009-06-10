@@ -19,6 +19,12 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<display-name>Hippo Site Toolkit Container Web Application</display-name>
 
+    <!-- for deploying on Websphere: disable Websphere default portletcontainer -->
+    <context-param>
+        <param-name>com.ibm.websphere.portletcontainer.PortletDeploymentEnabled</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    
 	<!-- Spring Log4j Web Configuration Init Parameters -->
     <context-param>
         <param-name>log4jConfigLocation</param-name>
@@ -100,6 +106,11 @@
         <url-pattern>/staticresource/*</url-pattern>
     </servlet-mapping>
 
+    <!-- The Usual Welcome File List -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
 	<error-page>
 		<error-code>404</error-code>
 		<location>/jsp/ErrorPage404.jsp</location>
@@ -130,10 +141,5 @@
 		<location>/jsp/ErrorPage500.jsp</location>
 	</error-page>
   
-	<!-- The Usual Welcome File List -->
-	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
-	</welcome-file-list>
-
 </web-app>
 

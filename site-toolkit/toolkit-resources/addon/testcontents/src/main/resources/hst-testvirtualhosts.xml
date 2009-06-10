@@ -30,6 +30,7 @@
     <sv:property sv:name="hst:prefixexclusions" sv:type="String">
         <sv:value>/binaries/</sv:value>
         <sv:value>/staticresource/</sv:value>
+        <sv:value>/exapps/</sv:value>
     </sv:property>
     <sv:property sv:name="hst:suffixexclusions" sv:type="String">
         <sv:value>.do</sv:value>
