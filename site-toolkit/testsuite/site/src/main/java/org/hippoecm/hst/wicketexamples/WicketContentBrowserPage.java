@@ -34,6 +34,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.target.basic.RedirectRequestTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,28 +78,54 @@ public class WicketContentBrowserPage extends WebPage {
                 final ItemBean itemBean = (ItemBean) item.getModelObject();
                 
                 final String name = itemBean.getName();
+                final String path = itemBean.getPath();
                 String primaryNodeTypeName = null;
                 String uuid = null;
+                String content = null;
                 
                 if (itemBean instanceof NodeBean) {
                     NodeBean nodeBean = (NodeBean) itemBean;
                     primaryNodeTypeName = nodeBean.getPrimaryNodeTypeName();
                     uuid = nodeBean.getUuid();
-                }
-                
-                Link nameLink = new Link("nameLink") {
-                    private static final long serialVersionUID = 1L;
-
-                    public void onClick() {
-                        currentRelativePath += ("/" + name);
-                        refreshCurrentPathItemBeans();
+                    
+                    if ("hippostd:html".equals(primaryNodeTypeName)) {
+                        Object [] props = nodeBean.getProperty("hippostd:content");
+                        
+                        if (props != null && props.length > 0) {
+                            content = (String) props[0];
+                        }
                     }
-                };
+                }
+
+                Link nameLink = null;
+                
+                if ("hippo:resource".equals(primaryNodeTypeName)) {
+                    // download link
+                    nameLink = new Link("nameLink") {
+                        private static final long serialVersionUID = 1L;
+    
+                        public void onClick() {
+                            currentRelativePath += ("/" + name);
+                            getRequestCycle().setRequestTarget(new RedirectRequestTarget("/binaries" + path));
+                        }
+                    };
+                } else {
+                    // navigational link
+                    nameLink = new Link("nameLink") {
+                        private static final long serialVersionUID = 1L;
+    
+                        public void onClick() {
+                            currentRelativePath += ("/" + name);
+                            refreshCurrentPathItemBeans();
+                        }
+                    };
+                }
                 
                 nameLink.add(new Label("name", name));
                 item.add(nameLink);
                 item.add(new Label("primaryNodeTypeName", primaryNodeTypeName));
                 item.add(new Label("uuid", uuid));
+                item.add(new Label("content", content).setEscapeModelStrings(false));
             }
         };
         

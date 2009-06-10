@@ -21,6 +21,13 @@
 <style>
 .content-browser {
     text-align: left;
+    vertical-align:top;
+}
+th.content-browser {
+    background-color: #ddd;
+}
+td.content-browser {
+    background-color: #eee;
 }
 </style>
 </head>
@@ -38,17 +45,19 @@
 		<th class="content-browser">Name</th>
 		<th class="content-browser">Primary Type</th>
 		<th class="content-browser">UUID</th>
+		<th class="content-browser">Content</th>
 	</tr>
     <tr class="content-browser">
-        <td class="content-browser" colspan="3"><em><a href='#' wicket:id='parentLink'>.. (go to parent)</a></em></td>
+        <td class="content-browser" colspan="4"><em><a href='#' wicket:id='parentLink'>.. (go to parent)</a></em></td>
     </tr>
 	<tr wicket:id="itemView" class="content-browser">
 		<td class="content-browser"><a href='#' wicket:id='nameLink'><span wicket:id="name" class="content-browser">name</span></a></td>
         <td class="content-browser"><span wicket:id="primaryNodeTypeName" class="content-browser">primaryNodeTypeName</span></td>
         <td class="content-browser"><span wicket:id="uuid" class="content-browser">UUID</span></td>
+        <td class="content-browser"><div wicket:id="content" class="content-browser-content-pane">Content</div></td>
 	</tr>
 	<tr class="content-browser">
-        <td class="content-browser"><span wicket:id="itemNavigator" class="content-browser">Navigator</span></td>
+        <th class="content-browser" colspan="4"><span wicket:id="itemNavigator" class="content-browser">Navigator</span></th>
 	</tr>
 </table>
 
