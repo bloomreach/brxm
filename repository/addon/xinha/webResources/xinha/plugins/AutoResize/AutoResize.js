@@ -109,6 +109,10 @@ AutoResize.prototype.doResize = function(editor) {
             if(this.dim.w != newDim.w || this.dim.h != newDim.h) {
                 editor.sizeEditor(newDim.w + 'px', newDim.h + 'px', true, true);
                 this.dim = newDim;
+                
+                if(Xinha.is_ie) {
+                    this.DOM.setStyle(this.findParent(), 'height', this.dim.h + 'px');
+                }
             }
         }
     }
