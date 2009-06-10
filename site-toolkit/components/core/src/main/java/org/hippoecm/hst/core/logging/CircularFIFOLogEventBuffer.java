@@ -43,7 +43,7 @@ public class CircularFIFOLogEventBuffer implements LogEventBuffer {
         }
         
         if (appendable) {
-            synchronized (buffer) {
+            synchronized (this) {
                 return buffer.add(event);
             }
         } else {
