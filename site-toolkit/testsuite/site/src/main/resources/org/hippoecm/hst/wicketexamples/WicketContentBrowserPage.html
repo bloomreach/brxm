@@ -18,12 +18,44 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.sourceforge.net/">
 
 <head>
+<style>
+.content-browser {
+    text-align: left;
+}
+</style>
 </head>
 
 <body>
-    <h1>Wicket Content Browser</h1>
-    <hr/>
+
+<h1>Current path: <span wicket:id="currentRelativePath">Current Relative Path</span></h1>
+
+<hr/>
     
+<div wicket:id="feedback"></div>
+    
+<table class="content-browser">
+	<tr class="content-browser">
+		<th class="content-browser">Name</th>
+		<th class="content-browser">Primary Type</th>
+		<th class="content-browser">UUID</th>
+	</tr>
+    <tr class="content-browser">
+        <td class="content-browser" colspan="3"><em><a href='#' wicket:id='parentLink'>.. (go to parent)</a></em></td>
+    </tr>
+	<tr wicket:id="itemView" class="content-browser">
+		<td class="content-browser"><a href='#' wicket:id='nameLink'><span wicket:id="name" class="content-browser">name</span></a></td>
+        <td class="content-browser"><span wicket:id="primaryNodeTypeName" class="content-browser">primaryNodeTypeName</span></td>
+        <td class="content-browser"><span wicket:id="uuid" class="content-browser">UUID</span></td>
+	</tr>
+	<tr class="content-browser">
+        <td class="content-browser"><span wicket:id="itemNavigator" class="content-browser">Navigator</span></td>
+	</tr>
+</table>
+
+<hr/>
+
+<em>Wicket Content Browser Example</em>
+
 </body>
 
 </html>

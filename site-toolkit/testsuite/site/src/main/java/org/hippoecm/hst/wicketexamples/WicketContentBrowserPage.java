@@ -15,12 +15,139 @@
  */
 package org.hippoecm.hst.wicketexamples;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jcr.Credentials;
+import javax.jcr.NodeIterator;
+import javax.jcr.Repository;
+import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
+
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.markup.repeater.data.ListDataProvider;
+import org.apache.wicket.model.PropertyModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WicketContentBrowserPage extends WebPage {
+    
+    private Logger logger = LoggerFactory.getLogger(WicketContentBrowserPage.class);
+
+    protected String currentRelativePath = "";
+    protected List<ItemBean> currentItemBeans = new ArrayList<ItemBean>();
 
     public WicketContentBrowserPage() {
+
+        refreshCurrentPathItemBeans();
         
+        Label currentRelativePathLabel = new Label("currentRelativePath", new PropertyModel(this, "currentRelativePath"));
+        add(currentRelativePathLabel);
+        
+        Link parentLink = new Link("parentLink") {
+            private static final long serialVersionUID = 1L;
+
+            public void onClick() {
+                if (currentRelativePath != null && !"".equals(currentRelativePath)) {
+                    int offset = currentRelativePath.lastIndexOf('/');
+                    
+                    if (offset >= 0) {
+                        currentRelativePath = currentRelativePath.substring(0, offset);
+                        refreshCurrentPathItemBeans();
+                    }
+                }
+            }
+        };
+        
+        add(parentLink);
+        
+        final DataView itemView = new DataView("itemView", new ListDataProvider(currentItemBeans)) {
+            
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void populateItem(Item item) {
+                final ItemBean itemBean = (ItemBean) item.getModelObject();
+                
+                final String name = itemBean.getName();
+                String primaryNodeTypeName = null;
+                String uuid = null;
+                
+                if (itemBean instanceof NodeBean) {
+                    NodeBean nodeBean = (NodeBean) itemBean;
+                    primaryNodeTypeName = nodeBean.getPrimaryNodeTypeName();
+                    uuid = nodeBean.getUuid();
+                }
+                
+                Link nameLink = new Link("nameLink") {
+                    private static final long serialVersionUID = 1L;
+
+                    public void onClick() {
+                        currentRelativePath += ("/" + name);
+                        refreshCurrentPathItemBeans();
+                    }
+                };
+                
+                nameLink.add(new Label("name", name));
+                item.add(nameLink);
+                item.add(new Label("primaryNodeTypeName", primaryNodeTypeName));
+                item.add(new Label("uuid", uuid));
+            }
+        };
+        
+        itemView.setItemsPerPage(10);
+        add(itemView);
+        add(new PagingNavigator("itemNavigator", itemView));
+        FeedbackPanel feedback = new FeedbackPanel("feedback");
+        feedback.setEscapeModelStrings(false);
+        add(feedback);
+        
+    }
+    
+    public String getCurrentRelativePath() {
+        return currentRelativePath;
+    }
+    
+    protected void refreshCurrentPathItemBeans() {
+        Repository repository = null;
+        Session session = null;
+        
+        try {
+            WicketContentBrowserApplication app = (WicketContentBrowserApplication) getApplication();
+            repository = app.getDefaultRepository();
+            Credentials credentials = app.getDefaultCredentials();
+            String basePath = app.getBasePath();
+            
+            session = (credentials == null ? repository.login() : repository.login(credentials));
+            
+            String statement = basePath + currentRelativePath + (currentRelativePath.endsWith("/") ? "*" : "/*");
+            Query query = session.getWorkspace().getQueryManager().createQuery(statement, "xpath");
+            QueryResult result = query.execute();
+            
+            currentItemBeans.clear();
+            
+            for (NodeIterator it = result.getNodes(); it.hasNext(); ) {
+                currentItemBeans.add(ItemBeanFactory.createItemBean(it.nextNode()));
+            }
+        } catch (Exception e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Failed to query.", e);
+            }
+        } finally {
+            if (session != null) {
+                try {
+                    session.logout();
+                } catch (Exception ce) {
+                }
+            }
+        }
     }
     
 }

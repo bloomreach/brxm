@@ -86,8 +86,6 @@
     <jackrabbit.version>1.5.0</jackrabbit.version>
 
     <hippoecm.version>2.06.04</hippoecm.version>
-    
-    <wicket.version>1.4-rc4</wicket.version>
 
   </properties>
 
@@ -542,20 +540,6 @@
         <artifactId>spring-test</artifactId>
         <version>${spring.version}</version>
         <scope>test</scope>
-      </dependency>
-      
-      <!-- Wicket dependencies -->
-      
-      <dependency>
-        <groupId>org.apache.wicket</groupId>
-        <artifactId>wicket</artifactId>
-        <version>${wicket.version}</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.apache.wicket</groupId>
-        <artifactId>wicket-extensions</artifactId>
-        <version>${wicket.version}</version>
       </dependency>
       
       <!-- Hippo ECM Depedencies -->

@@ -15,13 +15,69 @@
  */
 package org.hippoecm.hst.wicketexamples;
 
+import javax.jcr.Credentials;
+import javax.jcr.Repository;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
 import org.apache.wicket.protocol.http.WebApplication;
+import org.hippoecm.hst.site.HstServices;
 
 public class WicketContentBrowserApplication extends WebApplication {
+    
+    private Repository repository;
+    private Credentials credentials;
+    private boolean credentialsConfigured = true;
+    private String basePath;
     
     @Override
     public Class getHomePage() {
         return WicketContentBrowserPage.class;
+    }
+    
+    public Repository getDefaultRepository() throws Exception {
+        if (repository == null) {
+            String repositoryResourceReferenceName = getInitParameter("repository-res-ref-name");
+            
+            if (repositoryResourceReferenceName != null) {
+                Context initCtx = new InitialContext();
+                Context envCtx = (Context) initCtx.lookup("java:comp/env");
+                repository = (Repository) envCtx.lookup(repositoryResourceReferenceName);
+            } else {
+                repository = HstServices.getComponentManager().getComponent("javax.jcr.Repository");
+            }
+        }
+        
+        return repository;
+    }
+    
+    public Credentials getDefaultCredentials() {
+        if (credentials == null && credentialsConfigured) {
+            String user = getInitParameter("repository-user");
+            String password = getInitParameter("repository-password");
+            
+            if (user != null && password != null) {
+                credentials = new SimpleCredentials(user, password.toCharArray());
+            } else {
+                credentialsConfigured = false;
+            }
+        }
+        
+        return credentials;
+    }
+    
+    public String getBasePath() {
+        if (basePath == null) {
+            basePath = getInitParameter("base-path");
+            
+            if (basePath == null) {
+                basePath = "/jcr:root";
+            }
+        }
+        
+        return basePath;
     }
     
 }
