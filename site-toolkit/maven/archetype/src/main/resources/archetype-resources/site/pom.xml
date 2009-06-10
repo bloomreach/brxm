@@ -444,6 +444,7 @@
                         <exclude name="xalan-*.jar" />
                         <exclude name="jdo2-*.jar" />
                         <exclude name="jpox-*.jar" />
+                        <exclude name="wicket-*.jar" />
                       </fileset>
                     </copy>
 

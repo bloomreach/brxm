@@ -128,6 +128,14 @@
       <artifactId>spring-webmvc</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.wicket</groupId>
+      <artifactId>wicket</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.wicket</groupId>
+      <artifactId>wicket-extensions</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-api</artifactId>
       <version>${project.version}</version>
@@ -442,6 +450,7 @@
                         <exclude name="xalan-*.jar" />
                         <exclude name="jdo2-*.jar" />
                         <exclude name="jpox-*.jar" />
+                        <exclude name="wicket-*.jar" />
                       </fileset>
                     </copy>
 
