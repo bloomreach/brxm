@@ -45,4 +45,25 @@
         </portlet-info>
     </portlet>
     
+    <portlet id="WicketContentBrowser">
+        <description>The WicketContentBrowser provides basic browsing functionalities on a specified JCR Repository.</description>
+        <portlet-name>WicketContentBrowser</portlet-name>
+        <display-name>Wicket Content Browser</display-name>
+        <portlet-class>org.apache.wicket.protocol.http.portlet.WicketPortlet</portlet-class>    
+        <init-param>
+          <name>wicketFilterPath</name>
+          <value>/exapps/contentbrowser</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <portlet-info>
+            <title>Wicket Content Browser</title>
+            <short-title>WicketContentBrowser</short-title>
+            <keywords>jcr,wicket,content,browser</keywords>
+        </portlet-info>
+    </portlet>    
+    
 </portlet-app>

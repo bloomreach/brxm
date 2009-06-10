@@ -27,12 +27,9 @@
       <property layout="TwoColumns" name="row" value="0"/>
       <property layout="TwoColumns" name="column" value="1"/>
     </fragment>
-    <fragment id="hstdemo-onehippo" type="portlet" name="webcontent::IFramePortlet">
+    <fragment id="hstdemo-wicketcontentbrowser" type="portlet" name="site::WicketContentBrowser">
       <property layout="TwoColumns" name="row" value="1" />
       <property layout="TwoColumns" name="column" value="1" />
-      <preference name="SRC">
-        <value>http://www.onehippo.org</value>
-      </preference>
     </fragment>
 
   </fragment>
