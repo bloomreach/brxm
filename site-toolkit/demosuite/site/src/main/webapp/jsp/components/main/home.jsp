@@ -5,9 +5,10 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
 
-<div>
-  <h2>${document.title}</h2>
+<div role="main" class="yui-u">
+  <h1>${document.title}</h1>
   <p>${document.summary}</p>
   <p><hst:html hippohtml="${document.html}"/></p>
+  <p style="height: 30em;">  </p>
 </div>
 

@@ -18,4 +18,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
-<p>This is the right column.</>
+
+<div class="yui-b">
+  <p>This is the right column</p>
+</div>

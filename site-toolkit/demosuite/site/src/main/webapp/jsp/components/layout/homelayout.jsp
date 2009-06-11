@@ -4,16 +4,17 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
-<table class="main">
-  <tr>
-    <td class="leftmenu">
-      <hst:include ref="bodynav"/>
-    </td>
-    <td class="content">
-      <hst:include ref="bodymain"/>
-    </td>
-    <td class="rightmenu">
-      <img src="<hst:link path="/images/hippo.gif"/>"/>
-    </td>
-  </tr>
-</table>
+<div id="bd">
+  <div id="yui-main">
+    <div class="yui-b">
+      <div class="yui-gf">
+          <hst:include ref="bodynav"/>
+          <hst:include ref="bodymain"/>
+        </div>
+    </div>
+  </div>
+  <div role="complementary" class="yui-b">
+      Second Navigation
+      (empty)
+  </div>
+</div>

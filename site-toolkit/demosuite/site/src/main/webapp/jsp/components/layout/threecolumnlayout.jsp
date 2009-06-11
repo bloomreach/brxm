@@ -3,16 +3,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
-<table class="main">
-  <tr>
-    <td class="leftmenu">
-      <hst:include ref="leftmenu"/>
-    </td>
-    <td class="content">
-      <hst:include ref="content"/>
-    </td>
-    <td class="rightmenu">
-      <hst:include ref="right"/>
-    </td>
-  </tr>
-</table>
+<div id="bd">
+  <div id="yui-main">
+    <div class="yui-b">
+      <div class="yui-gf">
+          <hst:include ref="leftmenu"/>
+          <hst:include ref="content"/>
+      </div>      
+    </div>    
+  </div>
+  <hst:include ref="right"/>
+</div>

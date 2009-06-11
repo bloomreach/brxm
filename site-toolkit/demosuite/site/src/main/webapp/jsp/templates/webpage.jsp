@@ -24,10 +24,18 @@
   <head>
     <hst:head-contributions />
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css">
     <link rel="stylesheet" href="<hst:link path="/css/style.css"/>" type="text/css">
   </head>
   <body>
-    <hst:include ref="header"/>
-    <hst:include ref="body"/>
+      <div id="custom-doc" class="yui-t6">
+        <div id="hd" role="banner">
+        <hst:include ref="header"/>
+      </div>
+          <hst:include ref="body"/>
+          <div id="ft">
+        <p><a title="NewsRSS" href="<hst:link path="/preview/rss.xml"/>">RSS <img src="<hst:link path="/images/rss.gif"/>"/></a></p>
+      </div>
+      </div>
   </body>
 </html>
