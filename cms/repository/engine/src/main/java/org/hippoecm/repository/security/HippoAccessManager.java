@@ -426,7 +426,13 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         }
 
         // find the id
-        NodeId id = getNodeId(absPath);
+        NodeId id;
+        try {
+            id = getNodeId(absPath);
+        } catch (PathNotFoundException e) {
+            log.warn("Unable to find node id, allowing read permissions " + npRes.getJCRPath(absPath), e);
+            return true;
+        }
 
         try {
             if (canRead(id)) {
@@ -858,7 +864,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
      * @throws PathNotFoundException
      * @throws RepositoryException
      */
-    private ItemId getItemId(String absPath) throws PathNotFoundException, RepositoryException {
+    private NodeId getNodeId(String absPath) throws PathNotFoundException, RepositoryException {
         checkInitialized();
         return getNodeId(npRes.getQPath(absPath));
     }
@@ -914,8 +920,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         if (id != null) {
             return id;
         }
-        throw new PathNotFoundException("Unable to resolve the node id from the path " + npRes.getJCRPath(absPath)
-                + " in " + hierMgr.getClass().getName() + " or in " + zombieHierMgr.getClass().getName());
+        throw new PathNotFoundException("Unable to resolve the node id from the path " + npRes.getJCRPath(absPath));
     }
 
     /**
@@ -940,10 +945,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             } else {
                 String msg = "Item state not found in normal, transient or attic: " + id;
                 NoSuchItemStateException e = new NoSuchItemStateException(msg);
-                log.info(msg);
-                if (log.isDebugEnabled()) {
-                    log.debug(msg,e);
-                }
+                log.error(msg,e);
                 throw e;
             }
         } catch (ItemStateException e) {
@@ -1200,21 +1202,18 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             log.debug("No privileges to check for path: {}.", absPath);
             return true;
         }
-        
+
         // check if the path points to a node
-        ItemId id = getItemId(absPath);
-        if (!id.denotesNode()) {
-            throw new PathNotFoundException("hasPrivileges called on property instead of node " + absPath);
-        }
-        
-        // system session can do everything
-        if (isSystem) {
-            return true;
-        }
+        NodeId id = getNodeId(absPath);
         
         // fast track read check
         if (privileges.length == 1 && "jcr:read".equals(privileges[0].getName())) {
-            return canRead(npRes.getQPath(absPath));
+            try {
+                return canRead(id);
+            } catch (NoSuchItemStateException e) {
+                throw new PathNotFoundException("Path not found " + absPath, e);
+            }
+
         }
         NodeState nodeState;
         try {
@@ -1268,11 +1267,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         checkInitialized();
         
         // check if the path points to a node
-        ItemId id = getItemId(absPath);
-        if (!id.denotesNode()) {
-            throw new PathNotFoundException("hasPrivileges called on property instead of node " + absPath);
-        }
-        
+        NodeId id = getNodeId(absPath);
         NodeState nodeState;
         try {
             nodeState = (NodeState) getItemState(id);
