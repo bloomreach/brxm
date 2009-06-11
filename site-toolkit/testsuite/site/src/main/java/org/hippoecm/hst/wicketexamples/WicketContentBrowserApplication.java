@@ -17,7 +17,6 @@ package org.hippoecm.hst.wicketexamples;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
-import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -30,7 +29,6 @@ public class WicketContentBrowserApplication extends WebApplication {
     private Repository repository;
     private Credentials credentials;
     private boolean credentialsConfigured = true;
-    private String basePath;
     
     @Override
     public Class getHomePage() {
@@ -66,18 +64,6 @@ public class WicketContentBrowserApplication extends WebApplication {
         }
         
         return credentials;
-    }
-    
-    public String getBasePath() {
-        if (basePath == null) {
-            basePath = getInitParameter("base-path");
-            
-            if (basePath == null) {
-                basePath = "/jcr:root";
-            }
-        }
-        
-        return basePath;
     }
     
 }

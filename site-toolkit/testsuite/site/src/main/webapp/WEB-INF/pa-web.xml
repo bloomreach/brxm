@@ -59,6 +59,14 @@
       <param-name>applicationClassName</param-name>
       <param-value>org.hippoecm.hst.wicketexamples.WicketContentBrowserApplication</param-value>
     </init-param>
+    <init-param>
+      <param-name>basePath</param-name>
+      <param-value>/</param-value>
+    </init-param>
+    <init-param>
+      <param-name>itemsPerPage</param-name>
+      <param-value>10</param-value>
+    </init-param>
   </filter>
   
   <filter-mapping>
