@@ -45,6 +45,18 @@ import org.apache.wicket.request.target.basic.RedirectRequestTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This example wicket web page is designed to demonstrate
+ * how to access a JCR session pooling repository component provided by HST-2 container
+ * and how an application can use simple pure JCR APIs for some purposes.
+ * <P>
+ * <EM>Please note that this example is not designed to support more advanced JCR repository features
+ * such as workflow, virtual nodes, document templates or faceted navigation
+ * which are supported by some JCR repository implementations.</EM> 
+ * </P>
+ * 
+ * @version $Id$
+ */
 public class WicketContentBrowserPage extends WebPage {
     
     private Logger logger = LoggerFactory.getLogger(WicketContentBrowserPage.class);
@@ -212,7 +224,7 @@ public class WicketContentBrowserPage extends WebPage {
             session = (credentials == null ? repository.login() : repository.login(credentials));
             
             QueryManager queryManager = session.getWorkspace().getQueryManager();
-            String statement = "//element(*, hippostd:html)[jcr:like(@hippostd:content, '%" + searchQuery + "%')]";
+            String statement = "//element(*, hippostd:html)[jcr:contains(., '" + searchQuery + "')]";
             Query query = queryManager.createQuery(statement, "xpath");
             QueryResult result = query.execute();
             NodeIterator nodeIt = result.getNodes();

@@ -24,6 +24,84 @@ import javax.naming.InitialContext;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.hippoecm.hst.site.HstServices;
 
+/**
+ * This example wicket application is designed to demonstrate
+ * how to access a JCR session pooling repository component provided by HST-2 container
+ * and how an application can use simple pure JCR APIs for some purposes.
+ * <P>
+ * <EM>Please note that this example is not designed to support more advanced JCR repository features
+ * such as workflow, virtual nodes, document templates or faceted navigation
+ * which are supported by some JCR repository implementations.</EM> 
+ * </P>
+ * <P>
+ * The wicket filter configuration for this application can have <CODE>basePath</CODE> and <CODE>itemsPerPage</CODE>
+ * init parameters like the following example:
+ * <CODE><PRE>
+ *  &lt;filter>
+ *    &lt;filter-name>WicketContentBrowser&lt;/filter-name>
+ *    &lt;filter-class>org.apache.wicket.protocol.http.WicketFilter&lt;/filter-class>
+ *    &lt;init-param>
+ *      &lt;param-name>applicationClassName&lt;/param-name>
+ *      &lt;param-value>org.hippoecm.hst.wicketexamples.WicketContentBrowserApplication&lt;/param-value>
+ *    &lt;/init-param>
+ *    &lt;init-param>
+ *      &lt;param-name>basePath&lt;/param-name>
+ *      &lt;param-value>/&lt;/param-value>
+ *    &lt;/init-param>
+ *    &lt;init-param>
+ *      &lt;param-name>itemsPerPage&lt;/param-name>
+ *      &lt;param-value>10&lt;/param-value>
+ *    &lt;/init-param>
+ *  &lt;/filter>
+ * </PRE></CODE>
+ * The <CODE>basePath</CODE> is for setting the navigation base path and the <CODE>itemsPerPage</CODE> is for setting
+ * the list item size of a page. If you don't configure those, the default value of <CODE>basePath</CODE> is '/' and
+ * the default value of <CODE>itemsPerPage</CODE> is 10.
+ * </P>
+ * <P>
+ * In this example application, you can also access the JCR session pooling repository in an indirect way or in a direct way.
+ * The indirect way is to use JNDI, and the direct way is to directly access to the {@link org.hippoecm.hst.site.HstServices} and {@link org.hippoecm.hst.core.container.ComponentManager}
+ * managed by the HST-2 container.
+ * </P>
+ * <P>
+ * If you want to use the indirect way with JNDI, then you need to set an init parameter in the Wicket filter configuration
+ * for this application like the following example:
+ * <CODE><PRE>
+ *  &lt;filter>
+ *    &lt;filter-name>WicketContentBrowser&lt;/filter-name>
+ *    &lt;filter-class>org.apache.wicket.protocol.http.WicketFilter&lt;/filter-class>
+ *    &lt;init-param>
+ *      &lt;param-name>applicationClassName&lt;/param-name>
+ *      &lt;param-value>org.hippoecm.hst.wicketexamples.WicketContentBrowserApplication&lt;/param-value>
+ *    &lt;/init-param>
+ *    &lt;init-param>
+ *      &lt;param-name>repository-res-ref-name&lt;/param-name>
+ *      &lt;param-value>/jcr/MyRepository&lt;/param-value>
+ *    &lt;/init-param>
+ *    &lt;init-param>
+ *      &lt;param-name>repository-user&lt;/param-name>
+ *      &lt;param-value>admin&lt;/param-value>
+ *    &lt;/init-param>
+ *    &lt;init-param>
+ *      &lt;param-name>repository-password&lt;/param-name>
+ *      &lt;param-value>admin&lt;/param-value>
+ *    &lt;/init-param>
+ *  &lt;/filter>
+ * </PRE></CODE>
+ * If you want to know how to configure the JNDI resource for the JCR session pooling repository provided by HST,
+ * please see the javadocs of {@link org.hippoecm.hst.core.jcr.pool.BasicPoolingRepositoryFactory} or {@link org.hippoecm.hst.core.jcr.pool.MultiplePoolingRepositoryFactory}.
+ * </P>
+ * <P>
+ * If you don't configure the <CODE>repository-user</CODE> or <CODE>repository-password</CODE>, then
+ * this example application would try logging in by default login feature by using {@link javax.jcr.Repository#login()}.
+ * </P>
+ * <P>
+ * If you don't configure the <CODE>repository-res-ref-name</CODE>, then
+ * this example application would use the direct way to use {@link org.hippoecm.hst.site.HstServices} instead of using JNDI.
+ * </P>
+ * 
+ * @version $Id$
+ */
 public class WicketContentBrowserApplication extends WebApplication {
     
     private Repository repository;

@@ -21,6 +21,11 @@ import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.logging.LoggerFactory;
 import org.hippoecm.hst.util.NOOPLogger;
 
+/**
+ * A static accessor to the {@link ComponentManager} managed by the HST container.
+ * 
+ * @version $Id$
+ */
 public class HstServices {
     
     private static final String LOGGER_FACTORY_COMPONENT_NAME = LoggerFactory.class.getName();
@@ -32,23 +37,44 @@ public class HstServices {
     private HstServices() {
     }
     
+    /**
+     * Sets the component manager of the HST container.
+     * @param compManager
+     */
     public static void setComponentManager(ComponentManager compManager) {
         HstServices.componentManager = compManager;
         HstServices.available = (HstServices.componentManager != null);
     }
     
+    /**
+     * Returns the component manager of the HST container.
+     * @return
+     */
     public static ComponentManager getComponentManager() {
         return HstServices.componentManager;
     }
     
+    /**
+     * Returns the flag if the HST container is available or not to serve requests.
+     * @return
+     */
     public static boolean isAvailable() {
         return HstServices.available;
     }
     
+    /**
+     * Returns the {@link RequestProcessor} component to serve requests.
+     * @return
+     */
     public static HstRequestProcessor getRequestProcessor() {
         return componentManager.getComponent(HstRequestProcessor.class.getName());
     }
     
+    /**
+     * Returns the centralized {@link Logger} component managed by the HST container.
+     * @param loggerName
+     * @return
+     */
     public static Logger getLogger(String loggerName) {
         if (isAvailable()) {
             return ((LoggerFactory) getComponentManager().getComponent(LOGGER_FACTORY_COMPONENT_NAME)).getLogger(loggerName);
