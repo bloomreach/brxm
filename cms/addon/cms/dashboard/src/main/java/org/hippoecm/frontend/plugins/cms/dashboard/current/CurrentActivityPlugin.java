@@ -218,12 +218,15 @@ public class CurrentActivityPlugin extends RenderPlugin {
                             item.add(link);
                             return;
                         } else {
+                            String name = StringUtils.substringAfterLast(sourceVariant, "/");
                             // No path, so we're just rendering a label without a link
                             String label = new StringResourceModel(timestamp, this, null, "").getString()
                                     + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this,
-                                            null, new Object[] { node.getProperty("hippo:eventUser").getString() })
-                                            .getString();
-                            item.add(new Label("entry", label));
+                                            null, new Object[] { node.getProperty("hippo:eventUser").getString(),
+                                            (name == null ? "" : name) }).getString();
+                            Label entryLabel = new Label("entry", label);
+                            entryLabel.setEscapeModelStrings(false);
+                            item.add(entryLabel);
                             return;
                         }
                     }
