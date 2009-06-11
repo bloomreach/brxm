@@ -231,7 +231,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
                         log.warn("cannot add virtual child in facet search: " + ex.getMessage());
                     }
                 } else {
-                    log.error("facet value with only facet type constant found. Skip result");
+                    log.warn("facet value with only facet type constant found. Skip result");
                 }
             }
             
