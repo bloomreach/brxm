@@ -90,7 +90,9 @@ public abstract class PluginTest extends TestCase {
 
     @After
     public void teardown() throws Exception {
-        tester.destroy();
+        if(tester != null) {
+            tester.destroy();
+        }
         if (session != null) {
             session.refresh(false);
             while (session.getRootNode().hasNode("config")) {
