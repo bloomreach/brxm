@@ -55,6 +55,10 @@
             <param-name>upload-limit</param-name>
             <param-value>4096k</param-value>
         </init-param>
+        <init-param>
+            <param-name>repository-address</param-name>
+            <param-value>vm://</param-value>
+        </init-param>
     </servlet>
 
     <!--Builtin console-->
