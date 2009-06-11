@@ -30,8 +30,8 @@ import org.hippoecm.hst.configuration.HstSite;
 public interface HstLink {
 
     /**
-     * 
-     * @return the path of this HstLink
+     * Note: This is *not* a url!
+     * @return the path of this HstLink. Note: This is *not* a url!
      */
     String getPath();
     
