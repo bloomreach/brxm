@@ -179,6 +179,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
     @Override
     public void setNamespacePrefix(String prefix, String uri)
             throws NamespaceException, RepositoryException {
+        super.setNamespacePrefix(prefix, uri);
         helper.setNamespacePrefix(prefix, uri);
     }
 
