@@ -95,7 +95,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
 
     @Override
     public void onEvent(Iterator<? extends IEvent> events) {
-        // filter events    	
+        // filter events
         if (field == null) {
             return;
         }

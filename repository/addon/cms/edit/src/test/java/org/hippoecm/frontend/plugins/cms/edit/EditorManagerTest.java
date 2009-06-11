@@ -48,6 +48,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class EditorManagerTest extends PluginTest implements IClusterable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
     
     static final String EDITORS = "editors";

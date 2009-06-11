@@ -23,6 +23,9 @@ import org.apache.wicket.request.target.component.BookmarkablePageRequestTarget;
 import org.apache.wicket.request.target.component.IPageRequestTarget;
 
 public class PluginRequestCycleProcessor extends WebRequestCycleProcessor {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     @Override
     public void processEvents(RequestCycle requestCycle) {
         super.processEvents(requestCycle);
