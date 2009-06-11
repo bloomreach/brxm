@@ -108,6 +108,15 @@
       <type>jar</type>
       <version>${hippoecm.version}</version>
     </dependency>     
+
+    <!--  Gallery picker dependency -->
+    <dependency>
+      <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
+      <artifactId>gallerypicker</artifactId>
+      <version>1.02.00</version>
+      <type>jar</type>
+    </dependency>
+
     
   </dependencies>
 

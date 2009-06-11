@@ -514,6 +514,32 @@
             <sv:value>hippostd:html</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="hippo:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:multiple" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:name" sv:type="String">
+            <sv:value>image</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:ordered" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:path" sv:type="String">
+            <sv:value>demosite:image</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:primary" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:type" sv:type="String">
+            <sv:value>hippogallerypicker:imagelink</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
     </sv:node>
     <sv:node sv:name="hippo:prototype">
@@ -568,6 +594,20 @@
           </sv:property>
           <sv:property sv:name="hippostd:content" sv:type="String">
             <sv:value/>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="demosite:image">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippogallerypicker:imagelink</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>4e557532-98ff-4673-a2a9-5cdbb2822eed</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:facets" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippo:modes" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippo:values" sv:type="String">
           </sv:property>
         </sv:node>
       </sv:node>
@@ -709,6 +749,37 @@
           </sv:property>
           <sv:property sv:name="field" sv:type="String">
             <sv:value>7df07d4f-0efd-4b02-ae73-1487cded4811</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>${cluster.id}.field</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>${wicket.model}</sv:value>
+          </sv:property>
+          <sv:node sv:name="cluster.options">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+        <sv:node sv:name="image">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="caption" sv:type="String">
+            <sv:value>Image</sv:value>
+          </sv:property>
+          <sv:property sv:name="engine" sv:type="String">
+            <sv:value>${engine}</sv:value>
+          </sv:property>
+          <sv:property sv:name="field" sv:type="String">
+            <sv:value>image</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
