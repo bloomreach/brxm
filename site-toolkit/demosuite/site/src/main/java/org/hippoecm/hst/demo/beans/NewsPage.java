@@ -28,5 +28,14 @@ public class NewsPage extends TextPage{
         return getProperty("demosite:date");
     }
 
+    /**
+     * Get the image of the newspage
+     *
+     * @return the image of the newspage
+     */
+    public ImageBean getImage() {
+        ImageLinkBean imageLinkBean = getBean("demosite:image");
+        return (ImageBean) imageLinkBean.getDeref();
+    }
  
 }
