@@ -34,7 +34,7 @@ td.content-browser {
 
 <body>
 
-<h1>Current path: <span wicket:id="currentRelativePath">Current Relative Path</span></h1>
+<h1><wicket:message key="label.current.path"/><span wicket:id="currentRelativePath"> Current Relative Path</span></h1>
 
 <hr/>
     
@@ -42,13 +42,13 @@ td.content-browser {
     
 <table class="content-browser">
 	<tr class="content-browser">
-		<th class="content-browser">Name</th>
-		<th class="content-browser">Primary Type</th>
-		<th class="content-browser">UUID</th>
-		<th class="content-browser">Content</th>
+		<th class="content-browser"><wicket:message key="label.name"/></th>
+		<th class="content-browser"><wicket:message key="label.primaryType"/></th>
+		<th class="content-browser"><wicket:message key="label.uuid"/></th>
+		<th class="content-browser"><wicket:message key="label.content"/></th>
 	</tr>
     <tr class="content-browser">
-        <td class="content-browser" colspan="4"><em><a href='#' wicket:id='parentLink'>.. (go to parent)</a></em></td>
+        <td class="content-browser" colspan="4"><em><a href='#' wicket:id='parentLink'><wicket:message key="label.goto.parent"/></a></em></td>
     </tr>
 	<tr wicket:id="itemView" class="content-browser">
 		<td class="content-browser"><a href='#' wicket:id='nameLink'><span wicket:id="name" class="content-browser">name</span></a></td>
@@ -63,22 +63,22 @@ td.content-browser {
 
 <hr/>
 
-<h2>Search Contents</h2>
+<h2><wicket:message key="label.search"/></h2>
 <form wicket:id="searchForm">
-    <input type="text" wicket:id="searchQuery"/><input type="submit" wicket:id="search" value="Search"/>
+    <input type="text" wicket:id="searchQuery"/><input type="submit" wicket:id="search" />
 </form>
 
 <table class="content-browser">
     <tr class="content-browser">
-        <th class="content-browser">Name</th>
-        <th class="content-browser">Primary Type</th>
-           <th class="content-browser">UUID</th>
-        <th class="content-browser">Content</th>
+        <th class="content-browser"><wicket:message key="label.name"/></th>
+        <th class="content-browser"><wicket:message key="label.primaryType"/></th>
+        <th class="content-browser"><wicket:message key="label.uuid"/></th>
+        <th class="content-browser"><wicket:message key="label.content"/></th>
     </tr>
     <tr wicket:id="searchedItemView" class="content-browser">
         <td class="content-browser"><a href='#' wicket:id='nameLink'><span wicket:id="name" class="content-browser">name</span></a></td>
         <td class="content-browser"><span wicket:id="primaryNodeTypeName" class="content-browser">primaryNodeTypeName</span></td>
-           <td class="content-browser"><span wicket:id="uuid" class="content-browser">UUID</span></td>
+        <td class="content-browser"><span wicket:id="uuid" class="content-browser">UUID</span></td>
         <td class="content-browser"><span wicket:id="content" class="content-browser">Content</span></td>
     </tr>
     <tr class="content-browser">
@@ -88,7 +88,7 @@ td.content-browser {
 
 <hr/>
 
-<em>Wicket Content Browser Example</em>
+<em><wicket:message key="label.footer"/></em>
 
 </body>
 
