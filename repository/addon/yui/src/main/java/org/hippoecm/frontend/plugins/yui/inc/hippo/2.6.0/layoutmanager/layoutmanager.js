@@ -254,14 +254,25 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             }
             units.push(body);
             
-            if(Lang.isNumber(config.headerHeight)) {
+            if(Lang.isNumber(config.headerHeight) && config.headerHeight > 0) {
                 var header = {position: 'top', body: 'hd', height: config.headerHeight, scroll: false, grids: true};
                 if(config.headerGutter != null) {
                   header.gutter = config.headerGutter;
                 }
                 units.push(header);
             }
-            if(Lang.isNumber(config.footerHeight)) {
+            
+            if(Lang.isNumber(config.leftWidth) && config.leftWidth > 0) {
+                var left = {position: 'left', body: 'lt', width: config.leftWidth, scroll: false};
+                units.push(left);
+            }
+            
+            if(Lang.isNumber(config.rightWidth) && config.rightWidth > 0) {
+                var right = {position: 'right', body: 'rt', width: config.rightWidth, scroll: false};
+                units.push(right);
+            }
+
+            if(Lang.isNumber(config.footerHeight) && config.footerHeight > 0) {
                 var footer = {position: 'bottom', body: 'ft', height: config.footerHeight, scroll: false, grids: true};
                 if(config.footerGutter != null) {
                   footer.gutter = config.footerGutter;
@@ -279,14 +290,19 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     this.prepareConfig();
                     
                     //for now we don't use the body element as wireframe root in IE
+                    /*
                     var layout = YAHOO.env.ua.ie ? 
                         new YAHOO.widget.Layout(this.id, this.config) :
                         new YAHOO.widget.Layout(this.config);
-
-                    this.layout = layout;
+                    */
+                    
+                    this.layout = new YAHOO.widget.Layout(this.config)
                     this.initLayout();
                 }
                 this.layout.render();
+                
+                //hack!
+                Dom.setStyle('doc3', 'display', 'none');
             },
             
             enhanceIds : function(){
@@ -528,7 +544,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
 ( function() {
     var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, Lang = YAHOO.lang;
-
     
     YAHOO.widget.Layout.prototype.destroy = function() {
         var par = this.get('parent');
@@ -536,7 +551,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             par.removeListener('resize', this.resize, this, true);
         }
         Event.removeListener(window, 'resize', this.resize, this, true);
-    
         this.unsubscribeAll();
         for (var u in this._units) {
             if (Lang.hasOwnProperty(this._units, u)) {
@@ -562,5 +576,41 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             //par.resize();
         }
     }
+
+    YAHOO.widget.LayoutUnit.prototype.destroy = function(force) {
+        if (this._resize) {
+            this._resize.destroy();
+        }
+        var par = this.get('parent');
+    
+        this.setStyle('display', 'none');
+        if (this._clip) {
+            this._clip.parentNode.removeChild(this._clip);
+            this._clip = null;
+        }
+    
+        if (!force) {
+            par.removeUnit(this);
+        }
+        
+        if (par) {
+            par.removeListener('resize', this.resize, this, true);
+        }
+        
+        this.unsubscribeAll();
+        Event.purgeElement(this.get('element'));
+        //this.get('parentNode').removeChild(this.get('element'));
+    
+        delete YAHOO.widget.LayoutUnit._instances[this.get('id')];
+        //Brutal Object Destroy
+        for (var i in this) {
+            if (Lang.hasOwnProperty(this, i)) {
+                this[i] = null;
+                delete this[i];
+            }
+        }
+        return par;
+    }
+
 
 })();

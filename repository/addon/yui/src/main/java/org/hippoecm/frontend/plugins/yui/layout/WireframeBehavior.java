@@ -111,7 +111,7 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
             while (!found) {
                 parent = parent.getParent();
                 if (parent == null) {
-                    throw new RuntimeException("Parent layout behavior not found");
+                    throw new RuntimeException("Parent layout behavior not found for component[" + component.getMarkupId() + "]");
                 }
                 for (Iterator j = parent.getBehaviors().iterator(); j.hasNext();) {
                     Object parentBehavior = j.next();
