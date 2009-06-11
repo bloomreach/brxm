@@ -6,19 +6,19 @@
 
   <fragment id="hstdemo" type="layout" name="jetspeed-layouts::VelocityTwoColumns2575">
 
-    <fragment id="hstdemo-locale" type="portlet" name="j2-admin::LocaleSelector">
-      <property layout="TwoColumns" name="row" value="0" />
-      <property layout="TwoColumns" name="column" value="0" />
-    </fragment>
     <fragment id="hstdemo-weather" type="portlet" name="demo::WeatherPortlet">
-        <property layout="TwoColumns" name="row" value="1"/>
+        <property layout="TwoColumns" name="row" value="0"/>
         <property layout="TwoColumns" name="column" value="0"/>
     </fragment>
     <fragment id="hstdemo-pickanum" type="portlet" name="demo::PickANumberPortlet" >
-      <property layout="TwoColumns" name="row" value="2" />
+      <property layout="TwoColumns" name="row" value="1" />
       <property layout="TwoColumns" name="column" value="0" />
     </fragment>
     <fragment id="hstdemo-bookmark" type="portlet" name="demo::BookmarkPortlet">
+      <property layout="TwoColumns" name="row" value="2" />
+      <property layout="TwoColumns" name="column" value="0" />
+    </fragment>
+    <fragment id="hstdemo-wicketnodepropsviewer" type="portlet" name="site::WicketNodePropertiesViewer">
       <property layout="TwoColumns" name="row" value="3" />
       <property layout="TwoColumns" name="column" value="0" />
     </fragment>

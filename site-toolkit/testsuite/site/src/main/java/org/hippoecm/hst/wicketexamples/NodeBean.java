@@ -17,6 +17,8 @@ package org.hippoecm.hst.wicketexamples;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 public class NodeBean extends ItemBean {
     
     private static final long serialVersionUID = 1L;
@@ -24,6 +26,10 @@ public class NodeBean extends ItemBean {
     protected String primaryNodeTypeName;
     protected String uuid;
     protected Map<String, Object []> properties;
+    
+    public NodeBean() {
+        super();
+    }
 
     public NodeBean(String name, String path, int depth, boolean ismodified, boolean isnew, boolean isnode, 
             String primaryNodeTypeName, String uuid, Map<String, Object []> properties) {
@@ -46,6 +52,27 @@ public class NodeBean extends ItemBean {
     
     public Map<String, Object []> getProperties() {
         return properties;
+    }
+    
+    public String getPropertiesAsString() {
+        StringBuilder sb = new StringBuilder();
+        
+        if (properties != null) {
+            for (Map.Entry<String, Object []> entry : properties.entrySet()) {
+                String name = entry.getKey();
+                Object [] props = entry.getValue();
+                
+                sb.append(name + ": ");
+                
+                if (props != null && props.length > 0) {
+                    sb.append(StringUtils.join(props, ','));
+                }
+                
+                sb.append("\n");
+            }
+        }
+        
+        return sb.toString();
     }
     
     public Object [] getProperty(String name) {

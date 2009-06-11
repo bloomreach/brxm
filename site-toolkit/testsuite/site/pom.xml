@@ -137,6 +137,14 @@
       <artifactId>wicket-extensions</artifactId>
       <version>1.4-rc4</version>
     </dependency>
+    <!-- To bypass portlet 2.0 event object to the old portlet messaging
+    because WicketPortlet does not support portlet 2.0 event yet. -->
+    <dependency>
+      <groupId>org.apache.portals.bridges</groupId>
+      <artifactId>portals-bridges-common</artifactId>
+      <version>1.0.4</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-api</artifactId>

@@ -28,6 +28,10 @@ public class ItemBean implements Serializable {
     protected boolean isnew;
     protected boolean isnode;
     
+    public ItemBean() {
+        
+    }
+    
     public ItemBean(String name, String path, int depth, boolean ismodified, boolean isnew, boolean isnode) {
         this.name = name;
         this.path = path;
