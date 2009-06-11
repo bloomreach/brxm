@@ -49,7 +49,7 @@
         </init-param>
         <init-param>
             <param-name>repository-address</param-name>
-            <param-value>rmi://localhost:1099/hipporepository/spi</param-value>
+            <param-value>vm://</param-value>
         </init-param>
         <init-param>
             <param-name>upload-limit</param-name>
