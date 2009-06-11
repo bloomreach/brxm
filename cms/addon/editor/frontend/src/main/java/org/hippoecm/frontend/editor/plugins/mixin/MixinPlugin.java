@@ -184,7 +184,11 @@ public class MixinPlugin extends RenderPlugin {
             JcrNodeModel nodeModel = (JcrNodeModel) MixinPlugin.this.getModel();
             try {
                 Node node = nodeModel.getNode();
-                return hasMixin(node, realType);
+                if (node != null) {
+                    return hasMixin(node, realType);
+                } else {
+                    return false;
+                }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
