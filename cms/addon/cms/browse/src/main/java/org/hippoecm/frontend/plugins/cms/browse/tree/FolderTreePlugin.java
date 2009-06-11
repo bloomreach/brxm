@@ -111,6 +111,8 @@ public class FolderTreePlugin extends RenderPlugin {
         addExtensionPoint("extension.addfolder");
 
         onModelChanged();
+
+        add(new ScrollBehavior());
     }
 
     @Override
