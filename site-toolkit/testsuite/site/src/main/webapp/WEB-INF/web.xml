@@ -59,6 +59,10 @@
       <param-value>org.hippoecm.hst.wicketexamples.WicketContentBrowserApplication</param-value>
     </init-param>
     <init-param>
+      <param-name>binary-download-servlet-path</param-name>
+      <param-value>/site/binaries</param-value>
+    </init-param>
+    <init-param>
       <param-name>basePath</param-name>
       <param-value>/</param-value>
     </init-param>

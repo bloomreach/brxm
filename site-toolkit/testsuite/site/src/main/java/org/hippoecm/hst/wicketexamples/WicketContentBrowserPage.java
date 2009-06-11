@@ -30,6 +30,8 @@ import javax.jcr.query.QueryResult;
 
 import org.apache.portals.messaging.PortletMessaging;
 import org.apache.wicket.RequestContext;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.Response;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -298,7 +300,16 @@ public class WicketContentBrowserPage extends WebPage {
                     private static final long serialVersionUID = 1L;
 
                     public void onClick() {
-                        getRequestCycle().setRequestTarget(new RedirectRequestTarget("/binaries" + path));
+                        final String redirectUrl = ((WicketContentBrowserApplication) getApplication()).getBinaryDownloadServletPath() + path;
+                        getRequestCycle().setRequestTarget(new RedirectRequestTarget(redirectUrl) {
+                            @Override
+                            public void respond(RequestCycle requestCycle) {
+                                Response response = requestCycle.getResponse();
+                                response.reset();
+                                RequestContext rc = RequestContext.get();
+                                response.redirect(redirectUrl);
+                            }
+                        });
                     }
                 };
             } else {

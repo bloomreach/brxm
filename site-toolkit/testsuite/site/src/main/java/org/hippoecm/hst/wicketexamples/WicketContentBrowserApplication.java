@@ -45,6 +45,10 @@ import org.hippoecm.hst.site.HstServices;
  *      &lt;param-value>org.hippoecm.hst.wicketexamples.WicketContentBrowserApplication&lt;/param-value>
  *    &lt;/init-param>
  *    &lt;init-param>
+ *      &lt;param-name>binary-download-servlet-path&lt;/param-name>
+ *      &lt;param-value>/site/binaries&lt;/param-value>
+ *    &lt;/init-param>
+ *    &lt;init-param>
  *      &lt;param-name>basePath&lt;/param-name>
  *      &lt;param-value>/&lt;/param-value>
  *    &lt;/init-param>
@@ -54,6 +58,8 @@ import org.hippoecm.hst.site.HstServices;
  *    &lt;/init-param>
  *  &lt;/filter>
  * </PRE></CODE>
+ * The <CODE>binary-download-servlet-path</CODE> is for setting the binary content download servlet path.
+ * This binary content download servlet path should be set with the context path.
  * The <CODE>basePath</CODE> is for setting the navigation base path and the <CODE>itemsPerPage</CODE> is for setting
  * the list item size of a page. If you don't configure those, the default value of <CODE>basePath</CODE> is '/' and
  * the default value of <CODE>itemsPerPage</CODE> is 10.
@@ -107,6 +113,7 @@ public class WicketContentBrowserApplication extends WebApplication {
     private Repository repository;
     private Credentials credentials;
     private boolean credentialsConfigured = true;
+    private String binaryDownloadServletPath;
     
     @Override
     public Class getHomePage() {
@@ -142,6 +149,18 @@ public class WicketContentBrowserApplication extends WebApplication {
         }
         
         return credentials;
+    }
+    
+    public String getBinaryDownloadServletPath() {
+        if (binaryDownloadServletPath == null) {
+            binaryDownloadServletPath = getInitParameter("binary-download-servlet-path");
+            
+            if (binaryDownloadServletPath == null) {
+                binaryDownloadServletPath = "/binaries";
+            }
+        }
+        
+        return binaryDownloadServletPath;
     }
     
 }
