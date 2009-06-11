@@ -189,4 +189,7 @@ ul#paging-nav li.active {
 
 ul.list-overview {
   margin-left:11.5em;
+  margin-bottom:1em;
+  border-bottom:1px solid #e0e0e0;
 }
+

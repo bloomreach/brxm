@@ -34,7 +34,7 @@
             <li class="title">
                 <a href="${link}">${bean.title}</a>
                 <div>
-                    <p>${bean.date.time}</p>
+                    <p><fmt:formatDate value="${bean.date.time}" type="Date" pattern="MMMM d, yyyy h:mm a" /></p>
                     <p>${bean.text}</p>
                 </div>
             </li>

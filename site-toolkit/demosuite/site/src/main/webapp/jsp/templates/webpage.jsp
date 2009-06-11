@@ -34,7 +34,7 @@
       </div>
           <hst:include ref="body"/>
           <div id="ft">
-        <p><a title="NewsRSS" href="<hst:link path="/preview/rss.xml"/>">RSS <img src="<hst:link path="/images/rss.gif"/>"/></a></p>
+        <p><a title="NewsRSS" href="<hst:link path="/rss.xml"/>">RSS <img src="<hst:link path="/images/rss.gif"/>"/></a></p>
       </div>
       </div>
   </body>
