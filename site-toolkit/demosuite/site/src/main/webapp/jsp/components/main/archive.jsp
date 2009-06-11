@@ -24,7 +24,7 @@
 <c:set var="prevpage" value="${searchResults.previous}"/>
 <c:set var="firstpage" value="${searchResults.startPage}"/>
 <c:set var="lastpage" value="${searchResults.endPage}"/>
-<div id="yui-main">
+<div id="yui-u">
         <h1>Archive</h1>
         <h2>Displaying ${searchResults.startOffset} - ${searchResults.endOffset} of ${searchResults.total} results</h2>
         

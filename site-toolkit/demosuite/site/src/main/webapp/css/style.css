@@ -175,7 +175,9 @@ strong {font-weight: bold;}
 em {font-style: italic;}
 img {max-width: 450px;}
 
-
+ul#paging-nav {
+  margin-left:11.5em;
+}
 
 ul#paging-nav li {
   display:inline;
@@ -185,3 +187,6 @@ ul#paging-nav li.active {
   font-weight:bold;
 }
 
+ul.list-overview {
+  margin-left:11.5em;
+}
