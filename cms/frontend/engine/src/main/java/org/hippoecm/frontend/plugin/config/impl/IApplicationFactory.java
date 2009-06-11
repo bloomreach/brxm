@@ -20,6 +20,8 @@ import org.hippoecm.frontend.plugin.IServiceFactory;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 
 public interface IApplicationFactory extends IClusterable {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     IServiceFactory<IPluginConfigService> getDefaultApplication();
 
