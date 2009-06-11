@@ -71,10 +71,10 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
-    
+
     protected final static IValueMap SMALL = new ValueMap("width=380,height=250");
-    protected final static IValueMap MEDIUM = new ValueMap("width=475,height=250");
-    protected final static IValueMap LARGE = new ValueMap("width=855,height=445");
+    protected final static IValueMap MEDIUM = new ValueMap("width=475,height=375");
+    protected final static IValueMap LARGE = new ValueMap("width=855,height=450");
 
     @SuppressWarnings("unchecked")
     private class Container extends Panel implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
@@ -117,7 +117,7 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
                                 + AbstractDialog.this.getClass().getName()
                                 + "' not found."
                                 + " Enable debug messages for org.apache.wicket.util.resource to get a list of all filenames tried"),
-                                ex);
+                        ex);
             }
         }
     }
@@ -179,7 +179,9 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
                 Map<String, String> details = new HashMap<String, String>();
                 details.put("type", ex.getClass().getName());
                 details.put("message", ex.getMessage());
-                ExceptionLabel label = new ExceptionLabel(id, new StringResourceModel("exception,${type},${message}", AbstractDialog.this, new Model((Serializable) details), ex.getLocalizedMessage()), ex, ExceptionFeedbackPanel.this.getEscapeModelStrings());
+                ExceptionLabel label = new ExceptionLabel(id, new StringResourceModel("exception,${type},${message}",
+                        AbstractDialog.this, new Model((Serializable) details), ex.getLocalizedMessage()), ex,
+                        ExceptionFeedbackPanel.this.getEscapeModelStrings());
                 return label;
             } else {
                 Label label = new Label(id);
@@ -193,11 +195,13 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         protected FeedbackMessagesModel newFeedbackMessagesModel() {
             return new FeedbackMessagesModel(this) {
                 private List messages;
+
                 @Override
                 protected List processMessages(final List messages) {
                     this.messages = messages;
                     return messages;
                 }
+
                 @Override
                 public void detach() {
                     if (messages == null || messages.size() == 0) {
@@ -217,7 +221,6 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         private IModel label;
         private boolean visible;
         private boolean enabled;
-
 
         public ButtonWrapper(Button button) {
             this.button = button;
@@ -268,7 +271,7 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         }
 
         public Button getButton() {
-            if(button == null) {
+            if (button == null) {
                 button = createButton();
             }
             return decorate(button);
@@ -325,7 +328,7 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
     }
 
     private final static ResourceReference AJAX_LOADER_GIF = new ResourceReference(AbstractDialog.class,
-    "ajax-loader.gif");
+            "ajax-loader.gif");
 
     protected FeedbackPanel feedback;
     private Component focusComponent;
@@ -445,7 +448,7 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
     protected void setOkLabel(IModel label) {
         ok.setLabel(label);
     }
-    
+
     protected void setFocusOnOk() {
         setFocus(ok.getButton());
     }
@@ -470,7 +473,6 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         setFocus(cancel.getButton());
     }
 
-    
     public void setDialogService(IDialogService dialogService) {
         this.dialogService = dialogService;
     }
@@ -548,11 +550,11 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
     }
 
     public Component setFocus(Component c) {
-        if(focusComponent != null) {
+        if (focusComponent != null) {
             return c;
         }
 
-        if(!c.getOutputMarkupId()) {
+        if (!c.getOutputMarkupId()) {
             c.setOutputMarkupId(true);
         }
         return focusComponent = c;
