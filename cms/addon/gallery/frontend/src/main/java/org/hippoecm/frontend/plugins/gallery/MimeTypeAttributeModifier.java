@@ -59,6 +59,10 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
                         try {
                             Item primItem = imageSet.getPrimaryItem();
                             if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
+                                if(((Node)primItem).hasProperty("jcr:mimeType")) {
+                                    Gallery.log.warn("Unset mime type of document");
+                                    return null;
+                                }
                                 String mimeType = ((Node) primItem).getProperty("jcr:mimeType").getString();
                                 if (mimeType.startsWith("application")) {
                                     cssClass = mimeType;
