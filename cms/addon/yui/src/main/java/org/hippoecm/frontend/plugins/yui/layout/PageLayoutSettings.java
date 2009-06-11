@@ -32,14 +32,18 @@ public class PageLayoutSettings extends AjaxSettings {
     private static final YuiIdSetting ROOT_ID = new YuiIdSetting("rootId", new YuiId("doc3"));
 
     private static final IntSetting HEADER_HEIGHT = new IntSetting("headerHeight");
-    private static final IntSetting FOOTER_HEIGHT = new IntSetting("headerHeight");
+    private static final IntSetting FOOTER_HEIGHT = new IntSetting("footerHeight");
+    private static final IntSetting LEFT_WIDTH = new IntSetting("leftWidth");
+    private static final IntSetting RIGHT_WIDTH = new IntSetting("rightWidth");
 
     private static final StringSetting HEADER_GUTTER = new StringSetting("headerGutter");
     private static final StringSetting BODY_GUTTER = new StringSetting("bodyGutter");
     private static final StringSetting FOOTER_GUTTER = new StringSetting("footerGutter");
+    private static final StringSetting LEFT_GUTTER = new StringSetting("leftGutter");
+    private static final StringSetting RIGHT_GUTTER = new StringSetting("rightGutter");
 
     protected static final YuiType TYPE = new YuiType(AjaxSettings.TYPE, ROOT_ID, HEADER_HEIGHT, FOOTER_HEIGHT,
-            HEADER_GUTTER, BODY_GUTTER, FOOTER_GUTTER);
+            LEFT_WIDTH, RIGHT_WIDTH, HEADER_GUTTER, BODY_GUTTER, FOOTER_GUTTER, LEFT_GUTTER, RIGHT_GUTTER);
 
     public PageLayoutSettings(IPluginConfig config) {
         super(TYPE, config);

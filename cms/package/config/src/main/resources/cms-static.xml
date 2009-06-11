@@ -404,7 +404,6 @@
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.header</sv:value>
       <sv:value>extension.center</sv:value>
-      <sv:value>extension.footer</sv:value>
       <sv:value>extension.search</sv:value>
       <sv:value>extension.feedback</sv:value>
     </sv:property>
@@ -413,9 +412,6 @@
     </sv:property>
     <sv:property sv:name="extension.center" sv:type="String">
       <sv:value>service.center</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.footer" sv:type="String">
-      <sv:value>service.footer</sv:value>
     </sv:property>
     <sv:property sv:name="extension.search" sv:type="String">
       <sv:value>service.search</sv:value>
