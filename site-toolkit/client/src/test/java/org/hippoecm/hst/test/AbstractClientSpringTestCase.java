@@ -15,23 +15,12 @@
  */
 package org.hippoecm.hst.test;
 
-import java.util.Properties;
-
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationConverter;
+import org.hippoecm.hst.component.support.ClientComponentManager;
 import org.hippoecm.hst.core.container.ComponentManager;
-import org.hippoecm.hst.core.container.ComponentManagerAware;
-import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * <p>
@@ -49,8 +38,8 @@ public abstract class AbstractClientSpringTestCase
 
     @Before
     public void setUp() throws Exception {
-        this.componentManager = new SpringComponentManager();
-        ((SpringComponentManager) this.componentManager).setConfigurationResources(getConfigurations());
+        this.componentManager = new ClientComponentManager();
+        this.componentManager.setConfigurationResources(getConfigurations());
         
         this.componentManager.initialize();
         this.componentManager.start();
@@ -80,90 +69,4 @@ public abstract class AbstractClientSpringTestCase
         return getComponentManager().<T>getComponent(name);
     }
     
-    public static class SpringComponentManager implements ComponentManager, BeanPostProcessor {
-        
-        protected AbstractApplicationContext applicationContext;
-        protected Configuration configuration;
-        protected ContainerConfiguration containerConfiguration;
-        protected String [] configurationResources;
-
-        public SpringComponentManager() {
-            this(null);
-        }
-        
-        public SpringComponentManager(Configuration configuration) {
-            this.configuration = configuration;
-        }
-        
-        public void initialize() {
-            String [] configurationResources = getConfigurationResources();
-            
-            if (null == configurationResources) {
-                String classXmlFileName = getClass().getName().replace(".", "/") + ".xml";
-                String classXmlFileName2 = getClass().getName().replace(".", "/") + "-*.xml";
-                configurationResources = new String[] { classXmlFileName, classXmlFileName2 };            
-            }
-
-            this.applicationContext = new ClassPathXmlApplicationContext(configurationResources, false) {
-                // According to the javadoc of org/springframework/context/support/AbstractApplicationContext.html#postProcessBeanFactory,
-                // this allows for registering special BeanPostProcessors.
-                protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-                    beanFactory.addBeanPostProcessor(SpringComponentManager.this);
-                }
-            };
-            
-            if (this.configuration != null) {
-                Properties initProps = ConfigurationConverter.getProperties(this.configuration);
-                PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
-                ppc.setIgnoreUnresolvablePlaceholders(true);
-                ppc.setSystemPropertiesMode(PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK);
-                ppc.setProperties(initProps);
-                this.applicationContext.addBeanFactoryPostProcessor(ppc);
-            }
-            
-            this.applicationContext.refresh();
-        }
-
-        public void start() {
-            this.applicationContext.start();
-        }
-
-        public void stop() {
-            this.applicationContext.stop();
-        }
-        
-        public void close() {
-            this.applicationContext.close();
-        }
-        
-        public <T> T getComponent(String name) {
-            return (T) this.applicationContext.getBean(name);
-        }
-        
-        public ContainerConfiguration getContainerConfiguration() {
-            return this.containerConfiguration;
-        }
-
-        public String[] getConfigurationResources() {
-            return this.configurationResources;
-        }
-        
-        public void setConfigurationResources(String [] configurationResources) {
-            this.configurationResources = configurationResources;
-        }
-
-        public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-            if (bean instanceof ComponentManagerAware) {
-                ((ComponentManagerAware) bean).setComponentManager(this);
-            }
-            
-            return bean;
-        }
-
-        public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-            return bean; 
-        }
-
-    }
-
 }

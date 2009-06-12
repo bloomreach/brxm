@@ -15,20 +15,83 @@
  */
 package org.hippoecm.hst.component.support;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Properties;
+
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationConverter;
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.site.HstServices;
-import org.springframework.context.support.AbstractApplicationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class ClientComponentManager implements ComponentManager {
+public class ClientComponentManager implements ComponentManager, BeanPostProcessor {
     
-    protected AbstractApplicationContext applicationContext;
+    Logger logger = LoggerFactory.getLogger(ClientComponentManager.class);
+    
+    protected AbstractRefreshableConfigApplicationContext applicationContext;
     protected String [] configurationResources;
+    protected Configuration configuration;
+    
+    public ClientComponentManager() {
+        this(null);
+    }
+    
+    public ClientComponentManager(Configuration configuration) {
+        this.configuration = configuration;
+    }
 
     public void initialize() {
-        this.applicationContext = new ClassPathXmlApplicationContext(getConfigurationResources(), false);
-        this.applicationContext.refresh();
+        String [] configurationResources = getConfigurationResources();
+        
+        this.applicationContext = new ClassPathXmlApplicationContext() {
+            // According to the javadoc of org/springframework/context/support/AbstractApplicationContext.html#postProcessBeanFactory,
+            // this allows for registering special BeanPostProcessors.
+            protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+                beanFactory.addBeanPostProcessor(ClientComponentManager.this);
+            }
+        };
+        
+        ArrayList<String> checkedConfigurationResources = new ArrayList<String>();
+        
+        for (String configurationResource : configurationResources) {
+            try {
+                this.applicationContext.getResources(configurationResource);
+                checkedConfigurationResources.add(configurationResource);
+            } catch (IOException e) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Ignoring resources on {}. It does not exist.", configurationResource);
+                }
+            }
+        }
+        
+        if (checkedConfigurationResources.isEmpty()) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("There's no valid component configuration.");
+            }
+        } else {
+            this.applicationContext.setConfigLocations(checkedConfigurationResources.toArray(new String [0]));
+            
+            if (this.configuration != null) {
+                Properties initProps = ConfigurationConverter.getProperties(this.configuration);
+                PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
+                ppc.setIgnoreUnresolvablePlaceholders(true);
+                ppc.setSystemPropertiesMode(PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK);
+                ppc.setProperties(initProps);
+                this.applicationContext.addBeanFactoryPostProcessor(ppc);
+            }
+            
+            this.applicationContext.refresh();
+        }
     }
 
     public void start() {
@@ -59,4 +122,16 @@ public class ClientComponentManager implements ComponentManager {
         return HstServices.getComponentManager().getContainerConfiguration();
     }
 
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        if (bean instanceof ComponentManagerAware) {
+            ((ComponentManagerAware) bean).setComponentManager(this);
+        }
+        
+        return bean;
+    }
+
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        return bean; 
+    }
+    
 }

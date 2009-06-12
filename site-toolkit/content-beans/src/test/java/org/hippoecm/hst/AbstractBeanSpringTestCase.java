@@ -55,16 +55,15 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * 
  * @version $Id$
  */
-public abstract class AbstractBeanSpringTestCase
-{
+public abstract class AbstractBeanSpringTestCase {
 
     protected final static Logger log = LoggerFactory.getLogger(AbstractBeanSpringTestCase.class);
     protected ComponentManager componentManager;
 
     @Before
     public void setUp() throws Exception {
-        this.componentManager = new SpringComponentManager();
-        ((SpringComponentManager) this.componentManager).setConfigurationResources(getConfigurations());
+        this.componentManager = new ContentBeansComponentManager();
+        ((ContentBeansComponentManager) this.componentManager).setConfigurationResources(getConfigurations());
         
         this.componentManager.initialize();
         this.componentManager.start();
@@ -139,18 +138,19 @@ public abstract class AbstractBeanSpringTestCase
         
         jcrPrimaryNodeTypeClassPairs.put(jcrPrimaryNodeType, clazz);
     }
-    public static class SpringComponentManager implements ComponentManager, BeanPostProcessor {
+    
+    public static class ContentBeansComponentManager implements ComponentManager, BeanPostProcessor {
         
         protected AbstractApplicationContext applicationContext;
         protected Configuration configuration;
         protected ContainerConfiguration containerConfiguration;
         protected String [] configurationResources;
 
-        public SpringComponentManager() {
+        public ContentBeansComponentManager() {
             this(null);
         }
         
-        public SpringComponentManager(Configuration configuration) {
+        public ContentBeansComponentManager(Configuration configuration) {
             this.configuration = configuration;
         }
         
@@ -167,7 +167,7 @@ public abstract class AbstractBeanSpringTestCase
                 // According to the javadoc of org/springframework/context/support/AbstractApplicationContext.html#postProcessBeanFactory,
                 // this allows for registering special BeanPostProcessors.
                 protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-                    beanFactory.addBeanPostProcessor(SpringComponentManager.this);
+                    beanFactory.addBeanPostProcessor(ContentBeansComponentManager.this);
                 }
             };
             

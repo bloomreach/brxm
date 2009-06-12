@@ -48,8 +48,8 @@ public abstract class AbstractOCMSpringTestCase
 
     @Before
     public void setUp() throws Exception {
-        this.componentManager = new SpringComponentManager();
-        ((SpringComponentManager) this.componentManager).setConfigurationResources(getConfigurations());
+        this.componentManager = new OCMComponentManager();
+        ((OCMComponentManager) this.componentManager).setConfigurationResources(getConfigurations());
         
         this.componentManager.initialize();
         this.componentManager.start();
@@ -79,18 +79,18 @@ public abstract class AbstractOCMSpringTestCase
         return getComponentManager().<T>getComponent(name);
     }
     
-    public static class SpringComponentManager implements ComponentManager, BeanPostProcessor {
+    public static class OCMComponentManager implements ComponentManager, BeanPostProcessor {
         
         protected AbstractApplicationContext applicationContext;
         protected Configuration configuration;
         protected ContainerConfiguration containerConfiguration;
         protected String [] configurationResources;
 
-        public SpringComponentManager() {
+        public OCMComponentManager() {
             this(null);
         }
         
-        public SpringComponentManager(Configuration configuration) {
+        public OCMComponentManager(Configuration configuration) {
             this.configuration = configuration;
         }
         
@@ -107,7 +107,7 @@ public abstract class AbstractOCMSpringTestCase
                 // According to the javadoc of org/springframework/context/support/AbstractApplicationContext.html#postProcessBeanFactory,
                 // this allows for registering special BeanPostProcessors.
                 protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-                    beanFactory.addBeanPostProcessor(SpringComponentManager.this);
+                    beanFactory.addBeanPostProcessor(OCMComponentManager.this);
                 }
             };
             
