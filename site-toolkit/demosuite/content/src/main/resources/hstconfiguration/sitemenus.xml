@@ -7,7 +7,7 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemenu</sv:value>
         </sv:property>
-        <sv:node sv:name="home">
+        <sv:node sv:name="Home">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemenuitem</sv:value>
             </sv:property>
@@ -15,7 +15,7 @@
                 <sv:value>home</sv:value>
             </sv:property>
         </sv:node>
-        <sv:node sv:name="about">
+        <sv:node sv:name="About">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemenuitem</sv:value>
             </sv:property>
@@ -23,7 +23,7 @@
                 <sv:value>about</sv:value>
             </sv:property>
         </sv:node>
-        <sv:node sv:name="news">
+        <sv:node sv:name="News">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemenuitem</sv:value>
             </sv:property>
@@ -34,7 +34,7 @@
                 <sv:value>true</sv:value>
             </sv:property>
             <sv:property sv:name="hst:depth" sv:type="Long">
-                <sv:value>2</sv:value>
+                <sv:value>1</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>

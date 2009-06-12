@@ -64,7 +64,7 @@
         <sv:value>This is the home page of the generated HST website.</sv:value>
       </sv:property>
       <sv:property sv:name="demosite:title" sv:type="String">
-        <sv:value>demosite Home Page</sv:value>
+        <sv:value>Home Page</sv:value>
       </sv:property>
       <sv:node sv:name="demosite:body">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
