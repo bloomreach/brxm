@@ -45,17 +45,16 @@
         </init-param>
     </filter>
     
+    <filter>
+        <filter-name>HstVirtualHostsFilter</filter-name>
+        <filter-class>org.hippoecm.hst.container.HstVirtualHostsFilter</filter-class>    
+    </filter>
+    
     <filter-mapping>
         <filter-name>CharacterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
-
-
-    <filter>
-        <filter-name>HstVirtualHostsFilter</filter-name>
-        <filter-class>org.hippoecm.hst.container.HstVirtualHostsFilter</filter-class>    
-    </filter>
     
     <filter-mapping>
         <filter-name>HstVirtualHostsFilter</filter-name>
