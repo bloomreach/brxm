@@ -23,6 +23,8 @@ import org.hippoecm.hst.content.beans.standard.HippoFacetSelect;
 @Node(jcrType="demosite:newspage")
 public class NewsPage extends TextPage{
 
+    private ImageBean imageBean;
+    
     @Override
     public Calendar getDate() {
         
@@ -35,8 +37,15 @@ public class NewsPage extends TextPage{
      * @return the image of the newspage
      */
     public ImageBean getImage() {
+        if(this.imageBean != null) {
+            return this.imageBean;
+        }
         HippoFacetSelect imageLinkBean = getBean("demosite:image");
-        return (ImageBean) imageLinkBean.getDeref();
+        if(imageLinkBean == null) {
+            return null;
+        }
+        this.imageBean = (ImageBean) imageLinkBean.getDeref();
+        return imageBean;
     }
  
 }

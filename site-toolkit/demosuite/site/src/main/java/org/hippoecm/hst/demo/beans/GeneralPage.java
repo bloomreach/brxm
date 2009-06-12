@@ -35,11 +35,21 @@ public class GeneralPage extends HippoDocument {
         return getHippoHtml("demosite:body");    
     }
     
-    /*
-     * to be overridden by beans having a date. By having it in the generalpage as well, 
-     * the jsp el can always try a var.date without getting an expression language exception
-     */  
+   /**
+    * to be overridden by beans having a date. By having it in the generalpage as well, 
+    * the jsp el can always try a var.date without getting an expression language exception
+    * @return Calendar obj of the bean or <code>null</code>
+    */
     public Calendar getDate() {
+        return null;
+    }
+    
+    /**
+     * to be overridden by beans having an image. By having it in the generalpage as well, 
+     * the jsp el can always try a var.image without getting an expression language exception
+     * @return
+     */
+    public ImageBean getImage(){
         return null;
     }
 }
