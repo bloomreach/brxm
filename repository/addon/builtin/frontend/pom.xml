@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon-builtin</artifactId>
-    <version>2.06.05-SNAPSHOT</version>
+    <version>2.06.05</version>
   </parent>
 
   <name>Builtin frontend addon</name>
@@ -28,36 +28,36 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/builtin/frontend</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/builtin/frontend</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/builtin/frontend</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_05/addon/builtin/frontend</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_05/addon/builtin/frontend</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_06_05/addon/builtin/frontend</url>
   </scm>
 
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.06.05-SNAPSHOT</version>
+      <version>2.06.05</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.06.05-SNAPSHOT</version>
+      <version>2.06.05</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>2.06.05-SNAPSHOT</version>
+      <version>2.06.05</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
-      <version>2.06.05-SNAPSHOT</version>
+      <version>2.06.05</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-workflow</artifactId>
-      <version>2.06.05-SNAPSHOT</version>
+      <version>2.06.05</version>
     </dependency>
   </dependencies>
 
