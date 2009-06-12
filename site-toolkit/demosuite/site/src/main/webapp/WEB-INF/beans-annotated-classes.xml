@@ -18,7 +18,6 @@
     <annotated-class>org.hippoecm.hst.demo.beans.TextPage</annotated-class>
     <annotated-class>org.hippoecm.hst.demo.beans.NewsPage</annotated-class>
 
-    <annotated-class>org.hippoecm.hst.demo.beans.ImageLinkBean</annotated-class>
     <annotated-class>org.hippoecm.hst.demo.beans.ImageBean</annotated-class>
     
 </hst-content-beans>

@@ -18,6 +18,7 @@ package org.hippoecm.hst.demo.beans;
 import java.util.Calendar;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoFacetSelect;
 
 @Node(jcrType="demosite:newspage")
 public class NewsPage extends TextPage{
@@ -34,7 +35,7 @@ public class NewsPage extends TextPage{
      * @return the image of the newspage
      */
     public ImageBean getImage() {
-        ImageLinkBean imageLinkBean = getBean("demosite:image");
+        HippoFacetSelect imageLinkBean = getBean("demosite:image");
         return (ImageBean) imageLinkBean.getDeref();
     }
  
