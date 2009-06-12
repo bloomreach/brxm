@@ -203,18 +203,55 @@ public class BaseHstComponent extends GenericHstComponent {
      * @param response the HstResponse
      * @param redirectToSiteMapItemId the sitemap item id to redirect to
      */
+     /**
+     * Use {@link sendRedirect(String, HstRequest, HstResponse) }
+     */
+    @Deprecated
     public void sendRedirect(HstRequest request, HstResponse response, String redirectToSiteMapItemId) {
         HstLinkCreator linkCreator = request.getRequestContext().getHstLinkCreator();
         HstSiteMap siteMap = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap();
         HstLink link = linkCreator.create(siteMap.getSiteMapItemById(redirectToSiteMapItemId));
 
-        StringBuffer url = new StringBuffer();
-        for (String elem : link.getPathElements()) {
-            String enc = response.encodeURL(elem);
-            url.append("/").append(enc);
+        if(link == null) {
+            throw new HstComponentException("Can not redirect.");
         }
-
-        String urlString = ((HstResponse) response).createNavigationalURL(url.toString()).toString();
+        String urlString = null;
+        urlString = link.toUrlForm(request, response, false);
+        
+        if(urlString == null) {
+            throw new HstComponentException("Can not redirect.");
+        }
+        
+        try {
+            response.sendRedirect(urlString);
+        } catch (IOException e) {
+            throw new HstComponentException("Could not redirect. ",e);
+        }
+    }
+    
+    /**
+     * 
+     * Facility method for sending a redirect to a SiteMapItemId.  
+     * 
+     * @param path the sitemap path you want to redirect to 
+     * @param request the HstRequest
+     * @param response the HstResponse
+     */
+    public void sendRedirect(String path, HstRequest request, HstResponse response) {
+        HstLinkCreator linkCreator = request.getRequestContext().getHstLinkCreator();
+        HstSiteMap siteMap = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap();
+        
+        HstLink link = linkCreator.create(path, siteMap.getSite());
+        if(link == null) {
+            throw new HstComponentException("Can not redirect.");
+        }
+        String urlString = null;
+        urlString = link.toUrlForm(request, response, false);
+        
+        if(urlString == null) {
+            throw new HstComponentException("Can not redirect.");
+        }
+        
         try {
             response.sendRedirect(urlString);
         } catch (IOException e) {
