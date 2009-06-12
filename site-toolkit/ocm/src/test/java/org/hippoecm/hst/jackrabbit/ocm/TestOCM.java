@@ -119,7 +119,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
-        TextPage1 productsPage = (TextPage1) ocm.getObject("/testcontent/testproject/Products/SomeProduct");
+        TextPage1 productsPage = (TextPage1) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
         assertNotNull(productsPage.getHtml());
@@ -138,7 +138,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         mapper = new HstAnnotationMapperImpl(classes, "hippo:document");
         ocm = createObjectContentManager(session, mapper);
         
-        HippoStdDocument productsPageDoc = (HippoStdDocument) ocm.getObject("/testcontent/testproject/Products/SomeProduct");
+        HippoStdDocument productsPageDoc = (HippoStdDocument) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPageDoc);
         assertNotNull(productsPageDoc.getNode());
 
@@ -176,7 +176,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
-        TextPage2 productsPage = (TextPage2) ocm.getObject("/testcontent/testproject/Products/SomeProduct");
+        TextPage2 productsPage = (TextPage2) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
         assertNotNull(productsPage.getUuid());
@@ -211,7 +211,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
-        TextPage1 productsPage = (TextPage1) ocm.getObject("/testcontent/testproject/Products/SomeProduct");
+        TextPage1 productsPage = (TextPage1) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
         
@@ -222,7 +222,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         System.out.println("state: " + productsPage.getState());
         
         // Normal JCR Node path
-        HippoStdFolder coll = (HippoStdFolder) ocm.getObject("/testcontent/testproject");
+        HippoStdFolder coll = (HippoStdFolder) ocm.getObject("/testcontent/documents/testproject");
         assertNotNull(coll);
         assertNotNull(coll.getNode());
         
@@ -239,7 +239,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
             System.out.println("childCollItem: " + childCollItem.getName() + ", " + childCollItem.getPath());
         }
         
-        HippoStdFolder productsColl = (HippoStdFolder) ocm.getObject("/testcontent/testproject/Products");
+        HippoStdFolder productsColl = (HippoStdFolder) ocm.getObject("/testcontent/documents/testproject/Products");
         
         List<HippoStdDocument> childDocs = productsColl.getDocuments();
         assertNotNull(childDocs);
@@ -262,7 +262,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
-        TextPage1 productsPage = (TextPage1) ocm.getObject("/testcontent/testproject/Products/SomeProduct");
+        TextPage1 productsPage = (TextPage1) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
         
@@ -273,7 +273,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         System.out.println("state: " + productsPage.getState());
         
         // Normal JCR Node path
-        HippoStdFolder coll = (HippoStdFolder) ocm.getObject("/testcontent/testproject");
+        HippoStdFolder coll = (HippoStdFolder) ocm.getObject("/testcontent/documents/testproject");
         assertNotNull(coll);
         assertNotNull(coll.getNode());
         
@@ -290,7 +290,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
             System.out.println("childCollItem: " + childCollItem.getName() + ", " + childCollItem.getPath());
         }
         
-        HippoStdFolder productsColl = (HippoStdFolder) ocm.getObject("/testcontent/testproject/Products");
+        HippoStdFolder productsColl = (HippoStdFolder) ocm.getObject("/testcontent/documents/testproject/Products");
         
         List<HippoStdDocument> childDocs = productsColl.getDocuments();
         assertNotNull(childDocs);
@@ -320,7 +320,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         // search collection
         QueryManager qm = ocm.getQueryManager();
         Filter filter = qm.createFilter(HippoStdDocument.class);
-        filter.setScope("/content/gettingstarted//");
+        filter.setScope("/testcontent/documents/testproject//");
         Query query = qm.createQuery(filter);
         Collection result = ocm.getObjects(query);
         System.out.println("result: " + result);
@@ -328,7 +328,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
 
         // search document by HippoStdDocument filter
         filter = qm.createFilter(HippoStdDocument.class);
-        filter.setScope("/testcontent/testproject/Products/SomeProduct//");
+        filter.setScope("/testcontent/documents/testproject/Products/SomeProduct//");
         query = qm.createQuery(filter);
         HippoStdDocument doc = (HippoStdDocument) ocm.getObject(query);
         System.out.println("doc: " + doc);
@@ -338,7 +338,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         // search document by TextPage class filter with title filter.
         // because the class is TextPage, we can use title filter here.
         filter = qm.createFilter(TextPage1.class);
-        filter.setScope("/testcontent/testproject/Products/SomeProduct//");
+        filter.setScope("/testcontent/documents/testproject/Products/SomeProduct//");
         filter.addEqualTo("title", "Products");
         query = qm.createQuery(filter);
         TextPage1 page = (TextPage1) ocm.getObject(query);
@@ -362,7 +362,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         
         ObjectContentManager ocm = createObjectContentManager(session, mapper);
         
-        TextPage1 productsPage = (TextPage1) ocm.getObject("/testcontent/testproject/Products/SomeProduct");
+        TextPage1 productsPage = (TextPage1) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
         
@@ -380,7 +380,7 @@ public class TestOCM extends AbstractOCMSpringTestCase {
         ocm.save();
         
         // Now validating the changes from the repository...
-        TextPage1 productsPageUpdated = (TextPage1) ocm.getObject("/testcontent/testproject/Products/SomeProduct");
+        TextPage1 productsPageUpdated = (TextPage1) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPageUpdated);
         assertNotNull(productsPageUpdated.getNode());
         assertEquals("Hey, Dude!", productsPageUpdated.getTitle());

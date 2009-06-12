@@ -38,10 +38,10 @@ public class TextPage2 extends HippoStdDocument {
     //     - gettingstarted:comment
     //     - ...
     //
-    @Collection(jcrName="gettingstarted:comments")
+    @Collection(jcrName="testproject:comments")
     protected List<TextPageComment> comments;
 
-    @Field(jcrName="gettingstarted:title")
+    @Field(jcrName="testproject:title")
     public String getTitle() {
         return this.title;
     }

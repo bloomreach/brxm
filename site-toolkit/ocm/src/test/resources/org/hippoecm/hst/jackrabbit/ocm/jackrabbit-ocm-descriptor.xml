@@ -20,7 +20,7 @@
     <field-descriptor fieldName="path" path="true" />
     <field-descriptor fieldName="stateSummary" jcrName="hippostd:stateSummary" />
     <field-descriptor fieldName="state" jcrName="hippostd:state" />
-    <field-descriptor fieldName="title" jcrName="gettingstarted:title" />
+    <field-descriptor fieldName="title" jcrName="testproject:title" />
   </class-descriptor>
   
   <class-descriptor jcrType="hippo:html" className="org.hippoecm.hst.jackrabbit.ocm.HippoStdHtml">

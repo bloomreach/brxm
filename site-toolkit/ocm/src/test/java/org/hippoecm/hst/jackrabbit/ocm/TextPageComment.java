@@ -19,13 +19,13 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
 
-@Node(jcrType="gettingstarted:comment", discriminator=false)
+@Node(jcrType="testproject:comment", discriminator=false)
 public class TextPageComment extends HippoStdNode {
 
     protected String name;
     protected String comment;
     
-    @Field(jcrName="gettingstarted:name")
+    @Field(jcrName="testproject:name")
     public String getName() {
         return this.name;
     }
