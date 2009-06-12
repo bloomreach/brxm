@@ -19,14 +19,12 @@
       
       <c:forEach var="item" items="${items}">
       <item>
-         <hst:link hippobean="${item}" var="link"/>
-
+         <hst:link hippobean="${item}" var="link" external="true"/>
          <title>${item.title}</title>
-         <link>http://localhost:8085${link}</link>
+         <link>${link}</link>
          <description>${item.summary}</description>
          <pubDate><fmt:formatDate value="${item.date.time}" pattern="EE, dd MMM yyyy HH:mm:ss Z"/></pubDate>
-         <guid>http://localhost:8085${link}</guid>
-
+         <guid>{link}</guid>
       </item>
       </c:forEach>
       
