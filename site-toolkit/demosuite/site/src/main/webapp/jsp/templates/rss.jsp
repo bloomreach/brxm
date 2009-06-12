@@ -2,10 +2,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<hst:link var="feedlink" path="/rss.xml"/>
 <rss version="2.0">
    <channel>
       <title>HST Demo RSS Feed</title>
-      <link>http://liftoff.msfc.nasa.gov/</link>
+      <link>http://localhost:8085${feedlink}</link>
       <description>Latest News!</description>
       <language>en-us</language>
       <pubDate><fmt:formatDate value="${today}" pattern="EE, dd MMM yyyy HH:mm:ss Z"/></pubDate>
