@@ -177,6 +177,16 @@
 		<exception-type>Exception</exception-type>
 		<location>/jsp/ErrorPage500.jsp</location>
 	</error-page>
-  
+    
+    <!-- If you want to use a pooling JCR repository from JNDI, uncomment the following and configure the correct jndiName. -->
+    <!--
+    <resource-ref>
+        <description>JCR Session Pooling Repository provided by HST-2 Core Components</description>
+        <res-ref-name>jcr/repository</res-ref-name>
+        <res-type>javax.jcr.Repository</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
+    -->
+    
 </web-app>
 

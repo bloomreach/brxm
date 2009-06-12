@@ -30,7 +30,7 @@ Repository repository = null;
 try {
 	Context initCtx = new InitialContext();
 	Context envCtx = (Context) initCtx.lookup("java:comp/env");
-	repository = (Repository) envCtx.lookup("jcr/MyRepository");
+	repository = (Repository) envCtx.lookup("jcr/repository");
 } catch (Exception e) {
     out.println("Failed to look up the pooling JCR repository: " + e);
 }

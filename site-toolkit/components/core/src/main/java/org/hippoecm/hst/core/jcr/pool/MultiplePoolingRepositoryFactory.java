@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * <code><pre>
  * &lt;Context ...>
  *   ...
- *   &lt;Resource name="jcr/MyRepository" auth="Container"
+ *   &lt;Resource name="jcr/repository" auth="Container"
  *             type="javax.jcr.Repository"
  *             factory="org.hippoecm.hst.core.jcr.pool.MultiplePoolingRepositoryFactory"
  *             repositoryAddress="rmi://127.0.0.1:1099/hipporepository, rmi://127.0.0.1:1099/hipporepository"
@@ -72,7 +72,7 @@ import org.slf4j.LoggerFactory;
  * <code><pre>
  * &lt;resource-ref>
  *   &lt;description>JCR Repository&lt;/description>
- *   &lt;res-ref-name>jcr/MyRepository&lt;/res-ref-name>
+ *   &lt;res-ref-name>jcr/repository&lt;/res-ref-name>
  *   &lt;res-type>javax.jcr.Repository&lt;/res-type>
  *   &lt;res-auth>Container&lt;/res-auth>
  * &lt;/resource-ref>
@@ -84,7 +84,7 @@ import org.slf4j.LoggerFactory;
  * &lt;%
  * Context initCtx = new InitialContext();
  * Context envCtx = (Context) initCtx.lookup("java:comp/env");
- * Repository repository = (Repository) envCtx.lookup("jcr/MyRepository");
+ * Repository repository = (Repository) envCtx.lookup("jcr/repository");
  * Credentials credentials = new SimpleCredentials("siteuser", "siteuser");
  * Session jcrSession = repository.login(credentials);
  * // do something...

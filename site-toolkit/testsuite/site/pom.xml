@@ -334,9 +334,9 @@
                     <unwar src="../cms/target/cms.war" dest="${tomcat.hst.cms.webapp}" overwrite="true" />
                                       
                     <echo>Replacing site web application into tomcat.</echo>
+                    <delete dir="${tomcat.server.home}/webapps/${project.build.finalName}.war" />
                     <delete dir="${tomcat.server.home}/webapps/${project.build.finalName}" />
-                    <mkdir dir="${tomcat.server.home}/webapps/${project.build.finalName}" />
-                    <unwar src="${project.build.directory}/${project.build.finalName}.war" dest="${tomcat.server.home}/webapps/${project.build.finalName}" overwrite="true" />
+                    <copy file="${project.build.directory}/${project.build.finalName}.war" tofile="${tomcat.server.home}/webapps/${project.build.finalName}.war" overwrite="true" />
                     
                   </tasks>
                 </configuration>

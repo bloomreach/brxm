@@ -82,7 +82,7 @@ import org.hippoecm.hst.site.HstServices;
  *    &lt;/init-param>
  *    &lt;init-param>
  *      &lt;param-name>repository-res-ref-name&lt;/param-name>
- *      &lt;param-value>/jcr/MyRepository&lt;/param-value>
+ *      &lt;param-value>jcr/repository&lt;/param-value>
  *    &lt;/init-param>
  *    &lt;init-param>
  *      &lt;param-name>repository-user&lt;/param-name>

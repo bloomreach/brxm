@@ -50,6 +50,17 @@ public interface PoolingRepository extends Repository {
     String WHEN_EXHAUSTED_GROW = "grow";
 
     /**
+     * Initializes the pool
+     * @throws Exception
+     */
+    public void initialize() throws Exception;
+    
+    /**
+     * Closes the pool
+     */
+    public void close() throws Exception;
+    
+    /**
      * Returns the current active session count in the pool.
      * 
      * @return

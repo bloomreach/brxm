@@ -58,8 +58,16 @@
         <groupId>javax.jcr</groupId>
         <artifactId>jcr</artifactId>
         <version>${dollar}{javax.jcr.version}</version>
+        <scope>provided</scope>
       </dependency>
       
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jta_1.1_spec</artifactId>
+        <version>${dollar}{jta.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
@@ -159,12 +167,6 @@
         </exclusions>
       </dependency>
     
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jta_1.1_spec</artifactId>
-        <version>${dollar}{jta.version}</version>
-      </dependency>
-
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-package-war</artifactId>

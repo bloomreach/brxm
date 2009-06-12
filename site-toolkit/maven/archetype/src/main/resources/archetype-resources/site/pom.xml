@@ -148,8 +148,6 @@
    
   </dependencies>
   
-  
-           
   <build>
     <defaultGoal>package</defaultGoal>
     <finalName>site</finalName>
@@ -199,6 +197,20 @@
             <groupId>com.atomikos</groupId>
             <artifactId>atomikos-util</artifactId>
             <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+          <!-- Shared Libraries
+          The followings will be located in shared lib folder in the servlet container. -->
+          <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jta_1.1_spec</artifactId>
+            <version>${dollar}{jta.version}</version>
+            <scope>runtime</scope>
+          </dependency>
+          <dependency>
+            <groupId>javax.jcr</groupId>
+            <artifactId>jcr</artifactId>
+            <version>${dollar}{javax.jcr.version}</version>
             <scope>runtime</scope>
           </dependency>
         </dependencies>
@@ -302,14 +314,9 @@
                     <unwar src="../cms/target/cms.war" dest="${dollar}{tomcat.hst.cms.webapp}" overwrite="true" />
                                       
                     <echo>Replacing site web application into tomcat.</echo>
+                    <delete dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}.war" />
                     <delete dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}" />
-                    <mkdir dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}" />
-                    <unwar src="${dollar}{project.build.directory}/${dollar}{project.build.finalName}.war" dest="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}" overwrite="true" />
-                    <delete>
-                      <fileset dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}/WEB-INF/lib">
-                        <include name="jcr-*.jar" />
-                      </fileset>
-                    </delete>
+                    <copy file="${dollar}{project.build.directory}/${dollar}{project.build.finalName}.war" tofile="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}" overwrite="true" />
                     
                   </tasks>
                 </configuration>
