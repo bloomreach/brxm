@@ -63,14 +63,15 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
         Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
 
-        HippoFolder folder = (HippoFolder) obm.getObject("/testcontent/testproject/Products");
+        HippoFolder folder = (HippoFolder) obm.getObject("/testcontent/documents/testproject/Products");
         
      
-        Object o = obm.getObject("/testcontent/testproject/Products/SomeProduct");
+        Object o = obm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
+        assertNotNull("The object is not retrieved from the path.", o);
         assertTrue(" Object should be an instance of SimpleTextPage and not SimpleTextPageCopy, because SimpleTextPage is added first", o instanceof SimpleTextPage);
         
-        SimpleTextPage productsPage =  (SimpleTextPage)obm.getObject("/testcontent/testproject/Products/SomeProduct");
-        SimpleTextPage productsPage2 = (SimpleTextPage) obm.getObject("/testcontent/testproject/Products/SomeProduct/SomeProduct");
+        SimpleTextPage productsPage =  (SimpleTextPage)obm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
+        SimpleTextPage productsPage2 = (SimpleTextPage) obm.getObject("/testcontent/documents/testproject/Products/SomeProduct/SomeProduct");
 
         assertTrue("Handle and Document should return true for equalCompare ", productsPage.equalCompare(productsPage2));
         assertFalse("Folder and Document should return false for equalCompare ",folder.equalCompare(productsPage2));
