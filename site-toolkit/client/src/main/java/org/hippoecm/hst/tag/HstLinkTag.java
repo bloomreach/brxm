@@ -170,9 +170,10 @@ public class HstLinkTag extends TagSupport {
         }
         
         if(this.isExternal()) {
-            MatchedMapping mapping;
-            if(( mapping = hstRequest.getRequestContext().getMatchedMapping()) != null) {
+            MatchedMapping mapping = hstRequest.getRequestContext().getMatchedMapping();
+            if( mapping != null && mapping.getMapping() != null) {
                 StringBuilder builder = new StringBuilder();
+               
                 VirtualHost vhost = mapping.getMapping().getVirtualHost();
                 if(vhost.getProtocol() == null) {
                     builder.append("http");
