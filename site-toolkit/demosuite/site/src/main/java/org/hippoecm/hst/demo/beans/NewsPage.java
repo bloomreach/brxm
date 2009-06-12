@@ -18,12 +18,12 @@ package org.hippoecm.hst.demo.beans;
 import java.util.Calendar;
 
 import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.content.beans.standard.HippoFacetSelect;
 
 @Node(jcrType="demosite:newspage")
 public class NewsPage extends TextPage{
 
     private ImageBean imageBean;
+    private boolean imagesLoaded = false;
     
     @Override
     public Calendar getDate() {
@@ -37,10 +37,11 @@ public class NewsPage extends TextPage{
      * @return the image of the newspage
      */
     public ImageBean getImage() {
-        if(this.imageBean != null) {
+        if(imagesLoaded) {
             return this.imageBean;
         }
-        HippoFacetSelect imageLinkBean = getBean("demosite:image");
+        imagesLoaded = true;
+        ImageLinkBean imageLinkBean = getBean("demosite:image");
         if(imageLinkBean == null) {
             return null;
         }
