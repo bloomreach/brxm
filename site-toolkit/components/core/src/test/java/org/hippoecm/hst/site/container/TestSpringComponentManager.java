@@ -23,6 +23,7 @@ public class TestSpringComponentManager {
     
     private static final String SIMPLE_BEANS_1 = "/META-INF/assembly/simple-beans-1.xml";
     private static final String SIMPLE_BEANS_2 = "/META-INF/assembly/simple-beans-2.xml";
+    private static final String NON_EXISTING_BEANS = "/META-INF/assembly/non-existing-ones/*.xml";
     
     @Test
     public void testSimpleBeans() {
@@ -42,7 +43,7 @@ public class TestSpringComponentManager {
     @Test
     public void testOverridingBeans() {
         SpringComponentManager componentManager = new SpringComponentManager();
-        String [] configurationResources = new String [] { SIMPLE_BEANS_1, SIMPLE_BEANS_2 };
+        String [] configurationResources = new String [] { SIMPLE_BEANS_1, SIMPLE_BEANS_2, NON_EXISTING_BEANS };
         componentManager.setConfigurationResources(configurationResources);
         
         componentManager.initialize();

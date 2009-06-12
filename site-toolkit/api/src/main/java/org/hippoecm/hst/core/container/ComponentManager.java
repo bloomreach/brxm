@@ -31,6 +31,12 @@ public interface ComponentManager
     void setConfigurationResources(String [] configurationResources);
     
     /**
+     * Returns configuration resources for components assembly
+     * @param configurationResource
+     */
+    String [] getConfigurationResources();
+    
+    /**
      * Initializes the component manager and container components.
      */
     void initialize();

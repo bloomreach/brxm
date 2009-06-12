@@ -35,6 +35,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.ConfigurationFactory;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.HippoRepository;
@@ -170,6 +171,8 @@ public class HstSiteConfigServlet extends HttpServlet {
     
     private static final String FORCEFUL_REINIT_PARAM = "forceful.reinit";
     
+    private static final String ASSEMBLY_OVERRIDES_CONFIGURATIONS_PARAM = "assembly.overrides";
+
     private static final String REPOSITORY_ADDRESS_PARAM_SUFFIX = ".repository.address";
 
     private final static Logger log = LoggerFactory.getLogger(HstSiteConfigServlet.class);
@@ -177,6 +180,8 @@ public class HstSiteConfigServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected ComponentManager componentManager;
+
+    protected String [] assemblyOverridesConfigurations;
     
     protected boolean initialized;
     
@@ -215,7 +220,9 @@ public class HstSiteConfigServlet extends HttpServlet {
         // then the initialization will go on from here.
         
         this.configuration = getConfiguration(config);
-
+        
+        assemblyOverridesConfigurations = this.configuration.getStringArray(ASSEMBLY_OVERRIDES_CONFIGURATIONS_PARAM);
+        
         checkRepositoriesRunning = this.configuration.getBoolean(CHECK_REPOSITORIES_RUNNING_INIT_PARAM);
         
         if (!checkRepositoriesRunning) {
@@ -284,6 +291,13 @@ public class HstSiteConfigServlet extends HttpServlet {
             log.info("HstSiteConfigServlet attempting to create the Component manager...");
             this.componentManager = new SpringComponentManager(this.configuration);
             log.info("HSTSiteServlet attempting to start the Component Manager...");
+            
+            if (assemblyOverridesConfigurations != null && assemblyOverridesConfigurations.length > 0) {
+                String [] configurations = this.componentManager.getConfigurationResources();
+                configurations = (String []) ArrayUtils.addAll(configurations, assemblyOverridesConfigurations);
+                this.componentManager.setConfigurationResources(configurations);
+            }
+            
             this.componentManager.initialize();
             this.componentManager.start();
             HstServices.setComponentManager(this.componentManager);
