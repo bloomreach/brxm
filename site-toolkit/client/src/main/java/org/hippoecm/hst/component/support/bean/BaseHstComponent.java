@@ -46,6 +46,7 @@ import org.hippoecm.hst.content.beans.standard.HippoFacetSelect;
 import org.hippoecm.hst.content.beans.standard.HippoFixedDirectory;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.content.beans.standard.HippoResource;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -244,6 +245,7 @@ public class BaseHstComponent extends GenericHstComponent {
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDirectory.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFixedDirectory.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoHtml.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoResource.class, true);
         // builds a fallback jcrPrimaryNodeType array.
         String[] fallBackJcrNodeTypes = getFallBackJcrNodeTypes();
         ObjectConverter objectConverter = new ObjectConverterImpl(jcrPrimaryNodeTypeClassPairs,
