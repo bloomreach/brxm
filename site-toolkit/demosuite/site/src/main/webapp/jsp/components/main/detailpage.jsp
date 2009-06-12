@@ -23,5 +23,8 @@
     <h2>${document.title}</h2>
     <p>${document.summary}</p>
     <p><hst:html hippohtml="${document.html}"/></p>
+    
+    <img src="<hst:link hippobean="${document.image.picture}"/>"/>
+  
 </div>
 
