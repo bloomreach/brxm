@@ -208,8 +208,12 @@ public class BasicHstLinkCreator implements HstLinkCreator {
     }
 
 
-    public HstLink create(String siteMapPath, HstSite hstSite) {
-        return new HstLinkImpl(PathUtils.normalizePath(siteMapPath), hstSite);
+    public HstLink create(String path, HstSite hstSite) {
+        return new HstLinkImpl(PathUtils.normalizePath(path), hstSite);
+    }
+    
+    public HstLink create(String path, HstSite hstSite, boolean containerResource) {
+        return new HstLinkImpl(PathUtils.normalizePath(path), hstSite, containerResource);
     }
 
     

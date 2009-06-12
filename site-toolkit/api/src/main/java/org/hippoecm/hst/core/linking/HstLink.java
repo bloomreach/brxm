@@ -16,6 +16,8 @@
 package org.hippoecm.hst.core.linking;
 
 import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstResponse;
 
 /**
  * HstLink is the object representing a link. The {@link #getPath()} return you the value of the link, and {@link #getPathElements()}
@@ -34,6 +36,13 @@ public interface HstLink {
      * @return the path of this HstLink. Note: This is *not* a url!
      */
     String getPath();
+    
+    /**
+     * @param request
+     * @param external if true, the returned url is external, in other words including http/https etc
+     * @return the url form of this HstLink, which is a url
+     */
+    String toUrlForm(HstRequest request, HstResponse response, boolean external);
     
     /**
      * @return the path elements of this HstLink, which is the {@link #getPath()} splitted on slashes

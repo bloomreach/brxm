@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -30,16 +29,13 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.MatchedMapping;
-import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,8 +92,6 @@ public class HstLinkTag extends TagSupport {
         }
         
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
-
         // if hst request/esponse is retrieved, then this servlet has been dispatched by hst component.
         HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
         HstResponse hstResponse = (HstResponse) request.getAttribute(ContainerConstants.HST_RESPONSE);
@@ -110,14 +104,7 @@ public class HstLinkTag extends TagSupport {
             hstResponse = (HstResponse) pageContext.getResponse();
         }
 
-        String characterEncoding = response.getCharacterEncoding();
-        
-        if (characterEncoding == null) {
-            characterEncoding = "UTF-8";
-        }
-        
-        StringBuilder url = new StringBuilder();
-
+        HstRequestContext reqContext = hstRequest.getRequestContext();
         if(this.hippoBean != null) {
             if(hippoBean.getNode() == null) {
                 log.warn("Cannot get a link for a detached node");
@@ -127,68 +114,21 @@ public class HstLinkTag extends TagSupport {
                 log.warn("Cannot only get links for HstRequest");
                 return EVAL_PAGE;
             }
-            HstRequestContext reqContext = hstRequest.getRequestContext();
+            
             this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), reqContext.getResolvedSiteMapItem());
         }
         
-        String[] pathElements = null;
-
-        if (this.link != null) {
-            pathElements = link.getPathElements();
+        if(this.link == null && this.path != null) {
+            HstSite site = reqContext.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSite();
+            this.link = reqContext.getHstLinkCreator().create(this.path, site, true);
         }
         
-        boolean containerResource = false;
-        
-        if (this.path != null) {
-            containerResource = true;
-            path = PathUtils.normalizePath(path);
-            pathElements = path.split("/");
-        }
-        
-        if(pathElements == null) {
+        if(this.link == null) {
             log.warn("Unable to rewrite link. Return EVAL_PAGE");
             return EVAL_PAGE;
         }
         
-        for(String elem : pathElements) {
-            String enc = response.encodeURL(elem);
-            url.append("/").append(enc);
-        }
-        
-        String urlString = null;
-        
-        if (containerResource) {
-            HstURL hstUrl = hstResponse.createResourceURL(ContainerConstants.CONTAINER_REFERENCE_NAMESPACE);
-            hstUrl.setResourceID(url.toString());
-            urlString = hstUrl.toString();
-        } else {
-            urlString = hstResponse.createNavigationalURL(url.toString()).toString();
-            String customParams =  getCustomParameters(request, response);
-            if(customParams != null) {
-                urlString += customParams;
-            }
-        }
-        
-        if(this.isExternal()) {
-            MatchedMapping mapping = hstRequest.getRequestContext().getMatchedMapping();
-            if( mapping != null && mapping.getMapping() != null) {
-                StringBuilder builder = new StringBuilder();
-               
-                VirtualHost vhost = mapping.getMapping().getVirtualHost();
-                if(vhost.getProtocol() == null) {
-                    builder.append("http");
-                } else {
-                    builder.append(vhost.getProtocol());
-                }
-                builder.append("://").append(request.getServerName());
-                if(vhost.isPortVisible()) {
-                    builder.append(":").append(vhost.getPortNumber());
-                }
-                urlString = builder.toString() + urlString;
-            } else {
-                log.warn("Cannot create external link because there is no virtual host to use");
-            }
-        }
+        String urlString = this.link.toUrlForm(hstRequest, hstResponse, external);
         
         if (var == null) {
             try {               
@@ -226,20 +166,6 @@ public class HstLinkTag extends TagSupport {
         return EVAL_PAGE;
     }
     
-    
-    /**
-     * If you want in your application to append some queryString to urls, you can implement this method. Make sure that
-     * if there are parameters, you should return a String starting with a <code>?</code>
-     * 
-     * @param request
-     * @param response
-     * @return a queryString to add to the link
-     */
-    protected String getCustomParameters(HttpServletRequest request, HttpServletResponse response) {
-        return null;
-    }
-
-
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#release()
      */

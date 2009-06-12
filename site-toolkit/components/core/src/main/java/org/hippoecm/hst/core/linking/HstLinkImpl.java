@@ -16,17 +16,33 @@
 package org.hippoecm.hst.core.linking;
 
 import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.hosting.VirtualHost;
+import org.hippoecm.hst.core.request.MatchedMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HstLinkImpl implements HstLink{
 
+    private final static Logger log = LoggerFactory.getLogger(HstLinkImpl.class);
+    
     private String path;
     private HstSite hstSite;
     private String[] pathElements;
+    private boolean containerResource;
     
     public HstLinkImpl(String path, HstSite hstSite){
+         this(path, hstSite,false);
+    }
+    
+    public HstLinkImpl(String path, HstSite hstSite, boolean containerResource) {
         this.path = path;
         this.hstSite = hstSite;
         this.pathElements = this.path.split("/");
+        this.containerResource = containerResource;
     }
     
     public HstSite getHstSite() {
@@ -39,6 +55,60 @@ public class HstLinkImpl implements HstLink{
     
     public String[] getPathElements() {
         return pathElements;
+    }
+
+    public String toUrlForm(HstRequest request, HstResponse response, boolean external) {
+        StringBuilder url = new StringBuilder();
+        
+        String characterEncoding = response.getCharacterEncoding();
+        
+        if (characterEncoding == null) {
+            characterEncoding = "UTF-8";
+        }
+        
+        String[] pathElements = this.getPathElements();
+        
+        if(pathElements == null) {
+            log.warn("Unable to rewrite link. Return EVAL_PAGE");
+            return null;
+        }
+        
+        for(String elem : pathElements) {
+            String enc = response.encodeURL(elem);
+            url.append("/").append(enc);
+        }
+        
+        String urlString = null;
+        
+        if (this.containerResource) {
+            HstURL hstUrl = response.createResourceURL(ContainerConstants.CONTAINER_REFERENCE_NAMESPACE);
+            hstUrl.setResourceID(url.toString());
+            urlString = hstUrl.toString();
+        } else {
+            urlString = response.createNavigationalURL(url.toString()).toString();
+        }
+        
+        if(external) {
+            MatchedMapping mapping = request.getRequestContext().getMatchedMapping();
+            if( mapping != null && mapping.getMapping() != null) {
+                StringBuilder builder = new StringBuilder();
+               
+                VirtualHost vhost = mapping.getMapping().getVirtualHost();
+                if(vhost.getProtocol() == null) {
+                    builder.append("http");
+                } else {
+                    builder.append(vhost.getProtocol());
+                }
+                builder.append("://").append(request.getServerName());
+                if(vhost.isPortVisible()) {
+                    builder.append(":").append(vhost.getPortNumber());
+                }
+                urlString = builder.toString() + urlString;
+            } else {
+                log.warn("Cannot create external link because there is no virtual host to use");
+            }
+        }
+        return urlString;
     }
 
 }
