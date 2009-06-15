@@ -143,45 +143,6 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
     public Set<Principal> getUserPrincipals() {
         return helper.getUserPrincipals();
     }
-    
-    @Override
-    public void logout() {
-        helper.logout();
-    }
-
-    //------------------------------------------------< Namespace handling >--
-    @Override
-    public String getNamespacePrefix(String uri)
-            throws NamespaceException, RepositoryException {
-        // accessmanager is instantiated before the helper is set
-        if (helper == null) {
-            return super.getNamespacePrefix(uri);
-        }
-        return helper.getNamespacePrefix(uri);
-    }
-
-    @Override
-    public String getNamespaceURI(String prefix)
-            throws NamespaceException, RepositoryException {
-        // accessmanager is instantiated before the helper is set
-        if (helper == null) {
-            return super.getNamespaceURI(prefix);
-        }
-        return helper.getNamespaceURI(prefix);
-    }
-
-    @Override
-    public String[] getNamespacePrefixes()
-            throws RepositoryException {
-        return helper.getNamespacePrefixes();
-    }
-
-    @Override
-    public void setNamespacePrefix(String prefix, String uri)
-            throws NamespaceException, RepositoryException {
-        super.setNamespacePrefix(prefix, uri);
-        helper.setNamespacePrefix(prefix, uri);
-    }
 
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException, NoSuchNodeTypeException, RepositoryException {
         return helper.pendingChanges(node, nodeType, prune);
