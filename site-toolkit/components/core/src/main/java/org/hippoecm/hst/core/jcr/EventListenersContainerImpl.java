@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.jcr;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Credentials;
@@ -41,7 +42,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
     protected long sessionLiveCheckInterval = 60000L;
     protected Workspace workspace;
     protected ObservationManager observationManager;
-    protected List<EventListenerItem> eventListenerItems;
+    protected List<EventListenerItem> eventListenerItems = new ArrayList<EventListenerItem>();
 
     protected boolean firstInitializationDone;
     protected EventListenersContainerSessionChecker eventListenersContainerSessionChecker;
@@ -61,6 +62,10 @@ public class EventListenersContainerImpl implements EventListenersContainer {
 
     public void setEventListenerItems(List<EventListenerItem> eventListenerItems) {
         this.eventListenerItems = eventListenerItems;
+    }
+    
+    public void addEventListenerItem(EventListenerItem eventListenerItem) {
+        this.eventListenerItems.add(eventListenerItem);
     }
 
     public void setSessionLiveCheck(boolean sessionLiveCheck) {

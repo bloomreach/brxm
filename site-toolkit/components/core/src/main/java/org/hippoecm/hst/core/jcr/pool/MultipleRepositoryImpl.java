@@ -35,40 +35,34 @@ public class MultipleRepositoryImpl implements MultipleRepository {
 
     private static ThreadLocal<Repository> tlCurrentRepository = new ThreadLocal<Repository>();
     
-    protected Map<CredentialsWrapper, Repository> repositoryMap;
+    protected Map<CredentialsWrapper, Repository> repositoryMap = new HashMap<CredentialsWrapper, Repository>();
     protected ResourceLifecycleManagement [] resourceLifecycleManagements;
     protected CredentialsWrapper defaultCredentialsWrapper;
     
+    public MultipleRepositoryImpl(Credentials defaultCredentials) {
+        this(null, defaultCredentials);
+    }
+    
     public MultipleRepositoryImpl(Map<Credentials, Repository> repoMap, Credentials defaultCredentials) {
-        this.repositoryMap = new HashMap<CredentialsWrapper, Repository>();
-        
-        for (Map.Entry<Credentials, Repository> entry : repoMap.entrySet()) {
-            Repository repo = entry.getValue();
-            
-            if (repo instanceof MultipleRepositoryAware) {
-                ((MultipleRepositoryAware) repo).setMultipleRepository(this);
-            }
-            
-            this.repositoryMap.put(new CredentialsWrapper(entry.getKey()), repo);
-        }
-
-        Set<ResourceLifecycleManagement> resourceLifecycleManagementSet = new HashSet<ResourceLifecycleManagement>();
-        
-        for (Repository repo : this.repositoryMap.values()) {
-            if (repo instanceof PoolingRepository) {
-                ResourceLifecycleManagement rlm = ((PoolingRepository) repo).getResourceLifecycleManagement();
-                resourceLifecycleManagementSet.add(rlm);
-            }
-        }
-        
-        this.resourceLifecycleManagements = new ResourceLifecycleManagement[resourceLifecycleManagementSet.size()];
-        int index = 0;
-        
-        for (ResourceLifecycleManagement rlm : resourceLifecycleManagementSet) {
-            this.resourceLifecycleManagements[index++] = rlm;
-        }
-
         this.defaultCredentialsWrapper = new CredentialsWrapper(defaultCredentials);
+
+        for (Map.Entry<Credentials, Repository> entry : repoMap.entrySet()) {
+            Credentials cred = entry.getKey();
+            Repository repo = entry.getValue();
+            addRepository(cred, repo);
+        }
+
+        refreshResourceLifecycleManagements();
+    }
+    
+    public void addRepository(Credentials credentials, Repository repository) {
+        if (repository instanceof MultipleRepositoryAware) {
+            ((MultipleRepositoryAware) repository).setMultipleRepository(this);
+        }
+        
+        this.repositoryMap.put(new CredentialsWrapper(credentials), repository);
+
+        refreshResourceLifecycleManagements();
     }
     
     public Repository getRepositoryByCredentials(Credentials credentials) {
@@ -147,6 +141,24 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         tlCurrentRepository.set(repository);
     }
 
+    private void refreshResourceLifecycleManagements() {
+        Set<ResourceLifecycleManagement> resourceLifecycleManagementSet = new HashSet<ResourceLifecycleManagement>();
+        
+        for (Repository repo : this.repositoryMap.values()) {
+            if (repo instanceof PoolingRepository) {
+                ResourceLifecycleManagement rlm = ((PoolingRepository) repo).getResourceLifecycleManagement();
+                resourceLifecycleManagementSet.add(rlm);
+            }
+        }
+        
+        this.resourceLifecycleManagements = new ResourceLifecycleManagement[resourceLifecycleManagementSet.size()];
+        int index = 0;
+        
+        for (ResourceLifecycleManagement rlm : resourceLifecycleManagementSet) {
+            this.resourceLifecycleManagements[index++] = rlm;
+        }
+    }
+    
     private boolean equalsCredentials(Credentials credentials1, Credentials credentials2) {
         if (credentials1 instanceof SimpleCredentials && credentials2 instanceof SimpleCredentials) {
             return (((SimpleCredentials) credentials1).getUserID().equals(((SimpleCredentials) credentials2).getUserID()));

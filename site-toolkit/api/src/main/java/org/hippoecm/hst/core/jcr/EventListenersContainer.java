@@ -33,6 +33,13 @@ public interface EventListenersContainer {
     void setEventListenerItems(List<EventListenerItem> eventListenerItems);
     
     /**
+     * Adds an event listener item.
+     * 
+     * @param eventListenerItem
+     */
+    void addEventListenerItem(EventListenerItem eventListenerItem);
+    
+    /**
      * Returns the event listener items.
      * @return
      */

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:lang="http://www.springframework.org/schema/lang" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+  
+  
+  <!--
+    In this component configuration, an example session pooling repository is defined.
+    By default, session of the pooling repository is refreshed on every passivating phase.
+    However, if the 'refreshOnPassivate' property is false in the following example, 
+    then the session of the pooling repository is refreshed on an specified event by an event listener.
+    The event listener defined here tries to refresh every session on the specified events.
+    
+    In the following example, the following properties should be defined in your configuration files:
+      - 'event.based.repository.address'
+      - 'event.based.repository.user.name'
+      - 'event.based.repository.password'
+    
+    If you want to use the following components for some reasons, please uncomment the followings.
+  -->
+  
+  
+  <!--
+
+  <bean id="javax.jcr.Repository.event.based" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
+        init-method="initialize" destroy-method="close">
+    <property name="repositoryAddress" value="${event.based.repository.address}" />
+    <property name="defaultCredentialsUserID" value="${event.based.repository.user.name}" />
+    <property name="defaultCredentialsPassword" value="${event.based.repository.password}" />
+    <property name="maxActive" value="250" />
+    <property name="maxIdle" value="5" />
+    <property name="minIdle" value="0" />
+    <property name="initialSize" value="0" />
+    <property name="maxWait" value="10000" />
+    <property name="testOnBorrow" value="true" />
+    <property name="testOnReturn" value="false" />
+    <property name="testWhileIdle" value="false" />
+    <property name="timeBetweenEvictionRunsMillis" value="60000" />
+    <property name="numTestsPerEvictionRun" value="1" />
+    <property name="minEvictableIdleTimeMillis" value="60000" />
+    <property name="refreshOnPassivate" value="false" />
+  </bean>
+  
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject"><ref bean="javax.jcr.Repository"/></property>
+    <property name="targetMethod"><value>addRepository</value></property>
+    <property name="arguments">
+      <list>
+        <bean class="javax.jcr.SimpleCredentials">
+          <constructor-arg value="${event.based.repository.user.name}" />
+          <constructor-arg value="${event.based.repository.password}" />
+        </bean>
+        <ref bean="javax.jcr.Repository.event.based" />
+      </list>
+    </property>
+  </bean>
+  
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject"><ref bean="org.hippoecm.hst.core.jcr.EventListenersContainer"/></property>
+    <property name="targetMethod"><value>addEventListenerItem</value></property>
+    <property name="arguments">
+      <list>
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true" />
+          <property name="nodeRemovedEnabled" value="true" />
+          <property name="propertyAddedEnabled" value="true" />
+          <property name="propertyChangedEnabled" value="true" />
+          <property name="propertyRemovedEnabled" value="true" />
+          <property name="absolutePath" value="${observation.sites.config.node.path}" />
+          <property name="deep" value="true" />
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="nodeTypeNames">
+            <null/>
+          </property>
+          <property name="noLocal" value="false" />
+          <property name="eventListener">
+            <bean class="org.hippoecm.hst.core.jcr.pool.PoolingRepositorySessionsRefreshEventListener">
+              <property name="poolingRepositoris">
+                <list>
+                  <ref bean="javax.jcr.Repository.event.based" />
+                </list>
+              </property>  
+            </bean>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+  
+  -->
+  
+  
+</beans>

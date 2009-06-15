@@ -32,6 +32,13 @@ import org.hippoecm.hst.core.ResourceLifecycleManagement;
 public interface MultipleRepository extends Repository {
     
     /**
+     * Adds an internal repository with a credentials as key
+     * @param credentials
+     * @param repository
+     */
+    void addRepository(Credentials credentials, Repository repository);
+    
+    /**
      * Returns the internal repository map.
      * 
      * @return
