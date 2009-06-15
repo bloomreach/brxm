@@ -30,6 +30,7 @@ import javax.servlet.ServletConfig;
 import org.apache.commons.digester.Digester;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.container.HstContainerServlet;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
@@ -51,6 +52,7 @@ import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
@@ -193,6 +195,19 @@ public class BaseHstComponent extends GenericHstComponent {
             }
         }
         return obm;
+    }
+    
+    /**
+     * This returns the client ComponentManager if one is configured with its default name. If set on the context with a different
+     * attribute name, you need to fetch it yourself with a different attr name
+     * @return the client ComponentManager or <code>null</code> if none configured 
+     */
+    public ComponentManager getDefaultClientComponentManager(){
+        ComponentManager clientComponentManager = (ComponentManager)this.getServletConfig().getServletContext().getAttribute(HstContainerServlet.CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);
+        if(clientComponentManager == null) {
+            log.warn("Cannot get a client component manager from servlet context for attr name '{}'", HstContainerServlet.CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);
+        }
+        return  clientComponentManager;
     }
     
     /**

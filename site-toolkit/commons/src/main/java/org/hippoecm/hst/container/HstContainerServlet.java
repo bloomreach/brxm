@@ -47,6 +47,8 @@ public class HstContainerServlet extends HttpServlet {
 
     public static final String CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM = "clientComponentManagerContextAttributeName";
 
+    public static final String CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME = HstContainerServlet.class.getName() + ".clientComponentManager";
+    
     protected HstContainerConfig requestContainerConfig;
     
     protected String contextNamespace;
