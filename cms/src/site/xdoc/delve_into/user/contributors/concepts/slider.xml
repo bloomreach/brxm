@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -31,13 +31,13 @@ ________________________________________________________________________________
 
    <div class='group'>
     <div class='screenshot'>
-     <img src="../../../../images/screenshots/cms_M9/contribs/sliders_with_images_open.png" alt='sliders'/>
+     <img src="../../../../images/screenshots/cms_M13/contribs/sliders_with_images_open.png" alt='sliders'/>
     </div>
     <p>
-      The sliders in the <a href='./content_navigation_panel.html'>content navigation panel</a>. 
+      The sliders in the <a href='./folder_navigation_panel.html'>folder navigation panel</a>.
       The 'images' slider is now open, while the 'documents' slider above it is closed,
-      and the 'assets' slider below it is also closed. 
-    </p>   
+      and the 'assets' slider below it is also closed.
+    </p>
    </div>
 
     <p>
@@ -45,18 +45,18 @@ ________________________________________________________________________________
      In a set of <i>sliders</i>, only one slider is fully visible at any time, while of all other sliders
      only the caption, with its name, is visible.
      Sliders slide up and down and always keep their order.
-    </p>    
+    </p>
     <p>
-       In the <a href='./content_navigation_panel.html'>content navigation panel</a>,
+       In the <a href='./folder_navigation_panel.html'>folder navigation panel</a>,
        the items organized in sliders are the upperlevel folders, folders that have no parent folders.
-       As they are folders, they will become the <a href='current_folder.html'>current folder</a> 
-       if their slider is selected, but no subfolder within that slider.
-    </p> 
- 
+       As they are folders, they will become the <a href='current_folder.html'>current folder</a>
+       if their slider is selected, while no subfolder within that slider is selected.
+    </p>
+
     <subsection name='Next'>
      If you are doing the tour, use the back button of your browser to resume the tour.
     </subsection>
 
    </section>
   </body>
-</document>        
+</document>

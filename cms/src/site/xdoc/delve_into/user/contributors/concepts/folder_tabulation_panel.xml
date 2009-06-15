@@ -35,24 +35,24 @@ ________________________________________________________________________________
    </script>
     <div class='group'>
      <div id='screenshot'><div>
-      <img src="../../../../images/screenshots/cms_M9/contribs/folder_tabulation_panel.png" 
+      <img src="../../../../images/screenshots/cms_M13/contribs/folder_tabulation_panel.png" 
        alt='folder tabulation panel screenshot'/>
      </div></div>
      <p>
-      The folder tabulation panel. 
+      The folder tabulation panel.
       <!-- Note that the left part of the content tabulation panel
-       will be hidden under the   
+       will be hidden under the
        <a href='documents_panel.html'>documents_panel</a>, if any document is .........
       -->
-     </p>   
+     </p>
     </div>
 
     <p>
-     The folder tabulation panel is the panel where the content of the 
+     The folder tabulation panel is the panel where the content of the
      <a href='current_folder.html'>current folder</a> is tabulated.
-     The 'name' column of this table gives the names of all items of content 
+     The 'name' column of this table gives the names of all items of content
      while the other columns give more information on each item:
-     In the first column an icon indicates the type of the item 
+     In the first column an icon indicates the type of the item
      and in the third column an icon indicates the state of the item:
      if it is published on the web or not.
 
@@ -65,14 +65,14 @@ ________________________________________________________________________________
       If you are doing the <a href='../tour.html'>tour</a>, use the back button of your browser to continue.
       (There is no hyperlink here, because you can get here from many different pages.)
      </li>
-    </ul>       
+    </ul>
    </subsection>
    <subsection name='Alternative'>
     <ul>
      <li><a href='./index.html'>Concept list.</a>.</li>
      <li><a href='../howto/index.html'>Howto list.</a>.</li>
-    </ul>       
+    </ul>
    </subsection>
   </section>
  </body>
-</document>        
+</document>

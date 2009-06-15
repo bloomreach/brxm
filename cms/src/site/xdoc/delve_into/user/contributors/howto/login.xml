@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -42,32 +42,32 @@ ________________________________________________________________________________
       <p>Marc logs in to Hippo CMS. He has typed his password, but only bullets are shown,
        to prevent someone looking over his shoulder from reading it. He chose the Hippo CMS to
        be in English. Now he is about to press the button marked 'login'.
-       (<a href='./screenshots.html'>screenshots</a>)
+       (<a href='../../screenshots.html'>About using the screenshots.</a>)
       </p>
    </div>
 
     <p>Each time one starts working with Hippo CMS one has to login
        to it, identifying oneselve. This ensures that no unauthorized
-       persons can get access to Hippo CMS.          
+       persons can get access to Hippo CMS.
     </p>
 
     <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. 
-     These must been given to you by your Hippo CMS administrator. 
+     After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog.
+     Type your Hippo CMS username and password.
+     These must been given to you by your Hippo CMS administrator.
     </p>
     <p>
      If usernames are not yet defined for your Hippo CMS, then
      you may use the default username and password: username=author, password=author.
      Note that in this case, your Hippo CMS is not yet protected by the login procedure,
      as anyone can read this.
-    </p>    
+    </p>
 
    <subsection name='Next'>
     <ul>
-     <li><a href='./goto_content_workspace.html'>Go to the 
+     <li><a href='./goto_content_workspace.html'>Go to the
       content workspace (continue</a> <a href='../tour.html'>tour).</a></li>
-    </ul>       
+    </ul>
    </subsection>
 
    <subsection name='Alternative'>

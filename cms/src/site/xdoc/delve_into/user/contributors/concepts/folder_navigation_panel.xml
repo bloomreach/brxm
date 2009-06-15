@@ -30,19 +30,26 @@ ________________________________________________________________________________
       <span class="shortdesc">What and where is the folder navigation panel?</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/screenshots/cms_M9/contribs/folder_navigation_panel.png" 
+     <img src="../../../../images/screenshots/cms_M13/contribs/folder_navigation_panel.png"
      alt='Folder navigation panel screenshot'/>
      <p>
-      The folder navigation panel. 
-     </p>   
+      About to press the newspaper folder in the
+      documents <a href='slider.html'>slider</a> in the folder navigation panel.
+      Before pressing,
+      the <a href='current_folder.html'>current folder</a> is common folder. After pressing,
+      it will be the newspaper folder.
+     </p>
    </div>
 
     <p>
-     The folder navigation panel is the panel in the <a href='./content_workspace.html'>content workspace</a> where you can
-     navigate in the folder tree, to go to a particular folder, which will become the 
-     <a href='./current_folder'>current folder</a>.  
-    </p>    
+     The folder navigation panel is the panel in
+     the <a href='content_workspace.html'>content workspace</a> where you can
+     navigate in the folder tree, to go to a particular folder, which will become the
+     <a href='current_folder.html'>current folder</a>.
+     The upper level folders are navigated by <a href='slider.html'>sliders</a>,
+     while all lower level folders are navigated in a tree.
+    </p>
 
    </section>
   </body>
-</document>        
+</document>

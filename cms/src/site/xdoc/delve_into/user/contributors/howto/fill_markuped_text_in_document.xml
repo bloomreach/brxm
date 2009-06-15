@@ -47,7 +47,7 @@ ________________________________________________________________________________
    </div>
 
    <p>
-     Ensure that in some way you have <a href='./set_edit_mode.html'>set the document in</a>
+     Ensure that in some way you have <a href='./set_edit_mode.html'>set the document in </a>
      <a href='../concepts/edit_mode.html'>edit mode</a>.  
      Click in a marked-up text inputfield, which is a multiline inputfield with clickable
      letters ('buttons') above it, at least 'B' for boldface, 'I' for italic and 'U' for underline.

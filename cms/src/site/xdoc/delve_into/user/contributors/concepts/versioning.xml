@@ -25,15 +25,17 @@
         <section name="Versioning">
          <span class='shortdesc'>What is versioning to a content contributor?</span>
 
-         <p>Versioning allows 
-             you to <a href='../howto/browsing_history_of_document.html'>browse the history of a document, i.e. to see the changes to the
-             document over time</a> and allows you to <a href='../howto/restore_previous_version.html'>restore a previous version of the document</a>,
+         <p>Versioning allows
+             you to <span href='../howto/browsing_history_of_document.html'>browse the history of a document,
+             i.e. to see the changes to the
+             document over time</span> and allows you to
+              <span href='../howto/restore_previous_version.html'>restore a previous version of the document</span>,
              to replace the current content of a document with content the document had sometime in the past.
          </p>
          <p>Versioning requires that copies of your document are saved for later history browsing and
             restoring. This is done automatically by Hippo CMS, but at what occasions the copies are automatically made
-            is a business rule decided by your organization. 
-            <span class='answer_later'>Who will know and how to find out what the business rule actually is?</span> 
+            is a business rule decided by your organization.
+            <span class='answer_later'>Who will know and how to find out what the business rule actually is?</span>
      </p>
 
 
