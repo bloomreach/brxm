@@ -18,6 +18,7 @@ package org.hippoecm.hst.demo.beans;
 import java.util.Calendar;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 
 @Node(jcrType="demosite:newspage")
 public class NewsPage extends TextPage{
@@ -41,7 +42,11 @@ public class NewsPage extends TextPage{
             return this.imageBean;
         }
         imagesLoaded = true;
-        ImageLinkBean imageLinkBean = getBean("demosite:image");
+        HippoBean bean = getBean("demosite:image");
+        if(!(bean instanceof ImageLinkBean)) {
+            return null;
+        }
+        ImageLinkBean imageLinkBean = (ImageLinkBean)bean;
         if(imageLinkBean == null) {
             return null;
         }
