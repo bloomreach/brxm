@@ -48,7 +48,8 @@ import javax.naming.spi.ObjectFactory;
  *             testWhileIdle="false"
  *             timeBetweenEvictionRunsMillis="60000"
  *             numTestsPerEvictionRun="1"
- *             minEvictableIdleTimeMillis="60000" />
+ *             minEvictableIdleTimeMillis="60000"
+ *             refreshOnPassivate="true" />
  *   ...
  * &lt;/Context>
  * </pre></code>
@@ -122,7 +123,9 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
                 poolingRepository.setNumTestsPerEvictionRun(Integer.parseInt(value));
             } else if (type.equals("minEvictableIdleTimeMillis")) {
                 poolingRepository.setMinEvictableIdleTimeMillis(Long.parseLong(value));
-            } 
+            } else if (type.equals("refreshOnPassivate")) {
+                poolingRepository.setRefreshOnPassivate(Boolean.parseBoolean(value));
+            }
         }
         
         poolingRepository.initialize();

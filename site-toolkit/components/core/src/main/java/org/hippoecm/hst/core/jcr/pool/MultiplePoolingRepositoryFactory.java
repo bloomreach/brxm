@@ -62,7 +62,8 @@ import org.slf4j.LoggerFactory;
  *             testWhileIdle="false, false"
  *             timeBetweenEvictionRunsMillis="60000, 60000"
  *             numTestsPerEvictionRun="1, 1"
- *             minEvictableIdleTimeMillis="60000, 60000" />
+ *             minEvictableIdleTimeMillis="60000, 60000"
+ *             refreshOnPassivate="true, true" />
  *   ...
  * &lt;/Context>
  * </pre></code>
@@ -191,7 +192,11 @@ public class MultiplePoolingRepositoryFactory implements ObjectFactory {
                 for (int i = 0; i < Math.min(valueArray.length, repositoryCount); i++) {
                     poolingRepositoryArray[i].setMinEvictableIdleTimeMillis(Long.parseLong(valueArray[i]));
                 }
-            } 
+            } else if (type.equals("refreshOnPassivate")) {
+                for (int i = 0; i < Math.min(valueArray.length, repositoryCount); i++) {
+                    poolingRepositoryArray[i].setRefreshOnPassivate(Boolean.parseBoolean(valueArray[i]));
+                }
+            }
         }
         
         for (int i = 0; i < poolingRepositoryArray.length; i++) {
