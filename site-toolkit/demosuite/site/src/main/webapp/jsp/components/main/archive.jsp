@@ -26,7 +26,7 @@
 <c:set var="lastpage" value="${searchResults.endPage}"/>
 <div id="yui-u">
         <h1>Archive</h1>
-        <h2>Displaying ${searchResults.startOffset} - ${searchResults.endOffset} of ${searchResults.total} results</h2>
+        <h2>Displaying ${searchResults.startOffset +1} - ${searchResults.endOffset} of ${searchResults.total} results</h2>
         
         <c:forEach var="bean" items="${searchResults.items}" varStatus="indexer">
             <hst:link var="link" hippobean="${bean.item}"/>                         
