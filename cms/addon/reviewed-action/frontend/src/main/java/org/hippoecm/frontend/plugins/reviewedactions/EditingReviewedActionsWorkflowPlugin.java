@@ -39,9 +39,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.OnCloseDialog;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
-import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorFilter;
-import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -178,7 +176,6 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
 
-                // FIXME more stable solution for this.
                 DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
                 info(new StringResourceModel("saved", EditingReviewedActionsWorkflowPlugin.this, null,
                         new Object[] { df.format(new Date()) }).getString());
@@ -203,26 +200,9 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-done-16.png")) {
             @Override
             public String execute(Workflow wf) throws Exception {
-                Node docNode = null;
-                try {
-                    docNode = ((WorkflowDescriptorModel) EditingReviewedActionsWorkflowPlugin.this.getModel()).getNode();
-                } catch(RepositoryException ex) {
-                    // ignore, we can't handle this.
-                }
-                
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
                 ((UserSession) Session.get()).getJcrSession().refresh(true);
-                
-                IEditorManager editorMgr = getPluginContext().getService(getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
-                if (editorMgr != null) {
-                    JcrNodeModel docModel = new JcrNodeModel(docNode);
-                    IEditor editor = editorMgr.getEditor(docModel);
-                    if (editor != null) {
-                        editor.setMode(Mode.VIEW);
-                    }
-                }
-
                 return null;
             }
         });

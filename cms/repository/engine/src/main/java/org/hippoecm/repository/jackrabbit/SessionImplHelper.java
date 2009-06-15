@@ -18,18 +18,13 @@ package org.hippoecm.repository.jackrabbit;
 import java.security.AccessControlException;
 import java.security.Principal;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -62,11 +57,11 @@ import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.NameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
-import org.apache.jackrabbit.util.XMLChar;
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.jackrabbit.MirrorVirtualProvider.MirrorNodeId;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedImportHandler;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSessionImporter;
+import org.hippoecm.repository.security.HippoAccessManager;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,173 +83,6 @@ abstract class SessionImplHelper {
     Subject subject;
     org.apache.jackrabbit.core.SessionImpl sessionImpl;
 
-    /**
-     * Local namespace mappings. Prefixes as keys and namespace URIs as values.
-     * <p>
-     * This map is only accessed from synchronized methods (see
-     * <a href="https://issues.apache.org/jira/browse/JCR-1793">JCR-1793</a>).
-     */
-    private final ConcurrentMap<String, String> namespaces = new ConcurrentHashMap<String, String>();
-
-    /**
-     * Clears the local namespace mappings. Subclasses that for example
-     * want to participate in a session pools should remember to call
-     * <code>super.logout()</code> when overriding this method to avoid
-     * namespace mappings to be carried over to a new session.
-     */
-    public void logout() {
-        namespaces.clear();
-    }
-
-    //------------------------------------------------< Namespace handling >--
-
-    /**
-     * Returns the namespace prefix mapped to the given URI. The mapping is
-     * added to the set of session-local namespace mappings unless it already
-     * exists there.
-     * <p>
-     * This behaviour is based on JSR 283 (JCR 2.0), but remains backwards
-     * compatible with JCR 1.0.
-     *
-     * @param uri namespace URI
-     * @return namespace prefix
-     * @throws NamespaceException if the namespace is not found
-     * @throws RepositoryException if a repository error occurs
-     */
-    public String getNamespacePrefix(String uri)
-            throws NamespaceException, RepositoryException {
-        Iterator<Map.Entry<String, String>> iterator = namespaces.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, String> entry = iterator.next();
-            if (entry.getValue().equals(uri)) {
-                return entry.getKey();
-            }
-        }
-
-        // The following throws an exception if the URI is not found, that's OK
-        String prefix = sessionImpl.getWorkspace().getNamespaceRegistry().getPrefix(uri);
-
-        // Generate a new prefix if the global mapping is already taken
-        String base = prefix;
-        for (int i = 2; namespaces.containsKey(prefix); i++) {
-            prefix = base + i;
-        }
-
-        namespaces.put(prefix, uri);
-        return prefix;
-    }
-
-    /**
-     * Returns the namespace URI mapped to the given prefix. The mapping is
-     * added to the set of session-local namespace mappings unless it already
-     * exists there.
-     * <p>
-     * This behaviour is based on JSR 283 (JCR 2.0), but remains backwards
-     * compatible with JCR 1.0.
-     *
-     * @param prefix namespace prefix
-     * @return namespace URI
-     * @throws NamespaceException if the namespace is not found
-     * @throws RepositoryException if a repository error occurs
-     */
-    public String getNamespaceURI(String prefix)
-            throws NamespaceException, RepositoryException {
-        String uri = (String) namespaces.get(prefix);
-
-        if (uri == null) {
-            // Not in local mappings, try the global ones
-            uri = sessionImpl.getWorkspace().getNamespaceRegistry().getURI(prefix);
-            if (namespaces.containsValue(uri)) {
-                // The global URI is locally mapped to some other prefix,
-                // so there are no mappings for this prefix
-                throw new NamespaceException("Namespace not found: " + prefix);
-            }
-            // Add the mapping to the local set, we already know that
-            // the prefix is not taken
-            namespaces.put(prefix, uri);
-        }
-
-        return uri;
-    }
-
-    /**
-     * Returns the prefixes of all known namespace mappings. All global
-     * mappings not already included in the local set of namespace mappings
-     * are added there.
-     * <p>
-     * This behaviour is based on JSR 283 (JCR 2.0), but remains backwards
-     * compatible with JCR 1.0.
-     *
-     * @return namespace prefixes
-     * @throws RepositoryException if a repository error occurs
-     */
-    public String[] getNamespacePrefixes()
-            throws RepositoryException {
-        NamespaceRegistry registry = sessionImpl.getWorkspace().getNamespaceRegistry();
-        String[] uris = registry.getURIs();
-        for (int i = 0; i < uris.length; i++) {
-            getNamespacePrefix(uris[i]);
-        }
-
-        return (String[])
-            namespaces.keySet().toArray(new String[namespaces.size()]);
-    }
-
-    /**
-     * Modifies the session local namespace mappings to contain the given
-     * prefix to URI mapping.
-     * <p>
-     * This behaviour is based on JSR 283 (JCR 2.0), but remains backwards
-     * compatible with JCR 1.0.
-     *
-     * @param prefix namespace prefix
-     * @param uri namespace URI
-     * @throws NamespaceException if the mapping is illegal
-     * @throws RepositoryException if a repository error occurs
-     */
-    public void setNamespacePrefix(String prefix, String uri)
-            throws NamespaceException, RepositoryException {
-        if (prefix == null) {
-            throw new IllegalArgumentException("Prefix must not be null");
-        } else if (uri == null) {
-            throw new IllegalArgumentException("Namespace must not be null");
-        } else if (prefix.length() == 0) {
-            throw new NamespaceException(
-                    "Empty prefix is reserved and can not be remapped");
-        } else if (uri.length() == 0) {
-            throw new NamespaceException(
-                    "Default namespace is reserved and can not be remapped");
-        } else if (prefix.toLowerCase().startsWith("xml")) {
-            throw new NamespaceException(
-                    "XML prefixes are reserved: " + prefix);
-        } else if (!XMLChar.isValidNCName(prefix)) {
-            throw new NamespaceException(
-                    "Prefix is not a valid XML NCName: " + prefix);
-        }
-
-        // FIXME Figure out how this should be handled
-        // Currently JSR 283 does not specify this exception, but for
-        // compatibility with JCR 1.0 TCK it probably should.
-        // Note that the solution here also affects the remove() code below
-        String previous = (String) namespaces.get(prefix);
-        if (previous != null && !previous.equals(uri)) {
-            throw new NamespaceException("Namespace already mapped");
-        }
-
-        namespaces.remove(prefix);
-        Iterator<Map.Entry<String, String>> iterator = namespaces.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, String> entry = iterator.next();
-            if (entry.getValue().equals(uri)) {
-                iterator.remove();
-            }
-        }
-
-        namespaces.put(prefix, uri);
-    }
-
-    
-    
     SessionImplHelper(org.apache.jackrabbit.core.SessionImpl sessionImpl,
                       NodeTypeManagerImpl ntMgr, RepositoryImpl rep, Subject subject) throws RepositoryException {
         this.sessionImpl = sessionImpl;
