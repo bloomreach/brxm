@@ -15,13 +15,19 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import java.util.Date;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.yui.calendar.DateTimeField;
+import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
@@ -32,7 +38,6 @@ public class AjaxDateTimeField extends DateTimeField {
 
     private static final long serialVersionUID = 1L;
 
-
     public AjaxDateTimeField(String id, IModel model) {
         super(id, model);
 
@@ -42,6 +47,21 @@ public class AjaxDateTimeField extends DateTimeField {
         get("amOrPmChoice").add(new ChangeBehaviour());
 
         setOutputMarkupId(true);
+
+        Button today = new AjaxButton("today") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form form) {
+                getField("date").setModelObject(new Date());
+
+                if (target != null) {
+                    target.addComponent(AjaxDateTimeField.this);
+                }
+            }
+        };
+        add(today);
+        today.setModel(new Model(getString("set-to-current-date")));
     }
 
     // callback that the ChangeBehaviour calls when one of the composing fields updates
@@ -94,5 +114,11 @@ public class AjaxDateTimeField extends DateTimeField {
         protected void onUpdate(AjaxRequestTarget target) {
             AjaxDateTimeField.this.onUpdate(target);
         }
+    }
+
+    @Override
+    protected void configure(Map widgetProperties) {
+        super.configure(widgetProperties);
+        //        widgetProperties.put("navigator", Boolean.TRUE);
     }
 }
