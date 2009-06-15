@@ -1,4 +1,4 @@
-package org.hippoecm.hst.core.util;
+package org.hippoecm.hst.util;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -18,7 +18,6 @@ import org.w3c.dom.Text;
 /**
  * Writes a DOM tree to a given Writer.
  * warning: this utility currently does not declare XML Namespaces.
- * <p>Utility class used by {@link org.hippoecm.hst.core.util.DOMUtils}.</p>
  * 
  * @version $Id$
  */

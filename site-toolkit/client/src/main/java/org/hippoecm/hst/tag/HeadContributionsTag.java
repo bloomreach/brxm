@@ -16,22 +16,24 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
-import org.dom4j.io.DOMReader;
 import org.dom4j.io.HTMLWriter;
 import org.dom4j.io.OutputFormat;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.util.DOMElementWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HeadContributionsTag extends TagSupport {
+    
+    static Logger logger = LoggerFactory.getLogger(HeadContributionsTag.class);
 
     private static final long serialVersionUID = 1L;
     private OutputFormat outputFormat = OutputFormat.createPrettyPrint();
@@ -60,33 +62,24 @@ public class HeadContributionsTag extends TagSupport {
             List<org.w3c.dom.Element> headElements = hstResponse.getHeadElements();
             
             if (headElements != null && !headElements.isEmpty()) {
-                JspWriter writer = pageContext.getOut();
-                HTMLWriter htmlWriter = new HTMLWriter(writer, this.outputFormat);
+                HTMLWriter htmlWriter = null;
                 
                 try {
                     org.dom4j.Element dom4jHeadElement = null;
-                    DocumentBuilder documentBuilder = null;
                     
                     for (org.w3c.dom.Element headElement : headElements) {
-                        if (headElement instanceof org.dom4j.Element) {
-                            dom4jHeadElement = (org.dom4j.Element) headElement;
-                        } else {
-                            if (documentBuilder == null) {
-                                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                                documentBuilder = factory.newDocumentBuilder();
-                            }
-                            
-                            org.w3c.dom.Document w3cDoc = documentBuilder.newDocument();
-                            w3cDoc.appendChild(headElement);
-                            DOMReader reader = new DOMReader();
-                            org.dom4j.Document dom4jDoc = reader.read(w3cDoc);
-                            dom4jHeadElement = dom4jDoc.getRootElement();
+                        if (htmlWriter == null) {
+                            htmlWriter = new HTMLWriter(pageContext.getOut(), this.outputFormat);
                         }
                         
-                        htmlWriter.write(dom4jHeadElement);
+                        if (headElement instanceof org.dom4j.Element) {
+                            dom4jHeadElement = (org.dom4j.Element) headElement;
+                            htmlWriter.write(dom4jHeadElement);
+                        } else {
+                            String stringified = stringifyElement(headElement, 80, 0, "  ");
+                            htmlWriter.write(stringified);
+                        }
                     }
-                } catch (ParserConfigurationException e) {
-                    throw new JspException("HeadContributionsTag Exception: cannot write to the output writer.");
                 } catch (IOException ioe) {
                     throw new JspException("HeadContributionsTag Exception: cannot write to the output writer.");
                 }
@@ -96,4 +89,21 @@ public class HeadContributionsTag extends TagSupport {
         return SKIP_BODY;
     }
 
+    private String stringifyElement(org.w3c.dom.Element element, int initialBufferSize, int indent, String indentWith) {
+        String stringified = null;
+        StringWriter writer = new StringWriter(initialBufferSize);
+        
+        try {
+            DOMElementWriter domWriter = new DOMElementWriter();
+            domWriter.write(element, writer, indent, indentWith);
+        } catch (Exception e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Failed to write element", e);
+            }
+        }
+
+        stringified = writer.toString();
+        return stringified;
+    }
+    
 }
