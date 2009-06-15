@@ -779,6 +779,10 @@ font-size: 12px; line-height: 18px; background: transparent; border: none; color
 
 /* date widget */
 .hippo-editor-field .hippo-editor-field-datepicker input{width: 80px}
+.hippo-editor-field .hippo-editor-field-datepicker input.time { border: 1px solid #e3e3e3; width: 30px; padding: 2px;}
+.hippo-editor-field .hippo-editor-field-datepicker span.yui-skin-sam { margin-right: 15px; }
+.hippo-editor-field .hippo-editor-field-datepicker input.today { border: 1px solid #e3e3e3; width: auto; padding: 2px; margin: 0px; }
+
 .hippo-editor-field .hippo-editor-field-datepicker select{width: 70px}
 
 /* Xinha xml editor used in the hippo-editor-field-html plugin */
