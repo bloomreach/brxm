@@ -24,7 +24,7 @@
          <link>${link}</link>
          <description>${item.summary}</description>
          <pubDate><fmt:formatDate value="${item.date.time}" pattern="EE, dd MMM yyyy HH:mm:ss Z"/></pubDate>
-         <guid>{link}</guid>
+         <guid>${link}</guid>
       </item>
       </c:forEach>
       
