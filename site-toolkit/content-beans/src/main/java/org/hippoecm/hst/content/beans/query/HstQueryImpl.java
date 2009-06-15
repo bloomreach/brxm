@@ -33,6 +33,7 @@ import org.hippoecm.hst.content.beans.query.filter.BaseFilter;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.hst.content.beans.query.filter.HstCtxWhereFilter;
+import org.hippoecm.hst.content.beans.query.filter.IsNodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.api.HippoQuery;
@@ -51,12 +52,20 @@ public class HstQueryImpl implements HstQuery {
     private Node scope;
     private List<String> orderByList = new ArrayList<String>();
     private NodeTypeFilter nodeTypeFilter;
+    private IsNodeTypeFilter isNodeTypeFilter;
 
     public HstQueryImpl(HstRequestContext hstRequestContext, ObjectConverter objectConverter, Node scope, NodeTypeFilter nodeTypeFilter) {
         this.hstRequestContext = hstRequestContext;
         this.objectConverter = objectConverter;
         this.scope = scope;
         this.nodeTypeFilter = nodeTypeFilter; 
+    }
+    
+    public HstQueryImpl(HstRequestContext hstRequestContext, ObjectConverter objectConverter, Node scope, IsNodeTypeFilter isNodeTypeFilter) {
+        this.hstRequestContext = hstRequestContext;
+        this.objectConverter = objectConverter;
+        this.scope = scope;
+        this.isNodeTypeFilter = isNodeTypeFilter; 
     }
 
    
@@ -121,7 +130,12 @@ public class HstQueryImpl implements HstQuery {
             }
          }
         
-        query.insert(0, "//*[");
+        if(this.isNodeTypeFilter != null) {
+            query.insert(0, isNodeTypeFilter.getJcrExpression() + "["); 
+        } else {
+            query.insert(0, "//*["); 
+        }
+        
         query.append("]");
         
         if(orderByList.size() > 0) {
