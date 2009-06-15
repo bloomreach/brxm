@@ -87,10 +87,6 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
          */
         enhanceComponentTree(templateRenderMap);
         
-        StringBuffer buf = new StringBuffer();
-        ConfigurationViewUtilities.view(buf, rootComponentConfigurations.get("hst:pages/home"));
-        System.out.println(buf);
-        System.out.println("!!!");
     }
      
     
