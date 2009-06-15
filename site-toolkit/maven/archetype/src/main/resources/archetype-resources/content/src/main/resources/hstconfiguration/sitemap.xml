@@ -36,7 +36,7 @@
             <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/about</sv:value>
+            <sv:value>hst:pages/detailpage</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
             <sv:value>common/About Us</sv:value>

@@ -11,14 +11,9 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class About extends BaseHstComponent {
+public class Detail extends BaseHstComponent {
 
-    public static final Logger log = LoggerFactory.getLogger(About.class);
-
-    @Override
-    public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        super.doAction(request, response);
-    }
+    public static final Logger log = LoggerFactory.getLogger(Detail.class);
 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
