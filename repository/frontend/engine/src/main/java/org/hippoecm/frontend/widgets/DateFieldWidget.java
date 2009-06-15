@@ -21,15 +21,14 @@ import java.util.GregorianCalendar;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-
-import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-
-public class DateFieldWidget extends AjaxUpdatingWidget {
+public class DateFieldWidget extends Panel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -40,16 +39,16 @@ public class DateFieldWidget extends AjaxUpdatingWidget {
     public DateFieldWidget(String id, IModel model) {
         super(id, model);
 
-        final JcrPropertyValueModel  valueModel = (JcrPropertyValueModel) getModel();
+        final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
         Date date;
         try {
             date = valueModel.getValue().getDate().getTime();
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
             // FIXME:  log error
             date = null;
         }
 
-        addFormField(new AjaxDateTimeField("widget", new Model(date) {
+        add(new AjaxDateTimeField("widget", new Model(date) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -57,8 +56,9 @@ public class DateFieldWidget extends AjaxUpdatingWidget {
                 Calendar calendar = new GregorianCalendar();
                 calendar.setTime((Date) object);
                 try {
-                  valueModel.setValue(valueModel.getJcrPropertymodel().getProperty().getSession().getValueFactory().createValue(calendar));
-                } catch(RepositoryException ex) {
+                    valueModel.setValue(valueModel.getJcrPropertymodel().getProperty().getSession().getValueFactory()
+                            .createValue(calendar));
+                } catch (RepositoryException ex) {
                     log.error(ex.getMessage(), ex);
                 }
                 super.setObject(object);
