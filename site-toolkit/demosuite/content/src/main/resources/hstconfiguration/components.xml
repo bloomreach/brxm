@@ -83,7 +83,7 @@
 		<sv:property sv:name="hst:template" sv:type="String">
 			<sv:value>homelayout</sv:value>
 		</sv:property>
-		<sv:node sv:name="bodynav">
+		<sv:node sv:name="leftmenu">
 			<sv:property sv:name="jcr:primaryType" sv:type="Name">
 				<sv:value>hst:component</sv:value>
 			</sv:property>

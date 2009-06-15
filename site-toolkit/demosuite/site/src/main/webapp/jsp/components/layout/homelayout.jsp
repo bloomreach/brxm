@@ -8,7 +8,7 @@
   <div id="yui-main">
     <div class="yui-b">
       <div class="yui-gf">
-          <hst:include ref="bodynav"/>
+          <hst:include ref="leftmenu"/>
           <hst:include ref="bodymain"/>
         </div>
     </div>
