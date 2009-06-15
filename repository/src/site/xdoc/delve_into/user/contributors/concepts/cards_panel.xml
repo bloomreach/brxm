@@ -29,14 +29,18 @@ ________________________________________________________________________________
    <section name="Cards panel">
       <span class="shortdesc">What and where is the cards panel?</span>
 
+   <script type="text/javascript">
+    leftpx=500;
+   </script>
     <div class='group'>
-     <div class='screenshot'>
-      <img src="../../../../images/screenshots/cms_M9/contribs/document_panel.png" 
+     <div id='screenshot'><div>
+       <img src="../../../../images/screenshots/cms_M13/contribs/cards_panel.png"
        alt='cards panel'/>
-     </div>
+     </div></div>
      <p>
-      The cards panel. 
-      <span class='rewrite'>Is for content. Call it content panel, file panel, present panel?</span>
+      The cards panel.
+      <span class='rewrite'>Is for content.
+       Call it content panel, file panel, present panel?</span>
      </p>
     </div>
 
@@ -51,10 +55,11 @@ ________________________________________________________________________________
      Each card has a tab at its upper edge and tabs of all
      cards are visible at all time. You can click on a tab to put that card on top.
     </p>
-    <p>The <i>cards panel</i> only exists when you have <a href='../howto/pullout_card.html'>pulled 
-      out at least one card</a>
-     from the repository. When you <a href='../howto/putback_card.html'>put back the last card</a>,
-     the <i>cards panel</i> goes away.
+    <p>The <i>cards panel</i> only exists when you have
+     <span href='../howto/open_file.html'>opened at least one file</span>, which
+     will be shown on a card. When you <span href='../howto/close_file.html'>close a file</span>,
+     its card goes away. If you close
+     the last of the opened files, the <i>cards panel</i> also goes away.
      The region on your screen that was occupied by the cards panel
      may then become empty, show a nice image or show another panel.
      </p>

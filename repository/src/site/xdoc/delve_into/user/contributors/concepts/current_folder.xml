@@ -29,42 +29,57 @@ ________________________________________________________________________________
    <section name="Current folder">
       <span class="shortdesc">What is the current folder?</span>
 
-    <div class='screenshot'>
-     <img src="../../../../images/screenshots/cms_M9/contribs/current_folder.png" 
-     alt='current folder screenshot'/>
-     <p>
-      The current folder is marked bright yellow in the 
-      <a href='folder_navigation_panel.html'>folder navigation panel</a>.
-     </p>   
-    </div>
+   <script type="text/javascript">
+    leftpx=300;
+   </script>
+   <div class='group'>
+    <div id='screenshot'><div>
+     <img src="../../../../images/screenshots/cms_M13/contribs/current_folder.png"
+      alt='current folder screenshot'/>
+    </div></div>
+    <p>
+      The current folder 'common' is marked bright yellow in the
+      <a href='folder_navigation_panel.html'>folder navigation panel</a> and its contents
+      is shown in the <a href='folder_tabulation_panel.html'>folder tabulation panel</a>.
+      The current folder contains a document titled 'About Us' and document titled 'homepage'.
+     </p>
+   </div>
 
     <p>
      The current folder is one single folder at any time, which is chosen by the user,
      by clicking on its name in the <a href='folder_navigation_panel.html'>folder navigation panel</a>
-     or in the <a href='content_tabulation_panel.html'>content tabulation panel</a>.
+     or in the <a href='folder_tabulation_panel.html'>content tabulation panel</a>.
      The current folder name is marked with a color in the <a href='folder_navigation_panel.html'>folder navigation panel</a>.
      At any time, the user can chose another folder to be the current folder.
     </p>
     <p>
      The content of the current folder is
-     tabulated in the <a href='content_tabulation_panel.html'>content tabulation panel</a>.
+     tabulated in the <a href='folder_tabulation_panel.html'>folder tabulation panel</a>.
      The content can be <a href='document'>documents</a>, images, <a href='asset'>assets</a> and subfolders.
      Of all items of content, information is presented in table form.
     </p>
     <p>
       The names of the subfolders of the current folder are listed under the current folder name in
       the  <a href='folder_navigation_panel.html'>folder navigation panel</a>.
-      This allows to proceed to one of the subfolders and make that the current folder. 
+      This allows to proceed to one of the subfolders and make that the current folder.
     </p>
     <p>
-     Particular actions are possible for the current folder, such as: creating a document in it, 
+     If a <a href='sliders'>slider</a> folder is the current folder, it is the one that is open.
+     If another folder is the current folder, it is marked bright yellow.
+    </p>
+    <p>
+      Note that when clicking in a <a href='folder_action_menu.html'>folder action menu</a>,
+      that folder has already become current, but the bright yellow marking will only be changed to
+      the new folder after the folder action has finished.
+    </p>
+    <p>
+     Particular actions are possible for the current folder, such as: creating a document in it,
      creating a subfolder in it, deleting a subfolder from it.
      The actions that a particular user may do on particular folder can be different for different folders.
-     The actions that are allowed on the current folder are presented in the 
-     <a href='folder_action_menu.html'>folder action menu</a>. 
-     At any particular moment, only folder actions on the current folder are possible.  
-    </p>    
+     The actions that are allowed on the current folder are presented in the
+     <a href='folder_action_menu.html'>folder action menu</a>.
+    </p>
 
    </section>
   </body>
-</document>        
+</document>

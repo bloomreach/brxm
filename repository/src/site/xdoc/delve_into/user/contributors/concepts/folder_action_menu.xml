@@ -29,29 +29,28 @@ ________________________________________________________________________________
    <section name="Folder action menu">
     <span class="shortdesc">What and where is the folder action menu?</span>
 
-    <div class='screenshot'>
-     <img src="../../../../images/screenshots/cms_M9/contribs/folder_action_menu.png" 
-     alt='Folder action menu screenshot'/>
+   <div class='group'>
+    <div id='screenshot'><div>
+     <img src="../../../../images/screenshots/cms_M13/contribs/folder_action_menu.png"
+      alt='Folder action menu screenshot'/>
+     </div></div>
      <p>
-      The folder action menu.  
-     </p>   
+      The folder action menu for the newspaper folder. The actions will be performed on
+      the newspaper folder and the newspaper folder will become the
+      <a href='current_folder.html'>current folder</a>.
+     </p>
     </div>
 
     <p>
      The folder action menu is a pull-down menu that
-     allows the user to choose an action to perform on the  
-     <a href='current_folder.html'>current folder</a>,
-     like creating a new document in it.
-     
-     Other possible actions are: creating a new subfolder in it,
+     allows the user to choose an action to perform on a folder, which becomes the
+     <a href='current_folder.html'>current folder</a>.
+     Possible actions are: creating a new document or subfolder in it,
      deleting a subfolder from it, reordering the folder, etc.
-    </p> 
+    </p>
     <p>
      The actions that a particular user may do on particular folder can be different for different folders.
     </p>
-    <p> 
-     At any particular moment, only folder actions on the current folder are possible.         
-    </p>
    </section>
   </body>
-</document>        
+</document>

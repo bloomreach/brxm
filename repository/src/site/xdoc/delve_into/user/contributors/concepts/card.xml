@@ -29,15 +29,18 @@ ________________________________________________________________________________
    <section name="Card">
       <span class="shortdesc">What and where are cards?</span>
 
+    <script type="text/javascript">
+     leftpx=500;
+    </script>
     <div class='group'>
-     <div class='screenshot'>
-      <img src="../../../../images/screenshots/cms_M9/contribs/document_card.png" 
-       alt='document cards'/>
-     </div>
+     <div id='screenshot'><div>
+       <img src="../../../../images/screenshots/cms_M13/contribs/document_card.png"
+        alt='document cards'/>
+     </div></div>
      <p>
-      A card. 
+      A card.
       <span class='add'>more about cards in the image</span>
-     </p>   
+     </p>
     </div>
 
     <p>
@@ -45,10 +48,9 @@ ________________________________________________________________________________
      for <a href='./edit_mode.html'>changing</a> and/or
      <a href='./review_mode.html'>reviewing</a> a single file (document, image or asset).
     </p>
-    <p>To change or review a file, you have to <a href='../howto/pullout_card.html'>pull
-      out the card</a> of the file
-      from the repository. The card will then be accessable in the
-      <a href='./cards_panel.html'>cards panel</a>.
+    <p>To change or review a file, you have to open the file.
+       The card will then be accessable on its own card in the
+       <a href='./cards_panel.html'>cards panel</a>.
    </p>
   </section>
  </body>
