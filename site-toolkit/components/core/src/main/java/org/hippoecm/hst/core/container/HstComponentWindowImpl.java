@@ -23,8 +23,12 @@ import java.util.Map;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstResponseState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HstComponentWindowImpl implements HstComponentWindow {
+
+    protected final static Logger log = LoggerFactory.getLogger(HstComponentWindowImpl.class);
     
     protected String name;
     protected String referenceName;
@@ -132,8 +136,11 @@ public class HstComponentWindowImpl implements HstComponentWindow {
             this.childWindowMap = new HashMap<String, HstComponentWindow>();
         }
         
-        this.childWindowMap.put(child.getName(), child);
-        
+        HstComponentWindow old = this.childWindowMap.put(child.getName(), child);
+        if(old != null) {
+            log.warn("Ambiguous components configuration because component sibblings found with same name. " +
+            		"The first one is replaced. Fix your configuration as this leads to unexpected behavior. Double name: '{}'", child.getName() );
+        }
         if (this.childWindowMapByReferenceName == null) {
             this.childWindowMapByReferenceName = new HashMap<String, HstComponentWindow>();
         }

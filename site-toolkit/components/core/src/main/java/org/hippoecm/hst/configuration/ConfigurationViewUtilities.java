@@ -128,6 +128,7 @@ public class ConfigurationViewUtilities {
         buf.append(newLine).append("referencename = ").append(hstComponentConfiguration.getReferenceName());
         buf.append(newLine).append("componentclassname = ").append(hstComponentConfiguration.getComponentClassName());
         buf.append(newLine).append("renderpath = ").append(hstComponentConfiguration.getRenderPath());
+        buf.append(newLine).append("parameters = ").append(hstComponentConfiguration.getParameters());
         for(HstComponentConfiguration childConfiguration : hstComponentConfiguration.getChildren().values()) {
             view(buf, indent+SMALL_INDENT, childConfiguration);
         }

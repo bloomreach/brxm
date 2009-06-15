@@ -219,34 +219,34 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     }
 
 
-    private HstComponentConfigurationService deepMerge(HstComponentConfigurationService parent, String newId, HstComponentConfigurationService child, List<HstComponentConfiguration> populated, Map<String, HstComponentConfiguration> rootComponentConfigurations){
+    private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId, HstComponentConfigurationService child, List<HstComponentConfiguration> populated, Map<String, HstComponentConfiguration> rootComponentConfigurations){
         if(child.getReferenceComponent() != null) {
             // populate child component if not yet happened
             child.populateComponentReferences(rootComponentConfigurations, populated);
         }
-        HstComponentConfigurationService merge = new HstComponentConfigurationService(newId);
-        merge.parent = parent;
-        merge.componentClassName = child.componentClassName;
-        merge.configurationRootNodePath = child.configurationRootNodePath;
-        merge.hstTemplate = child.hstTemplate;
-        merge.name = child.name;
-        merge.propertyMap = child.propertyMap;
-        merge.referenceName = child.referenceName;
-        merge.renderPath = child.renderPath;
-        merge.referenceComponent = child.referenceComponent;
-        merge.serveResourcePath = child.serveResourcePath;
-        merge.parameters = child.parameters;
+        HstComponentConfigurationService copy = new HstComponentConfigurationService(newId);
+        copy.parent = parent;
+        copy.componentClassName = child.componentClassName;
+        copy.configurationRootNodePath = child.configurationRootNodePath;
+        copy.hstTemplate = child.hstTemplate;
+        copy.name = child.name;
+        copy.propertyMap = child.propertyMap;
+        copy.referenceName = child.referenceName;
+        copy.renderPath = child.renderPath;
+        copy.referenceComponent = child.referenceComponent;
+        copy.serveResourcePath = child.serveResourcePath;
+        copy.parameters = child.parameters;
         List<String> copyToList = new ArrayList<String>();
         Collections.copy(copyToList, child.usedChildReferenceNames);
-        merge.usedChildReferenceNames = copyToList;
+        copy.usedChildReferenceNames = copyToList;
         for(HstComponentConfigurationService descendant : child.orderedListConfigs) {
-            String descId = merge.id + descendant.id;
-            HstComponentConfigurationService copyDescendant = deepMerge(merge,descId,descendant, populated, rootComponentConfigurations);
-            merge.componentConfigurations.put(copyDescendant.id, copyDescendant);
-            merge.orderedListConfigs.add(copyDescendant);
+            String descId = copy.id + descendant.id;
+            HstComponentConfigurationService copyDescendant = deepCopy(copy,descId,descendant, populated, rootComponentConfigurations);
+            copy.componentConfigurations.put(copyDescendant.id, copyDescendant);
+            copy.orderedListConfigs.add(copyDescendant);
             // do not need them by name for copies
         }
-        return merge;
+        return copy;
     }
     
     protected void populateComponentReferences(Map<String, HstComponentConfiguration> rootComponentConfigurations, List<HstComponentConfiguration> populated) {
@@ -291,22 +291,25 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                  Collections.copy(copyToList, referencedComp.usedChildReferenceNames);
                  this.usedChildReferenceNames.addAll(copyToList);
                 
-                 // now we need to copy all the descendant components from the referenced component to this component.
-                 // Note this has to be a copy!! 
+                 // now we need to merge all the descendant components from the referenced component with this component.
                  
                  for(HstComponentConfigurationService childToMerge : referencedComp.orderedListConfigs){
                      if(childToMerge.getReferenceComponent() != null) {
                          // populate child component if not yet happened
                          childToMerge.populateComponentReferences(rootComponentConfigurations, populated);
                          // after population, add it
-                         addDeepMerge(childToMerge, populated, rootComponentConfigurations);
+                         addDeepCopy(childToMerge, populated, rootComponentConfigurations);
                      }
                      if(this.childConfByName.get(childToMerge.name) != null){
                          // we have an overlay again because we have a component with the same name
-                         this.childConfByName.get(childToMerge.name).populateComponentReferences(rootComponentConfigurations, populated);
+                         // first populate it
+                         HstComponentConfigurationService existingChild = this.childConfByName.get(childToMerge.name);
+                         existingChild.populateComponentReferences(rootComponentConfigurations, populated);
+                         // merge the childToMerge with existingChild
+                         existingChild.combine(childToMerge, rootComponentConfigurations, populated);
                      } else {
                          // make a copy of the child
-                         addDeepMerge(childToMerge, populated,rootComponentConfigurations);
+                         addDeepCopy(childToMerge, populated,rootComponentConfigurations);
                      } 
                  }
                   
@@ -316,10 +319,44 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         }
     }
     
-    private void addDeepMerge(HstComponentConfigurationService childToCopy, List<HstComponentConfiguration> populated, Map<String, HstComponentConfiguration> rootComponentConfigurations) {
+    private void combine(HstComponentConfigurationService childToMerge, Map<String, HstComponentConfiguration> rootComponentConfigurations, List<HstComponentConfiguration> populated) {
+        if(!this.hasClassNameConfigured) this.componentClassName = childToMerge.componentClassName;
+        if(this.configurationRootNodePath == null) this.configurationRootNodePath = childToMerge.configurationRootNodePath;
+        if(this.hstTemplate == null) this.hstTemplate = childToMerge.hstTemplate;
+        if(this.name == null) this.name = childToMerge.name;
+        if(this.propertyMap == null) this.propertyMap = childToMerge.propertyMap;
+        if(this.referenceName == null) this.referenceName = childToMerge.referenceName;
+        if(this.renderPath == null) this.renderPath = childToMerge.renderPath;
+        if(this.referenceComponent == null) this.referenceComponent = childToMerge.referenceComponent;
+        if(this.serveResourcePath == null) this.serveResourcePath = childToMerge.serveResourcePath;
+        if(this.parameters == null) {
+            this.parameters = childToMerge.parameters;
+        } else if(childToMerge.parameters != null){
+            // as we already have parameters, add only the once we do not yet have
+            for(Entry<String,String> entry : childToMerge.parameters.entrySet()){
+                if(this.parameters.containsKey(entry.getKey())) { 
+                    // skip: we already have this parameter set ourselves
+                } else {
+                  this.parameters.put(entry.getKey(), entry.getValue());  
+                }
+            }
+        }
+        for(HstComponentConfigurationService toMerge :  childToMerge.orderedListConfigs) {
+            if(this.childConfByName.get(toMerge.name) != null){
+                this.childConfByName.get(toMerge.name).combine(toMerge, rootComponentConfigurations, populated);
+            } else {
+              //  String newId = this.id + "-" + toMerge.id;
+              //  this.deepCopy(this, newId, toMerge, populated, rootComponentConfigurations);
+                this.addDeepCopy(toMerge, populated, rootComponentConfigurations );
+            }
+        }
         
-        String newId = this.id + "-" + childToCopy.id;
-        HstComponentConfigurationService copy = this.deepMerge(this, newId, childToCopy, populated, rootComponentConfigurations);
+    }
+    
+    private void addDeepCopy(HstComponentConfigurationService childToMerge, List<HstComponentConfiguration> populated, Map<String, HstComponentConfiguration> rootComponentConfigurations) {
+        
+        String newId = this.id + "-" + childToMerge.id;
+        HstComponentConfigurationService copy = this.deepCopy(this, newId, childToMerge, populated, rootComponentConfigurations);
         this.componentConfigurations.put(copy.getId(), copy);
         this.orderedListConfigs.add(copy);
         
@@ -330,7 +367,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     protected void setRenderPath(Map<String, String> templateRenderMap) {
         String templateRenderPath = templateRenderMap.get(this.getHstTemplate());
         if(templateRenderPath == null) {
-            log.warn("Cannot find renderpath for component '{}'", this.getId());
+            log.debug("Cannot find renderpath for component '{}'. This component can only be used to be extended", this.getId());
         }
         this.renderPath = templateRenderPath;
         for(HstComponentConfigurationService child :  orderedListConfigs) {
