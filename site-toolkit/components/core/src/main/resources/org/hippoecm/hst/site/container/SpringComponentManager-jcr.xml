@@ -34,6 +34,13 @@
     <constructor-arg value="${writable.repository.password}" />
   </bean>
   
+  <!--
+  <bean id="javax.jcr.Credentials.event.based" class="javax.jcr.SimpleCredentials">
+    <constructor-arg value="${event.based.repository.user.name}" />
+    <constructor-arg value="${event.based.repository.password}" />
+  </bean>
+  -->
+      
   <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.MultipleRepositoryImpl">
     <!-- Delegating session pool repositories -->
     <constructor-arg>
@@ -80,6 +87,32 @@
             <property name="minEvictableIdleTimeMillis" value="60000" />
           </bean>
         </entry>
+        <!--
+          By default, disable refreshment on passivate.
+          Instead, try late refreshing for each session by an event listener. 
+        -->
+        <!--
+        <entry key-ref="javax.jcr.Credentials.event.based">
+          <bean class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
+                init-method="initialize" destroy-method="close">
+            <property name="repositoryAddress" value="${event.based.repository.address}" />
+            <property name="defaultCredentialsUserID" value="${event.based.repository.user.name}" />
+            <property name="defaultCredentialsPassword" value="${event.based.repository.password}" />
+            <property name="maxActive" value="250" />
+            <property name="maxIdle" value="5" />
+            <property name="minIdle" value="0" />
+            <property name="initialSize" value="0" />
+            <property name="maxWait" value="10000" />
+            <property name="testOnBorrow" value="true" />
+            <property name="testOnReturn" value="false" />
+            <property name="testWhileIdle" value="false" />
+            <property name="timeBetweenEvictionRunsMillis" value="60000" />
+            <property name="numTestsPerEvictionRun" value="1" />
+            <property name="minEvictableIdleTimeMillis" value="60000" />
+            <property name="refreshOnPassivate" value="false" />
+          </bean>
+        </entry>
+        -->
       </map>
     </constructor-arg>
     <!-- The default credentials for login() without credentials parameter. -->
