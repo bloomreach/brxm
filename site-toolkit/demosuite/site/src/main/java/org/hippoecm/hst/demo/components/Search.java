@@ -15,23 +15,28 @@
  */
 package org.hippoecm.hst.demo.components;
 
-import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Archive extends AbstractSearchComponent {
+public class Search extends AbstractSearchComponent {
 
-    public static final Logger log = LoggerFactory.getLogger(Archive.class);
-    
+    public static final Logger log = LoggerFactory.getLogger(Search.class);
+
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-       
-        HippoBean currentBean = this.getContentBean(request);
+        super.doBeforeRender(request, response);
+
+        String query = getPublicRequestParameter(request, "query");
         
-        doSearch(request, response, null, null, "demosite:date", DEFAULT_PAGE_SIZE, currentBean);
+        if (query == null || "".equals(query)) {
+            query = request.getParameter("query");
+        }
+
+        doSearch(request, response, query, null, null, DEFAULT_PAGE_SIZE, getSiteContentBaseBean(request));
+
     }
- 
+
 }
