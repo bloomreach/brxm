@@ -86,9 +86,8 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
                     cache.put(key, new NullResolvedSiteMapItem());
                     return null;
                 } else {
-                    log.warn("Did not find a matching sitemap item at all. Return the catch all sitemap item (the ** matcher) ");
                     // The ** has the value of the entire pathInfo
-                    params.put("1", pathInfo);
+                    params.put(String.valueOf(params.size()+1), pathInfo);
                     ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(hstSiteMapItemAny, params, pathInfo);
                     cache.put(key, r);
                     return r;
@@ -98,13 +97,21 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             }
         }
         
-       
         HstSiteMapItem matchedSiteMapItem =  resolveMatchingSiteMap(hstSiteMapItem, params, 1, elements);
       
         if(matchedSiteMapItem == null) {
-            log.warn("No matching sitemap item found for path '{}'. Cannot return ResolvedSiteMapItem. Return null", pathInfo);
-            cache.put(key, new NullResolvedSiteMapItem());
-            return null;
+            if(hstSiteMapItemAny != null) {
+                // There is a ** catch all sitemap item: use this one
+                params = new Properties();
+                params.put(String.valueOf(params.size()+1), pathInfo);
+                ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(hstSiteMapItemAny, params, pathInfo);
+                cache.put(key, r);
+                return r;
+            } else {
+                log.warn("No matching sitemap item found for path '{}'. Cannot return ResolvedSiteMapItem. Return null", pathInfo);
+                cache.put(key, new NullResolvedSiteMapItem());
+                return null;
+            }
         }
         
         if(log.isInfoEnabled()){
