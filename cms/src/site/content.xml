@@ -43,6 +43,7 @@
    <subsection>Prepare</subsection>
    <subsection>Configure Eclipse workspace</subsection>
    <subsection>Create Eclipse projects</subsection>
+   <subsection>Fixup</subsection>
    <subsection>Run</subsection>
    <subsection>Code formatting</subsection>
    <subsection>Keeping up</subsection>
@@ -127,10 +128,7 @@
    <subsection>Versioning invocation as part of a workflow step</subsection>
    <subsection>Expert information</subsection>
   </document><folder>eclipse
-   <title>Eclipse</title><shortdesc>Using eclipse for Hippo CMS addon projects</shortdesc><introduction>              <!-- tree -->
-  This section is to describe how to configure eclipse to use with Hippo CMS addon projects.
- </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
- </afterlist>
+   
    <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/custom/howto/eclipse">Configure Workspace
    <section>Configure Workspace</section>
    <shortdesc>Configure Eclipse Workspace for Hippo CMS addon projects.</shortdesc>
@@ -554,27 +552,14 @@
    <img>Derby logo</img>
    <img>Oracle logo</img>
   </document></folder><folder>tools
-   <title>Development Tools</title><shortdesc>Tools used when developing upon Hippo CMS 7</shortdesc><introduction>              <!-- tree -->
-  This section is to describe general tools and procedures needed when developing on top of Hippo CMS 7.
-  <span class="expires">When tools section finished</span>The intend is that the rest of the documentation
-  will link to this section where needed and thereby become cleaner.
- </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
- </afterlist>
+   
    <folder>howto
-   <title>Development Tools Howto</title><shortdesc>Howto's for tools used when developing upon Hippo CMS 7</shortdesc><introduction>              <!-- tree -->
-  This subsection of the tools section is to describe 
-  howto's of general tools and procedures needed when developing on top of Hippo CMS 7.
-  <span class="expires">When tools section finished</span>The intend is that the rest of the documentation
-  will link to the tools section where needed and thereby become cleaner.
- </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
- </afterlist>
+   
    <document ext="xml" filename="create_pom" relpath="delve_into/tools/howto">Create a pom.xml
    <section>Create a pom.xml</section>
    <shortdesc>Learn how to create a project object model file for maven.</shortdesc>
   </document><folder>eclipse
-   <title>Eclipse</title><shortdesc>How to use eclipse for Hippo projects.</shortdesc><introduction>              <!-- tree -->
- </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
- </afterlist>
+   
    <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/howto/eclipse">Configure Workspace
    <section>Configure Workspace</section>
    <shortdesc>Configure Eclipse Workspace for Hippo projects.</shortdesc>
@@ -594,9 +579,7 @@
    <shortdesc>Get the Hippo CMS source from the Hippo subversion repository.</shortdesc>
   </document><document ext="xml" filename="index" relpath="delve_into/tools/howto">
   </document><folder>maven
-   <title>Maven</title><shortdesc>How to use maven for Hippo projects.</shortdesc><introduction>              <!-- tree -->
- </introduction><afterlist>                 <!-- tree, e.g. <subsection name='Alternative'> -->
- </afterlist>
+   
    <document ext="xml.vm" filename="build_core_Hippo_CMS" relpath="delve_into/tools/howto/maven">Building the core Hippo CMS
    <section>Building the core Hippo CMS</section>
    <shortdesc>How to build the core Hippo CMS package from the sources?</shortdesc>
@@ -610,12 +593,7 @@
   </document><document ext="xml" filename="run_development_package" relpath="delve_into/tools/howto/maven">Run a development package
    <section>Run a development package</section>
    <shortdesc>How to build the package of a project and run it, all on the fly?</shortdesc>
-  </document></folder><document ext="xml" filename="snapshot_dependencies" relpath="delve_into/tools/howto">Using snapshot dependencies
-   <section>Using snapshot dependencies</section>
-   <shortdesc>How to ensure that projects that depend on snapshot versions of
-      packages will build?
-     </shortdesc>
-  </document></folder><document ext="xml" filename="index" relpath="delve_into/tools">
+  </document></folder></folder><document ext="xml" filename="index" relpath="delve_into/tools">
   </document></folder><folder>user
    
    <folder>cms_admins
@@ -628,10 +606,21 @@
      </p>
   </subsection>
  </afterlist>
-   <document ext="xml" filename="index" relpath="delve_into/user/cms_admins/concepts">
+   <document ext="xml" filename="home_workspace" relpath="delve_into/user/cms_admins/concepts">Home Workspace
+   <section>Home Workspace</section>
+   <shortdesc>What and where is the home workspace?</shortdesc>
+   <img>home workspace</img>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="index" relpath="delve_into/user/cms_admins/concepts">
    <subsection>Alternative</subsection>
   </document></folder><folder>howto
-   
+   <title>CMS admin Howto</title><shortdesc>A collection of howto's for small tasks a CMS admin may want to do.</shortdesc><afterlist>
+  <subsection name="Alternative">
+     <p>
+      If you do not know where to start, take the <a href="../tour.html">Tour</a>.
+     </p>
+  </subsection>
+ </afterlist>
    <document ext="xml" filename="add_group" relpath="delve_into/user/cms_admins/howto">Add Group
    <section>Add Group</section>
    <shortdesc>How to add a group to Hippo CMS to group users in.</shortdesc>
@@ -651,23 +640,22 @@
    <subsection>Alternative</subsection>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="change_group_properties" relpath="delve_into/user/cms_admins/howto">Change group properties
-   <section>Change group properties</section>
-   <shortdesc>How to change to properties of a Hippo CMS group of users.</shortdesc>
-   <img>Group properties screenshot</img>
-   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="change_group_properties" relpath="delve_into/user/cms_admins/howto">Edit group properties
+   <section>Edit group properties</section>
+   <shortdesc>How to edit the properties of a Hippo CMS user group.</shortdesc>
+   <img>Edit group properties screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="change_password" relpath="delve_into/user/cms_admins/howto">Change password
-   <section>Change password</section>
-   <shortdesc>How to change the password of a Hippo CMS user.</shortdesc>
-   <img>Change password screenshot</img>
+  </document><document ext="xml" filename="change_password" relpath="delve_into/user/cms_admins/howto">Change own password
+   <section>Change own password</section>
+   <shortdesc>How to change your own password.</shortdesc>
+   <img>Change own screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="change_user_properties" relpath="delve_into/user/cms_admins/howto">Change user properties
-   <section>Change user properties</section>
-   <shortdesc>How to change to properties of a Hippo CMS user account.</shortdesc>
-   <img>Change user properties screenshot</img>
+  </document><document ext="xml" filename="change_user_properties" relpath="delve_into/user/cms_admins/howto">Edit user properties
+   <section>Edit user properties</section>
+   <shortdesc>How to edit the properties of a Hippo CMS user account.</shortdesc>
+   <img>Edit user properties screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="deactivate_account" relpath="delve_into/user/cms_admins/howto">Deactivate account
@@ -676,27 +664,13 @@
    <img>Deactivate account screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="goto_group_properties" relpath="delve_into/user/cms_admins/howto">Goto Group Properties
-   <section>Goto Group Properties</section>
-   <shortdesc>How to get to the properties of a group</shortdesc>
-   <img>group properties screenshot</img>
+  </document><document ext="xml" filename="goto_user_management_workspace" relpath="delve_into/user/cms_admins/howto">Goto User Management Workspace
+   <section>Goto User Management Workspace</section>
+   <shortdesc>How to get to the user management workspace, to add users and groups or change their properties.</shortdesc>
+   <img>user management workspace screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="goto_user_management_tab" relpath="delve_into/user/cms_admins/howto">Goto User Management Tab
-   <section>Goto User Management Tab</section>
-   <shortdesc>How to get to the user management tab, to add users and groups or change their properties.</shortdesc>
-   <img>user management tab screenshot</img>
-   <subsection>Next</subsection>
-   <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="goto_user_properties" relpath="delve_into/user/cms_admins/howto">Goto User Properties
-   <section>Goto User Properties</section>
-   <shortdesc>How to get to the properties of a user</shortdesc>
-   <img>user properties screenshot</img>
-   <subsection>Next</subsection>
-   <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="index" relpath="delve_into/user/cms_admins/howto">CMS admin Howto
-   <section>CMS admin Howto</section>
-   <shortdesc>A collection of howto's for small tasks a CMS admin may want to do.</shortdesc>
+  </document><document ext="xml" filename="index" relpath="delve_into/user/cms_admins/howto">
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="login" relpath="delve_into/user/cms_admins/howto">Login as Admin
    <section>Login as Admin</section>
@@ -710,10 +684,21 @@
    <img>logout screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="publish_all" relpath="delve_into/user/cms_admins/howto">Publish all
+   <section>Publish all</section>
+   <shortdesc>How to publish all documents simultaneously?</shortdesc>
+   <img>Add user screenshot</img>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="save_settings" relpath="delve_into/user/cms_admins/howto">Save settings
    <section>Save settings</section>
    <shortdesc>How to save settings, like the properties of a user of a group.</shortdesc>
-   <img>save settings screenshot</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="set_permissions_for_group" relpath="delve_into/user/cms_admins/howto">Set group permissions
+   <section>Set group permissions</section>
+   <shortdesc>How to set permissions for a Hippo CMS group of users.</shortdesc>
+   <img>Set permissions screenshot</img>
+   <subsection>Alternative</subsection>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="start_CMS" relpath="delve_into/user/cms_admins/howto">Start CMS
@@ -721,18 +706,33 @@
    <shortdesc>How to start a CMS session in your browser</shortdesc>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="type_in_editing_region" relpath="delve_into/user/cms_admins/howto">Type in editing region
+  </document></folder><document ext="xml" filename="index" relpath="delve_into/user/cms_admins">CMS Admin Guide
+   <section>CMS Admin Guide</section>
+   <shortdesc>Guide for Hippo CMS users to perform the role of CMS admin</shortdesc>
+  </document><folder>todo
+   
+   <document ext="xml" filename="goto_group_properties" relpath="delve_into/user/cms_admins/todo">Edit Group Properties
+   <section>Edit Group Properties</section>
+   <shortdesc>How to edit the properties of a group.</shortdesc>
+   <img>edit group properties screenshot</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="goto_user_properties" relpath="delve_into/user/cms_admins/todo">Goto User Properties
+   <section>Goto User Properties</section>
+   <shortdesc>How to get to the properties of a user</shortdesc>
+   <img>user properties screenshot</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="type_in_editing_region" relpath="delve_into/user/cms_admins/todo">Type in editing region
    <section>Type in editing region</section>
    <shortdesc>How to type in an editing regin, creating markuped text.</shortdesc>
    <img>Editing region screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document></folder><document ext="xml" filename="index" relpath="delve_into/user/cms_admins">CMS Admin Guide
-   <section>CMS Admin Guide</section>
-   <shortdesc>Guide for Hippo CMS users to perform the role of CMS admin</shortdesc>
-  </document><document ext="xml" filename="tour" relpath="delve_into/user/cms_admins">Hippo CMS Admin Tour
+  </document></folder><document ext="xml" filename="tour" relpath="delve_into/user/cms_admins">Hippo CMS Admin Tour
    <section>Hippo CMS Admin Tour</section>
-   <shortdesc>To get introduced to the role of CMS administrator, take the following tour.</shortdesc>
+   <shortdesc>To get introduced to the role of CMS administrator,
+    take the following tour.</shortdesc>
   </document></folder><folder>contributors
    
    <folder>concepts
@@ -785,6 +785,9 @@
    <img>edit mode sreenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="editor" relpath="delve_into/user/contributors/concepts">CMS editor
+   <section>CMS editor</section>
+   <shortdesc>What is a CMS editor?</shortdesc>
   </document><document ext="xml" filename="folder_action_menu" relpath="delve_into/user/contributors/concepts">Folder action menu
    <section>Folder action menu</section>
    <shortdesc>What and where is the folder action menu?</shortdesc>
@@ -860,7 +863,13 @@
      </p>
   </subsection>
  </afterlist>
-   <document ext="xml" filename="create_document" relpath="delve_into/user/contributors/howto">Create Document
+   <document ext="xml" filename="change_own_password" relpath="delve_into/user/contributors/howto">Change own password
+   <section>Change own password</section>
+   <shortdesc>How to change your own password.</shortdesc>
+   <img>Change own screenshot</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="create_document" relpath="delve_into/user/contributors/howto">Create Document
    <section>Create Document</section>
    <shortdesc>How to create a document to write in.</shortdesc>
    <img>Create document screenshot</img>
@@ -1073,13 +1082,14 @@
    <section>Boolean</section>
    <shortdesc>What is a boolean</shortdesc>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="current_folder" relpath="delve_into/user/information_architects/concepts">Current folder
-   <section>Current folder</section>
-   <shortdesc>What is the current folder?</shortdesc>
-   <img>current folder screenshot</img>
   </document><document ext="xml" filename="documenttype" relpath="delve_into/user/information_architects/concepts">Document type
    <section>Document type</section>
    <shortdesc>What is a document type</shortdesc>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="editing" relpath="delve_into/user/information_architects/concepts">Editing
+   <section>Editing</section>
+   <shortdesc>What is editing?</shortdesc>
+   <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="edit_mode" relpath="delve_into/user/information_architects/concepts">Edit mode
    <section>Edit mode</section>
@@ -1087,14 +1097,16 @@
    <img>edit mode sreenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="field_properties_overview" relpath="delve_into/user/information_architects/concepts">string
+   <section>string</section>
+   <shortdesc>What is a field properties overview</shortdesc>
+   <img>field properties overview screenshot</img>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="field_type_menu" relpath="delve_into/user/information_architects/concepts">string
    <section>string</section>
    <shortdesc>What is a field type menu</shortdesc>
+   <img>field type menu screenshot</img>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="folder_action_menu" relpath="delve_into/user/information_architects/concepts">Folder action menu
-   <section>Folder action menu</section>
-   <shortdesc>What and where is the folder action menu?</shortdesc>
-   <img>Folder action menu screenshot</img>
   </document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/concepts">
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="mandatory_or_optional" relpath="delve_into/user/information_architects/concepts">Mandatory or optional field
@@ -1115,6 +1127,22 @@
    <section>namespace</section>
    <shortdesc>What is a namespace</shortdesc>
    <subsection>Alternative</subsection>
+  </document><folder>old
+   
+   <document ext="xml" filename="current_folder" relpath="delve_into/user/information_architects/concepts/old">Current folder
+   <section>Current folder</section>
+   <shortdesc>What is the current folder?</shortdesc>
+   <img>current folder screenshot</img>
+  </document><document ext="xml" filename="folder_action_menu" relpath="delve_into/user/information_architects/concepts/old">Folder action menu
+   <section>Folder action menu</section>
+   <shortdesc>What and where is the folder action menu?</shortdesc>
+   <img>Folder action menu screenshot</img>
+  </document></folder><document ext="xml" filename="review_mode" relpath="delve_into/user/information_architects/concepts">Review mode
+   <section>Review mode</section>
+   <shortdesc>What is review mode?</shortdesc>
+   <img>review mode screenshot</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="string" relpath="delve_into/user/information_architects/concepts">string
    <section>string</section>
    <shortdesc>What is a string</shortdesc>
@@ -1123,8 +1151,53 @@
    <section>URL</section>
    <shortdesc>URL</shortdesc>
    <subsection>Alternative</subsection>
-  </document></folder><folder>howto
+  </document></folder><folder>document_types
    
+   <document ext="xml" filename="editor" relpath="delve_into/user/information_architects/document_types">The Document Type Editor
+   <section>The Document Type Editor</section>
+   <img>Screenshot of the document type editor</img>
+   <subsection>Using the editor</subsection>
+   <img>Screenshot detail of new field type selector</img>
+   <img>Screenshot detail of field preview</img>
+   <img>Screenshot detail of field properties editor</img>
+   <img>Screenshot detail of save options</img>
+   <subsection>Applying your changes</subsection>
+   <img>Screenshot detail of update content action</img>
+   <subsection>Advanced</subsection>
+  </document><document ext="xml" filename="examples" relpath="delve_into/user/information_architects/document_types">Examples of document types
+   <section>Examples of document types</section>
+  </document><document ext="xml" filename="fieldtypes" relpath="delve_into/user/information_architects/document_types">Field Types Reference
+   <section>Field Types Reference</section>
+   <subsection>String</subsection>
+   <img>screenshot detail of string widget</img>
+   <subsection>Html</subsection>
+   <img>screenshot detail of html widget</img>
+   <subsection>Text</subsection>
+   <img>screenshot detail of text widget</img>
+   <subsection>Date</subsection>
+   <img>screenshot detail of date widget</img>
+   <img>screenshot detail of date widget with popup calendar</img>
+   <subsection>Boolean</subsection>
+   <img>screenshot detail of boolean widget</img>
+   <subsection>hippo:resource</subsection>
+   <img>screenshot detail of hippo:resource widget</img>
+   <subsection>hippo:query</subsection>
+   <subsection>hippo:facetselect</subsection>
+  </document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/document_types">Document Types
+   <section>Document Types</section>
+  </document><document ext="xml" filename="tutorial" relpath="delve_into/user/information_architects/document_types">Document Type Tutorial
+   <section>Document Type Tutorial</section>
+   <subsection>Creating your first document type</subsection>
+   <img>screenshot detail of 'create new type' action</img>
+   <img>screenshot detail of 'create new type' dialog</img>
+  </document></folder><folder>howto
+   <title>CMS Information Architect Howto</title><shortdesc>A collection of howto's for small tasks an information architect may want to do!</shortdesc><afterlist>
+  <subsection name="Alternative">
+     <p>
+      If you do not know where to start, take the <a href="../tour.html">Tour</a>.
+     </p>
+  </subsection>
+ </afterlist>
    <document ext="xml" filename="add_boolean_to_documenttype" relpath="delve_into/user/information_architects/howto">Add boolean to document type
    <section>Add boolean to document type</section>
    <shortdesc>How to add a boolean to a document type.</shortdesc>
@@ -1174,44 +1247,7 @@
    <subsection>Alternative</subsection>
   </document><folder>document_types
    
-   <document ext="xml" filename="editor" relpath="delve_into/user/information_architects/howto/document_types">The Document Type Editor
-   <section>The Document Type Editor</section>
-   <img>Screenshot of the document type editor</img>
-   <subsection>Using the editor</subsection>
-   <img>Screenshot detail of new field type selector</img>
-   <img>Screenshot detail of field preview</img>
-   <img>Screenshot detail of field properties editor</img>
-   <img>Screenshot detail of save options</img>
-   <subsection>Applying your changes</subsection>
-   <img>Screenshot detail of update content action</img>
-   <subsection>Advanced</subsection>
-  </document><document ext="xml" filename="examples" relpath="delve_into/user/information_architects/howto/document_types">Examples of document types
-   <section>Examples of document types</section>
-  </document><document ext="xml" filename="fieldtypes" relpath="delve_into/user/information_architects/howto/document_types">Field Types Reference
-   <section>Field Types Reference</section>
-   <subsection>String</subsection>
-   <img>screenshot detail of string widget</img>
-   <subsection>Html</subsection>
-   <img>screenshot detail of html widget</img>
-   <subsection>Text</subsection>
-   <img>screenshot detail of text widget</img>
-   <subsection>Date</subsection>
-   <img>screenshot detail of date widget</img>
-   <img>screenshot detail of date widget with popup calendar</img>
-   <subsection>Boolean</subsection>
-   <img>screenshot detail of boolean widget</img>
-   <subsection>hippo:resource</subsection>
-   <img>screenshot detail of hippo:resource widget</img>
-   <subsection>hippo:query</subsection>
-   <subsection>hippo:facetselect</subsection>
-  </document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/howto/document_types">Document Types
-   <section>Document Types</section>
-  </document><document ext="xml" filename="tutorial" relpath="delve_into/user/information_architects/howto/document_types">Document Type Tutorial
-   <section>Document Type Tutorial</section>
-   <subsection>Creating your first document type</subsection>
-   <img>screenshot detail of 'create new type' action</img>
-   <img>screenshot detail of 'create new type' dialog</img>
-  </document></folder><document ext="xml" filename="fieldcaption" relpath="delve_into/user/information_architects/howto">Field caption
+   <document ext="" filename="*" relpath="delve_into/user/information_architects/howto/document_types"><notvalid>Document is not a valid XML document.</notvalid></document></folder><document ext="xml" filename="fieldcaption" relpath="delve_into/user/information_architects/howto">Field caption
    <section>Field caption</section>
    <shortdesc>How to define a caption for a field in a document type.</shortdesc>
    <img>Fieldcaption screenshot</img>
@@ -1241,10 +1277,9 @@
    <img>Go to namespace screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/howto">CMS Information Architect Howto
-   <section>CMS Information Architect Howto</section>
-   <shortdesc>A collection of howto's for small tasks an information architect may want to do.</shortdesc>
-  </document><document ext="xml" filename="login" relpath="delve_into/user/information_architects/howto">Login
+  </document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/howto">
+   <subsection>Alternative</subsection>
+  </document><document ext="xml.sav" filename="index" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="login" relpath="delve_into/user/information_architects/howto">Login
    <section>Login</section>
    <shortdesc>How to login to Hippo CMS.</shortdesc>
    <img>Hippo login screenshot</img>
@@ -1364,7 +1399,9 @@
    <subsection>Recording a Selenium test</subsection>
   </document><document ext="xml" filename="releasing" relpath=".">Performing a release of the Hippo ECM suite
    <section>Performing a release of the Hippo ECM suite</section>
+   <subsection>Prerequisites</subsection>
    <subsection>Preparing a release</subsection>
+   <subsection>Update release information in the root pom.xml</subsection>
    <subsection>Releasing in subversion</subsection>
    <subsection>Deploying the targets</subsection>
    <section>Branching</section>

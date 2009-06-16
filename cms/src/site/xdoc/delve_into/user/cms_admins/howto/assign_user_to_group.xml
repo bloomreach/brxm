@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -30,34 +30,35 @@ ________________________________________________________________________________
       <span class="shortdesc">How to make a particular user belong to a particular group.</span>
 
    <script type="text/javascript">
-    leftpx=450;
-    bottompx=350;
+    leftpx=0;
+    bottompx=600;
    </script>
-   <div class='group'> 
+   <div class='group'>
     <div id='screenshot'><div>
-     <img src="../../../../images/user_properties.png" alt='Assign user to group screenshot'/>      
-   </div></div></div>
+      <img src="../../../../images/screenshots/cms_M13/admins/group_membership.png"
+       alt='Assign user to group screenshot'/>
+    </div></div>
    <p>
-    Open the list of <a href='./goto_user_properties.html'>properties of the user</a>,
-    and on the left, select with the mouse a group from the list of existing groups
-    (below the 'new group' button), and drag and drop it to the groups property of the user (low in the list, go below the groups title).
-    Unsurprisingly, the user can be assigned to more than one group that way.    
-    Then <a href='./save_settings.html'>save the settings</a>.
+    When <a href='./change_user_properties.html'>editing user properties</a>,
+    after choosing group memberships.
    </p>
+   </div>
 
   <subsection name='Alternative'>
    <ul>
     <li><a href='./add_group.html'>Add a group</a>.</li>
-   </ul>       
+   </ul>
   </subsection>
-
 
   <subsection name='Next'>
    <ul>
+    <li><a href='./publish_all.html'>Publish all</a>
+       (continue <a href='../tour.html'>tour</a>).</li>
     <li><a href='./change_user_properties.html'>Change user properties</a>.</li>
     <li><a href='./add_user.html'>Add a user</a>.</li>
-   </ul>       
+   </ul>
   </subsection>
+
    <subsection name='Alternative'>
     <ul>
      <li><a href='../tour.html'>tour page.</a></li>
@@ -68,4 +69,4 @@ ________________________________________________________________________________
 
    </section>
   </body>
-</document>        
+</document>

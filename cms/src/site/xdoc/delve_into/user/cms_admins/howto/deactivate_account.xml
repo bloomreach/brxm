@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -30,35 +30,39 @@ ________________________________________________________________________________
       <span class="shortdesc">How to deactivate a Hippo CMS user account.</span>
 
    <script type="text/javascript">
-    leftpx=450;
-    bottompx=350;
+    leftpx=0;
+    bottompx=500;
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
-     <img src="../../../../images/deactivate_account.png" alt='Deactivate account screenshot'/>      
-  </div></div></div>
+      <img src="../../../../images/screenshots/cms_M13/admins/deactivate_account.png" alt='Deactivate account screenshot'/>      
+    </div></div>
+   <p>
+     In the <a href='goto_user_management_workspace.html'>user management workspace</a>,
+     After choosing to <a href='change_user_properties.html'>edit user properties</a>,
+     just after clicking the activate checkbutton to uncheck it.
+    </p>
+   </div>
 
    <p>
-    In the list of <a href='./goto_user_properties.html'>properties of the user</a>,
-    click the active checkbutton to uncheck it 
-    and <a href='./save_settings.html'>save the settings</a>.
+    When done, <a href='./save_settings.html'>save the settings</a>.
    </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./add_group.html'>Add a group</a>.</li>
-    <li><a href='./add_user.html'>Add a user</a>.</li>
-    <li><a href='./change_password.html'>change a password</a>.</li>
-   </ul>       
+    <li><a href='add_group.html'>Add a group</a>
+       (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='add_user.html'>Add a user</a>.</li>
+   </ul>
   </subsection>
    <subsection name='Alternative'>
     <ul>
      <li><a href='../tour.html'>tour page.</a></li>
-     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>
     </ul>
    </subsection>
 
    </section>
   </body>
-</document>        
+</document>

@@ -37,7 +37,7 @@ ________________________________________________________________________________
    </p>
    <p>
     However, this implies that it is not possible to check if the
-    <a href='../concepts/contributor.html'>contributor</a> fills the field with
+    <a href='../../contributors/concepts/contributor.html'>contributor</a> fills the field with
     a number. He may use any sequence of characters. An organization using Hippo CMS,
     may have the number field added to the field type menu and in the future Hippo CMS
     may have the number field in the standard field type menu.

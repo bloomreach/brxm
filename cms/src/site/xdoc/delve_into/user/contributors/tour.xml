@@ -68,32 +68,44 @@
          who installed the Hippo CMS at Swatia.
       </td>
      </tr>
-   
+
      <tr>
       <td><a href="./howto/login.html">Login CMS</a></td>
       <td>
        <span class='login-48 icon-48'/> 
       </td>
-      <td> 
+      <td>
        Marc received a username and
        password from his CMS administrator, to login to the CMS,
-       i.e. to get access to the CMS. 
-       <br/>  
+       i.e. to get access to the CMS.
+       <br/>
         To login to the CMS,
-        Marc types his username and password in the appropiate inputfields. 
-        His password is only known to him, so you do not get to see it.
+        Marc types his username and password in the appropiate inputfields.
+        His password is supposed to be only known to him, so you do not get to see it.
       </td>
      </tr>
 
     <tr>
+      <td><a href="./howto/change_own_password.html">Change password</a></td>
+      <td>
+       <span class='user-48 icon-48'/>
+      </td>
+      <td>
+         The CSM administrator told Marc that the password he gave him is not
+         unique and that Marc should change it to a word nobody else knows.
+         So Marc <a href='./howto/change_own_password.html'>Changes his password</a>.
+      </td>
+    </tr>
+
+    <tr>
       <td><a href="./howto/goto_content_workspace.html">Goto workspace</a></td>
       <td>
-       <span class='user-48 icon-48'/> 
+       <span class='user-48 icon-48'/>
       </td>
-      <td> 
-         Because Marc wants to work on 
+      <td>
+         Because Marc wants to work on
          <span href='./concepts/content.html'>content</span>, 
-         he first goes to the <a href='./concepts/content_workspace.html'>content workspace</a>.  
+         he goes to the <a href='./concepts/content_workspace.html'>content workspace</a>.
       </td>
     </tr>
 
@@ -102,10 +114,10 @@
       <td>
        <span class='user-48 icon-48'/> 
       </td>
-      <td> 
+      <td>
          Marc learned that all articles for Swatia's online newspaper are supposed to
-         go in the 'newspaper' document folder, so he goes to that folder to add his new 
-         document in.  
+         go in the 'newspaper' document folder, so he goes to that folder to add his new
+         document in.
       </td>
      </tr>
 

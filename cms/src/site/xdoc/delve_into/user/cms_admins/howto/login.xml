@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -28,39 +28,42 @@ ________________________________________________________________________________
   <body>
     <section name="Login as Admin">
       <span class="shortdesc">How to login to Hippo CMS as administrator.</span>
-     
+
    <script type="text/javascript">
-    leftpx=450;
-    bottompx=350;
+    leftpx=200;
+    bottompx=600;
    </script>
-   <div class='group'> 
+   <div class='group'>
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/editors/hippo_login_Janine.png" alt='Hippo login screenshot'/>
+     <img src="../../../../images/screenshots/cms_M13/admins/login.png" alt='Hippo login screenshot'/>
    </div></div>
    <p>The Hippo CMS login dialog.</p>
    </div>
 
     <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. 
+     After <a href='start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog. 
+     Type your Hippo CMS username and password.
      The first time, use: username=admin, password=admin.
     </p>
 
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./change_password.html'>Change your password</a>.</li>
-    <li><a href='./add_user.html'>Add a user</a>.</li>
-   </ul>       
+    <li><a href='change_password.html'>Change your password</a> 
+     (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='publish_all.html'>Publish all</a>.</li>
+    <li><a href='add_user.html'>Add a user</a>.</li>
+    <li><a href='add_group.html'>Add a group</a>.</li>
+   </ul>
   </subsection>
    <subsection name='Alternative'>
     <ul>
      <li><a href='../tour.html'>tour page.</a></li>
-     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>
     </ul>
    </subsection>
 
    </section>
   </body>
-</document>        
+</document>

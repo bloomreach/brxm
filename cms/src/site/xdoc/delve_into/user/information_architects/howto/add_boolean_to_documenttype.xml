@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -38,7 +38,7 @@ ________________________________________________________________________________
      <img src="../../../../images/screenshots/cms_M9/inars/add_boolean_to_documenttype.png" alt='Add boolean to document type screenshot'/> 
     </div></div>
     <p>
-      Adding mandatory <a href='../concepts/boolean.html'>boolean</a> field snp:indoors with caption 'Indoors?' 
+      Adding mandatory <a href='../concepts/boolean.html'>boolean</a> field snp:indoors with caption 'Indoors?'
       to document type `upcoming'.
      </p>
    </div>

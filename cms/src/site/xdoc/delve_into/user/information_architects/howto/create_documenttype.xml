@@ -48,8 +48,8 @@ ________________________________________________________________________________
    <p>
     To add a documenttype to a <a href='../concepts/namespace.html'>namespace</a>, select the
     <a href='../concepts/namespaces_folder.html'>folder</a> for that namespace
-    as the <a href='../concepts/current_folder.html'>current folder</a> and
-    select 'create new type' in the <a href='../concepts/folder_action_menu.html'>folder action menu</a>.
+    as the <a href='../../contributors/concepts/current_folder.html'>current folder</a> and
+    select 'create new type' in the <a href='../../contributors/concepts/folder_action_menu.html'>folder action menu</a>.
     A dialog window appears.
    </p>
    <p>

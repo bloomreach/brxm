@@ -35,19 +35,19 @@ ________________________________________________________________________________
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
-     <img src="../../../../images/user/content_browse_tab.png" alt='content browse screenshot'/>      
+     <img src="../../../../images/user/content_browse_tab.png" alt='content browse screenshot'/>
   </div></div>
    </div>
     <p>
-     Go to the content browse tab by clicking on the 
+     Go to the content browse tab by clicking on the
      content browse icon (an image of a folder) <span class='content_browse_16'/>,
-     at the left of the screen. 
+     at the left of the screen.
     </p>
 
   <subsection name='Next'>
    <ul>
     <li><a href='./goto_documenttypes_tab.html'>Go to document types tab</a>.</li>
-   </ul>       
+   </ul>
   </subsection>
    <subsection name='Alternative'>
     <ul>
@@ -59,4 +59,4 @@ ________________________________________________________________________________
 
    </section>
   </body>
-</document>        
+</document>

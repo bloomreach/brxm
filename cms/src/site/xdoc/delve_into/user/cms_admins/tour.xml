@@ -23,29 +23,30 @@
  </properties>
  <body>
   <section name="Hippo CMS Admin Tour">
-    <span class='shortdesc'>To get introduced to the role of CMS administrator, take the following tour.</span> 
+   <span class='shortdesc'>To get introduced to the role of CMS administrator,
+    take the following tour.</span>
 
    <blockquote>
     <table>
-  
+
      <tr>
       <td>Browser</td>
       <td>
-       <span class='web-48 icon-48'/> 
+       <span class='web-48 icon-48'/>
       </td>
       <td>
-        Open the Hippo CMS site 
-        <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in 
-        your browser. 
+        Open the Hippo CMS site
+        <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in
+        your browser.
       </td>
      </tr>
-   
+
      <tr>
       <td>Login</td>
       <td>
-       <span class='login-48 icon-48'/> 
+       <span class='login-48 icon-48'/>
       </td>
-      <td> 
+      <td>
          <a href="./howto/login.html">Login to Hippo CMS</a> in the standard CMS admin account.
       </td>
      </tr>
@@ -53,7 +54,7 @@
      <tr>
       <td>Password</td>
       <td>
-       <span class='admin-48 icon-48'/> 
+       <span class='admin-48 icon-48'/>
       </td>
       <td> 
          <a href="./howto/change_password.html">Change the password</a> of the
@@ -64,76 +65,88 @@
      </p>
       </td>
      </tr>
- 
+
     <tr>
       <td>Deactivate</td>
       <td>
-       <span class='admin-48 icon-48'/> 
+       <span class='admin-48 icon-48'/>
       </td>
       <td>
          <a href="./howto/deactivate_account.html">Deactivate the other standard accounts</a> to
          use personal accounts instead.
          <p>
           Instead, you could just change their passwords, and use them as guest accounts,
-          if all your guests are trustworthty. 
+          if all your guests are trustworthty.
      </p>
-  
+
       </td>
      </tr>
-  
+
      <tr>
       <td>Add Group</td>
       <td>
-       <span class='multiuser-48 icon-48'/> 
+       <span class='multiuser-48 icon-48'/>
       </td>
       <td>
-         <a href="./howto/add_group.html">Add a group</a>. 
+       <a href="./howto/add_group.html">Add a group</a>. The group will be assigned permissions and
+       users as members. All members will have the permissions of the group.
       </td>
      </tr>
 
      <tr>
-      <td>Change Group Properties</td>
+      <td>Set Permissions</td>
       <td>
-       <span class='multiuser-48 icon-48'/> 
+       <span class='multiuser-48 icon-48'/>
       </td>
       <td>
-         <a href="./howto/change_group_properties.html">Change group properties</a>. 
+         <a href="./howto/set_permissions_for_group.html">Set permissions for the group</a>.
       </td>
      </tr>
-    
+
      <tr>
       <td>Add Users</td>
       <td>
-       <span class='user-48 icon-48'/> 
+       <span class='user-48 icon-48'/>
       </td>
       <td>
-         <a href="./howto/add_user.html">Add user accounts</a>.
+         <a href="./howto/add_user.html">Add user account</a>.
       </td>
      </tr>
 
      <tr>
-      <td>Change User propertes</td>
+      <td>Assign membership</td>
       <td>
-       <span class='user-48 icon-48'/> 
+       <span class='user-48 icon-48'/>
       </td>
       <td>
-         <a href="./howto/change_user_properties.html">Change user properties</a>.
+         <a href="./howto/assign_user_to_group.html">Assign user to group</a>.
+      </td>
+     </tr>
+
+     <tr>
+      <td>Publish All</td>
+      <td>
+       <span class='user-48 icon-48'/>
+      </td>
+      <td>
+       Because there was already some content that needs to be published, the admin decides to
+       <a href="./howto/publish_all.html">Publish them all at once</a>.
       </td>
      </tr>
 
      <tr>
       <td>Logout</td>
       <td>
-       <span class='logout-48 icon-48'/> 
+       <span class='logout-48 icon-48'/>
       </td>
       <td> 
-         <a href="./howto/logout.html">Logout</a>. 
+         <a href="./howto/logout.html">Logout</a>.
       </td>
      </tr>
- 
+
     </table>
    </blockquote>
-       
+
     </section>
   </body>
 </document>

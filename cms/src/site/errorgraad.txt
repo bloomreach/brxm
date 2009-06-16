@@ -341,3 +341,31 @@ fifi is /home/rita/bin/fifi
       <span class="shortdesc">435 errors and/or todos in 236 out of 236 documents (100%).</span>
 #___________________________________________________________________________________________________________________rita_2009-w17-5-19:09
       <span class="shortdesc">435 errors and/or todos in 236 out of 236 documents (100%).</span>
+#__________________________________________________________rita_2009-w25-1-21:14
+      <span class="shortdesc">436 errors and/or todos in 236 out of 236 documents (100%).</span>
+#__________________________________________________________rita_2009-w25-1-21:22
+      <span class="shortdesc">436 errors and/or todos in 236 out of 236 documents (100%).</span>
+#__________________________________________________________rita_2009-w25-1-21:22
+      <span class="shortdesc">438 errors and/or todos in 236 out of 236 documents (100%).</span>
+#__________________________________________________________rita_2009-w25-1-21:35
+      <span class="shortdesc">438 errors and/or todos in 236 out of 236 documents (100%).</span>
+#__________________________________________________________rita_2009-w25-1-22:01
+      <span class="shortdesc">440 errors and/or todos in 238 out of 238 documents (100%).</span>
+#_________________________________________________________________________________________rita_2009-w25-1-22:27
+      <span class="shortdesc">442 errors and/or todos in 240 out of 240 documents (100%).</span>
+#______________________________________________________________________________________________rita_2009-w25-2-15:51
+      <span class="shortdesc">446 errors and/or todos in 245 out of 245 documents (100%).</span>
+#______________________________________________________________________________________________rita_2009-w25-2-15:57
+      <span class="shortdesc">446 errors and/or todos in 245 out of 245 documents (100%).</span>
+#______________________________________________________________________________________________rita_2009-w25-2-16:02
+      <span class="shortdesc">449 errors and/or todos in 246 out of 246 documents (100%).</span>
+#______________________________________________________________________________________________rita_2009-w25-2-16:25
+      <span class="shortdesc">449 errors and/or todos in 246 out of 246 documents (100%).</span>
+#______________________________________________________________________________________________rita_2009-w25-2-16:38
+      <span class="shortdesc">449 errors and/or todos in 246 out of 246 documents (100%).</span>
+#______________________________________________________________________________________________rita_2009-w25-2-16:49
+      <span class="shortdesc">448 errors and/or todos in 245 out of 245 documents (100%).</span>
+#______________________________________________________________________________________________rita_2009-w25-2-16:58
+      <span class="shortdesc">448 errors and/or todos in 245 out of 245 documents (100%).</span>
+#______________________________________________________________________________________________rita_2009-w25-2-16:59
+      <span class="shortdesc">448 errors and/or todos in 245 out of 245 documents (100%).</span>

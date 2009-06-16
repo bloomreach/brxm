@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 913 terms</span>
+      <span class="shortdesc">Term index, 946 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -46,21 +46,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/index.html#A_collection_of_howto's_for_small_tasks_a_CMS_admin_may_want_to_do_">A collection of howto's for small tasks a CMS admin may want to do.</a>
-            </td>
-            <td>Welcome: CMS admin Howto</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/editors/howto/index.html#A_collection_of_howto's_for_small_tasks_an_CMS_editor_may_want_to_do_">A collection of howto's for small tasks an CMS editor may want to do.</a>
             </td>
             <td>Welcome: CMS Editor Howto</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/howto/index.html#A_collection_of_howto's_for_small_tasks_an_information_architect_may_want_to_do_">A collection of howto's for small tasks an information architect may want to do.</a>
-            </td>
-            <td>Welcome: CMS Information Architect Howto</td>
           </tr>
           <tr>
             <td>
@@ -166,6 +154,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/cms_admins/howto/publish_all.html#Add_user_screenshot">Add user screenshot</a>
+            </td>
+            <td>Howto: Publish all</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/reference/index.html#Add-on_Reference">Add-on Reference</a>
             </td>
             <td>Welcome: Add-on Reference</td>
@@ -190,7 +184,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/editor.html#Advanced">Advanced</a>
+              <a href="../delve_into/user/information_architects/document_types/editor.html#Advanced">Advanced</a>
             </td>
             <td>The Document Type Editor</td>
           </tr>
@@ -205,6 +199,12 @@
               <a href="../delve_into/custom/reference/frontend/frontend_plugin_communication.html#Advanced_-_Subject_to_Change">Advanced - Subject to Change</a>
             </td>
             <td>Frontend Plugin Communication</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/concepts/home_workspace.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Home Workspace</td>
           </tr>
           <tr>
             <td>
@@ -240,25 +240,19 @@
             <td>
               <a href="../delve_into/user/cms_admins/howto/change_group_properties.html#Alternative">Alternative</a>
             </td>
-            <td>Howto: Change group properties</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/cms_admins/howto/change_group_properties.html#Alternative">Alternative</a>
-            </td>
-            <td>Howto: Change group properties</td>
+            <td>Howto: Edit group properties</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/cms_admins/howto/change_password.html#Alternative">Alternative</a>
             </td>
-            <td>Howto: Change password</td>
+            <td>Howto: Change own password</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/cms_admins/howto/change_user_properties.html#Alternative">Alternative</a>
             </td>
-            <td>Howto: Change user properties</td>
+            <td>Howto: Edit user properties</td>
           </tr>
           <tr>
             <td>
@@ -268,27 +262,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/goto_group_properties.html#Alternative">Alternative</a>
+              <a href="../delve_into/user/cms_admins/howto/goto_user_management_workspace.html#Alternative">Alternative</a>
             </td>
-            <td>Howto: Goto Group Properties</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/cms_admins/howto/goto_user_management_tab.html#Alternative">Alternative</a>
-            </td>
-            <td>Howto: Goto User Management Tab</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/cms_admins/howto/goto_user_properties.html#Alternative">Alternative</a>
-            </td>
-            <td>Howto: Goto User Properties</td>
+            <td>Howto: Goto User Management Workspace</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/cms_admins/howto/index.html#Alternative">Alternative</a>
             </td>
-            <td>Welcome: CMS admin Howto</td>
+            <td>Welcome: </td>
           </tr>
           <tr>
             <td>
@@ -304,9 +286,27 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/cms_admins/howto/publish_all.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Publish all</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/cms_admins/howto/save_settings.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Save settings</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/howto/set_permissions_for_group.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Set group permissions</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/howto/set_permissions_for_group.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Set group permissions</td>
           </tr>
           <tr>
             <td>
@@ -316,9 +316,21 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/type_in_editing_region.html#Alternative">Alternative</a>
+              <a href="../delve_into/user/cms_admins/todo/goto_group_properties.html#Alternative">Alternative</a>
             </td>
-            <td>Howto: Type in editing region</td>
+            <td>Edit Group Properties</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/todo/goto_user_properties.html#Alternative">Alternative</a>
+            </td>
+            <td>Goto User Properties</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/todo/type_in_editing_region.html#Alternative">Alternative</a>
+            </td>
+            <td>Type in editing region</td>
           </tr>
           <tr>
             <td>
@@ -379,6 +391,12 @@
               <a href="../delve_into/user/contributors/concepts/workspace.html#Alternative">Alternative</a>
             </td>
             <td>Concept: Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/change_own_password.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Change own password</td>
           </tr>
           <tr>
             <td>
@@ -532,9 +550,21 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/editing.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Editing</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/concepts/edit_mode.html#Alternative">Alternative</a>
             </td>
             <td>Concept: Edit mode</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/field_properties_overview.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: string</td>
           </tr>
           <tr>
             <td>
@@ -571,6 +601,12 @@
               <a href="../delve_into/user/information_architects/concepts/namespace.html#Alternative">Alternative</a>
             </td>
             <td>Concept: namespace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/review_mode.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Review mode</td>
           </tr>
           <tr>
             <td>
@@ -661,6 +697,12 @@
               <a href="../delve_into/user/information_architects/howto/goto_namespace.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Go to a namespace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/index.html#Alternative">Alternative</a>
+            </td>
+            <td>Welcome: </td>
           </tr>
           <tr>
             <td>
@@ -760,7 +802,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/editor.html#Applying_your_changes">Applying your changes</a>
+              <a href="../delve_into/user/information_architects/document_types/editor.html#Applying_your_changes">Applying your changes</a>
             </td>
             <td>The Document Type Editor</td>
           </tr>
@@ -844,7 +886,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#Boolean">Boolean</a>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#Boolean">Boolean</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
@@ -952,21 +994,27 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/change_group_properties.html#Change_group_properties">Change group properties</a>
+              <a href="../delve_into/user/cms_admins/howto/change_password.html#Change_own_password">Change own password</a>
             </td>
-            <td>Howto: Change group properties</td>
+            <td>Howto: Change own password</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/change_password.html#Change_password">Change password</a>
+              <a href="../delve_into/user/contributors/howto/change_own_password.html#Change_own_password">Change own password</a>
             </td>
-            <td>Howto: Change password</td>
+            <td>Howto: Change own password</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/change_password.html#Change_password_screenshot">Change password screenshot</a>
+              <a href="../delve_into/user/cms_admins/howto/change_password.html#Change_own_screenshot">Change own screenshot</a>
             </td>
-            <td>Howto: Change password</td>
+            <td>Howto: Change own password</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/change_own_password.html#Change_own_screenshot">Change own screenshot</a>
+            </td>
+            <td>Howto: Change own password</td>
           </tr>
           <tr>
             <td>
@@ -1006,18 +1054,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/change_user_properties.html#Change_user_properties">Change user properties</a>
-            </td>
-            <td>Howto: Change user properties</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/cms_admins/howto/change_user_properties.html#Change_user_properties_screenshot">Change user properties screenshot</a>
-            </td>
-            <td>Howto: Change user properties</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/editors/howto/check_for_requests.html#Check_for_requests">Check for requests</a>
             </td>
             <td>Howto: Check for requests</td>
@@ -1036,9 +1072,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/index.html#CMS_admin_Howto">CMS admin Howto</a>
+              <a href="../delve_into/user/contributors/concepts/editor.html#CMS_editor">CMS editor</a>
             </td>
-            <td>Welcome: CMS admin Howto</td>
+            <td>Concept: CMS editor</td>
           </tr>
           <tr>
             <td>
@@ -1051,12 +1087,6 @@
               <a href="../delve_into/user/editors/howto/index.html#CMS_Editor_Howto">CMS Editor Howto</a>
             </td>
             <td>Welcome: CMS Editor Howto</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/howto/index.html#CMS_Information_Architect_Howto">CMS Information Architect Howto</a>
-            </td>
-            <td>Welcome: CMS Information Architect Howto</td>
           </tr>
           <tr>
             <td>
@@ -1373,7 +1403,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/tutorial.html#Creating_your_first_document_type">Creating your first document type</a>
+              <a href="../delve_into/user/information_architects/document_types/tutorial.html#Creating_your_first_document_type">Creating your first document type</a>
             </td>
             <td>Document Type Tutorial</td>
           </tr>
@@ -1391,7 +1421,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/concepts/current_folder.html#Current_folder">Current folder</a>
+              <a href="../delve_into/user/information_architects/concepts/old/current_folder.html#Current_folder">Current folder</a>
             </td>
             <td>Concept: Current folder</td>
           </tr>
@@ -1403,7 +1433,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/concepts/current_folder.html#current_folder_screenshot">current folder screenshot</a>
+              <a href="../delve_into/user/information_architects/concepts/old/current_folder.html#current_folder_screenshot">current folder screenshot</a>
             </td>
             <td>Concept: Current folder</td>
           </tr>
@@ -1463,7 +1493,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#Date">Date</a>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#Date">Date</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
@@ -1661,6 +1691,18 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/howto/document_types/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td/>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/index.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Welcome: </td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/web/jcr/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
             </td>
             <td/>
@@ -1691,13 +1733,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/tutorial.html#Document_Type_Tutorial">Document Type Tutorial</a>
+              <a href="../delve_into/user/information_architects/document_types/tutorial.html#Document_Type_Tutorial">Document Type Tutorial</a>
             </td>
             <td>Document Type Tutorial</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/index.html#Document_Types">Document Types</a>
+              <a href="../delve_into/user/information_architects/document_types/index.html#Document_Types">Document Types</a>
             </td>
             <td>Welcome: Document Types</td>
           </tr>
@@ -1745,6 +1787,30 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/cms_admins/howto/change_group_properties.html#Edit_group_properties">Edit group properties</a>
+            </td>
+            <td>Howto: Edit group properties</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/todo/goto_group_properties.html#Edit_Group_Properties">Edit Group Properties</a>
+            </td>
+            <td>Edit Group Properties</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/howto/change_group_properties.html#Edit_group_properties_screenshot">Edit group properties screenshot</a>
+            </td>
+            <td>Howto: Edit group properties</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/todo/goto_group_properties.html#edit_group_properties_screenshot">edit group properties screenshot</a>
+            </td>
+            <td>Edit Group Properties</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/edit_mode.html#Edit_mode">Edit mode</a>
             </td>
             <td>Concept: Edit mode</td>
@@ -1769,15 +1835,33 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/cms_admins/howto/change_user_properties.html#Edit_user_properties">Edit user properties</a>
+            </td>
+            <td>Howto: Edit user properties</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/howto/change_user_properties.html#Edit_user_properties_screenshot">Edit user properties screenshot</a>
+            </td>
+            <td>Howto: Edit user properties</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/editing.html#Editing">Editing</a>
             </td>
             <td>Concept: Editing</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/type_in_editing_region.html#Editing_region_screenshot">Editing region screenshot</a>
+              <a href="../delve_into/user/information_architects/concepts/editing.html#Editing">Editing</a>
             </td>
-            <td>Howto: Type in editing region</td>
+            <td>Concept: Editing</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/todo/type_in_editing_region.html#Editing_region_screenshot">Editing region screenshot</a>
+            </td>
+            <td>Type in editing region</td>
           </tr>
           <tr>
             <td>
@@ -1859,7 +1943,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/examples.html#Examples_of_document_types">Examples of document types</a>
+              <a href="../delve_into/user/information_architects/document_types/examples.html#Examples_of_document_types">Examples of document types</a>
             </td>
             <td>Examples of document types</td>
           </tr>
@@ -1955,13 +2039,25 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/field_properties_overview.html#field_properties_overview_screenshot">field properties overview screenshot</a>
+            </td>
+            <td>Concept: string</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/howto/fieldsize.html#Field_size">Field size</a>
             </td>
             <td>Howto: Field size</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#Field_Types_Reference">Field Types Reference</a>
+              <a href="../delve_into/user/information_architects/concepts/field_type_menu.html#field_type_menu_screenshot">field type menu screenshot</a>
+            </td>
+            <td>Concept: string</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#Field_Types_Reference">Field Types Reference</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
@@ -2117,6 +2213,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/core/building/eclipse.html#Fixup">Fixup</a>
+            </td>
+            <td>Developing Hippo CMS with Eclipse</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/folder.html#Folder">Folder</a>
             </td>
             <td>Concept: Folder</td>
@@ -2135,7 +2237,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/concepts/folder_action_menu.html#Folder_action_menu">Folder action menu</a>
+              <a href="../delve_into/user/information_architects/concepts/old/folder_action_menu.html#Folder_action_menu">Folder action menu</a>
             </td>
             <td>Concept: Folder action menu</td>
           </tr>
@@ -2147,7 +2249,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/concepts/folder_action_menu.html#Folder_action_menu_screenshot">Folder action menu screenshot</a>
+              <a href="../delve_into/user/information_architects/concepts/old/folder_action_menu.html#Folder_action_menu_screenshot">Folder action menu screenshot</a>
             </td>
             <td>Concept: Folder action menu</td>
           </tr>
@@ -2424,33 +2526,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/goto_group_properties.html#Goto_Group_Properties">Goto Group Properties</a>
+              <a href="../delve_into/user/cms_admins/howto/goto_user_management_workspace.html#Goto_User_Management_Workspace">Goto User Management Workspace</a>
             </td>
-            <td>Howto: Goto Group Properties</td>
+            <td>Howto: Goto User Management Workspace</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/goto_user_management_tab.html#Goto_User_Management_Tab">Goto User Management Tab</a>
+              <a href="../delve_into/user/cms_admins/todo/goto_user_properties.html#Goto_User_Properties">Goto User Properties</a>
             </td>
-            <td>Howto: Goto User Management Tab</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/cms_admins/howto/goto_user_properties.html#Goto_User_Properties">Goto User Properties</a>
-            </td>
-            <td>Howto: Goto User Properties</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/cms_admins/howto/change_group_properties.html#Group_properties_screenshot">Group properties screenshot</a>
-            </td>
-            <td>Howto: Change group properties</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/cms_admins/howto/goto_group_properties.html#group_properties_screenshot">group properties screenshot</a>
-            </td>
-            <td>Howto: Goto Group Properties</td>
+            <td>Goto User Properties</td>
           </tr>
           <tr>
             <td>
@@ -2664,7 +2748,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#hippo:facetselect">hippo:facetselect</a>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#hippo:facetselect">hippo:facetselect</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
@@ -2676,13 +2760,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#hippo:query">hippo:query</a>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#hippo:query">hippo:query</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#hippo:resource">hippo:resource</a>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#hippo:resource">hippo:resource</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
@@ -2697,6 +2781,18 @@
               <a href="../delve_into/sysadmin/configuration/nodes/users.html#hippo:user">hippo:user</a>
             </td>
             <td>Users Configuration</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/concepts/home_workspace.html#Home_Workspace">Home Workspace</a>
+            </td>
+            <td>Concept: Home Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/concepts/home_workspace.html#home_workspace">home workspace</a>
+            </td>
+            <td>Concept: Home Workspace</td>
           </tr>
           <tr>
             <td>
@@ -2814,21 +2910,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/change_password.html#How_to_change_the_password_of_a_Hippo_CMS_user_">How to change the password of a Hippo CMS user.</a>
+              <a href="../delve_into/user/cms_admins/howto/change_password.html#How_to_change_your_own_password_">How to change your own password.</a>
             </td>
-            <td>Howto: Change password</td>
+            <td>Howto: Change own password</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/change_group_properties.html#How_to_change_to_properties_of_a_Hippo_CMS_group_of_users_">How to change to properties of a Hippo CMS group of users.</a>
+              <a href="../delve_into/user/contributors/howto/change_own_password.html#How_to_change_your_own_password_">How to change your own password.</a>
             </td>
-            <td>Howto: Change group properties</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/cms_admins/howto/change_user_properties.html#How_to_change_to_properties_of_a_Hippo_CMS_user_account_">How to change to properties of a Hippo CMS user account.</a>
-            </td>
-            <td>Howto: Change user properties</td>
+            <td>Howto: Change own password</td>
           </tr>
           <tr>
             <td>
@@ -2905,11 +2995,21 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/snapshot_dependencies.html#How_to_ensure_that_projects_that_depend_on_snapshot_versions_of&#10;______packages_will_build_&#10;_____">How to ensure that projects that depend on snapshot versions of
-      packages will build?
-     </a>
+              <a href="../delve_into/user/cms_admins/todo/goto_group_properties.html#How_to_edit_the_properties_of_a_group_">How to edit the properties of a group.</a>
             </td>
-            <td>Howto: Using snapshot dependencies</td>
+            <td>Edit Group Properties</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/howto/change_user_properties.html#How_to_edit_the_properties_of_a_Hippo_CMS_user_account_">How to edit the properties of a Hippo CMS user account.</a>
+            </td>
+            <td>Howto: Edit user properties</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/howto/change_group_properties.html#How_to_edit_the_properties_of_a_Hippo_CMS_user_group_">How to edit the properties of a Hippo CMS user group.</a>
+            </td>
+            <td>Howto: Edit group properties</td>
           </tr>
           <tr>
             <td>
@@ -2967,21 +3067,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/goto_group_properties.html#How_to_get_to_the_properties_of_a_group">How to get to the properties of a group</a>
+              <a href="../delve_into/user/cms_admins/todo/goto_user_properties.html#How_to_get_to_the_properties_of_a_user">How to get to the properties of a user</a>
             </td>
-            <td>Howto: Goto Group Properties</td>
+            <td>Goto User Properties</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/goto_user_properties.html#How_to_get_to_the_properties_of_a_user">How to get to the properties of a user</a>
+              <a href="../delve_into/user/cms_admins/howto/goto_user_management_workspace.html#How_to_get_to_the_user_management_workspace,_to_add_users_and_groups_or_change_their_properties_">How to get to the user management workspace, to add users and groups or change their properties.</a>
             </td>
-            <td>Howto: Goto User Properties</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/cms_admins/howto/goto_user_management_tab.html#How_to_get_to_the_user_management_tab,_to_add_users_and_groups_or_change_their_properties_">How to get to the user management tab, to add users and groups or change their properties.</a>
-            </td>
-            <td>Howto: Goto User Management Tab</td>
+            <td>Howto: Goto User Management Workspace</td>
           </tr>
           <tr>
             <td>
@@ -3083,6 +3177,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/cms_admins/howto/publish_all.html#How_to_publish_all_documents_simultaneously_">How to publish all documents simultaneously?</a>
+            </td>
+            <td>Howto: Publish all</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/howto/remove_field_from_documenttype.html#How_to_remove_a_field_from_a_document_type_">How to remove a field from a document type.</a>
             </td>
             <td>Howto: Remove field from document type</td>
@@ -3131,6 +3231,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/cms_admins/howto/set_permissions_for_group.html#How_to_set_permissions_for_a_Hippo_CMS_group_of_users_">How to set permissions for a Hippo CMS group of users.</a>
+            </td>
+            <td>Howto: Set group permissions</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/cms_admins/howto/start_CMS.html#How_to_start_a_CMS_session_in_your_browser">How to start a CMS session in your browser</a>
             </td>
             <td>Howto: Start CMS</td>
@@ -3143,9 +3249,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/type_in_editing_region.html#How_to_type_in_an_editing_regin,_creating_markuped_text_">How to type in an editing regin, creating markuped text.</a>
+              <a href="../delve_into/user/cms_admins/todo/type_in_editing_region.html#How_to_type_in_an_editing_regin,_creating_markuped_text_">How to type in an editing regin, creating markuped text.</a>
             </td>
-            <td>Howto: Type in editing region</td>
+            <td>Type in editing region</td>
           </tr>
           <tr>
             <td>
@@ -3209,7 +3315,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#Html">Html</a>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#Html">Html</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
@@ -3739,19 +3845,19 @@
             <td>
               <a href="../delve_into/user/cms_admins/howto/change_group_properties.html#Next">Next</a>
             </td>
-            <td>Howto: Change group properties</td>
+            <td>Howto: Edit group properties</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/cms_admins/howto/change_password.html#Next">Next</a>
             </td>
-            <td>Howto: Change password</td>
+            <td>Howto: Change own password</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/cms_admins/howto/change_user_properties.html#Next">Next</a>
             </td>
-            <td>Howto: Change user properties</td>
+            <td>Howto: Edit user properties</td>
           </tr>
           <tr>
             <td>
@@ -3761,21 +3867,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/goto_group_properties.html#Next">Next</a>
+              <a href="../delve_into/user/cms_admins/howto/goto_user_management_workspace.html#Next">Next</a>
             </td>
-            <td>Howto: Goto Group Properties</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/cms_admins/howto/goto_user_management_tab.html#Next">Next</a>
-            </td>
-            <td>Howto: Goto User Management Tab</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/cms_admins/howto/goto_user_properties.html#Next">Next</a>
-            </td>
-            <td>Howto: Goto User Properties</td>
+            <td>Howto: Goto User Management Workspace</td>
           </tr>
           <tr>
             <td>
@@ -3797,15 +3891,33 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/cms_admins/howto/set_permissions_for_group.html#Next">Next</a>
+            </td>
+            <td>Howto: Set group permissions</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/cms_admins/howto/start_CMS.html#Next">Next</a>
             </td>
             <td>Howto: Start CMS</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/type_in_editing_region.html#Next">Next</a>
+              <a href="../delve_into/user/cms_admins/todo/goto_group_properties.html#Next">Next</a>
             </td>
-            <td>Howto: Type in editing region</td>
+            <td>Edit Group Properties</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/todo/goto_user_properties.html#Next">Next</a>
+            </td>
+            <td>Goto User Properties</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/todo/type_in_editing_region.html#Next">Next</a>
+            </td>
+            <td>Type in editing region</td>
           </tr>
           <tr>
             <td>
@@ -3854,6 +3966,12 @@
               <a href="../delve_into/user/contributors/concepts/workspace.html#Next">Next</a>
             </td>
             <td>Concept: Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/change_own_password.html#Next">Next</a>
+            </td>
+            <td>Howto: Change own password</td>
           </tr>
           <tr>
             <td>
@@ -3995,6 +4113,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/editing.html#Next">Next</a>
+            </td>
+            <td>Concept: Editing</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/concepts/edit_mode.html#Next">Next</a>
             </td>
             <td>Concept: Edit mode</td>
@@ -4004,6 +4128,12 @@
               <a href="../delve_into/user/information_architects/concepts/namespaces_folder.html#Next">Next</a>
             </td>
             <td>Concept: Namespace folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/review_mode.html#Next">Next</a>
+            </td>
+            <td>Concept: Review mode</td>
           </tr>
           <tr>
             <td>
@@ -4277,6 +4407,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../releasing.html#Prerequisites">Prerequisites</a>
+            </td>
+            <td>Performing a release of the Hippo ECM suite</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/core/project-structure.html#Project_Structure">Project Structure</a>
             </td>
             <td>Project Structure</td>
@@ -4286,6 +4422,12 @@
               <a href="../support/forums.html#Public_Forums">Public Forums</a>
             </td>
             <td>Public Forums</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/howto/publish_all.html#Publish_all">Publish all</a>
+            </td>
+            <td>Howto: Publish all</td>
           </tr>
           <tr>
             <td>
@@ -4427,7 +4569,19 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/review_mode.html#Review_mode">Review mode</a>
+            </td>
+            <td>Concept: Review mode</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/review_mode.html#review_mode_screenshot">review mode screenshot</a>
+            </td>
+            <td>Concept: Review mode</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/review_mode.html#review_mode_screenshot">review mode screenshot</a>
             </td>
             <td>Concept: Review mode</td>
           </tr>
@@ -4517,12 +4671,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/save_settings.html#save_settings_screenshot">save settings screenshot</a>
-            </td>
-            <td>Howto: Save settings</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/contributors/howto/schedule_publication.html#Schedule_publication_of_Document">Schedule publication of Document</a>
             </td>
             <td>Howto: Schedule publication of Document</td>
@@ -4535,85 +4683,85 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/tutorial.html#screenshot_detail_of_'create_new_type'_action">screenshot detail of 'create new type' action</a>
+              <a href="../delve_into/user/information_architects/document_types/tutorial.html#screenshot_detail_of_'create_new_type'_action">screenshot detail of 'create new type' action</a>
             </td>
             <td>Document Type Tutorial</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/tutorial.html#screenshot_detail_of_'create_new_type'_dialog">screenshot detail of 'create new type' dialog</a>
+              <a href="../delve_into/user/information_architects/document_types/tutorial.html#screenshot_detail_of_'create_new_type'_dialog">screenshot detail of 'create new type' dialog</a>
             </td>
             <td>Document Type Tutorial</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_boolean_widget">screenshot detail of boolean widget</a>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#screenshot_detail_of_boolean_widget">screenshot detail of boolean widget</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_date_widget">screenshot detail of date widget</a>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#screenshot_detail_of_date_widget">screenshot detail of date widget</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_date_widget_with_popup_calendar">screenshot detail of date widget with popup calendar</a>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#screenshot_detail_of_date_widget_with_popup_calendar">screenshot detail of date widget with popup calendar</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/editor.html#Screenshot_detail_of_field_preview">Screenshot detail of field preview</a>
+              <a href="../delve_into/user/information_architects/document_types/editor.html#Screenshot_detail_of_field_preview">Screenshot detail of field preview</a>
             </td>
             <td>The Document Type Editor</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/editor.html#Screenshot_detail_of_field_properties_editor">Screenshot detail of field properties editor</a>
+              <a href="../delve_into/user/information_architects/document_types/editor.html#Screenshot_detail_of_field_properties_editor">Screenshot detail of field properties editor</a>
             </td>
             <td>The Document Type Editor</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_hippo:resource_widget">screenshot detail of hippo:resource widget</a>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#screenshot_detail_of_hippo:resource_widget">screenshot detail of hippo:resource widget</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_html_widget">screenshot detail of html widget</a>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#screenshot_detail_of_html_widget">screenshot detail of html widget</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/editor.html#Screenshot_detail_of_new_field_type_selector">Screenshot detail of new field type selector</a>
+              <a href="../delve_into/user/information_architects/document_types/editor.html#Screenshot_detail_of_new_field_type_selector">Screenshot detail of new field type selector</a>
             </td>
             <td>The Document Type Editor</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/editor.html#Screenshot_detail_of_save_options">Screenshot detail of save options</a>
+              <a href="../delve_into/user/information_architects/document_types/editor.html#Screenshot_detail_of_save_options">Screenshot detail of save options</a>
             </td>
             <td>The Document Type Editor</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_string_widget">screenshot detail of string widget</a>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#screenshot_detail_of_string_widget">screenshot detail of string widget</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_text_widget">screenshot detail of text widget</a>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#screenshot_detail_of_text_widget">screenshot detail of text widget</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/editor.html#Screenshot_detail_of_update_content_action">Screenshot detail of update content action</a>
+              <a href="../delve_into/user/information_architects/document_types/editor.html#Screenshot_detail_of_update_content_action">Screenshot detail of update content action</a>
             </td>
             <td>The Document Type Editor</td>
           </tr>
@@ -4625,7 +4773,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/editor.html#Screenshot_of_the_document_type_editor">Screenshot of the document type editor</a>
+              <a href="../delve_into/user/information_architects/document_types/editor.html#Screenshot_of_the_document_type_editor">Screenshot of the document type editor</a>
             </td>
             <td>The Document Type Editor</td>
           </tr>
@@ -4700,6 +4848,18 @@
               <a href="../delve_into/user/contributors/howto/set_edit_mode.html#set_edit_mode">set edit mode</a>
             </td>
             <td>Howto: set edit mode</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/howto/set_permissions_for_group.html#Set_group_permissions">Set group permissions</a>
+            </td>
+            <td>Howto: Set group permissions</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/howto/set_permissions_for_group.html#Set_permissions_screenshot">Set permissions screenshot</a>
+            </td>
+            <td>Howto: Set group permissions</td>
           </tr>
           <tr>
             <td>
@@ -4793,6 +4953,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/field_properties_overview.html#string">string</a>
+            </td>
+            <td>Concept: string</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/concepts/field_type_menu.html#string">string</a>
             </td>
             <td>Concept: string</td>
@@ -4805,7 +4971,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#String">String</a>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#String">String</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
@@ -4889,7 +5055,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#Text">Text</a>
+              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#Text">Text</a>
             </td>
             <td>Field Types Reference</td>
           </tr>
@@ -4907,7 +5073,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/editor.html#The_Document_Type_Editor">The Document Type Editor</a>
+              <a href="../delve_into/user/information_architects/document_types/editor.html#The_Document_Type_Editor">The Document Type Editor</a>
             </td>
             <td>The Document Type Editor</td>
           </tr>
@@ -4919,7 +5085,8 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/tour.html#To_get_introduced_to_the_role_of_CMS_administrator,_take_the_following_tour_">To get introduced to the role of CMS administrator, take the following tour.</a>
+              <a href="../delve_into/user/cms_admins/tour.html#To_get_introduced_to_the_role_of_CMS_administrator,&#10;____take_the_following_tour_">To get introduced to the role of CMS administrator,
+    take the following tour.</a>
             </td>
             <td>Hippo CMS Admin Tour</td>
           </tr>
@@ -4986,9 +5153,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/type_in_editing_region.html#Type_in_editing_region">Type in editing region</a>
+              <a href="../delve_into/user/cms_admins/todo/type_in_editing_region.html#Type_in_editing_region">Type in editing region</a>
             </td>
-            <td>Howto: Type in editing region</td>
+            <td>Type in editing region</td>
           </tr>
           <tr>
             <td>
@@ -5007,6 +5174,12 @@
               <a href="../delve_into/custom/howto/customize_editing_template.html#Update_project">Update project</a>
             </td>
             <td>Howto: Customize an Editing Template</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../releasing.html#Update_release_information_in_the_root_pom_xml">Update release information in the root pom.xml</a>
+            </td>
+            <td>Performing a release of the Hippo ECM suite</td>
           </tr>
           <tr>
             <td>
@@ -5040,15 +5213,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/goto_user_management_tab.html#user_management_tab_screenshot">user management tab screenshot</a>
+              <a href="../delve_into/user/cms_admins/howto/goto_user_management_workspace.html#user_management_workspace_screenshot">user management workspace screenshot</a>
             </td>
-            <td>Howto: Goto User Management Tab</td>
+            <td>Howto: Goto User Management Workspace</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/goto_user_properties.html#user_properties_screenshot">user properties screenshot</a>
+              <a href="../delve_into/user/cms_admins/todo/goto_user_properties.html#user_properties_screenshot">user properties screenshot</a>
             </td>
-            <td>Howto: Goto User Properties</td>
+            <td>Goto User Properties</td>
           </tr>
           <tr>
             <td>
@@ -5058,19 +5231,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/snapshot_dependencies.html#Using_snapshot_dependencies">Using snapshot dependencies</a>
-            </td>
-            <td>Howto: Using snapshot dependencies</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/quickstart.html#Using_standard_Hippo_CMS_with_example_content">Using standard Hippo CMS with example content</a>
             </td>
             <td>Quickstart Steps</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/editor.html#Using_the_editor">Using the editor</a>
+              <a href="../delve_into/user/information_architects/document_types/editor.html#Using_the_editor">Using the editor</a>
             </td>
             <td>The Document Type Editor</td>
           </tr>
@@ -5172,7 +5339,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/concepts/folder_action_menu.html#What_and_where_is_the_folder_action_menu_">What and where is the folder action menu?</a>
+              <a href="../delve_into/user/information_architects/concepts/old/folder_action_menu.html#What_and_where_is_the_folder_action_menu_">What and where is the folder action menu?</a>
             </td>
             <td>Concept: Folder action menu</td>
           </tr>
@@ -5187,6 +5354,12 @@
               <a href="../delve_into/user/contributors/concepts/folder_tabulation_panel.html#What_and_where_is_the_folder_tabulation_panel_">What and where is the folder tabulation panel?</a>
             </td>
             <td>Concept: Folder tabulation panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/cms_admins/concepts/home_workspace.html#What_and_where_is_the_home_workspace_">What and where is the home workspace?</a>
+            </td>
+            <td>Concept: Home Workspace</td>
           </tr>
           <tr>
             <td>
@@ -5244,6 +5417,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/editor.html#What_is_a_CMS_editor_">What is a CMS editor?</a>
+            </td>
+            <td>Concept: CMS editor</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/editors/concepts/editor.html#What_is_a_CMS_editor_">What is a CMS editor?</a>
             </td>
             <td>Concept: CMS editor</td>
@@ -5265,6 +5444,12 @@
               <a href="../delve_into/user/contributors/concepts/document.html#What_is_a_document_">What is a document?</a>
             </td>
             <td>Concept: Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/field_properties_overview.html#What_is_a_field_properties_overview">What is a field properties overview</a>
+            </td>
+            <td>Concept: string</td>
           </tr>
           <tr>
             <td>
@@ -5346,6 +5531,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/editing.html#What_is_editing_">What is editing?</a>
+            </td>
+            <td>Concept: Editing</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../index.html#What_is_Hippo_CMS_">What is Hippo CMS?</a>
             </td>
             <td>Welcome: What is Hippo CMS?</td>
@@ -5370,13 +5561,19 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/review_mode.html#What_is_review_mode_">What is review mode?</a>
+            </td>
+            <td>Concept: Review mode</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/current_folder.html#What_is_the_current_folder_">What is the current folder?</a>
             </td>
             <td>Concept: Current folder</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/concepts/current_folder.html#What_is_the_current_folder_">What is the current folder?</a>
+              <a href="../delve_into/user/information_architects/concepts/old/current_folder.html#What_is_the_current_folder_">What is the current folder?</a>
             </td>
             <td>Concept: Current folder</td>
           </tr>

@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -38,15 +38,17 @@ ________________________________________________________________________________
      <img src="../../../../images/screenshots/cms_M9/editors/handle_request.png" alt='handle requests screenshot'/> 
     </div></div>
      <p>
-      Handling a <a href='../concepts/request.html'>request</a> concerning the document 
+      Handling a <a href='../concepts/request.html'>request</a> concerning the document
       'multibazaar2008' by clicking on the accept request button.
      </p>
    </div>
 
    <p>
     If you click on a <a href='./check_for_requests.html'>request in your todo list</a>, the
-    <a href='card.html'>card</a> of that document is pulled out and shown in the
-    <a href='cards_panel'>cards panel</a> in <a href='review_mode.html'>review mode</a>.
+    <a href='../../contributors/concepts/card.html'>card</a> of that document
+    is pulled out and shown in the
+    <a href='../../contributors/concepts/cards_panel.html'>cards panel</a> 
+    in <a href='../../contributors/concepts/review_mode.html'>review mode</a>.
     You can review the document. Then decide to either
     accept the request or reject the request, by pressing one of the buttons at the top.
    </p>
