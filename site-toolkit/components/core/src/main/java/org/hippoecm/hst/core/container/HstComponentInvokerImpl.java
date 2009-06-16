@@ -292,15 +292,18 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
     }
     
     protected void renderErrorInformation(HstComponentWindow window, HstResponse hstResponse) {
-        PrintWriter out = null;
         
+        PrintWriter out = null;
         try {
             hstResponse.reset();
-            out = hstResponse.getWriter();
-            for (HstComponentException hce : window.getComponentExceptions()) {
-                out.println(hce.getMessage());
-            }
+            // TODO see HSTTWO-651
+            if(false) {
+                out = hstResponse.getWriter();
+                for (HstComponentException hce : window.getComponentExceptions()) {
+                    out.println(hce.getMessage());
+                }
             out.flush();
+            }
         } catch (Exception e) {
             log.warn("Invalid out.");
         } finally {
