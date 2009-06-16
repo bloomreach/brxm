@@ -45,8 +45,9 @@ public class FilterImpl implements Filter{
         this.hstRequestContext = hstRequestContext;
     }
 
-    public void negate(){
+    public Filter negate(){
         this.negated = !negated;
+        return this;
     }
     
     private void addContains(String scope, String fullTextSearch, boolean isNot){

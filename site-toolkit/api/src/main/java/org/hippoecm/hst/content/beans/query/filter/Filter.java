@@ -81,5 +81,5 @@ public interface Filter extends BaseFilter{
     /**
      * negates the current filter
      */
-    void negate();
+    Filter negate();
 }
