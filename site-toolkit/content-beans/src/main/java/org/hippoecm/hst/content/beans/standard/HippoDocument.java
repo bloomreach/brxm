@@ -29,26 +29,26 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
 
     private static Logger log = LoggerFactory.getLogger(HippoDocument.class);
     
-    private Map<String, HippoHtmlWrapper> htmls = new HashMap<String, HippoHtmlWrapper>();
+    private Map<String, BeanWrapper<HippoHtml>> htmls = new HashMap<String, BeanWrapper<HippoHtml>>();
     
     /**
      * @param relPath
      * @return <code>HippoHtml</code> or <code>null</code> if no node exists as relPath or no node of type "hippostd:html"
      */
     public HippoHtml getHippoHtml(String relPath) {
-        HippoHtmlWrapper wrapped = htmls.get(relPath);
+        BeanWrapper<HippoHtml> wrapped = htmls.get(relPath);
         if(wrapped != null) {
-            return wrapped.html;
+            return wrapped.getBean();
         } else {
             Object o = getBean(relPath);
             if(o instanceof HippoHtml) { 
-                wrapped = new HippoHtmlWrapper((HippoHtml)o);
+                wrapped = new BeanWrapper<HippoHtml>((HippoHtml)o);
                 htmls.put(relPath, wrapped);
-                return wrapped.html;
+                return wrapped.getBean();
             } else {
                 log.warn("Cannot get HippoHtml bean for relPath '{}' because returned bean is of a different class. Return null.", relPath);
                 // even when null, put it in the map to avoid being refetched
-                wrapped = new HippoHtmlWrapper((HippoHtml)null);
+                wrapped = new BeanWrapper<HippoHtml>(null);
                 htmls.put(relPath, wrapped);
                 return null;
             }
@@ -58,9 +58,9 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
     @Override
     public void detach(){
         super.detach();
-        for(HippoHtmlWrapper wrapperHtml : this.htmls.values()) {
-            if(wrapperHtml.html!= null) {
-                wrapperHtml.html.detach();
+        for(BeanWrapper<HippoHtml> wrapper : this.htmls.values()) {
+            if(wrapper.getBean() != null) {
+                wrapper.getBean().detach();
             }
         }
     }
@@ -71,10 +71,4 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
         this.htmls.clear();
     }
 
-    private class HippoHtmlWrapper{
-        private HippoHtml html;
-        private HippoHtmlWrapper(HippoHtml html){
-            this.html = html;
-        }
-    }
 }

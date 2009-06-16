@@ -50,7 +50,7 @@ public class NewsPage extends TextPage{
         if(imageLinkBean == null) {
             return null;
         }
-        this.imageBean = (ImageBean) imageLinkBean.getDeref();
+        this.imageBean = (ImageBean) imageLinkBean.getReferencedBean();
         return imageBean;
     }
  
