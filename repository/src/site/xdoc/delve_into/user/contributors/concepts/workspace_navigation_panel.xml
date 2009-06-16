@@ -16,13 +16,13 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
 <document>
   <properties>
-    <title>Content Navigation Panel</title>
+    <title>Workspace Navigation Panel</title>
   </properties>
 
   <body>
@@ -37,20 +37,20 @@ ________________________________________________________________________________
      <img src="../../../../images/screenshots/cms_M9/contribs/workspace_navigation_panel.png" alt='workspace navigation panel screenshot'/>      
     </div></div> 
     <p>
-     The workspace navigation panel is a panel 
+     The workspace navigation panel is a panel
      containing buttons to go to different <a href='./workspace.html'>workspaces</a>.
-     It is a thin, high panel at the left of the CMS window. 
+     It is a thin, high panel at the left of the CMS window.
     </p>
    </div>
 
 
   <subsection name='Next'>
    <ul>
-    <li><a href='../howto/goto_content_workspace.html'>Goto content workspace
-    (resume</a> <a href='../tour.html'>tour</a>).</li>
-   </ul>       
+      If you are doing the <a href='../tour.html'>tour</a>, use the back button of your browser to continue.
+      (There is no hyperlink here, because you can get here from many different pages.)
+   </ul>
   </subsection>
 
    </section>
   </body>
-</document>        
+</document>

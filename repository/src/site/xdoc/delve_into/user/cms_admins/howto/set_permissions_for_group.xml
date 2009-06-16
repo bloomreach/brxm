@@ -16,36 +16,33 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
 <document>
   <properties>
-    <title>Change group properies</title>
+    <title>Set permissions for a group</title>
   </properties>
 
   <body>
-    <section name="Change group properties">
-      <span class="shortdesc">How to change to properties of a Hippo CMS group of users.</span>
+    <section name="Set group permissions">
+      <span class="shortdesc">How to set permissions for a Hippo CMS group of users.</span>
 
    <script type="text/javascript">
-    leftpx=450;
-    bottompx=350;
+    leftpx=150;
    </script>
-   <div class='group'> 
+   <div class='group'>
     <div id='screenshot'><div>
-     <img src="../../../../images/group_properties.png" alt='Group properties screenshot'/>      
+      <img src="../../../../images/screenshots/cms_M13/admins/set_permissions.png" alt='Set permissions screenshot'/>
   </div></div></div>
 
-   <p>
-    To add or change the description of a group, <a href='./type_in_editing_region.html'>type in the editing region</a>.  
-    Then <a href='./save_settings.html'>save the settings</a>.
+  <p>
+     In the <a href='./goto_user_management_workspace.html'>user management workspace</a>,
+     after choosing the permission administration, just before clicking to add a group
+     to security domain 'everywhere'.
    </p>
-   <p>
-    <a href='./assign_user_to_group.html'>Which users belong to the group</a> are properties of each of those users
-    and are set for the users, not for the group.    
-   </p>
+
 
   <subsection name='Alternative'>
    <ul>
@@ -55,9 +52,9 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
+    <li><a href='./add_user.html'>Add a user</a> (continue <a href='../tour.html'>tour</a>).</li>
     <li><a href='./assign_user_to_group.html'>Assign users to the group</a>.</li>
-    <li><a href='./add_user.html'>Add a user</a>.</li>
-   </ul>       
+   </ul>
   </subsection>
    <subsection name='Alternative'>
     <ul>
@@ -69,4 +66,4 @@ ________________________________________________________________________________
 
    </section>
   </body>
-</document>        
+</document>

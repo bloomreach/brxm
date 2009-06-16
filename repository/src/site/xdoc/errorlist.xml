@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">435 errors and/or todos in 236 out of 236 documents (100%).</span>
+      <span class="shortdesc">448 errors and/or todos in 245 out of 245 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -39,19 +39,19 @@
      </li>
         <li>2 documents to review.
      </li>
-        <li>49 documents missing required info.
+        <li>51 documents missing required info.
      </li>
         <li>3 empty documents.
      </li>
-        <li>11 documents to rewrite.
+        <li>10 documents to rewrite.
      </li>
         <li>11 documents requiring additions.
      </li>
         <li>11 documents with unidentified TODO strings.
      </li>
-        <li>1 not valid XML documents.
+        <li>3 not valid XML documents.
      </li>
-        <li>21 documents with bad text.
+        <li>20 documents with bad text.
      </li>
         <li>10 multisection documents.
      </li>
@@ -89,7 +89,7 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents with empty elements: 11">
+      <subsection name="Documents with empty elements: 10">
         <ol>
           <li>
             <a href="./about/roadmap.html">roadmap: Roadmap Hippo CMS</a>
@@ -145,14 +145,6 @@
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/cms_admins/howto/goto_user_management_tab.html">goto_user_management_tab: Goto User Management Tab</a>
-            <ul>
-              <li>...&lt;span class='usermanagement_16'/&gt;,
-     at the left of the screen. 
-    .../&lt;p&gt;<br xmlns=""/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</li>
-            </ul>
-          </li>
-          <li>
             <a href="./delve_into/user/contributors/howto/restore_previous_version.html">restore_previous_version: Restoring a previous version of a document</a>
             <ul>
               <li>&lt;section name='Restoring a previous version of a document'/&gt;</li>
@@ -170,7 +162,7 @@
             <a href="./delve_into/user/information_architects/howto/goto_content_browse_tab.html">goto_content_browse_tab: Go to content browse tab</a>
             <ul>
               <li>...&lt;span class='content_browse_16'/&gt;,
-     at the left of the screen. 
+     at the left of the screen.
     .../&lt;p&gt;<br xmlns=""/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</li>
             </ul>
           </li>
@@ -215,7 +207,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents lacking some information: 49">
+      <subsection name="Documents lacking some information: 51">
         <ol>
           <li>
             <a href="./about/architecture.html">architecture: Architecture</a>
@@ -439,6 +431,13 @@ repository is;
             </ul>
           </li>
           <li>
+            <a href="./delve_into/user/cms_admins/howto/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
             <a href="./delve_into/user/contributors/concepts/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
@@ -481,33 +480,40 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/information_architects/howto/document_types/editor.html">editor: The Document Type Editor</a>
+            <a href="./delve_into/user/information_architects/document_types/editor.html">editor: The Document Type Editor</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/information_architects/howto/document_types/examples.html">examples: Examples of document types</a>
+            <a href="./delve_into/user/information_architects/document_types/examples.html">examples: Examples of document types</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/information_architects/howto/document_types/fieldtypes.html">fieldtypes: Field Types Reference</a>
+            <a href="./delve_into/user/information_architects/document_types/fieldtypes.html">fieldtypes: Field Types Reference</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/information_architects/howto/document_types/index.html">index: Document Types</a>
+            <a href="./delve_into/user/information_architects/document_types/index.html">index: Document Types</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/information_architects/howto/document_types/tutorial.html">tutorial: Document Type Tutorial</a>
+            <a href="./delve_into/user/information_architects/document_types/tutorial.html">tutorial: Document Type Tutorial</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
             </ul>
           </li>
           <li>
@@ -559,14 +565,8 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="rewrite documents: 11">
+      <subsection name="rewrite documents: 10">
         <ol>
-          <li>
-            <a href="./delve_into/core/building/eclipse.html">eclipse: Developing Hippo CMS with Eclipse</a>
-            <ul>
-              <li>org.hippoecm.frontend.Home</li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/custom/concepts/index.html">index: Change to the document title</a>
             <ul>
@@ -609,7 +609,8 @@ repository is;
           <li>
             <a href="./delve_into/user/contributors/concepts/cards_panel.html">cards_panel: Cards panel</a>
             <ul>
-              <li>Is for content. Call it content panel, file panel, present panel?</li>
+              <li>Is for content.
+       Call it content panel, file panel, present panel?</li>
             </ul>
           </li>
           <li>
@@ -772,7 +773,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/information_architects/howto/document_types/examples.html">examples: Examples of document types</a>
+            <a href="./delve_into/user/information_architects/document_types/examples.html">examples: Examples of document types</a>
             <ul>
               <li>
                 <span xmlns="" class="bad"> TODO </span>
@@ -780,7 +781,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/information_architects/howto/document_types/fieldtypes.html">fieldtypes: Field Types Reference</a>
+            <a href="./delve_into/user/information_architects/document_types/fieldtypes.html">fieldtypes: Field Types Reference</a>
             <ul>
               <li>
                 <span xmlns="" class="bad"> TODO </span>
@@ -791,7 +792,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/information_architects/howto/document_types/index.html">index: Document Types</a>
+            <a href="./delve_into/user/information_architects/document_types/index.html">index: Document Types</a>
             <ul>
               <li>
                 <span xmlns="" class="bad"> TODO </span>
@@ -864,7 +865,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="badtext documents: 21">
+      <subsection name="badtext documents: 20">
         <ol>
           <li>
             <a href="./about/roadmap.html">roadmap: Roadmap Hippo CMS</a>
@@ -916,21 +917,17 @@ repository is;
             <a href="./delve_into/user/contributors/concepts/current_folder.html">current_folder: Current folder</a>
             <ul>
               <li>What is the<span xmlns="" class="bad"> current </span>folder?</li>
-              <li>The<span xmlns="" class="bad"> current </span>folder is marked bright yellow in the</li>
+              <li>The<span xmlns="" class="bad"> current </span>folder 'common' is marked bright yellow in the</li>
+              <li>. The<span xmlns="" class="bad"> current </span>folder contains a document titled 'About Us' and document titled 'homepage'.</li>
               <li>The<span xmlns="" class="bad"> current </span>folder is one single folder at any time, which is chosen by the user, by clicking on its name in the</li>
               <li>. The<span xmlns="" class="bad"> current </span>folder name is marked with a color in the</li>
               <li>. At any time, the user can chose another folder to be the<span xmlns="" class="bad"> current </span>folder.</li>
               <li>The content of the<span xmlns="" class="bad"> current </span>folder is tabulated in the</li>
               <li>The names of the subfolders of the<span xmlns="" class="bad"> current </span>folder are listed under the current folder name in the</li>
               <li>. This allows to proceed to one of the subfolders and make that the<span xmlns="" class="bad"> current </span>folder.</li>
+              <li>folder is the<span xmlns="" class="bad"> current </span>folder, it is the one that is open. If another folder is the current folder, it is marked bright yellow.</li>
+              <li>, that folder has already become<span xmlns="" class="bad"> current </span>, but the bright yellow marking will only be changed to the new folder after the folder action has finished.</li>
               <li>Particular actions are possible for the<span xmlns="" class="bad"> current </span>folder, such as: creating a document in it, creating a subfolder in it, deleting a subfolder from it. The actions that a particular user may do on particular folder can be different for different fold</li>
-              <li>. At any particular moment, only folder actions on the<span xmlns="" class="bad"> current </span>folder are possible.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/contributors/concepts/folder_action_menu.html">folder_action_menu: Folder action menu</a>
-            <ul>
-              <li>At any particular moment, only folder actions on the<span xmlns="" class="bad"> current </span>folder are possible.</li>
             </ul>
           </li>
           <li>
@@ -974,7 +971,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/information_architects/concepts/current_folder.html">current_folder: Current folder</a>
+            <a href="./delve_into/user/information_architects/concepts/old/current_folder.html">current_folder: Current folder</a>
             <ul>
               <li>What is the<span xmlns="" class="bad"> current </span>folder?</li>
               <li>The<span xmlns="" class="bad"> current </span>folder is marked bright yellow in the</li>
@@ -989,7 +986,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/information_architects/concepts/folder_action_menu.html">folder_action_menu: Folder action menu</a>
+            <a href="./delve_into/user/information_architects/concepts/old/folder_action_menu.html">folder_action_menu: Folder action menu</a>
             <ul>
               <li>At any particular moment, only folder actions on the<span xmlns="" class="bad"> current </span>folder are possible.</li>
             </ul>
@@ -1014,6 +1011,7 @@ repository is;
             <ul>
               <li>The first formally released version must be 2.01.01 because of the<span xmlns="" class="bad"> current </span>numbering scheme</li>
               <li>followed by the SVN revision number of the then<span xmlns="" class="bad"> current </span>trunk. For example a version might be</li>
+              <li>Note that the<span xmlns="" class="bad"> current </span>install uses the maven release plugin version 2.0-beta-8, there is a newer version 2.0-beta-9 available which should fix the bug which leads to the initial failure of releasing and requires you to do </li>
             </ul>
           </li>
           <li>
@@ -1024,8 +1022,20 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="notvalid documents: 1">
+      <subsection name="notvalid documents: 3">
         <ol>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/document_types/*.html">*: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/index.html">index: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
           <li>
             <a href="./delve_into/web/jcr/*.html">*: </a>
             <ul>

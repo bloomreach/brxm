@@ -54,7 +54,8 @@ ________________________________________________________________________________
     <p>
      After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog.
      Type your Hippo CMS username and password.
-     These must been given to you by your Hippo CMS administrator.
+     These must been given to you by your Hippo CMS administrator. You can change your
+     password later.
     </p>
     <p>
      If usernames are not yet defined for your Hippo CMS, then
@@ -65,8 +66,9 @@ ________________________________________________________________________________
 
    <subsection name='Next'>
     <ul>
+     <li><a href='./change_own_password.html'>Change your password (continue</a> <a href='../tour.html'>tour).</a></li>
      <li><a href='./goto_content_workspace.html'>Go to the
-      content workspace (continue</a> <a href='../tour.html'>tour).</a></li>
+       content workspace</a></li>
     </ul>
    </subsection>
 
@@ -74,8 +76,8 @@ ________________________________________________________________________________
     <ul>
      <li><a href='./index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>
-    </ul>       
+    </ul>
    </subsection>
     </section>
   </body>
-</document>        
+</document>

@@ -16,45 +16,53 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-
+    
 ____________________________________________________________________________________________
 
 -->
- <document>
+<document>
   <properties>
-    <title>field type menu</title>
+    <title>Publish all</title>
   </properties>
 
   <body>
-    <section name="string">
-      <span class="shortdesc">What is a field type menu</span>
+    <section name="Publish all">
+      <span class="shortdesc">How to publish all documents simultaneously?</span>
 
    <script type="text/javascript">
-    leftpx=450;
+    leftpx=0
    </script>
    <div class='group'>
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/inars/field_type_menu.png" alt='field type menu screenshot'/> 
+      <img src="../../../../images/screenshots/cms_M13/admins/publish_all.png" alt='Add user screenshot'/>
     </div></div>
-    <p>
-      Field type menu.
-     </p>
+   <p>
+    In the <a href='../concepts/home_workspace.html'>home workspace</a>,
+    just after clicking 'Publish all'.
+   </p>
    </div>
 
-      <p>A field type menu
-         occurs in the <span href='document_type_editor.html'>document type editor</span>.
-         In the field type menu a field type can be selected, which results in a new field of
-         that type being added at the end of the
-         <a href='documenttype.html'>document type</a> being edited.
-     </p>
+   <p>
+    The 'publish all' functionality allows the CMS administrator to publish all documents simultaneously.
+    'Depublish all' allows the opposite.
+     This is useful e.g.\ for testing.
+   </p>
+
+  <subsection name='Next'>
+   <ul>
+    <li><a href='./logout.html'>Logout</a>
+       (continue <a href='../tour.html'>tour</a>).</li>
+   </ul>
+  </subsection>
+
    <subsection name='Alternative'>
     <ul>
      <li><a href='../tour.html'>tour page.</a></li>
-     <li><a href='./index.html'>Glossary.</a></li>
-     <li><a href='../howto/index.html'>Howto list.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
     </ul>
    </subsection>
+
    </section>
   </body>
- </document>
-
+</document>

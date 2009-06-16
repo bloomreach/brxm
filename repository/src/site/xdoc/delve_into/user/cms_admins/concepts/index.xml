@@ -27,7 +27,7 @@
     <title>CMS Admins Concepts</title>
   </properties>
   <body>
-    <section name="CMS Admins Concepts"><span class="shortdesc">A collection of concepts a CMS administrators may want to know.</span><table/>  
+    <section name="CMS Admins Concepts"><span class="shortdesc">A collection of concepts a CMS administrators may want to know.</span><table><tr><td><a href="./home_workspace.html">Home Workspace</a></td><td>What and where is the home workspace?: <a href="./home_workspace.html#Alternative">Alternative</a>.</td></tr></table>  
   <subsection xmlns="" name="Alternative">
      <p>
       If you do not know where to start, take the <a href="../tour.html">Tour</a>.

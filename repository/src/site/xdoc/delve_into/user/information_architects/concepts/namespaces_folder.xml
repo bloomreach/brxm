@@ -40,7 +40,7 @@ ________________________________________________________________________________
     </div></div>
     <p>
      Opened the <i>namespaces folder</i>.
-     It is a main folder in the <a href='../concepts/configuration_slide.html'>configuration slide</a>.
+     It is a main folder in the configuration <a href='../../contributors/concepts/slider.html'>slider</a>.
      The subfolders of the namespaces folder are <a href='../concepts/namespace.html'>namespaces</a>.
      There is one namespace in this example, called 'defaultcontent'.
      It is the namespace for <span href='../concepts/namespace.html'>default content</span>.

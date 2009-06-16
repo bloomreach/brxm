@@ -29,24 +29,11 @@ ________________________________________________________________________________
     <section name="Save settings">
       <span class="shortdesc">How to save settings, like the properties of a user of a group.</span>
 
-   <script type="text/javascript">
-    leftpx=450;
-    bottompx=350;
-   </script>
-   <div class='group'> 
-    <div id='screenshot'><div>
-     <img src="../../../../images/save_settings.png" alt='save settings screenshot'/>      
-  </div></div></div>
-
-  <p>
-   In the properties list on the right of the <a href='./goto_user_management_tab.html'>user management tab</a>
-   click on the save button (at the bottom of the list of properties).
-  </p>
-
    <p>
-    If you change your mind before you clicked the save button, click the cancel button. 
+    You will find a save button and a cancel button.
+    If you change your mind before you clicked the save button, click the cancel button.
     <div class='alert-48 icon-text-48'>
-     If you logout without clicking the cancel button, the new properties will also be saved. 
+     If you logout without clicking the cancel button, the new properties will also be saved.
      This is generally a good thing, but know what you are doing when changing for example the
      admin password.
     </div>
@@ -54,11 +41,12 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
+    <li>If you are doing the <a href='../tour.html'>tour</a>,
+        use the back button of your browser to continue.</li>
     <li><a href='./add_group.html'>Add a group</a>.</li>
     <li><a href='./add_user.html'>Add a user</a>.</li>
-    <li><a href='./change_password.html'>change a password</a>.</li>
     <li><a href='./deactivate_account.html'>deactivate an account</a>.</li>
-   </ul>       
+   </ul>
   </subsection>
    <subsection name='Alternative'>
     <ul>
@@ -70,4 +58,4 @@ ________________________________________________________________________________
 
    </section>
   </body>
-</document>        
+</document>

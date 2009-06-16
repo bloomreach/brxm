@@ -22,61 +22,70 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Change user properies</title>
+    <title>Edit user properies</title>
   </properties>
 
   <body>
-    <section name="Change user properties">
-      <span class="shortdesc">How to change to properties of a Hippo CMS user account.</span>
+    <section name="Edit user properties">
+      <span class="shortdesc">How to edit the properties of a Hippo CMS user account.</span>
 
    <script type="text/javascript">
-    leftpx=450;
-    bottompx=350;
+    leftpx=0;
    </script>
-   <div class='group'> 
+   <div class='group'>
     <div id='screenshot'><div>
-     <img src="../../../../images/user_properties.png" alt='Change user properties screenshot'/>      
-  </div></div></div>
+      <img src="../../../../images/screenshots/cms_M13/admins/edit_user_properties.png" alt='Edit user properties screenshot'/>
+    </div></div>
+   <p>About to click on the name 'Marc' to edit his user properties.
+   </p>
+   </div>
 
-   <p>
-    In the list of <a href='./goto_user_properties.html'>properties of the user</a>,
-    you can:
+   <p>You can edit the following properties of the user:
    </p>
    <ol>
-    <li>    
-     <a href='./deactivate_account.html'>deactivate his account</a>,
+    <li>
+     First name.
     </li>
     <li>
-     <a href='./change_password.html'>change his password</a>,
+     Last name.
     </li>
     <li>
-     <a href='./assign_user_to_group.html'>assign him to one or more groups</a>,
+     Email adres.
     </li>
-    <li>or change another property, by clicking below the property title,
-        just like 
-        <a href='./change_password.html'>changing his password</a>, except that
-        the value will be visible.
+    <li>
+     His password.
+    </li>
+    <li>
+     <a href='deactivate_account.html'>deactivate/activate his account</a>,
+    </li>
+    <li>
+     <a href='assign_user_to_group.html'>assign him to one or more groups</a>,
+    </li>
+    <li>
+     Delete his account.
     </li>
    </ol>
-  
+
    <p>
-    Then <a href='./save_settings.html'>save the settings</a>.
+    When finished <a href='./save_settings.html'>save the settings</a>.
    </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./add_group.html'>Add a group</a>.</li>
-    <li><a href='./add_user.html'>Add a user</a>.</li>
-   </ul>       
+    <li>If you are doing the <a href='../tour.html'>tour</a>,
+        use the back button of your browser to continue.</li>
+    <li><a href='add_group.html'>Add a group</a>.</li>
+    <li><a href='add_user.html'>Add a user</a>.</li>
+   </ul>
   </subsection>
    <subsection name='Alternative'>
     <ul>
      <li><a href='../tour.html'>tour page.</a></li>
-     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>
     </ul>
    </subsection>
 
    </section>
   </body>
-</document>        
+</document>

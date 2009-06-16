@@ -160,21 +160,6 @@
         <item name="CMS 7 Admins" collapse="true" href="/delve_into/user/cms_admins/index.html">
           <item name="Tour" collapse="false" href="/delve_into/user/cms_admins/tour.html"/> 
           <item name="Howto" collapse="true" href="/delve_into/user/cms_admins/howto/index.html"> 
-            <item name="Add Group" href="/delve_into/user/cms_admins/howto/add_group.html"/>
-            <item name="Add User" href="/delve_into/user/cms_admins/howto/add_user.html"/>
-            <item name="Assign user to group" href="/delve_into/user/cms_admins/howto/assign_user_to_group.html"/>
-            <item name="Change group properties" href="/delve_into/user/cms_admins/howto/change_group_properties.html"/>
-            <item name="Change password" href="/delve_into/user/cms_admins/howto/change_password.html"/>
-            <item name="Change user properties" href="/delve_into/user/cms_admins/howto/change_user_properties.html"/>
-            <item name="Deactivate account" href="/delve_into/user/cms_admins/howto/deactivate_account.html"/>
-            <item name="Goto Group Properties" href="/delve_into/user/cms_admins/howto/goto_group_properties.html"/>
-            <item name="Goto User Management Tab" href="/delve_into/user/cms_admins/howto/goto_user_management_tab.html"/>
-            <item name="Goto User Properties" href="/delve_into/user/cms_admins/howto/goto_user_properties.html"/>
-            <item name="CMS 7 admin Howto" href="/delve_into/user/cms_admins/howto/index.html"/>
-            <item name="Login as Admin" href="/delve_into/user/cms_admins/howto/login.html"/>
-            <item name="Save settings" href="/delve_into/user/cms_admins/howto/save_settings.html"/>
-            <item name="Start CMS 7" href="/delve_into/user/cms_admins/howto/start_CMS.html"/>
-            <item name="Type in editing region" href="/delve_into/user/cms_admins/howto/type_in_editing_region.html"/>
           </item>
           <item name="Concepts" collapse="true" href="/delve_into/user/cms_admins/concepts/index.html"/>
         </item>

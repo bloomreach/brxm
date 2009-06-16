@@ -22,39 +22,41 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Add User</title>
+    <title>Goto User Management workspace</title>
   </properties>
 
   <body>
-    <section name="Add User">
-      <span class="shortdesc">How to add a user account to Hippo CMS to allow someone access.</span>
+    <section name="Goto User Management Workspace">
+      <span class="shortdesc">How to get to the user management workspace, to add users and groups or change their properties.</span>
 
    <script type="text/javascript">
-    leftpx=0;
-    bottompx=600;
+    bottompx=400;
    </script>
    <div class='group'>
     <div id='screenshot'><div>
-      <img src="../../../../images/screenshots/cms_M13/admins/add_user.png" alt='Add user screenshot'/>
+      <img src="../../../../images/screenshots/cms_M13/admins/user_management_workspace.png" alt='user management workspace screenshot'/>
     </div></div>
+    <p>
+     The user management workspace just after entering it by clicking the
+     user management icon in the
+     <a href='../../contributors/concepts/workspace_navigation_panel.html'>workspace navigation panel</a>.
+    </p>
    </div>
-
-   <p>
-     In the <a href='./goto_user_management_workspace.html'>user management workspace</a>,
-     after choosing the user administration and then 'create user'.
-   </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./assign_user_to_group.html'>Assign user to group</a>
-       (continue <a href='../tour.html'>tour</a>).</li>
-    <li><a href='./change_user_properties.html'>Edit user properties</a>.</li>
+    <li>If you are doing the <a href='../tour.html'>tour</a>,
+        use the back button of your browser to continue.</li>
+    <li><a href='./add_group.html'>Add a group</a>.</li>
+    <li><a href='./add_user.html'>Add a user</a>.</li>
+    <li><a href='./change_password.html'>change a password</a>.</li>
+    <li><a href='./deactivate_account.html'>deactivate an account</a>.</li>
    </ul>
   </subsection>
    <subsection name='Alternative'>
     <ul>
      <li><a href='../tour.html'>tour page.</a></li>
-     <li><a href='index.html'>Howto list.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>
     </ul>
    </subsection>
