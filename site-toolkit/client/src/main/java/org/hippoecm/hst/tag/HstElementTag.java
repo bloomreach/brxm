@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.tag;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTagSupport;
@@ -23,11 +22,8 @@ import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.dom4j.dom.DOMDocument;
-import org.dom4j.dom.DOMElement;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -61,8 +57,6 @@ public class HstElementTag extends BodyTagSupport {
             parentElement = parentElementTag.getElement();
         }
 
-        HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
-
         if (name != null && !"".equals(name)) {
             // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
             HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
@@ -73,36 +67,6 @@ public class HstElementTag extends BodyTagSupport {
 
             if (hstResponse != null) {
                 element = hstResponse.createElement(name);
-            } else {
-                element = new DOMElement(name)
-                {
-                    private static final long serialVersionUID = 1L;
-                    
-                    private Document document;
-                    
-                    @Override
-                    public Document getOwnerDocument() 
-                    {
-                        if (document == null)
-                        {
-                            document = new DOMDocument(this);
-                        }
-                        
-                        return document;
-                    }
-
-                    @SuppressWarnings("unused")
-                    public void setTextContent(String textContent)
-                    {
-                        setText(textContent);
-                    }
-                    
-                    @SuppressWarnings("unused")
-                    public String getTextContent()
-                    {
-                        return getText();
-                    }
-                };
             }
         } else {
             throw new JspException("Invalid element name: " + name);

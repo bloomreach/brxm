@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.hippoecm.hst.util;
 
 import java.io.IOException;
@@ -189,12 +204,12 @@ public class DOMElementWriter {
                     break;
 
                 case Node.TEXT_NODE:
-                    out.write(encode(child.getNodeValue()));
+                    out.write(encodetext(child.getNodeValue()));
                     break;
 
                 case Node.COMMENT_NODE:
                     out.write("<!--");
-                    out.write(encode(child.getNodeValue()));
+                    out.write(encodetext(child.getNodeValue()));
                     out.write("-->");
                     break;
 
@@ -400,6 +415,43 @@ public class DOMElementWriter {
                 break;
             case '\"':
                 sb.append("&quot;");
+                break;
+            case '&':
+                int nextSemi = value.indexOf(";", i);
+                if (nextSemi < 0
+                    || !isReference(value.substring(i, nextSemi + 1))) {
+                    sb.append("&amp;");
+                } else {
+                    sb.append('&');
+                }
+                break;
+            default:
+                if (isLegalCharacter(c)) {
+                    sb.append(c);
+                }
+                break;
+            }
+        }
+        return sb.substring(0);
+    }
+    
+    /**
+     * Escape &lt;, &gt; &amp; as their entities and
+     * drop characters that are illegal in XML documents.
+     * @param value the string to encode.
+     * @return the encoded string.
+     */
+    public String encodetext(String value) {
+        StringBuffer sb = new StringBuffer();
+        int len = value.length();
+        for (int i = 0; i < len; i++) {
+            char c = value.charAt(i);
+            switch (c) {
+            case '<':
+                sb.append("&lt;");
+                break;
+            case '>':
+                sb.append("&gt;");
                 break;
             case '&':
                 int nextSemi = value.indexOf(";", i);

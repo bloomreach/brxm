@@ -20,7 +20,6 @@ import java.io.StringWriter;
 import java.util.List;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.dom4j.io.HTMLWriter;
@@ -68,17 +67,25 @@ public class HeadContributionsTag extends TagSupport {
                     org.dom4j.Element dom4jHeadElement = null;
                     
                     for (org.w3c.dom.Element headElement : headElements) {
-                        if (htmlWriter == null) {
-                            htmlWriter = new HTMLWriter(pageContext.getOut(), this.outputFormat);
-                        }
-                        
                         if (headElement instanceof org.dom4j.Element) {
+                            if (htmlWriter == null) {
+                                htmlWriter = new HTMLWriter(pageContext.getOut(), this.outputFormat);
+                            }
+                            
                             dom4jHeadElement = (org.dom4j.Element) headElement;
                             htmlWriter.write(dom4jHeadElement);
                         } else {
-                            String stringified = stringifyElement(headElement, 80, 0, "  ");
-                            htmlWriter.write(stringified);
+                            if (htmlWriter != null) {
+                                htmlWriter.flush();
+                            }
+                            
+                            pageContext.getOut().println(stringifyElement(headElement, 80, 0, "  "));
+                            pageContext.getOut().flush();
                         }
+                    }
+                    
+                    if (htmlWriter != null) {
+                        htmlWriter.flush();
                     }
                 } catch (IOException ioe) {
                     throw new JspException("HeadContributionsTag Exception: cannot write to the output writer.");

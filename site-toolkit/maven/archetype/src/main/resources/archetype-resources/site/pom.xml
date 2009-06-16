@@ -369,12 +369,6 @@
           <scope>provided</scope>
         </dependency>
         <dependency>
-          <groupId>org.onehippo.ecm.hst.components</groupId>
-          <artifactId>hst-core</artifactId>
-          <version>${dollar}{hst.version}</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
           <groupId>commons-logging</groupId>
           <artifactId>commons-logging</artifactId>
           <version>[1.1.1,)</version>
