@@ -137,7 +137,8 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IRefreshabl
     public void refresh() {
         active = true;
         try {
-            Iterator<AbstractCmsEditor<JcrNodeModel>> iter = editors.iterator();
+            List<AbstractCmsEditor<JcrNodeModel>> copy = new LinkedList<AbstractCmsEditor<JcrNodeModel>>(editors);
+            Iterator<AbstractCmsEditor<JcrNodeModel>> iter = copy.iterator();
             while (iter.hasNext()) {
                 AbstractCmsEditor<JcrNodeModel> editor = iter.next();
                 editor.refresh();
