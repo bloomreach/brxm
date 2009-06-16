@@ -31,6 +31,8 @@ public class FilterImpl implements Filter{
 
     private HstRequestContext hstRequestContext; 
     private StringBuilder jcrExpressionBuilder;
+    
+    private boolean negated = false;
     /**
      * AND and OR filters are evaluated at the end when #getJcrExpression is called.
      * This allows us to change those filters even after those are added to filter
@@ -43,7 +45,11 @@ public class FilterImpl implements Filter{
         this.hstRequestContext = hstRequestContext;
     }
 
-    public void addContains(String scope, String fullTextSearch) throws FilterException{
+    public void negate(){
+        this.negated = !negated;
+    }
+    
+    private void addContains(String scope, String fullTextSearch, boolean isNot){
         String jcrExpression;
         if (scope.equals(".")) {
             jcrExpression = "jcr:contains(., '" + fullTextSearch + "')";
@@ -51,18 +57,39 @@ public class FilterImpl implements Filter{
         else {
             jcrExpression = "jcr:contains(@" + scope + ", '" + fullTextSearch+ "')";
         }
-
-        addExpression(jcrExpression);
+        if(isNot) {
+            addNotExpression(jcrExpression);
+        } else {
+            addExpression(jcrExpression);
+        }
+    }
+    public void addContains(String scope, String fullTextSearch) throws FilterException{
+        addContains(scope, fullTextSearch, false);
+    }
+    
+    public void addNotContains(String scope, String fullTextSearch) throws FilterException{
+        addContains(scope, fullTextSearch, true);
     }
    
-
-    public void addBetween(String fieldAttributeName, Object value1, Object value2) throws FilterException {
+    private void addBetween(String fieldAttributeName, Object value1, Object value2, boolean isNot) throws FilterException {
         String jcrExpression = "( @" + fieldAttributeName + " >= "
         + this.getStringValue(fieldAttributeName, value1)
         + " and @" + fieldAttributeName + " <= "
         + this.getStringValue(fieldAttributeName, value2) + ")";
 
-       addExpression(jcrExpression);
+        if(isNot) {
+            addNotExpression(jcrExpression);
+        } else {
+            addExpression(jcrExpression);
+        }
+    }
+
+    public void addBetween(String fieldAttributeName, Object value1, Object value2) throws FilterException {
+        addBetween(fieldAttributeName, value1, value2,false);
+    }
+    
+    public void addNotBetween(String fieldAttributeName, Object value1, Object value2) throws FilterException {
+        addBetween(fieldAttributeName, value1, value2,true);
     }
 
     public void addEqualTo(String fieldAttributeName, Object value) throws FilterException{
@@ -102,10 +129,22 @@ public class FilterImpl implements Filter{
         addExpression(jcrExpression);
     }
 
-    public void addLike(String fieldAttributeName, Object value) throws FilterException{
+    private void addLike(String fieldAttributeName, Object value, boolean isNot) throws FilterException{
         String jcrExpression = "jcr:like(" + "@" + fieldAttributeName + ", '"
             + value + "')";
-        addExpression(jcrExpression);
+        if(isNot) {
+            addNotExpression(jcrExpression);
+        } else {
+            addExpression(jcrExpression);
+        }
+    }
+
+    public void addLike(String fieldAttributeName, Object value) throws FilterException{
+       addLike(fieldAttributeName, value, false);
+    }
+    
+    public void addNotLike(String fieldAttributeName, Object value) throws FilterException{
+        addLike(fieldAttributeName, value, true);
     }
     
 
@@ -148,6 +187,13 @@ public class FilterImpl implements Filter{
         this.addExpression(filter.getJcrExpression());
     }
     
+    private void addNotExpression(String jcrExpression){
+        if(jcrExpression == null || "".equals(jcrExpression)) {
+            return;
+        }
+        addExpression("not("+jcrExpression+")");
+    }
+    
     private void addExpression(String jcrExpression) {
         if(jcrExpression == null || "".equals(jcrExpression)) {
             return;
@@ -168,7 +214,12 @@ public class FilterImpl implements Filter{
         if (this.jcrExpressionBuilder == null) {
             return null;
         }
-        return jcrExpressionBuilder.toString();
+        if(this.negated) {
+            return "not("+jcrExpressionBuilder.toString()+")";
+        } else {
+            return jcrExpressionBuilder.toString();
+        }
+        
     }
 
     /**

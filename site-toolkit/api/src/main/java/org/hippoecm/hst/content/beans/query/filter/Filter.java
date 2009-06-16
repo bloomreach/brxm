@@ -21,11 +21,17 @@ import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 public interface Filter extends BaseFilter{
 
     void addContains(String scope, String fullTextSearch) throws FilterException ;
+    
+    void addNotContains(String scope, String fullTextSearch) throws FilterException ;
 
     void addBetween(String fieldAttributeName, Object value1, Object value2) throws FilterException ;
 
-    void addEqualTo(String fieldAttributeName, Object value) throws FilterException ;
+    void addNotBetween(String fieldAttributeName, Object value1, Object value2) throws FilterException ;
 
+    void addEqualTo(String fieldAttributeName, Object value) throws FilterException ;
+    
+    void addNotEqualTo(String fieldAttributeName, Object value) throws FilterException ;
+    
     void addGreaterOrEqualThan(String fieldAttributeName, Object value) throws FilterException ;
 
     void addGreaterThan(String fieldAttributeName, Object value) throws FilterException ;
@@ -42,8 +48,16 @@ public interface Filter extends BaseFilter{
      * @throws FilterException
      */
     void addLike(String fieldAttributeName, Object value) throws FilterException ;
+    
+    /**
+     * Try to avoid this method, as 'like' searches are slow. Certainly try to avoid prefix wildcards in the
+     * value, as they do not scale at all.
+     * @param fieldAttributeName
+     * @param value
+     * @throws FilterException
+     */
+    void addNotLike(String fieldAttributeName, Object value) throws FilterException ;
 
-    void addNotEqualTo(String fieldAttributeName, Object value) throws FilterException ;
 
     void addNotNull(String fieldAttributeName) throws FilterException ;
 
@@ -51,8 +65,21 @@ public interface Filter extends BaseFilter{
     
     void addJCRExpression(String jcrExpression);
     
+    /**
+     * @param filter to OR added
+     * @return the current filter
+     */
     Filter addOrFilter(BaseFilter filter);
 
+    /**
+     * 
+     * @param filter to AND added
+     * @return the current filter
+     */
     Filter addAndFilter(BaseFilter filter);
 
+    /**
+     * negates the current filter
+     */
+    void negate();
 }
