@@ -43,6 +43,9 @@ public class ContextResolvingValve extends AbstractValve
             matchedMapping = requestContext.getMatchedMapping();
         } else {
             String hostName = servletRequest.getServerName();
+            if(this.virtualHostsManager.getVirtualHosts() == null) {
+                throw new ContainerException("Hosts are not properly initialized");
+            }
             matchedMapping = this.virtualHostsManager.getVirtualHosts().findMapping(hostName, baseURL.getServletPath() + baseURL.getPathInfo());   
             ((HstRequestContextImpl)requestContext).setMatchedMapping(matchedMapping);
             if (matchedMapping == null) {

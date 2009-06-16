@@ -25,6 +25,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.hosting.VirtualHosts;
 import org.hippoecm.hst.core.hosting.VirtualHostsManager;
 import org.hippoecm.hst.core.request.MatchedMapping;
@@ -66,7 +68,7 @@ public class HstVirtualHostsFilter implements Filter {
             
             VirtualHostsManager virtualHostManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
             VirtualHosts vHosts = virtualHostManager.getVirtualHosts();
-            if(vHosts.isExcluded(pathInfo)) {
+            if(vHosts == null || vHosts.isExcluded(pathInfo)) {
                 chain.doFilter(request, response);
                 return;
             }
@@ -91,6 +93,9 @@ public class HstVirtualHostsFilter implements Filter {
             } else {
                 chain.doFilter(request, response);
             }
+        } catch(RepositoryNotAvailableException e) {
+            final String msg = "Fatal error encountered while processing request: " + e.toString();
+            throw new ServletException(msg, e);
         } finally {
             if (logger != null && logger.isDebugEnabled()) {
                 long starttick = request.getAttribute(REQUEST_START_TICK_KEY) == null ? 0 : (Long)request.getAttribute(REQUEST_START_TICK_KEY);

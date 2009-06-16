@@ -15,13 +15,15 @@
  */
 package org.hippoecm.hst.core.hosting;
 
+import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+
 
 public interface VirtualHostsManager {
 
     /**
      * @return the <code>VirtualHosts</code> managed by this VirtualHostsManager
      */
-    VirtualHosts getVirtualHosts();
+    VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException;
     
     /**
      * Invalidates this VirtualHostsManager. Typically this invalidate is called after a received event indicating that for example

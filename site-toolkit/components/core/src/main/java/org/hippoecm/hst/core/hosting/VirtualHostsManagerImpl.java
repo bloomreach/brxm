@@ -17,12 +17,14 @@ package org.hippoecm.hst.core.hosting;
 
 import javax.jcr.Credentials;
 import javax.jcr.Item;
+import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +52,7 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
     }
 
     
-    public VirtualHosts getVirtualHosts() {
+    public VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException{
         VirtualHosts vHosts = this.virtualHosts;
         
         if (vHosts == null) {
@@ -63,12 +65,11 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
         return vHosts;
     }
 
-    protected synchronized void buildVirtualHosts() {
+    protected synchronized void buildVirtualHosts() throws RepositoryNotAvailableException{
         if (this.virtualHosts != null) {
             return;
         }
         Session session = null;
-        
         try {
             if (this.credentials == null) {
                 session = this.repository.login();
@@ -92,6 +93,12 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
                 log.debug("No correct virtualhosts configured at {}. Use the default site for any request regardless the hostname.", virtualHostsPath);
                 this.virtualHosts = new VirtualHostsService(defaultSiteName);
             }
+            
+        } catch (LoginException e) {
+            if (log.isDebugEnabled()) {
+                log.info("The repository is not (yet) available: {}", e.getMessage()); 
+            } 
+            throw new RepositoryNotAvailableException("The repository is not (yet) available.", e );
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
                 log.error("Failed to retrieve virtual hosts configuration: {}, {}", e.getMessage(), e);
