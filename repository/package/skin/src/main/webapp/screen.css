@@ -654,8 +654,18 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 .hippo-tree div.wicket-tree div.row-selected a {font-weight: normal; color: black;}
 
 /* IE6 workaround */
-.hippo-tree div.wicket-tree div.context-hover{background-position: -200px 0px;}
-.hippo-tree div.wicket-tree div.context-hover-selected{background-position: -200px -21px;}
+.hippo-tree div.wicket-tree div.context-hover .hippo-tree-dropdown-icon-container {
+  background-image: url("images/controls/folder-workflow-icon.png"); 
+  background-repeat: no-repeat;
+  background-position: -1px -2px;
+}
+
+.hippo-tree div.wicket-tree div.context-hover-selected .hippo-tree-dropdown-icon-container {
+  background-image: url("images/controls/folder-workflow-icon.png"); 
+  background-repeat: no-repeat;
+  background-position: -1px -2px;
+  
+}
 
 .hippo-tree .wicket-tree span.plus, 
 .hippo-tree .wicket-tree span.minus {background-image: url("images/tree-icons.png"); width: 14px;}
