@@ -20,12 +20,16 @@ import org.hippoecm.frontend.plugin.IServiceFactory;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BuiltinApplicationFactory implements IApplicationFactory {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log = LoggerFactory.getLogger(BuiltinApplicationFactory.class);
 
     public BuiltinApplicationFactory() {
     }
@@ -35,6 +39,7 @@ public class BuiltinApplicationFactory implements IApplicationFactory {
     }
     
     public IServiceFactory<IPluginConfigService> getApplication(String name) {
+        log.info("Starting builtin application: " + name);
         JavaConfigService configService;
         if ("login".equals(name)) {
             configService = new JavaConfigService("login");
@@ -43,7 +48,6 @@ public class BuiltinApplicationFactory implements IApplicationFactory {
         }
         configService.addClusterConfig("login", initLogin());
         configService.addClusterConfig("console", initConsole());
-
         return new Factory(configService);
     }
 
