@@ -21,7 +21,6 @@
         <param-name>log4jConfigLocation</param-name>
         <param-value>classpath:log4j.properties</param-value>
     </context-param>
-
 	<context-param>
 		<param-name>log4jRefreshInterval</param-name>
 		<param-value>60000</param-value>
@@ -47,7 +46,15 @@
     
     <filter>
         <filter-name>HstVirtualHostsFilter</filter-name>
-        <filter-class>org.hippoecm.hst.container.HstVirtualHostsFilter</filter-class>    
+        <filter-class>org.hippoecm.hst.container.HstVirtualHostsFilter</filter-class>
+        <init-param>
+            <param-name>welcome-page</param-name>
+            <param-value>home</param-value>
+        </init-param>
+        <init-param>
+            <param-name>preview-prefix</param-name>
+            <param-value>/preview</param-value>
+        </init-param>   
     </filter>
     
     <filter-mapping>
