@@ -30,7 +30,8 @@ ________________________________________________________________________________
       <span class="shortdesc">What is the current folder?</span>
 
    <script type="text/javascript">
-    leftpx=300;
+    leftpx=0;
+    bottompx=500;
    </script>
    <div class='group'>
     <div id='screenshot'><div>
@@ -79,6 +80,20 @@ ________________________________________________________________________________
      The actions that are allowed on the current folder are presented in the
      <a href='folder_action_menu.html'>folder action menu</a>.
     </p>
+   <subsection name='Next'>
+    <ul>
+     <li>
+      If you are doing the <a href='../tour.html'>tour</a>, use the back button of your browser to continue.
+      (There is no hyperlink here, because you can get here from many different pages.)
+     </li>
+    </ul>
+   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./index.html'>Glossary.</a></li>
+     <li><a href='../howto/index.html'>Howto list.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>

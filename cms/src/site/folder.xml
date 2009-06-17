@@ -732,16 +732,32 @@
    fullname='delve_into/user/contributors/concepts/inputfield.xml'
    relpath='delve_into/user/contributors/concepts'
   >inputfield</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/contributors/concepts/inputfield.xml~'
+   relpath='delve_into/user/contributors/concepts'
+  >inputfield</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/concepts/markuped_text.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >markuped_text</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/contributors/concepts/markuped_text.xml~'
    relpath='delve_into/user/contributors/concepts'
   >markuped_text</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/concepts/review_mode.xml'
    relpath='delve_into/user/contributors/concepts'
   >review_mode</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/contributors/concepts/review_mode.xml~'
+   relpath='delve_into/user/contributors/concepts'
+  >review_mode</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/concepts/slider.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >slider</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/contributors/concepts/slider.xml~'
    relpath='delve_into/user/contributors/concepts'
   >slider</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
@@ -749,23 +765,11 @@
    relpath='delve_into/user/contributors/concepts'
   >string</file>
       <folder>todo
-<info>
- <title>todo</title>             <!-- string -->
- <shortdesc>This folder contains concepts that are in development.</shortdesc>     <!-- string -->
-</info>
-       <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
-   fullname='delve_into/user/contributors/concepts/todo/document_card.xml'
+       <file ext='' note='empty'
+   fullname='delve_into/user/contributors/concepts/todo/*'
    relpath='delve_into/user/contributors/concepts/todo'
-  >document_card</file>
-       <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
-   fullname='delve_into/user/contributors/concepts/todo/index.xml'
-   relpath='delve_into/user/contributors/concepts/todo'
-  >index</file>
+  >*</file>
       </folder>
-      <file ext='xml' mimetype='application/xml' valid='yes'
-   fullname='delve_into/user/contributors/concepts/versioning.xml'
-   relpath='delve_into/user/contributors/concepts'
-  >versioning</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/concepts/workspace_navigation_panel.xml'
    relpath='delve_into/user/contributors/concepts'
@@ -823,7 +827,7 @@
    fullname='delve_into/user/contributors/howto/goto_folder.xml'
    relpath='delve_into/user/contributors/howto'
   >goto_folder</file>
-      <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
+      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/howto/index.xml'
    relpath='delve_into/user/contributors/howto'
   >index</file>
@@ -863,12 +867,6 @@
    fullname='delve_into/user/contributors/howto/start_CMS.xml'
    relpath='delve_into/user/contributors/howto'
   >start_CMS</file>
-      <folder>todo
-       <file ext='' note='empty'
-   fullname='delve_into/user/contributors/howto/todo/*'
-   relpath='delve_into/user/contributors/howto/todo'
-  >*</file>
-      </folder>
      </folder>
      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/index.xml'
@@ -890,6 +888,20 @@
       <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
    fullname='delve_into/user/contributors/todo/index.xml'
    relpath='delve_into/user/contributors/todo'
+  >index</file>
+     </folder>
+     <folder>todo-concepts
+<info>
+ <title>todo</title>             <!-- string -->
+ <shortdesc>This folder contains concepts that are in development.</shortdesc>     <!-- string -->
+</info>
+      <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
+   fullname='delve_into/user/contributors/todo-concepts/document_card.xml'
+   relpath='delve_into/user/contributors/todo-concepts'
+  >document_card</file>
+      <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
+   fullname='delve_into/user/contributors/todo-concepts/index.xml'
+   relpath='delve_into/user/contributors/todo-concepts'
   >index</file>
      </folder>
      <file ext='xml' mimetype='application/xml' valid='yes'

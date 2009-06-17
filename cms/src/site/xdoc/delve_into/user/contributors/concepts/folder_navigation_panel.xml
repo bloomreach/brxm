@@ -39,10 +39,10 @@ ________________________________________________________________________________
      </div></div>
      <p>
       About to press the newspaper folder in the
-      documents <a href='slider.html'>slider</a> in the folder navigation panel.
+      Documents <a href='slider.html'>slider</a> in the folder navigation panel.
       Before pressing,
-      the <a href='current_folder.html'>current folder</a> is common folder. After pressing,
-      it will be the newspaper folder.
+      the <a href='current_folder.html'>current folder</a> is the common folder. 
+      After pressing, it will be the newspaper folder.
      </p>
    </div>
 
@@ -54,6 +54,21 @@ ________________________________________________________________________________
      The upper level folders are navigated by <a href='slider.html'>sliders</a>,
      while all lower level folders are navigated in a tree.
     </p>
+
+   <subsection name='Next'>
+    <ul>
+     <li>
+      If you are doing the <a href='../tour.html'>tour</a>, use the back button of your browser to continue.
+      (There is no hyperlink here, because you can get here from many different pages.)
+     </li>
+    </ul>
+   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./index.html'>Glossary.</a></li>
+     <li><a href='../howto/index.html'>Howto list.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>
