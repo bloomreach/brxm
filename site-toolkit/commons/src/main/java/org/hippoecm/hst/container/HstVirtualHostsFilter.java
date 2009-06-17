@@ -25,7 +25,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.hosting.VirtualHosts;
 import org.hippoecm.hst.core.hosting.VirtualHostsManager;
@@ -41,10 +40,34 @@ public class HstVirtualHostsFilter implements Filter {
 
     private final static String FILTER_DONE_KEY = "filter.done_"+HstVirtualHostsFilter.class.getName();
     private final static String REQUEST_START_TICK_KEY = "request.start_"+HstVirtualHostsFilter.class.getName();
+    private final static String DEFAULT_WELCOME_PAGE = "home";
+    private final static String DEFAULT_PREVIEW_PREFIX = "/preview";
+    private final static String WELCOME_PAGE_INIT_PARAM = "welcome-page";
+    private final static String PREVIEW_PREFIX_INIT_PARAM = "preview-prefix";
+    private String welcome_page = DEFAULT_WELCOME_PAGE;
+    private String preview_prefix  = DEFAULT_PREVIEW_PREFIX;
     private FilterConfig filterConfig;
 
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
+        String customWelcomePage = filterConfig.getInitParameter(WELCOME_PAGE_INIT_PARAM);
+        if(customWelcomePage != null) {
+            welcome_page = stripSlashes(customWelcomePage);
+        }
+        String customPreviewPrefix = filterConfig.getInitParameter(PREVIEW_PREFIX_INIT_PARAM);
+        if(customPreviewPrefix != null) {
+            preview_prefix = "/" + stripSlashes(customPreviewPrefix);
+        }
+    }
+
+    private String stripSlashes(String value) {
+        if(value.startsWith("/")) {
+            value = value.substring(1);
+        }
+        if(value.endsWith("/")) {
+            value = value.substring(0, value.length() - 1);
+        }
+        return value;
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
@@ -65,6 +88,18 @@ public class HstVirtualHostsFilter implements Filter {
             if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
             
             String pathInfo = req.getRequestURI().substring(req.getContextPath().length());
+            
+            if(pathInfo.equals("")) {
+                pathInfo += "/"+welcome_page;
+            }
+            else if(pathInfo.equals("/")) {
+                pathInfo += welcome_page;
+            } else if (pathInfo.equals(preview_prefix)) {
+                pathInfo += "/"+welcome_page; 
+            }
+            else if (pathInfo.equals(preview_prefix+"/")) {
+                pathInfo += welcome_page; 
+            }
             
             VirtualHostsManager virtualHostManager = HstServices.getComponentManager().getComponent(VirtualHostsManager.class.getName());
             VirtualHosts vHosts = virtualHostManager.getVirtualHosts();
