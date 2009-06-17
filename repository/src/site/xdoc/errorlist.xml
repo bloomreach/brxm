@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">443 errors and/or todos in 244 out of 244 documents (100%).</span>
+      <span class="shortdesc">441 errors and/or todos in 243 out of 243 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -51,7 +51,7 @@
      </li>
         <li>3 not valid XML documents.
      </li>
-        <li>19 documents with bad text.
+        <li>18 documents with bad text.
      </li>
         <li>10 multisection documents.
      </li>
@@ -440,13 +440,6 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/contributors/concepts/todo/index.html">index: </a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-              <li>Missing section. Add &lt;section name='...'&gt;.</li>
-            </ul>
-          </li>
-          <li>
             <a href="./delve_into/user/contributors/howto/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
@@ -455,6 +448,13 @@ repository is;
           </li>
           <li>
             <a href="./delve_into/user/contributors/todo/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/todo-concepts/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
               <li>Missing section. Add &lt;section name='...'&gt;.</li>
@@ -677,12 +677,6 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/contributors/concepts/todo/document_card.html">document_card: Document card</a>
-            <ul>
-              <li>more about cards in the image</li>
-            </ul>
-          </li>
-          <li>
             <a href="./delve_into/user/contributors/howto/goto_content_workspace.html">goto_content_workspace: Goto Content workspace</a>
             <ul>
               <li> image class='content-workspace-16 icon-16'</li>
@@ -698,6 +692,12 @@ repository is;
             <a href="./delve_into/user/contributors/howto/set_edit_mode.html">set_edit_mode: set edit mode</a>
             <ul>
               <li>Screenshot set edit mode</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/todo-concepts/document_card.html">document_card: Document card</a>
+            <ul>
+              <li>more about cards in the image</li>
             </ul>
           </li>
           <li>
@@ -867,7 +867,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="badtext documents: 19">
+      <subsection name="badtext documents: 18">
         <ol>
           <li>
             <a href="./about/roadmap.html">roadmap: Roadmap Hippo CMS</a>
@@ -921,12 +921,6 @@ repository is;
               <li>folder is the<span xmlns="" class="bad"> current </span>folder, it is the one that is open. If another folder is the current folder, it is marked bright yellow.</li>
               <li>, that folder has already become<span xmlns="" class="bad"> current </span>, but the bright yellow marking will only be changed to the new folder after the folder action has finished.</li>
               <li>Particular actions are possible for the<span xmlns="" class="bad"> current </span>folder, such as: creating a document in it, creating a subfolder in it, deleting a subfolder from it. The actions that a particular user may do on particular folder can be different for different fold</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/contributors/concepts/versioning.html">versioning: Versioning</a>
-            <ul>
-              <li>, to replace the<span xmlns="" class="bad"> current </span>content of a document with content the document had sometime in the past.</li>
             </ul>
           </li>
           <li>
@@ -1018,7 +1012,7 @@ repository is;
       <subsection name="notvalid documents: 3">
         <ol>
           <li>
-            <a href="./delve_into/user/contributors/howto/todo/*.html">*: </a>
+            <a href="./delve_into/user/contributors/concepts/todo/*.html">*: </a>
             <ul>
               <li>Document is not a valid XML document.</li>
             </ul>

@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 946 terms</span>
+      <span class="shortdesc">Term index, 971 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -322,9 +322,51 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/boolean.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Boolean</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/cards_panel.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Cards panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/card.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Card</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/content_workspace.html#Alternative">Alternative</a>
             </td>
             <td>Concept: Content Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/contributor.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Contributor</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/current_folder.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Current folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/document_type.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Document type</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/document.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Document</td>
           </tr>
           <tr>
             <td>
@@ -340,9 +382,33 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/editor.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: CMS editor</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/folder_action_menu.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Folder action menu</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/folder_navigation_panel.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Folder navigation panel</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/folder_tabulation_panel.html#Alternative">Alternative</a>
             </td>
             <td>Concept: Folder tabulation panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/folder.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Folder</td>
           </tr>
           <tr>
             <td>
@@ -358,6 +424,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/inputfield.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Inputfield</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/markuped_text.html#Alternative">Alternative</a>
             </td>
             <td>Concept: Markuped text</td>
@@ -370,9 +442,21 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/slider.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Slider</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/string.html#Alternative">Alternative</a>
             </td>
             <td>Concept: String</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/workspace_navigation_panel.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Workspace Navigation Panel</td>
           </tr>
           <tr>
             <td>
@@ -1667,9 +1751,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/concepts/todo/document_card.html#Document_card">Document card</a>
+              <a href="../delve_into/user/contributors/todo-concepts/document_card.html#Document_card">Document card</a>
             </td>
-            <td>Concept: Document card</td>
+            <td>Document card</td>
           </tr>
           <tr>
             <td>
@@ -1679,15 +1763,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/concepts/todo/document_card.html#document_cards">document cards</a>
+              <a href="../delve_into/user/contributors/todo-concepts/document_card.html#document_cards">document cards</a>
             </td>
-            <td>Concept: Document card</td>
+            <td>Document card</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/todo/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+              <a href="../delve_into/user/contributors/concepts/todo/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
             </td>
-            <td/>
+            <td>Concept: </td>
           </tr>
           <tr>
             <td>
@@ -3909,9 +3993,51 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/boolean.html#Next">Next</a>
+            </td>
+            <td>Concept: Boolean</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/cards_panel.html#Next">Next</a>
+            </td>
+            <td>Concept: Cards panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/card.html#Next">Next</a>
+            </td>
+            <td>Concept: Card</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/content_workspace.html#Next">Next</a>
             </td>
             <td>Concept: Content Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/contributor.html#Next">Next</a>
+            </td>
+            <td>Concept: Contributor</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/current_folder.html#Next">Next</a>
+            </td>
+            <td>Concept: Current folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/document_type.html#Next">Next</a>
+            </td>
+            <td>Concept: Document type</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/document.html#Next">Next</a>
+            </td>
+            <td>Concept: Document</td>
           </tr>
           <tr>
             <td>
@@ -3927,15 +4053,51 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/editor.html#Next">Next</a>
+            </td>
+            <td>Concept: CMS editor</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/folder_action_menu.html#Next">Next</a>
             </td>
             <td>Concept: Folder action menu</td>
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/folder_navigation_panel.html#Next">Next</a>
+            </td>
+            <td>Concept: Folder navigation panel</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/folder_tabulation_panel.html#Next">Next</a>
             </td>
             <td>Concept: Folder tabulation panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/folder.html#Next">Next</a>
+            </td>
+            <td>Concept: Folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/home_workspace.html#Next">Next</a>
+            </td>
+            <td>Concept: Home Workspace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/inputfield.html#Next">Next</a>
+            </td>
+            <td>Concept: Inputfield</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/markuped_text.html#Next">Next</a>
+            </td>
+            <td>Concept: Markuped text</td>
           </tr>
           <tr>
             <td>
@@ -5255,12 +5417,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/concepts/versioning.html#Versioning">Versioning</a>
-            </td>
-            <td>Concept: Versioning</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/contributors/todo/browsing_history_of_document.html#Versioning_display_screenshot">Versioning display screenshot</a>
             </td>
             <td>Browsing history of a document</td>
@@ -5309,9 +5465,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/concepts/todo/document_card.html#What_and_where_are_document_cards_">What and where are document cards?</a>
+              <a href="../delve_into/user/contributors/todo-concepts/document_card.html#What_and_where_are_document_cards_">What and where are document cards?</a>
             </td>
-            <td>Concept: Document card</td>
+            <td>Document card</td>
           </tr>
           <tr>
             <td>
@@ -5576,12 +5732,6 @@
               <a href="../delve_into/user/information_architects/concepts/old/current_folder.html#What_is_the_current_folder_">What is the current folder?</a>
             </td>
             <td>Concept: Current folder</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/concepts/versioning.html#What_is_versioning_to_a_content_contributor_">What is versioning to a content contributor?</a>
-            </td>
-            <td>Concept: Versioning</td>
           </tr>
           <tr>
             <td>
