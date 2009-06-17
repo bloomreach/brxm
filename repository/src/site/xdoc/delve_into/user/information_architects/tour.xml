@@ -25,7 +25,7 @@
     <section name="Hippo CMS Tour for Information Architects">
      <span class='shortdesc'>To get introduced to the role of CMS information architect, 
       take the following tour.</span> 
-      
+
  <p>To get introduced to the role of CMS information architect, you will look over the shoulder of
     Alice, who is working as an CMS information architect for the imaginary organization Swatia,
     an organization of people very interested in music, art and knowledge. We did not imagine an
@@ -34,7 +34,7 @@
 
    <blockquote>
     <table>
-  
+
      <tr>
       <td>Browser</td>
       <td>
@@ -46,7 +46,7 @@
         your browser. 
       </td>
      </tr>
-   
+
      <tr>
       <td>Login</td>
       <td>
@@ -64,28 +64,28 @@
       <td>
        <span class='structure-48 icon-48'/> 
       </td>
-      <td> 
+      <td>
          <a href="./howto/create_namespace.html">Create a namespace</a>. Swatia decides to
-         publish an online newspaper about music, art and knowledge. The name will be Sar, which
-         is just an abbreviation of `Swatia Articles'. Alice creates a namespace to gather
-         all the different kind of content of Sar in.
+         publish an online newspaper about music, art and knowledge. The name will be snp, which
+         is just an abbreviation of `Swatia Newspaper'. Alice creates a namespace to gather
+         all the different kind of content of snp in.
       </td>
      </tr>
 
      <tr>
       <td>Document types</td>
       <td>
-       <span class='structure-48 icon-48'/> 
+       <span class='structure-48 icon-48'/>
       </td>
       <td> 
-         <a href="./howto/create_documenttype.html">Create document types</a>. 
-         Alice decides that the online newspaper should at least contain 
+         <a href="./howto/create_documenttype.html">Create document types</a>.
+         Alice decides that the online newspaper should at least contain
          documents for announcing an upcoming happening and documents for
          describing the author's hobby. So for the time being, she creates two document types,
-         which she calls `upcoming' and `myhobby'. 
+         which she calls `upcoming' and `myhobby'.
       </td>
      </tr>
-  
+
      <tr>
       <td>Add date</td>
       <td>
@@ -195,7 +195,7 @@
       </td>
       <td> 
          <a href="./howto/save_documenttype.html">Save document type</a>. 
-         Alice saves here new document type called 'upcoming'.          
+         Alice saves here new document type called 'upcoming'.
       </td>
      </tr>
 
@@ -206,13 +206,12 @@
       </td>
       <td> 
          <a href="./howto/logout.html">Logout</a>. 
-         Alice quits for today.          
+         Alice quits for today.
       </td>
      </tr>
- 
+
     </table>
    </blockquote>
-      
 
 
     </section>

@@ -55,7 +55,7 @@ ________________________________________________________________________________
         <p>
           Any repository add-on can also contain a namespace definition with
           node types.  These add-ons contain the types as created with the
-          <a href="../user/information_architects/howto/document_types/index.html">Document
+          <a href="../user/information_architects/index.html">Document
           Type Editor</a>.  See the
           <a href="../web/add-ons/howto/editing_template.html">tutorial
           on how to create a template add-on</a> for more information.

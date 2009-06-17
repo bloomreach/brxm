@@ -30,32 +30,33 @@ ________________________________________________________________________________
       <span class="shortdesc">How to get to a namespace, to view the document types in it.</span>
 
    <script type="text/javascript">
-    leftpx=450;
-    bottompx=350;
+    leftpx=0;
+    bottompx=500;
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/inars/namespace_tab.png" alt='Go to namespace screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M13/inars/select_namespace.png" alt='Go to namespace screenshot'/> 
     </div></div>
     <p>
-      Opened list of documenttypes in <a href='../concepts/namespace.html'>namespace</a> 'sar'.
+      In the <a href='../../contributors/concepts/folder_navigation_panel.html'>folder navigation panel</a>
+      opened the Configuration
+      <a href='../../contributors/concepts/slider.html'>slider</a>. Within the opened slider,
+      the folder 'snp' is selected, i.e. made
+      the <a href='../../contributors/concepts/current_folder.html'>current folder.</a>
+      This folder contains the <a href='../concepts/documenttype.html'>document types</a>
+      of the <a href='../concepts/namespace.html'>namespace</a> 'snp'.
+      The document types in the snp folder (and snp namespace) are listed in the
+      <a href='../../contributors/concepts/folder_tabulation_panel.html'>folder tabulation panel</a>.
       The namespace 'sar' contains te document types 'myhobby' and 'upcoming'.
      </p>
    </div>
 
-   <p>
-    In the list of namespaces
-    (in the tree view, below the documenttypes folder, in 
-    the <a href='./goto_documenttypes_tab.html'>document types tab</a>, at middle-left), 
-    click on namespace you want to open. 
-   </p>
-
   <subsection name='Next'>
    <ul>
     <li><a href='./create_documenttype.html'>Create document type</a>.</li>
-    <li><a href='./goto_documenttype_tab.html'>Go to document type tab</a>.</li>
+    <li><a href='./goto_documenttype_card.html'>Go to document type card (open document type for reading or editing)</a>.</li>
     <li><a href='./goto_namespace.html'>Go to another namespace</a>.</li>
-   </ul>       
+   </ul>
   </subsection>
    <subsection name='Alternative'>
     <ul>
@@ -67,4 +68,4 @@ ________________________________________________________________________________
 
    </section>
   </body>
-</document>        
+</document>

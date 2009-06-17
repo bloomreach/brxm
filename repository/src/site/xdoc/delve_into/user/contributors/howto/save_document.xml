@@ -35,38 +35,47 @@ ________________________________________________________________________________
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/contribs/save_document.png" alt='save document screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M13/contribs/save_document.png" alt='save document screenshot'/> 
     </div></div> 
      <p>
       Persisting the changes to document 'multibazaar2009', by pressing
-      'save and close'. The changes can be discarded by pressing 'close without saving'.
+      'save'.
      </p>
    </div>
 
    <p>
-      After <a href='../concepts/editing.html'>editing</a> a document 
+      After <a href='../concepts/editing.html'>editing</a> a document
       (e.g. <a href='./fill_markuped_text_in_document.html'>writing marked-up text</a>),
-      click the 'save and close' button at the top to save your last changes or click the
-      'close without saving' to discard your last changes. 
-      Both will close <a href='../concepts/edit_mode.html'>edit_mode</a> and
+      click the 'save' or the 'done' button to save your draft as
+      preview version of your document.
+    </p>
+    <p>
+      The save button does nothing else, while the 'done' button will also
+      leave <a href='../concepts/edit_mode.html'>edit_mode</a> and
       bring the document in <a href='../concepts/review_mode.html'>review_mode</a>.
-   </p>
+    </p>
+    <p>
+      Even if you do not press the 'save' button, your changes are saved automatically,
+      but in the draft version of your document.
+      You can <a href='discard_changes.html'>discard the draft</a> version of your
+      document, but you can not discard the preview version of your document.
+    </p>
 
    <subsection name='Next'>
     <ul>
-     <li><a href='./request_publication.html'>Request publication (continue</a> <a href='../tour.html'>tour</a>).</li>
+     <li><a href='./request_publication.html'>Request publication</a> (continue <a href='../tour.html'>tour</a>).</li>
      <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
      <li><a href='./goto_folder.html'>Open another folder (list its contents)</a>.</li>
      <li><a href='./logout.html'>Logout</a>.</li>
-    </ul>       
+    </ul>
    </subsection>
    <subsection name='Alternative'>
     <ul>
      <li><a href='./index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>
-    </ul>       
+    </ul>
    </subsection>
 
   </section>
  </body>
-</document>        
+</document>

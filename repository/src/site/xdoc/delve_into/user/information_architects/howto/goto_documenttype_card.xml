@@ -35,21 +35,25 @@ ________________________________________________________________________________
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/inars/documenttype_tab.png" alt='documenttype tab screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M13/inars/documenttype_card.png" alt='documenttype card screenshot'/> 
     </div></div>
     <p>
-     Opened the <a href='../../contributors/concepts/card.html'>card</a> for the document
-     type 'upcoming', which is a document type in the namespace
-      'sar'. For the document type, the actions '<a href='../concepts/edit_mode.html'>edit</a>' and 'Copy' are possible.
+     Just opened the <a href='../../contributors/concepts/card.html'>card</a> for the document
+     type 'upcoming' by clicking on its name in the
+     <a href='../../contributors/concepts/folder_tabulation_panel.html'>folder tabulation panel</a>.
+      The document type 'upcoming' is in the namespace
+      'snp'.
+      The document type is now shown in <a href='../concepts/review_mode.html'>review mode</a>.
+      Change to '<a href='../concepts/edit_mode.html'>edit mode</a>' by clicking the Edit button.
+
       The 'upcoming' document type is already filled by a structure definition containing the fields:
-      Date of happening, Title, Indoors?, Recurring? and Description. Except for Description, they
-      all are mandatory (this is shown by the * signs).
-     </p>
+      Upcoming Date, Title, Indoors?, Recurring?, Entrance price in Euro and Description.
+      Upcoming Date is mandatory (this is shown by the * sign).
+    </p>
    </div>
 
    <p>
-    While a <a href='./goto_namespace.html'>namespace is selected</a>,
-    click on a document type name in the list at middle right.
+    To find the right document type, first open the <a href='./goto_namespace.html'>correct namespace folder</a>.
    </p>
 
   <subsection name='Next'>

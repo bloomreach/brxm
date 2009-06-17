@@ -29,10 +29,13 @@ ________________________________________________________________________________
     <section name="Slider">
       <span class="shortdesc">What and where are sliders?</span>
 
+   <script type="text/javascript">
+    leftpx=0;
+   </script>
    <div class='group'>
-    <div class='screenshot'>
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M13/contribs/sliders_with_images_open.png" alt='sliders'/>
-    </div>
+    </div></div>
     <p>
       The sliders in the <a href='./folder_navigation_panel.html'>folder navigation panel</a>.
       The 'images' slider is now open, while the 'documents' slider above it is closed,

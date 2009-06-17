@@ -101,8 +101,6 @@
    <h4>First subsubsection title</h4>
    <h4>First subsubsection title</h4>
    <subsection>Second subsection title</subsection>
-  </document><document ext="xml" filename="versioning" relpath="delve_into/custom/concepts">Versioning
-   <section>Versioning</section>
   </document></folder><folder>howto
    
    <document ext="xml" filename="customize_editing_template" relpath="delve_into/custom/howto">Customize an Editing Template
@@ -120,13 +118,6 @@
    <subsection>What to customize</subsection>
    <subsection>Overview of a skin project</subsection>
    <subsection>How to apply a skin</subsection>
-  </document><document ext="xml" filename="customize_versioning" relpath="delve_into/custom/howto">Customize versioning
-   <section>Customize versioning</section>
-   <shortdesc>How to customize at what events copies are made, in a custom workflow.</shortdesc>
-   <subsection>Creating versions</subsection>
-   <subsection>About the user perspective</subsection>
-   <subsection>Versioning invocation as part of a workflow step</subsection>
-   <subsection>Expert information</subsection>
   </document><folder>eclipse
    
    <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/custom/howto/eclipse">Configure Workspace
@@ -552,9 +543,20 @@
    <img>Derby logo</img>
    <img>Oracle logo</img>
   </document></folder><folder>tools
-   
+   <title>Development Tools</title><shortdesc>Tools used when developing upon Hippo CMS 7</shortdesc><introduction>
+  This section is to describe general tools and procedures needed when developing on top of Hippo CMS 7.
+  <span xmlns="" class="expire">When tools section finished</span>
+  The intend is that the rest of the documentation
+  will link to this section where needed and thereby become cleaner.
+ </introduction>
    <folder>howto
-   
+   <title>Development Tools Howto</title><shortdesc>Howto's for tools used when developing upon Hippo CMS 7.</shortdesc><introduction>
+    This subsection of the tools section is to describe
+    howto's of general tools and procedures needed when developing on top of Hippo CMS 7.
+    <span class="expire">When tools section finished.</span>
+    The intend is that the rest of the documentation
+    will link to the tools section where needed and thereby become cleaner.
+ </introduction>
    <document ext="xml" filename="create_pom" relpath="delve_into/tools/howto">Create a pom.xml
    <section>Create a pom.xml</section>
    <shortdesc>Learn how to create a project object model file for maven.</shortdesc>
@@ -688,6 +690,7 @@
    <section>Publish all</section>
    <shortdesc>How to publish all documents simultaneously?</shortdesc>
    <img>Add user screenshot</img>
+   <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="save_settings" relpath="delve_into/user/cms_admins/howto">Save settings
    <section>Save settings</section>
@@ -792,6 +795,7 @@
    <section>Folder action menu</section>
    <shortdesc>What and where is the folder action menu?</shortdesc>
    <img>Folder action menu screenshot</img>
+   <subsection>Next</subsection>
   </document><document ext="xml" filename="folder_navigation_panel" relpath="delve_into/user/contributors/concepts">Folder navigation panel
    <section>Folder navigation panel</section>
    <shortdesc>What and where is the folder navigation panel?</shortdesc>
@@ -875,6 +879,12 @@
    <img>Create document screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="discard_changes" relpath="delve_into/user/contributors/howto">Discard changes
+   <section>Discard changes</section>
+   <shortdesc>How to discard changes you made to a document.</shortdesc>
+   <img>save document screenshot</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="fill_boolean_field_in_document" relpath="delve_into/user/contributors/howto">Fill boolean field in Document
    <section>Fill boolean field in Document</section>
    <shortdesc>How to answer a yes/no question in a document.</shortdesc>
@@ -931,6 +941,7 @@
    <shortdesc>How to logout</shortdesc>
    <img>logout screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="request_publication" relpath="delve_into/user/contributors/howto">Request Publication of Document
    <section>Request Publication of Document</section>
    <shortdesc>How to ask the editor to publish a document?</shortdesc>
@@ -964,22 +975,24 @@
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><folder>todo
+   
+   <document ext="" filename="*" relpath="delve_into/user/contributors/howto/todo"><notvalid>Document is not a valid XML document.</notvalid></document></folder></folder><document ext="xml" filename="index" relpath="delve_into/user/contributors">Contributors Guide
+   <section>Contributors Guide</section>
+   <shortdesc>Guide for Hippo CMS users to perform the role of contributor.</shortdesc>
+  </document><folder>todo
    <title>todo</title><shortdesc>This folder contains howto's that are in development.</shortdesc>
-   <document ext="xml" filename="browsing_history_of_document" relpath="delve_into/user/contributors/howto/todo">Browsing history of a document
+   <document ext="xml" filename="browsing_history_of_document" relpath="delve_into/user/contributors/todo">Browsing history of a document
    <section>Browsing history of a document</section>
    <shortdesc>How to browse the history of a document, i.e. to see the changes to the document over time?</shortdesc>
    <img>Versioning display screenshot</img>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="goto_document_tab" relpath="delve_into/user/contributors/howto/todo">Goto a Document
+  </document><document ext="xml" filename="goto_document_tab" relpath="delve_into/user/contributors/todo">Goto a Document
    <section>Goto a Document</section>
    <shortdesc>How to get to a screen to manipulate a particular document.</shortdesc>
    <img>document tab screenshot</img>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="index" relpath="delve_into/user/contributors/howto/todo">
-  </document></folder></folder><document ext="xml" filename="index" relpath="delve_into/user/contributors">Contributors Guide
-   <section>Contributors Guide</section>
-   <shortdesc>Guide for Hippo CMS users to perform the role of contributor.</shortdesc>
-  </document><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour
+  </document><document ext="xml" filename="index" relpath="delve_into/user/contributors/todo">
+  </document></folder><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour
    <section>Hippo CMS Contributor Tour</section>
    <shortdesc>A CMS contributor writes documents and/or adds images and/or assets.
     To get introduced to the role of CMS Contributor, take the following tour.</shortdesc>
@@ -1012,9 +1025,15 @@
    <shortdesc>What is a request?</shortdesc>
   </document><document ext="xml" filename="scheduled_publication" relpath="delve_into/user/editors/concepts">Scheduled publication
    <section>Scheduled publication</section>
-   <shortdesc/>
+   <shortdesc>What about scheduling the online publication of documents?</shortdesc>
   </document></folder><folder>howto
-   
+   <title>CMS Editor Howto</title><shortdesc>A collection of howto's for small tasks an CMS editor may want to do.</shortdesc><afterlist>
+  <subsection name="Alternative">
+     <p>
+      If you do not know where to start, take the <a href="../tour.html">Tour</a>.
+     </p>
+  </subsection>
+ </afterlist>
    <document ext="xml" filename="check_for_requests" relpath="delve_into/user/editors/howto">Check for requests
    <section>Check for requests</section>
    <shortdesc>How to check for requests.</shortdesc>
@@ -1027,20 +1046,14 @@
    <img>Create folder screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="goto_content_browse_tab" relpath="delve_into/user/editors/howto">Goto Content Browse Tab
-   <section>Goto Content Browse Tab</section>
-   <shortdesc>How to get to the content browse tab.</shortdesc>
-   <img>content browse screenshot</img>
-   <subsection>Next</subsection>
   </document><document ext="xml" filename="handle_request" relpath="delve_into/user/editors/howto">Handle request
    <section>Handle request</section>
    <shortdesc>How to handle a request.</shortdesc>
    <img>handle requests screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="index" relpath="delve_into/user/editors/howto">CMS Editor Howto
-   <section>CMS Editor Howto</section>
-   <shortdesc>A collection of howto's for small tasks an CMS editor may want to do.</shortdesc>
+  </document><document ext="xml" filename="index" relpath="delve_into/user/editors/howto">
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="login" relpath="delve_into/user/editors/howto">Login as Editor
    <section>Login as Editor</section>
    <shortdesc>How to login to Hippo CMS as editor 
@@ -1062,7 +1075,14 @@
   </document></folder><document ext="xml" filename="index" relpath="delve_into/user/editors">Editors Guide
    <section>Editors Guide</section>
    <shortdesc>Guide for Hippo CMS users to perform the role of editor.</shortdesc>
-  </document><document ext="xml" filename="tour" relpath="delve_into/user/editors">Hippo CMS Editor Tour
+  </document><folder>old
+   
+   <document ext="xml" filename="goto_content_browse_tab" relpath="delve_into/user/editors/old">Goto Content Browse Tab
+   <section>Goto Content Browse Tab</section>
+   <shortdesc>How to get to the content browse tab.</shortdesc>
+   <img>content browse screenshot</img>
+   <subsection>Next</subsection>
+  </document></folder><document ext="xml" filename="tour" relpath="delve_into/user/editors">Hippo CMS Editor Tour
    <section>Hippo CMS Editor Tour</section>
    <shortdesc>To get introduced to the role of CMS Editor, take the following tour.</shortdesc>
   </document></folder><document ext="xml" filename="index" relpath="delve_into/user">User Guide
@@ -1099,12 +1119,11 @@
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="field_properties_overview" relpath="delve_into/user/information_architects/concepts">string
    <section>string</section>
-   <shortdesc>What is a field properties overview</shortdesc>
-   <img>field properties overview screenshot</img>
+   <shortdesc>What is a field properties overview?</shortdesc>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="field_type_menu" relpath="delve_into/user/information_architects/concepts">string
    <section>string</section>
-   <shortdesc>What is a field type menu</shortdesc>
+   <shortdesc>What is a field type menu?</shortdesc>
    <img>field type menu screenshot</img>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/concepts">
@@ -1245,9 +1264,7 @@
    <img>Create namespace screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><folder>document_types
-   
-   <document ext="" filename="*" relpath="delve_into/user/information_architects/howto/document_types"><notvalid>Document is not a valid XML document.</notvalid></document></folder><document ext="xml" filename="fieldcaption" relpath="delve_into/user/information_architects/howto">Field caption
+  </document><document ext="xml" filename="fieldcaption" relpath="delve_into/user/information_architects/howto">Field caption
    <section>Field caption</section>
    <shortdesc>How to define a caption for a field in a document type.</shortdesc>
    <img>Fieldcaption screenshot</img>
@@ -1259,16 +1276,10 @@
    <img>Fieldsize screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="goto_content_browse_tab" relpath="delve_into/user/information_architects/howto">Go to content browse tab
-   <section>Go to content browse tab</section>
-   <shortdesc>How to get to the content browse tab.</shortdesc>
-   <img>content browse screenshot</img>
-   <subsection>Next</subsection>
-   <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="goto_documenttype_tab" relpath="delve_into/user/information_architects/howto">Go to a Document type
+  </document><document ext="xml" filename="goto_documenttype_card" relpath="delve_into/user/information_architects/howto">Go to a Document type
    <section>Go to a Document type</section>
    <shortdesc>How to get to a screen to manipulate a particular document type.</shortdesc>
-   <img>documenttype tab screenshot</img>
+   <img>documenttype card screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="goto_namespace" relpath="delve_into/user/information_architects/howto">Go to a namespace
@@ -1329,7 +1340,15 @@
   </document></folder><document ext="xml" filename="index" relpath="delve_into/user/information_architects">Information Architects Guide
    <section>Information Architects Guide</section>
    <shortdesc>Guide for Hippo CMS users to perform the role of Information Architect.</shortdesc>
-  </document><document ext="xml" filename="tour" relpath="delve_into/user/information_architects">Hippo CMS Tour for Information Architects
+  </document><folder>old
+   
+   <document ext="xml" filename="goto_content_browse_tab" relpath="delve_into/user/information_architects/old">Go to content browse tab
+   <section>Go to content browse tab</section>
+   <shortdesc>How to get to the content browse tab.</shortdesc>
+   <img>content browse screenshot</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document></folder><document ext="xml" filename="tour" relpath="delve_into/user/information_architects">Hippo CMS Tour for Information Architects
    <section>Hippo CMS Tour for Information Architects</section>
    <shortdesc>To get introduced to the role of CMS information architect, 
       take the following tour.</shortdesc>

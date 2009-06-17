@@ -23,10 +23,10 @@
     </properties>
     <body>
         <section name="Scheduled publication">
-         <span class='shortdesc'></span>
+         <span class='shortdesc'>What about scheduling the online publication of documents?</span>
 
           <p>Scheduled publication is a feature of Hippo CMS
-             involving scheduling the publication of documents online:
+             involving scheduling the online publication of documents.
           </p>
           <p>
              If an <a href='./editor.html'>editor</a>

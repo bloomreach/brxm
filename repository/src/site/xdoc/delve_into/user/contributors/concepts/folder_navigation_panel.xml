@@ -29,9 +29,14 @@ ________________________________________________________________________________
     <section name="Folder navigation panel">
       <span class="shortdesc">What and where is the folder navigation panel?</span>
 
-   <div class='screenshot'>
+   <script type="text/javascript">
+    leftpx=0;
+   </script>
+   <div class='group'>
+    <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M13/contribs/folder_navigation_panel.png"
-     alt='Folder navigation panel screenshot'/>
+      alt='Folder navigation panel screenshot'/>
+     </div></div>
      <p>
       About to press the newspaper folder in the
       documents <a href='slider.html'>slider</a> in the folder navigation panel.

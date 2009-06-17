@@ -31,7 +31,7 @@ ________________________________________________________________________________
 
 
    <script type="text/javascript">
-    leftpx=300;
+    leftpx=0;
    </script>
     <div class='group'>
      <div id='screenshot'><div>
@@ -39,7 +39,10 @@ ________________________________________________________________________________
        alt='folder tabulation panel screenshot'/>
      </div></div>
      <p>
-      The folder tabulation panel.
+      About to click the document 'multibazar2009' in the folder tabulation panel.
+      This document is one of the two documents in folder 'newspaper', which
+      is the <a href='current_folder.html'>current folder</a>, being selected in the
+      <a href='folder_navigation_panel.html'>folder navigation panel</a>.
       <!-- Note that the left part of the content tabulation panel
        will be hidden under the
        <a href='documents_panel.html'>documents_panel</a>, if any document is .........

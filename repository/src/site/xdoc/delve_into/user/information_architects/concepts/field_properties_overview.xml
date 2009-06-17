@@ -27,20 +27,22 @@ ________________________________________________________________________________
 
   <body>
     <section name="string">
-      <span class="shortdesc">What is a field properties overview</span>
+      <span class="shortdesc">What is a field properties overview?</span>
 
+   <!--
+      TODO
    <script type="text/javascript">
     leftpx=450;
    </script>
    <div class='group'>
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/inars/field_properties_overview.png" alt='field properties overview screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M13/inars/field_properties_overview.png" alt='field properties overview screenshot'/> 
     </div></div>
      <p>
       Field properties overview.
      </p>
    </div>
-
+  -->
 
       <p>A field properties overview
          occurs in the <span href='document_type_editor.html'>document type editor</span>.
@@ -48,6 +50,8 @@ ________________________________________________________________________________
          every field can be <a href='mandatory_or_optional.xml'>mandatory or optional</a>.
          Other properties are specific for a particular type of field, like the height
          of a text box.
+         Note that the path is also a property that can be redefined. It should be redefined
+         to a useful name for the field (and should include the namespace prefix).
      </p>
    <subsection name='Alternative'>
     <ul>

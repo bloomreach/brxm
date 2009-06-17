@@ -237,7 +237,9 @@
           <item name="Editing Template Plugin" href="/delve_into/custom/howto/editing_template_plugin.html"/>
           <item name="Customize Skin" href="/delve_into/custom/howto/customize_skin.html"/>
           <item name="Custom Workflow" href="/delve_into/custom/howto/workflow.html"/>
-          <item name="Customize Versioning" href="/delve_into/custom/howto/customize_versioning.html"/>
+      <!--
+        <item name="Customize Versioning" href="/delve_into/custom/howto/customize_versioning.html"/>
+      -->
         </item>
         <item name="Reference Guide" href="/delve_into/custom/reference/index.html" collapse="true">
           <item name="Repository Plugins" href="/delve_into/custom/reference/repository/repository_plugins.html"/>
@@ -256,7 +258,9 @@
         </item>
         <item name="List of Concepts" href="/delve_into/custom/concepts/index.html" collapse="true">
           <item name="Repository Plugins" href="/delve_into/custom/concepts/repository_plugins.html"/>
-          <item name="Versioning" href="/delve_into/custom/concepts/versioning.html"/>
+       <!--
+         <item name="Versioning" href="/delve_into/custom/concepts/versioning.html"/>
+       -->
         </item>
         <!--<item name="Dropbox Example" href="/delve_into/implementation/advanced/jcr-dropbox-example.html"/>-->
       </item>
