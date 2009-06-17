@@ -1769,12 +1769,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/concepts/todo/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
-            </td>
-            <td>Concept: </td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/information_architects/howto/index.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
             </td>
             <td>Welcome: </td>
@@ -4110,6 +4104,12 @@
               <a href="../delve_into/user/contributors/concepts/slider.html#Next">Next</a>
             </td>
             <td>Concept: Slider</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/string.html#Next">Next</a>
+            </td>
+            <td>Concept: String</td>
           </tr>
           <tr>
             <td>

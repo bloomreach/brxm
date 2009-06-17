@@ -724,7 +724,7 @@
    fullname='delve_into/user/contributors/concepts/home_workspace.xml'
    relpath='delve_into/user/contributors/concepts'
   >home_workspace</file>
-      <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
+      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/concepts/index.xml'
    relpath='delve_into/user/contributors/concepts'
   >index</file>
@@ -732,44 +732,22 @@
    fullname='delve_into/user/contributors/concepts/inputfield.xml'
    relpath='delve_into/user/contributors/concepts'
   >inputfield</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/contributors/concepts/inputfield.xml~'
-   relpath='delve_into/user/contributors/concepts'
-  >inputfield</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/concepts/markuped_text.xml'
-   relpath='delve_into/user/contributors/concepts'
-  >markuped_text</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/contributors/concepts/markuped_text.xml~'
    relpath='delve_into/user/contributors/concepts'
   >markuped_text</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/concepts/review_mode.xml'
    relpath='delve_into/user/contributors/concepts'
   >review_mode</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/contributors/concepts/review_mode.xml~'
-   relpath='delve_into/user/contributors/concepts'
-  >review_mode</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/concepts/slider.xml'
-   relpath='delve_into/user/contributors/concepts'
-  >slider</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/contributors/concepts/slider.xml~'
    relpath='delve_into/user/contributors/concepts'
   >slider</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/concepts/string.xml'
    relpath='delve_into/user/contributors/concepts'
   >string</file>
-      <folder>todo
-       <file ext='' note='empty'
-   fullname='delve_into/user/contributors/concepts/todo/*'
-   relpath='delve_into/user/contributors/concepts/todo'
-  >*</file>
-      </folder>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/concepts/workspace_navigation_panel.xml'
    relpath='delve_into/user/contributors/concepts'

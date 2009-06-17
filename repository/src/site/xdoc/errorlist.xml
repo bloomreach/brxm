@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">441 errors and/or todos in 243 out of 243 documents (100%).</span>
+      <span class="shortdesc">440 errors and/or todos in 242 out of 242 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -49,7 +49,7 @@
      </li>
         <li>11 documents with unidentified TODO strings.
      </li>
-        <li>3 not valid XML documents.
+        <li>2 not valid XML documents.
      </li>
         <li>18 documents with bad text.
      </li>
@@ -1009,14 +1009,8 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="notvalid documents: 3">
+      <subsection name="notvalid documents: 2">
         <ol>
-          <li>
-            <a href="./delve_into/user/contributors/concepts/todo/*.html">*: </a>
-            <ul>
-              <li>Document is not a valid XML document.</li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/user/information_architects/howto/index.html">index: </a>
             <ul>

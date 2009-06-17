@@ -863,10 +863,9 @@
   </document><document ext="xml" filename="string" relpath="delve_into/user/contributors/concepts">String
    <section>String</section>
    <shortdesc>What is a string?</shortdesc>
+   <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><folder>todo
-   
-   <document ext="" filename="*" relpath="delve_into/user/contributors/concepts/todo"><notvalid>Document is not a valid XML document.</notvalid></document></folder><document ext="xml" filename="workspace_navigation_panel" relpath="delve_into/user/contributors/concepts">Workspace Navigation Panel
+  </document><document ext="xml" filename="workspace_navigation_panel" relpath="delve_into/user/contributors/concepts">Workspace Navigation Panel
    <section>Workspace Navigation Panel</section>
    <shortdesc>What and where is the workspace navigation panel?</shortdesc>
    <img>workspace navigation panel screenshot</img>
