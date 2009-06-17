@@ -110,8 +110,8 @@
         <td>
          <img src='../../images/windows_logo_tiny.png' alt='MS windows logo'/>
         </td>
-        <td>    
-         <a href='http://www.microsoft.com/windows/TODO'>Microsoft Server 2003</a>
+        <td>
+         <a href='http://www.microsoft.com/windowsserver2003/default.mspx'>Microsoft Server 2003</a>
         </td>
        </tr>
        <tr>
@@ -274,15 +274,14 @@
     <td>Database</td>
     <td>
      <span class='archive-48 icon-48'/>
-    </td>      
+    </td>
     <td>
-        Hippo CMS uses a relational database for it's datastorage, E.g.: 
-           
+        Hippo CMS uses a relational database for it's datastorage, E.g.:
        <div class='nav'>
         <table>
          <tr>
           <td>
-           <a href='http://TODO'><img src='../../images/derby_logo_tiny.png' alt='Derby logo'/></a>
+           <a href='http://db.apache.org/derby/'><img src='../../images/derby_logo_tiny.png' alt='Derby logo'/></a>
           </td>
           <td>
           <a href='http://db.apache.org/derby/'>Apache Derby</a> &gt; 10.0
@@ -305,7 +304,7 @@
          </tr>
          <tr>
           <td>
-           <a href='http://TODO'><img src='../../images/oracle_logo_tiny.png' alt='Oracle logo'/></a>
+           <a href='http://www.oracle.com/index.html'><img src='../../images/oracle_logo_tiny.png' alt='Oracle logo'/></a>
           </td>
           <td>Oracle 9.2, 10 and 11</td>
          </tr>

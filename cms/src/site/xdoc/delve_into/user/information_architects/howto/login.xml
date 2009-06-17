@@ -40,7 +40,7 @@ ________________________________________________________________________________
     </div></div>
     <p>Alice logs in to Hippo CMS. She has typed her password, but only bullets are shown,
        to prevent someone looking over her shoulder from reading it. She chose the Hippo CMS to
-       be in English. Now she is about to press the button marked `sign in'.
+       be in English. Now she is about to press the button marked 'login'.
       </p>
    </div>
 
@@ -53,7 +53,8 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./goto_documenttypes_tab.html'>Go to document types tab (continue tour)</a>.</li>
+    <li><a href='./create_namespace.html'>Create new namespace</a> (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='./goto_documenttype_card.html'>Go to document types card</a>.</li>
    </ul>
   </subsection>
    <subsection name='Alternative'>

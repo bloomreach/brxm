@@ -24,18 +24,18 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">448 errors and/or todos in 245 out of 245 documents (100%).</span>
+      <span class="shortdesc">443 errors and/or todos in 244 out of 244 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
-        <li>2 documents using dummy references.
+        <li>1 documents using dummy references.
      </li>
         <li> 
         Checking if documents are linked to was not possible (no previous, readable linkreport to compare to).
        </li>
         <li>0 documents out of date (needing update).
      </li>
-        <li>2 documents with typo's.
+        <li>3 documents with typo's.
      </li>
         <li>2 documents to review.
      </li>
@@ -51,20 +51,13 @@
      </li>
         <li>3 not valid XML documents.
      </li>
-        <li>20 documents with bad text.
+        <li>19 documents with bad text.
      </li>
         <li>10 multisection documents.
      </li>
       </ul>
-      <subsection name="Documents with dummy references: 2">
+      <subsection name="Documents with dummy references: 1">
         <ol>
-          <li>
-            <a href="./delve_into/custom/howto/customize_versioning.html">customize_versioning: Customize versioning</a>
-            <ul>
-              <li>en a version of a document must be checked in. Workflows are written as plain Java code, as explained<span xmlns="" class="bad"> in X </span>. When such a custom workflow is invoked it may indicate that a version must be created of a document by in its turn invoking the internal workflow for versioning. This versioning workflow is a built-</li>
-              <li>mes with the interface for remote access and the implementation of the document, similar as described<span xmlns="" class="bad"> in X </span>.</li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/tools/howto/export_node.html">export_node: Export node</a>
             <ul>
@@ -73,12 +66,20 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents with standard typos: 2">
+      <subsection name="Documents with standard typos: 3">
         <ol>
           <li>
             <a href="./delve_into/custom/howto/eclipse/configure_workspace.html">configure_workspace: Configure Workspace</a>
             <ul>
               <li>Select JPOX -&gt; Enhancer and enter 'BCEL' in<span xmlns="" class="bad"> the the </span>'Class Enhancer' field.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/howto/discard_changes.html">discard_changes: Discard changes</a>
+            <ul>
+              <li>
+                <span xmlns="" class="bad"> the the </span>
+              </li>
             </ul>
           </li>
           <li>
@@ -151,7 +152,7 @@
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/editors/howto/goto_content_browse_tab.html">goto_content_browse_tab: Goto Content Browse Tab</a>
+            <a href="./delve_into/user/editors/old/goto_content_browse_tab.html">goto_content_browse_tab: Goto Content Browse Tab</a>
             <ul>
               <li>...&lt;span class='content_browse-16'/&gt;,
      at the left of the screen. 
@@ -159,7 +160,7 @@
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/information_architects/howto/goto_content_browse_tab.html">goto_content_browse_tab: Go to content browse tab</a>
+            <a href="./delve_into/user/information_architects/old/goto_content_browse_tab.html">goto_content_browse_tab: Go to content browse tab</a>
             <ul>
               <li>...&lt;span class='content_browse_16'/&gt;,
      at the left of the screen.
@@ -248,12 +249,6 @@ repository is;
           </li>
           <li>
             <a href="./delve_into/core/building/maven.html">maven: Developing with Maven</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/custom/concepts/versioning.html">versioning: Versioning</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
@@ -459,7 +454,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/contributors/howto/todo/index.html">index: </a>
+            <a href="./delve_into/user/contributors/todo/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
               <li>Missing section. Add &lt;section name='...'&gt;.</li>
@@ -467,6 +462,13 @@ repository is;
           </li>
           <li>
             <a href="./delve_into/user/editors/concepts/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/editors/howto/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
               <li>Missing section. Add &lt;section name='...'&gt;.</li>
@@ -865,21 +867,12 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="badtext documents: 20">
+      <subsection name="badtext documents: 19">
         <ol>
           <li>
             <a href="./about/roadmap.html">roadmap: Roadmap Hippo CMS</a>
             <ul>
               <li>Suggesting the CMS user what possible metadata could be added to the<span xmlns="" class="bad"> current </span>document, based on the user's behavior in the CMS itself.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/custom/howto/customize_versioning.html">customize_versioning: Customize versioning</a>
-            <ul>
-              <li>Certain events may trigger a copy of the then<span xmlns="" class="bad"> current </span>document to be made. This copy is read-only and stored in a different section. Additional information, such as the date the copy was made helps keeping a time-line of the document over time. These cop</li>
-              <li> This happens for the reviewed-actions workflow. Upon publication of a document a version of the then<span xmlns="" class="bad"> current </span>published document is created. However, if the document is depublished, there is no longer a published version of the document. The ability of the Hippo ECM suite is to be able to deal with this and i</li>
-              <li>sionWorkflow) getWorkflowContext().getWorkflow("versioning"); workflow.version(); // this commits the<span xmlns="" class="bad"> current </span>document as a version } }</li>
-              <li>voking the workflow step directly, it schedules the called workflow to be executed directly after the<span xmlns="" class="bad"> current </span>workflow and within the same transaction. This means that it is not possible to use the return values.</li>
             </ul>
           </li>
           <li>
@@ -956,7 +949,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/contributors/howto/todo/browsing_history_of_document.html">browsing_history_of_document: Browsing history of a document</a>
+            <a href="./delve_into/user/contributors/todo/browsing_history_of_document.html">browsing_history_of_document: Browsing history of a document</a>
             <ul>
               <li>Initially the<span xmlns="" class="bad"> current </span>version is show. With the "Older" link you can browse back into previous versions of the document, or back again towards the most current version using the "Newer" link.</li>
               <li>the version is shown. The name of the article is shown (which is constant over all versions, only the<span xmlns="" class="bad"> current </span>name is shown, renaming or moving a document is not part of the document history of the document itself but --if available-- part of the document in which a document is embedded).</li>
@@ -1025,7 +1018,7 @@ repository is;
       <subsection name="notvalid documents: 3">
         <ol>
           <li>
-            <a href="./delve_into/user/information_architects/howto/document_types/*.html">*: </a>
+            <a href="./delve_into/user/contributors/howto/todo/*.html">*: </a>
             <ul>
               <li>Document is not a valid XML document.</li>
             </ul>

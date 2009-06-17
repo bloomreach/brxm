@@ -32,7 +32,7 @@ ________________________________________________________________________________
       <p>
         As you are developing your website, you'll need to be able to extend
         Hippo CMS.  Perhaps you have created your own 
-        <a href="../../user/information_architects/howto/document_types/index.html">Document Type</a>, a
+        <a href="../../user/information_architects/index.html">Document Type</a>, a
         <a href="">[FIXME] site map</a> or some documents with test data.
         It is possible to capture this work in an add-on, thereby making
         it possible to use version control, use an automated build process, share
@@ -61,7 +61,7 @@ ________________________________________________________________________________
         <p>
           Any repository add-on can also contain a namespace definition with
           node types.  These add-ons contain the types as created with the
-          <a href="../../user/information_architects/howto/document_types/index.html">Document
+          <a href="../../user/information_architects/index.html">Document
           Type Editor</a>.  See the <a href="howto/editing_template.html">tutorial
           on how to create a template add-on</a> for more information.
         </p>

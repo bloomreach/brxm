@@ -35,18 +35,18 @@ ________________________________________________________________________________
    </script>
    <div class='group'>
     <div id='screenshot'><div>
-      <img src="../../../../images/screenshots/cms_M9/contribs/goto_request_schedule_publication.png" alt='request schedule publication screenshot'/>
+      <img src="../../../../images/screenshots/cms_M13/contribs/goto_request_schedule_publication.png" alt='request schedule publication screenshot'/>
     </div></div>
     <p>
-      Requesting publication of the document 'multibazaar2009'.
+      About to request publication of the document 'multibazaar2009'.
     </p>
    </div>
 
    <p>
     In a document in <a href='../concepts/review_mode.html'>review mode</a>, e.g. after
     <a href='./save_document.html'>saving that document</a>,
-    click the 'schedule publication (request)'
-    button at the top to request that the document be published.
+    select the 'schedule publication (request)'
+    action at the top to request that the document be published.
     <a href='./schedule_publication.html'>A window will popup</a> where you can schedule at
     what date and time you want the publication to occur.
    </p>

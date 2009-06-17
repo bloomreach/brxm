@@ -29,19 +29,33 @@ ________________________________________________________________________________
     <section name="Logout">
       <span class="shortdesc">How to logout</span>
 
-   <div class='screenshot'>
-     <img src="../../../../images/screenshots/cms_M9/contribs/logout.png" alt='logout screenshot'/> 
+   <script type="text/javascript">
+    leftpx=500;
+    bottompx=300;
+   </script>
+   <div class='group'> 
+    <div id='screenshot'><div>
+      <img src="../../../../images/screenshots/cms_M9/contribs/logout.png" alt='logout screenshot'/> 
+     </div></div>
      <p>
-       Click the logout button to logout. The <a href='./login.html'>login</a> dialog will reapear.
+      Click the logout button to logout.
+      The <a href='./login.html'>login</a> dialog will reapear.
      </p>
    </div>
 
   <subsection name='Next'>
    <ul>
     <li><a href='./login.html'>Login</a>.</li>
-   </ul>       
+   </ul>
+  </subsection>
+
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
   </subsection>
 
    </section>
   </body>
-</document>        
+</document>

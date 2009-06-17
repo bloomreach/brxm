@@ -66,26 +66,26 @@
       </td>
       <td> 
          <a href="./howto/create_folder.html">Create folder for authors to add their documents in</a>.
-         Janine wants all content for the Sar newspaper to be collected in one folder and she
-         she creates the 'sar newspaper' document folder for this.
+         Janine wants all content for the Sar newspaper to be collected in one folder and
+         she creates the 'newspaper' document folder for this.
       </td>
      </tr>
 
      <tr>
       <td>Logout</td>
       <td>
-       <span class='logout-48 icon-48'/> 
+       <span class='logout-48 icon-48'/>
       </td>
       <td> 
-         <a href="./howto/logout.html">Logout</a>. 
-         Janine quits for this day.          
+         <a href="./howto/logout.html">Logout</a>.
+         Janine quits for this day.
       </td>
      </tr>
 
      <tr>
       <td>Browser</td>
       <td>
-       <span class='web-48 icon-48'/> 
+       <span class='web-48 icon-48'/>
       </td>
       <td>
         A week later Janine wants to check for requests, so she opens the Hippo CMS site 

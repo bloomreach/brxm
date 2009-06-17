@@ -37,28 +37,23 @@ ________________________________________________________________________________
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/inars/create_documenttype.png" alt='Create document type screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M13/inars/create_documenttype.png" alt='Create document type screenshot'/> 
     </div></div>
     <p>
-     Creation of <a href='../concepts/documenttype.html'>document type</a> with name 'myhobby',
-     in namespace 'snp'. The namespace 'snp' already contains the document type 'upcoming'.
+     About to select the <a href='../../contributors/concepts/folder_action_menu.html'>folder action</a>
+     'New document type' while in the folder snp, which is a namespace folder.
+     A dialog window will appear. The new document type will be added to the document types in the snp namespace,
+     which are now 'myhobby' and 'upcoming'.
     </p>
    </div>
 
-   <p>
-    To add a documenttype to a <a href='../concepts/namespace.html'>namespace</a>, select the
-    <a href='../concepts/namespaces_folder.html'>folder</a> for that namespace
-    as the <a href='../../contributors/concepts/current_folder.html'>current folder</a> and
-    select 'create new type' in the <a href='../../contributors/concepts/folder_action_menu.html'>folder action menu</a>.
-    A dialog window appears.
-   </p>
    <p>
     Type an informative name for the documenttype.
    </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./add_date_to_documenttype.html'>Add date to document type (continue tour)</a>.</li>
+    <li><a href='./add_date_to_documenttype.html'>Add date to document type</a> (continue <a href='../tour.html'>tour</a>).</li>
     <li><a href='./create_documenttype.html'>Create another document type</a>.</li>
    </ul>
   </subsection>

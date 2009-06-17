@@ -46,21 +46,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/editors/howto/index.html#A_collection_of_howto's_for_small_tasks_an_CMS_editor_may_want_to_do_">A collection of howto's for small tasks an CMS editor may want to do.</a>
-            </td>
-            <td>Welcome: CMS Editor Howto</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/sysadmin/configuration/console.html#A_simple_GUI_application_that_can_be_used_to_edit_the_configuration_">A simple GUI application that can be used to edit the configuration.</a>
             </td>
             <td>Console</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/howto/customize_versioning.html#About_the_user_perspective">About the user perspective</a>
-            </td>
-            <td>Howto: Customize versioning</td>
           </tr>
           <tr>
             <td>
@@ -406,6 +394,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/discard_changes.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Discard changes</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/fill_boolean_field_in_document.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Fill boolean field in Document</td>
@@ -460,6 +454,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/logout.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Logout</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/request_publication.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Request Publication of Document</td>
@@ -490,7 +490,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/todo/browsing_history_of_document.html#Alternative">Alternative</a>
+              <a href="../delve_into/user/contributors/todo/browsing_history_of_document.html#Alternative">Alternative</a>
             </td>
             <td>Browsing history of a document</td>
           </tr>
@@ -523,6 +523,12 @@
               <a href="../delve_into/user/editors/howto/handle_request.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Handle request</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/index.html#Alternative">Alternative</a>
+            </td>
+            <td>Welcome: </td>
           </tr>
           <tr>
             <td>
@@ -682,13 +688,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/goto_content_browse_tab.html#Alternative">Alternative</a>
-            </td>
-            <td>Howto: Go to content browse tab</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/howto/goto_documenttype_tab.html#Alternative">Alternative</a>
+              <a href="../delve_into/user/information_architects/howto/goto_documenttype_card.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Go to a Document type</td>
           </tr>
@@ -745,6 +745,12 @@
               <a href="../delve_into/user/information_architects/howto/update_content.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Update content</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/old/goto_content_browse_tab.html#Alternative">Alternative</a>
+            </td>
+            <td>Go to content browse tab</td>
           </tr>
           <tr>
             <td>
@@ -904,7 +910,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/todo/browsing_history_of_document.html#Browsing_history_of_a_document">Browsing history of a document</a>
+              <a href="../delve_into/user/contributors/todo/browsing_history_of_document.html#Browsing_history_of_a_document">Browsing history of a document</a>
             </td>
             <td>Browsing history of a document</td>
           </tr>
@@ -1084,12 +1090,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/editors/howto/index.html#CMS_Editor_Howto">CMS Editor Howto</a>
-            </td>
-            <td>Welcome: CMS Editor Howto</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/sysadmin/installation/plugins.html#cms_plus_feedback">cms plus feedback</a>
             </td>
             <td>Hippo Forge plugins</td>
@@ -1228,15 +1228,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/editors/howto/goto_content_browse_tab.html#content_browse_screenshot">content browse screenshot</a>
+              <a href="../delve_into/user/editors/old/goto_content_browse_tab.html#content_browse_screenshot">content browse screenshot</a>
             </td>
-            <td>Howto: Goto Content Browse Tab</td>
+            <td>Goto Content Browse Tab</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/goto_content_browse_tab.html#content_browse_screenshot">content browse screenshot</a>
+              <a href="../delve_into/user/information_architects/old/goto_content_browse_tab.html#content_browse_screenshot">content browse screenshot</a>
             </td>
-            <td>Howto: Go to content browse tab</td>
+            <td>Go to content browse tab</td>
           </tr>
           <tr>
             <td>
@@ -1397,12 +1397,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/howto/customize_versioning.html#Creating_versions">Creating versions</a>
-            </td>
-            <td>Howto: Customize versioning</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/information_architects/document_types/tutorial.html#Creating_your_first_document_type">Creating your first document type</a>
             </td>
             <td>Document Type Tutorial</td>
@@ -1460,12 +1454,6 @@
               <a href="../delve_into/custom/howto/customize_skin.html#Customize_the_appearance_of_Hippo_CMS_">Customize the appearance of Hippo CMS.</a>
             </td>
             <td>Howto: Frontend skin customization</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/howto/customize_versioning.html#Customize_versioning">Customize versioning</a>
-            </td>
-            <td>Howto: Customize versioning</td>
           </tr>
           <tr>
             <td>
@@ -1661,6 +1649,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/discard_changes.html#Discard_changes">Discard changes</a>
+            </td>
+            <td>Howto: Discard changes</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/sysadmin/configuration/performance_tuning.html#Do_not_allow_very_large_assets">Do not allow very large assets</a>
             </td>
             <td>Performance tuning</td>
@@ -1691,7 +1685,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/document_types/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+              <a href="../delve_into/user/contributors/howto/todo/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
             </td>
             <td/>
           </tr>
@@ -1709,7 +1703,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/todo/goto_document_tab.html#document_tab_screenshot">document tab screenshot</a>
+              <a href="../delve_into/user/contributors/todo/goto_document_tab.html#document_tab_screenshot">document tab screenshot</a>
             </td>
             <td>Goto a Document</td>
           </tr>
@@ -1751,7 +1745,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/goto_documenttype_tab.html#documenttype_tab_screenshot">documenttype tab screenshot</a>
+              <a href="../delve_into/user/information_architects/howto/goto_documenttype_card.html#documenttype_card_screenshot">documenttype card screenshot</a>
             </td>
             <td>Howto: Go to a Document type</td>
           </tr>
@@ -1949,12 +1943,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/howto/customize_versioning.html#Expert_information">Expert information</a>
-            </td>
-            <td>Howto: Customize versioning</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/reference/frontend/frontend_plugin_architecture.html#Explanation_of_the_frontend_plugin_architecture_">Explanation of the frontend plugin architecture.</a>
             </td>
             <td>Frontend Plugin Architecture</td>
@@ -2036,12 +2024,6 @@
               <a href="../delve_into/user/information_architects/howto/fieldcaption.html#Field_caption">Field caption</a>
             </td>
             <td>Howto: Field caption</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/concepts/field_properties_overview.html#field_properties_overview_screenshot">field properties overview screenshot</a>
-            </td>
-            <td>Concept: string</td>
           </tr>
           <tr>
             <td>
@@ -2436,7 +2418,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/goto_documenttype_tab.html#Go_to_a_Document_type">Go to a Document type</a>
+              <a href="../delve_into/user/information_architects/howto/goto_documenttype_card.html#Go_to_a_Document_type">Go to a Document type</a>
             </td>
             <td>Howto: Go to a Document type</td>
           </tr>
@@ -2448,9 +2430,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/goto_content_browse_tab.html#Go_to_content_browse_tab">Go to content browse tab</a>
+              <a href="../delve_into/user/information_architects/old/goto_content_browse_tab.html#Go_to_content_browse_tab">Go to content browse tab</a>
             </td>
-            <td>Howto: Go to content browse tab</td>
+            <td>Go to content browse tab</td>
           </tr>
           <tr>
             <td>
@@ -2478,7 +2460,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/todo/goto_document_tab.html#Goto_a_Document">Goto a Document</a>
+              <a href="../delve_into/user/contributors/todo/goto_document_tab.html#Goto_a_Document">Goto a Document</a>
             </td>
             <td>Goto a Document</td>
           </tr>
@@ -2502,9 +2484,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/editors/howto/goto_content_browse_tab.html#Goto_Content_Browse_Tab">Goto Content Browse Tab</a>
+              <a href="../delve_into/user/editors/old/goto_content_browse_tab.html#Goto_Content_Browse_Tab">Goto Content Browse Tab</a>
             </td>
-            <td>Howto: Goto Content Browse Tab</td>
+            <td>Goto Content Browse Tab</td>
           </tr>
           <tr>
             <td>
@@ -2886,7 +2868,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/todo/browsing_history_of_document.html#How_to_browse_the_history_of_a_document,_i_e__to_see_the_changes_to_the_document_over_time_">How to browse the history of a document, i.e. to see the changes to the document over time?</a>
+              <a href="../delve_into/user/contributors/todo/browsing_history_of_document.html#How_to_browse_the_history_of_a_document,_i_e__to_see_the_changes_to_the_document_over_time_">How to browse the history of a document, i.e. to see the changes to the document over time?</a>
             </td>
             <td>Browsing history of a document</td>
           </tr>
@@ -2953,12 +2935,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/howto/customize_versioning.html#How_to_customize_at_what_events_copies_are_made,_in_a_custom_workflow_">How to customize at what events copies are made, in a custom workflow.</a>
-            </td>
-            <td>Howto: Customize versioning</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/cms_admins/howto/deactivate_account.html#How_to_deactivate_a_Hippo_CMS_user_account_">How to deactivate a Hippo CMS user account.</a>
             </td>
             <td>Howto: Deactivate account</td>
@@ -2986,6 +2962,12 @@
               <a href="../delve_into/user/information_architects/howto/fieldsize.html#How_to_define_the_size_for_a_field_in_a_document_type_">How to define the size for a field in a document type.</a>
             </td>
             <td>Howto: Field size</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/discard_changes.html#How_to_discard_changes_you_made_to_a_document_">How to discard changes you made to a document.</a>
+            </td>
+            <td>Howto: Discard changes</td>
           </tr>
           <tr>
             <td>
@@ -3037,27 +3019,27 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/goto_documenttype_tab.html#How_to_get_to_a_screen_to_manipulate_a_particular_document_type_">How to get to a screen to manipulate a particular document type.</a>
+              <a href="../delve_into/user/information_architects/howto/goto_documenttype_card.html#How_to_get_to_a_screen_to_manipulate_a_particular_document_type_">How to get to a screen to manipulate a particular document type.</a>
             </td>
             <td>Howto: Go to a Document type</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/todo/goto_document_tab.html#How_to_get_to_a_screen_to_manipulate_a_particular_document_">How to get to a screen to manipulate a particular document.</a>
+              <a href="../delve_into/user/contributors/todo/goto_document_tab.html#How_to_get_to_a_screen_to_manipulate_a_particular_document_">How to get to a screen to manipulate a particular document.</a>
             </td>
             <td>Goto a Document</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/editors/howto/goto_content_browse_tab.html#How_to_get_to_the_content_browse_tab_">How to get to the content browse tab.</a>
+              <a href="../delve_into/user/editors/old/goto_content_browse_tab.html#How_to_get_to_the_content_browse_tab_">How to get to the content browse tab.</a>
             </td>
-            <td>Howto: Goto Content Browse Tab</td>
+            <td>Goto Content Browse Tab</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/goto_content_browse_tab.html#How_to_get_to_the_content_browse_tab_">How to get to the content browse tab.</a>
+              <a href="../delve_into/user/information_architects/old/goto_content_browse_tab.html#How_to_get_to_the_content_browse_tab_">How to get to the content browse tab.</a>
             </td>
-            <td>Howto: Go to content browse tab</td>
+            <td>Go to content browse tab</td>
           </tr>
           <tr>
             <td>
@@ -3885,6 +3867,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/cms_admins/howto/publish_all.html#Next">Next</a>
+            </td>
+            <td>Howto: Publish all</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/cms_admins/howto/save_settings.html#Next">Next</a>
             </td>
             <td>Howto: Save settings</td>
@@ -3939,6 +3927,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/folder_action_menu.html#Next">Next</a>
+            </td>
+            <td>Concept: Folder action menu</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/folder_tabulation_panel.html#Next">Next</a>
             </td>
             <td>Concept: Folder tabulation panel</td>
@@ -3978,6 +3972,12 @@
               <a href="../delve_into/user/contributors/howto/create_document.html#Next">Next</a>
             </td>
             <td>Howto: Create Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/discard_changes.html#Next">Next</a>
+            </td>
+            <td>Howto: Discard changes</td>
           </tr>
           <tr>
             <td>
@@ -4065,7 +4065,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/todo/goto_document_tab.html#Next">Next</a>
+              <a href="../delve_into/user/contributors/todo/goto_document_tab.html#Next">Next</a>
             </td>
             <td>Goto a Document</td>
           </tr>
@@ -4080,12 +4080,6 @@
               <a href="../delve_into/user/editors/howto/create_folder.html#Next">Next</a>
             </td>
             <td>Howto: Create Folder</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/editors/howto/goto_content_browse_tab.html#Next">Next</a>
-            </td>
-            <td>Howto: Goto Content Browse Tab</td>
           </tr>
           <tr>
             <td>
@@ -4110,6 +4104,12 @@
               <a href="../delve_into/user/editors/howto/start_CMS.html#Next">Next</a>
             </td>
             <td>Howto: Start CMS site</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/old/goto_content_browse_tab.html#Next">Next</a>
+            </td>
+            <td>Goto Content Browse Tab</td>
           </tr>
           <tr>
             <td>
@@ -4191,13 +4191,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/goto_content_browse_tab.html#Next">Next</a>
-            </td>
-            <td>Howto: Go to content browse tab</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/howto/goto_documenttype_tab.html#Next">Next</a>
+              <a href="../delve_into/user/information_architects/howto/goto_documenttype_card.html#Next">Next</a>
             </td>
             <td>Howto: Go to a Document type</td>
           </tr>
@@ -4254,6 +4248,12 @@
               <a href="../delve_into/user/information_architects/howto/update_content.html#Next">Next</a>
             </td>
             <td>Howto: Update content</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/old/goto_content_browse_tab.html#Next">Next</a>
+            </td>
+            <td>Go to content browse tab</td>
           </tr>
           <tr>
             <td>
@@ -4644,6 +4644,12 @@
               <a href="../delve_into/user/contributors/howto/save_document.html#Save_Document">Save Document</a>
             </td>
             <td>Howto: Save Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/discard_changes.html#save_document_screenshot">save document screenshot</a>
+            </td>
+            <td>Howto: Discard changes</td>
           </tr>
           <tr>
             <td>
@@ -5249,19 +5255,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/concepts/versioning.html#Versioning">Versioning</a>
-            </td>
-            <td>Concept: Versioning</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/contributors/concepts/versioning.html#Versioning">Versioning</a>
             </td>
             <td>Concept: Versioning</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/todo/browsing_history_of_document.html#Versioning_display_screenshot">Versioning display screenshot</a>
+              <a href="../delve_into/user/contributors/todo/browsing_history_of_document.html#Versioning_display_screenshot">Versioning display screenshot</a>
             </td>
             <td>Browsing history of a document</td>
           </tr>
@@ -5270,12 +5270,6 @@
               <a href="../delve_into/sysadmin/configuration/repository/index.html#Versioning_element">Versioning element</a>
             </td>
             <td>Welcome: Repository configuration</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/howto/customize_versioning.html#Versioning_invocation_as_part_of_a_workflow_step">Versioning invocation as part of a workflow step</a>
-            </td>
-            <td>Howto: Customize versioning</td>
           </tr>
           <tr>
             <td>
@@ -5300,6 +5294,12 @@
               <a href="../delve_into/web/index.html#Website_Development">Website Development</a>
             </td>
             <td>Welcome: Website Development</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/concepts/scheduled_publication.html#What_about_scheduling_the_online_publication_of_documents_">What about scheduling the online publication of documents?</a>
+            </td>
+            <td>Concept: Scheduled publication</td>
           </tr>
           <tr>
             <td>
@@ -5447,13 +5447,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/concepts/field_properties_overview.html#What_is_a_field_properties_overview">What is a field properties overview</a>
+              <a href="../delve_into/user/information_architects/concepts/field_properties_overview.html#What_is_a_field_properties_overview_">What is a field properties overview?</a>
             </td>
             <td>Concept: string</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/concepts/field_type_menu.html#What_is_a_field_type_menu">What is a field type menu</a>
+              <a href="../delve_into/user/information_architects/concepts/field_type_menu.html#What_is_a_field_type_menu_">What is a field type menu?</a>
             </td>
             <td>Concept: string</td>
           </tr>

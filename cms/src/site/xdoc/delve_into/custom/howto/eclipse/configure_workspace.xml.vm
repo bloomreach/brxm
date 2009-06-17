@@ -104,7 +104,7 @@
     Optional. The <a href="${project_source_url}/${last_release}">Hippo CMS sources can be checkout
     from a subversion repository</a>, but only developers at Hippo
     can commit their changes back to that repository. The first checkout of the Hippo CMS sources should not
-    be done from within Eclipse, but <a href='get_Hippo_CMS_source.html'>from the commandline</a>. 
+    be done from within Eclipse, but <a href='../../../tools/howto/get_Hippo_CMS_source.html'>from the commandline</a>. 
     So this plugin would only be useful to checkout updates, which you also could do from the commandline.
     There are monthly Hippo CMS releases. The developers at Hippo commit updates on the Hippo CMS trunk
     contineously, but it is not advisable to develop addons on top of the trunk, as it is allowed that the

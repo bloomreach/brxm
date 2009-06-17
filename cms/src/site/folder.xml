@@ -82,10 +82,6 @@
    fullname='delve_into/custom/concepts/repository_plugins.xml'
    relpath='delve_into/custom/concepts'
   >repository_plugins</file>
-     <file ext='xml' mimetype='application/xml' valid='yes'
-   fullname='delve_into/custom/concepts/versioning.xml'
-   relpath='delve_into/custom/concepts'
-  >versioning</file>
     </folder>
     <folder>howto
      <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
@@ -96,10 +92,6 @@
    fullname='delve_into/custom/howto/customize_skin.xml'
    relpath='delve_into/custom/howto'
   >customize_skin</file>
-     <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
-   fullname='delve_into/custom/howto/customize_versioning.xml'
-   relpath='delve_into/custom/howto'
-  >customize_versioning</file>
      <folder>eclipse
       <file ext='xml.vm' mimetype='application/xml' valid='yes' note='todo'
    fullname='delve_into/custom/howto/eclipse/configure_workspace.xml.vm'
@@ -446,13 +438,34 @@
    relpath='delve_into/sysadmin/installation'
   >plugins</file>
     </folder>
-    <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
+    <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/sysadmin/requirements.xml'
    relpath='delve_into/sysadmin'
   >requirements</file>
    </folder>
    <folder>tools
+<info>
+ <title>Development Tools</title>
+ <shortdesc>Tools used when developing upon Hippo CMS 7</shortdesc>
+ <introduction>
+  This section is to describe general tools and procedures needed when developing on top of Hippo CMS 7.
+  <span xmlns="" class="expire">When tools section finished</span>
+  The intend is that the rest of the documentation
+  will link to this section where needed and thereby become cleaner.
+ </introduction>
+</info>
     <folder>howto
+<info>
+ <title>Development Tools Howto</title>
+ <shortdesc>Howto's for tools used when developing upon Hippo CMS 7.</shortdesc>
+ <introduction>
+    This subsection of the tools section is to describe
+    howto's of general tools and procedures needed when developing on top of Hippo CMS 7.
+    <span class="expire">When tools section finished.</span>
+    The intend is that the rest of the documentation
+    will link to the tools section where needed and thereby become cleaner.
+ </introduction>
+</info>
      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/tools/howto/create_pom.xml'
    relpath='delve_into/tools/howto'
@@ -783,6 +796,10 @@
    relpath='delve_into/user/contributors/howto'
   >create_document</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
+   fullname='delve_into/user/contributors/howto/discard_changes.xml'
+   relpath='delve_into/user/contributors/howto'
+  >discard_changes</file>
+      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/howto/fill_boolean_field_in_document.xml'
    relpath='delve_into/user/contributors/howto'
   >fill_boolean_field_in_document</file>
@@ -847,28 +864,34 @@
    relpath='delve_into/user/contributors/howto'
   >start_CMS</file>
       <folder>todo
-<info>
- <title>todo</title>             <!-- string -->
- <shortdesc>This folder contains howto's that are in development.</shortdesc>     <!-- string -->
-</info>
-       <file ext='xml' mimetype='application/xml' valid='yes'
-   fullname='delve_into/user/contributors/howto/todo/browsing_history_of_document.xml'
+       <file ext='' note='empty'
+   fullname='delve_into/user/contributors/howto/todo/*'
    relpath='delve_into/user/contributors/howto/todo'
-  >browsing_history_of_document</file>
-       <file ext='xml' mimetype='application/xml' valid='yes'
-   fullname='delve_into/user/contributors/howto/todo/goto_document_tab.xml'
-   relpath='delve_into/user/contributors/howto/todo'
-  >goto_document_tab</file>
-       <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
-   fullname='delve_into/user/contributors/howto/todo/index.xml'
-   relpath='delve_into/user/contributors/howto/todo'
-  >index</file>
+  >*</file>
       </folder>
      </folder>
      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/index.xml'
    relpath='delve_into/user/contributors'
   >index</file>
+     <folder>todo
+<info>
+ <title>todo</title>             <!-- string -->
+ <shortdesc>This folder contains howto's that are in development.</shortdesc>     <!-- string -->
+</info>
+      <file ext='xml' mimetype='application/xml' valid='yes'
+   fullname='delve_into/user/contributors/todo/browsing_history_of_document.xml'
+   relpath='delve_into/user/contributors/todo'
+  >browsing_history_of_document</file>
+      <file ext='xml' mimetype='application/xml' valid='yes'
+   fullname='delve_into/user/contributors/todo/goto_document_tab.xml'
+   relpath='delve_into/user/contributors/todo'
+  >goto_document_tab</file>
+      <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
+   fullname='delve_into/user/contributors/todo/index.xml'
+   relpath='delve_into/user/contributors/todo'
+  >index</file>
+     </folder>
      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/tour.xml'
    relpath='delve_into/user/contributors'
@@ -913,6 +936,17 @@
   >scheduled_publication</file>
      </folder>
      <folder>howto
+<info>
+ <title>CMS Editor Howto</title>
+ <shortdesc>A collection of howto's for small tasks an CMS editor may want to do.</shortdesc>
+ <afterlist>
+  <subsection name='Alternative'>
+     <p>
+      If you do not know where to start, take the <a href="../tour.html">Tour</a>.
+     </p>
+  </subsection>
+ </afterlist>
+</info>
       <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
    fullname='delve_into/user/editors/howto/check_for_requests.xml'
    relpath='delve_into/user/editors/howto'
@@ -921,10 +955,6 @@
    fullname='delve_into/user/editors/howto/create_folder.xml'
    relpath='delve_into/user/editors/howto'
   >create_folder</file>
-      <file ext='xml' mimetype='application/xml' valid='yes'
-   fullname='delve_into/user/editors/howto/goto_content_browse_tab.xml'
-   relpath='delve_into/user/editors/howto'
-  >goto_content_browse_tab</file>
       <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
    fullname='delve_into/user/editors/howto/handle_request.xml'
    relpath='delve_into/user/editors/howto'
@@ -950,6 +980,12 @@
    fullname='delve_into/user/editors/index.xml'
    relpath='delve_into/user/editors'
   >index</file>
+     <folder>old
+      <file ext='xml' mimetype='application/xml' valid='yes'
+   fullname='delve_into/user/editors/old/goto_content_browse_tab.xml'
+   relpath='delve_into/user/editors/old'
+  >goto_content_browse_tab</file>
+     </folder>
      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/editors/tour.xml'
    relpath='delve_into/user/editors'
@@ -988,7 +1024,7 @@
    fullname='delve_into/user/information_architects/concepts/edit_mode.xml'
    relpath='delve_into/user/information_architects/concepts'
   >edit_mode</file>
-      <file ext='xml' mimetype='application/xml' valid='yes'
+      <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
    fullname='delve_into/user/information_architects/concepts/field_properties_overview.xml'
    relpath='delve_into/user/information_architects/concepts'
   >field_properties_overview</file>
@@ -1105,12 +1141,6 @@
    fullname='delve_into/user/information_architects/howto/create_namespace.xml'
    relpath='delve_into/user/information_architects/howto'
   >create_namespace</file>
-      <folder>document_types
-       <file ext='' note='empty'
-   fullname='delve_into/user/information_architects/howto/document_types/*'
-   relpath='delve_into/user/information_architects/howto/document_types'
-  >*</file>
-      </folder>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/howto/fieldcaption.xml'
    relpath='delve_into/user/information_architects/howto'
@@ -1120,13 +1150,9 @@
    relpath='delve_into/user/information_architects/howto'
   >fieldsize</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
-   fullname='delve_into/user/information_architects/howto/goto_content_browse_tab.xml'
+   fullname='delve_into/user/information_architects/howto/goto_documenttype_card.xml'
    relpath='delve_into/user/information_architects/howto'
-  >goto_content_browse_tab</file>
-      <file ext='xml' mimetype='application/xml' valid='yes'
-   fullname='delve_into/user/information_architects/howto/goto_documenttype_tab.xml'
-   relpath='delve_into/user/information_architects/howto'
-  >goto_documenttype_tab</file>
+  >goto_documenttype_card</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/howto/goto_namespace.xml'
    relpath='delve_into/user/information_architects/howto'
@@ -1176,6 +1202,12 @@
    fullname='delve_into/user/information_architects/index.xml'
    relpath='delve_into/user/information_architects'
   >index</file>
+     <folder>old
+      <file ext='xml' mimetype='application/xml' valid='yes'
+   fullname='delve_into/user/information_architects/old/goto_content_browse_tab.xml'
+   relpath='delve_into/user/information_architects/old'
+  >goto_content_browse_tab</file>
+     </folder>
      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/tour.xml'
    relpath='delve_into/user/information_architects'

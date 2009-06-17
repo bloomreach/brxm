@@ -26,7 +26,8 @@
         <span class="shortdesc">Learn how to create a template with a custom layout.</span>
 
         <p>
-          Using the <a href="../../user/information_architects/howto/document_types/editor.html">Document Type Editor</a>, you can create
+          Using the <a href="../../user/information_architects/index.html">Document Type Editor</a>,
+          you can create
           straightforward document types.  You can add and remove fields, specify their
           properties and rearrange their order in a list.  When moving fields up and
           down a list doesn't really cut it for you, you need to define your own layout.

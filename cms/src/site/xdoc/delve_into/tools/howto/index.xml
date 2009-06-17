@@ -27,12 +27,14 @@
     <title>Development Tools Howto</title>
   </properties>
   <body>
-    <section name="Development Tools Howto"><span class="shortdesc">Howto's for tools used when developing upon Hippo CMS 7</span>              <!-- tree -->
-  This subsection of the tools section is to describe 
-  howto's of general tools and procedures needed when developing on top of Hippo CMS 7.
-  <span xmlns="" class="expires">When tools section finished</span>The intend is that the rest of the documentation
-  will link to the tools section where needed and thereby become cleaner.
- <table><tr><td><a href="./create_pom.html">Create a pom.xml</a></td><td>Learn how to create a project object model file for maven.</td></tr><tr><td><a href="./eclipse/index.html">eclipse</a></td><td>How to use eclipse for Hippo projects: <a href="eclipse/configure_workspace.html">configure_workspace</a>, <a href="eclipse/start_eclipse.html">start_eclipse</a>, <a href="eclipse/war_overlays_in_eclipse.html">war_overlays_in_eclipse</a>.</td></tr><tr><td><a href="./export_node.html">Export node</a></td><td>Export node from Hippo repository in XML format</td></tr><tr><td><a href="./get_Hippo_CMS_source.html">Get the Hippo CMS source</a></td><td>Get the Hippo CMS source from the Hippo subversion repository.</td></tr><tr><td><a href="./maven/index.html">maven</a></td><td>How to use maven for Hippo projects: <a href="maven/build_core_Hippo_CMS.html">build_core_Hippo_CMS</a>, <a href="maven/install_maven.html">install_maven</a>, <a href="maven/learning_maven.html">learning_maven</a>, <a href="maven/run_development_package.html">run_development_package</a>.</td></tr><tr><td><a href="./snapshot_dependencies.html">Using snapshot dependencies</a></td><td>How to ensure that projects that depend on snapshot versions of packages will build?</td></tr></table>                 <!-- tree, e.g. <subsection name='Alternative'> -->
- </section>
+    <section name="Development Tools Howto"><span class="shortdesc">Howto's for tools used when developing upon Hippo CMS 7.</span>
+    This subsection of the tools section is to describe
+    howto's of general tools and procedures needed when developing on top of Hippo CMS 7.
+    <span xmlns="" class="expire">When tools section finished.</span>
+    The intend is that the rest of the documentation
+    will link to the tools section where needed and thereby become cleaner.
+ <table><tr><td><a href="./create_pom.html">Create a pom.xml</a></td><td>Learn how to create a project object model file for maven.</td></tr><tr><td><a href="./eclipse/index.html">eclipse</a></td><td><span class="missing">Short description for
+           /.html</span>: <a href="eclipse/configure_workspace.html">configure_workspace</a>, <a href="eclipse/start_eclipse.html">start_eclipse</a>, <a href="eclipse/war_overlays_in_eclipse.html">war_overlays_in_eclipse</a>.</td></tr><tr><td><a href="./export_node.html">Export node</a></td><td>Export node from Hippo repository in XML format</td></tr><tr><td><a href="./get_Hippo_CMS_source.html">Get the Hippo CMS source</a></td><td>Get the Hippo CMS source from the Hippo subversion repository.</td></tr><tr><td><a href="./maven/index.html">maven</a></td><td><span class="missing">Short description for
+           /.html</span>: <a href="maven/build_core_Hippo_CMS.html">build_core_Hippo_CMS</a>, <a href="maven/install_maven.html">install_maven</a>, <a href="maven/learning_maven.html">learning_maven</a>, <a href="maven/run_development_package.html">run_development_package</a>.</td></tr></table></section>
   </body>
 </document>
