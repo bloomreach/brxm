@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -678,7 +679,53 @@ public class JcrObservationManager implements ObservationManager {
     }
 
     public EventListenerIterator getRegisteredEventListeners() throws RepositoryException {
-        throw new UnsupportedOperationException("getRegisteredEventListeners() is not implemented yet");
+        // create a local copy of the event listeners
+        final Set<EventListener> currentListeners = new HashSet<EventListener>();
+        synchronized (listeners) {
+            for (EventListener el : listeners.keySet()) {
+                currentListeners.add(el);
+            }
+        }
+
+        return new EventListenerIterator() {
+            private final Iterator<EventListener> listenerIterator = currentListeners.iterator();
+            private final long size = currentListeners.size();
+            private long pos = 0;
+
+            public EventListener nextEventListener() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                pos++;
+                return listenerIterator.next();
+            }
+
+            public void skip(long skipNum) {
+                while (skipNum-- > 0) {
+                    next();
+                }
+            }
+
+            public long getSize() {
+                return size;
+            }
+
+            public long getPosition() {
+                return pos;
+            }
+
+            public void remove() {
+                throw new UnsupportedOperationException("EventListenerIterator.remove()");
+            }
+
+            public boolean hasNext() {
+                return listenerIterator.hasNext();
+            }
+
+            public Object next() {
+                return nextEventListener();
+            }
+        };
     }
 
     public void removeEventListener(EventListener listener) throws RepositoryException {

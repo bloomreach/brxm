@@ -54,12 +54,13 @@ public class JcrApplicationFactory implements IApplicationFactory, IDetachable {
     }
 
     public IServiceFactory<IPluginConfigService> getApplication(String name) {
+        log.info("Starting application: " + name);
         try {
             Node applicationFolder = nodeModel.getNode();
             if (applicationFolder.hasNode(name)) {
                 return getApplication(applicationFolder.getNode(name));
             } else {
-                log.debug("No application " + name + " found");
+                log.info("No application " + name + " found");
             }
         } catch (RepositoryException e) {
             log.error("Error retrieving application", e);

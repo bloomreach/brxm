@@ -25,6 +25,8 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.observation.EventListener;
+import javax.jcr.observation.EventListenerIterator;
 import javax.servlet.ServletContext;
 
 import org.apache.wicket.Application;
@@ -246,6 +248,25 @@ public class Main extends WebApplication {
     @Override
     protected void onDestroy() {
         if (repository != null) {
+            // remove listeners
+            JcrObservationManager jom = JcrObservationManager.getInstance();
+            EventListenerIterator eli;
+            try {
+                eli = jom.getRegisteredEventListeners();
+                log.info("Number of listeners to remove: {}", eli.getSize());
+                while (eli.hasNext()) {
+                    EventListener el = eli.nextEventListener();
+                    try {
+                        jom.removeEventListener(el);
+                    } catch (RepositoryException e) {
+                        log.warn("Unable to remove listener", e);
+                    }
+                }
+            } catch (RepositoryException e) {
+                log.error("Unable to get registered event listeners for shutdown", e);
+            }
+
+            // close
             repository.close();
             repository = null;
         }
