@@ -46,7 +46,11 @@ public class HstQueryImpl implements HstQuery {
     private HstRequestContext hstRequestContext;
     private ObjectConverter objectConverter;
     
-    private int limit = -1;
+    /*
+     * By default, if you do not use setLimit(int limit), we use a limit of 1000. This is for performance reasons (internal repo)
+     */
+    private final static int DEFAULT_LIMIT = 1000;
+    private int limit = DEFAULT_LIMIT;
     private int offset = -1;
     private BaseFilter filter;
     private Node scope;
