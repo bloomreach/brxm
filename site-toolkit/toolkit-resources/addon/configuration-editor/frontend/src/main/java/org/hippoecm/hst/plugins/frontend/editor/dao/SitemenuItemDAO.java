@@ -44,6 +44,9 @@ public class SitemenuItemDAO extends EditorDAO<SitemenuItem> {
     /** SITEMAP_PROPERTY represents the jcr propertyname of the referenced sitemap item. */
     private static final String SITEMAP_PROPERTY = "hst:referencesitemapitem";
 
+    /** EXTERNAL_URL_PROPERTY represents the jcr propertyname of the external url. */
+    private static final String EXTERNAL_URL_PROPERTY = "hst:externallink";
+
     /**
      * Instantiates a new sitemenu item dao.
      * 
@@ -74,6 +77,9 @@ public class SitemenuItemDAO extends EditorDAO<SitemenuItem> {
         if (JcrUtilities.hasProperty(model, SITEMAP_PROPERTY)) {
             item.setSitemapReference((JcrUtilities.getProperty(model, SITEMAP_PROPERTY)));
         }
+        if (JcrUtilities.hasProperty(model, EXTERNAL_URL_PROPERTY)) {
+            item.setExternalLink((JcrUtilities.getProperty(model, EXTERNAL_URL_PROPERTY)));
+        }
 
         return item;
     }
@@ -95,8 +101,10 @@ public class SitemenuItemDAO extends EditorDAO<SitemenuItem> {
             log.warn("Exception occured while trying to get name from model: ",e.getMessage());
         }
 
-        //save contentPath
+        //save sitemapReference
         JcrUtilities.updateProperty(model, SITEMAP_PROPERTY, k.getSitemapReference());
+        //save externalLink
+        JcrUtilities.updateProperty(model, EXTERNAL_URL_PROPERTY, k.getExternalLink());
     }
 
 }
