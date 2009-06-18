@@ -172,7 +172,6 @@
           <item name="Servlet Container" collapse="true" href="/delve_into/sysadmin/requirements.html#Java_Servlet_Container"/>
           <item name="Relational Database" collapse="true" href="/delve_into/sysadmin/requirements.html#Relational_Database"/>
         </item>
-        <item name="Supported stacks" href="supported_stacks.html" collapse="false"/>
         <item name="Installation" href="/delve_into/sysadmin/installation/index.html" collapse="true">
           <item name="in Servlet Container" collapse="true" href="/delve_into/sysadmin/installation/in_servlet_container.html">
             <item name="Tomcat" href="/delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat"/>
