@@ -22,35 +22,35 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Card</title>
+    <title>Tab page</title>
   </properties>
 
   <body>
-   <section name="Card">
-      <span class="shortdesc">What and where are cards?</span>
+   <section name="Tab page">
+      <span class="shortdesc">What and where are tab pages?</span>
 
     <script type="text/javascript">
      leftpx=500;
     </script>
     <div class='group'>
      <div id='screenshot'><div>
-       <img src="../../../../images/screenshots/cms_M13/contribs/document_card.png"
-        alt='document cards'/>
+       <img src="../../../../images/screenshots/cms_M13/contribs/document_tab_page.png"
+        alt='document tab pages'/>
      </div></div>
      <p>
-      A card.
-      <span class='add'>more about cards in the image</span>
+      A tab page.
+      <span class='add'>more about tab pages in the image</span>
      </p>
     </div>
 
     <p>
-     A single card is for
+     A single tab page is for
      for <a href='./edit_mode.html'>changing</a> and/or
      <a href='./review_mode.html'>reviewing</a> a single file (document, image or asset).
     </p>
     <p>To change or review a file, you have to open the file.
-       The file will then be accessable on its own card in the
-       <a href='./cards_panel.html'>cards panel</a>.
+       The file will then be accessable on its own tab page in the
+       <a href='./tab_pages_panel.html'>tab pages panel</a>.
    </p>
    <subsection name='Next'>
     <ul>

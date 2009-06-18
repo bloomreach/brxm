@@ -752,16 +752,10 @@
    <shortdesc>What is a boolean</shortdesc>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="cards_panel" relpath="delve_into/user/contributors/concepts">Cards panel
-   <section>Cards panel</section>
-   <shortdesc>What and where is the cards panel?</shortdesc>
-   <img>cards panel</img>
-   <subsection>Next</subsection>
-   <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="card" relpath="delve_into/user/contributors/concepts">Card
-   <section>Card</section>
-   <shortdesc>What and where are cards?</shortdesc>
-   <img>document cards</img>
+  </document><document ext="xml" filename="card" relpath="delve_into/user/contributors/concepts">Tab page
+   <section>Tab page</section>
+   <shortdesc>What and where are tab pages?</shortdesc>
+   <img>document tab pages</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="content_workspace" relpath="delve_into/user/contributors/concepts">Content Workspace
@@ -864,6 +858,18 @@
   </document><document ext="xml" filename="string" relpath="delve_into/user/contributors/concepts">String
    <section>String</section>
    <shortdesc>What is a string?</shortdesc>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="tab_pages_panel" relpath="delve_into/user/contributors/concepts">Tab pages panel
+   <section>Tab pages panel</section>
+   <shortdesc>What and where is the tab pages panel?</shortdesc>
+   <img>tab pages panel</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="tab_page" relpath="delve_into/user/contributors/concepts">Tab page
+   <section>Tab page</section>
+   <shortdesc>What and where are tab pages?</shortdesc>
+   <img>document tab pages</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="workspace_navigation_panel" relpath="delve_into/user/contributors/concepts">Workspace Navigation Panel
@@ -1008,8 +1014,8 @@
   </document><document ext="xml" filename="index" relpath="delve_into/user/contributors/todo">
   </document></folder><folder>todo-concepts
    <title>todo</title><shortdesc>This folder contains concepts that are in development.</shortdesc>
-   <document ext="xml" filename="document_card" relpath="delve_into/user/contributors/todo-concepts">Document card
-   <section>Document card</section>
+   <document ext="xml" filename="document_card" relpath="delve_into/user/contributors/todo-concepts">Document tab page
+   <section>Document tab page</section>
    <shortdesc>What and where are document cards?</shortdesc>
    <img>document cards</img>
   </document><document ext="xml" filename="index" relpath="delve_into/user/contributors/todo-concepts">
@@ -1310,7 +1316,7 @@
   </document><document ext="xml" filename="goto_documenttype_card" relpath="delve_into/user/information_architects/howto">Go to a Document type
    <section>Go to a Document type</section>
    <shortdesc>How to get to a screen to manipulate a particular document type.</shortdesc>
-   <img>documenttype card screenshot</img>
+   <img>documenttype tab page screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="goto_namespace" relpath="delve_into/user/information_architects/howto">Go to a namespace

@@ -22,11 +22,11 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Document card</title>
+    <title>Document tab page</title>
   </properties>
 
   <body>
-   <section name="Document card">
+   <section name="Document tab page">
       <span class="shortdesc">What and where are document cards?</span>
 
     <div class='group'>
@@ -45,12 +45,12 @@ ________________________________________________________________________________
      <a href='content_tabulation_panel.html'>content tabulation panel</a> 
      to <a href='./edit_mode.html'>change</a> or
      <a href='./review_mode.html'>review</a> it. The document
-     then appears on a <i>document card</i> in the 
+     then appears on a <i>document tab page</i> in the 
      <a href='documents_panel.html'>documents panel</a>. 
-     Several documents card can be open on the documents panel at any time.
+     Several documents tab page can be open on the documents panel at any time.
      They will not all be visible, but lay on top of each other. Only a small
-     tab on the upper edge of each card will be visible. 
-     You can click on a tab to put another document card on top, so that you
+     tab on the upper edge of each tab page will be visible. 
+     You can click on a tab to put another document tab page on top, so that you
      can see it. 
     </p>
 
