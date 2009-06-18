@@ -42,7 +42,7 @@
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
-      <scope>provided</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -213,12 +213,6 @@
             <version>${jta.version}</version>
             <scope>runtime</scope>
           </dependency>
-          <dependency>
-            <groupId>javax.jcr</groupId>
-            <artifactId>jcr</artifactId>
-            <version>${javax.jcr.version}</version>
-            <scope>runtime</scope>
-          </dependency>
           
         </dependencies>
       </plugin>
@@ -306,8 +300,7 @@
                 <configuration>
                   <tasks>
 
-                    <echo>Replacing HST Shared Libraries.</echo>
-                    <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${tomcat.hst.shared.lib}/jcr-1.0.jar" overwrite="true" />
+                    <echo>Replacing Shared Libraries.</echo>
                     <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" overwrite="true" />
                     
                     <echo>Replacing cms web application into tomcat.</echo>
@@ -353,6 +346,11 @@
       </properties>
 
       <dependencies>
+        <dependency>
+          <groupId>javax.jcr</groupId>
+          <artifactId>jcr</artifactId>
+          <scope>provided</scope>
+        </dependency>
         <dependency>
           <groupId>org.onehippo.ecm.hst</groupId>
           <artifactId>hst-api</artifactId>

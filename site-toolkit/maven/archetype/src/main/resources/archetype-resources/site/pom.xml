@@ -35,6 +35,11 @@
   </properties>
   
   <dependencies>
+    <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+      <scope>compile</scope>
+    </dependency>
     <!-- Dependencies needed to be able to send mail -->
     <dependency>
       <groupId>javax.mail</groupId>
@@ -207,12 +212,6 @@
             <version>${dollar}{jta.version}</version>
             <scope>runtime</scope>
           </dependency>
-          <dependency>
-            <groupId>javax.jcr</groupId>
-            <artifactId>jcr</artifactId>
-            <version>${dollar}{javax.jcr.version}</version>
-            <scope>runtime</scope>
-          </dependency>
         </dependencies>
       </plugin>
       <plugin>
@@ -304,8 +303,7 @@
                 <configuration>
                   <tasks>
 
-                    <echo>Replacing HST Shared Libraries.</echo>
-                    <copy file="${dollar}{settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${dollar}{tomcat.hst.shared.lib}/jcr-1.0.jar" overwrite="true" />
+                    <echo>Replacing Shared Libraries.</echo>
                     <copy file="${dollar}{settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${dollar}{tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" overwrite="true" />
                     
                     <echo>Replacing cms web application into tomcat.</echo>
