@@ -88,6 +88,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
+    <sv:property sv:name="nodename.max.length" sv:type="String">
+      <sv:value>23</sv:value>
+    </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.hst.plugins.frontend.HstFolderTreePlugin</sv:value>
     </sv:property>
@@ -108,6 +111,9 @@
   <sv:node sv:name="pageBrowser">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="nodename.max.length" sv:type="String">
+      <sv:value>23</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
@@ -130,6 +136,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
+    <sv:property sv:name="nodename.max.length" sv:type="String">
+      <sv:value>23</sv:value>
+    </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
     </sv:property>
@@ -151,6 +160,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
+    <sv:property sv:name="nodename.max.length" sv:type="String">
+      <sv:value>23</sv:value>
+    </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
     </sv:property>
@@ -171,6 +183,9 @@
   <sv:node sv:name="sitemenusBrowser">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="nodename.max.length" sv:type="String">
+      <sv:value>23</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
