@@ -52,6 +52,11 @@ ________________________________________________________________________________
    <p>
     Type a descriptive name for the new folder.
    </p>
+   <p>
+    Root folders within a <a href='../../contributors/concepts/slider.html'>slider</a> are not created via
+    a folder action menu, but via the 'Add root folder' button.
+    You can see it in the screenshot for <a href='../../contributors/concepts/slider.html'>sliders</a>.
+   </p>
 
   <subsection name='Next'>
    <ul>
