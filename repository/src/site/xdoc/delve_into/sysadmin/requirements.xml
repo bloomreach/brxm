@@ -40,7 +40,7 @@
          <img src='../../images/firefox_logo_tiny.png' alt='Firefox logo'/>
         </td>
         <td>
-         Firefox 1.5 just works, <a href='http://www.mozilla.com/en-US/firefox/'>3.0</a> is recommended and supported.
+         <a href='http://www.mozilla.com/en-US/firefox/'>Firefox 3</a>
         </td>
        </tr>
        <tr>
@@ -48,7 +48,8 @@
          <img src='../../images/internet_explorer_logo_tiny.png' alt='internet explorer logo'/>
         </td>
         <td>
-          Internet explorer 6 just works, <a href='http://www.microsoft.com/netherlands/windows/products/winfamily/ie/default.mspx'>7</a> is recommended and supported.
+          <a href='http://www.microsoft.com'>Internet Explorer 6 and 7</a>
+	  <p>Internet Explorer 7 is a faster browser, and generally renders better than 6. If possible, it's advisable to upgrade.</p>
         </td>
        </tr>
       </table>
@@ -59,8 +60,13 @@
      <td>
       <span class='OS-48 icon-48'/>
      </td>
-     <td>The client side of Hippo CMS runs on every OS that runs one of the required web browsers.
-         Windows XP and Vista and Linux Redhat, Suse and Ubuntu are supported.
+     <td>The Hippo development team tests Hippo CMS on Windows XP, Mac OS X and Ubuntu Linux.
+	<p>
+	If you need guaranteed support for a specific client OS (for example, in a virtualized environment), contact <a href="http://www.onehippo.com/en/support">Hippo Support</a> and ask for Certified Stack support, which is part of the Hippo Support License.
+	<ul>
+	<li><a href="http://www.onehippo.com/en/support">Hippo Certified Stack support</a></li>
+	</ul>
+	</p>
      </td>
     </tr>
     <tr>
@@ -69,18 +75,16 @@
       <span class='hardware-48 icon-48'/>
      </td>
      <td>
+      As a minimum configuration, Hippo CMS requires:
       <ul>
         <li>
           Intel Pentium 4
        </li>
        <li>
-           512 MB Memory
+          512 MB Memory
        </li>
        <li>
           1024x768 screen resolution
-       </li>
-        <li>
-         200 MB of available hard-disk space (not to be used by Hippo CMS, but to prevent the system from becoming too slow for Hippo CMS).
        </li>
       </ul>
      </td>
@@ -91,71 +95,10 @@
       <span class='OS-48 icon-48'/>
      </td>
      <td>
-       Hippo CMS runs on all modern operating systems
-       that run <a href='http://www.sun.com/'>Sun</a>'s 
-       <span class='expires'>Java 6 (or 5)</span> 
-       correctly, especially Microsoft Window systems after 2006 and
-       <a href='http://www.linux.org/'>Linux</a> with a kernel >= 2.6.
-     <div class='nav'>
-      <table>
-       <tr>
-        <td>
-         <img src='../../images/windows_logo_tiny.png' alt='MS windows logo'/>
-        </td>
-        <td>
-         <a href='http://www.microsoft.com/windows/windows-xp/default.aspx'>Microsoft Windows XP</a>
-        </td>
-       </tr>
-       <tr>
-        <td>
-         <img src='../../images/windows_logo_tiny.png' alt='MS windows logo'/>
-        </td>
-        <td>
-         <a href='http://www.microsoft.com/windowsserver2003/default.mspx'>Microsoft Server 2003</a>
-        </td>
-       </tr>
-       <tr>
-        <td>
-          <a href='http://www.redhat.com/rhel/'><img src='../../images/redhat_logo_tiny.png' alt='Redhat logo'/></a>
-        </td>
-        <td>
-          <a href='http://www.redhat.com/rhel/'>Redhat Enterprise Linux 5</a>
-        </td>
-       </tr>
-       <tr>
-        <td>
-          <a href='http://www.novell.com/products/desktop/'><img src='../../images/suse_logo_tiny.png' alt='Suse logo'/></a>
-        </td>
-        <td>
-          <a href='http://www.novell.com/products/desktop/'>SUSE Linux Enterprise Desktop 10</a>
-        </td>
-       </tr>
- <!--
-       <tr>
-        <td>
-        </td>
-        <td>
-         <a href='http://www.ubuntu.com/'>Ubuntu 8.10 (newest)</a> and
-         <a href='http://www.ubuntu.com/'>8.04 LTS (Long Term Support version)</a>
-        </td>
-       </tr>
-       <tr>
-        <td>
-        </td>
-        <td>
-         <a href='http://www.debian.org'>Debian 4.0</a>
-        </td>
-       </tr>
-       <tr>
-        <td>
-        </td>
-        <td>
-         <a href='http://www.slackware.com/'>Slackware 12.2</a>
-        </td>
-       </tr>
- -->
-      </table>
-     </div>
+       Hippo CMS is a <a href="http://java.sun.com">Java</a> based server application. It runs on most operating systems that run Java. We generally test on Windows XP and Ubuntu Linux. If you need guaranteed support for a specific server OS (Red Hat, Suse, IBM, HP, Sun or other operating system), contact <a href="http://www.onehippo.com/en/support">Hippo Support</a> and ask for Certified Stack support, which is part of the Hippo Support License.
+	<ul>
+	<li><a href="http://www.onehippo.com/en/support">Hippo Certified Stack support</a></li>
+	</ul>
       </td>
      </tr>
      <tr>
@@ -175,7 +118,7 @@
         <li>2 Gb of available hard-disk space for data storage (5 Gb or more recommended)</li>
        </ul>
        Actual requirements for a specific project may differ.
-      </td>
+</td>
      </tr>
 
      <tr>
@@ -185,9 +128,6 @@
      </td>
      <td>
           <a href='http://java.com/en/download/help/'>Sun's Java Virtual Machine</a>, JVM 6 (or 5). 
-          The JVM is also called the Java Runtime Environment (JRE) or just Java.
-          The Java Development Kit (JDK) contains the JVM.
-   
      <div class='nav'>
       <table>
        <tr>
@@ -198,34 +138,13 @@
           <a href='http://java.com/en/download/index.jsp'>Sun Microsystems</a>
         </td>
        </tr>
-       <tr>
-        <td>
-         <a href='http://www.linux.org/'><img src='../../images/Tux_logo_tiny.png' alt='Tux logo'/></a>
-        </td>
-        <td>
-          Only Linux JRE packages that ask you to agree to Sun's licence terms contain Java from
-          <a href='http://www.sun.com/'>Sun Microsystems</a> and will run Hippo ECM.
-        </td>
-       </tr>
- <!--
-       <tr>
-        <td>
-         <a href='http://packages.ubuntu.com/hardy/sun-java6-jre'><img src='../../images/Ubuntu_logo_tiny.png' alt='Ubuntu logo'/></a>
-        </td>
-        <td>
-          <a href='http://packages.ubuntu.com/'>Ubuntu</a> <a href='http://packages.ubuntu.com/hardy/sun-java6-jre'>JRE 6</a>.
-        </td>
-       </tr>
-       <tr>
-        <td>
-         <a href='http://packages.debian.org/lenny/sun-java6-jre'><img src='../../images/Debian_logo_tiny.png' alt='Debian logo'/></a>
-        </td>
-        <td>
-          <a href='http://www.debian.org/distrib/packages'>Debian</a> <a href='http://packages.debian.org/lenny/sun-java6-jre'>JRE 6</a>.
-        </td>
-       </tr>
- -->
-      </table>          
+	</table>
+
+          If you need guaranteed support for a specific version of Java (IBM, BEA, etc), contact <a href="http://www.onehippo.com/en/support">Hippo Support</a> and ask for Certified Stack support, which is part of the Hippo Support License.
+	<ul>
+	<li><a href="http://www.onehippo.com/en/support">Hippo Certified Stack support</a></li>
+	</ul>
+
      </div>
     </td>
    </tr>
@@ -234,11 +153,10 @@
    <td>
      <a href='http://java.com/'><img src='../../images/java_logo.png' alt='Java logo'/></a>
    </td>
-   <td>Hippo CMS works in any Java Servlet container or Java application server conforming to version
-       <span class='confirm'>2.4</span> of the 
-       <a href='http://java.sun.com/products/servlet/reference/api/index.html'>Sun Servlet container 
-       specification</a>, E.g.:
+   <td>Hippo CMS works in Java Servlet containers or Java application servers that conform to version <span class='confirm'>2.4</span> of the 
+       <a href='http://java.sun.com/products/servlet/reference/api/index.html'>Sun Servlet container specification</a>.
 
+       The following containers are generally used for running Hippo CMS:
        <div class='nav'>
         <table>
          <tr>
@@ -247,7 +165,8 @@
           </td>
           <td>
            <a href='http://jetty.mortbay.com/jetty/'>Jetty</a> <a href='http://docs.codehaus.org/display/JETTY/Downloading+Jetty'>6.1</a>,
-             also included in <a href='../quickstart.html'>Hippo CMS quickstart-bin package</a>.
+             also included in <a href='../quickstart.html'>Hippo CMS quickstart-bin package</a>. 
+	     <p>Very useful for development and testing, sometimes also the best option for production.</p>
           </td>
          </tr>
          <tr>
@@ -255,18 +174,28 @@
            <a href='http://tomcat.apache.org/'><img src='../../images/tomcat_logo_tiny.png' alt='Tomcat logo'/></a>
           </td>
           <td>
-           <a href='http://tomcat.apache.org/'>Tomcat</a> <a href="http://tomcat.apache.org/download-60.cgi">6.0</a> and 5.5                
-          </td>
-         </tr>
-         <tr>
-          <td>
-           <a href='https://glassfish.dev.java.net/public/users.html'><img src='../../images/glassfish_logo_tiny.png' alt='Glassfish logo'/></a>
-          </td>
-          <td>
-           <a href='https://glassfish.dev.java.net/public/users.html'>Sun GlassFish</a> V2 (<a href='http://packages.ubuntu.com/hardy/glassfishv2'>Linux Ubuntu package of Glassfish V2</a>). 
+           <a href='http://tomcat.apache.org/'>Tomcat</a> <a href="http://tomcat.apache.org/download-60.cgi">6.0</a> and 5.5. 
+	   <p>Generally used in production environments.</p>
           </td>
          </tr>
         </table>
+	<p>
+	Get Hippo Certified Stack support if you need to use the following containers:
+
+	<ul>
+		<li>IBM Websphere</li>
+		<li>BEA Weblogic</li>
+		<li>JBoss</li>
+		<li>Sun GlassFish</li>
+	</ul>
+	</p>
+	<p>
+	If you're running Hippo CMS in a production environment (either clustered or not), it might be useful to get some Systems Support from <a href="http://www.onehippo.com/en/support">Hippo</a>. These guys know how to tune Hippo CMS to the max like no other :)
+	</p>
+
+	<ul>
+	<li><a href="http://www.onehippo.com/en/support">Hippo Certified Stack support</a></li>
+	</ul>
        </div>
     </td>
    </tr>
@@ -276,7 +205,7 @@
      <span class='archive-48 icon-48'/>
     </td>
     <td>
-        Hippo CMS uses a relational database for it's datastorage, E.g.:
+        Hippo CMS uses a relational database for it's datastorage, e.g.:
        <div class='nav'>
         <table>
          <tr>
@@ -285,23 +214,23 @@
           </td>
           <td>
           <a href='http://db.apache.org/derby/'>Apache Derby</a> &gt; 10.0
-            is embedded and configured as default and runs "out of the box".
-          </td>
+            is embedded and configured as default and runs "out of the box", but not intended for production environments.
+          </td>Sun's Java Virtual Machine, JVM 6 (or 5).
+Sun logo 	Sun Microsystems
          </tr>
          <tr>
           <td>
           </td>
           <td>
-           <a href="http://www.mysql.com">MySQL 5.0</a> and <a href="http://www.mysql.com">5.1</a>
+           <a href="http://www.mysql.com">MySQL 5.0</a> and <a href="http://www.mysql.com">5.1</a>, generally used in production.
           </td>
          </tr>
-         <tr>
-          <td>
-          </td>
-          <td>
-            PosgreSQL 8.0 or newer
-          </td>
-         </tr>
+	</table>
+	</div>
+
+	If you already have a license for one of the following databases, and want to hook them up to Hippo CMS, contact Hippo for <a href="http://www.onehippo.com/en/support">Certified Stack Support</a>:
+       <div class='nav'>
+        <table>
          <tr>
           <td>
            <a href='http://www.oracle.com/index.html'><img src='../../images/oracle_logo_tiny.png' alt='Oracle logo'/></a>
@@ -311,7 +240,7 @@
          <tr>
           <td>
           </td>
-          <td>MS SQLServer 2000 or newer</td>
+          <td>Microsoft SQLServer 2000 or newer</td>
          </tr>
         </table>
        </div>
