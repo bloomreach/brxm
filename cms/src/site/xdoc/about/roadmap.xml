@@ -23,24 +23,27 @@
     </properties>
     <body>
         <section name="Roadmap Hippo CMS">
-         <span class='shortdesc'>Dates for future releases of Hippo CMS</span>
+         <span class='shortdesc'>What's up for the future?</span>
+	 <p>
+	   <a href="http://www.onehippo.com">Hippo</a> develops features for customers that have a <a href="http://www.onehippo.com/en/support">Hippo Support License</a>. Our wishlist below contains all the features that we'd like to have one day, and for some we've already implemented parts in the architectural foundations. If you think Hippo CMS is a good match for your situation, but you require any of the features on our wishlist (or something that is *not* on our list :) ), contact <a href="http://www.onehippo.com/en/support">Hippo Support</a> directly. Of course, code donations for any of the features on our wishlist are very very welcome!
+	 </p>
          <p>
-           Here's the Roadmap outline for Hippo CMS for 2009.
            This is a list of how we intent to roll out functionalities, even though some changes may occur as priorities shift.
-           The version numbers follow <a href='./version_numbers.html'>this version numbering scheme</a>.
-           Note that only the supported releases are listed here, not the monthly updates. See the
+           The version numbers follow <a href='./version_numbers.html'>the Hippo version numbering scheme</a>.
+           Note that only the supported releases are listed here, not the beta versions, monthly updates or Release Candidates. See the
            <a href='http://www.onehippo.org/about/release_schedule.html'>notes on the release schedule</a> for
            more information.
          </p>
+
             <table>
                 <thead>
                     <tr>
                         <th>Scheduled date</th>
                         <th>Release</th>
-                        <th>Feature Goals</th>
+                        <th>For this release we will focus on:</th>
                     </tr>
                 </thead>
-                <tr>
+                <!--tr>
                     <td>December, 2008</td>
                     <td>Hippo CMS v7.0 (r2.02.xx)</td>
                     <td>Folder structure, Template editor, Workflow, Internationalization (i18n),
@@ -54,25 +57,71 @@
                     <td>All standard Hippo CMS 6 features, Faceted browsing, Tagging, Split pane
                         versioning, Migration path CMS 6 to CMS 7, Forms, Metadata extraction (from
                         Word, PDF, etc), Batch workflow actions, HST-2 Configuration editor</td>
+                </tr-->
+                <tr>
+                    <td>Summer 2009</td>
+                    <td>Hippo CMS v7.2</td>
+                    <td>
+			<ul>
+			<li>Developers tools for working together on editing templates and
+			     other configuration elements</li>
+			<li>An improved template editor</li>
+			</ul>
+		    </td>
                 </tr>
                 <tr>
-                    <td>June, 2009</td>
-                    <td>Hippo CMS v7.2 (r2.08.xx)</td>
-                    <td>Hippo CMS 6 migration tools, Reporting, Translations workflow</td>
-                </tr>
-                <tr>
-                    <td>September, 2009</td>
-                    <td>Hippo CMS v7.3 (r2.11.xx)</td>
-                    <td>DMS, BPM, Metadata suggestor, collections, full-repository archiving</td>
-                </tr>
-                <tr>
-                    <td>December, 2009</td>
-                    <td>Hippo CMS v7.4 (r2.14.xx)</td>
-                    <td>TBD</td>
+                    <td>Fall 2009</td>
+                    <td>Hippo CMS v7.3</td>
+                    <td>
+			<ul>
+			<li><i>Awaiting feedback from v7.1 release..</i></li>
+			</ul>
+		    </td>
                 </tr>
             </table>
-            
-            <h3>v7.0 (December 2008)</h3>
+
+	    <h3>The Wishlist</h3>
+For all of the items on the wishlist we're sure it should be possible to build them into Hippo CMS given its broad architectural foundations. We simply have not yet had the change or the need to implement them. For some we already have a partial implementation, but it requires a little extra effort to turn them into reusable components.
+<p>
+Contact <a href="http://www.onehippo.com/en/support">Hippo Support</a> directly if you need any of the following features:</p>
+		<ul>
+		<li> Customizable help</li>
+		<li> Personalized reporting ("My recent documents", "My Tasks", etc)</li>
+		<li> DMS functionality</li>
+		<li> External BPM layer</li>
+		<li> Repository-wide content tagging and labeling</li>
+		<li> Archiver (roll back to a specific date)</li>
+		<li> Visitor generated metadata management</li>
+		<li> Collection management</li>
+		<li> Word import</li>
+		<li> Split pane versioning</li>
+		<li> Translations workflow</li>
+		<li> Metadata / tag suggestors</li>
+		<li> User profiles (different UI configurations for different user profiles)</li>
+		<li> Knowledge driven workflow</li>
+		<li> Website templating (Freemarker / JSP templates)</li>
+		<li> Task management</li>
+		<li> Search in pickers</li>
+		<li> Upload in image picker</li>
+		<li> Save draft</li>
+		<li> Advanced Search</li>
+		<li> Multi-upload</li>
+		<li> Improved CMS plugin development</li>
+		<li> Improved image management (tagging, collections, previews, thumbnails)</li>
+		<li> Taxonomy picker and Taxonomy editor</li>
+		<li> Form builder</li>
+		<li> Versioning (Version management user interface, history browsing)</li>
+		<li> Search in pickers</li>
+		<li> Permissions management user interface for folders and domains</li>
+		<li> Separated deployment</li>
+		<li> Batch workflow actions on search results</li>
+		<li> Forms management</li>
+		<li> Extended metadata extraction (PDF, Word, Images, etc)</li>
+		<li> REST interface</li>
+		<li> CMIS interface</li>
+		</ul>
+
+            <!--h3>v7.0 (December 2008)</h3>
             <h4>Goal: deliver all basic CMS functionalities, production ready</h4>
             <table>
                 <thead>
@@ -124,7 +173,7 @@
                 <tr>
                     <td>Plugin architecture</td>
                     <td>CMS can be extended by adding plugins, to be downloaded from the Hippo Forge.</td>
-                </tr>
+                </tr>g <li> f
                 <tr>
                     <td>Versioning</td>
                     <td>Per publication, a version is stored. Using a dropdown, the user can see the contents of older versions.</td>
@@ -309,7 +358,7 @@
                     <td>Collections</td>
                     <td>Collections functionality: hand-picked, search or folder selection. Collections can be used for navigation. Collections have workflow.</td>
                 </tr>
-            </table>
+            </table-->
         
         </section>
     </body>
