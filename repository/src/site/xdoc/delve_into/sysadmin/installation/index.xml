@@ -39,61 +39,6 @@
           Hippo supplies a Java <span class="index" id="WAR">WAR</span> package to deploy in Java servlet containers and
           a <span class="index" id="EAR">EAR</span> package to deploy in Java application servers. 
         </p>
-
-        <!-- TODO use colspan=0 for the title, as soon as that is possible. -->  
-        <table xmlns="">
-        <tr><th class="title">Compatible</th><th> Java servlet</th><th> containers:</th></tr>
-        <tr>
-          <td>
-             <img src="../../../images/tomcat_icon.png" alt="tomcat logo"/>
-      </td>
-          <td>
-            <a href="http://tomcat.apache.org/">Apache Tomcat</a>
-      </td>
-          <td>
-            <a href="in_servlet_container.html#Deploying_in_Tomcat">Deploying Hippo</a>
-      </td>
-    </tr>
-        <tr>
-          <td>
-           <img src="../../../images/jetty_icon.png" alt="jetty logo"/>
-      </td>
-          <td>
-            <a href="http://jetty.mortbay.com/jetty/">Jetty</a>
-      </td>
-          <td>
-            <!-- <a href='in_servlet_container.html'>Deploying Hippo</a> -->
-      </td>
-    </tr>
-        <tr><th colspan="0">Compatible</th><th> Java application</th><th> servers:</th></tr>
-        <tr>
-          <td>
-            <img src="../../../images/glassfish_icon.png" alt="glassfish logo"/>
-      </td>
-          <td>
-            <a href="https://glassfish.dev.java.net/">Sun Glassfish</a>
-      </td>
-          <td>
-            <a href="in_application_server.html#Deploying_in_Glassfish">Deploying Hippo</a> 
-      </td>
-    </tr>
-
-        <tr>
-          <td>
-            <img src="../../../images/jboss_icon.png" alt="JBoss logo"/>
-      </td>
-          <td>
-            <a href="http://www.jboss.org/">JBoss</a>
-      </td>
-          <td>
-            <a href="in_application_server.html#Deploying_in_JBoss">Deploying Hippo</a> 
-      </td>
-    </tr>
-    </table>
-            <!--
-            <li><a href='http://www.ibm.com/software/webservers/appserv/was/'>IBM WebSphere Application Server</a></li>
-            <li><a href='http://www.bea.com/framework.jsp?CNT=index.htm&amp;FP=/content/products/weblogic/server'>Oracle Bea WebLogic Server</a></li>
-            -->
  <table><tr><td><a href="./in_application_server.html">in Application Server</a></td><td>Get Hippo CMS up and running in a Java application server: <a href="./in_application_server.html#Obtain_the_EAR_package">Obtain the EAR package</a>, <a href="./in_application_server.html#Application_Server">Application Server</a>, <a href="./in_application_server.html#Deploying_in_Glassfish">Deploying in Glassfish</a>, <a href="./in_application_server.html#Deploying_in_JBoss">Deploying in JBoss</a>.</td></tr><tr><td><a href="./in_servlet_container.html">in Servlet Container</a></td><td>Get Hippo CMS up and running in a Java servlet container: <a href="./in_servlet_container.html#Deploying_in_Tomcat">Deploying in Tomcat</a>.</td></tr><tr><td><a href="./install_tomcat.html">Install Tomcat</a></td><td>Learn how to install Apache Tomcat</td></tr><tr><td><a href="./plugins.html">Hippo Forge plugins</a></td><td>Installing plugins from the Hippo forge: <a href="./plugins.html#Download_the_Plugin">Download the Plugin</a>, <a href="./plugins.html#Extending_the_EAR">Extending the EAR</a>, <a href="./plugins.html#Extending_the_WAR">Extending the WAR</a>, <a href="./plugins.html#Deploy_the_Bundle_(planned)">Deploy the Bundle (planned)</a>, <a href="./plugins.html#Customizing_the_CMS_configuration">Customizing the CMS configuration</a>, <a href="./plugins.html#Sending_feedback">Sending feedback</a>.</td></tr></table></section>
   </body>
 </document>
