@@ -54,7 +54,7 @@ ________________________________________________________________________________
   <subsection name='Next'>
    <ul>
     <li><a href='./create_documenttype.html'>Create document type</a>.</li>
-    <li><a href='./goto_documenttype_card.html'>Go to document type card (open document type for reading or editing)</a>.</li>
+    <li><a href='./goto_documenttype_card.html'>Go to document type tab page (open document type for reading or editing)</a>.</li>
     <li><a href='./goto_namespace.html'>Go to another namespace</a>.</li>
    </ul>
   </subsection>

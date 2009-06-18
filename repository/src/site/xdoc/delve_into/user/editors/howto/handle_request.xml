@@ -45,9 +45,9 @@ ________________________________________________________________________________
 
    <p>
     If you click on a <a href='./check_for_requests.html'>request in your todo list</a>, the
-    <a href='../../contributors/concepts/card.html'>card</a> of that document
+    <a href='../../contributors/concepts/tab_page.html'>tab page</a> of that document
     is pulled out and shown in the
-    <a href='../../contributors/concepts/cards_panel.html'>cards panel</a> 
+    <a href='../../contributors/concepts/tab_pages_panel.html'>cards panel</a> 
     in <a href='../../contributors/concepts/review_mode.html'>review mode</a>.
     You can review the document. Then decide to either
     accept the request or reject the request, by pressing one of the buttons at the top.

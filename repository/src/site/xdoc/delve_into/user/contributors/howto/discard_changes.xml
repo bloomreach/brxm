@@ -39,8 +39,8 @@ ________________________________________________________________________________
     </div></div>
      <p>
       About to discard the changes in the draft version of the document
-      'multibazaar2009', by pressing the kill <a href='../concepts/card.html'>card</a>
-      cross on the tab of the card. If there are outstanding changes in your draft version,
+      'multibazaar2009', by pressing the kill <a href='../concepts/tab_page.html'>tab page</a>
+      cross on the tab of the tab page. If there are outstanding changes in your draft version,
       a popup will ask if you want to save or discard them.
      </p>
    </div>
@@ -51,7 +51,7 @@ ________________________________________________________________________________
       you may not like what you wrote so you may want to discard your changes, reverting
       to a previous version.
       As mentioned above, this is possible via the
-      the kill <a href='../concepts/card.html'>card</a>
+      the kill <a href='../concepts/tab_page.html'>tab page</a>
       cross. Note that it is possible to discard the changes in your draft version,
       but not the changes in your preview version.
       As <a href='save_document.html'>save</a> writes to the preview version,

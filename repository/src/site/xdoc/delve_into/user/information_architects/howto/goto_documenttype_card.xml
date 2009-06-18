@@ -35,10 +35,10 @@ ________________________________________________________________________________
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M13/inars/documenttype_card.png" alt='documenttype card screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M13/inars/documenttype_card.png" alt='documenttype tab page screenshot'/> 
     </div></div>
     <p>
-     Just opened the <a href='../../contributors/concepts/card.html'>card</a> for the document
+     Just opened the <a href='../../contributors/concepts/tab_page.html'>tab page</a> for the document
      type 'upcoming' by clicking on its name in the
      <a href='../../contributors/concepts/folder_tabulation_panel.html'>folder tabulation panel</a>.
       The document type 'upcoming' is in the namespace

@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">434 errors and/or todos in 240 out of 240 documents (100%).</span>
+      <span class="shortdesc">436 errors and/or todos in 241 out of 241 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -45,7 +45,7 @@
      </li>
         <li>9 documents to rewrite.
      </li>
-        <li>11 documents requiring additions.
+        <li>12 documents requiring additions.
      </li>
         <li>11 documents with unidentified TODO strings.
      </li>
@@ -603,7 +603,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/contributors/concepts/cards_panel.html">cards_panel: Cards panel</a>
+            <a href="./delve_into/user/contributors/concepts/tab_pages_panel.html">tab_pages_panel: Tab pages panel</a>
             <ul>
               <li>Is for content.
        Call it content panel, file panel, present panel?</li>
@@ -623,7 +623,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Add something to documents: 11">
+      <subsection name="Add something to documents: 12">
         <ol>
           <li>
             <a href="./delve_into/custom/howto/eclipse/configure_workspace.html">configure_workspace: Configure Workspace</a>
@@ -653,15 +653,21 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/contributors/concepts/card.html">card: Card</a>
+            <a href="./delve_into/user/contributors/concepts/card.html">card: Tab page</a>
             <ul>
-              <li>more about cards in the image</li>
+              <li>more about tab pages in the image</li>
             </ul>
           </li>
           <li>
             <a href="./delve_into/user/contributors/concepts/folder_tabulation_panel.html">folder_tabulation_panel: Folder tabulation panel</a>
             <ul>
               <li>more on publish states</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/concepts/tab_page.html">tab_page: Tab page</a>
+            <ul>
+              <li>more about tab pages in the image</li>
             </ul>
           </li>
           <li>
@@ -683,7 +689,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/contributors/todo-concepts/document_card.html">document_card: Document card</a>
+            <a href="./delve_into/user/contributors/todo-concepts/document_card.html">document_card: Document tab page</a>
             <ul>
               <li>more about cards in the image</li>
             </ul>

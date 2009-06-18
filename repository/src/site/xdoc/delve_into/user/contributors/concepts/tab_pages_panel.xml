@@ -22,45 +22,45 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Cards panel</title>
+    <title>Tab pages panel</title>
   </properties>
 
   <body>
-   <section name="Cards panel">
-      <span class="shortdesc">What and where is the cards panel?</span>
+   <section name="Tab pages panel">
+      <span class="shortdesc">What and where is the tab pages panel?</span>
 
    <script type="text/javascript">
     leftpx=500;
    </script>
     <div class='group'>
      <div id='screenshot'><div>
-       <img src="../../../../images/screenshots/cms_M13/contribs/cards_panel.png"
-       alt='cards panel'/>
+       <img src="../../../../images/screenshots/cms_M13/contribs/tab_pages_panel.png"
+       alt='tab pages panel'/>
      </div></div>
      <p>
-      The cards panel.
+      The tab pages panel.
       <span class='rewrite'>Is for content.
        Call it content panel, file panel, present panel?</span>
      </p>
     </div>
 
     <p>
-     The <i>cards panel</i> is for <a href='./edit_mode.html'>changing</a> and
+     The <i>tab pages panel</i> is for <a href='./edit_mode.html'>changing</a> and
      <a href='./review_mode.html'>reviewing</a> files (documents, images or assets).
-     The <i>cards panel</i> holds one or more <a href='./card.html'>cards</a>.
-     Each card shows a document, image or asset.
-     The cards are lying on top of each other, so
+     The <i>tab pages panel</i> holds one or more <a href='./tab_page.html'>tab pages</a>.
+     Each tab page shows a document, image or asset.
+     The tab pages are lying on top of each other, so
      you can actually see only the upper one. But you can
      easily switch between them:
-     Each card has a tab at its upper edge and tabs of all
-     cards are visible at all time. You can click on a tab to put that card on top.
+     Each tab page has a tab at its upper edge and tabs of all
+     tab pages are visible at all time. You can click on a tab to put that tab page on top.
     </p>
-    <p>The <i>cards panel</i> only exists when you have
+    <p>The <i>tab pages panel</i> only exists when you have
      <span href='../howto/open_file.html'>opened at least one file</span>, which
-     will be shown on a card. When you <span href='../howto/close_file.html'>close a file</span>,
-     its card goes away. If you close
-     the last of the opened files, the <i>cards panel</i> also goes away.
-     The region on your screen that was occupied by the cards panel
+     will be shown on a tab page. When you <span href='../howto/close_file.html'>close a file</span>,
+     its tab page goes away. If you close
+     the last of the opened files, the <i>tab pages panel</i> also goes away.
+     The region on your screen that was occupied by the tab pages panel
      may then become empty, show a nice image or show another panel.
      </p>
    <subsection name='Next'>

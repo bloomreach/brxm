@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 990 terms</span>
+      <span class="shortdesc">Term index, 995 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -328,15 +328,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/concepts/cards_panel.html#Alternative">Alternative</a>
-            </td>
-            <td>Concept: Cards panel</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/contributors/concepts/card.html#Alternative">Alternative</a>
             </td>
-            <td>Concept: Card</td>
+            <td>Concept: Tab page</td>
           </tr>
           <tr>
             <td>
@@ -451,6 +445,18 @@
               <a href="../delve_into/user/contributors/concepts/string.html#Alternative">Alternative</a>
             </td>
             <td>Concept: String</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/tab_pages_panel.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Tab pages panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/tab_page.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Tab page</td>
           </tr>
           <tr>
             <td>
@@ -1093,24 +1099,6 @@
               <a href="../delve_into/custom/howto/workflow.html#Building_your_own_workflow">Building your own workflow</a>
             </td>
             <td>Howto: Developing workflows</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/concepts/card.html#Card">Card</a>
-            </td>
-            <td>Concept: Card</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/concepts/cards_panel.html#Cards_panel">Cards panel</a>
-            </td>
-            <td>Concept: Cards panel</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/concepts/cards_panel.html#cards_panel">cards panel</a>
-            </td>
-            <td>Concept: Cards panel</td>
           </tr>
           <tr>
             <td>
@@ -1793,27 +1781,33 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/todo-concepts/document_card.html#Document_card">Document card</a>
-            </td>
-            <td>Document card</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/concepts/card.html#document_cards">document cards</a>
-            </td>
-            <td>Concept: Card</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/contributors/todo-concepts/document_card.html#document_cards">document cards</a>
             </td>
-            <td>Document card</td>
+            <td>Document tab page</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/web/jcr/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
             </td>
             <td/>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/todo-concepts/document_card.html#Document_tab_page">Document tab page</a>
+            </td>
+            <td>Document tab page</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/card.html#document_tab_pages">document tab pages</a>
+            </td>
+            <td>Concept: Tab page</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/tab_page.html#document_tab_pages">document tab pages</a>
+            </td>
+            <td>Concept: Tab page</td>
           </tr>
           <tr>
             <td>
@@ -1859,7 +1853,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/goto_documenttype_card.html#documenttype_card_screenshot">documenttype card screenshot</a>
+              <a href="../delve_into/user/information_architects/howto/goto_documenttype_card.html#documenttype_tab_page_screenshot">documenttype tab page screenshot</a>
             </td>
             <td>Howto: Go to a Document type</td>
           </tr>
@@ -4041,15 +4035,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/concepts/cards_panel.html#Next">Next</a>
-            </td>
-            <td>Concept: Cards panel</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/contributors/concepts/card.html#Next">Next</a>
             </td>
-            <td>Concept: Card</td>
+            <td>Concept: Tab page</td>
           </tr>
           <tr>
             <td>
@@ -4158,6 +4146,18 @@
               <a href="../delve_into/user/contributors/concepts/string.html#Next">Next</a>
             </td>
             <td>Concept: String</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/tab_pages_panel.html#Next">Next</a>
+            </td>
+            <td>Concept: Tab pages panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/tab_page.html#Next">Next</a>
+            </td>
+            <td>Concept: Tab page</td>
           </tr>
           <tr>
             <td>
@@ -5307,6 +5307,30 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/card.html#Tab_page">Tab page</a>
+            </td>
+            <td>Concept: Tab page</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/tab_page.html#Tab_page">Tab page</a>
+            </td>
+            <td>Concept: Tab page</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/tab_pages_panel.html#Tab_pages_panel">Tab pages panel</a>
+            </td>
+            <td>Concept: Tab pages panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/tab_pages_panel.html#tab_pages_panel">tab pages panel</a>
+            </td>
+            <td>Concept: Tab pages panel</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/core/index.html#Take_a_deep_dive_into_core_Hippo_CMS_development_">Take a deep dive into core Hippo CMS development.</a>
             </td>
             <td>Welcome: Hacking the core</td>
@@ -5573,15 +5597,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/concepts/card.html#What_and_where_are_cards_">What and where are cards?</a>
-            </td>
-            <td>Concept: Card</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/contributors/todo-concepts/document_card.html#What_and_where_are_document_cards_">What and where are document cards?</a>
             </td>
-            <td>Document card</td>
+            <td>Document tab page</td>
           </tr>
           <tr>
             <td>
@@ -5591,9 +5609,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/concepts/cards_panel.html#What_and_where_is_the_cards_panel_">What and where is the cards panel?</a>
+              <a href="../delve_into/user/contributors/concepts/card.html#What_and_where_are_tab_pages_">What and where are tab pages?</a>
             </td>
-            <td>Concept: Cards panel</td>
+            <td>Concept: Tab page</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/tab_page.html#What_and_where_are_tab_pages_">What and where are tab pages?</a>
+            </td>
+            <td>Concept: Tab page</td>
           </tr>
           <tr>
             <td>
@@ -5648,6 +5672,12 @@
               <a href="../delve_into/user/information_architects/concepts/namespaces_folder.html#What_and_where_is_the_namespace_folder_">What and where is the namespace folder?</a>
             </td>
             <td>Concept: Namespace folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/tab_pages_panel.html#What_and_where_is_the_tab_pages_panel_">What and where is the tab pages panel?</a>
+            </td>
+            <td>Concept: Tab pages panel</td>
           </tr>
           <tr>
             <td>

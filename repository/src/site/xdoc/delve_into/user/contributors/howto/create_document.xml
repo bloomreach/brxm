@@ -49,8 +49,8 @@ ________________________________________________________________________________
       <a href='../concepts/folder_tabulation_panel.html'>folder tabulation panel</a>, in which
       there now is already one documentname tabulated: 'artificial intelligence'.
       The unfilled document itself will appear on its own 
-      <a href='../concepts/card.html'>card</a> in the
-      <a href='../concepts/cards_panel.html'>cards panel</a>,
+      <a href='../concepts/tab_page.html'>tab page</a> in the
+      <a href='../concepts/tab_pages_panel.html'>cards panel</a>,
       in <a href='../concepts/edit_mode.html'>edit mode</a>, meaning that you may start
       filling the new document immediately.
     </p>

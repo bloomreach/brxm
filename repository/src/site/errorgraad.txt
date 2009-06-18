@@ -395,3 +395,7 @@ fifi is /home/rita/bin/fifi
       <span class="shortdesc">440 errors and/or todos in 242 out of 242 documents (100%).</span>
 #__________________________________________________________rita_2009-w25-4-11:18
       <span class="shortdesc">434 errors and/or todos in 240 out of 240 documents (100%).</span>
+#_________________________________________________________________________________________________rita_2009-w25-4-12:33
+      <span class="shortdesc">434 errors and/or todos in 240 out of 240 documents (100%).</span>
+#_________________________________________________________________________________________________rita_2009-w25-4-12:39
+      <span class="shortdesc">436 errors and/or todos in 241 out of 241 documents (100%).</span>
