@@ -31,24 +31,23 @@ ________________________________________________________________________________
 
    <script type="text/javascript">
     leftpx=450;
-    bottompx=350;
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/inars/add_date_to_documenttype.png" alt='Naming a field screenshot'/> 
     </div></div>
     <p>
-      In a document type, a field with name sar:date_of_happening (which is a date field).
+      In a document type, a field with name sar:upcoming_date (which is a date field).
      </p>
    </div>
 
    <p>
-    While adding a field to a document type, e.g. 
+    While adding a field to a document type, e.g.
     a <a href='./add_date_to_documenttype.html'>date field</a>,
-    a name must be given to the field added. 
+    a name must be given to the field added.
    </p>
    <p>
-    Supply a name, under 'path' (far right, almost at bottom). 
+    Supply a name, under 'path' (far right, almost at bottom).
     The path will have the form prefix:name.
     Before you change it, the path will be prefix:date, in the example sar:date.
     Replace 'date' by a name that is unique within this document type.

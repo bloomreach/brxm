@@ -35,24 +35,22 @@ ________________________________________________________________________________
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/inars/save_documenttype.png" alt='save document type screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M13/contribs/save_document.png" alt='save document type screenshot'/> 
     </div></div>
     <p>
-       Click on 'save and close' to save the changes to a document type and 'Close without saving'
-       to discard the changes.
-     </p>
+     The buttons for saving a documenttype are the same as for
+       <a href='../../contributors/howto/save_document.html'>saving a normal document</a>.
+     Note that after saving, the documenttype will NOT yet be available to write documents of that type.
+    </p>
    </div>
 
    <p>
-    After  
-    <a href='./add_markuped_text_to_documenttype.html'>adding</a>,
-    <a href='./change_field_in_documenttype.html'>changing</a> or
-    <a href='./remove_field_from_documenttype.html'>removing</a>
-    fields from a documenttype, save the document type by clicking on the
-    'save and close' button at the top of the document type tab.
-    The changes can be discarded by clicking on the 'Close without saving'
-    button. To make the document type available for authors,
-    also <a href='./update_content.html'>update all content</a>.
+    The effect of saving a documenttype will not be the same as for a normal document,
+    as there will be no preview of a documenttype on any site.
+    After saving, <a href='./update_content.html'>update all content</a>
+    to make the documenttype available to
+    <a href='../../contributors/concepts/contributor.html'>contributors</a>, to write
+    documents of that type.
    </p>
 
   <subsection name='Next'>

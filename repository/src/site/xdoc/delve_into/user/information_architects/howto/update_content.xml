@@ -30,22 +30,33 @@ ________________________________________________________________________________
       <span class="shortdesc">How to update content</span>
 
    <script type="text/javascript">
-    leftpx=450;
-    bottompx=350;
+    leftpx=0;
+    toppx=200;
+    bottompx=600;
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/inars/update_content.png" alt='update content screenshot'/> 
     </div></div>
     <p>
-       In the selection menu at middle-right select 'update content'. A dialog window appears.
+     After choosing 'Update all content' from the
+     <a href='../../contributors/concepts/folder_action_menu.html'>folder action menu</a>
+     of the namespace folder snp. A dialog window appears.
      </p>
    </div>
+
+   <p>
+    Update all content makes a new <a href='../concepts/documenttype.html'>document type</a>
+    available for writing documents of that type.
+    In case of changes to an existing document type,
+    update all content will change all existing documents of that type to conform to the new
+    definition.
+   </p>
 
   <subsection name='Next'>
    <ul>
     <li><a href='./logout.html'>Logout</a>.</li>
-   </ul>       
+   </ul>
   </subsection>
    <subsection name='Alternative'>
     <ul>
@@ -57,4 +68,4 @@ ________________________________________________________________________________
 
    </section>
   </body>
-</document>        
+</document>

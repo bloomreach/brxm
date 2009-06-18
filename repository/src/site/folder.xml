@@ -708,6 +708,10 @@
    fullname='delve_into/user/contributors/concepts/folder_action_menu.xml'
    relpath='delve_into/user/contributors/concepts'
   >folder_action_menu</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/contributors/concepts/folder_action_menu.xml~'
+   relpath='delve_into/user/contributors/concepts'
+  >folder_action_menu</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/concepts/folder_navigation_panel.xml'
    relpath='delve_into/user/contributors/concepts'
@@ -825,10 +829,6 @@
    fullname='delve_into/user/contributors/howto/request_publication.xml'
    relpath='delve_into/user/contributors/howto'
   >request_publication</file>
-      <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
-   fullname='delve_into/user/contributors/howto/restore_previous_version.xml'
-   relpath='delve_into/user/contributors/howto'
-  >restore_previous_version</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/howto/save_document.xml'
    relpath='delve_into/user/contributors/howto'
@@ -945,8 +945,16 @@
    fullname='delve_into/user/editors/howto/create_folder.xml'
    relpath='delve_into/user/editors/howto'
   >create_folder</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/editors/howto/create_folder.xml~'
+   relpath='delve_into/user/editors/howto'
+  >create_folder</file>
       <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
    fullname='delve_into/user/editors/howto/handle_request.xml'
+   relpath='delve_into/user/editors/howto'
+  >handle_request</file>
+      <file ext='xml~' mimetype='application/xml' note='todo'
+   fullname='delve_into/user/editors/howto/handle_request.xml~'
    relpath='delve_into/user/editors/howto'
   >handle_request</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
@@ -1014,12 +1022,24 @@
    fullname='delve_into/user/information_architects/concepts/edit_mode.xml'
    relpath='delve_into/user/information_architects/concepts'
   >edit_mode</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/information_architects/concepts/edit_mode.xml~'
+   relpath='delve_into/user/information_architects/concepts'
+  >edit_mode</file>
       <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
    fullname='delve_into/user/information_architects/concepts/field_properties_overview.xml'
    relpath='delve_into/user/information_architects/concepts'
   >field_properties_overview</file>
+      <file ext='xml~' mimetype='application/xml' note='todo'
+   fullname='delve_into/user/information_architects/concepts/field_properties_overview.xml~'
+   relpath='delve_into/user/information_architects/concepts'
+  >field_properties_overview</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/concepts/field_type_menu.xml'
+   relpath='delve_into/user/information_architects/concepts'
+  >field_type_menu</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/information_architects/concepts/field_type_menu.xml~'
    relpath='delve_into/user/information_architects/concepts'
   >field_type_menu</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
@@ -1042,18 +1062,12 @@
    fullname='delve_into/user/information_architects/concepts/namespace.xml'
    relpath='delve_into/user/information_architects/concepts'
   >namespace</file>
-      <folder>old
-       <file ext='xml' mimetype='application/xml' valid='yes'
-   fullname='delve_into/user/information_architects/concepts/old/current_folder.xml'
-   relpath='delve_into/user/information_architects/concepts/old'
-  >current_folder</file>
-       <file ext='xml' mimetype='application/xml' valid='yes'
-   fullname='delve_into/user/information_architects/concepts/old/folder_action_menu.xml'
-   relpath='delve_into/user/information_architects/concepts/old'
-  >folder_action_menu</file>
-      </folder>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/concepts/review_mode.xml'
+   relpath='delve_into/user/information_architects/concepts'
+  >review_mode</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/information_architects/concepts/review_mode.xml~'
    relpath='delve_into/user/information_architects/concepts'
   >review_mode</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
@@ -1115,6 +1129,10 @@
    fullname='delve_into/user/information_architects/howto/add_number_to_documenttype.xml'
    relpath='delve_into/user/information_architects/howto'
   >add_number_to_documenttype</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/information_architects/howto/add_number_to_documenttype.xml~'
+   relpath='delve_into/user/information_architects/howto'
+  >add_number_to_documenttype</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/howto/add_string_to_documenttype.xml'
    relpath='delve_into/user/information_architects/howto'
@@ -1131,16 +1149,32 @@
    fullname='delve_into/user/information_architects/howto/create_namespace.xml'
    relpath='delve_into/user/information_architects/howto'
   >create_namespace</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/information_architects/howto/create_namespace.xml~'
+   relpath='delve_into/user/information_architects/howto'
+  >create_namespace</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/howto/fieldcaption.xml'
+   relpath='delve_into/user/information_architects/howto'
+  >fieldcaption</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/information_architects/howto/fieldcaption.xml~'
    relpath='delve_into/user/information_architects/howto'
   >fieldcaption</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/howto/fieldsize.xml'
    relpath='delve_into/user/information_architects/howto'
   >fieldsize</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/information_architects/howto/fieldsize.xml~'
+   relpath='delve_into/user/information_architects/howto'
+  >fieldsize</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/howto/goto_documenttype_card.xml'
+   relpath='delve_into/user/information_architects/howto'
+  >goto_documenttype_card</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/information_architects/howto/goto_documenttype_card.xml~'
    relpath='delve_into/user/information_architects/howto'
   >goto_documenttype_card</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
@@ -1149,10 +1183,6 @@
   >goto_namespace</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/howto/index.xml'
-   relpath='delve_into/user/information_architects/howto'
-  >index</file>
-      <file ext='xml.sav' mimetype='application/xml'
-   fullname='delve_into/user/information_architects/howto/index.xml.sav'
    relpath='delve_into/user/information_architects/howto'
   >index</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
@@ -1167,16 +1197,32 @@
    fullname='delve_into/user/information_architects/howto/mandatory_or_optional.xml'
    relpath='delve_into/user/information_architects/howto'
   >mandatory_or_optional</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/information_architects/howto/mandatory_or_optional.xml~'
+   relpath='delve_into/user/information_architects/howto'
+  >mandatory_or_optional</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/howto/naming_a_field.xml'
+   relpath='delve_into/user/information_architects/howto'
+  >naming_a_field</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/information_architects/howto/naming_a_field.xml~'
    relpath='delve_into/user/information_architects/howto'
   >naming_a_field</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/howto/remove_field_from_documenttype.xml'
    relpath='delve_into/user/information_architects/howto'
   >remove_field_from_documenttype</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/information_architects/howto/remove_field_from_documenttype.xml~'
+   relpath='delve_into/user/information_architects/howto'
+  >remove_field_from_documenttype</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/howto/save_documenttype.xml'
+   relpath='delve_into/user/information_architects/howto'
+  >save_documenttype</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/information_architects/howto/save_documenttype.xml~'
    relpath='delve_into/user/information_architects/howto'
   >save_documenttype</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
@@ -1185,6 +1231,10 @@
   >start_CMS</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/howto/update_content.xml'
+   relpath='delve_into/user/information_architects/howto'
+  >update_content</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/information_architects/howto/update_content.xml~'
    relpath='delve_into/user/information_architects/howto'
   >update_content</file>
      </folder>
@@ -1198,8 +1248,22 @@
    relpath='delve_into/user/information_architects/old'
   >goto_content_browse_tab</file>
      </folder>
+     <folder>old-concepts
+      <file ext='xml' mimetype='application/xml' valid='yes'
+   fullname='delve_into/user/information_architects/old-concepts/current_folder.xml'
+   relpath='delve_into/user/information_architects/old-concepts'
+  >current_folder</file>
+      <file ext='xml' mimetype='application/xml' valid='yes'
+   fullname='delve_into/user/information_architects/old-concepts/folder_action_menu.xml'
+   relpath='delve_into/user/information_architects/old-concepts'
+  >folder_action_menu</file>
+     </folder>
      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/tour.xml'
+   relpath='delve_into/user/information_architects'
+  >tour</file>
+     <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/information_architects/tour.xml~'
    relpath='delve_into/user/information_architects'
   >tour</file>
     </folder>

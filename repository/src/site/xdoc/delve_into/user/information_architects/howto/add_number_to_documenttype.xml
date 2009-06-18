@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -30,19 +30,24 @@ ________________________________________________________________________________
      <span class="shortdesc">How to add a number field to a document type.</span>
 
   <p>
-    In the standard <a href='../concepts/field_type_menu.html'>field type menu</a>,
-    of Hippo CMS, there is no number field type to choose.
-    But any number is of course also a string, i.e. a sequence of characters,
-    so <a href='./add_date_to_documenttype.html'>you can use a date field instead.</a>
-   </p>
-   <p>
-    However, this implies that it is not possible to check if the
-    <a href='../../contributors/concepts/contributor.html'>contributor</a> fills the field with
-    a number. He may use any sequence of characters. An organization using Hippo CMS,
-    may have the number field added to the field type menu and in the future Hippo CMS
-    may have the number field in the standard field type menu.
-    <span class='expires'>When Hippo CMS has a number field in the field type menu.</span>
+   For a number, choose
+   the long or double from the <a href='../concepts/field_type_menu.html'>field type menu</a>.
+   The long is for integers and the double for floating point numbers.
+   Long refers to very large integers being allowed and double refers to very precise floating
+   point numbers being possible.
   </p>
+
+  <subsection name='Next'>
+   <ul>
+    <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type</a> (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='./add_markuped_text_to_documenttype.html'>Add field for marked-up text to a document type</a>.</li>
+    <li><a href='./add_date_to_documenttype.html'>Add a date field to a document type</a>.</li>
+    <li><a href='./add_string_to_documenttype.html'>Add string field to a document type</a>.</li>
+    <li><a href='./add_number_to_documenttype.html'>Add another number field to a document type</a>.</li>
+    <li><a href='./change_field_in_documenttype.html'>Change a field in a document type</a>.</li>
+    <li><a href='./remove_field_from_documenttype.html'>Remove field of a document type</a>.</li>
+   </ul>
+  </subsection>
 
    <subsection name='Alternative'>
     <ul>
