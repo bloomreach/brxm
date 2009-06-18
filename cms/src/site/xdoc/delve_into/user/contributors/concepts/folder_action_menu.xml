@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -41,7 +41,9 @@ ________________________________________________________________________________
      <p>
       The folder action menu for the newspaper folder. The actions will be performed on
       the newspaper folder and the newspaper folder will become the
-      <a href='current_folder.html'>current folder</a>.
+      <a href='current_folder.html'>current folder</a>. Note that the buttons for
+      the folder action menus of all the folders are not normally visible. As soon as
+      you hover over a perticular folder name, its button becomes visible.
      </p>
     </div>
 

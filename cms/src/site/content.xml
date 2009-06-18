@@ -612,6 +612,7 @@
    <section>Home Workspace</section>
    <shortdesc>What and where is the home workspace?</shortdesc>
    <img>home workspace</img>
+   <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/user/cms_admins/concepts">
    <subsection>Alternative</subsection>
@@ -966,9 +967,6 @@
    <img>request schedule publication screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="restore_previous_version" relpath="delve_into/user/contributors/howto">Restoring a previous version of a document
-   <section>Restoring a previous version of a document</section>
-   <shortdesc>How to replace the current content of a document with content the document had sometime in the past?</shortdesc>
   </document><document ext="xml" filename="save_document" relpath="delve_into/user/contributors/howto">Save Document
    <section>Save Document</section>
    <shortdesc>How to save the changes you made to a document.</shortdesc>
@@ -1033,22 +1031,32 @@
    <document ext="xml" filename="editor" relpath="delve_into/user/editors/concepts">CMS editor
    <section>CMS editor</section>
    <shortdesc>What is a CMS editor?</shortdesc>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="folder" relpath="delve_into/user/editors/concepts">Folder
    <section>Folder</section>
    <shortdesc>What is a Folder?</shortdesc>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="home_workspace" relpath="delve_into/user/editors/concepts">Home Workspace
    <section>Home Workspace</section>
    <shortdesc>What and where is the home workspace?</shortdesc>
    <img>home workspace</img>
+   <subsection>Alternative</subsection>
+   <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/user/editors/concepts">
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="request" relpath="delve_into/user/editors/concepts">Request
    <section>Request</section>
    <shortdesc>What is a request?</shortdesc>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="scheduled_publication" relpath="delve_into/user/editors/concepts">Scheduled publication
    <section>Scheduled publication</section>
    <shortdesc>What about scheduling the online publication of documents?</shortdesc>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document></folder><folder>howto
    <title>CMS Editor Howto</title><shortdesc>A collection of howto's for small tasks an CMS editor may want to do.</shortdesc><afterlist>
   <subsection name="Alternative">
@@ -1089,6 +1097,7 @@
    <shortdesc>How to logout</shortdesc>
    <img>logout screenshot</img>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="start_CMS" relpath="delve_into/user/editors/howto">Start CMS site
    <section>Start CMS site</section>
    <shortdesc>How to go to the CMS site, i.e. start a CMS session, in your browser.</shortdesc>
@@ -1124,10 +1133,12 @@
    <document ext="xml" filename="boolean" relpath="delve_into/user/information_architects/concepts">Boolean
    <section>Boolean</section>
    <shortdesc>What is a boolean</shortdesc>
+   <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="documenttype" relpath="delve_into/user/information_architects/concepts">Document type
    <section>Document type</section>
    <shortdesc>What is a document type</shortdesc>
+   <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="editing" relpath="delve_into/user/information_architects/concepts">Editing
    <section>Editing</section>
@@ -1140,24 +1151,28 @@
    <img>edit mode sreenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="field_properties_overview" relpath="delve_into/user/information_architects/concepts">string
-   <section>string</section>
+  </document><document ext="xml" filename="field_properties_overview" relpath="delve_into/user/information_architects/concepts">Field properties overview
+   <section>Field properties overview</section>
    <shortdesc>What is a field properties overview?</shortdesc>
+   <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="field_type_menu" relpath="delve_into/user/information_architects/concepts">string
-   <section>string</section>
+  </document><document ext="xml" filename="field_type_menu" relpath="delve_into/user/information_architects/concepts">field type menu
+   <section>field type menu</section>
    <shortdesc>What is a field type menu?</shortdesc>
    <img>field type menu screenshot</img>
+   <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/concepts">
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="mandatory_or_optional" relpath="delve_into/user/information_architects/concepts">Mandatory or optional field
    <section>Mandatory or optional field</section>
    <shortdesc>What is a mandatory or optional field in a documenttype?</shortdesc>
+   <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="markuped_text" relpath="delve_into/user/information_architects/concepts">Markuped text
    <section>Markuped text</section>
    <shortdesc>What is markuped text?</shortdesc>
+   <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="namespaces_folder" relpath="delve_into/user/information_architects/concepts">Namespace folder
    <section>Namespace folder</section>
@@ -1169,17 +1184,7 @@
    <section>namespace</section>
    <shortdesc>What is a namespace</shortdesc>
    <subsection>Alternative</subsection>
-  </document><folder>old
-   
-   <document ext="xml" filename="current_folder" relpath="delve_into/user/information_architects/concepts/old">Current folder
-   <section>Current folder</section>
-   <shortdesc>What is the current folder?</shortdesc>
-   <img>current folder screenshot</img>
-  </document><document ext="xml" filename="folder_action_menu" relpath="delve_into/user/information_architects/concepts/old">Folder action menu
-   <section>Folder action menu</section>
-   <shortdesc>What and where is the folder action menu?</shortdesc>
-   <img>Folder action menu screenshot</img>
-  </document></folder><document ext="xml" filename="review_mode" relpath="delve_into/user/information_architects/concepts">Review mode
+  </document><document ext="xml" filename="review_mode" relpath="delve_into/user/information_architects/concepts">Review mode
    <section>Review mode</section>
    <shortdesc>What is review mode?</shortdesc>
    <img>review mode screenshot</img>
@@ -1188,10 +1193,12 @@
   </document><document ext="xml" filename="string" relpath="delve_into/user/information_architects/concepts">string
    <section>string</section>
    <shortdesc>What is a string</shortdesc>
+   <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="URL" relpath="delve_into/user/information_architects/concepts">URL
    <section>URL</section>
    <shortdesc>URL</shortdesc>
+   <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document></folder><folder>document_types
    
@@ -1261,6 +1268,7 @@
   </document><document ext="xml" filename="add_number_to_documenttype" relpath="delve_into/user/information_architects/howto">Add number to document type
    <section>Add number to document type</section>
    <shortdesc>How to add a number field to a document type.</shortdesc>
+   <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="add_string_to_documenttype" relpath="delve_into/user/information_architects/howto">Add string to document type
    <section>Add string to document type</section>
@@ -1313,7 +1321,7 @@
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/howto">
    <subsection>Alternative</subsection>
-  </document><document ext="xml.sav" filename="index" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="login" relpath="delve_into/user/information_architects/howto">Login
+  </document><document ext="xml" filename="login" relpath="delve_into/user/information_architects/howto">Login
    <section>Login</section>
    <shortdesc>How to login to Hippo CMS.</shortdesc>
    <img>Hippo login screenshot</img>
@@ -1354,6 +1362,7 @@
    <section>Start CMS</section>
    <shortdesc>How to start a CMS session in your browser</shortdesc>
    <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="update_content" relpath="delve_into/user/information_architects/howto">Update content
    <section>Update content</section>
    <shortdesc>How to update content</shortdesc>
@@ -1371,6 +1380,16 @@
    <img>content browse screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
+  </document></folder><folder>old-concepts
+   
+   <document ext="xml" filename="current_folder" relpath="delve_into/user/information_architects/old-concepts">Current folder
+   <section>Current folder</section>
+   <shortdesc>What is the current folder?</shortdesc>
+   <img>current folder screenshot</img>
+  </document><document ext="xml" filename="folder_action_menu" relpath="delve_into/user/information_architects/old-concepts">Folder action menu
+   <section>Folder action menu</section>
+   <shortdesc>What and where is the folder action menu?</shortdesc>
+   <img>Folder action menu screenshot</img>
   </document></folder><document ext="xml" filename="tour" relpath="delve_into/user/information_architects">Hippo CMS Tour for Information Architects
    <section>Hippo CMS Tour for Information Architects</section>
    <shortdesc>To get introduced to the role of CMS information architect, 

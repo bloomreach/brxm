@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">440 errors and/or todos in 242 out of 242 documents (100%).</span>
+      <span class="shortdesc">434 errors and/or todos in 240 out of 240 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -43,15 +43,15 @@
      </li>
         <li>3 empty documents.
      </li>
-        <li>10 documents to rewrite.
+        <li>9 documents to rewrite.
      </li>
         <li>11 documents requiring additions.
      </li>
         <li>11 documents with unidentified TODO strings.
      </li>
-        <li>2 not valid XML documents.
+        <li>1 not valid XML documents.
      </li>
-        <li>18 documents with bad text.
+        <li>17 documents with bad text.
      </li>
         <li>10 multisection documents.
      </li>
@@ -90,7 +90,7 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents with empty elements: 10">
+      <subsection name="Documents with empty elements: 9">
         <ol>
           <li>
             <a href="./about/roadmap.html">roadmap: Roadmap Hippo CMS</a>
@@ -143,12 +143,6 @@
               <li>&lt;td/&gt;</li>
               <li>&lt;td/&gt;</li>
               <li>&lt;td/&gt;</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/contributors/howto/restore_previous_version.html">restore_previous_version: Restoring a previous version of a document</a>
-            <ul>
-              <li>&lt;section name='Restoring a previous version of a document'/&gt;</li>
             </ul>
           </li>
           <li>
@@ -567,7 +561,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="rewrite documents: 10">
+      <subsection name="rewrite documents: 9">
         <ol>
           <li>
             <a href="./delve_into/custom/concepts/index.html">index: Change to the document title</a>
@@ -613,12 +607,6 @@ repository is;
             <ul>
               <li>Is for content.
        Call it content panel, file panel, present panel?</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/contributors/howto/restore_previous_version.html">restore_previous_version: Restoring a previous version of a document</a>
-            <ul>
-              <li>all text</li>
             </ul>
           </li>
           <li>
@@ -867,7 +855,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="badtext documents: 18">
+      <subsection name="badtext documents: 17">
         <ol>
           <li>
             <a href="./about/roadmap.html">roadmap: Roadmap Hippo CMS</a>
@@ -930,13 +918,6 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/contributors/howto/restore_previous_version.html">restore_previous_version: Restoring a previous version of a document</a>
-            <ul>
-              <li>How to replace the<span xmlns="" class="bad"> current </span>content of a document with content the document had sometime in the past?</li>
-              <li>Finally the "Restore" button allows the user to replace the<span xmlns="" class="bad"> current </span>document with the content of a historic document. Note that this does not mean that the historic version of the document becomes the current version of the document. Only the content is restored, and </li>
-            </ul>
-          </li>
-          <li>
             <a href="./delve_into/user/contributors/howto/start_CMS.html">start_CMS: Start CMS site</a>
             <ul>
               <li>ia.org/. The site is not yet visible, because the user has not clicked yet. Coincidentially, the site<span xmlns="" class="bad"> current </span>ly visible happens to be the Hippo CMS documentation site at</li>
@@ -958,7 +939,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/information_architects/concepts/old/current_folder.html">current_folder: Current folder</a>
+            <a href="./delve_into/user/information_architects/old-concepts/current_folder.html">current_folder: Current folder</a>
             <ul>
               <li>What is the<span xmlns="" class="bad"> current </span>folder?</li>
               <li>The<span xmlns="" class="bad"> current </span>folder is marked bright yellow in the</li>
@@ -973,7 +954,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/information_architects/concepts/old/folder_action_menu.html">folder_action_menu: Folder action menu</a>
+            <a href="./delve_into/user/information_architects/old-concepts/folder_action_menu.html">folder_action_menu: Folder action menu</a>
             <ul>
               <li>At any particular moment, only folder actions on the<span xmlns="" class="bad"> current </span>folder are possible.</li>
             </ul>
@@ -1009,14 +990,8 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="notvalid documents: 2">
+      <subsection name="notvalid documents: 1">
         <ol>
-          <li>
-            <a href="./delve_into/user/information_architects/howto/index.html">index: </a>
-            <ul>
-              <li>Document is not a valid XML document.</li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/web/jcr/*.html">*: </a>
             <ul>

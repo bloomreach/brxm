@@ -31,7 +31,8 @@ ________________________________________________________________________________
 
    <script type="text/javascript">
     leftpx=450;
-    bottompx=350;
+    toppx=200;
+    bottompx=600;
    </script>
    <div class='group'> 
     <div id='screenshot'><div>

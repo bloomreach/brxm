@@ -22,11 +22,11 @@ ________________________________________________________________________________
 -->
  <document>
   <properties>
-    <title>field type menu</title>
+    <title>field properties overview</title>
   </properties>
 
   <body>
-    <section name="string">
+    <section name="Field properties overview">
       <span class="shortdesc">What is a field properties overview?</span>
 
    <!--
@@ -52,14 +52,23 @@ ________________________________________________________________________________
          of a text box.
          Note that the path is also a property that can be redefined. It should be redefined
          to a useful name for the field (and should include the namespace prefix).
-     </p>
+        </p>
+
+   <subsection name='Next'>
+    <ul>
+     <li>
+      If you are doing the <a href='../tour.html'>tour</a>, use the back button of your browser to continue.
+      (There is no hyperlink here, because you can get here from many different pages.)
+     </li>
+    </ul>
+   </subsection>
    <subsection name='Alternative'>
     <ul>
-     <li><a href='../tour.html'>tour page.</a></li>
      <li><a href='./index.html'>Glossary.</a></li>
      <li><a href='../howto/index.html'>Howto list.</a></li>
     </ul>
    </subsection>
+
    </section>
   </body>
  </document>

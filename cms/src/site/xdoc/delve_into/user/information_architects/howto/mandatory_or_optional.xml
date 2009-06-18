@@ -31,7 +31,6 @@ ________________________________________________________________________________
 
    <script type="text/javascript">
     leftpx=450;
-    bottompx=350;
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
@@ -59,7 +58,7 @@ ________________________________________________________________________________
     <li><a href='./add_string_to_documenttype.html'>Add a string field to a document type</a>.</li>
     <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type</a>.</li>
     <li><a href='./add_markuped_text_to_documenttype.html'>Add field for marked-up text to a document type</a>.</li>
-   </ul>       
+   </ul>
   </subsection>
    <subsection name='Alternative'>
     <ul>
@@ -71,4 +70,4 @@ ________________________________________________________________________________
 
    </section>
   </body>
-</document>        
+</document>

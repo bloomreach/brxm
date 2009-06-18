@@ -30,18 +30,26 @@ ________________________________________________________________________________
       <span class="shortdesc">How to start a CMS session in your browser</span>
 
    <p>
-        Open the Hippo CMS site 
-        <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in 
-        your browser. 
+        Open the Hippo CMS site
+        <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in
+        your browser.
    </p>
 
 
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./login.html'>Login</a>.</li>
-   </ul>       
-  </subsection>
+   <subsection name='Next'>
+    <ul>
+     <li><a href='login.html'>Login</a>.</li>
+    </ul>
+   </subsection>
+
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
 
    </section>
   </body>
-</document>        
+</document>

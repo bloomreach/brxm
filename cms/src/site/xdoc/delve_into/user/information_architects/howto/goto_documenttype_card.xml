@@ -30,8 +30,8 @@ ________________________________________________________________________________
       <span class="shortdesc">How to get to a screen to manipulate a particular document type.</span>
 
    <script type="text/javascript">
-    leftpx=445;
-    bottompx=300;
+    leftpx=0;
+    bottompx=500;
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
@@ -64,7 +64,7 @@ ________________________________________________________________________________
     <li><a href='./add_string_to_documenttype.html'>Add a string field to a document type</a>.</li>
     <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type</a>.</li>
     <li><a href='./add_markuped_text_to_documenttype.html'>Add field for markedup text to a document type</a>.</li>
-   </ul>       
+   </ul>
   </subsection>
    <subsection name='Alternative'>
     <ul>
@@ -76,4 +76,4 @@ ________________________________________________________________________________
 
    </section>
   </body>
-</document>        
+</document>

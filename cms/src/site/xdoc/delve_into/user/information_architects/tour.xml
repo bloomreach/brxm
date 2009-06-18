@@ -42,18 +42,18 @@
       </td>
       <td>
         Open the Hippo CMS site 
-        <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in 
-        your browser. 
+        <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in
+        your browser.
       </td>
      </tr>
 
      <tr>
       <td>Login</td>
       <td>
-       <span class='login-48 icon-48'/> 
+       <span class='login-48 icon-48'/>
       </td>
       <td> 
-         <a href="./howto/login.html">Login to Hippo CMS</a> in the CMS account given to you by your 
+         <a href="./howto/login.html">Login to Hippo CMS</a> in the CMS account given to you by your
           CMS administrator. Alice logs in with her name. Her password is only known to her, so you do
           not get to see it.
       </td>
@@ -62,7 +62,7 @@
      <tr>
       <td>Namespace</td>
       <td>
-       <span class='structure-48 icon-48'/> 
+       <span class='structure-48 icon-48'/>
       </td>
       <td>
          <a href="./howto/create_namespace.html">Create a namespace</a>. Swatia decides to
@@ -142,12 +142,9 @@
        <span class='structure-48 icon-48'/> 
       </td>
       <td> 
-         <a href="./howto/add_string_to_documenttype.html">Add number to document type</a>. 
+         <a href="./howto/add_string_to_documenttype.html">Add number to document type</a>.
          Alice wants readers to always know what the entrance price is for a happening.
-         An entrance price is a number and the list of possible fieldtypes has no number in it.
-         But any number is of course also a string, i.e. a sequence of characters, so
-         she uses the string fieldtype for it. So Alice adds a mandatory string field
-         called 'Entrance price in Euro'.
+         So Alice adds a mandatory long field called 'Entrance price in Euro'.
       </td>
      </tr>
 
