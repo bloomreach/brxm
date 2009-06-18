@@ -187,13 +187,19 @@ public class RepositoryServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-        log.info("Stopping repository.");
+        // close repository
+        log.warn("Closing repository.");
+        repository.close();
+        repository = null;
+
+        // done
+        log.warn("Repository closed.");
 
         // unbinding from registry
         String name = null;
         try {
             name = new RepositoryRmiUrl(bindingAddress).getName();
-            log.info("Unbinding '"+name+"' from registry.");
+            log.warn("Unbinding '"+name+"' from registry.");
             registry.unbind(name);
         } catch (RemoteException e) {
             log.error("Error during unbinding '" + name + "': " + e.getMessage());
@@ -205,7 +211,7 @@ public class RepositoryServlet extends HttpServlet {
 
         // unexporting from registry
         try {
-            log.info("Unexporting rmi repository: " + bindingAddress);
+            log.warn("Unexporting rmi repository: " + bindingAddress);
             UnicastRemoteObject.unexportObject(rmiRepository, true);
         } catch (NoSuchObjectException e) {
             log.error("Error during rmi shutdown for address: " + bindingAddress, e);
@@ -214,20 +220,12 @@ public class RepositoryServlet extends HttpServlet {
         // shutdown registry
         if (registryIsEmbedded) {
             try {
-                log.info("Closing rmiregistry: " + bindingAddress);
+                log.warn("Closing rmiregistry: " + bindingAddress);
                 UnicastRemoteObject.unexportObject(registry, true);
             } catch (NoSuchObjectException e) {
                 log.error("Error during rmi shutdown for address: " + bindingAddress, e);
             }
         }
-
-        // close repository
-        log.info("Closing repository.");
-        repository.close();
-        repository = null;
-
-        // done
-        log.info("Repository stopped.");
     }
 
     @Override
