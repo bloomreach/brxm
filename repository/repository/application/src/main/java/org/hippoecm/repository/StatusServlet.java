@@ -68,7 +68,7 @@ public class StatusServlet extends HttpServlet {
         writer.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"");
         writer.println("    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
         writer.println("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
-        writer.println("<head><title>Hippo Repository Console</title>");
+        writer.println("<head><title>Hippo Repository Status</title>");
         writer.println("<style type=\"text/css\">");
         writer.println(" table.params {font-size:small}");
         writer.println("</style>");
