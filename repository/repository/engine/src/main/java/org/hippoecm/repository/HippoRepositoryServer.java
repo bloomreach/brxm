@@ -56,6 +56,8 @@ public class HippoRepositoryServer extends LocalHippoRepository {
 
     @Override
     public void close() {
+        super.close();
+        
         // unbinding from registry
         String name = null;
         try {
@@ -93,7 +95,6 @@ public class HippoRepositoryServer extends LocalHippoRepository {
                 registry = null;
             }
         }
-        super.close();
     }
 
     public void run(boolean background) throws RemoteException, AlreadyBoundException, MalformedURLException {
