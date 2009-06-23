@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,7 +26,6 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.Event;
@@ -40,23 +40,24 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FacetSearchObserver implements EventListener {
+public class FacetSearchObserver {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
 
     static final Logger log = LoggerFactory.getLogger(FacetSearchObserver.class);
 
-    private Session session;
+    private WeakReference<Session> sessionRef;
     private Map<String, FacetSearchListener> listeners;
     private Set<UpstreamEntry> upstream;
 
     public FacetSearchObserver(Session session) {
-        this.session = session;
+        this.sessionRef = new WeakReference<Session>(session);
         this.upstream = new HashSet<UpstreamEntry>();
         this.listeners = new HashMap<String, FacetSearchListener>();
     }
 
     void start() {
+        Session session = sessionRef.get();
         try {
             QueryManager queryMgr = session.getWorkspace().getQueryManager();
             Query query = queryMgr.createQuery("select * from hippo:facetsearch", Query.SQL);
@@ -72,20 +73,16 @@ public class FacetSearchObserver implements EventListener {
                     listeners.put(node.getPath(), addFacetSearchListener(obMgr, docbase, node));
                 }
             }
-
-            obMgr.addEventListener(this, Event.NODE_ADDED | Event.NODE_REMOVED, "/", true, null,
-                    new String[] { "hippo:document" }, false);
         } catch (RepositoryException ex) {
             log.error("Failure to subscribe to facetsearch nodes", ex);
         }
     }
 
     void stop() {
-        if (session.isLive()) {
+        Session session = sessionRef.get();
+        if (session != null && session.isLive()) {
             try {
                 ObservationManager obMgr = session.getWorkspace().getObservationManager();
-                obMgr.removeEventListener(this);
-    
                 Iterator<Map.Entry<String, FacetSearchListener>> iter = listeners.entrySet().iterator();
                 while (iter.hasNext()) {
                     Map.Entry<String, FacetSearchListener> entry = iter.next();
@@ -122,47 +119,6 @@ public class FacetSearchObserver implements EventListener {
             if (upstream.size() == 0) {
                 stop();
             }
-        }
-    }
-
-    public void onEvent(EventIterator events) {
-        try {
-            ObservationManager obMgr = session.getWorkspace().getObservationManager();
-            while (events.hasNext()) {
-                Event event = events.nextEvent();
-                try {
-                    String path = event.getPath();
-                    switch (event.getType()) {
-                    case Event.NODE_ADDED:
-                        Node node;
-                        try {
-                            node = session.getRootNode().getNode(path.substring(1));
-                        } catch (PathNotFoundException e) {
-                            // TODO: ISSUE-2584, this should be part of the async event listeners
-                            log.debug("Node not found because the session/node is not yet refreshed: " + path);
-                            break;
-                        }
-                        if (node.isNodeType("hippo:facetsearch")) {
-                            String uuid = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                            String docbase = session.getNodeByUUID(uuid).getPath();
-                            listeners.put(path, addFacetSearchListener(obMgr, docbase, node));
-                        }
-                        break;
-                    case Event.NODE_REMOVED:
-                        EventListener listener = listeners.remove(path);
-                        if (listener != null) {
-                            obMgr.removeEventListener(listener);
-                        }
-                        break;
-                    default:
-                        log.warn("unexpected event type " + event.getType());
-                    }
-                } catch (RepositoryException ex) {
-                    log.error("Error while processing event", ex);
-                }
-            }
-        } catch (RepositoryException ex) {
-            log.error("Error obtaining observation manager", ex);
         }
     }
 
@@ -207,7 +163,7 @@ public class FacetSearchObserver implements EventListener {
             });
             List<UpstreamEntry> listeners;
             synchronized (upstream) {
-                listeners = new ArrayList(upstream);
+                listeners = new ArrayList<UpstreamEntry>(upstream);
             }
             for (UpstreamEntry listener : listeners) {
                 // notify listener if it registered at an ancestor or child
