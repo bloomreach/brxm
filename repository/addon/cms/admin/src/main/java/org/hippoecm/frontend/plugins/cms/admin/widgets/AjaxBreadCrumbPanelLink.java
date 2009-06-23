@@ -18,8 +18,6 @@ package org.hippoecm.frontend.plugins.cms.admin.widgets;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
-import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanelFactory;
-import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 
