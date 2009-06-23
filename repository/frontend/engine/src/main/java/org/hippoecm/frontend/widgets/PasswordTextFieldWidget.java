@@ -64,7 +64,7 @@ public class PasswordTextFieldWidget extends AjaxUpdatingWidget {
         addFormField(pwd);
     }
 
-    class MyModel implements IChainingModel {
+    static class MyModel implements IChainingModel {
         private static final long serialVersionUID = 1L;
 
         private JcrPropertyValueModel model;

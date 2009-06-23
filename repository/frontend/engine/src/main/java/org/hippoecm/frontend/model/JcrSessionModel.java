@@ -16,14 +16,11 @@
 package org.hippoecm.frontend.model;
 
 import java.rmi.RemoteException;
-import java.util.Map;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.observation.EventIterator;
-import javax.jcr.observation.EventListener;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
@@ -34,7 +31,6 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.FacetSearchObserver;
 import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;

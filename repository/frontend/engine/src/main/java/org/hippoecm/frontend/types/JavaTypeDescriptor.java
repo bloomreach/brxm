@@ -93,7 +93,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
     }
 
     public void removeField(String name) {
-        IFieldDescriptor field = fields.remove(name);
+        fields.remove(name);
         for (ITypeListener listener : listeners) {
             listener.fieldRemoved(name);
         }

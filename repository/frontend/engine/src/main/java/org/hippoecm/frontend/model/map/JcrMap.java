@@ -413,9 +413,9 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
     private Object getValue(Value value) throws RepositoryException {
         switch (value.getType()) {
         case PropertyType.BOOLEAN:
-            return new Boolean(value.getBoolean());
+            return Boolean.valueOf(value.getBoolean());
         case PropertyType.LONG:
-            return new Long(value.getLong());
+            return Long.valueOf(value.getLong());
         case PropertyType.STRING:
         default:
             return value.getString();

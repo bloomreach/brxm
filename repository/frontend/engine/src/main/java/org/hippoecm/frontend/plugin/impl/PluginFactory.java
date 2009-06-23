@@ -111,7 +111,7 @@ public class PluginFactory implements IClusterable {
         return plugin;
     }
 
-    private class LayoutPlugin extends RenderPlugin implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
+    private static class LayoutPlugin extends RenderPlugin implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
         private static final long serialVersionUID = 1L;
 
         private final IResourceStream stream;

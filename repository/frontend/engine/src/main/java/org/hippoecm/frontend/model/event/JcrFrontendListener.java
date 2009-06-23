@@ -64,8 +64,8 @@ public class JcrFrontendListener extends NodeModelWrapper {
                     deep = node.getProperty(FrontendNodeTypes.DEEP).getBoolean();
                 }
 
-                listener = new JcrEventListener(obContext, new Long(node.getProperty(FrontendNodeTypes.EVENTS)
-                        .getLong()).intValue(), node.getProperty(FrontendNodeTypes.PATH).getString(), deep,
+                listener = new JcrEventListener(obContext, (int) node.getProperty(FrontendNodeTypes.EVENTS).getLong(),
+                        node.getProperty(FrontendNodeTypes.PATH).getString(), deep,
                         getMultiString(FrontendNodeTypes.UUIDS), getMultiString(FrontendNodeTypes.NODETYPES));
 
                 listener.start();

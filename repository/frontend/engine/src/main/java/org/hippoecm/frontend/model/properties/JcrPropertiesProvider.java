@@ -86,7 +86,7 @@ public class JcrPropertiesProvider extends NodeModelWrapper implements IDataProv
         try {
             if (nodeModel.getNode() != null) {
                 PropertyIterator it = nodeModel.getNode().getProperties();
-                result = new Long(it.getSize()).intValue();
+                result = (int) it.getSize();
 
 //                result = result - 1; // For jcr:primaryType
 //                result = nodeModel.getNode().hasProperty("jcr:mixinTypes") ? result -1 : result;

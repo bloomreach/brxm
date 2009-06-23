@@ -34,7 +34,7 @@ public class Pinger extends Label {
         add(new PingBehavior(Duration.seconds(20)));
     }
 
-    private class PingBehavior extends AbstractAjaxTimerBehavior {
+    private static class PingBehavior extends AbstractAjaxTimerBehavior {
         private static final long serialVersionUID = 1L;
 
         public PingBehavior(Duration duration) {

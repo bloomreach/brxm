@@ -61,7 +61,7 @@ public abstract class ItemModelWrapper implements IChainingModel {
     }
 
     public void setObject(Object object) {
-        itemModel.setObject(object);
+        throw new UnsupportedOperationException("Cannot alter the item of an " + getClass());
     }
 
     public void detach() {

@@ -100,7 +100,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
         }
     }
 
-    class EntryFilter implements Iterator<Entry<String, Object>> {
+    static class EntryFilter implements Iterator<Entry<String, Object>> {
 
         Iterator<Entry<String, Object>> base;
         Entry<String, Object> next;
@@ -403,6 +403,14 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
 
     public void removeClusterConfigListener(IClusterConfigListener listener) {
         listeners.remove(listener);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof JcrClusterConfig) {
+            return super.equals(other);
+        }
+        return false;
     }
 
 }
