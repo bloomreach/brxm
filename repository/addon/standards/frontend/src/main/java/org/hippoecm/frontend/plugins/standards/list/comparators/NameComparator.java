@@ -27,27 +27,28 @@ public class NameComparator extends NodeComparator {
 
     @Override
     public int compare(JcrNodeModel o1, JcrNodeModel o2) {
-        int result;
         try {
             Node n1 = o1.getNode();
             Node n2 = o2.getNode();
             if (n1 == null) {
                 if (n2 == null) {
-                    result = 0;
+                    return 0;
                 }
-                result = 1;
-            } else if (o2 == null) {
-                result = -1;
+                return 1;
+            } else if (n2 == null) {
+                return -1;
             }
             String name1 = n1.getName();
             String name2 = n2.getName();
+            int result;
             if((result = String.CASE_INSENSITIVE_ORDER.compare(name1, name2)) == 0) {
-                result = n1.getIndex() - n2.getIndex();
+                return n1.getIndex() - n2.getIndex();
+            } else {
+                return result;
             }
         } catch (RepositoryException e) {
-            result = 0;
         }
-        return result;
+        return 0;
     }
 
 }

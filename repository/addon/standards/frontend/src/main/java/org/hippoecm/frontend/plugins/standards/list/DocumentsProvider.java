@@ -103,7 +103,7 @@ public class DocumentsProvider extends SortableDataProvider {
         }
     }
 
-    private class FoldersFirstComparator extends NodeComparator {
+    private static class FoldersFirstComparator extends NodeComparator {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -116,7 +116,7 @@ public class DocumentsProvider extends SortableDataProvider {
                         return 0;
                     }
                     return 1;
-                } else if (o2 == null) {
+                } else if (n2 == null) {
                     return -1;
                 }
                 String label1 = folderOrDocument(n1);

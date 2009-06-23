@@ -55,7 +55,7 @@ public class UploadPlugin extends RenderPlugin {
         form.setModel(newModel);
     }
 
-    private class FileUploadForm extends Form {
+    private static class FileUploadForm extends Form {
         private static final long serialVersionUID = 1L;
 
         private FileUploadField fileUploadField;
