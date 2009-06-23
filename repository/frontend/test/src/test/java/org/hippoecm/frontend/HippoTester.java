@@ -44,6 +44,8 @@ public class HippoTester extends WicketTester {
 
     public Home startPluginPage() {
         Home home;
+        // create a request cycle, but don't use it.
+        // this is a workaround for mockwebapplication's retaining of these cycles. 
         RequestCycle rc = createRequestCycle();
         if (appFactory != null) {
             home = (Home) super.startPage(new Home(appFactory));
