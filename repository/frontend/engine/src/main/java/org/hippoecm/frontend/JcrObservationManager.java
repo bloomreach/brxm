@@ -54,6 +54,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,7 @@ public class JcrObservationManager implements ObservationManager {
         }
     }
 
-    private class NodeCache {
+    private static class NodeCache {
 
         private class NodeEvent implements Event {
 
@@ -295,12 +296,49 @@ public class JcrObservationManager implements ObservationManager {
                 uuid = uuids.toArray(new String[uuids.size()]);
             }
             obMgr.addEventListener(this, eventTypes, path, isDeep, uuid, nodeTypes, noLocal);
+
+            // subscribe to facet search observer.
+            // FIXME due to HREPTWO-2655, will not be able to receive events on newly
+            // created facet search nodes.
+            fso = getSession().getJcrSessionModel().getFacetSearchObserver();
+
+            // subscribe when listening to deep tree structures;
+            // there will/might be facetsearches in there.
+            if (isDeep && uuids == null) {
+                if (nodeTypes == null) {
+                    fso.subscribe(this, path);
+                } else {
+                    for (String type : nodeTypes) {
+                        if (type.equals(HippoNodeType.NT_DOCUMENT)) {
+                            fso.subscribe(this, path);
+                        }
+                    }
+                }
+                return;
+            }
+
+            // subscribe when target has a facetsearch as an ancestor
+            try {
+                for (Node node = getRoot(); node.getDepth() > 0;) {
+                    if (node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
+                        fso.subscribe(this, node.getPath());
+                        break;
+                    }
+                    node = node.getParent();
+                }
+
+                for (Node node : getReferencedNodes()) {
+                    if (node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
+                        fso.subscribe(this, node.getPath());
+                    }
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
         }
 
         void unsubscribe() throws RepositoryException {
-            if(fso != null) {
-                fso.unsubscribe(this);
-            }
+            fso.unsubscribe(this);
             fso = null;
 
             if (session.isLive()) {
@@ -334,6 +372,7 @@ public class JcrObservationManager implements ObservationManager {
                         validUuids.add(id);
                     } catch (ItemNotFoundException e) {
                         log.warn("Could not dereference uuid {} : {}", id, e.getMessage());
+                        throw new RuntimeException("uuid " + id + " has disappeared!", e);
                     } catch (RepositoryException e) {
                         log.warn("Could not dereference uuid {} : {}", id, e.getMessage());
                     }
