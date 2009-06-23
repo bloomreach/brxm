@@ -26,10 +26,8 @@ import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.TestCase;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
@@ -61,10 +59,20 @@ public abstract class PluginTest extends TestCase {
     protected HippoTester tester;
     protected Home home;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        TestCase.setUpClass(true);
+    }
+
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
+        setUp(false);
+    }
+
+    @Override
+    public void setUp(boolean clear) throws Exception {
+        super.setUp(clear);
         while (session.getRootNode().hasNode("config")) {
             session.getRootNode().getNode("config").remove();
             session.save();
@@ -113,6 +121,10 @@ public abstract class PluginTest extends TestCase {
         tester.processRequestCycle(requestCycle);
     }
 
+    /**
+     * Instantiate a plugin from configuration.
+     * @param config A plugin configuration, i.e. plugin.class is defined.
+     */
     protected IPluginContext start(IPluginConfig config) {
         return home.getPluginManager().start(config);
     }
