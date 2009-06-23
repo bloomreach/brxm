@@ -201,7 +201,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
         return listview;
     }
 
-    private class NodeItem implements IClusterable {
+    private static class NodeItem implements IClusterable {
         private static final long serialVersionUID = 1L;
 
         boolean enabled;

@@ -122,9 +122,6 @@ public class BrowseService implements IBrowseService<JcrNodeModel>, IRefreshable
     }
 
     public void browse(JcrNodeModel model) {
-        if (!(model instanceof JcrNodeModel)) {
-            throw new IllegalArgumentException("invalid model type");
-        }
         JcrNodeModel document = findDocument((JcrNodeModel) model);
         if (folder != null) {
             documentService.updateModel(document);

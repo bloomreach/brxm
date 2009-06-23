@@ -50,7 +50,7 @@ public class TabbedPanel extends WebMarkupContainer {
     private transient boolean redraw = false;
 
     public TabbedPanel(String id, TabsPlugin plugin, List<TabsPlugin.Tab> tabs) {
-        super(id, new Model(new Integer(-1)));
+        super(id, new Model(Integer.valueOf(-1)));
 
         if (tabs == null) {
             throw new IllegalArgumentException("argument [tabs] cannot be null");
@@ -65,7 +65,7 @@ public class TabbedPanel extends WebMarkupContainer {
             private static final long serialVersionUID = 1L;
 
             public Object getObject() {
-                return new Integer(TabbedPanel.this.tabs.size());
+                return Integer.valueOf(TabbedPanel.this.tabs.size());
             }
         };
 
@@ -126,7 +126,7 @@ public class TabbedPanel extends WebMarkupContainer {
     // used by superclass to add title to the container
 
     protected WebMarkupContainer newLink(final int index) {
-        WebMarkupContainer container = new WebMarkupContainer("container", new Model(new Integer(index)));
+        WebMarkupContainer container = new WebMarkupContainer("container", new Model(Integer.valueOf(index)));
         final TabsPlugin.Tab tabbie = (TabsPlugin.Tab) getTabs().get(index);
         if (tabbie.canClose()) {
             container.add(new AjaxFallbackLink("close") {
@@ -206,7 +206,7 @@ public class TabbedPanel extends WebMarkupContainer {
             return;
         }
 
-        setModelObject(new Integer(index));
+        setModelObject(Integer.valueOf(index));
 
         ITab tab = (ITab) tabs.get(index);
 
