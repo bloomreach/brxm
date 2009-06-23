@@ -63,7 +63,7 @@ if (!YAHOO.hippo.AutoCompleteManager) {
     })();
 
     YAHOO.hippo.AutoCompleteManager = new YAHOO.hippo.AutoCompleteManagerImpl();
-    YAHOO.register("layoutmanager", YAHOO.hippo.LayoutManager, {
+    YAHOO.register("autocompletemanager", YAHOO.hippo.AutoCompleteManager, {
         version :"2.6.0",
         build :"1321"
     });
