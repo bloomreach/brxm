@@ -51,7 +51,7 @@ public class JcrPropertyValueModel extends Model {
 
     // dynamically reload value
     private transient boolean loaded = false;
-    private transient Value value;
+    private transient Value value = null;
     private transient PropertyDefinition propertyDefinition;
 
     private JcrPropertyModel propertyModel;

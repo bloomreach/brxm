@@ -22,9 +22,9 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.slf4j.Logger;
@@ -38,11 +38,11 @@ public class NodeWrapper implements ITranslation<IModel> {
 
     final static Logger log = LoggerFactory.getLogger(NodeWrapper.class);
 
-    private Node node;
+    private JcrNodeModel nodeModel;
     private Set<String> matches;
 
     NodeWrapper(Node node, Map<String, String> keys) {
-        this.node = node;
+        this.nodeModel = new JcrNodeModel(node);
 
         matches = new HashSet<String>();
         try {
@@ -61,7 +61,7 @@ public class NodeWrapper implements ITranslation<IModel> {
 
     public IModel getModel() {
         try {
-            Property property = node.getProperty("hippo:message");
+            Property property = nodeModel.getNode().getProperty("hippo:message");
             return new JcrPropertyValueModel(new JcrPropertyModel(property));
         } catch(RepositoryException ex) {
             log.error(ex.getMessage());

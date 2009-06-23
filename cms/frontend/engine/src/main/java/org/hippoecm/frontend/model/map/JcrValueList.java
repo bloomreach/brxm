@@ -126,13 +126,13 @@ public class JcrValueList<T> extends AbstractList<T> implements IDetachable {
             if (index < values.length) {
                 switch (type) {
                 case PropertyType.BOOLEAN:
-                    return (T) new Boolean(values[index].getBoolean());
+                    return (T) Boolean.valueOf(values[index].getBoolean());
                 case PropertyType.DATE:
                     return (T) values[index].getDate();
                 case PropertyType.DOUBLE:
                     return (T) new Double(values[index].getDouble());
                 case PropertyType.LONG:
-                    return (T) new Long(values[index].getLong());
+                    return (T) Long.valueOf(values[index].getLong());
                 case PropertyType.NAME:
                 case PropertyType.PATH:
                 case PropertyType.STRING:

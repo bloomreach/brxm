@@ -51,7 +51,6 @@ public abstract class AjaxUpdatingWidget extends Panel {
                 return new AjaxPreprocessingCallDecorator(super.getAjaxCallDecorator()) {
                     @Override
                     public CharSequence decorateScript(CharSequence script) {
-
                         return "Hippo.OnChangeTrigger.setOnChangeListener(null); " + super.decorateScript(script);
                     }
                 };

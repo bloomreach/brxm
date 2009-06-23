@@ -116,7 +116,7 @@ public class BuiltinApplicationFactory implements IApplicationFactory {
         return plugins;
     }
 
-    private class Factory implements IServiceFactory<IPluginConfigService> {
+    private static class Factory implements IServiceFactory<IPluginConfigService> {
         private static final long serialVersionUID = 1L;
 
         IPluginConfigService service;

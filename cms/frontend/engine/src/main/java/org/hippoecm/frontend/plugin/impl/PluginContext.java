@@ -53,8 +53,8 @@ public class PluginContext implements IPluginContext, IDetachable {
     private Map<String, List<IServiceTracker<? extends IClusterable>>> listeners;
     private Map<String, ClusterControl> children;
     private PluginManager manager;
-    private transient boolean initializing;
-    private transient boolean stopping;
+    private transient boolean initializing = true;
+    private transient boolean stopping = false;
 
     public PluginContext(PluginManager manager, IPluginConfig config) {
         this.manager = manager;
@@ -67,7 +67,6 @@ public class PluginContext implements IPluginContext, IDetachable {
         this.instances = new IdentityHashMap<IServiceFactory, IClusterable>();
         this.listeners = new HashMap<String, List<IServiceTracker<? extends IClusterable>>>();
         this.children = new TreeMap<String, ClusterControl>();
-        this.initializing = true;
     }
 
     public IClusterControl newCluster(IClusterConfig template, IPluginConfig parameters) {

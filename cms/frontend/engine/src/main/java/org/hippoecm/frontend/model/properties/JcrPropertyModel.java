@@ -54,7 +54,7 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider,
 
     static final Logger log = LoggerFactory.getLogger(ItemModelWrapper.class);
 
-    private class IndexedValue {
+    private static class IndexedValue {
         protected Value value;
         protected int index;
 

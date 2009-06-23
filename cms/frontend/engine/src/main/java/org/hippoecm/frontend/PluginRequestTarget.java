@@ -109,4 +109,12 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PluginRequestTarget) {
+            return super.equals(obj);
+        }
+        return false;
+    }
+
 }
