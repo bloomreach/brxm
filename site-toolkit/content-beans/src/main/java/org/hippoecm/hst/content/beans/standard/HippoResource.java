@@ -15,7 +15,14 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
+
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Bean mapping class for the 'hippo:resource' document type
@@ -24,4 +31,24 @@ import org.hippoecm.hst.content.beans.Node;
 @Node(jcrType = "hippo:resource")
 public class HippoResource extends HippoItem implements HippoBean {
 
+
+    private static Logger log = LoggerFactory.getLogger(HippoResource.class);
+    /**
+     * 
+     * @return the number of bytes of binary stored in this resoure
+     */
+    public long getLength(){
+        if(this.getNode() == null) {
+            log.warn("Cannot get length for detached node");
+            return 0;
+        }
+        // a hippo:resource has a mandatory jcr:data property by cnd definition so not testing needed
+        try {
+            return this.getNode().getProperty("jcr:data").getLength();
+        }catch (RepositoryException e) {
+           log.warn("Error while fetching binary data length : {}", e);
+        }
+        return 0;
+    }
+    
 }
