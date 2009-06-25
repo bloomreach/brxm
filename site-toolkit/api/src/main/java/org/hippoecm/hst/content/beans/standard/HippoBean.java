@@ -34,13 +34,22 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
 
     String getPath();
 
+    /**
+     * Same as getProperty, where getProperty is only there for having a nice .getProperty['propname'] in jsp expression language
+     * @see #getProperty()
+     */
     Map<String, Object> getProperties();
 
+    /**
+     * Return types can be of type String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
+     * @param <T>
+     * @param name
+     * @return The return type is either String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
+     */
     <T> T getProperty(String name);
 
     /**
-     * Return a (pseudo)-map to use in expression language like jsp
-     * @return Map of all properties
+     * @return Map of all properties, where the values can be of type String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
      */
     Map<String, Object> getProperty();
     
