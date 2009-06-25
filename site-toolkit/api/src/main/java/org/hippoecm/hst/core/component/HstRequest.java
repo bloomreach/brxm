@@ -56,8 +56,11 @@ public interface HstRequest extends HttpServletRequest {
      * Returns the parameter map of this component window.
      * If the request is in the action lifecycle, then only action parameters can be accessible.
      * Otherwise, then only render parameters can be accessible.
+     * @return an immutable java.util.Map<String, String []> containing parameter names as keys and parameter values as map values.
+     *         The keys in the parameter map are of type String. 
+     *         The values in the parameter map are of type String array.
      */
-    Map<String, Object> getParameterMap();
+    Map<String, String []> getParameterMap();
     
     /**
      * The reference namespace of the component window.
@@ -73,7 +76,7 @@ public interface HstRequest extends HttpServletRequest {
      * @param referenceNamespace
      * @return
      */
-    Map<String, Object> getParameterMap(String referenceNamespace);
+    Map<String, String []> getParameterMap(String referenceNamespace);
     
     /**
      * Returns the attribute map of this component window.

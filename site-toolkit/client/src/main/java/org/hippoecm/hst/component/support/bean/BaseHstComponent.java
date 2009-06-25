@@ -92,11 +92,13 @@ public class BaseHstComponent extends GenericHstComponent {
     }
     
     public String getPublicRequestParameter(HstRequest request, String parameterName){
-        Map<String, Object> namespaceLessParameters = request.getParameterMap("");
-        Object o = namespaceLessParameters.get(parameterName);
-        if(o instanceof String) {
-            return (String)o;
+        Map<String, String []> namespaceLessParameters = request.getParameterMap("");
+        String [] paramValues = namespaceLessParameters.get(parameterName);
+        
+        if (paramValues.length > 0) {
+            return paramValues[0];
         }
+        
         return null;
     }
     

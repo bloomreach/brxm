@@ -42,7 +42,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     
     protected String lifecyclePhase;
     protected HstRequestContext requestContext;
-    protected Map<String, Map<String, Object>> namespaceParametersMap = new HashMap<String, Map<String, Object>>();
+    protected Map<String, Map<String, String []>> namespaceParametersMap = new HashMap<String, Map<String, String []>>();
     protected Map<String, Map<String, Object>> namespaceAttributesMap = new HashMap<String, Map<String, Object>>();
     protected HstComponentWindow componentWindow;
     protected String parameterNameComponentSeparator;
@@ -59,13 +59,13 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         super.setRequest(servletRequest);
     }
 
-    public Map<String, Object> getParameterMap() {
+    public Map<String, String []> getParameterMap() {
         String referenceNamespace = this.componentWindow.getReferenceNamespace();
         return getParameterMap(referenceNamespace);
     }
     
-    public Map<String, Object> getParameterMap(String referencePath) {
-        Map<String, Object> parameterMap = null;
+    public Map<String, String []> getParameterMap(String referencePath) {
+        Map<String, String []> parameterMap = null;
         
         String namespace = getReferenceNamespacePath(referencePath);
         String prefix = getFullNamespacePrefix(namespace);
@@ -73,7 +73,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         parameterMap = this.namespaceParametersMap.get(prefix);
         
         if (parameterMap == null) {
-            parameterMap = new HashMap<String, Object>();
+            parameterMap = new HashMap<String, String []>();
 
             if (this.requestContext.getBaseURL().getActionWindowReferenceNamespace() != null) {
                 Map<String, String []> actionParams = this.requestContext.getBaseURL().getActionParameterMap();
@@ -82,14 +82,14 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
                     for (Map.Entry<String, String []> entry : actionParams.entrySet()) {
                         String paramName = entry.getKey();
                         String [] paramValues = entry.getValue();
-                        parameterMap.put(paramName, paramValues.length > 1 ? paramValues : paramValues[0]);
+                        parameterMap.put(paramName, paramValues);
                     }
                 }
                 
                 for (Enumeration paramNames = super.getParameterNames(); paramNames.hasMoreElements(); ) {
                     String paramName = (String) paramNames.nextElement();
                     String [] paramValues = super.getParameterValues(paramName);
-                    parameterMap.put(paramName, paramValues.length > 1 ? paramValues : paramValues[0]);
+                    parameterMap.put(paramName, paramValues);
                 }
             } else {
                 for (Enumeration paramNames = super.getParameterNames(); paramNames.hasMoreElements(); ) {
@@ -98,7 +98,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
                     if (encodedParamName.startsWith(prefix)) {
                         String paramName = encodedParamName.substring(paramPrefixLen);
                         String [] paramValues = super.getParameterValues(encodedParamName);
-                        parameterMap.put(paramName, paramValues.length > 1 ? paramValues : paramValues[0]);
+                        parameterMap.put(paramName, paramValues);
                     }
                 }
             }

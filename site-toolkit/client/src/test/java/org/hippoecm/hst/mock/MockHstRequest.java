@@ -26,7 +26,7 @@ public class MockHstRequest extends MockHttpServletRequest implements HstRequest
 
     protected String referencePath;
     protected Map<String, Map<String, Object>> attributeMap = new HashMap<String, Map<String, Object>>();
-    protected Map<String, Map<String, Object>> parameterMap = new HashMap<String, Map<String, Object>>();
+    protected Map<String, Map<String, String []>> parameterMap = new HashMap<String, Map<String, String []>>();
     protected HstRequestContext requestContext;
     protected String resourceId;
     protected String referenceNamespace;
@@ -48,11 +48,11 @@ public class MockHstRequest extends MockHttpServletRequest implements HstRequest
         return this.attributeMap.get(referencePath);
     }
 
-    public void setParameterMap(String referencePath, Map<String, Object> paramMap) {
+    public void setParameterMap(String referencePath, Map<String, String []> paramMap) {
         this.parameterMap.put(referencePath, paramMap);
     }
     
-    public Map<String, Object> getParameterMap(String referencePath) {
+    public Map<String, String []> getParameterMap(String referencePath) {
         return this.parameterMap.get(referencePath);
     }
 
