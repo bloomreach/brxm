@@ -197,7 +197,11 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         
         loadProperty(propertyName,PropertyType.STRING, true);
         
-        return this.propertyMap.getStringArrays().get(propertyName);
+        String[] val =  this.propertyMap.getStringArrays().get(propertyName);
+        if(val == null) {
+            return new String[0];
+        }
+        return val;
     }
 
     public Double getDouble(String propertyName) {
@@ -228,8 +232,11 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         }
         
         loadProperty(propertyName,PropertyType.DOUBLE, true);
-       
-        return this.propertyMap.getDoubleArrays().get(propertyName);
+        Double[] val = this.propertyMap.getDoubleArrays().get(propertyName);
+        if(val == null) {
+            return new Double[0];
+        }
+        return val;
     }
 
     public Long getLong(String propertyName) {
@@ -261,8 +268,11 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         }
         
         loadProperty(propertyName,PropertyType.LONG, true);
-       
-        return this.propertyMap.getLongArrays().get(propertyName);
+        Long[] val = this.propertyMap.getLongArrays().get(propertyName);
+        if(val == null) {
+            return new Long[0];
+        }
+        return val;
     }
   
     // As a Calendar object is modifiable, return a cloned instance such that the underlying Calendar object cannot be changed
@@ -287,12 +297,15 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             return (Calendar[])o.clone();
         }
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
-            return null;
+            return new Calendar[0];
         }
         
         loadProperty(propertyName,PropertyType.DATE, true);
-      
-        return this.propertyMap.getCalendarArrays().get(propertyName);
+        Calendar[] val = this.propertyMap.getCalendarArrays().get(propertyName);
+        if(val == null) {
+            return new Calendar[0];
+        }
+        return val;
     }
 
     public Boolean getBoolean(String propertyName) {
@@ -322,7 +335,11 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             return new Boolean[0];
         }
         loadProperty(propertyName,PropertyType.BOOLEAN, true);
-        return this.propertyMap.getBooleanArrays().get(propertyName);
+        Boolean[] val  = this.propertyMap.getBooleanArrays().get(propertyName);
+        if(val == null) {
+           return new Boolean[0];
+        } 
+        return val;
     }
 
     public Map<String, Object> getProperties() {

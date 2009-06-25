@@ -48,7 +48,7 @@ public interface ValueProvider extends Serializable{
     /**
      * Returns String array of string values of a node property
      * @param propertyName
-     * @return String[] values of the node property, or null if the property does not exist, or is single-values, or is not of type string
+     * @return String[] values of the node property, or an empty string array String[0] if the property does not exist, or is single-valued, or is not of type string
      */
     public String[] getStrings(String propertyName);
 
@@ -62,7 +62,7 @@ public interface ValueProvider extends Serializable{
     /**
      * Returns boolean array of the boolean values of a node property
      * @param propertyName
-     * @return Boolean[] values of the node property. If the property does not exist, or is single-valued, or is not of type boolean, a boolean array with all 'false' values is returned
+     * @return Boolean[] values of the node property. If the property does not exist, or is single-valued, or is not of type boolean, an empty boolean array Boolean[0] is returned
      */
     public Boolean[] getBooleans(String propertyName);
     
@@ -76,7 +76,7 @@ public interface ValueProvider extends Serializable{
     /**
      * Returns long array of the long values of a node property.  
      * @param propertyName
-     * @return Long array presentation of the node property. If the property does not exist, or is single-valued, or is not of type long, an array of 0's is returned
+     * @return Long array presentation of the node property. If the property does not exist, or is single-valued, or is not of type long, an empty array Long[0] is returned
      */
     public Long[] getLongs(String propertyName);
 
@@ -89,7 +89,7 @@ public interface ValueProvider extends Serializable{
     /**
      * Returns double array of the long values of a node property.  
      * @param propertyName
-     * @return Double array presentation of the node property. If the property does not exist, or is single-valued, or is not of type double, an array of 0's is returned
+     * @return Double array presentation of the node property. If the property does not exist, or is single-valued, or is not of type double, an empty array Double[0] is returned
      */
     public Double[] getDoubles(String propertyName);
 
@@ -103,7 +103,7 @@ public interface ValueProvider extends Serializable{
     /**
      * Returns Calendar array of the Calendar values of a node property.
      * @param propertyName
-     * @return Calendar[] of the Calendar values of the node property. If the property does not exist, or is single-valued, or is not of type jcr DATE, an array of nulls is returned
+     * @return Calendar[] of the Calendar values of the node property. If the property does not exist, or is single-valued, or is not of type jcr DATE, an empty array Calendar[0] is returned
      */
     public Calendar[] getDates(String propertyName);
     
