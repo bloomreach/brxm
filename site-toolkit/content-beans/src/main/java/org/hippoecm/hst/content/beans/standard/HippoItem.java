@@ -80,15 +80,10 @@ public class HippoItem implements HippoBean{
        return this.path;
     }
     
+    /**
+     * values in the map can be of type String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
+     */
     public Map<String, Object> getProperties() {
-        return valueProvider.getProperties();
-    }
-       
-    public <T> T getProperty(String name) {
-        return (T) getProperties().get(name);
-    }
-    
-    public Map<String, Object> getProperty() {
         Map<String, Object> properties = null;
         if (this.valueProvider == null) {
             properties = Collections.emptyMap();
@@ -96,6 +91,18 @@ public class HippoItem implements HippoBean{
             properties = this.valueProvider.getProperties();
         }
         return properties;
+    }
+    
+    public <T> T getProperty(String name) {
+        return (T) getProperties().get(name);
+    }
+    
+    /**
+     * @see {@link #getProperties()}
+     * @see org.hippoecm.hst.content.beans.standard.HippoBean#getProperty()
+     */
+    public Map<String, Object> getProperty() {
+        return this.getProperties();
     }
     
     public <T> T getBean(String relPath) {
