@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
@@ -59,6 +60,31 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         assertNull("action window reference namespace is not null.", containerURL.getActionWindowReferenceNamespace());
         assertNull("resource window reference namespace is not null.", containerURL.getResourceWindowReferenceNamespace());
         assertEquals("The path info is wrong: " + containerURL.getPathInfo(), "/news/2008/08", containerURL.getPathInfo());
+    }
+    
+    @Test
+    public void testRenderCotnainerURL() throws UnsupportedEncodingException, ContainerException {
+        HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
+        HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
+
+        HstContainerURL containerURL = this.urlProvider.parseURL(request, response);
+
+        HstURL url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "r1", containerURL);
+        url.setParameter("param1", "value1");
+        url.setParameter("param2", "value2");
+        
+        assertTrue("The url is wrong.", url.toString().contains("r1:param1=value1"));
+        assertTrue("The url is wrong.", url.toString().contains("r1:param2=value2"));
+        
+        url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "", containerURL);
+        url.setParameter("param1", "value1");
+        url.setParameter("param2", "value2");
+        
+        assertFalse("The url is wrong.", url.toString().contains(":param1=value1"));
+        assertFalse("The url is wrong.", url.toString().contains(":param2=value2"));
+        
+        assertTrue("The url is wrong.", url.toString().contains("param1=value1"));
+        assertTrue("The url is wrong.", url.toString().contains("param2=value2"));
     }
     
     @Test
@@ -107,4 +133,5 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         assertEquals("resource id is wrong.", "myresource001", resourceURL.getResourceId());
         assertEquals("The path info is wrong.", "/news/2008/08", resourceURL.getPathInfo());
     }
+    
 }
