@@ -85,6 +85,9 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         
         assertTrue("The url is wrong.", url.toString().contains("param1=value1"));
         assertTrue("The url is wrong.", url.toString().contains("param2=value2"));
+        
+        // TODO: Test with non-namespacing parameters..
+        
     }
     
     @Test
