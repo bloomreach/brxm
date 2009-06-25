@@ -28,7 +28,6 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ImportUUIDBehavior;
@@ -54,6 +53,7 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
+import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.Query;
 import javax.jcr.version.VersionException;
@@ -133,12 +133,6 @@ class LocalHippoRepository extends HippoRepositoryImpl {
     /** Whether to perform an automatic upgrade from previous releases */
     private boolean upgradeEnabled = true;
 
-    /** Listener for changes under /hippo:configuration/hippo:initialize node */
-    private EventListener listener;
-
-    /** Thread to react to these changes */
-    private Thread initThread;
-    
     List<DaemonModule> daemonModules = new LinkedList<DaemonModule>();
 
     protected LocalHippoRepository() throws RepositoryException {
@@ -410,31 +404,12 @@ class LocalHippoRepository extends HippoRepositoryImpl {
              * are deleted, so they will not be processed more than once.
              */
             ObservationManager obMgr = rootSession.getWorkspace().getObservationManager();
-            final Semaphore sem = new Semaphore(1);
-            listener = new EventListener() {
+            EventListener listener = new RefreshingEventListener(rootSession, 2000) {
                 public synchronized void onEvent(EventIterator events) {
                     log.debug("received initialization change event");
-                    sem.release();
+                    refresh();
                 }
             };
-            initThread = new Thread() {
-                @Override
-                public void run() {
-                    while (!Thread.currentThread().isInterrupted()) {
-                        try {
-                            sem.acquire();
-
-                            // FIXME: event is/can be received before indexer is ready!
-                            Thread.sleep(2000);
-
-                            log.debug("refreshing");
-                            refresh();
-                        } catch (InterruptedException ex) {
-                        }
-                    }
-                }
-            };
-            initThread.start();
             obMgr.addEventListener(listener, Event.NODE_ADDED | Event.PROPERTY_ADDED, "/"
                     + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH,
                     true, null, null, true);
@@ -460,6 +435,11 @@ class LocalHippoRepository extends HippoRepositoryImpl {
      */
     private synchronized void refresh() {
         try {
+            if (jackrabbitRepository == null || rootSession == null || !rootSession.isLive()) {
+                log.warn("Unable to refresh initialize nodes, no session available");
+                return;
+            }
+            
             Workspace workspace = rootSession.getWorkspace();
             NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
 
@@ -484,7 +464,6 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                         removeNodecontent(rootSession, path);
                         p.remove();
                     }
-
 
                     // Namespace
                     if (node.hasProperty(HippoNodeType.HIPPO_NAMESPACE)) {
@@ -873,18 +852,23 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             }
         }
 
-        if (listener != null) {
-            initThread.interrupt();
-
+        // stop all listeners on rootSession
+        if (rootSession != null && rootSession.isLive()) {
             try {
-                Session rootSession =  ((LocalRepositoryImpl)jackrabbitRepository).getRootSession(null);
-                Workspace workspace = rootSession.getWorkspace();
-                ObservationManager obMgr = workspace.getObservationManager();
-                obMgr.removeEventListener(listener);
+                ObservationManager obMgr = rootSession.getWorkspace().getObservationManager();
+                EventListenerIterator elIter = obMgr.getRegisteredEventListeners();
+                while (elIter.hasNext()) {
+                    EventListener el = elIter.nextEventListener();
+                    if (el instanceof RefreshingEventListener) {
+                        log.debug("Stopping RefreshingEventListener");
+                        ((RefreshingEventListener) el).stopRefresher();
+                    }
+                    log.debug("Removing EventListener from root session");
+                    obMgr.removeEventListener(el);
+                }
             } catch (Exception ex) {
                 log.error("Error while removing listener: " + ex.getMessage(), ex);
             }
-            listener = null;
         }
 
         if (jackrabbitRepository != null) {

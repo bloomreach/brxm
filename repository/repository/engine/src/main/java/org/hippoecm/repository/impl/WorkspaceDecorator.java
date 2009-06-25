@@ -17,6 +17,7 @@ package org.hippoecm.repository.impl;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -40,9 +41,9 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
-
 import javax.jcr.util.TraversingItemVisitor;
 import javax.jcr.version.VersionException;
+
 import org.apache.jackrabbit.core.observation.SynchronousEventListener;
 import org.hippoecm.repository.HierarchyResolverImpl;
 import org.hippoecm.repository.api.DocumentManager;
@@ -91,14 +92,14 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
 
     @Override
     protected void finalize() {
-        if(rootSession != null) {
-            if(rootSession.isLive()) {
+        if (rootSession != null) {
+            if (rootSession.isLive()) {
                 rootSession.logout();
             }
             rootSession = null;
         }
     }
-    
+
     @Override
     public DocumentManager getDocumentManager() throws RepositoryException {
         if (documentManager == null) {
@@ -109,17 +110,20 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
 
     @Override
     public WorkflowManager getWorkflowManager() throws RepositoryException {
-        if(rootSession == null) {
+        if (rootSession == null) {
             Repository repository = RepositoryDecorator.unwrap(session.getRepository());
             try {
-                if(repository instanceof RepositoryImpl) {
-                    rootSession = (SessionDecorator) factory.getSessionDecorator(session.getRepository(), session.impersonate(new SimpleCredentials("workflowuser", new char[] { }))); // FIXME: hardcoded workflowuser
+                if (repository instanceof RepositoryImpl) {
+                    rootSession = (SessionDecorator) factory.getSessionDecorator(session.getRepository(), session
+                            .impersonate(new SimpleCredentials("workflowuser", new char[] {}))); // FIXME: hardcoded workflowuser
                 }
             } catch (LoginException ex) {
                 logger.debug("User " + session.getUserID() + " is not allowed to impersonate to workflow session", ex);
-                throw new AccessDeniedException("User " + session.getUserID() + " is not allowed to obtain the workflow manager", ex);
-            } catch(RepositoryException ex) {
-                logger.error("Error while trying to obtain workflow session "+ex.getClass().getName()+": "+ex.getMessage(), ex);
+                throw new AccessDeniedException("User " + session.getUserID()
+                        + " is not allowed to obtain the workflow manager", ex);
+            } catch (RepositoryException ex) {
+                logger.error("Error while trying to obtain workflow session " + ex.getClass().getName() + ": "
+                        + ex.getMessage(), ex);
                 throw new RepositoryException("Error while trying to obtain workflow session", ex);
             }
         }
@@ -155,14 +159,60 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
             }
 
             public EventListenerIterator getRegisteredEventListeners() throws RepositoryException {
-                return upstream.getRegisteredEventListeners();
+                // create local copy
+                final Set<EventListenerDecorator> currentListeners = new HashSet<EventListenerDecorator>();
+                synchronized (listeners) {
+                    if (listeners.containsKey(session)) {
+                        currentListeners.addAll(listeners.get(session));
+                    }
+                }
+
+                return new EventListenerIterator() {
+                    private final Iterator<EventListenerDecorator> listenerIterator = currentListeners.iterator();
+                    private final long size = currentListeners.size();
+                    private long pos = 0;
+
+                    public EventListener nextEventListener() {
+                        if (!hasNext()) {
+                            throw new NoSuchElementException();
+                        }
+                        pos++;
+                        return listenerIterator.next().listener;
+                    }
+
+                    public void skip(long skipNum) {
+                        while (skipNum-- > 0) {
+                            next();
+                        }
+                    }
+
+                    public long getSize() {
+                        return size;
+                    }
+
+                    public long getPosition() {
+                        return pos;
+                    }
+
+                    public void remove() {
+                        throw new UnsupportedOperationException("EventListenerIterator.remove()");
+                    }
+
+                    public boolean hasNext() {
+                        return listenerIterator.hasNext();
+                    }
+
+                    public Object next() {
+                        return nextEventListener();
+                    }
+                };
             }
 
             public void removeEventListener(EventListener listener) throws RepositoryException {
                 synchronized (listeners) {
                     Set<EventListenerDecorator> registered = listeners.get(session);
                     if (registered != null) {
-                        for (Iterator<EventListenerDecorator> iter = registered.iterator(); iter.hasNext(); ) {
+                        for (Iterator<EventListenerDecorator> iter = registered.iterator(); iter.hasNext();) {
                             EventListenerDecorator decorator = iter.next();
                             if (decorator.listener == listener) {
                                 iter.remove();
@@ -176,7 +226,7 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
                     }
                 }
             }
-            
+
         };
     }
 
@@ -193,18 +243,23 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     }
 
     private void touch(String destAbsPath) throws RepositoryException {
-        Node destination = null, parent = getSession().getRootNode().getNode(destAbsPath.substring(1,destAbsPath.lastIndexOf("/")));
-        for(NodeIterator iter = parent.getNodes(destAbsPath.substring(destAbsPath.lastIndexOf("/")+1)); iter.hasNext(); ) {
+        Node destination = null, parent = getSession().getRootNode().getNode(
+                destAbsPath.substring(1, destAbsPath.lastIndexOf("/")));
+        for (NodeIterator iter = parent.getNodes(destAbsPath.substring(destAbsPath.lastIndexOf("/") + 1)); iter
+                .hasNext();) {
             destination = iter.nextNode();
         }
-        if(destination != null) {
+        if (destination != null) {
             destination.accept(new TraversingItemVisitor() {
                 protected void entering(Property property, int level) throws RepositoryException {
                 }
+
                 protected void entering(Node node, int level) throws RepositoryException {
                 }
+
                 protected void leaving(Property property, int level) throws RepositoryException {
                 }
+
                 protected void leaving(Node node, int level) throws RepositoryException {
                     if (node.isNodeType(HippoNodeType.NT_DERIVED)) {
                         node.setProperty("hippo:compute", (String) null);
@@ -216,25 +271,31 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     }
 
     @Override
-    public void copy(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
+    public void copy(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException,
+            AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
         super.copy(srcAbsPath, destAbsPath);
         touch(destAbsPath);
     }
 
     @Override
-    public void copy(String srcWorkspace, String srcAbsPath, String destAbsPath) throws NoSuchWorkspaceException, ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
+    public void copy(String srcWorkspace, String srcAbsPath, String destAbsPath) throws NoSuchWorkspaceException,
+            ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException,
+            ItemExistsException, LockException, RepositoryException {
         super.copy(srcWorkspace, srcAbsPath, destAbsPath);
         touch(destAbsPath);
     }
 
     @Override
-    public void clone(String srcWorkspace, String srcAbsPath, String destAbsPath, boolean removeExisting) throws NoSuchWorkspaceException, ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
+    public void clone(String srcWorkspace, String srcAbsPath, String destAbsPath, boolean removeExisting)
+            throws NoSuchWorkspaceException, ConstraintViolationException, VersionException, AccessDeniedException,
+            PathNotFoundException, ItemExistsException, LockException, RepositoryException {
         super.clone(srcWorkspace, srcAbsPath, destAbsPath, removeExisting);
         touch(destAbsPath);
     }
 
     @Override
-    public void move(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
+    public void move(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException,
+            AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
         super.move(srcAbsPath, destAbsPath);
         touch(destAbsPath);
     }
