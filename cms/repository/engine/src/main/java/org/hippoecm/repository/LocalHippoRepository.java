@@ -404,7 +404,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
              * are deleted, so they will not be processed more than once.
              */
             ObservationManager obMgr = rootSession.getWorkspace().getObservationManager();
-            EventListener listener = new RefreshingEventListener(rootSession, 2000) {
+            EventListener listener = new RefreshingEventListener(rootSession, 1000) {
                 public synchronized void onEvent(EventIterator events) {
                     log.debug("received initialization change event");
                     refresh();
