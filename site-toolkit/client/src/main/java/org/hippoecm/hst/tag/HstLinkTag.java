@@ -34,6 +34,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
@@ -120,7 +121,9 @@ public class HstLinkTag extends TagSupport {
         
         if(this.link == null && this.path != null) {
             HstSite site = reqContext.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSite();
-            this.link = reqContext.getHstLinkCreator().create(this.path, site, true);
+            VirtualHost virtualHost = reqContext.getVirtualHost();
+            boolean containerResource = (virtualHost != null && virtualHost.getVirtualHosts().isExcluded(this.path));
+            this.link = reqContext.getHstLinkCreator().create(this.path, site, containerResource);
         }
         
         if(this.link == null) {

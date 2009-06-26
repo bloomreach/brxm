@@ -24,7 +24,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.hosting.Mapping;
+import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
@@ -136,6 +136,12 @@ public interface HstRequestContext {
      * Enumerates the attribute names
      */
     Enumeration<String> getAttributeNames();
+    
+    /**
+     * Returns the matched virtual host object 
+     * @return
+     */
+    VirtualHost getVirtualHost();
     
     /**
      * Returns the container configuration
