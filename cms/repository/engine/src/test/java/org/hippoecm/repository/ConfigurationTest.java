@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 import javax.jcr.Node;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,6 +30,15 @@ public class ConfigurationTest extends TestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        if (session.getRootNode().hasNode("hippo:configuration/hippo:initialize/testnode")) {
+            session.getRootNode().getNode("hippo:configuration/hippo:initialize/testnode").remove();
+            session.save();
+        }
+        super.tearDown();
     }
 
     @Test
