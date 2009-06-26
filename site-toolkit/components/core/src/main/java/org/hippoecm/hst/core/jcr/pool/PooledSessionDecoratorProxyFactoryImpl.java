@@ -87,6 +87,12 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                     // from another session pool repository based on the credentials.
                     Credentials credentials = (Credentials) invocation.getArguments()[0];
                     ret = poolingRepository.impersonate(credentials);
+                    // if the poolingRepository returns null, it means the poolingRepository cannot retrieve
+                    // a pooled session with the credentials.
+                    // in this case, just proceeed to allow impersonation by underlying JCR session.
+                    if (ret == null) {
+                        ret = invocation.proceed();
+                    }
                 } else if ("refresh".equals(methodName)) {
                     ret = invocation.proceed();
                     lastRefreshed = System.currentTimeMillis();

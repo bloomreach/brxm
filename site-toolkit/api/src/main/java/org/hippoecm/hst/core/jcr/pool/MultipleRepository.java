@@ -46,6 +46,14 @@ public interface MultipleRepository extends Repository {
     Map<Credentials, Repository> getRepositoryMap();
     
     /**
+     * Checks if it contains the internal repository which has the specified credentials.
+     * 
+     * @param credentials
+     * @return
+     */
+    boolean containsRepositoryByCredentials(Credentials credentials);
+    
+    /**
      * Returns the internal repository which has the specified credentials as its default credentials.
      * 
      * @param credentials

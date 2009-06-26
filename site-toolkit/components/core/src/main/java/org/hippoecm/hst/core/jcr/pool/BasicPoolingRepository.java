@@ -249,10 +249,8 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     public Session impersonate(Credentials credentials) throws LoginException, RepositoryException {
         Session session = null;
         
-        if (this.multipleRepository != null) {
+        if (this.multipleRepository != null && this.multipleRepository.containsRepositoryByCredentials(credentials)) {
             session = this.multipleRepository.login(credentials);
-        } else {
-            throw new RepositoryException("Multiple session pooling repositories is not available.");
         }
         
         return session;

@@ -93,7 +93,7 @@ public interface PoolingRepository extends Repository {
      * If this pooling repository is contained in a {@link MultipleRepository} implementation
      * and the containing {@link MultipleRepository} has a proper repository for the provided credentials,
      * then it can return a proper session impersonated.
-     * Otherwise, it throws a RepositoryException. 
+     * Otherwise, it returns null.
      * 
      * @param credentials
      * @return

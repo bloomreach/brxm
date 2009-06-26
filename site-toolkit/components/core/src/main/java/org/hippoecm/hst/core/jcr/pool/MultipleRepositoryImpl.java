@@ -65,6 +65,10 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         refreshResourceLifecycleManagements();
     }
     
+    public boolean containsRepositoryByCredentials(Credentials credentials) {
+        return this.repositoryMap.containsKey(new CredentialsWrapper(credentials));
+    }
+    
     public Repository getRepositoryByCredentials(Credentials credentials) {
         return this.repositoryMap.get(new CredentialsWrapper(credentials));
     }
