@@ -34,7 +34,7 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
     @Before
     @Override
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp();
     }
 
     @After

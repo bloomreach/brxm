@@ -105,7 +105,7 @@ public class FacetedAuthorizationTest extends TestCase {
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp();
 
         cleanup();
         Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
