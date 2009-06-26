@@ -27,8 +27,14 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.component.HstURLFactoryImpl;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.mock.MockHstComponentWindow;
+import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +44,11 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
 
     protected HstURLFactory urlFactory;
     protected HstContainerURLProvider urlProvider;
+    protected HstRequestContext requestContext;
+    
+    protected MockHstComponentWindow rootWindow;
+    protected MockHstComponentWindow leftChildWindow;
+    protected MockHstComponentWindow rightChildWindow;
     
     @Before
     public void setUp() throws Exception {
@@ -45,6 +56,22 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
 
         this.urlFactory = getComponent(HstURLFactory.class.getName());
         this.urlProvider = this.urlFactory.getServletUrlProvider();
+        this.requestContext = new HstRequestContextImpl(null);
+        ((HstRequestContextImpl) this.requestContext).setURLFactory(urlFactory);
+        
+        rootWindow = new MockHstComponentWindow();
+        rootWindow.setReferenceName("root");
+        rootWindow.setReferenceNamespace("");
+        
+        leftChildWindow = new MockHstComponentWindow();
+        leftChildWindow.setReferenceName("left");
+        leftChildWindow.setReferenceNamespace("l1");
+        leftChildWindow.setParentWindow(rootWindow);
+        
+        rightChildWindow = new MockHstComponentWindow();
+        rightChildWindow.setReferenceName("right");
+        rightChildWindow.setReferenceNamespace("r1");
+        rightChildWindow.setParentWindow(rootWindow);
     }
     
     @Test
@@ -63,11 +90,12 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
     }
     
     @Test
-    public void testRenderCotnainerURL() throws UnsupportedEncodingException, ContainerException {
+    public void testRenderContainerURL() throws UnsupportedEncodingException, ContainerException {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
 
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response);
+        ((HstRequestContextImpl) requestContext).setBaseURL(containerURL);
 
         HstURL url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "r1", containerURL);
         url.setParameter("param1", "value1");
@@ -76,18 +104,73 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         assertTrue("The url is wrong.", url.toString().contains("r1:param1=value1"));
         assertTrue("The url is wrong.", url.toString().contains("r1:param2=value2"));
         
+        ((MockHttpServletRequest) request).setParameter("r1:param1", "value1");
+        ((MockHttpServletRequest) request).setParameter("r1:param2", "value2");
+        
+        HstRequest hstRequest = new HstRequestImpl(request, requestContext, rightChildWindow, HstRequest.RENDER_PHASE);
+        assertEquals("The parameter value is wrong: param1", "value1", hstRequest.getParameter("param1"));
+        assertEquals("The parameter value is wrong: param2", "value2", hstRequest.getParameter("param2"));
+        
         url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "", containerURL);
         url.setParameter("param1", "value1");
         url.setParameter("param2", "value2");
         
         assertFalse("The url is wrong.", url.toString().contains(":param1=value1"));
         assertFalse("The url is wrong.", url.toString().contains(":param2=value2"));
-        
         assertTrue("The url is wrong.", url.toString().contains("param1=value1"));
         assertTrue("The url is wrong.", url.toString().contains("param2=value2"));
         
-        // TODO: Test with non-namespacing parameters..
+        ((MockHttpServletRequest) request).removeAllParameters();
+        ((MockHttpServletRequest) request).setParameter("param1", "value1");
+        ((MockHttpServletRequest) request).setParameter("param2", "value2");
+
+        hstRequest = new HstRequestImpl(request, requestContext, rootWindow, HstRequest.RENDER_PHASE);
+        assertEquals("The parameter value is wrong: param1", "value1", hstRequest.getParameter("param1"));
+        assertEquals("The parameter value is wrong: param2", "value2", hstRequest.getParameter("param2"));        
+    }
+    
+    @Test
+    public void testNamespacelessRenderContainerURL() throws UnsupportedEncodingException, ContainerException {
+        HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
+        HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
+
+        HstContainerURL containerURL = this.urlProvider.parseURL(request, response);
+        ((HstRequestContextImpl) requestContext).setBaseURL(containerURL);
+
+        ((HstURLFactoryImpl) this.urlFactory).setReferenceNamespaceIgnored(true);
         
+        HstURL url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "r1", containerURL);
+        url.setParameter("param1", "value1");
+        url.setParameter("param2", "value2");
+        
+        assertFalse("The url is wrong.", url.toString().contains(":param1=value1"));
+        assertFalse("The url is wrong.", url.toString().contains(":param2=value2"));
+        assertTrue("The url is wrong.", url.toString().contains("param1=value1"));
+        assertTrue("The url is wrong.", url.toString().contains("param2=value2"));
+        
+        ((MockHttpServletRequest) request).setParameter("param1", "value1");
+        ((MockHttpServletRequest) request).setParameter("param2", "value2");
+        
+        HstRequest hstRequest = new HstRequestImpl(request, requestContext, rightChildWindow, HstRequest.RENDER_PHASE);
+        assertEquals("The parameter value is wrong: param1", "value1", hstRequest.getParameter("param1"));
+        assertEquals("The parameter value is wrong: param2", "value2", hstRequest.getParameter("param2"));
+        
+        url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "", containerURL);
+        url.setParameter("param1", "value1");
+        url.setParameter("param2", "value2");
+        
+        assertFalse("The url is wrong.", url.toString().contains(":param1=value1"));
+        assertFalse("The url is wrong.", url.toString().contains(":param2=value2"));
+        assertTrue("The url is wrong.", url.toString().contains("param1=value1"));
+        assertTrue("The url is wrong.", url.toString().contains("param2=value2"));
+        
+        ((MockHttpServletRequest) request).removeAllParameters();
+        ((MockHttpServletRequest) request).setParameter("param1", "value1");
+        ((MockHttpServletRequest) request).setParameter("param2", "value2");
+
+        hstRequest = new HstRequestImpl(request, requestContext, rootWindow, HstRequest.RENDER_PHASE);
+        assertEquals("The parameter value is wrong: param1", "value1", hstRequest.getParameter("param1"));
+        assertEquals("The parameter value is wrong: param2", "value2", hstRequest.getParameter("param2"));        
     }
     
     @Test

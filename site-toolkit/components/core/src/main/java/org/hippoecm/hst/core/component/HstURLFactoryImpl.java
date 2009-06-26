@@ -23,6 +23,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public class HstURLFactoryImpl implements HstURLFactory {
     
     protected HstContainerURLProviderProvider urlProviderProvider;
+    protected boolean referenceNamespaceIgnored;
 
     public void setUrlProviderProvider(HstContainerURLProviderProvider urlProviderProvider) {
         this.urlProviderProvider = urlProviderProvider;
@@ -40,14 +41,22 @@ public class HstURLFactoryImpl implements HstURLFactory {
         return this.urlProviderProvider.getPortletUrlProvider();
     }
     
+    public void setReferenceNamespaceIgnored(boolean referenceNamespaceIgnored) {
+        this.referenceNamespaceIgnored = referenceNamespaceIgnored;
+    }
+    
+    public boolean isReferenceNamespaceIgnored() {
+        return referenceNamespaceIgnored;
+    }
+    
     public HstURL createURL(String type, String referenceNamespace, HstContainerURL containerURL) {
-        return new HstURLImpl(type, containerURL, referenceNamespace, containerURL.isViaPortlet() ? getPortletUrlProvider() : getServletUrlProvider(), null);
+        return new HstURLImpl(type, containerURL, referenceNamespaceIgnored ? "" : referenceNamespace, containerURL.isViaPortlet() ? getPortletUrlProvider() : getServletUrlProvider(), null);
     }
     
     public HstURL createURL(String type, String referenceNamespace, HstContainerURL containerURL, HstRequestContext requestContext) {
         // if container url == null, use the requestContext baseUrl
         HstContainerURL baseContainerURL = (containerURL == null ? requestContext.getBaseURL() : containerURL);
-        return new HstURLImpl(type, baseContainerURL, referenceNamespace, requestContext.getBaseURL().isViaPortlet() ? getPortletUrlProvider() : getServletUrlProvider(), requestContext);
+        return new HstURLImpl(type, baseContainerURL, referenceNamespaceIgnored ? "" : referenceNamespace, requestContext.getBaseURL().isViaPortlet() ? getPortletUrlProvider() : getServletUrlProvider(), requestContext);
     }
 
 }

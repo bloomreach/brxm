@@ -63,4 +63,10 @@ public interface HstURLFactory {
      */
     HstURL createURL(String type, String referenceNamespace, HstContainerURL base, HstRequestContext requestContext);
     
+    /**
+     * Returns the flag if parameter namespacing is ignored or not. It returns false by default.
+     * @return
+     */
+    boolean isReferenceNamespaceIgnored();
+    
 }

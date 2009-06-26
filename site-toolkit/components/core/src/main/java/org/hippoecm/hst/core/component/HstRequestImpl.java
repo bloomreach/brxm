@@ -46,11 +46,13 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     protected Map<String, Map<String, Object>> namespaceAttributesMap = new HashMap<String, Map<String, Object>>();
     protected HstComponentWindow componentWindow;
     protected String parameterNameComponentSeparator;
+    protected boolean referenceNamespaceIgnored;
     
     public HstRequestImpl(HttpServletRequest servletRequest, HstRequestContext requestContext, HstComponentWindow componentWindow, String lifecyclePhase) {
         super(servletRequest);
         this.lifecyclePhase = lifecyclePhase;
         this.requestContext = requestContext;
+        this.referenceNamespaceIgnored = this.requestContext.getURLFactory().isReferenceNamespaceIgnored();
         this.componentWindow = componentWindow;
         this.parameterNameComponentSeparator = requestContext.getURLFactory().getServletUrlProvider().getParameterNameComponentSeparator();
     }
@@ -61,7 +63,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
 
     public Map<String, String []> getParameterMap() {
         String referenceNamespace = this.componentWindow.getReferenceNamespace();
-        return getParameterMap(referenceNamespace);
+        return getParameterMap(referenceNamespaceIgnored ? "" : referenceNamespace);
     }
     
     public Map<String, String []> getParameterMap(String referencePath) {

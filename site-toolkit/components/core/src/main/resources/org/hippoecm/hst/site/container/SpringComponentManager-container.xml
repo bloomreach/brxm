@@ -64,6 +64,7 @@
   <bean id="org.hippoecm.hst.core.component.HstURLFactory"
         class="org.hippoecm.hst.core.component.HstURLFactoryImpl">
     <property name="urlProviderProvider" ref="org.hippoecm.hst.core.container.HstContainerURLProviderProvider" />
+    <property name="referenceNamespaceIgnored" value="${parameter.namespace.ignored}" />
   </bean>
   
 </beans>
