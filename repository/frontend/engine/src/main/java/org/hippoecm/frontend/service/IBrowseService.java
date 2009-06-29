@@ -18,6 +18,12 @@ package org.hippoecm.frontend.service;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
+/**
+ * The browser service provides clients (plugins) the means to select a model in
+ * "the browser".  Client plugins can use this service to display the model.
+ *
+ * @param <T> type of models supported by the service
+ */
 public interface IBrowseService<T extends IModel> extends IClusterable {
     final static String SVN_ID = "$Id$";
 
