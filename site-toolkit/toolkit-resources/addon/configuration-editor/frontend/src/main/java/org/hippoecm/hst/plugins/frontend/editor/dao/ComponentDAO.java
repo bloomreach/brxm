@@ -33,21 +33,16 @@ import org.hippoecm.hst.plugins.frontend.editor.domain.Component.Parameter;
 import org.hippoecm.hst.plugins.frontend.util.JcrUtilities;
 
 public class ComponentDAO extends EditorDAO<Component> {
-    private static final String HST_REFERENCECOMPONENT = "hst:referencecomponent";
-
-    private static final String HST_PARAMETERVALUES = "hst:parametervalues";
-
-    private static final String HST_PARAMETERNAMES = "hst:parameternames";
-
-    private static final String HST_SERVERESOURCEPATH = "hst:serveresourcepath";
-
-    private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
-
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private static final String HST_REFERENCECOMPONENT = "hst:referencecomponent";
+    private static final String HST_PARAMETERVALUES = "hst:parametervalues";
+    private static final String HST_PARAMETERNAMES = "hst:parameternames";
+    private static final String HST_SERVERESOURCEPATH = "hst:serveresourcepath";
+    private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
     private static final String HST_TEMPLATE = "hst:template";
 
     public ComponentDAO(IPluginContext context, IPluginConfig config) {
@@ -104,9 +99,6 @@ public class ComponentDAO extends EditorDAO<Component> {
 
         component.setModel(JcrUtilities.rename(model, component.getName()));
 
-        //Save template
-        JcrUtilities.updateProperty(model, HST_TEMPLATE, component.getTemplate());
-
         //save componentClassName
         JcrUtilities.updateProperty(model, HST_COMPONENTCLASSNAME, component.getComponentClassName());
 
@@ -118,7 +110,7 @@ public class ComponentDAO extends EditorDAO<Component> {
         //- hst:parametervalues (string) multiple
         List<String> names = new ArrayList<String>();
         List<String> values = new ArrayList<String>();
-        for(Parameter param : component.getParameters()) {
+        for (Parameter param : component.getParameters()) {
             names.add(param.getName());
             values.add(param.getValue());
         }
@@ -127,19 +119,17 @@ public class ComponentDAO extends EditorDAO<Component> {
 
         //Create containers
         updateTemplate(component, model);
+
+        //Save template
+
     }
 
     private void updateTemplate(Component component, JcrNodeModel model) {
         String templateName = component.getTemplate();
-        if (templateName == null || (JcrUtilities.hasProperty(model, HST_TEMPLATE) && JcrUtilities.getProperty(model, HST_TEMPLATE).equals(templateName))) {
-            return;
-        }
+        JcrUtilities.updateProperty(model, HST_TEMPLATE, templateName);
 
         JcrNodeModel template = new JcrNodeModel(getHstContext().template.absolutePath(templateName));
         List<String> containers = JcrUtilities.getMultiValueProperty(template, TemplateDAO.HST_CONTAINERS);
-        if(containers == null) {
-            return;
-        }
 
         Node node = model.getNode();
         Set<String> nodes = new HashSet<String>();
@@ -150,12 +140,15 @@ public class ComponentDAO extends EditorDAO<Component> {
                     nodes.add(it.nextNode().getName());
                 }
             }
-            for (String container : containers) {
-                if (nodes.contains(container)) {
-                    nodes.remove(container);
-                    continue;
+
+            if (containers != null) {
+                for (String container : containers) {
+                    if (nodes.contains(container)) {
+                        nodes.remove(container);
+                        continue;
+                    }
+                    node.addNode(container, "hst:component");
                 }
-                node.addNode(container, "hst:component");
             }
             for (String name : nodes) {
                 node.getNode(name).remove();
