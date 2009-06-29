@@ -230,7 +230,7 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
             add(fc);
 
             //Component Classname widget
-            fc = new RequiredTextField("componentClassName");
+            fc = new TextField("componentClassName");
             fc.setOutputMarkupId(true);
             add(fc);
 
@@ -271,6 +271,5 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
     protected Dialog newAddDialog() {
         return new AddComponentDialog(dao, this, (JcrNodeModel) getModel());
     }
-
 
 }
