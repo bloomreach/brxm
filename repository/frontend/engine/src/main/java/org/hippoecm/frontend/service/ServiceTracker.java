@@ -24,9 +24,9 @@ public class ServiceTracker<S extends IClusterable> implements IServiceTracker<S
 
     private static final long serialVersionUID = 1L;
 
-    private Class clazz;
+    private Class<S> clazz;
 
-    public ServiceTracker(Class clazz) {
+    public ServiceTracker(Class<S> clazz) {
         this.clazz = clazz;
     }
 
