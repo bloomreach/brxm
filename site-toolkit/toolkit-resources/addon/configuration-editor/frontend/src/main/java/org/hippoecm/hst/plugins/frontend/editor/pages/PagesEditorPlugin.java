@@ -17,14 +17,13 @@
 package org.hippoecm.hst.plugins.frontend.editor.pages;
 
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.hst.plugins.frontend.editor.EditorPlugin;
-import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
+import org.hippoecm.hst.plugins.frontend.editor.components.ComponentEditorPlugin;
 import org.hippoecm.hst.plugins.frontend.editor.dao.PageDAO;
-import org.hippoecm.hst.plugins.frontend.editor.domain.Page;
 
-public class PagesEditorPlugin extends EditorPlugin<Page> {
+public class PagesEditorPlugin extends ComponentEditorPlugin {
     private static final long serialVersionUID = 1L;
 
     public PagesEditorPlugin(IPluginContext context, IPluginConfig config) {
@@ -32,13 +31,13 @@ public class PagesEditorPlugin extends EditorPlugin<Page> {
     }
 
     @Override
-    protected EditorDAO<Page> newDAO() {
-        return new PageDAO(getPluginContext(), getPluginConfig());
+    protected Dialog newAddDialog() {
+        return new AddPageDialog((PageDAO) dao, this, (JcrNodeModel) getModel());
     }
 
     @Override
-    protected Dialog newAddDialog() {
-        return null;
+    protected PageDAO newDAO() {
+        return new PageDAO(getPluginContext(), getPluginConfig());
     }
 
 }
