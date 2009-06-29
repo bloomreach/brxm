@@ -30,25 +30,30 @@ public class PersistableObjectBeanManagerImpl extends ObjectBeanManagerImpl impl
         // TODO Auto-generated method stub
 
     }
-
+    
+    public void update(Object content) throws ContentPersistenceException {
+        
+    }
+    
     public void remove(Object content) throws ContentPersistenceException {
         // TODO Auto-generated method stub
 
     }
 
-    public void reset() throws ContentPersistenceException {
-        // TODO Auto-generated method stub
-
-    }
-
     public void save() throws ContentPersistenceException {
-        // TODO Auto-generated method stub
-
+        try {
+            super.session.save();
+        } catch (Exception e) {
+            throw new ContentPersistenceException(e);
+        }
     }
 
-    public void update(Object content) throws ContentPersistenceException {
-        // TODO Auto-generated method stub
-
+    public void reset() throws ContentPersistenceException {
+        try {
+            super.session.refresh(false);
+        } catch (Exception e) {
+            throw new ContentPersistenceException(e);
+        }
     }
-
+    
 }
