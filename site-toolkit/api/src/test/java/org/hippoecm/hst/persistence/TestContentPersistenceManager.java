@@ -32,7 +32,7 @@ public class TestContentPersistenceManager {
     private Comment comment2;
     
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         cpm = new MockContentPersistenceManager();
         
         comment1 = new Comment("/content/blog/comments/comment1", "comment1 - title", "comment1 - content");
@@ -42,7 +42,7 @@ public class TestContentPersistenceManager {
     }
 
     @Test
-    public void testBasicUsage() {
+    public void testBasicUsage() throws Exception {
         Comment testComment1 = (Comment) cpm.getObject("/content/blog/comments/comment1");
         assertEquals(comment1, testComment1);
         Comment testComment2 = (Comment) cpm.getObject("/content/blog/comments/comment2");

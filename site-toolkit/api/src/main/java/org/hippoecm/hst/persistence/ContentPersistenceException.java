@@ -22,7 +22,7 @@ package org.hippoecm.hst.persistence;
  * 
  * @version $Id$
  */
-public class ContentPersistenceException extends RuntimeException {
+public class ContentPersistenceException extends Exception {
     
     private static final long serialVersionUID = 1L;
 

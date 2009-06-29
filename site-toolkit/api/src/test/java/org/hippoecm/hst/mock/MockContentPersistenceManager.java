@@ -122,11 +122,11 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
         return path;
     }
     
-    protected Object getSerializedCopy(Object object) {
+    protected Object getSerializedCopy(Object object) throws ContentPersistenceException {
         return bytesToObject(objectToBytes(object));
     }
     
-    protected byte [] objectToBytes(Object object) {
+    protected byte [] objectToBytes(Object object) throws ContentPersistenceException {
         if (!(object instanceof Serializable)) {
             throw new ContentPersistenceException("Object is not serializable.");            
         }
@@ -152,7 +152,7 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
         return bytes;
     }
     
-    protected Object bytesToObject(byte [] bytes) {
+    protected Object bytesToObject(byte [] bytes) throws ContentPersistenceException {
         Object object = null;
         
         ByteArrayInputStream bais = null;
