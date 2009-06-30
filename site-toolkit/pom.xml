@@ -564,6 +564,12 @@
       </dependency>
       
       <dependency>
+        <groupId>org.hippoecm</groupId>
+        <artifactId>hippo-ecm-addon-builtin-common</artifactId>
+        <version>${hippoecm.version}</version>
+      </dependency>
+      
+      <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-ocm</artifactId>
         <version>${jackrabbit.version}</version>

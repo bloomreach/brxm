@@ -37,7 +37,8 @@
     
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-connector</artifactId>
+      <artifactId>hippo-ecm-addon-builtin-common</artifactId>
+      <version>${hippoecm.version}</version>
     </dependency>
     
     <dependency>
