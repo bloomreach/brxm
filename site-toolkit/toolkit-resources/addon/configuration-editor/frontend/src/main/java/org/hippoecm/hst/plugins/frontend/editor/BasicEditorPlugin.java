@@ -109,23 +109,21 @@ public abstract class BasicEditorPlugin<K extends EditorBean> extends EditorPlug
     protected void doRemove() {
         try {
             final String name = bean.getModel().getNode().getName();
-            JcrNodeModel nextModel = bean.getModel().getParentModel();
-            if (dao.delete(bean)) {
-                Node next = nextModel.getNode();
-                if (next.hasNodes()) {
-                    boolean found = false;
-                    for (NodeIterator it = next.getNodes(); it.hasNext();) {
-                        Node node = it.nextNode();
-                        if (node.getName().compareTo(name) < 0) {
-                            found = true;
-                        } else if (found) {
-                            break;
-                        } else {
-                            found = true;
-                        }
-                        next = node;
+            Node next = bean.getModel().getParentModel().getNode();
+
+            for (NodeIterator it = next.getNodes(); it.hasNext();) {
+                Node node = it.nextNode();
+                if (node.getName().equals(name)) {
+                    if (it.hasNext()) {
+                        next = it.nextNode();
                     }
+                    break;
+                } else {
+                    next = node;
                 }
+            }
+
+            if (dao.delete(bean)) {
                 setModel(new JcrNodeModel(next));
                 info(new StringResourceModel("node.removed", this, null, new Object[] { name }).getString());
             }

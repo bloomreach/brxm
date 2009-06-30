@@ -5,6 +5,24 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 public class SitemapItem extends EditorBean {
     private static final long serialVersionUID = 1L;
 
+    public enum Matcher {
+        CUSTOM(""), WILDCARD("*"), INFINITE("**");
+
+        private String value;
+
+        Matcher(String initialValue) {
+            value = initialValue;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    };
+
     public SitemapItem(JcrNodeModel model) {
         super(model);
     }
@@ -36,6 +54,5 @@ public class SitemapItem extends EditorBean {
     public void setPage(String page) {
         this.page = page;
     }
-
 
 }
