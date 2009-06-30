@@ -24,6 +24,7 @@ import javax.portlet.PortletResponse;
 
 import org.hippoecm.hst.container.HstContainerPortlet;
 import org.hippoecm.hst.container.HstContainerPortletContext;
+import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLProvider {
@@ -39,12 +40,16 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
         String urlString = "";
         
         String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();
-        boolean containerResource = ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace);
+        boolean containerResource = false;
+        
+        if (!this.portletResourceURLEnabled) {
+            containerResource = ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace);
+        }
         
         StringBuilder path = new StringBuilder(100);
         String pathInfo = null;
         
-        if (!this.portletResourceURLEnabled && containerResource) {
+        if (containerResource) {
             String oldPathInfo = containerURL.getPathInfo();
             String resourcePath = containerURL.getResourceId();
             Map<String, String[]> oldParamMap = containerURL.getParameterMap();
@@ -63,12 +68,20 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
             path.append(getVirtualizedServletPath(containerURL, requestContext, pathInfo));
         } else {
             pathInfo = buildHstURLPath(containerURL);
-            path.append(containerURL.getServletPath());
+            
+            if (!this.portletResourceURLEnabled) {
+                VirtualHost virtualHost = requestContext.getVirtualHost();
+                containerResource = (virtualHost != null && virtualHost.getVirtualHosts().isExcluded(pathInfo));
+            }
+            
+            if (!containerResource) {
+                path.append(containerURL.getServletPath());
+            }
         }
         
         path.append(pathInfo);
         
-        if (!this.portletResourceURLEnabled && resourceWindowReferenceNamespace != null) {
+        if (containerResource) {
             path.insert(0, getVirtualizedContextPath(containerURL, requestContext, pathInfo));
             urlString = path.toString();
         } else {
