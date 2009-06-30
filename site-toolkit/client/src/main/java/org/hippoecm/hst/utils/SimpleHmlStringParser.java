@@ -22,7 +22,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,7 +32,6 @@ import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.provider.jcr.JCRUtilities;
 import org.hippoecm.hst.util.PathUtils;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +47,7 @@ public class SimpleHmlStringParser {
     public static final String SRC_ATTR_NAME = "src=\"";
     public static final String ATTR_END = "\"";
 
-    public static String parse(HippoNode node, String html, HttpServletRequest request, HstResponse response) {
+    public static String parse(Node node, String html, HttpServletRequest request, HstResponse response) {
         // only create if really needed
         StringBuffer sb = null;
         
@@ -161,7 +159,7 @@ public class SimpleHmlStringParser {
         }
     }
 
-    public static String getHref(String path, HippoNode node, HstRequestContext reqContext,
+    public static String getHref(String path, Node node, HstRequestContext reqContext,
             HttpServletResponse response) {
         
         try {
@@ -220,7 +218,7 @@ public class SimpleHmlStringParser {
         return false;
     }
     
-    public static String getSrcLink(String path, HippoNode node, HstRequestContext reqContext, HttpServletResponse response) {
+    public static String getSrcLink(String path, Node node, HstRequestContext reqContext, HttpServletResponse response) {
 
         try {
             path = URLDecoder.decode(path, "utf-8");

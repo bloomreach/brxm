@@ -33,7 +33,6 @@ import javax.servlet.jsp.tagext.VariableInfo;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.utils.SimpleHmlStringParser;
-import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,8 +89,8 @@ public class HstHtmlTag extends TagSupport {
             
         String html = hippoHtml.getContent();
        
-        if(hippoHtml.getNode() instanceof HippoNode && response instanceof HstResponse) {
-            html = SimpleHmlStringParser.parse((HippoNode)hippoHtml.getNode(), html, request, (HstResponse)response);
+        if(hippoHtml.getNode() != null && response instanceof HstResponse) {
+            html = SimpleHmlStringParser.parse(hippoHtml.getNode(), html, request, (HstResponse)response);
         } else {
             log.warn("Node should be a HippoNode and response a HstResponse");
         }

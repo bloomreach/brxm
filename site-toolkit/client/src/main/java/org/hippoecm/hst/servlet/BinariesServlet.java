@@ -18,6 +18,7 @@ package org.hippoecm.hst.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLDecoder;
 
 import javax.jcr.Credentials;
 import javax.jcr.Item;
@@ -38,7 +39,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.PathUtils;
@@ -304,6 +304,20 @@ public class BinariesServlet extends HttpServlet {
 
         if (path == null) {
             path = request.getPathInfo();
+            
+            try {
+                String characterEncoding = request.getCharacterEncoding();
+                
+                if (characterEncoding == null) {
+                    characterEncoding = "ISO-8859-1";
+                }
+
+                path = URLDecoder.decode(path, characterEncoding);
+            } catch (Exception e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Cannot decode path: {}. {}", path, e.toString());
+                }
+            }
         }
 
         if (path != null && !path.startsWith("/") && path.indexOf(':') > 0) {
