@@ -15,107 +15,83 @@
  */
 package org.hippoecm.hst.content.beans.manager;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
-import java.io.Serializable;
+import javax.jcr.Credentials;
+import javax.jcr.Repository;
+import javax.jcr.Session;
 
+import org.apache.commons.beanutils.MethodUtils;
+import org.hippoecm.hst.AbstractPersistencySpringTestCase;
+import org.hippoecm.hst.content.beans.PersistableTextPage;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
-public class TestPersistableObjectBeanManager {
+public class TestPersistableObjectBeanManager extends AbstractPersistencySpringTestCase {
     
+    protected Object repository;
+    protected Credentials defaultCredentials;
     private ContentPersistenceManager cpm;
-    private Comment comment1;
-    private Comment comment2;
     
     @Before
     public void setUp() throws Exception {
-        //cpm = new PersistableObjectBeanManagerImpl();
+        super.setUp();
         
-        comment1 = new Comment("/content/blog/comments/comment1", "comment1 - title", "comment1 - content");
-        comment2 = new Comment("/content/blog/comments/comment2", "comment2 - title", "comment2 - content");
-    }
-
-    @Test
-    public void testBasicUsage() throws Exception {
-        Comment testComment1 = (Comment) cpm.getObject("/content/blog/comments/comment1");
-        assertEquals(comment1, testComment1);
-        Comment testComment2 = (Comment) cpm.getObject("/content/blog/comments/comment2");
-        assertEquals(comment2, testComment2);
-        
-        testComment1.setTitle("testcomment1 - title");
-        testComment1.setContent("testcomment1 - content");
-        
-        cpm.update(testComment1);
-        
-        Comment testComment12 = (Comment) cpm.getObject("/content/blog/comments/comment1");
-        assertFalse(comment1.equals(testComment12));
-        assertEquals(testComment1, testComment12);
-        
-        cpm.remove(testComment1);
-        Comment testComment13 = (Comment) cpm.getObject("/content/blog/comments/comment1");
-        assertTrue(testComment13 == null);
-        
-        cpm.save();
+        this.repository = getComponent(Repository.class.getName());
+        this.defaultCredentials = getComponent(Credentials.class.getName());
     }
     
-    public static class Comment implements Serializable {
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
         
-        private static final long serialVersionUID = 1L;
-        
-        private String path;
-        private String title;
-        private String content;
-        
-        public Comment(String path, String title, String content) {
-            this.path = path;
-            this.title = title;
-            this.content = content;
-        }
-        
-        public String getPath() {
-            return path;
-        }
-        
-        public void setTitle(String title) {
-            this.title = title;
-        }
-        
-        public String getTitle() {
-            return title;
-        }
-        
-        public void setContent(String content) {
-            this.content = content;
-        }
-        
-        public String getContent() {
-            return content;
-        }
-        
-        @Override
-        public boolean equals(Object other) {
-            if (other instanceof Comment) {
-                if (this.title != null && this.content != null) {
-                    return (this.title.equals(((Comment) other).title) && this.content.equals(((Comment) other).content));
-                }
-            }
-            return false;
-        }
-        
-        @Override
-        public String toString() {
-            return "Title: " + title + ", Content: " + content;
-        }
-        
-        @Override
-        public int hashCode() {
-            return toString().hashCode();
+        if (this.repository != null) {
+            MethodUtils.invokeMethod(this.repository, "close", null);
         }
     }
+    
+    @Test
+    public void testBasicUsage() throws Exception {
+        Session session = null;
+        
+        try {
+            ObjectConverter objectConverter = getObjectConverter();
+            
+            session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
+            
+            cpm = new PersistableObjectBeanManagerImpl(session, objectConverter);
+            
+            PersistableTextPage page1 = (PersistableTextPage) cpm.getObject("/testcontent/documents/testproject/Solutions/SolutionsPage");
+            assertNotNull(page1);
+            
+//            cpm.create("/testcontent/documents/testproject/Solutions", "testproject:textpage", "CollaborationPortal");
+//            PersistableTextPage page2 = (PersistableTextPage) cpm.getObject("/testcontent/documents/testproject/Solutions/CollaborationPortal");
+//            assertNotNull(page2);
+            
+//          assertEquals(comment1, testComment1);
+//          Comment testComment2 = (Comment) cpm.getObject("/content/blog/comments/comment2");
+//          assertEquals(comment2, testComment2);
+//          
+//          testComment1.setTitle("testcomment1 - title");
+//          testComment1.setContent("testcomment1 - content");
+//          
+//          cpm.update(testComment1);
+//          
+//          Comment testComment12 = (Comment) cpm.getObject("/content/blog/comments/comment1");
+//          assertFalse(comment1.equals(testComment12));
+//          assertEquals(testComment1, testComment12);
+//          
+//          cpm.remove(testComment1);
+//          Comment testComment13 = (Comment) cpm.getObject("/content/blog/comments/comment1");
+//          assertTrue(testComment13 == null);
+//          
+//          cpm.save();
+        } finally {
+            if (session != null) session.logout();
+        }
+        
+    }
+    
 }
