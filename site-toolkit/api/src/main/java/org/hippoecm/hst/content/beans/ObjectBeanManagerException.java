@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.content.beans;
 
-import org.hippoecm.hst.persistence.ContentPersistenceException;
 
 /**
  * The <CODE>ObjectContentManagerException</CODE> class defines a general exception
@@ -24,7 +23,7 @@ import org.hippoecm.hst.persistence.ContentPersistenceException;
  * 
  * @version $Id$
  */
-public class ObjectBeanManagerException extends ContentPersistenceException {
+public class ObjectBeanManagerException extends Exception {
 
     private static final long serialVersionUID = 1L;
 

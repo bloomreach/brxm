@@ -18,6 +18,7 @@ package org.hippoecm.hst.content.beans.manager;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.persistence.ContentPersistenceException;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
@@ -28,9 +29,13 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
-public class PersistableObjectBeanManagerImpl extends ObjectBeanManagerImpl implements ContentPersistenceManager {
+public class PersistableObjectBeanManagerImpl implements ContentPersistenceManager {
 
     private static final String HIPPOSTD_FOLDER = "hippostd:folder";
+    
+    protected ObjectBeanManager obm;
+    protected Session session;
+    protected ObjectConverter objectConverter;
     
     // TODO: Are these category names correct?
     protected String workflowCategory = "default"; // just fairy declaration
@@ -40,7 +45,17 @@ public class PersistableObjectBeanManagerImpl extends ObjectBeanManagerImpl impl
     protected String documentRemovalWorkflowCategory = "remove-document"; // just fairy declaration
 
     public PersistableObjectBeanManagerImpl(Session session, ObjectConverter objectConverter) {
-        super(session, objectConverter);
+        obm = new ObjectBeanManagerImpl(session, objectConverter);
+        this.session = session;
+        this.objectConverter = objectConverter;
+    }
+    
+    public Object getObject(String absPath) throws ContentPersistenceException {
+        try {
+            return obm.getObject(absPath);
+        } catch (ObjectBeanManagerException e) {
+            throw new ContentPersistenceException(e);
+        }
     }
     
     public void create(String absPath, String nodeTypeName, String name) throws ContentPersistenceException {
@@ -131,5 +146,5 @@ public class PersistableObjectBeanManagerImpl extends ObjectBeanManagerImpl impl
             throw new ContentPersistenceException(e);
         }
     }
-    
+
 }
