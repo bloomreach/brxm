@@ -30,7 +30,6 @@ import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -52,12 +51,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
 
     static final Logger log = LoggerFactory.getLogger(JcrTypeStore.class);
 
-    private IPluginContext context;
     private Map<String, JcrTypeDescriptor> types = new HashMap<String, JcrTypeDescriptor>();
-
-    public JcrTypeStore(IPluginContext context) {
-        this.context = context;
-    }
 
     public JcrTypeDescriptor getTypeDescriptor(String name) {
         if ("rep:root".equals(name)) {
@@ -86,7 +80,6 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
     }
     
     public void close() {
-        context = null;
     }
 
     public void delete(ITypeDescriptor object) {
@@ -122,7 +115,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
                 WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 Workflow workflow = workflowManager.getWorkflow("editor", nsNode);
 
-                ((NamespaceWorkflow) workflow).addType(info.subType);
+                ((NamespaceWorkflow) workflow).addType("document", info.subType);
 
                 nsNode.refresh(false);
 
@@ -187,7 +180,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
     private JcrTypeDescriptor createTypeDescriptor(Node typeNode, String type) throws RepositoryException {
         try {
             if (typeNode.isNodeType(HippoNodeType.NT_NODETYPE)) {
-                return new JcrTypeDescriptor(new JcrNodeModel(typeNode), context);
+                return new JcrTypeDescriptor(new JcrNodeModel(typeNode));
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
@@ -233,8 +226,8 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
                 }
 
                 if (current != null) {
-                    ITypeDescriptor currentType = new JcrTypeDescriptor(new JcrNodeModel(current), null);
-                    ITypeDescriptor draftType = draft == null ? null : new JcrTypeDescriptor(new JcrNodeModel(draft), null);
+                    ITypeDescriptor currentType = new JcrTypeDescriptor(new JcrNodeModel(current));
+                    ITypeDescriptor draftType = draft == null ? null : new JcrTypeDescriptor(new JcrNodeModel(draft));
                     result.put(typeNode.getName(), new TypeConversion(JcrTypeStore.this, currentType, draftType).getTypeUpdate());
                 }
             }

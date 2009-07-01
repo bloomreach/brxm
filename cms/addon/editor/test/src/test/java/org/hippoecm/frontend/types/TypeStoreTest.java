@@ -33,7 +33,7 @@ public class TypeStoreTest extends PluginTest {
 
     @Test
     public void testJcrTypeDescriptor() throws Exception {
-        IStore<ITypeDescriptor> typeStore = new JcrTypeStore(context);
+        IStore<ITypeDescriptor> typeStore = new JcrTypeStore();
         ITypeDescriptor type = typeStore.load("test:test");
         assertEquals("test:test", type.getName());
 
@@ -66,7 +66,7 @@ public class TypeStoreTest extends PluginTest {
 
     @Test
     public void testJcrTypeSave() throws Exception {
-        IStore<ITypeDescriptor> jcrTypeStore = new JcrTypeStore(context);
+        IStore<ITypeDescriptor> jcrTypeStore = new JcrTypeStore();
 
         IStore<ITypeDescriptor> typeStore = new BuiltinTypeStore();
         ITypeDescriptor builtinType = typeStore.load("test:test2");

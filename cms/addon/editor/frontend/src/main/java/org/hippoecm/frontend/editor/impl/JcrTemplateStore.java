@@ -30,7 +30,6 @@ import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
@@ -50,11 +49,9 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
     static final Logger log = LoggerFactory.getLogger(JcrTemplateStore.class);
 
     private IStore<ITypeDescriptor> typeStore;
-    private IPluginContext context;
 
-    public JcrTemplateStore(IStore<ITypeDescriptor> typeStore, IPluginContext context) {
+    public JcrTemplateStore(IStore<ITypeDescriptor> typeStore) {
         this.typeStore = typeStore;
-        this.context = context;
     }
 
     public Iterator<IClusterConfig> find(Map<String, Object> criteria) {
@@ -75,7 +72,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
         if (nodeModel.getNode() == null) {
             throw new StoreException("Unknown template " + id);
         }
-        return new JcrClusterConfig(nodeModel, context);
+        return new JcrClusterConfig(nodeModel);
     }
 
     public String save(IClusterConfig cluster) throws StoreException {
@@ -95,7 +92,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
             try {
                 Node node = getTemplateNode(typeStore.load(type), true);
 
-                JcrClusterConfig jcrConfig = new JcrClusterConfig(new JcrNodeModel(node), null);
+                JcrClusterConfig jcrConfig = new JcrClusterConfig(new JcrNodeModel(node));
                 for (Map.Entry entry : (Set<Map.Entry>) ((Map) cluster).entrySet()) {
                     jcrConfig.put(entry.getKey(), entry.getValue());
                 }
@@ -164,7 +161,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
             if (node == null) {
                 throw new StoreException("No template found for " + type);
             } else {
-                return new JcrClusterConfig(new JcrNodeModel(node), context);
+                return new JcrClusterConfig(new JcrNodeModel(node));
             }
         } catch (RepositoryException ex) {
             log.error("Error while fetching template for type: " + type, ex);

@@ -27,7 +27,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.apache.wicket.Session;
-import org.hippoecm.frontend.model.event.ListenerList;
+import org.hippoecm.frontend.model.event.EventCollection;
+import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
     private JavaFieldDescriptor primary;
     private boolean node;
     private boolean mixin;
-    private List<ITypeListener> listeners;
+    private IObservationContext obContext;
 
     public JavaTypeDescriptor(String name, String type) {
         this.name = name;
@@ -57,7 +58,6 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
         this.primary = null;
         this.node = true;
         this.mixin = false;
-        this.listeners = new ListenerList<ITypeListener>();
     }
 
     public String getName() {
@@ -87,15 +87,19 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
     public void addField(IFieldDescriptor field) {
         String name = field.getName();
         fields.put(name, field);
-        for (ITypeListener listener : listeners) {
-            listener.fieldAdded(name);
+        if (obContext != null) {
+            EventCollection<TypeDescriptorEvent> collection = new EventCollection<TypeDescriptorEvent>();
+            collection.add(new TypeDescriptorEvent(this, field, TypeDescriptorEvent.EventType.FIELD_ADDED));
+            obContext.notifyObservers(collection);
         }
     }
 
     public void removeField(String name) {
-        fields.remove(name);
-        for (ITypeListener listener : listeners) {
-            listener.fieldRemoved(name);
+        IFieldDescriptor field = fields.remove(name);
+        if (obContext != null) {
+            EventCollection<TypeDescriptorEvent> collection = new EventCollection<TypeDescriptorEvent>();
+            collection.add(new TypeDescriptorEvent(this, field, TypeDescriptorEvent.EventType.FIELD_REMOVED));
+            obContext.notifyObservers(collection);
         }
     }
 
@@ -168,12 +172,14 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
         }
     }
 
-    public void addTypeListener(ITypeListener listener) {
-        listeners.add(listener);
+    public void setObservationContext(IObservationContext context) {
+        this.obContext = context;
     }
 
-    public void removeTypeListener(ITypeListener listener) {
-        listeners.remove(listener);
+    public void startObservation() {
+    }
+
+    public void stopObservation() {
     }
 
 }

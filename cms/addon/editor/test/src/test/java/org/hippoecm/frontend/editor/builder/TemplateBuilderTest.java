@@ -18,6 +18,7 @@ package org.hippoecm.frontend.editor.builder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -26,13 +27,16 @@ import javax.jcr.Node;
 
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.plugin.config.IClusterConfigListener;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
-import org.hippoecm.frontend.types.ITypeDescriptor.ITypeListener;
+import org.hippoecm.frontend.types.TypeDescriptorEvent;
 import org.junit.Test;
 
 public class TemplateBuilderTest extends PluginTest {
@@ -49,22 +53,36 @@ public class TemplateBuilderTest extends PluginTest {
         final List<IPluginConfig> added = new LinkedList<IPluginConfig>();
         final List<IPluginConfig> removed = new LinkedList<IPluginConfig>();
         final List<IPluginConfig> changed = new LinkedList<IPluginConfig>();
-        IClusterConfig config = builder.getTemplate();
-        config.addClusterConfigListener(new IClusterConfigListener() {
+        final IClusterConfig config = builder.getTemplate();
+        context.registerService(new IObserver() {
+            private static final long serialVersionUID = 1L;
 
-            public void onPluginAdded(IPluginConfig config) {
-                added.add(config);
+            public IObservable getObservable() {
+                return config;
             }
 
-            public void onPluginChanged(IPluginConfig config) {
-                removed.add(config);
-            }
-
-            public void onPluginRemoved(IPluginConfig config) {
-                changed.add(config);
+            public void onEvent(Iterator<? extends IEvent> events) {
+                while (events.hasNext()) {
+                    IEvent event = events.next();
+                    if (event instanceof ClusterConfigEvent) {
+                        ClusterConfigEvent cce = (ClusterConfigEvent) event;
+                        IPluginConfig config = cce.getPlugin();
+                        switch (cce.getType()) {
+                        case PLUGIN_ADDED:
+                            added.add(config);
+                            break;
+                        case PLUGIN_CHANGED:
+                            changed.add(config);
+                            break;
+                        case PLUGIN_REMOVED:
+                            removed.add(config);
+                            break;
+                        }
+                    }
+                }
             }
             
-        });
+        }, IObserver.class.getName());
 
         ITypeDescriptor type = builder.getTypeDescriptor();
         type.addField(new JavaFieldDescriptor("test", "nt:unstructured"));
@@ -82,7 +100,7 @@ public class TemplateBuilderTest extends PluginTest {
         TemplateBuilder builder = new TemplateBuilder("test:test", false, context);
 
         // initialize type descriptor and template
-        ITypeDescriptor type = builder.getTypeDescriptor();
+        final ITypeDescriptor type = builder.getTypeDescriptor();
         IClusterConfig config = builder.getTemplate();
         List<IPluginConfig> plugins = config.getPlugins();
         session.save();
@@ -91,20 +109,31 @@ public class TemplateBuilderTest extends PluginTest {
         // setup field removal detection
         final List<String> added = new LinkedList<String>();
         final List<String> removed = new LinkedList<String>();
-        type.addTypeListener(new ITypeListener() {
+        context.registerService(new IObserver() {
 
-            public void fieldAdded(String field) {
-                added.add(field);
+            public IObservable getObservable() {
+                return type;
             }
 
-            public void fieldRemoved(String field) {
-                removed.add(field);
-            }
-
-            public void fieldChanged(String field) {
+            public void onEvent(Iterator<? extends IEvent> events) {
+                while (events.hasNext()) {
+                    IEvent event = events.next();
+                    if (event instanceof TypeDescriptorEvent) {
+                        TypeDescriptorEvent cce = (TypeDescriptorEvent) event;
+                        String field = cce.getField().getName();
+                        switch (cce.getType()) {
+                        case FIELD_ADDED:
+                            added.add(field);
+                            break;
+                        case FIELD_REMOVED:
+                            removed.add(field);
+                            break;
+                        }
+                    }
+                }
             }
             
-        });
+        }, IObserver.class.getName());
 
         // remove a field plugin
         plugins.remove(1);
@@ -112,10 +141,6 @@ public class TemplateBuilderTest extends PluginTest {
         home.processEvents();
 
         assertEquals(1, removed.size());
-    }
-
-    @Test
-    public void testReorderPlugins() throws Exception {
     }
 
     @Test
@@ -141,6 +166,10 @@ public class TemplateBuilderTest extends PluginTest {
 
         assertTrue(prototype.getNode().hasProperty("test:titel_new"));
         assertEquals("titel", prototype.getNode().getProperty("test:titel_new").getString());
+    }
+
+    @Test
+    public void testReorderPlugins() throws Exception {
     }
 
     @Test

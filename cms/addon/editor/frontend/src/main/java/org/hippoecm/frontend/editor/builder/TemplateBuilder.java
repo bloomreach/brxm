@@ -40,17 +40,19 @@ import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.plugin.config.IClusterConfigListener;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
+import org.hippoecm.frontend.types.TypeDescriptorEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,8 +64,9 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateBuilder.class);
 
-    private boolean readonly;
     private String type;
+    private boolean readonly;
+    private IPluginContext context;
 
     private IStore<IClusterConfig> jcrTemplateStore;
     private IStore<IClusterConfig> builtinTemplateStore;
@@ -80,12 +83,16 @@ public class TemplateBuilder implements IDetachable, IObservable {
     private Map<String, String> paths;
     private transient Map<String, IFieldDescriptor> removedFields;
 
-    private IObservationContext observationContext;
+    private IObservationContext obContext;
+    private IObserver typeObserver;
+    private IObserver clusterObserver;
 
-    public TemplateBuilder(String type, boolean readonly, IPluginContext context) {
+    public TemplateBuilder(String type, boolean readonly, IPluginContext context) throws BuilderException {
         this.type = type;
         this.readonly = readonly;
-        this.jcrTypeStore = new JcrTypeStore(context);
+        this.context = context;
+
+        this.jcrTypeStore = new JcrTypeStore();
         this.builtinTypeStore = new BuiltinTypeStore();
         this.fieldTypeStore = new IStore<ITypeDescriptor>() {
             private static final long serialVersionUID = 1L;
@@ -115,96 +122,18 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         };
 
-        this.jcrTemplateStore = new JcrTemplateStore(fieldTypeStore, context);
+        this.jcrTemplateStore = new JcrTemplateStore(fieldTypeStore);
         this.builtinTemplateStore = new BuiltinTemplateStore(fieldTypeStore);
 
         this.prototypeStore = new JcrPrototypeStore();
-    }
 
-    public String getName() {
-        return type;
-    }
+        try {
+            typeDescriptor = jcrTypeStore.load(type);
 
-    public ITypeDescriptor getTypeDescriptor() throws BuilderException {
-        if (typeDescriptor == null) {
-            try {
-                typeDescriptor = jcrTypeStore.load(type);
-            } catch (StoreException ex) {
-                if (!readonly) {
-                    try {
-                        ITypeDescriptor builtin = builtinTypeStore.load(type);
-                        String id = jcrTypeStore.save(builtin);
-                        if (!id.equals(type)) {
-                            throw new BuilderException("Created type descriptor has invalid id " + id);
-                        }
-                        typeDescriptor = jcrTypeStore.load(id);
-                    } catch (StoreException ex2) {
-                        throw new BuilderException("Could not convert builtin type descriptor to editable copy", ex2);
-                    }
-                } else {
-                    throw new BuilderException("Could not load type descriptor", ex);
-                }
-            }
-            typeDescriptor.addTypeListener(new ITypeDescriptor.ITypeListener() {
-                private static final long serialVersionUID = 1L;
-
-                public void fieldAdded(String field) {
-                    IClusterConfig template;
-                    try {
-                        template = getTemplate();
-                    } catch (BuilderException ex) {
-                        log.error("Could not find template", ex);
-                        return;
-                    }
-
-                    IFieldDescriptor fieldDescriptor = typeDescriptor.getField(field);
-                    ITypeDescriptor fieldType;
-                    try {
-                        fieldType = fieldTypeStore.load(fieldDescriptor.getType());
-                    } catch (StoreException ex) {
-                        log.error("Unknown type " + fieldDescriptor.getType(), ex);
-                        return;
-                    }
-
-                    String pluginName = UUID.randomUUID().toString();
-                    JavaPluginConfig pluginConfig = new JavaPluginConfig(pluginName);
-                    if (fieldType.isNode()) {
-                        pluginConfig.put("plugin.class", NodeFieldPlugin.class.getName());
-                    } else {
-                        pluginConfig.put("plugin.class", PropertyFieldPlugin.class.getName());
-                    }
-                    pluginConfig.put("wicket.id", "${cluster.id}.field");
-                    pluginConfig.put("wicket.model", "${wicket.model}");
-                    pluginConfig.put("mode", "${mode}");
-                    pluginConfig.put("engine", "${engine}");
-                    pluginConfig.put("field", field);
-                    pluginConfig.put("caption", fieldType.getName());
-
-                    template.getPlugins().add(pluginConfig);
-
-                    updatePrototype();
-                }
-
-                public void fieldRemoved(String field) {
-                    updatePrototype();
-                }
-
-                public void fieldChanged(String field) {
-                    updatePrototype();
-                }
-
-            });
-        }
-        return typeDescriptor;
-    }
-
-    public IClusterConfig getTemplate() throws BuilderException {
-        if (clusterConfig == null) {
-            final ITypeDescriptor type = getTypeDescriptor();
-
+            // load template
             @SuppressWarnings("unchecked")
             Map<String, Object> criteria = new MiniMap(1);
-            criteria.put("type", type);
+            criteria.put("type", typeDescriptor);
             Iterator<IClusterConfig> iter = jcrTemplateStore.find(criteria);
             if (iter.hasNext()) {
                 clusterConfig = iter.next();
@@ -223,48 +152,42 @@ public class TemplateBuilder implements IDetachable, IObservable {
                     throw new BuilderException("No template found to display type");
                 }
             }
-
-            // maintain a list of field plugins, so that we can clean up when one
-            // of them disappears.
-            // TODO: check plugin class to verify that the plugin is a fieldplugin
-            final Map<String, String> fields = new TreeMap<String, String>();
-            for (IPluginConfig plugin : clusterConfig.getPlugins()) {
-                if (plugin.getString("field") != null) {
-                    fields.put(plugin.getName(), plugin.getString("field"));
+        } catch (StoreException ex) {
+            if (!readonly) {
+                try {
+                    ITypeDescriptor builtin = builtinTypeStore.load(type);
+                    String id = jcrTypeStore.save(builtin);
+                    if (!id.equals(type)) {
+                        throw new BuilderException("Created type descriptor has invalid id " + id);
+                    }
+                    typeDescriptor = jcrTypeStore.load(id);
+                } catch (StoreException ex2) {
+                    throw new BuilderException("Could not convert builtin type descriptor to editable copy", ex2);
                 }
+            } else {
+                throw new BuilderException("Could not load type descriptor", ex);
             }
-            clusterConfig.addClusterConfigListener(new IClusterConfigListener() {
-                private static final long serialVersionUID = 1L;
+        }
 
-                public void onPluginAdded(IPluginConfig config) {
-                    if (removedFields != null && config.getString("field") != null) {
-                        String field = config.getString("field");
-                        IFieldDescriptor descriptor = removedFields.remove(field);
-                        if (descriptor != null) {
-                            type.addField(descriptor);
-                        }
-                        fields.put(config.getName(), field);
-                    }
-                    notifyObservers();
-                }
+        registerObservers();
+    }
 
-                public void onPluginRemoved(IPluginConfig config) {
-                    if (fields.containsKey(config.getName())) {
-                        String field = fields.remove(config.getName());
-                        if (removedFields == null) {
-                            removedFields = new TreeMap<String, IFieldDescriptor>();
-                        }
-                        removedFields.put(field, new JavaFieldDescriptor(type.getField(field)));
-                        type.removeField(field);
-                    }
-                    notifyObservers();
-                }
+    public void dispose() {
+        unregisterObservers();
+    }
+    
+    public String getName() {
+        return type;
+    }
 
-                public void onPluginChanged(IPluginConfig config) {
-                    //                    notifyObservers();
-                }
+    public ITypeDescriptor getTypeDescriptor() throws BuilderException {
+        return typeDescriptor;
+    }
 
-            });
+    public IClusterConfig getTemplate() throws BuilderException {
+        if (clusterConfig == null) {
+            final ITypeDescriptor type = getTypeDescriptor();
+
         }
         return clusterConfig;
     }
@@ -312,20 +235,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
             }
         } catch (StoreException ex) {
             log.error(ex.getMessage());
-        }
-    }
-
-    private void notifyObservers() {
-        if (observationContext != null) {
-            EventCollection<IEvent> collection = new EventCollection<IEvent>();
-            collection.add(new IEvent() {
-
-                public IObservable getSource() {
-                    return TemplateBuilder.this;
-                }
-
-            });
-            observationContext.notifyObservers(collection);
         }
     }
 
@@ -404,8 +313,146 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
     }
 
+    protected void processFieldAdded(IFieldDescriptor fieldDescriptor) {
+        IClusterConfig template;
+        try {
+            template = getTemplate();
+        } catch (BuilderException ex) {
+            log.error("Could not find template", ex);
+            return;
+        }
+
+        ITypeDescriptor fieldType;
+        try {
+            fieldType = fieldTypeStore.load(fieldDescriptor.getType());
+        } catch (StoreException ex) {
+            log.error("Unknown type " + fieldDescriptor.getType(), ex);
+            return;
+        }
+
+        String pluginName = UUID.randomUUID().toString();
+        JavaPluginConfig pluginConfig = new JavaPluginConfig(pluginName);
+        if (fieldType.isNode()) {
+            pluginConfig.put("plugin.class", NodeFieldPlugin.class.getName());
+        } else {
+            pluginConfig.put("plugin.class", PropertyFieldPlugin.class.getName());
+        }
+        pluginConfig.put("wicket.id", "${cluster.id}.field");
+        pluginConfig.put("wicket.model", "${wicket.model}");
+        pluginConfig.put("mode", "${mode}");
+        pluginConfig.put("engine", "${engine}");
+        pluginConfig.put("field", fieldDescriptor.getName());
+        pluginConfig.put("caption", fieldType.getName());
+
+        template.getPlugins().add(pluginConfig);
+    }
+    
+    private void registerObservers() {
+        if (typeDescriptor != null) {
+            context.registerService(typeObserver = new IObserver() {
+    
+                public IObservable getObservable() {
+                    return typeDescriptor;
+                }
+    
+                public void onEvent(Iterator<? extends IEvent> events) {
+                    while (events.hasNext()) {
+                        IEvent event = events.next();
+                        if (event instanceof TypeDescriptorEvent) {
+                            TypeDescriptorEvent tde = (TypeDescriptorEvent) event;
+                            switch (tde.getType()) {
+                            case FIELD_ADDED:
+                                processFieldAdded(tde.getField());
+                                break;
+                            case FIELD_REMOVED:
+                            case FIELD_CHANGED:
+                            }
+                            updatePrototype();
+                        }
+                    }
+                }
+                
+            }, IObserver.class.getName());
+        }
+
+        if (clusterConfig != null) {
+            // maintain a list of field plugins, so that we can clean up when one
+            // of them disappears.
+            // TODO: check plugin class to verify that the plugin is a fieldplugin
+            final Map<String, String> fields = new TreeMap<String, String>();
+            for (IPluginConfig plugin : clusterConfig.getPlugins()) {
+                if (plugin.getString("field") != null) {
+                    fields.put(plugin.getName(), plugin.getString("field"));
+                }
+            }
+            context.registerService(clusterObserver = new IObserver() {
+    
+                public IObservable getObservable() {
+                    return clusterConfig;
+                }
+    
+                public void onEvent(Iterator<? extends IEvent> events) {
+                    while (events.hasNext()) {
+                        IEvent event = events.next();
+                        if (event instanceof ClusterConfigEvent) {
+                            ClusterConfigEvent cce = (ClusterConfigEvent) event;
+                            IPluginConfig config = cce.getPlugin();
+                            switch (cce.getType()) {
+                            case PLUGIN_ADDED:
+                                if (removedFields != null && config.getString("field") != null) {
+                                    String field = config.getString("field");
+                                    IFieldDescriptor descriptor = removedFields.remove(field);
+                                    if (descriptor != null) {
+                                        typeDescriptor.addField(descriptor);
+                                    }
+                                    fields.put(config.getName(), field);
+                                }
+                                notifyObservers();
+                                break;
+                            case PLUGIN_CHANGED:
+                                break;
+                            case PLUGIN_REMOVED:
+                                if (fields.containsKey(config.getName())) {
+                                    String field = fields.remove(config.getName());
+                                    if (removedFields == null) {
+                                        removedFields = new TreeMap<String, IFieldDescriptor>();
+                                    }
+                                    removedFields.put(field, new JavaFieldDescriptor(typeDescriptor.getField(field)));
+                                    typeDescriptor.removeField(field);
+                                }
+                                notifyObservers();
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+            }, IObserver.class.getName());
+        }
+
+    }
+
+    private void unregisterObservers() {
+        if (typeObserver != null) {
+            context.unregisterService(typeObserver, IObserver.class.getName());
+            typeObserver = null;
+        }
+        if (clusterObserver != null) {
+            context.unregisterService(clusterObserver, IObserver.class.getName());
+            clusterObserver = null;
+        }
+    }
+
+    // IDetachable
+    
+    public void detach() {
+        prototypeStore.detach();
+    }
+
+    // IObservable
+
     public void setObservationContext(IObservationContext context) {
-        this.observationContext = context;
+        this.obContext = context;
     }
 
     public void startObservation() {
@@ -414,8 +461,18 @@ public class TemplateBuilder implements IDetachable, IObservable {
     public void stopObservation() {
     }
 
-    public void detach() {
-        prototypeStore.detach();
+    private void notifyObservers() {
+        if (obContext != null) {
+            EventCollection<IEvent> collection = new EventCollection<IEvent>();
+            collection.add(new IEvent() {
+
+                public IObservable getSource() {
+                    return TemplateBuilder.this;
+                }
+
+            });
+            obContext.notifyObservers(collection);
+        }
     }
 
 }

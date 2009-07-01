@@ -23,7 +23,6 @@ import java.util.AbstractSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,8 +33,13 @@ import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.frontend.model.event.EventCollection;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.IPluginConfigListener;
+import org.hippoecm.frontend.plugin.config.PluginConfigEvent;
 
 public abstract class AbstractPluginDecorator extends AbstractMap implements IPluginConfig, IDetachable {
     @SuppressWarnings("unused")
@@ -66,23 +70,13 @@ public abstract class AbstractPluginDecorator extends AbstractMap implements IPl
     }
 
     protected IPluginConfig upstream;
-    private List<IPluginConfigListener> listeners;
+    protected IObservationContext obContext;
+    private IObserver observer;
     private Map<IPluginConfig, IPluginConfig> wrapped;
 
     public AbstractPluginDecorator(IPluginConfig upstream) {
         this.upstream = upstream;
-        this.listeners = new LinkedList<IPluginConfigListener>();
         this.wrapped = new HashMap<IPluginConfig, IPluginConfig>();
-        upstream.addPluginConfigListener(new IPluginConfigListener() {
-            private static final long serialVersionUID = 1L;
-
-            public void onPluginConfigChanged() {
-                for (IPluginConfigListener listener : listeners) {
-                    listener.onPluginConfigChanged();
-                }
-            }
-
-        });
     }
 
     public String getName() {
@@ -99,14 +93,6 @@ public abstract class AbstractPluginDecorator extends AbstractMap implements IPl
             configSet.add(wrapConfig(config));
         }
         return configSet;
-    }
-
-    public void addPluginConfigListener(IPluginConfigListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removePluginConfigListener(IPluginConfigListener listener) {
-        listeners.add(listener);
     }
 
     public void detach() {
@@ -400,5 +386,40 @@ public abstract class AbstractPluginDecorator extends AbstractMap implements IPl
     }
 
     protected abstract Object decorate(Object object);
+
+    public void setObservationContext(IObservationContext context) {
+        this.obContext = context;
+    }
+
+    protected IObservationContext getObservationContext() {
+        return obContext;
+    }
+    
+    public void startObservation() {
+        obContext.registerObserver(observer = new IObserver() {
+            private static final long serialVersionUID = 1L;
+
+            public IObservable getObservable() {
+                return upstream;
+            }
+
+            public void onEvent(Iterator<? extends IEvent> events) {
+                EventCollection<PluginConfigEvent> collection = new EventCollection<PluginConfigEvent>();
+                while (events.hasNext()) {
+                    IEvent event = events.next();
+                    if (event instanceof PluginConfigEvent) {
+                        PluginConfigEvent pce = (PluginConfigEvent) event;
+                        collection.add(new PluginConfigEvent(AbstractPluginDecorator.this, PluginConfigEvent.EventType.CONFIG_CHANGED));
+                    }
+                }
+                obContext.notifyObservers(collection);
+            }
+            
+        });
+    }
+
+    public void stopObservation() {
+        obContext.unregisterObserver(observer);
+    }
 
 }

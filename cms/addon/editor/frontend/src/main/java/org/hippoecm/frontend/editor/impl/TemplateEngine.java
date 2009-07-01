@@ -31,7 +31,6 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -53,8 +52,8 @@ public class TemplateEngine implements ITemplateEngine {
     private IStore<IClusterConfig> builtinTemplateStore;
     private JcrPrototypeStore prototypeStore;
 
-    public TemplateEngine(IPluginContext context) {
-        final IStore<ITypeDescriptor> jcrTypeStore = new JcrTypeStore(context);
+    public TemplateEngine() {
+        final IStore<ITypeDescriptor> jcrTypeStore = new JcrTypeStore();
         final IStore<ITypeDescriptor> builtinTypeStore = new BuiltinTypeStore();
         typeStore = new IStore<ITypeDescriptor>() {
             private static final long serialVersionUID = 1L;
@@ -94,7 +93,7 @@ public class TemplateEngine implements ITemplateEngine {
 
         };
 
-        this.jcrTemplateStore = new JcrTemplateStore(typeStore, context);
+        this.jcrTemplateStore = new JcrTemplateStore(typeStore);
         this.builtinTemplateStore = new BuiltinTemplateStore(typeStore);
         this.prototypeStore = new JcrPrototypeStore();
     }

@@ -23,10 +23,13 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.ocm.JcrObject;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.TypeDescriptorEvent;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,17 +42,18 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
 
     private static final Logger log = LoggerFactory.getLogger(JcrFieldDescriptor.class);
 
-    private JcrTypeDescriptor type;
     private Set<String> excluded;
+    private ITypeDescriptor type;
+    private String name;
 
-    public JcrFieldDescriptor(JcrNodeModel model, JcrTypeDescriptor type, IPluginContext context) {
-        super(model, context);
+    public JcrFieldDescriptor(JcrNodeModel model, JcrTypeDescriptor type) {
+        super(model);
         this.type = type;
-        init();
+        this.name = getString(HippoNodeType.HIPPO_NAME);
     }
 
     public String getName() {
-        return getString(HippoNodeType.HIPPO_NAME);
+        return name;
     }
 
     public String getPath() {
@@ -132,13 +136,10 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
     }
 
     @Override
-    protected void onEvent(Iterator<? extends IEvent> event) {
-        type.notifyFieldChanged(this);
-    }
-
-    @Override
-    protected void dispose() {
-        super.dispose();
+    protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
+        EventCollection<TypeDescriptorEvent> collection = new EventCollection<TypeDescriptorEvent>();
+        collection.add(new TypeDescriptorEvent(type, this, TypeDescriptorEvent.EventType.FIELD_CHANGED));
+        context.notifyObservers(collection);
     }
 
     void copy(IFieldDescriptor source) {

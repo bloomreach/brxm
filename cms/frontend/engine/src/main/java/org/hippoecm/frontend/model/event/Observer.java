@@ -13,15 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugin.config;
+package org.hippoecm.frontend.model.event;
 
-import java.util.EventListener;
+public abstract class Observer implements IObserver {
+    private static final long serialVersionUID = 1L;
 
-import org.apache.wicket.IClusterable;
-
-public interface IPluginConfigListener extends EventListener, IClusterable {
-    @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
-
-    void onPluginConfigChanged();
+    IObservable observable;
+    
+    public Observer(IObservable observable) {
+        this.observable = observable;
+    }
+    
+    public IObservable getObservable() {
+        return observable;
+    }
+    
 }

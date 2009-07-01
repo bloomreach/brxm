@@ -36,7 +36,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -150,19 +149,16 @@ public class CndSerializer implements IClusterable {
         }
     }
 
-    private IPluginContext context;
     private JcrSessionModel jcrSession;
     private Map<String, String> namespaces;
     private LinkedHashMap<String, TypeEntry> types;
     private IStore<ITypeDescriptor> jcrTypeStore;
     private IStore<ITypeDescriptor> builtinTypeStore;
 
-    public CndSerializer(IPluginContext context, JcrSessionModel sessionModel, String namespace)
-            throws RepositoryException, StoreException {
-        this.context = context;
+    public CndSerializer(JcrSessionModel sessionModel, String namespace) throws RepositoryException, StoreException {
         this.jcrSession = sessionModel;
 
-        this.jcrTypeStore = new JcrTypeStore(context);
+        this.jcrTypeStore = new JcrTypeStore();
         this.builtinTypeStore = new BuiltinTypeStore();
 
         initTypes(namespace);
@@ -219,10 +215,10 @@ public class CndSerializer implements IClusterable {
                 Node version = versions.nextNode();
                 if (version.isNodeType(HippoNodeType.NT_REMODEL)) {
                     if (version.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
-                        oldType = new JcrTypeDescriptor(new JcrNodeModel(version), context);
+                        oldType = new JcrTypeDescriptor(new JcrNodeModel(version));
                     }
                 } else {
-                    newType = new JcrTypeDescriptor(new JcrNodeModel(version), context);
+                    newType = new JcrTypeDescriptor(new JcrNodeModel(version));
                 }
             }
 

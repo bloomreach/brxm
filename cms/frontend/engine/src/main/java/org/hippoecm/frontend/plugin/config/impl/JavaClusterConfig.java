@@ -18,9 +18,10 @@ package org.hippoecm.frontend.plugin.config.impl;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hippoecm.frontend.model.event.ListenerList;
+import org.hippoecm.frontend.model.event.EventCollection;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.plugin.config.IClusterConfigListener;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfig {
@@ -33,14 +34,12 @@ public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfi
     private List<String> services;
     private List<String> references;
     private List<String> properties;
-    private List<IClusterConfigListener> listeners;
 
     public JavaClusterConfig() {
         plugins = new LinkedList<IPluginConfig>();
         services = new LinkedList<String>();
         references = new LinkedList<String>();
         properties = new LinkedList<String>();
-        listeners = new ListenerList<IClusterConfigListener>();
     }
 
     public JavaClusterConfig(IClusterConfig upstream) {
@@ -53,13 +52,15 @@ public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfi
         this.services = upstream.getServices();
         this.references = upstream.getReferences();
         this.properties = upstream.getProperties();
-        this.listeners = new ListenerList<IClusterConfigListener>();
     }
 
     public void addPlugin(IPluginConfig config) {
         plugins.add(config);
-        for (IClusterConfigListener listener : listeners) {
-            listener.onPluginAdded(config);
+        IObservationContext obContext = getObservationContext();
+        if (obContext != null) {
+            EventCollection<ClusterConfigEvent> collection = new EventCollection<ClusterConfigEvent>();
+            collection.add(new ClusterConfigEvent(this, config, ClusterConfigEvent.EventType.PLUGIN_ADDED));
+            obContext.notifyObservers(collection);
         }
     }
 
@@ -89,14 +90,6 @@ public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfi
 
     public List<String> getProperties() {
         return properties;
-    }
-
-    public void addClusterConfigListener(IClusterConfigListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeClusterConfigListener(IClusterConfigListener listener) {
-        listeners.remove(listener);
     }
 
 }

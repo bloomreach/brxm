@@ -31,9 +31,10 @@ import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.model.event.ListenerList;
+import org.hippoecm.frontend.model.event.EventCollection;
+import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.IPluginConfigListener;
+import org.hippoecm.frontend.plugin.config.PluginConfigEvent;
 
 public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
     @SuppressWarnings("unused")
@@ -41,11 +42,11 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
 
     private static final long serialVersionUID = 1L;
 
-    private List<IPluginConfigListener> listeners = new ListenerList<IPluginConfigListener>();
     private Set<IPluginConfig> configSet = new LinkedHashSet<IPluginConfig>();
 
     private final int hashCode = new Object().hashCode();
     private String pluginInstanceName = null;
+    private IObservationContext obContext;
 
     public JavaPluginConfig() {
         super();
@@ -322,8 +323,10 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
 
     public Object put(String key, Object value) {
         Object oldValue = super.put(key, value);
-        for (IPluginConfigListener listener : listeners) {
-            listener.onPluginConfigChanged();
+        if (obContext != null) {
+            EventCollection<PluginConfigEvent> collection = new EventCollection<PluginConfigEvent>();
+            collection.add(new PluginConfigEvent(this, PluginConfigEvent.EventType.CONFIG_CHANGED));
+            obContext.notifyObservers(collection);
         }
         return oldValue;
     }
@@ -377,14 +380,6 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
         };
     }
 
-    public void addPluginConfigListener(IPluginConfigListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removePluginConfigListener(IPluginConfigListener listener) {
-        listeners.remove(listener);
-    }
-
     // override super equals(), hashCode() as they depend on entry equivalence
 
     @Override
@@ -395,6 +390,20 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
     @Override
     public int hashCode() {
         return hashCode;
+    }
+
+    public void setObservationContext(IObservationContext context) {
+        this.obContext = context;
+    }
+
+    protected IObservationContext getObservationContext() {
+        return obContext;
+    }
+
+    public void startObservation() {
+    }
+
+    public void stopObservation() {
     }
 
 }

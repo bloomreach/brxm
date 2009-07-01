@@ -39,7 +39,7 @@ public class JcrApplicationFactory implements IApplicationFactory, IDetachable {
         this.nodeModel = model;
     }
 
-    public IServiceFactory<IPluginConfigService> getDefaultApplication() {
+    public IPluginConfigService getDefaultApplication() {
         try {
             Node applicationFolder = nodeModel.getNode();
             if (applicationFolder.getNodes().hasNext()) {
@@ -53,7 +53,7 @@ public class JcrApplicationFactory implements IApplicationFactory, IDetachable {
         return null;
     }
 
-    public IServiceFactory<IPluginConfigService> getApplication(String name) {
+    public IPluginConfigService getApplication(String name) {
         log.info("Starting application: " + name);
         try {
             Node applicationFolder = nodeModel.getNode();
@@ -68,7 +68,7 @@ public class JcrApplicationFactory implements IApplicationFactory, IDetachable {
         return null;
     }
 
-    private IServiceFactory<IPluginConfigService> getApplication(Node applicationNode) throws RepositoryException {
+    private IPluginConfigService getApplication(Node applicationNode) throws RepositoryException {
         if (applicationNode.hasNodes()) {
             Node clusterNode = applicationNode.getNodes().nextNode();
             return new JcrConfigServiceFactory(new JcrNodeModel(applicationNode), clusterNode.getName());

@@ -41,7 +41,7 @@ public class CndSerializationTest extends PluginTest {
     @Test
     public void testSerialization() throws Exception {
         JcrSessionModel sessionModel = ((UserSession) Session.get()).getJcrSessionModel();
-        CndSerializer serializer = new CndSerializer(context, sessionModel, "test");
+        CndSerializer serializer = new CndSerializer(sessionModel, "test");
         String cnd = serializer.getOutput();
 
         CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new StringReader(cnd), "test");
