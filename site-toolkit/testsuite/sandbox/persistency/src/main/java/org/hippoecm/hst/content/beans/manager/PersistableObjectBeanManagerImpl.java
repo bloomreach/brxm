@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.content.beans.manager;
 
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.Session;
 
@@ -39,6 +41,7 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
     protected ObjectBeanManager obm;
     protected Session session;
     protected ObjectConverter objectConverter;
+    protected Map<String, ContentPersistenceBinder> nodeTypeBinders;
     
     protected String folderNodeWorkflowCategory = "internal"; // found in Niels's example
     protected String documentNodeWorkflowCategory = "default"; // found in Niels's example
@@ -48,9 +51,14 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
     protected boolean publishAfterUpdate;
     
     public PersistableObjectBeanManagerImpl(Session session, ObjectConverter objectConverter) {
+        this(session, objectConverter, null);
+    }
+    
+    public PersistableObjectBeanManagerImpl(Session session, ObjectConverter objectConverter, Map<String, ContentPersistenceBinder> nodeTypeBinders) {
         obm = new ObjectBeanManagerImpl(session, objectConverter);
         this.session = session;
         this.objectConverter = objectConverter;
+        this.nodeTypeBinders = nodeTypeBinders;
     }
     
     public Object getObject(String absPath) throws ContentPersistenceException {
@@ -91,7 +99,32 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
     }
     
     public void update(Object content) throws ContentPersistenceException {
-        update(content, null);
+        if (content instanceof HippoBean) {
+            ContentPersistenceBinder binder = null;
+
+            if (nodeTypeBinders != null && !nodeTypeBinders.isEmpty()) {
+                HippoBean contentBean = (HippoBean) content;
+                Node contentNode = contentBean.getNode();
+                
+                try {
+                    if (contentNode instanceof HippoNode) {
+                        contentNode = ((HippoNode) contentNode).getCanonicalNode();
+                    }
+                    
+                    binder = nodeTypeBinders.get(contentNode.getPrimaryNodeType().getName());
+                    
+                    if (binder == null && content instanceof ContentPersistenceBinder) {
+                        binder = (ContentPersistenceBinder) content;
+                    }
+                } catch (Exception e) {
+                    throw new ContentPersistenceException(e);
+                }
+            }
+            
+            update(content, binder);
+        } else {
+            throw new ContentPersistenceException("The content object parameter should be an instance of HippoBean.");
+        }
     }
     
     public void update(Object content, ContentPersistenceBinder customBinder) throws ContentPersistenceException {

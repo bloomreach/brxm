@@ -18,6 +18,9 @@ package org.hippoecm.hst.content.beans.manager;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.Repository;
@@ -52,6 +55,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
     protected Object repository;
     protected Credentials defaultCredentials;
     private ContentPersistenceManager cpm;
+    private Map<String, ContentPersistenceBinder> persistBinders;
     
     @Before
     public void setUp() throws Exception {
@@ -59,6 +63,8 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
         
         this.repository = getComponent(Repository.class.getName());
         this.defaultCredentials = getComponent(Credentials.class.getName());
+        this.persistBinders = new HashMap<String, ContentPersistenceBinder>();
+        this.persistBinders.put("testproject:textpage", new PersistableTextPageBinder());
     }
     
     @After
@@ -79,7 +85,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
             
             session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
             
-            cpm = new PersistableObjectBeanManagerImpl(session, objectConverter);
+            cpm = new PersistableObjectBeanManagerImpl(session, objectConverter, persistBinders);
             ((PersistableObjectBeanManagerImpl) cpm).setPublishAfterUpdate(true);
             
             // basic object retrieval from the content
@@ -96,17 +102,11 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
                 
                 newPage.setTitle("Collaboration Portal Title");
 
-                cpm.update(newPage, new ContentPersistenceBinder() {
-                    public void bind(Object contentObject, Object contentNode) throws ContentPersistenceBindingException {
-                        PersistableTextPage documentObject = (PersistableTextPage) contentObject;
-                        Node documentNode = (Node) contentNode;
-                        try {
-                            documentNode.setProperty("testproject:title", documentObject.getTitle());
-                        } catch (Exception e) {
-                            throw new ContentPersistenceBindingException(e);
-                        }
-                    }
-                });
+                // custom mapping binder is already provided during CPM instantiation.
+                // but you can also provide your custom binder as the second parameter.
+                // if any binder is not found and the first parameter (newPage) is instanceof ContentPersistenceBinder,
+                // then the POJO object in the first parameter will be used as a binder. 
+                cpm.update(newPage);
                 
                 // retrieves the document created just before
                 newPage = (PersistableTextPage) cpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
@@ -141,7 +141,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
             
             session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
             
-            cpm = new PersistableObjectBeanManagerImpl(session, objectConverter);
+            cpm = new PersistableObjectBeanManagerImpl(session, objectConverter, persistBinders);
             
             HippoFolderBean newFolder = null;
             
@@ -162,6 +162,21 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
             cpm.save();
         } finally {
             if (session != null) session.logout();
+        }
+        
+    }
+    
+    private class PersistableTextPageBinder implements ContentPersistenceBinder {
+        
+        public void bind(Object contentObject, Object contentNode) throws ContentPersistenceBindingException {
+            PersistableTextPage documentObject = (PersistableTextPage) contentObject;
+            Node documentNode = (Node) contentNode;
+            
+            try {
+                documentNode.setProperty("testproject:title", documentObject.getTitle());
+            } catch (Exception e) {
+                throw new ContentPersistenceBindingException(e);
+            }
         }
         
     }
