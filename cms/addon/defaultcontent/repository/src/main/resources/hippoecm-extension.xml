@@ -56,6 +56,102 @@
     </sv:property>
   </sv:node>
 
+  <!-- document type -->
+  <sv:node sv:name="defaultcontent-type-document">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3001.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>types/defaultcontent-type-document.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces/defaultcontent</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <!-- text type -->
+  <sv:node sv:name="defaultcontent-type-text">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3001.2</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>types/defaultcontent-type-text.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces/defaultcontent</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <!-- article type -->
+  <sv:node sv:name="defaultcontent-type-article">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3001.3</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>types/defaultcontent-type-article.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces/defaultcontent</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <!-- event type -->
+  <sv:node sv:name="defaultcontent-type-event">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3001.4</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>types/defaultcontent-type-event.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces/defaultcontent</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <!-- news type -->
+  <sv:node sv:name="defaultcontent-type-news">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3001.5</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>types/defaultcontent-type-news.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces/defaultcontent</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <!-- overview type -->
+  <sv:node sv:name="defaultcontent-type-overview">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3001.6</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>types/defaultcontent-type-overview.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces/defaultcontent</sv:value>
+    </sv:property>
+  </sv:node>
+
   <!-- defaultcontent content -->
   <sv:node sv:name="content">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

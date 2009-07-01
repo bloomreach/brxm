@@ -18,6 +18,7 @@ package org.hippoecm.editor.repository.impl;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.jcr.RepositoryException;
@@ -45,15 +46,33 @@ public class NamespaceWorkflowImpl extends WorkflowImpl implements NamespaceWork
     public Map<String, Serializable> hints() {
         Map<String, Serializable> hints = super.hints();
         hints.put("prefix", prefix);
+        /*
+        try {
+            FolderWorkflow folderWorkflow = (FolderWorkflow) getWorkflowContext().getWorkflow("internal");
+            Map<String, Set<String>> prototypes = (Map<String, Set<String>>) folderWorkflow.hints().get("prototypes");
+            hints.put("templates", (Serializable) prototypes.get("new-type"));
+        } catch (MappingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (WorkflowException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }*/
         return hints;
     }
 
-    public String addType(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public String addType(String template, String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         FolderWorkflow folderWorkflow = (FolderWorkflow) getWorkflowContext().getWorkflow("internal");
         Map<String,String> replacements = new TreeMap<String,String>();
-        replacements.put("./_name", name);
         replacements.put("name", name);
-        return folderWorkflow.add("Template Editor Type", "type", replacements);
+        replacements.put("prefix:document", prefix + ":document");
+        return folderWorkflow.add("new-type", template, replacements);
     }
 
     public void updateModel(String cnd, Object updates) throws WorkflowException, MappingException, RepositoryException, RemoteException {

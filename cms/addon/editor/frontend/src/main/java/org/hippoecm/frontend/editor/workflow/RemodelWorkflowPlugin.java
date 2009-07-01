@@ -71,7 +71,7 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             @Override
             protected String execute(Workflow wf) throws Exception {
                 NamespaceWorkflow workflow = (NamespaceWorkflow) wf;
-                workflow.addType(name);
+                workflow.addType("document", name);
                 return null;
             }
         });

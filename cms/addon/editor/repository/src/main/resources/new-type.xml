@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.3" xmlns:hippo="http://www.hippoecm.org/nt/1.3" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.4" xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions" xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:rep="internal" sv:name="Template Editor Type">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="new-type">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippostd:templatequery</sv:value>
   </sv:property>
@@ -7,29 +7,56 @@
     <sv:value>xpath</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:statement" sv:type="String">
-    <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/Template_x0020_Editor_x0020_Type/hippostd:templates/type</sv:value>
+    <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-type/hippostd:templates/node()</sv:value>
   </sv:property>
   <sv:property sv:name="hippostd:modify" sv:type="String">
     <sv:value>./_name</sv:value>
     <sv:value>$name</sv:value>
+    <sv:value>./hippo:nodetype/hippo:nodetype/hippo:supertype</sv:value>
+    <sv:value>$prefix:document</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
     <sv:value>hippo:translated</sv:value>
     <sv:value>hippostd:translated</sv:value>
   </sv:property>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>en</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>New Type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:workflow" sv:type="String">
+      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>nl</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>Nieuw Type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:workflow" sv:type="String">
+      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="hippostd:templates">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templates</sv:value>
     </sv:property>
-    <sv:node sv:name="type">
+    <sv:node sv:name="document">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:templatetype</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>f493b1fa-7c55-4ee6-9343-5ac20f85978c</sv:value>
       </sv:property>
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -38,9 +65,6 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:hardhandle</sv:value>
         </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>a59beb7a-c2eb-4e46-9a34-39ef9cea19c7</sv:value>
-        </sv:property>
         <sv:node sv:name="hippo:nodetype">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:nodetype</sv:value>
@@ -48,20 +72,11 @@
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
           </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>222a5ed7-b2aa-4f0f-9320-fe7dab9f2733</sv:value>
-          </sv:property>
           <sv:property sv:name="hippo:node" sv:type="Boolean">
             <sv:value>true</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:paths" sv:type="String">
-            <sv:value>a59beb7a-c2eb-4e46-9a34-39ef9cea19c7</sv:value>
-            <sv:value>f493b1fa-7c55-4ee6-9343-5ac20f85978c</sv:value>
-          </sv:property>
           <sv:property sv:name="hippo:supertype" sv:type="String">
             <sv:value>hippo:document</sv:value>
-            <sv:value>hippostd:publishable</sv:value>
-            <sv:value>hippostd:publishableSummary</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -72,9 +87,6 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:hardhandle</sv:value>
         </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>acab6915-270f-4e3e-a44a-99a3fd02fedc</sv:value>
-        </sv:property>
         <sv:node sv:name="hippo:prototype">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>nt:unstructured</sv:value>
@@ -83,13 +95,6 @@
             <sv:value>hippo:harddocument</sv:value>
             <sv:value>hippostd:publishable</sv:value>
             <sv:value>hippostd:publishableSummary</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>b0d5b10e-2efd-4fd7-90db-dfc5ee1a7e99</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:paths" sv:type="String">
-            <sv:value>acab6915-270f-4e3e-a44a-99a3fd02fedc</sv:value>
-            <sv:value>f493b1fa-7c55-4ee6-9343-5ac20f85978c</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:state" sv:type="String">
             <sv:value>unpublished</sv:value>
@@ -134,33 +139,90 @@
         </sv:node>
       </sv:node>
     </sv:node>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>en</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Template Editor Type</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:workflow" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:translation">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>nl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Template Editor Type</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:workflow" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
-    </sv:property>
+    <sv:node sv:name="compound">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:templatetype</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippo:nodetype">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippo:nodetype">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:nodetype</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:node" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="hippo:prototype">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippo:prototype">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>nt:unstructured</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>hippostd:publishable</sv:value>
+            <sv:value>hippostd:publishableSummary</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="hippo:template">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippo:template">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugincluster</sv:value>
+          </sv:property>
+          <sv:property sv:name="frontend:services" sv:type="String">
+            <sv:value>wicket.id</sv:value>
+          </sv:property>
+          <sv:property sv:name="frontend:references" sv:type="String">
+            <sv:value>engine</sv:value>
+            <sv:value>wicket.model</sv:value>
+          </sv:property>
+          <sv:property sv:name="frontend:properties" sv:type="String">
+            <sv:value>mode</sv:value>
+          </sv:property>
+          <sv:node sv:name="root">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:plugin</sv:value>
+            </sv:property>
+            <sv:property sv:name="plugin.class" sv:type="String">
+              <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+            </sv:property>
+            <sv:property sv:name="wicket.id" sv:type="String">
+              <sv:value>${wicket.id}</sv:value>
+            </sv:property>
+            <sv:property sv:name="item" sv:type="String">
+              <sv:value>${cluster.id}.field</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+    </sv:node>
   </sv:node>
 </sv:node>
