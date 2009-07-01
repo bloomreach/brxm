@@ -90,6 +90,7 @@ public abstract class AddNodeWidget extends AjaxEditableLabel {
     protected void onSubmit(AjaxRequestTarget target) {
         super.onSubmit(target);
 
+        // FIXME: use FolderWorkflow
         String nodeName = (String) getModel().getObject();
         try {
             Node node = null;
