@@ -42,6 +42,12 @@
     </dependency>
     
     <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
+      <version>${hippoecm.version}</version>
+    </dependency>
+    
+    <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-api</artifactId>
       <version>${pom.version}</version>

@@ -15,21 +15,44 @@
  */
 package org.hippoecm.hst.content.beans.manager;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import javax.jcr.Credentials;
+import javax.jcr.Node;
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.ValueFormatException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.hippoecm.hst.AbstractPersistencySpringTestCase;
 import org.hippoecm.hst.content.beans.PersistableTextPage;
+import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
+import org.hippoecm.hst.persistence.ContentPersistenceBinder;
+import org.hippoecm.hst.persistence.ContentPersistenceBindingException;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TestPersistableObjectBeanManager extends AbstractPersistencySpringTestCase {
+    
+    private static final String HIPPOSTD_FOLDER_NODE_TYPE = "hippostd:folder";
+    private static final String TEST_DOCUMENT_NODE_TYPE = "testproject:textpage";
+    
+    private static final String TEST_FOLDER_NODE_PATH = "/testcontent/documents/testproject/Solutions";
+
+    private static final String TEST_EXISTING_DOCUMENT_NODE_PATH = TEST_FOLDER_NODE_PATH + "/SolutionsPage";
+    
+    private static final String TEST_NEW_DOCUMENT_NODE_NAME = "CollaborationPortal";
+    private static final String TEST_NEW_DOCUMENT_NODE_PATH = TEST_FOLDER_NODE_PATH + "/" + TEST_NEW_DOCUMENT_NODE_NAME;
+    
+    private static final String TEST_NEW_FOLDER_NODE_NAME = "SubSolutions";
+    private static final String TEST_NEW_FOLDER_NODE_PATH = TEST_FOLDER_NODE_PATH + "/" + TEST_NEW_FOLDER_NODE_NAME;
     
     protected Object repository;
     protected Credentials defaultCredentials;
@@ -53,7 +76,69 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
     }
     
     @Test
-    public void testBasicUsage() throws Exception {
+    public void testDocumentManipulation() throws Exception {
+        Session session = null;
+        
+        try {
+            ObjectConverter objectConverter = getObjectConverter();
+            
+            session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
+            
+            cpm = new PersistableObjectBeanManagerImpl(session, objectConverter);
+            ((PersistableObjectBeanManagerImpl) cpm).setPublishAfterUpdate(true);
+            
+            // basic object retrieval from the content
+            PersistableTextPage page = (PersistableTextPage) cpm.getObject(TEST_EXISTING_DOCUMENT_NODE_PATH);
+            assertNotNull(page);
+            
+            try {
+                // create a document with type and name 
+                cpm.create(TEST_FOLDER_NODE_PATH, TEST_DOCUMENT_NODE_TYPE, TEST_NEW_DOCUMENT_NODE_NAME);
+            
+                // retrieves the document created just before
+                PersistableTextPage newPage = (PersistableTextPage) cpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
+                assertNotNull(newPage);
+                
+                newPage.setTitle("Collaboration Portal Title");
+
+                cpm.update(newPage, new ContentPersistenceBinder() {
+                    public void bind(Object contentObject, Object contentNode) throws ContentPersistenceBindingException {
+                        PersistableTextPage documentObject = (PersistableTextPage) contentObject;
+                        Node documentNode = (Node) contentNode;
+                        try {
+                            documentNode.setProperty("testproject:title", documentObject.getTitle());
+                        } catch (Exception e) {
+                            throw new ContentPersistenceBindingException(e);
+                        }
+                    }
+                });
+                
+                // retrieves the document created just before
+                newPage = (PersistableTextPage) cpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
+                assertEquals("Collaboration Portal Title", newPage.getTitle());
+                
+            } finally {
+                PersistableTextPage newPage = null;
+                
+                try {
+                    newPage = (PersistableTextPage) cpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
+                } catch (Exception e) {
+                }
+                
+                if (newPage != null) {
+                    cpm.remove(newPage);
+                }
+            }
+            
+            cpm.save();
+        } finally {
+            if (session != null) session.logout();
+        }
+        
+    }
+    
+    @Test
+    public void testFolderCreateRemove() throws Exception {
         Session session = null;
         
         try {
@@ -63,31 +148,23 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
             
             cpm = new PersistableObjectBeanManagerImpl(session, objectConverter);
             
-            PersistableTextPage page1 = (PersistableTextPage) cpm.getObject("/testcontent/documents/testproject/Solutions/SolutionsPage");
-            assertNotNull(page1);
+            HippoFolderBean newFolder = null;
             
-//            cpm.create("/testcontent/documents/testproject/Solutions", "testproject:textpage", "CollaborationPortal");
-//            PersistableTextPage page2 = (PersistableTextPage) cpm.getObject("/testcontent/documents/testproject/Solutions/CollaborationPortal");
-//            assertNotNull(page2);
+            try {
+                // create a document with type and name 
+                cpm.create(TEST_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, TEST_NEW_FOLDER_NODE_NAME);
             
-//          assertEquals(comment1, testComment1);
-//          Comment testComment2 = (Comment) cpm.getObject("/content/blog/comments/comment2");
-//          assertEquals(comment2, testComment2);
-//          
-//          testComment1.setTitle("testcomment1 - title");
-//          testComment1.setContent("testcomment1 - content");
-//          
-//          cpm.update(testComment1);
-//          
-//          Comment testComment12 = (Comment) cpm.getObject("/content/blog/comments/comment1");
-//          assertFalse(comment1.equals(testComment12));
-//          assertEquals(testComment1, testComment12);
-//          
-//          cpm.remove(testComment1);
-//          Comment testComment13 = (Comment) cpm.getObject("/content/blog/comments/comment1");
-//          assertTrue(testComment13 == null);
-//          
-//          cpm.save();
+                // retrieves the document created just before
+                newFolder = (HippoFolderBean) cpm.getObject(TEST_NEW_FOLDER_NODE_PATH);
+                assertNotNull(newFolder);
+                
+            } finally {
+                if (newFolder != null) {
+                    cpm.remove(newFolder);
+                }
+            }
+            
+            cpm.save();
         } finally {
             if (session != null) session.logout();
         }

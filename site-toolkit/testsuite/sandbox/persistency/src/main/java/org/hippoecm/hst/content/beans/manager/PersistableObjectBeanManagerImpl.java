@@ -20,30 +20,33 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.persistence.ContentPersistenceBinder;
 import org.hippoecm.hst.persistence.ContentPersistenceException;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
 public class PersistableObjectBeanManagerImpl implements ContentPersistenceManager {
 
-    private static final String HIPPOSTD_FOLDER = "hippostd:folder";
+    private static final String HIPPOSTD_FOLDER_NODE_TYPE = "hippostd:folder";
     
     protected ObjectBeanManager obm;
     protected Session session;
     protected ObjectConverter objectConverter;
     
-    // TODO: Are these category names correct?
-    protected String workflowCategory = "default"; // just fairy declaration
-    protected String folderAdditionWorkflowCategory = "new-folder"; // just fairy declaration
-    protected String folderRemovalWorkflowCategory = "remove-folder"; // just fairy declaration
+    protected String folderNodeWorkflowCategory = "internal"; // found in Niels's example
+    protected String documentNodeWorkflowCategory = "default"; // found in Niels's example
     protected String documentAdditionWorkflowCategory = "new-document"; // found in Niels's example
-    protected String documentRemovalWorkflowCategory = "remove-document"; // just fairy declaration
-
+    protected String folderAdditionWorkflowCategory = "new-folder"; // fairy declaration, but it works!!
+    
+    protected boolean publishAfterUpdate;
+    
     public PersistableObjectBeanManagerImpl(Session session, ObjectConverter objectConverter) {
         obm = new ObjectBeanManagerImpl(session, objectConverter);
         this.session = session;
@@ -61,16 +64,20 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
     public void create(String absPath, String nodeTypeName, String name) throws ContentPersistenceException {
         try {
             Node folderNode = (Node) session.getItem(absPath);
+            
+            if (folderNode instanceof HippoNode) {
+                folderNode = ((HippoNode) folderNode).getCanonicalNode();
+            }
+            
             WorkflowManager wfm = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-            Workflow wf = wfm.getWorkflow(workflowCategory, folderNode);
+            Workflow wf = wfm.getWorkflow(folderNodeWorkflowCategory, folderNode);
             
             if (wf instanceof FolderWorkflow) {
                 FolderWorkflow fwf = (FolderWorkflow) wf;
                 
                 String category = documentAdditionWorkflowCategory;
                 
-                // TODO: Is there any folder addition workflow category?
-                if (HIPPOSTD_FOLDER.equals(nodeTypeName)) {
+                if (HIPPOSTD_FOLDER_NODE_TYPE.equals(nodeTypeName)) {
                     category = folderAdditionWorkflowCategory;
                 }
                 
@@ -84,17 +91,41 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
     }
     
     public void update(Object content) throws ContentPersistenceException {
+        update(content, null);
+    }
+    
+    public void update(Object content, ContentPersistenceBinder customBinder) throws ContentPersistenceException {
         if (content instanceof HippoBean) {
             try {
                 HippoBean contentBean = (HippoBean) content;
-                WorkflowManager wfm = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-                Workflow wf = wfm.getWorkflow(workflowCategory, contentBean.getNode());
+                Node contentNode = contentBean.getNode();
                 
-                // TODO: Can we use EditableWorkflow or any other here?
+                if (contentNode instanceof HippoNode) {
+                    contentNode = ((HippoNode) contentNode).getCanonicalNode();
+                }
+                
+                WorkflowManager wfm = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+                Workflow wf = wfm.getWorkflow(documentNodeWorkflowCategory, contentNode);
+                
                 if (wf instanceof EditableWorkflow) {
                     EditableWorkflow ewf = (EditableWorkflow) wf;
                     Document document = ewf.obtainEditableInstance();
-                    // TODO: How can document be updated?
+                    String uuid = document.getIdentity();
+                    
+                    if (uuid != null && !"".equals(uuid)) {
+                        contentNode = session.getNodeByUUID(uuid);
+                    }
+                    
+                    if (customBinder != null) {
+                        customBinder.bind(content, contentNode);
+                    }
+                    
+                    if (publishAfterUpdate) {
+                        if (wf instanceof BasicReviewedActionsWorkflow) {
+                            ((BasicReviewedActionsWorkflow) wf).requestPublication();
+                        }
+                    }
+                    
                     ewf.commitEditableInstance();
                 } else {
                     throw new ContentPersistenceException("The workflow is not a EditableWorkflow for " + contentBean.getPath() + ": " + wf);
@@ -112,11 +143,15 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
             try {
                 HippoBean contentBean = (HippoBean) content;
                 HippoBean folderBean = contentBean.getParentBean();
+                Node folderNode = folderBean.getNode();
+                
+                if (folderNode instanceof HippoNode) {
+                    folderNode = ((HippoNode) folderNode).getCanonicalNode();
+                }
                 
                 WorkflowManager wfm = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-                Workflow wf = wfm.getWorkflow(workflowCategory, folderBean.getNode());
+                Workflow wf = wfm.getWorkflow(folderNodeWorkflowCategory, folderNode);
                 
-                // TODO: Is it right to invoke delete() from FolderWorkflow to delete document or subfolder?
                 if (wf instanceof FolderWorkflow) {
                     FolderWorkflow fwf = (FolderWorkflow) wf;
                     fwf.delete(contentBean.getName());
@@ -147,4 +182,44 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
         }
     }
 
+    public String getFolderNodeWorkflowCategory() {
+        return folderNodeWorkflowCategory;
+    }
+
+    public void setFolderNodeWorkflowCategory(String folderNodeWorkflowCategory) {
+        this.folderNodeWorkflowCategory = folderNodeWorkflowCategory;
+    }
+
+    public String getDocumentNodeWorkflowCategory() {
+        return documentNodeWorkflowCategory;
+    }
+
+    public void setDocumentNodeWorkflowCategory(String documentNodeWorkflowCategory) {
+        this.documentNodeWorkflowCategory = documentNodeWorkflowCategory;
+    }
+
+    public String getFolderAdditionWorkflowCategory() {
+        return folderAdditionWorkflowCategory;
+    }
+
+    public void setFolderAdditionWorkflowCategory(String folderAdditionWorkflowCategory) {
+        this.folderAdditionWorkflowCategory = folderAdditionWorkflowCategory;
+    }
+
+    public String getDocumentAdditionWorkflowCategory() {
+        return documentAdditionWorkflowCategory;
+    }
+
+    public void setDocumentAdditionWorkflowCategory(String documentAdditionWorkflowCategory) {
+        this.documentAdditionWorkflowCategory = documentAdditionWorkflowCategory;
+    }
+
+    public void setPublishAfterUpdate(boolean publishAfterUpdate) {
+        this.publishAfterUpdate = publishAfterUpdate;
+    }
+    
+    public boolean getPublishAfterUpdate() {
+        return publishAfterUpdate;
+    }
+    
 }

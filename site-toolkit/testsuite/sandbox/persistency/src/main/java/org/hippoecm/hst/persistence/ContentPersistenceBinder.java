@@ -13,26 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.content.beans;
+package org.hippoecm.hst.persistence;
 
-import org.hippoecm.hst.content.beans.standard.HippoDocument;
-import org.hippoecm.hst.content.beans.standard.HippoHtml;
-
-@Node(jcrType="testproject:textpage")
-public class PersistableTextPage extends HippoDocument {
+/**
+ * <CODE>ContentPersistenceBinder</CODE> is the interface for custom mapping content POJO object to content node.
+ * <P>
+ * An implementation of this interface should be able to set property values of the content node or its child nodes.
+ * </P>
+ * 
+ * @version $Id$
+ */
+public interface ContentPersistenceBinder {
     
-    protected String title;
-
-    public String getTitle() {
-        return (title != null ? title : (String) getProperty("testproject:title"));
-    }
-    
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    
-    public HippoHtml getBody(){
-        return getHippoHtml("testproject:body");
-    }
+    void bind(Object contentObject, Object contentNode) throws ContentPersistenceBindingException;
     
 }

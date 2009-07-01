@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hippoecm.hst.persistence.ContentPersistenceBinder;
 import org.hippoecm.hst.persistence.ContentPersistenceException;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
 
@@ -92,6 +93,16 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
         }
     }
 
+    public void update(Object content, ContentPersistenceBinder customBinder) throws ContentPersistenceException {
+        String path = getPathProperty(content);
+        if (path != null) {
+            if (customBinder != null) {
+                // do nothing...
+            }
+            setObject(path, content);
+        }
+    }
+    
     public void remove(Object content) throws ContentPersistenceException {
         String path = getPathProperty(content);
         if (path != null) {
@@ -171,5 +182,5 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
         
         return object;
     }
-    
+
 }

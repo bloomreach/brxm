@@ -16,7 +16,7 @@
 package org.hippoecm.hst.persistence;
 
 /**
- * <CODE>PersistenceManager</CODE> is the primary interface for HST-2-Persistence-aware application components.
+ * <CODE>ContentPersistenceManager</CODE> is the primary interface for HST-2-Persistence-aware application components.
  * <P>
  * An implementation of this interface should be able to convert content nodes to objects, and vice versa.
  * Also it should have knowledges on how to create, update or remove a content node with node type and absolute path.
@@ -53,10 +53,21 @@ public interface ContentPersistenceManager {
     
     /**
      * Updates the content node which is mapped to the object.
+     * An implementation can provide automatic content binding.
      * @param content
      * @throws ContentPersistenceException
      */
     void update(Object content) throws ContentPersistenceException;
+    
+    /**
+     * Updates the content node which is mapped to the object.
+     * With <CODE>customBinder</CODE> parameter, the physical binding content object to content node(s)
+     * should be provided by the <CODE>customBinder</CODE> itself.
+     * @param content
+     * @param customBinder
+     * @throws ContentPersistenceException
+     */
+    void update(Object content, ContentPersistenceBinder customBinder) throws ContentPersistenceException;
     
     /**
      * Removes the content node which is mapped to the object.
