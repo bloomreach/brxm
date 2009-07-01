@@ -25,6 +25,19 @@
     <sv:value>frontend:plugincluster</sv:value>
   </sv:property>
 
+  <!-- Load services that can be invoked from plugins that are loaded dynamically -->
+  <sv:node sv:name="servicesLoader">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugin.loader.PluginClusterLoader</sv:value>
+    </sv:property>
+    <sv:property sv:name="cluster.name" sv:type="String">
+      <sv:value>cms-services</sv:value>
+    </sv:property>
+  </sv:node>
+  
   <sv:node sv:name="configTranslator">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
