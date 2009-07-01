@@ -30,7 +30,6 @@ import org.apache.commons.beanutils.MethodUtils;
 import org.hippoecm.hst.AbstractPersistencySpringTestCase;
 import org.hippoecm.hst.content.beans.PersistableTextPage;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
-import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.persistence.ContentPersistenceBinder;
 import org.hippoecm.hst.persistence.ContentPersistenceBindingException;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
