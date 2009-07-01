@@ -92,6 +92,8 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
             builder = new TemplateBuilder(typeName, !"edit".equals(config.getString("mode")), context);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
+        } catch (BuilderException e) {
+            log.error(e.getMessage());
         }
 
         onModelChanged();

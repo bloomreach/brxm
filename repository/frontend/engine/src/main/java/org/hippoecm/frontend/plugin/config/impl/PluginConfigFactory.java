@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
+import java.util.List;
+
 import javax.jcr.Session;
 
 import org.apache.wicket.Application;
@@ -23,13 +25,12 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.WebApplicationHelper;
 import org.hippoecm.frontend.model.JcrSessionModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceFactory;
+import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PluginConfigFactory implements IServiceFactory<IPluginConfigService> {
+public class PluginConfigFactory implements IPluginConfigService {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -37,7 +38,7 @@ public class PluginConfigFactory implements IServiceFactory<IPluginConfigService
 
     private static final Logger log = LoggerFactory.getLogger(PluginConfigFactory.class);
 
-    private IServiceFactory<IPluginConfigService> pluginConfigServiceFactory;
+    private IPluginConfigService pluginConfigService;
 
     public PluginConfigFactory(JcrSessionModel sessionModel, IApplicationFactory defaultFactory) {
         IApplicationFactory  builtinFactory = new BuiltinApplicationFactory();
@@ -50,7 +51,7 @@ public class PluginConfigFactory implements IServiceFactory<IPluginConfigService
             appName = "login";
         }
 
-        IServiceFactory<IPluginConfigService> baseService;
+        IPluginConfigService baseService;
         if (session == null || !session.isLive()) {
             baseService = builtinFactory.getApplication("login");
         } else if (appName == null) {
@@ -64,23 +65,23 @@ public class PluginConfigFactory implements IServiceFactory<IPluginConfigService
                 baseService = builtinFactory.getDefaultApplication();
             }
         }
-        pluginConfigServiceFactory = baseService;
+        pluginConfigService = baseService;
     }
 
-    public IPluginConfigService getPluginConfigService(IPluginContext context) {
-        return pluginConfigServiceFactory.getService(context);
+    public IClusterConfig getCluster(String key) {
+        return pluginConfigService.getCluster(key);
     }
 
-    public IPluginConfigService getService(IPluginContext context) {
-        return pluginConfigServiceFactory.getService(context);
+    public IClusterConfig getDefaultCluster() {
+        return pluginConfigService.getDefaultCluster();
     }
 
-    public Class<? extends IPluginConfigService> getServiceClass() {
-        return IPluginConfigService.class;
+    public List<String> listClusters(String folder) {
+        return pluginConfigService.listClusters(folder);
     }
 
-    public void releaseService(IPluginContext context, IPluginConfigService service) {
-        pluginConfigServiceFactory.releaseService(context, service);
+    public void detach() {
+        pluginConfigService.detach();
     }
 
 }

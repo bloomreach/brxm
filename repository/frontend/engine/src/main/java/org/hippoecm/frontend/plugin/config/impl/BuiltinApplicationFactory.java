@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceFactory;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
@@ -34,11 +32,11 @@ public class BuiltinApplicationFactory implements IApplicationFactory {
     public BuiltinApplicationFactory() {
     }
 
-    public IServiceFactory<IPluginConfigService> getDefaultApplication() {
+    public IPluginConfigService getDefaultApplication() {
         return getApplication("console");
     }
     
-    public IServiceFactory<IPluginConfigService> getApplication(String name) {
+    public IPluginConfigService getApplication(String name) {
         log.info("Starting builtin application: " + name);
         JavaConfigService configService;
         if ("login".equals(name)) {
@@ -48,7 +46,7 @@ public class BuiltinApplicationFactory implements IApplicationFactory {
         }
         configService.addClusterConfig("login", initLogin());
         configService.addClusterConfig("console", initConsole());
-        return new Factory(configService);
+        return configService;
     }
 
     private IClusterConfig initLogin() {
@@ -114,27 +112,6 @@ public class BuiltinApplicationFactory implements IApplicationFactory {
         plugins.addPlugin(config);
 
         return plugins;
-    }
-
-    private static class Factory implements IServiceFactory<IPluginConfigService> {
-        private static final long serialVersionUID = 1L;
-
-        IPluginConfigService service;
-
-        Factory(IPluginConfigService service) {
-            this.service = service;
-        }
-
-        public IPluginConfigService getService(IPluginContext context) {
-            return service;
-        }
-
-        public Class<? extends IPluginConfigService> getServiceClass() {
-            return IPluginConfigService.class;
-        }
-
-        public void releaseService(IPluginContext context, IPluginConfigService service) {
-        }
     }
 
 }

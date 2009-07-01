@@ -24,12 +24,12 @@ import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrObject implements IDetachable {
+public class JcrObject implements IDetachable, IObservable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -37,45 +37,22 @@ public class JcrObject implements IDetachable {
 
     static final Logger log = LoggerFactory.getLogger(JcrObject.class);
 
-    private IPluginContext context;
     private JcrNodeModel nodeModel;
     private IObserver observer;
+    private IObservationContext obContext;
 
-    public JcrObject(JcrNodeModel nodeModel, IPluginContext context) {
+    public JcrObject(JcrNodeModel nodeModel) {
         this.nodeModel = nodeModel;
-        this.context = context;
     }
 
-    protected void init() {
-        context.registerService(observer = new IObserver() {
-            private static final long serialVersionUID = 1L;
-
-            public IObservable getObservable() {
-                return JcrObject.this.nodeModel;
-            }
-
-            public void onEvent(Iterator<? extends IEvent> event) {
-                JcrObject.this.onEvent(event);
-            }
-
-        }, IObserver.class.getName());
-    }
-
-    protected void dispose() {
-        context.unregisterService(observer, IObserver.class.getName());
-    }
-
-    protected IPluginContext getPluginContext() {
-        return context;
-    }
-    
     protected Node getNode() {
         return nodeModel.getNode();
     }
 
-    protected void onEvent(Iterator<? extends IEvent> event) {
+    protected JcrNodeModel getNodeModel() {
+        return nodeModel;
     }
-
+    
     public void save() {
         if (nodeModel.getNode() != null) {
             try {
@@ -92,6 +69,36 @@ public class JcrObject implements IDetachable {
         if (nodeModel != null) {
             nodeModel.detach();
         }
+    }
+
+    public void setObservationContext(IObservationContext context) {
+        this.obContext = context;
+    }
+
+    protected IObservationContext getObservationContext() {
+        return obContext;
+    }
+    
+    protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
+    }
+    
+    public void startObservation() {
+        obContext.registerObserver(observer = new IObserver() {
+            private static final long serialVersionUID = 1L;
+
+            public IObservable getObservable() {
+                return nodeModel;
+            }
+
+            public void onEvent(Iterator<? extends IEvent> event) {
+                JcrObject.this.processEvents(obContext, event);
+            }
+
+        });
+    }
+
+    public void stopObservation() {
+        obContext.unregisterObserver(observer);
     }
 
 }

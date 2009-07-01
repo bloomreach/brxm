@@ -41,16 +41,16 @@ import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.model.event.ListenerList;
 import org.hippoecm.frontend.model.map.HippoMap;
 import org.hippoecm.frontend.model.map.IHippoMap;
 import org.hippoecm.frontend.model.map.JcrMap;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.IPluginConfigListener;
+import org.hippoecm.frontend.plugin.config.PluginConfigEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,50 +105,16 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
     }
 
     protected final JcrNodeModel nodeModel;
-    private IPluginContext context;
-    private IObserver observer;
-    private List<IPluginConfigListener> listeners = new ListenerList<IPluginConfigListener>();
+    private IObservationContext obContext;
+    private IObserver nodeObserver;
     private JcrMap map;
     private Map<JcrNodeModel, JcrPluginConfig> childConfigs;
     private transient Set<Map.Entry<String, Object>> entries;
 
     public JcrPluginConfig(JcrNodeModel nodeModel) {
-        this(nodeModel, null);
-    }
-
-    JcrPluginConfig(JcrNodeModel nodeModel, IPluginContext context) {
         this.nodeModel = nodeModel;
-        this.context = context;
         this.map = new JcrMap(nodeModel);
         this.childConfigs = new HashMap<JcrNodeModel, JcrPluginConfig>();
-    }
-
-    protected void init() {
-        if (context != null) {
-            observer = new IObserver() {
-                private static final long serialVersionUID = 1L;
-
-                public IObservable getObservable() {
-                    return nodeModel;
-                }
-
-                public void onEvent(Iterator<? extends IEvent> event) {
-                    sync();
-                    for (IPluginConfigListener listener : listeners) {
-                        listener.onPluginConfigChanged();
-                    }
-                }
-
-            };
-            context.registerService(observer, IObserver.class.getName());
-        }
-    }
-
-    protected void dispose() {
-        if (context != null) {
-            context.unregisterService(observer, IObserver.class.getName());
-            observer = null;
-        }
     }
 
     protected void sync() {
@@ -159,17 +125,13 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
             JcrNodeModel model = entry.getKey();
             if (!model.getItemModel().exists()) {
                 childIter.remove();
-                entry.getValue().dispose();
+                entry.getValue();
             }
         }
     }
 
     public JcrNodeModel getNodeModel() {
         return nodeModel;
-    }
-
-    protected IPluginContext getPluginContext() {
-        return context;
     }
 
     public String getName() {
@@ -444,8 +406,7 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
     protected JcrPluginConfig wrapConfig(Node node) {
         JcrNodeModel nodeModel = new JcrNodeModel(node);
         if (!childConfigs.containsKey(nodeModel)) {
-            JcrPluginConfig childConfig = new JcrPluginConfig(nodeModel, context);
-            childConfig.init();
+            JcrPluginConfig childConfig = new JcrPluginConfig(nodeModel);
             childConfigs.put(nodeModel, childConfig);
         }
         JcrPluginConfig result = childConfigs.get(nodeModel);
@@ -475,12 +436,34 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
         return value;
     }
 
-    public void addPluginConfigListener(IPluginConfigListener listener) {
-        listeners.add(listener);
+    public void setObservationContext(IObservationContext context) {
+        this.obContext = context;
     }
 
-    public void removePluginConfigListener(IPluginConfigListener listener) {
-        listeners.remove(listener);
+    protected IObservationContext getObservationContext() {
+        return obContext;
+    }
+    
+    public void startObservation() {
+        obContext.registerObserver(nodeObserver = new IObserver() {
+            private static final long serialVersionUID = 1L;
+
+            public IObservable getObservable() {
+                return nodeModel;
+            }
+
+            public void onEvent(Iterator<? extends IEvent> event) {
+                sync();
+                EventCollection<PluginConfigEvent> coll = new EventCollection<PluginConfigEvent>();
+                coll.add(new PluginConfigEvent(JcrPluginConfig.this, PluginConfigEvent.EventType.CONFIG_CHANGED));
+                obContext.notifyObservers(coll);
+            }
+
+        });
+    }
+
+    public void stopObservation() {
+        obContext.unregisterObserver(nodeObserver);
     }
 
 }

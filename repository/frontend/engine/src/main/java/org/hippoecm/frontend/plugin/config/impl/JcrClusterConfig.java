@@ -28,22 +28,18 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
+import javax.jcr.observation.EventIterator;
 
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IObservationContext;
-import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.model.event.JcrEvent;
 import org.hippoecm.frontend.model.event.JcrEventListener;
-import org.hippoecm.frontend.model.event.ListenerList;
 import org.hippoecm.frontend.model.map.JcrMap;
 import org.hippoecm.frontend.model.map.JcrValueList;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.plugin.config.IClusterConfigListener;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -55,50 +51,6 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(JcrClusterConfig.class);
-
-    private static class Observable implements IObservable {
-        private static final long serialVersionUID = 1L;
-
-        private JcrClusterConfig config;
-        private IObservationContext observationContext;
-        private JcrEventListener listener;
-
-        Observable(JcrClusterConfig config) {
-            this.config = config;
-        }
-
-        public void setObservationContext(IObservationContext context) {
-            this.observationContext = context;
-        }
-
-        public void startObservation() {
-            String path = config.getNodeModel().getItemModel().getPath();
-            int events = Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED
-                    | Event.PROPERTY_REMOVED;
-            listener = new JcrEventListener(observationContext, events, path, true, null, null);
-            listener.start();
-        }
-
-        public void stopObservation() {
-            if (listener != null) {
-                listener.stop();
-                listener = null;
-            }
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof Observable) {
-                return ((Observable) obj).config.equals(config);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            return config.hashCode() ^ 234457;
-        }
-    }
 
     static class EntryFilter implements Iterator<Entry<String, Object>> {
 
@@ -209,12 +161,8 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
                         node.orderBefore(previous.getName() + "[" + previous.getIndex() + "]", child.getName() + "["
                                 + child.getIndex() + "]");
                     }
-                    if (getPluginContext() == null) {
-                        plugins.add(index, getPluginName(child));
-                        for (IClusterConfigListener listener : listeners) {
-                            listener.onPluginAdded(wrapConfig(child));
-                        }
-                    }
+
+                    notifyObservers();
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
                 }
@@ -229,14 +177,8 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
             Node current = getNode(index);
             try {
                 if (current != null) {
-                    String name = getPluginName(current);
                     current.remove();
-                    if (getPluginContext() == null) {
-                        plugins.remove(name);
-                        for (IClusterConfigListener listener : listeners) {
-                            listener.onPluginRemoved(result);
-                        }
-                    }
+                    notifyObservers();
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
@@ -244,55 +186,63 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
             return result;
         }
 
-        void process(Event event, List<IClusterConfigListener> listeners) {
+        void processChanges(EventCollection<ClusterConfigEvent> collection) {
             List<String> newPlugins = loadPlugins();
             Iterator<String> iter = plugins.iterator();
             while (iter.hasNext()) {
                 String plugin = iter.next();
                 if (!newPlugins.contains(plugin)) {
                     iter.remove();
-                    for (IClusterConfigListener listener : listeners) {
-                        // FIXME: return actual config
-                        listener.onPluginRemoved(new JavaPluginConfig(plugin));
-                    }
+                    collection.add(new ClusterConfigEvent(JcrClusterConfig.this, new JavaPluginConfig(plugin),
+                            ClusterConfigEvent.EventType.PLUGIN_REMOVED));
                 }
             }
             for (String newPlugin : newPlugins) {
                 if (!plugins.contains(newPlugin)) {
                     plugins.add(newPlugins.indexOf(newPlugin), newPlugin);
                     IPluginConfig config = get(newPlugins.indexOf(newPlugin));
-                    for (IClusterConfigListener listener : listeners) {
-                        listener.onPluginAdded(config);
-                    }
+                    collection.add(new ClusterConfigEvent(JcrClusterConfig.this, new JavaPluginConfig(config),
+                            ClusterConfigEvent.EventType.PLUGIN_ADDED));
                 }
             }
+        }
 
-            if (listeners.size() > 0) {
-                if (event.getType() != 0) {
-                    try {
-                        String path = event.getPath();
-                        path = path.substring(0, path.lastIndexOf('/'));
-                        Node node = (Node) ((UserSession) Session.get()).getJcrSession().getItem(path);
-
-                        Node root = getNode();
-                        while (!node.isSame(root)) {
-                            if (node.isNodeType("frontend:plugin")) {
-                                IPluginConfig config = wrapConfig(node);
-                                for (IClusterConfigListener listener : listeners) {
-                                    listener.onPluginChanged(config);
-                                }
-                                break;
-                            }
-                            node = node.getParent();
-                        }
-                    } catch (RepositoryException ex) {
-                        log.error("unable to find plugin configuration for event", ex);
-                    }
-                } else {
-                    for (IClusterConfigListener listener : listeners) {
-                        listener.onPluginChanged(null);
-                    }
+        void notifyObservers() {
+            EventCollection<ClusterConfigEvent> coll = new EventCollection<ClusterConfigEvent>();
+            processChanges(coll);
+            if (coll.size() > 0) {
+                IObservationContext obContext = getObservationContext();
+                if (obContext != null) {
+                    obContext.notifyObservers(coll);
                 }
+            }
+        }
+
+        void process(Event event, EventCollection<ClusterConfigEvent> collection) {
+            processChanges(collection);
+
+            if (event.getType() != 0) {
+                try {
+                    String path = event.getPath();
+                    path = path.substring(0, path.lastIndexOf('/'));
+                    Node node = (Node) ((UserSession) Session.get()).getJcrSession().getItem(path);
+
+                    Node root = getNode();
+                    while (!node.isSame(root)) {
+                        if (node.isNodeType("frontend:plugin")) {
+                            IPluginConfig config = wrapConfig(node);
+                            collection.add(new ClusterConfigEvent(JcrClusterConfig.this, config,
+                                    ClusterConfigEvent.EventType.PLUGIN_CHANGED));
+                            break;
+                        }
+                        node = node.getParent();
+                    }
+                } catch (RepositoryException ex) {
+                    log.error("unable to find plugin configuration for event", ex);
+                }
+            } else {
+                collection.add(new ClusterConfigEvent(JcrClusterConfig.this, null,
+                        ClusterConfigEvent.EventType.PLUGIN_CHANGED));
             }
         }
 
@@ -320,32 +270,12 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
     }
 
     private PluginList configs;
-    private List<IClusterConfigListener> listeners;
+    private JcrEventListener listener;
 
     public JcrClusterConfig(JcrNodeModel nodeModel) {
-        this(nodeModel, null);
-    }
-
-    public JcrClusterConfig(JcrNodeModel nodeModel, IPluginContext context) {
-        super(nodeModel, context);
+        super(nodeModel);
         configs = new PluginList();
-        listeners = new ListenerList<IClusterConfigListener>();
-        if (context != null) {
-            context.registerService(new IObserver() {
-                private static final long serialVersionUID = 1L;
 
-                public IObservable getObservable() {
-                    return new Observable(JcrClusterConfig.this);
-                }
-
-                public void onEvent(Iterator<? extends IEvent> iter) {
-                    while (iter.hasNext()) {
-                        configs.process(((JcrEvent) iter.next()).getEvent(), listeners);
-                    }
-                }
-
-            }, IObserver.class.getName());
-        }
     }
 
     public List<IPluginConfig> getPlugins() {
@@ -397,20 +327,48 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
         return wrapConfig(node).getName();
     }
 
-    public void addClusterConfigListener(IClusterConfigListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeClusterConfigListener(IClusterConfigListener listener) {
-        listeners.remove(listener);
-    }
-
     @Override
     public boolean equals(Object other) {
         if (other instanceof JcrClusterConfig) {
             return super.equals(other);
         }
         return false;
+    }
+
+    @Override
+    public void startObservation() {
+        super.startObservation();
+
+        IObservationContext obContext = getObservationContext();
+        String path = getNodeModel().getItemModel().getPath();
+        int events = Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED
+                | Event.PROPERTY_REMOVED;
+        listener = new JcrEventListener(obContext, events, path, true, null, null) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onEvent(EventIterator events) {
+                IObservationContext obContext = getObservationContext();
+                EventCollection<ClusterConfigEvent> coll = new EventCollection<ClusterConfigEvent>();
+                while (events.hasNext()) {
+                    configs.process(events.nextEvent(), coll);
+                }
+                if (coll.size() > 0) {
+                    obContext.notifyObservers(coll);
+                }
+            }
+        };
+
+        listener.start();
+    }
+
+    @Override
+    public void stopObservation() {
+        if (listener != null) {
+            listener.stop();
+            listener = null;
+        }
+        super.stopObservation();
     }
 
 }

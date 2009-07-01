@@ -17,23 +17,18 @@ package org.hippoecm.frontend.plugin.config.impl;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceFactory;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrConfigServiceFactory implements IServiceFactory<IPluginConfigService> {
+public class JcrConfigServiceFactory implements IPluginConfigService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -48,75 +43,43 @@ public class JcrConfigServiceFactory implements IServiceFactory<IPluginConfigSer
         this.defaultKey = defaultKey;
     }
 
-    public IPluginConfigService getService(IPluginContext context) {
-        return new PluginConfigService(context);
-    }
-
-    public Class<? extends IPluginConfigService> getServiceClass() {
-        return IPluginConfigService.class;
-    }
-
-    public void releaseService(IPluginContext context, IPluginConfigService service) {
-    }
-
-    private class PluginConfigService implements IPluginConfigService {
-        private static final long serialVersionUID = 1L;
-
-        private IPluginContext context;
-        // cache lookups to always return the same instance
-        private Map<String, IClusterConfig> cache;
-
-        PluginConfigService(IPluginContext context) {
-            this.context = context;
-            this.cache = new TreeMap<String, IClusterConfig>();
-        }
-
-        public IClusterConfig getCluster(String key) {
-            if (!cache.containsKey(key)) {
-                IClusterConfig cluster = null;
-                try {
-                    if (model.getNode().hasNode(key)) {
-                        Node clusterNode = model.getNode().getNode(key);
-                        JcrNodeModel clusterNodeModel = new JcrNodeModel(clusterNode);
-                        cluster = new JcrClusterConfig(clusterNodeModel, context);
-                    }
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
-                }
-                cache.put(key, cluster);
+    public IClusterConfig getCluster(String key) {
+        IClusterConfig cluster = null;
+        try {
+            if (model.getNode().hasNode(key)) {
+                Node clusterNode = model.getNode().getNode(key);
+                JcrNodeModel clusterNodeModel = new JcrNodeModel(clusterNode);
+                cluster = new JcrClusterConfig(clusterNodeModel);
             }
-            return cache.get(key);
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
         }
+        return cluster;
+    }
 
-        public List<String> listClusters(String folder) {
-            List<String> results = new LinkedList<String>();
-            try {
-                Node node = model.getNode().getNode(folder);
-                NodeIterator iter = node.getNodes();
-                while (iter.hasNext()) {
-                    Node child = iter.nextNode();
-                    if (child.isNodeType("frontend:plugincluster")) {
-                        results.add(child.getName());
-                    }
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-            return results;
-        }
-
-        public IClusterConfig getDefaultCluster() {
-            return getCluster(defaultKey);
-        }
-
-        public void detach() {
-            model.detach();
-            for (IClusterConfig cluster : cache.values()) {
-                if (cluster instanceof IDetachable) {
-                    ((IDetachable) cluster).detach();
+    public List<String> listClusters(String folder) {
+        List<String> results = new LinkedList<String>();
+        try {
+            Node node = model.getNode().getNode(folder);
+            NodeIterator iter = node.getNodes();
+            while (iter.hasNext()) {
+                Node child = iter.nextNode();
+                if (child.isNodeType("frontend:plugincluster")) {
+                    results.add(child.getName());
                 }
             }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
         }
-
+        return results;
     }
+
+    public IClusterConfig getDefaultCluster() {
+        return getCluster(defaultKey);
+    }
+
+    public void detach() {
+        model.detach();
+    }
+
 }

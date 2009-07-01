@@ -18,16 +18,18 @@ package org.hippoecm.frontend.model.ocm;
 import static junit.framework.Assert.assertEquals;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.event.Observer;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,19 +40,25 @@ public class JcrObjectTest extends PluginTest {
 
     static final Logger log = LoggerFactory.getLogger(JcrObjectTest.class);
 
-    interface IListener {
+    final static class TestEvent implements IEvent {
 
-        void objectChanged();
+        TestObject source;
+
+        TestEvent(TestObject source) {
+            this.source = source;
+        }
+
+        public IObservable getSource() {
+            return source;
+        }
+
     }
 
     class TestObject extends JcrObject {
         private static final long serialVersionUID = 1L;
 
-        List<IListener> listeners = new LinkedList<IListener>();
-
-        public TestObject(JcrNodeModel nodeModel, IPluginContext context) {
-            super(nodeModel, context);
-            init();
+        public TestObject(JcrNodeModel nodeModel) {
+            super(nodeModel);
         }
 
         void setValue(String value) {
@@ -63,21 +71,21 @@ public class JcrObjectTest extends PluginTest {
         }
 
         @Override
-        protected void onEvent(Iterator<? extends IEvent> event) {
-            for (IListener listener : listeners) {
-                listener.objectChanged();
-            }
-        }
-
-        void addListener(IListener listener) {
-            listeners.add(listener);
+        protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
+            context.notifyObservers(new EventCollection());
         }
     }
 
-    class TestListener implements IListener {
+    class TestObserver extends Observer {
+        private static final long serialVersionUID = 1L;
+
         int count = 0;
 
-        public void objectChanged() {
+        TestObserver(IObservable observable) {
+            super(observable);
+        }
+
+        public void onEvent(Iterator<? extends IEvent> events) {
             count++;
         }
     };
@@ -87,21 +95,20 @@ public class JcrObjectTest extends PluginTest {
         Node root = session.getRootNode();
         Node test = root.addNode("test");
 
-        TestObject testObject = new TestObject(new JcrNodeModel(test), context);
-
-        TestListener listener = new TestListener();
-        testObject.addListener(listener);
+        TestObject testObject = new TestObject(new JcrNodeModel(test));
+        TestObserver observer = new TestObserver(testObject);
+        context.registerService(observer, IObserver.class.getName());
         testObject.setValue("testing 1 2 3");
-        
+
         home.processEvents();
 
-        assertEquals(1, listener.count);
+        assertEquals(1, observer.count);
 
         testObject.setValue("bladie");
 
         home.processEvents();
 
-        assertEquals(2, listener.count);
+        assertEquals(2, observer.count);
     }
 
 }

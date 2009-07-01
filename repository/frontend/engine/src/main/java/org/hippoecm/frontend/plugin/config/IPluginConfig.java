@@ -19,8 +19,9 @@ import java.io.Serializable;
 import java.util.Set;
 
 import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.frontend.model.event.IObservable;
 
-public interface IPluginConfig extends IValueMap, Serializable {
+public interface IPluginConfig extends IValueMap, IObservable, Serializable {
     final static String SVN_ID = "$Id$";
 
     String getName();
@@ -29,7 +30,4 @@ public interface IPluginConfig extends IValueMap, Serializable {
 
     Set<IPluginConfig> getPluginConfigSet();
 
-    void addPluginConfigListener(IPluginConfigListener listener);
-
-    void removePluginConfigListener(IPluginConfigListener listener);
 }

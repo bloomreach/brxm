@@ -36,13 +36,12 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.IPluginConfigListener;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.ITypeDescriptor.ITypeListener;
+import org.hippoecm.frontend.types.TypeDescriptorEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,14 +71,18 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
 
             this.type = type;
             this.edited = edited;
-            edited.addPluginConfigListener(new IPluginConfigListener() {
+            context.registerService(new IObserver() {
                 private static final long serialVersionUID = 1L;
 
-                public void onPluginConfigChanged() {
+                public IObservable getObservable() {
+                    return PropertyEditor.this.edited;
+                }
+
+                public void onEvent(Iterator<? extends IEvent> events) {
                     redraw();
                 }
 
-            });
+            }, IObserver.class.getName());
 
             fieldModel = new LoadableDetachableModel() {
                 private static final long serialVersionUID = 1L;
@@ -96,23 +99,31 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
             add(new FieldEditor(FIELD_EDITOR, type, fieldModel, edit));
             add(new FieldPluginEditor(FIELD_PLUGIN_EDITOR, new Model(edited), edit));
 
-            type.addTypeListener(new ITypeListener() {
-                private static final long serialVersionUID = 1L;
+            context.registerService(new IObserver() {
 
-                public void fieldAdded(String field) {
+                public IObservable getObservable() {
+                    return PropertyEditor.this.type;
                 }
 
-                public void fieldChanged(String field) {
-                    if (field.equals(PropertyEditor.this.edited.getString("field"))) {
-                        PropertyEditor.this.redraw();
-                        FieldPluginEditorPlugin.this.updatePreview();
+                public void onEvent(Iterator<? extends IEvent> events) {
+                    while (events.hasNext()) {
+                        IEvent event = events.next();
+                        if (event instanceof TypeDescriptorEvent) {
+                            TypeDescriptorEvent tde = (TypeDescriptorEvent) event;
+                            IFieldDescriptor field = tde.getField();
+                            switch (tde.getType()) {
+                            case FIELD_CHANGED:
+                                if (field.equals(PropertyEditor.this.edited.getString("field"))) {
+                                    PropertyEditor.this.redraw();
+                                    FieldPluginEditorPlugin.this.updatePreview();
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
 
-                public void fieldRemoved(String field) {
-                }
-
-            });
+            }, IObserver.class.getName());
             add(new EmptyPanel(TEMPLATE_PARAMETER_EDITOR));
         }
 

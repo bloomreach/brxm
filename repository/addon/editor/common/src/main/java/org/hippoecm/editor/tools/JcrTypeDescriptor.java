@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.Map.Entry;
 
@@ -36,13 +37,16 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.ListenerList;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.ocm.JcrObject;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.TypeDescriptorEvent;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,12 +61,12 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     private String name;
     private String type;
-    private List<ITypeListener> listeners;
     private transient Map<String, IFieldDescriptor> fields;
+    private transient Map<String, IObserver> observers = new TreeMap<String, IObserver>();
     private transient JcrFieldDescriptor primary;
 
-    public JcrTypeDescriptor(JcrNodeModel nodeModel, IPluginContext context) throws RepositoryException {
-        super(nodeModel, context);
+    public JcrTypeDescriptor(JcrNodeModel nodeModel) throws RepositoryException {
+        super(nodeModel);
 
         Node typeNode = nodeModel.getNode();
         Node templateTypeNode = typeNode;
@@ -83,8 +87,6 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             type = name;
         }
 
-        listeners = new ListenerList<ITypeListener>();
-
         primary = null;
         fields = loadFields();
         for (IFieldDescriptor field : fields.values()) {
@@ -93,8 +95,6 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
                 break;
             }
         }
-
-        init();
     }
 
     public String getName() {
@@ -126,6 +126,8 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         try {
             String[] types = superTypes.toArray(new String[superTypes.size()]);
             getNode().setProperty(HippoNodeType.HIPPO_SUPERTYPE, types);
+
+            updateFields();
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -201,13 +203,10 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         try {
             Node typeNode = getNode();
             Node field = typeNode.addNode(HippoNodeType.HIPPO_FIELD, HippoNodeType.NT_FIELD);
-            JcrFieldDescriptor desc = new JcrFieldDescriptor(new JcrNodeModel(field), this, getPluginContext());
+            JcrFieldDescriptor desc = new JcrFieldDescriptor(new JcrNodeModel(field), this);
             desc.copy(descriptor);
-            fields.put(desc.getName(), desc);
 
-            for (ITypeListener listener : listeners) {
-                listener.fieldAdded(descriptor.getName());
-            }
+            updateFields();
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -217,21 +216,17 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         try {
             Node fieldNode = getFieldNode(field);
             if (fieldNode != null) {
-                IFieldDescriptor descriptor = new JcrFieldDescriptor(new JcrNodeModel(fieldNode), this,
-                        getPluginContext());
+                IFieldDescriptor descriptor = new JcrFieldDescriptor(new JcrNodeModel(fieldNode), this);
 
                 if (descriptor.isPrimary()) {
                     primary = null;
                 }
-                JcrFieldDescriptor fieldDescriptor = (JcrFieldDescriptor) fields.remove(field);
-                fieldDescriptor.dispose();
                 fieldNode.remove();
-                for (ITypeListener listener : listeners) {
-                    listener.fieldRemoved(field);
-                }
             } else {
                 log.warn("field " + field + " was not found in type " + type);
             }
+
+            updateFields();
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -255,14 +250,8 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         } else {
             log.warn("field " + name + " was not found");
         }
-    }
 
-    public void addTypeListener(ITypeListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeTypeListener(ITypeListener listener) {
-        listeners.remove(listener);
+        updateFields();
     }
 
     @Override
@@ -288,8 +277,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
                 while (it.hasNext()) {
                     Node child = it.nextNode();
                     if (child != null && child.isNodeType(HippoNodeType.NT_FIELD)) {
-                        JcrFieldDescriptor field = new JcrFieldDescriptor(new JcrNodeModel(child), this,
-                                getPluginContext());
+                        JcrFieldDescriptor field = new JcrFieldDescriptor(new JcrNodeModel(child), this);
                         fields.put(field.getName(), field);
                     }
                 }
@@ -309,32 +297,6 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             log.error(ex.getMessage());
         }
         return fields;
-    }
-
-    @Override
-    protected void onEvent(Iterator<? extends IEvent> events) {
-        Map<String, IFieldDescriptor> newFields = loadFields();
-        for (String field : newFields.keySet()) {
-            if (!fields.containsKey(field)) {
-                fields.put(field, newFields.get(field));
-                for (ITypeListener listener : listeners) {
-                    listener.fieldAdded(field);
-                }
-            } else {
-                ((JcrFieldDescriptor) newFields.get(field)).dispose();
-            }
-        }
-        Iterator<Entry<String, IFieldDescriptor>> iter = fields.entrySet().iterator();
-        while (iter.hasNext()) {
-            Entry<String, IFieldDescriptor> entry = iter.next();
-            if (!newFields.containsKey(entry.getKey())) {
-                for (ITypeListener listener : listeners) {
-                    listener.fieldRemoved(entry.getKey());
-                }
-                ((JcrFieldDescriptor) entry.getValue()).dispose();
-                iter.remove();
-            }
-        }
     }
 
     private boolean getBoolean(String path) {
@@ -371,9 +333,92 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         return null;
     }
 
-    void notifyFieldChanged(IFieldDescriptor field) {
-        for (ITypeListener listener : listeners) {
-            listener.fieldChanged(field.getName());
+    @Override
+    public void startObservation() {
+        super.startObservation();
+        for (IFieldDescriptor field : fields.values()) {
+            subscribe(field);
+        }
+    }
+
+    @Override
+    public void stopObservation() {
+        for (IFieldDescriptor field : fields.values()) {
+            unsubscribe(field);
+        }
+        super.stopObservation();
+    }
+    
+    private void subscribe(final IFieldDescriptor field) {
+        final IObservationContext obContext = getObservationContext();
+        IObserver observer = new IObserver() {
+            private static final long serialVersionUID = 1L;
+
+            public IObservable getObservable() {
+                return field;
+            }
+
+            public void onEvent(Iterator<? extends IEvent> events) {
+                EventCollection<TypeDescriptorEvent> collection = new EventCollection<TypeDescriptorEvent>();
+                while (events.hasNext()) {
+                    IEvent event = events.next();
+                    if (event instanceof TypeDescriptorEvent) {
+                        collection.add((TypeDescriptorEvent) event);
+                    }
+                }
+                if (collection.size() > 0) {
+                    obContext.notifyObservers(collection);
+                }
+            }
+
+        };
+        observers.put(field.getName(), observer);
+        obContext.registerObserver(observer);
+    }
+
+    private void unsubscribe(IFieldDescriptor field) {
+        final IObservationContext obContext = getObservationContext();
+        IObserver observer = observers.remove(field.getName());
+        obContext.unregisterObserver(observer);
+    }
+
+    protected void processEvents(EventCollection collection) {
+        IObservationContext obContext = getObservationContext();
+        Map<String, IFieldDescriptor> newFields = loadFields();
+        for (String field : newFields.keySet()) {
+            if (!fields.containsKey(field)) {
+                fields.put(field, newFields.get(field));
+                collection.add(new TypeDescriptorEvent(this, fields.get(field),
+                        TypeDescriptorEvent.EventType.FIELD_ADDED));
+                if (obContext != null) {
+                    IFieldDescriptor descriptor = newFields.get(field);
+                    subscribe(descriptor);
+                }
+            }
+        }
+        Iterator<Entry<String, IFieldDescriptor>> iter = fields.entrySet().iterator();
+        while (iter.hasNext()) {
+            Entry<String, IFieldDescriptor> entry = iter.next();
+            if (!newFields.containsKey(entry.getKey())) {
+                collection.add(new TypeDescriptorEvent(this, entry.getValue(),
+                        TypeDescriptorEvent.EventType.FIELD_REMOVED));
+                iter.remove();
+                if (obContext != null) {
+                    IFieldDescriptor descriptor = entry.getValue();
+                    unsubscribe(descriptor);
+                }
+            }
+        }
+    }
+
+    protected void updateFields() {
+        EventCollection collection = new EventCollection();
+        processEvents(collection);
+        if (collection.size() > 0) {
+            IObservationContext obContext = getObservationContext();
+            if (obContext != null) {
+                obContext.notifyObservers(collection);
+            }
         }
     }
 

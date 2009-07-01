@@ -15,44 +15,35 @@
  */
 package org.hippoecm.frontend.types;
 
-import java.util.Set;
-
-import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 
-public interface IFieldDescriptor extends IClusterable, IObservable {
-    final static String SVN_ID = "$Id$";
+public class TypeDescriptorEvent implements IEvent {
 
-    String getName();
+    public enum EventType {
+        FIELD_ADDED, FIELD_CHANGED, FIELD_REMOVED
+    }
 
-    String getType();
+    private ITypeDescriptor descriptor;
+    private IFieldDescriptor field;
+    private EventType type;
 
-    void setType(String type);
+    public TypeDescriptorEvent(ITypeDescriptor descriptor, IFieldDescriptor field, EventType type) {
+        this.descriptor = descriptor;
+        this.field = field;
+        this.type = type;
+    }
 
-    String getPath();
+    public EventType getType() {
+        return type;
+    }
 
-    void setPath(String path);
+    public IFieldDescriptor getField() {
+        return field;
+    }
 
-    void setMultiple(boolean multiple);
-
-    boolean isMultiple();
-
-    boolean isBinary();
-
-    boolean isProtected();
-
-    boolean isMandatory();
-
-    void setMandatory(boolean mandatory);
-
-    boolean isOrdered();
-
-    void setOrdered(boolean isOrdered);
-
-    boolean isPrimary();
-
-    Set<String> getExcluded();
-
-    void setExcluded(Set<String> set);
+    public IObservable getSource() {
+        return descriptor;
+    }
 
 }

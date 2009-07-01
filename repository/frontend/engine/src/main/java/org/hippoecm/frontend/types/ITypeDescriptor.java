@@ -15,25 +15,16 @@
  */
 package org.hippoecm.frontend.types;
 
-import java.util.EventListener;
 import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Value;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.model.event.IObservable;
 
-public interface ITypeDescriptor extends IClusterable {
+public interface ITypeDescriptor extends IClusterable, IObservable {
     final static String SVN_ID = "$Id$";
-
-    interface ITypeListener extends EventListener, IClusterable {
-
-        void fieldAdded(String field);
-
-        void fieldChanged(String field);
-
-        void fieldRemoved(String field);
-    }
 
     String getName();
 
@@ -62,9 +53,5 @@ public interface ITypeDescriptor extends IClusterable {
     void setIsMixin(boolean isMixin);
 
     Value createValue();
-
-    void addTypeListener(ITypeListener listener);
-
-    void removeTypeListener(ITypeListener listener);
     
 }

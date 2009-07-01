@@ -18,6 +18,9 @@ package org.hippoecm.frontend.types;
 import java.util.Set;
 import java.util.UUID;
 
+import org.hippoecm.frontend.model.event.EventCollection;
+import org.hippoecm.frontend.model.event.IObservationContext;
+
 public class JavaFieldDescriptor implements IFieldDescriptor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -37,6 +40,8 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
     private boolean ordered;
     private boolean primary;
 
+    private IObservationContext obContext;
+    
     public JavaFieldDescriptor(String prefix, String type) {
         this.type = type;
         this.path = prefix + ":" + type.toLowerCase().replace(':', '_');
@@ -77,6 +82,7 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
 
     public void setPath(String path) {
         this.path = path;
+        notifyObservers();
     }
 
     public void setMultiple(boolean multiple) {
@@ -127,4 +133,21 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
         this.primary = isPrimary;
     }
 
+    public void setObservationContext(IObservationContext context) {
+        this.obContext = context;
+    }
+
+    public void startObservation() {
+    }
+
+    public void stopObservation() {
+    }
+
+    private void notifyObservers() {
+        if (obContext != null) {
+            EventCollection<TypeDescriptorEvent> collection = new EventCollection<TypeDescriptorEvent>();
+            collection.add(new TypeDescriptorEvent(null, this, TypeDescriptorEvent.EventType.FIELD_CHANGED));
+        }
+    }
+    
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2008 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,17 +15,28 @@
  */
 package org.hippoecm.frontend.plugin.config;
 
-import java.util.EventListener;
+import org.hippoecm.frontend.model.event.IEvent;
 
-import org.apache.wicket.IClusterable;
+public class PluginConfigEvent implements IEvent<IPluginConfig> {
 
-public interface IClusterConfigListener extends EventListener, IClusterable {
-    @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id: $";
+    public enum EventType {
+        CONFIG_CHANGED,
+    }
 
-    void onPluginAdded(IPluginConfig config);
+    private IPluginConfig source;
+    private EventType type;
 
-    void onPluginChanged(IPluginConfig config);
+    public PluginConfigEvent(IPluginConfig source, EventType type) {
+        this.source = source;
+        this.type = type;
+    }
 
-    void onPluginRemoved(IPluginConfig config);
+    public EventType getType() {
+        return type;
+    }
+
+    public IPluginConfig getSource() {
+        return source;
+    }
+
 }

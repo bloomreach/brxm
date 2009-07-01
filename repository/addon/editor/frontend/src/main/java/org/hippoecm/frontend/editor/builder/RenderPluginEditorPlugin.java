@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -28,12 +29,14 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.model.IModelReference;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.IPluginConfigListener;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
@@ -52,7 +55,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
 
     private String pluginId;
     protected IClusterControl previewControl;
-    private IPluginConfigListener pluginConfigListener;
+    private IObserver configObserver;
 
     public RenderPluginEditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -160,22 +163,23 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
     }
 
     public void start() {
-        IPluginConfig editedConfig = getEditablePluginConfig();
-        editedConfig.addPluginConfigListener(pluginConfigListener = new IPluginConfigListener() {
+        final IPluginConfig editedConfig = getEditablePluginConfig();
+        getPluginContext().registerService(configObserver = new IObserver() {
             private static final long serialVersionUID = 1L;
 
-            public void onPluginConfigChanged() {
+            public IObservable getObservable() {
+                return editedConfig;
+            }
+
+            public void onEvent(Iterator<? extends IEvent> events) {
                 updatePreview();
             }
-        });
+            
+        }, IObserver.class.getName());
     }
 
     public void stop() {
-        IPluginConfig editedConfig = getEditablePluginConfig();
-        // config may already have disappeared (causing this plugin to be stopped)
-        if (editedConfig != null) {
-            editedConfig.removePluginConfigListener(pluginConfigListener);
-        }
+        getPluginContext().unregisterService(configObserver, IObserver.class.getName());
     }
 
     @Override

@@ -197,7 +197,7 @@ public class PluginConfigTest extends PluginTest {
     }
 
     protected IClusterConfig getClusterConfig() throws Exception {
-        return new JcrClusterConfig(new JcrNodeModel(root.getNode("test/cluster")), null);
+        return new JcrClusterConfig(new JcrNodeModel(root.getNode("test/cluster")));
     }
 
     @Test

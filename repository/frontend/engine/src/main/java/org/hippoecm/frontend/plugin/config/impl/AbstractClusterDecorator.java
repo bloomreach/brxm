@@ -15,11 +15,16 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.hippoecm.frontend.model.event.EventCollection;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.plugin.config.IClusterConfigListener;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public abstract class AbstractClusterDecorator extends AbstractPluginDecorator implements IClusterConfig {
@@ -28,33 +33,10 @@ public abstract class AbstractClusterDecorator extends AbstractPluginDecorator i
 
     private static final long serialVersionUID = 1L;
 
-    private List<IClusterConfigListener> cclisteners;
-
+    private IObserver observer;
+    
     public AbstractClusterDecorator(IClusterConfig upstream) {
         super(upstream);
-        this.cclisteners = new LinkedList<IClusterConfigListener>();
-        upstream.addClusterConfigListener(new IClusterConfigListener() {
-            private static final long serialVersionUID = 1L;
-
-            public void onPluginAdded(IPluginConfig config) {
-                for (IClusterConfigListener listener : cclisteners) {
-                    listener.onPluginAdded(wrapConfig(config));
-                }
-            }
-
-            public void onPluginChanged(IPluginConfig config) {
-                for (IClusterConfigListener listener : cclisteners) {
-                    listener.onPluginChanged(wrapConfig(config));
-                }
-            }
-
-            public void onPluginRemoved(IPluginConfig config) {
-                for (IClusterConfigListener listener : cclisteners) {
-                    listener.onPluginRemoved(wrapConfig(config));
-                }
-            }
-            
-        });
     }
 
     protected IClusterConfig getUpstream() {
@@ -77,12 +59,38 @@ public abstract class AbstractClusterDecorator extends AbstractPluginDecorator i
         return getUpstream().getServices();
     }
 
-    public void addClusterConfigListener(IClusterConfigListener listener) {
-        cclisteners.add(listener);
+    @Override
+    public void startObservation() {
+        super.startObservation();
+        IObservationContext obContext = getObservationContext();
+        obContext.registerObserver(observer = new IObserver() {
+            private static final long serialVersionUID = 1L;
+
+            public IObservable getObservable() {
+                return upstream;
+            }
+
+            public void onEvent(Iterator<? extends IEvent> events) {
+                EventCollection<ClusterConfigEvent> collection = new EventCollection<ClusterConfigEvent>();
+                while (events.hasNext()) {
+                    IEvent event = events.next();
+                    if (event instanceof ClusterConfigEvent) {
+                        ClusterConfigEvent cce = (ClusterConfigEvent) event;
+                        collection.add(new ClusterConfigEvent(AbstractClusterDecorator.this, wrapConfig(cce.getPlugin()), cce.getType()));
+                    }
+                }
+                if (collection.size() > 0) {
+                    getObservationContext().notifyObservers(collection);
+                }
+            }
+            
+        });
     }
 
-    public void removeClusterConfigListener(IClusterConfigListener listener) {
-        cclisteners.remove(listener);
+    @Override
+    public void stopObservation() {
+        IObservationContext obContext = getObservationContext();
+        obContext.unregisterObserver(observer);
+        super.stopObservation();
     }
-
 }

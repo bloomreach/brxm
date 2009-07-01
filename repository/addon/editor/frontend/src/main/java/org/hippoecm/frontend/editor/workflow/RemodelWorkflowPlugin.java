@@ -93,10 +93,10 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                     Map<String, Serializable> hints = workflow.hints();
                     String prefix = (String) hints.get("prefix");
 
-                    CndSerializer serializer = new CndSerializer(getPluginContext(), sessionModel, prefix);
+                    CndSerializer serializer = new CndSerializer(sessionModel, prefix);
                     String cnd = serializer.getOutput();
 
-                    JcrTypeStore typeStore = new JcrTypeStore(getPluginContext());
+                    JcrTypeStore typeStore = new JcrTypeStore();
                     Map<String, TypeUpdate> update = typeStore.getUpdate(prefix);
 
                     JcrPrototypeStore prototypeStore = new JcrPrototypeStore();
