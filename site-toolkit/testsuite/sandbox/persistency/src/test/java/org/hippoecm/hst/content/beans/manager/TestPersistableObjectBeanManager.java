@@ -30,6 +30,7 @@ import org.apache.commons.beanutils.MethodUtils;
 import org.hippoecm.hst.AbstractPersistencySpringTestCase;
 import org.hippoecm.hst.content.beans.PersistableTextPage;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.persistence.ContentPersistenceBinder;
 import org.hippoecm.hst.persistence.ContentPersistenceBindingException;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
@@ -101,6 +102,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
                 assertNotNull(newPage);
                 
                 newPage.setTitle("Collaboration Portal Title");
+                newPage.setBodyContent("<h1>Welcome to the Collaboration Portal!</h1>");
 
                 // custom mapping binder is already provided during CPM instantiation.
                 // but you can also provide your custom binder as the second parameter.
@@ -111,6 +113,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
                 // retrieves the document created just before
                 newPage = (PersistableTextPage) cpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
                 assertEquals("Collaboration Portal Title", newPage.getTitle());
+                assertEquals("<h1>Welcome to the Collaboration Portal!</h1>", newPage.getBodyContent());
                 
             } finally {
                 PersistableTextPage newPage = null;
@@ -174,6 +177,8 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
             
             try {
                 documentNode.setProperty("testproject:title", documentObject.getTitle());
+                Node htmlNode = documentNode.getNode("testproject:body");
+                htmlNode.setProperty("hippostd:content", documentObject.getBodyContent());
             } catch (Exception e) {
                 throw new ContentPersistenceBindingException(e);
             }

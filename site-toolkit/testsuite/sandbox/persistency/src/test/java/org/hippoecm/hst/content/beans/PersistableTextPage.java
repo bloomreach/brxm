@@ -22,6 +22,7 @@ import org.hippoecm.hst.content.beans.standard.HippoHtml;
 public class PersistableTextPage extends HippoDocument {
     
     protected String title;
+    protected String bodyContent;
 
     public String getTitle() {
         return (title != null ? title : (String) getProperty("testproject:title"));
@@ -33,6 +34,24 @@ public class PersistableTextPage extends HippoDocument {
     
     public HippoHtml getBody(){
         return getHippoHtml("testproject:body");
+    }
+    
+    public String getBodyContent() {
+        if (bodyContent != null) {
+            return bodyContent;
+        } else {
+            HippoHtml html = getBody();
+            
+            if (html != null) {
+                return html.getContent();
+            } else {
+                return null;
+            }
+        }
+    }
+    
+    public void setBodyContent(String bodyContent) {
+        this.bodyContent = bodyContent;
     }
     
 }
