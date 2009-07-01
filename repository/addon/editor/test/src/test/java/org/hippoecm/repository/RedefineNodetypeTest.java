@@ -59,11 +59,16 @@ public class RedefineNodetypeTest extends TestCase {
     private static void waitForRefresh(Session session, String prefix) throws PathNotFoundException, RepositoryException {
         session.refresh(true);
         Node base = session.getRootNode().getNode("hippo:configuration").getNode("hippo:initialize");
-        while(base.getNode(prefix).hasProperty(HippoNodeType.HIPPO_NODETYPES) ||
-              base.getNode(prefix).hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE)) {
+        int n = 10;
+        while((base.getNode(prefix).hasProperty(HippoNodeType.HIPPO_NODETYPES) ||
+              base.getNode(prefix).hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE))) {
+            if (n-- == 0) {
+                throw new RuntimeException("timed out waiting for initialization");
+            }
             try {
                 Thread.sleep(300);
             } catch(InterruptedException ex) {
+                throw new RuntimeException("interrupted while waiting for initialization");
             }
             session.refresh(true);
         }
