@@ -135,7 +135,7 @@ public class TemplateEditorWorkflowTest extends TestCase {
         WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
         Workflow workflow = workflowManager.getWorkflow("test", node);
         assertTrue(workflow instanceof NamespaceWorkflow);
-        ((NamespaceWorkflow) workflow).addType("testtype");
+        ((NamespaceWorkflow) workflow).addType("document", "testtype");
         assertTrue(session.getRootNode().hasNode("hippo:namespaces/hippostd/testtype"));
     }
 
