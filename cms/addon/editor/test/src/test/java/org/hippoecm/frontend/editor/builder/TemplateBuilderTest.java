@@ -168,12 +168,4 @@ public class TemplateBuilderTest extends PluginTest {
         assertEquals("titel", prototype.getNode().getProperty("test:titel_new").getString());
     }
 
-    @Test
-    public void testReorderPlugins() throws Exception {
-    }
-
-    @Test
-    public void testChangeCaption() throws Exception {
-    }
-
 }

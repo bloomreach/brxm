@@ -27,6 +27,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.editor.tools.CndSerializer;
 import org.hippoecm.editor.tools.JcrPrototypeStore;
@@ -58,20 +59,38 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
     public RemodelWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new WorkflowAction("create", new StringResourceModel("create-type", this, null)) {
+        add(new WorkflowAction("new-document-type", new StringResourceModel("new-document-type", this, null)) {
             private static final long serialVersionUID = 1L;
 
             public String name;
 
             @Override
             protected Dialog createRequestDialog() {
-                return new CreateTypeDialog(this);
+                return new CreateDocumentTypeDialog(this);
             }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
                 NamespaceWorkflow workflow = (NamespaceWorkflow) wf;
                 workflow.addType("document", name);
+                return null;
+            }
+        });
+
+        add(new WorkflowAction("new-compound-type", new StringResourceModel("new-compound-type", this, null)) {
+            private static final long serialVersionUID = 1L;
+
+            public String name;
+
+            @Override
+            protected Dialog createRequestDialog() {
+                return new CreateCompoundTypeDialog(this);
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                NamespaceWorkflow workflow = (NamespaceWorkflow) wf;
+                workflow.addType("compound", name);
                 return null;
             }
         });
@@ -144,17 +163,20 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
         });
     }
 
-    public class CreateTypeDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
+    public abstract class CreateTypeDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
         private static final long serialVersionUID = 1L;
 
-        public CreateTypeDialog(CompatibilityWorkflowPlugin.WorkflowAction action) {
+        private String title;
+        
+        public CreateTypeDialog(CompatibilityWorkflowPlugin.WorkflowAction action, String title) {
             action.super();
             add(setFocus(new TextFieldWidget("name", new PropertyModel(action, "name"))));
+            this.title = title;
         }
 
         @Override
         public IModel getTitle() {
-            return new StringResourceModel("create-type", RemodelWorkflowPlugin.this, null);
+            return new StringResourceModel(title, RemodelWorkflowPlugin.this, null);
         }
 
         @Override
@@ -163,4 +185,20 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
         }
     }
 
+    public class CreateDocumentTypeDialog extends CreateTypeDialog {
+        private static final long serialVersionUID = 1L;
+
+        public CreateDocumentTypeDialog(WorkflowAction action) {
+            super(action, "new-document-type");
+        }
+    }
+
+    public class CreateCompoundTypeDialog extends CreateTypeDialog {
+        private static final long serialVersionUID = 1L;
+
+        public CreateCompoundTypeDialog(WorkflowAction action) {
+            super(action, "new-compound-type");
+        }
+    }
+    
 }
