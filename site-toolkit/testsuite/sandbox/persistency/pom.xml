@@ -25,7 +25,7 @@
   <name>Hippo Site Toolkit Test Suite Sandbox Experimental Persistency Support</name>
   <description>Hippo Site Toolkit Test Suite Sandbox for Experimental Persistency Support</description>
   <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>
-  <artifactId>hst-persistency-alpha</artifactId>
+  <artifactId>hst-sandbox-persistency</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
