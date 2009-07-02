@@ -63,6 +63,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+/**
+ * A base HstComponent implementation to provide some facility methods for accessing content node POJO objects,
+ * {@link ObjectBeanManager}, request parameters, query manager, etc.
+ * <P>
+ * This implementation enables developers to make use of HST Content Bean's {@link ObjectBeanManager}
+ * which provides a simple object-content mapping solution.
+ * To use {@link ObjectBeanManager}, you can invoke {@link #getObjectBeanManager(HstRequest)}, which retrieves
+ * a JCR session from {@link HstRequestContext#getSession()} internally.
+ * </P>
+ * 
+ * @version $Id$
+ */
 public class BaseHstComponent extends GenericHstComponent {
 
     private static Logger log = LoggerFactory.getLogger(BaseHstComponent.class);
@@ -72,9 +84,9 @@ public class BaseHstComponent extends GenericHstComponent {
     public static final String BEANS_REQUEST_CONTEXT_ATTR_NAME = BaseHstComponent.class.getName() + ".beans";
     public static final String QUERY_REQUEST_CONTEXT_ATTR_NAME = BaseHstComponent.class.getName() + ".query";
 
-    private boolean beansInitialized;
-    private ObjectConverter objectConverter;
-    private HstQueryManager queryManager;
+    protected boolean beansInitialized;
+    protected ObjectConverter objectConverter;
+    protected HstQueryManager queryManager;
 
     public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
         super.init(servletConfig, componentConfig);

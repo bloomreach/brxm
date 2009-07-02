@@ -25,7 +25,7 @@
   <name>Hippo Site Toolkit Test Suite Sandbox Experimental Persistency Support</name>
   <description>Hippo Site Toolkit Test Suite Sandbox for Experimental Persistency Support</description>
   <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>
-  <artifactId>persistency</artifactId>
+  <artifactId>hst-persistency-alpha</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -57,6 +57,12 @@
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-content-beans</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-client</artifactId>
       <version>${pom.version}</version>
     </dependency>
     
