@@ -19,7 +19,7 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
 <div style="border:1px solid">
-    <h1>My menu : ${menu.name}</h1>
+    <h2>My menu : ${menu.name}</h2>
     <ul>
     <c:forEach var="item" items="${menu.menuItems}">
         <li>

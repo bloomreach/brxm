@@ -14,33 +14,53 @@
   limitations under the License. --%>
 
 <%@ page language="java" %>
+<%@ page import="org.hippoecm.hst.content.beans.standard.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
 <div>
 
-    <h1>My detail page</h1>
-    <div style="border:1px black solid; width:400px;">
+  <h2>My detail page</h2>
+  
+  <div style="border:1px black solid; width:400px;">
     <hst:link var="link" hippobean="${parent}"/>
-    <a href="${link}">
-    PARENT : ${parent.name}      
-    </a>
+    <a href="${link}">PARENT : ${parent.name}</a>
+  </div>
     
-    </div>  
-    <div style="border:1px black solid; width:400px;">
-    
-        ${document.title}
-       
-        <br/>
-        ${document.summary}
-        <br/>
-        ${document.date.time}
-        
-        <div style="border:1px black solid;" >
-         <hst:html hippohtml="${document.body}"/>
-     
-        </div>
-     
-        
+  <div style="border:1px black solid; width:400px;">
+    ${document.title}
+    <br/>
+    ${document.summary}
+    <br/>
+    ${document.date.time}
+    <div style="border:1px black solid;" >
+      <hst:html hippohtml="${document.body}"/>
     </div>
+  </div>
+  
+  <br/>
+  
+  <div>
+    <form method="POST" action="<hst:actionURL/>">
+      <h4>Enter your comment here:</h4>
+      <table>
+        <tr>
+          <th>Title:</th>
+          <td><input type="text" name="title" value="" /></td>
+        </tr>
+        <tr>
+          <th valign="top">Comment:</th>
+          <td><textarea name="comment" rows="4" cols="40"></textarea></td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input type="submit" value="Submit"/>
+		    <input type="reset" value="Reset"/>
+          </td>
+         </tr>
+      </table>
+    </form>
+  </div>
+  
+</div>

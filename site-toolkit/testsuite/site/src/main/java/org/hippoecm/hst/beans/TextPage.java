@@ -20,4 +20,30 @@ import org.hippoecm.hst.content.beans.Node;
 @Node(jcrType="testproject:textpage")
 public class TextPage extends GeneralPage {
     
+    protected String summary;
+    
+    public String getTitle() {
+        if (title != null) {
+            return title;
+        } else {
+            return getProperty("testproject:title");
+        }
+    }
+    
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getSummary() {
+        if (summary != null) {
+            return summary;
+        } else {
+            return getProperty("testproject:summary");
+        }
+    }
+    
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+    
 }
