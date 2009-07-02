@@ -53,18 +53,44 @@ import org.hippoecm.hst.persistence.ContentPersistenceManager;
  */
 public class BaseHstComponent extends org.hippoecm.hst.component.support.bean.BaseHstComponent {
     
+    /**
+     * Returns a <CODE>ContentPersistenceManager</CODE> instance.
+     * @param session
+     * @return
+     */
     public ContentPersistenceManager getContentPersistenceManager(Session session) {
         return getContentPersistenceManager(session, null);
     }
     
+    /**
+     * Returns a <CODE>ContentPersistenceManager</CODE> instance with custom binders map.
+     * @param session
+     * @param contentNodeBinders
+     * @return
+     */
     public ContentPersistenceManager getContentPersistenceManager(Session session, Map<String, ContentNodeBinder> contentNodeBinders) {
         return getContentPersistenceManager(session, contentNodeBinders, false);
     }
     
+    /**
+     * Returns a <CODE>ContentPersistenceManager</CODE> instance with request-publishing-option after invoking
+     * any <CODE>update()</CODE> method.
+     * @param session
+     * @param publishAfterUpdate
+     * @return
+     */
     public ContentPersistenceManager getContentPersistenceManager(Session session, boolean publishAfterUpdate) {
         return getContentPersistenceManager(session, null, publishAfterUpdate);
     }
     
+    /**
+     * Returns a <CODE>ContentPersistenceManager</CODE> instance with custom binders map and 
+     * request-publishing-option after invoking any <CODE>update()</CODE> method.
+     * @param session
+     * @param contentNodeBinders
+     * @param publishAfterUpdate
+     * @return
+     */
     public ContentPersistenceManager getContentPersistenceManager(Session session, Map<String, ContentNodeBinder> contentNodeBinders, boolean publishAfterUpdate) {
         PersistableObjectBeanManagerImpl cpm = new PersistableObjectBeanManagerImpl(session, this.objectConverter, contentNodeBinders);
         cpm.setPublishAfterUpdate(publishAfterUpdate);
