@@ -15,8 +15,12 @@
  */
 package org.hippoecm.frontend;
 
+import java.io.PrintStream;
+
 import javax.jcr.Node;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.ValueMap;
@@ -111,6 +115,19 @@ public abstract class PluginTest extends TestCase {
         super.tearDown();
     }
 
+    protected void printComponents(final PrintStream out) {
+        home.visitChildren(new IVisitor() {
+
+            public Object component(Component component) {
+                String name = component.getClass().getName();
+                name = name.substring(name.lastIndexOf('.') + 1);
+                out.println(component.getPageRelativePath() + ": " + name);
+                return IVisitor.CONTINUE_TRAVERSAL;
+            }
+
+        });
+    }
+    
     protected void refreshPage() {
         WebRequestCycle requestCycle = tester.setupRequestAndResponse(true);;
         HippoTester.callOnBeginRequest(requestCycle);

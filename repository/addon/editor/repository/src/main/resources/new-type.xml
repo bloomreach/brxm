@@ -93,8 +93,6 @@
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
-            <sv:value>hippostd:publishable</sv:value>
-            <sv:value>hippostd:publishableSummary</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:state" sv:type="String">
             <sv:value>unpublished</sv:value>
