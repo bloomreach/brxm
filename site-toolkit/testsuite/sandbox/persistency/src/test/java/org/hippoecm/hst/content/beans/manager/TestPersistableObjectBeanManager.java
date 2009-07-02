@@ -30,7 +30,7 @@ import org.apache.commons.beanutils.MethodUtils;
 import org.hippoecm.hst.AbstractPersistencySpringTestCase;
 import org.hippoecm.hst.content.beans.PersistableTextPage;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
-import org.hippoecm.hst.persistence.ContentPersistenceBinder;
+import org.hippoecm.hst.persistence.ContentNodeBinder;
 import org.hippoecm.hst.persistence.ContentPersistenceBindingException;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
 import org.junit.After;
@@ -55,7 +55,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
     protected Object repository;
     protected Credentials defaultCredentials;
     private ContentPersistenceManager cpm;
-    private Map<String, ContentPersistenceBinder> persistBinders;
+    private Map<String, ContentNodeBinder> persistBinders;
     
     @Before
     public void setUp() throws Exception {
@@ -63,7 +63,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
         
         this.repository = getComponent(Repository.class.getName());
         this.defaultCredentials = getComponent(Credentials.class.getName());
-        this.persistBinders = new HashMap<String, ContentPersistenceBinder>();
+        this.persistBinders = new HashMap<String, ContentNodeBinder>();
         this.persistBinders.put("testproject:textpage", new PersistableTextPageBinder());
     }
     
@@ -168,16 +168,15 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
         
     }
     
-    private class PersistableTextPageBinder implements ContentPersistenceBinder {
+    private class PersistableTextPageBinder implements ContentNodeBinder {
         
-        public void bind(Object contentObject, Object contentNode) throws ContentPersistenceBindingException {
-            PersistableTextPage documentObject = (PersistableTextPage) contentObject;
-            Node documentNode = (Node) contentNode;
+        public void bind(Object content, Node node) throws ContentPersistenceBindingException {
+            PersistableTextPage page = (PersistableTextPage) content;
             
             try {
-                documentNode.setProperty("testproject:title", documentObject.getTitle());
-                Node htmlNode = documentNode.getNode("testproject:body");
-                htmlNode.setProperty("hippostd:content", documentObject.getBodyContent());
+                node.setProperty("testproject:title", page.getTitle());
+                Node htmlNode = node.getNode("testproject:body");
+                htmlNode.setProperty("hippostd:content", page.getBodyContent());
             } catch (Exception e) {
                 throw new ContentPersistenceBindingException(e);
             }

@@ -22,7 +22,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.persistence.ContentPersistenceBinder;
+import org.hippoecm.hst.persistence.ContentNodeBinder;
 import org.hippoecm.hst.persistence.ContentPersistenceException;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
 import org.hippoecm.repository.api.Document;
@@ -34,33 +34,99 @@ import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
+/**
+ * An implementation for {@link ContentPersistenceManager} interface with Hippo Repository Workflow API.
+ * <P>
+ * This implementation does not provide automatic bindings from content object to JCR node(s).
+ * So, client codes should provide custom binders for their own node types. These custom binders map can be
+ * given by a constructor argument, or a custom binder can be given by an argument of {@link #update(Object, ContentNodeBinder)} method.
+ * </P>
+ * <P>
+ * Another useful option is to make a content POJO object implement {@link ContentNodeBinder} interface.
+ * When client codes invoke {@link #update(Object)} method, this implementation will look up the custom binder 
+ * from the internal map at first. If there's nothing found, then this implementation will check if the content POJO
+ * object is an instance of {@link ContentNodeBinder}. If it is, this implementation will use the content POJO object itself
+ * as a <CODE>ContentNodeBinder</CODE>.
+ * </P>
+ * <P>
+ * If this implementation cannot find any <CODE>ContentNodeBinder</CODE>, it will do updating the content without any bindings.
+ * </P>
+ * 
+ * @version $Id$
+ */
 public class PersistableObjectBeanManagerImpl implements ContentPersistenceManager {
 
+    /**
+     * Hippo Repository specific predefined folder node type name
+     */
     private static final String HIPPOSTD_FOLDER_NODE_TYPE = "hippostd:folder";
     
+    /**
+     * {@link ObjectBeanManager} instance provided by HST content-beans to provide {@link #getObject(String)} facility. 
+     */
     protected ObjectBeanManager obm;
-    protected Session session;
-    protected ObjectConverter objectConverter;
-    protected Map<String, ContentPersistenceBinder> nodeTypeBinders;
     
+    /**
+     * JCR session in this manager object context.
+     */
+    protected Session session;
+    
+    /**
+     * Custom content node binders map, which is used to look up a custom binder for a node type.
+     */
+    protected Map<String, ContentNodeBinder> contentNodeBinders;
+    
+    /**
+     * The workflow category name to get a folder workflow.
+     */
     protected String folderNodeWorkflowCategory = "internal"; // found in Niels's example
+    
+    /**
+     * The workflow category name to get a document workflow. 
+     */
     protected String documentNodeWorkflowCategory = "default"; // found in Niels's example
+    
+    /**
+     * The workflow category name to add a new document.
+     */
     protected String documentAdditionWorkflowCategory = "new-document"; // found in Niels's example
+    
+    /**
+     * The workflow category name to add a new folder.
+     */
     protected String folderAdditionWorkflowCategory = "new-folder"; // fairy declaration, but it works!!
     
+    /**
+     * Flag to request publishing after {@link #update(Object)} or {@link #update(Object, ContentNodeBinder)} is invoked.
+     */
     protected boolean publishAfterUpdate;
     
+    /**
+     * Constructor
+     * @param session the session for this manager context
+     * @param objectConverter the object converter to do mapping from JCR nodes to content POJO objects
+     */
     public PersistableObjectBeanManagerImpl(Session session, ObjectConverter objectConverter) {
         this(session, objectConverter, null);
     }
     
-    public PersistableObjectBeanManagerImpl(Session session, ObjectConverter objectConverter, Map<String, ContentPersistenceBinder> nodeTypeBinders) {
+    /**
+     * Constructor
+     * @param session the session for this manager context
+     * @param objectConverter the object converter to do mapping from JCR nodes to content POJO objects
+     * @param contentNodeBinders the predefined content node binders map which item is node type name key and custom binder object value.
+     */
+    public PersistableObjectBeanManagerImpl(Session session, ObjectConverter objectConverter, Map<String, ContentNodeBinder> contentNodeBinders) {
         obm = new ObjectBeanManagerImpl(session, objectConverter);
         this.session = session;
-        this.objectConverter = objectConverter;
-        this.nodeTypeBinders = nodeTypeBinders;
+        this.contentNodeBinders = contentNodeBinders;
     }
     
+    /**
+     * Get an object from the JCR repository
+     * 
+     * @see {@link ObjectBeanManager#getObject(String)}
+     */
     public Object getObject(String absPath) throws ContentPersistenceException {
         try {
             return obm.getObject(absPath);
@@ -69,6 +135,17 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
         }
     }
     
+    /**
+     * Creates content node(s) with the specified node type at the specified absolute path.
+     * <P>
+     * The absolute path is regarded as the path of a workflow-enabled document/folder path. 
+     * </P>
+     * 
+     * @param absPath the absolute node path
+     * @param nodeTypeName the node type name of the content object
+     * @param name the content node name
+     * @throws ContentPersistenceException
+     */
     public void create(String absPath, String nodeTypeName, String name) throws ContentPersistenceException {
         try {
             Node folderNode = (Node) session.getItem(absPath);
@@ -98,11 +175,25 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
         }
     }
     
+    /**
+     * Updates the content node which is mapped to the object.
+     * <P>
+     * This will look up a propery custom content node binder from the internal map. ({@link #contentNodeBinders}).
+     * If it is not found there, this implementation will check if the content object is an instance of {@link ContentNodeBinder} interface.
+     * If so, the content object will be used as a custom binder.
+     * </P>
+     * <P>
+     * If there's no content node binder found, then this implementation will do updating
+     * only without any bindings.
+     * </P>
+     * @param content
+     * @throws ContentPersistenceException
+     */
     public void update(Object content) throws ContentPersistenceException {
         if (content instanceof HippoBean) {
-            ContentPersistenceBinder binder = null;
+            ContentNodeBinder binder = null;
 
-            if (nodeTypeBinders != null && !nodeTypeBinders.isEmpty()) {
+            if (contentNodeBinders != null && !contentNodeBinders.isEmpty()) {
                 HippoBean contentBean = (HippoBean) content;
                 Node contentNode = contentBean.getNode();
                 
@@ -111,14 +202,14 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
                         contentNode = ((HippoNode) contentNode).getCanonicalNode();
                     }
                     
-                    binder = nodeTypeBinders.get(contentNode.getPrimaryNodeType().getName());
-                    
-                    if (binder == null && content instanceof ContentPersistenceBinder) {
-                        binder = (ContentPersistenceBinder) content;
-                    }
+                    binder = contentNodeBinders.get(contentNode.getPrimaryNodeType().getName());
                 } catch (Exception e) {
                     throw new ContentPersistenceException(e);
                 }
+            }
+            
+            if (binder == null && content instanceof ContentNodeBinder) {
+                binder = (ContentNodeBinder) content;
             }
             
             update(content, binder);
@@ -127,7 +218,21 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
         }
     }
     
-    public void update(Object content, ContentPersistenceBinder customBinder) throws ContentPersistenceException {
+    /**
+     * Updates the content node which is mapped to the object by the <CODE>customContentNodeBinder</CODE>
+     * provided by client.
+     * <P>
+     * Unlike {@link #update(Object)}, the implementation should not try to do automatic or predefined bindings.
+     * Instead, it should invoke <CODE>customContentNodeBinder</CODE> to do bindings.
+     * </P>
+     * <P>
+     * Therefore, if a developer wants to customize the bindings, the developer should provide a <CODE>customContentNodeBinder</CODE>.
+     * </P>
+     * @param content
+     * @param customContentNodeBinder
+     * @throws ContentPersistenceException
+     */
+    public void update(Object content, ContentNodeBinder customContentNodeBinder) throws ContentPersistenceException {
         if (content instanceof HippoBean) {
             try {
                 HippoBean contentBean = (HippoBean) content;
@@ -149,8 +254,8 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
                         contentNode = session.getNodeByUUID(uuid);
                     }
                     
-                    if (customBinder != null) {
-                        customBinder.bind(content, contentNode);
+                    if (customContentNodeBinder != null) {
+                        customContentNodeBinder.bind(content, contentNode);
                     }
                     
                     if (publishAfterUpdate) {
@@ -171,6 +276,11 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
         }
     }
     
+    /**
+     * Removes the content node which is mapped to the object.
+     * @param content
+     * @throws ContentPersistenceException
+     */
     public void remove(Object content) throws ContentPersistenceException {
         if (content instanceof HippoBean) {
             try {
@@ -199,6 +309,10 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
         }
     }
 
+    /**
+     * Saves all pending changes. 
+     * @throws ContentPersistenceException
+     */
     public void save() throws ContentPersistenceException {
         try {
             session.save();
@@ -207,6 +321,10 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
         }
     }
 
+    /**
+     * Discards all pending changes and resets the current state.
+     * @throws ContentPersistenceException
+     */
     public void reset() throws ContentPersistenceException {
         try {
             session.refresh(false);
@@ -214,45 +332,85 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
             throw new ContentPersistenceException(e);
         }
     }
+    
+    /**
+     * Sets the flag whether it should request publishing after invoking update.
+     * @param publishAfterUpdate
+     */
+    public void setPublishAfterUpdate(boolean publishAfterUpdate) {
+        this.publishAfterUpdate = publishAfterUpdate;
+    }
 
+    /**
+     * Gets the flag whether it should request publishing after invoking update.
+     * @return
+     */
+    public boolean getPublishAfterUpdate() {
+        return publishAfterUpdate;
+    }
+    
+    /**
+     * Gets the workflow category name used to get a folder workflow.
+     * @return
+     */
     public String getFolderNodeWorkflowCategory() {
         return folderNodeWorkflowCategory;
     }
 
+    /**
+     * Sets the workflow category name used to get a folder workflow.
+     * @param folderNodeWorkflowCategory
+     */
     public void setFolderNodeWorkflowCategory(String folderNodeWorkflowCategory) {
         this.folderNodeWorkflowCategory = folderNodeWorkflowCategory;
     }
 
+    /**
+     * Gets the workflow category name used to get a document workflow.
+     * @return
+     */
     public String getDocumentNodeWorkflowCategory() {
         return documentNodeWorkflowCategory;
     }
 
+    /**
+     * Sets the workflow category name used to get a document workflow.
+     * @param documentNodeWorkflowCategory
+     */
     public void setDocumentNodeWorkflowCategory(String documentNodeWorkflowCategory) {
         this.documentNodeWorkflowCategory = documentNodeWorkflowCategory;
     }
 
+    /**
+     * Gets the workflow category name used to add a folder.
+     * @return
+     */
     public String getFolderAdditionWorkflowCategory() {
         return folderAdditionWorkflowCategory;
     }
 
+    /**
+     * Sets the workflow category name used to add a folder.
+     * @param folderAdditionWorkflowCategory
+     */
     public void setFolderAdditionWorkflowCategory(String folderAdditionWorkflowCategory) {
         this.folderAdditionWorkflowCategory = folderAdditionWorkflowCategory;
     }
 
+    /**
+     * Gets the workflow category name used to add a document.
+     * @return
+     */
     public String getDocumentAdditionWorkflowCategory() {
         return documentAdditionWorkflowCategory;
     }
 
+    /**
+     * Sets the workflow category name used to add a document.
+     * @param documentAdditionWorkflowCategory
+     */
     public void setDocumentAdditionWorkflowCategory(String documentAdditionWorkflowCategory) {
         this.documentAdditionWorkflowCategory = documentAdditionWorkflowCategory;
-    }
-
-    public void setPublishAfterUpdate(boolean publishAfterUpdate) {
-        this.publishAfterUpdate = publishAfterUpdate;
-    }
-    
-    public boolean getPublishAfterUpdate() {
-        return publishAfterUpdate;
     }
     
 }

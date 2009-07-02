@@ -22,12 +22,19 @@ package org.hippoecm.hst.persistence;
  * Also it should have knowledges on how to create, update or remove a content node with node type and absolute path.
  * </P>
  * <P>
- * Some sophisticated JCR repository engine already have their own workflow knowledges on 
- * how to create, update and remove content nodes based on node types.
+ * If the content models are not complex and so just simple node structures are enough for the requirements, then
+ * an implementation for this interface can probably provide an automatic bi-directional mappings.
  * </P>
  * <P>
+ * However, in most real cases, the content models are very sophisticated, so they need careful workflow management
+ * to fulfill real requirements such as faceted selection, virtual nodes, approval or publishing management.
+ * Therefore, this sophisticated management should be implemented properly in separated classes.
+ * </P>
+ * <P>
+ * Some sophisticated JCR repository engine already have their own workflow knowledges on 
+ * how to create, update and remove content nodes based on node types.
  * Or, some domain specific content-based application should know the knowledges on their own content models.
- * In this case, they should provide an implementation for this interface.
+ * In these cases, they can provide an implementation for this interface.
  * </P>
  * 
  * @version $Id$
@@ -43,9 +50,16 @@ public interface ContentPersistenceManager {
     Object getObject(String absPath) throws ContentPersistenceException;
     
     /**
-     * Creates a content node with the specified node type at the specified absolute path.
-     * @param absPath
-     * @param nodeTypeName
+     * Creates content node(s) with the specified node type at the specified absolute path.
+     * <P>
+     * The absolute path could be regarded differently according to physical implementations.
+     * For example, an implementation can regard the path as a simple one to create a simple JCR node.
+     * On the other hand, a sophisticated implementation can regard the path as an input for 
+     * a workflow-enabled document/folder path. 
+     * </P>
+     * 
+     * @param absPath the absolute node path
+     * @param nodeTypeName the node type name of the content object
      * @param name the content node name
      * @throws ContentPersistenceException
      */
@@ -53,21 +67,32 @@ public interface ContentPersistenceManager {
     
     /**
      * Updates the content node which is mapped to the object.
-     * An implementation can provide automatic content binding.
+     * <P>
+     * An implementation can provide binding the content object to the physical JCR node(s) and updates.
+     * An implementation can provide automatic content binding, or another requires pre-registered
+     * <CODE>ContentNodeBinder</CODE> map to do real bindings. It probably depends on the functionalities
+     * of underlying repository.
+     * </P>
      * @param content
      * @throws ContentPersistenceException
      */
     void update(Object content) throws ContentPersistenceException;
     
     /**
-     * Updates the content node which is mapped to the object.
-     * With <CODE>customBinder</CODE> parameter, the physical binding content object to content node(s)
-     * should be provided by the <CODE>customBinder</CODE> itself.
+     * Updates the content node which is mapped to the object by the <CODE>customContentNodeBinder</CODE>
+     * provided by client.
+     * <P>
+     * Unlike {@link #update(Object)}, the implementation should not try to do automatic or predefined bindings.
+     * Instead, it should invoke <CODE>customContentNodeBinder</CODE> to do bindings.
+     * </P>
+     * <P>
+     * Therefore, if a developer wants to customize the bindings, the developer should provide a <CODE>customContentNodeBinder</CODE>.
+     * </P>
      * @param content
-     * @param customBinder
+     * @param customContentNodeBinder
      * @throws ContentPersistenceException
      */
-    void update(Object content, ContentPersistenceBinder customBinder) throws ContentPersistenceException;
+    void update(Object content, ContentNodeBinder customContentNodeBinder) throws ContentPersistenceException;
     
     /**
      * Removes the content node which is mapped to the object.
