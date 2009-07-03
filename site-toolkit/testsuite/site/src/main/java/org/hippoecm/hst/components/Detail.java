@@ -15,15 +15,13 @@
  */
 package org.hippoecm.hst.components;
 
-import java.util.List;
-
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.beans.TextPage;
 import org.hippoecm.hst.component.support.bean.persistency.BaseHstComponent;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -31,9 +29,9 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.persistence.ContentNodeBinder;
-import org.hippoecm.hst.persistence.ContentPersistenceBindingException;
+import org.hippoecm.hst.persistence.ContentPersistenceException;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,59 +46,141 @@ public class Detail extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
         
-        HippoBean  n = this.getContentBean(request);
+        HippoBean document = getContentBean(request);
         
-        if (n == null) {
+        if (document == null) {
             return;
         }
         
-        request.setAttribute("parent", n.getParentBean());
-        request.setAttribute("document",n);
+        request.setAttribute("parent", document.getParentBean());
+        request.setAttribute("document", document);
+        
+        
+        // retrieves comments folder bean for this document
+        String siteContentBasePath = getSiteContentBasePath(request);
+        String documentRelPath = PathUtils.normalizePath(document.getPath());
+        if (documentRelPath.startsWith(siteContentBasePath)) {
+            documentRelPath = documentRelPath.substring(siteContentBasePath.length() + 1);
+        }
+        String commentsFolderNodePath = "/" + siteContentBasePath + "/comments/" + documentRelPath;
+        
+        try {
+            HippoFolderBean commentsFolderBean = (HippoFolderBean) getObjectBeanManager(request).getObject(commentsFolderNodePath);
+            if (commentsFolderBean != null) {
+                request.setAttribute("commentsFolder", commentsFolderBean);
+            }
+        } catch (ObjectBeanManagerException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to retrieve comments folder for {}: {}", commentsFolderNodePath, e);
+            }
+        }
     }
 
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        String title = request.getParameter("title");
-        String comment = request.getParameter("comment");
+        String type = request.getParameter("type");
         
-        if (title != null && !"".equals(title.trim()) && comment != null) {
-            try {
-                Session persistableSession = getPersistableSession(request);
-                boolean requestPublishingAfterUpdate = true;
-                ContentPersistenceManager cpm = getContentPersistenceManager(persistableSession, requestPublishingAfterUpdate);
+        if ("add".equals(type)) {
+            String title = request.getParameter("title");
+            String comment = request.getParameter("comment");
+            
+            if (title != null && !"".equals(title.trim()) && comment != null) {
+                Session persistableSession = null;
+                ContentPersistenceManager cpm = null;
                 
-                HippoBean document = getContentBean(request);
-                List<HippoFolderBean> commentsFolderList = document.getChildBeansByName("comments");
-                
-                if (commentsFolderList.isEmpty()) {
-                    cpm.create(document.getPath(), "hippostd:folder", "comments");
-                }
-                
-                cpm.create(document.getPath() + "/comments", "testproject:textpage", title);
-
-                TextPage commentPage = (TextPage) cpm.getObject(document.getPath() + "/comments" + "/" + title);
-                commentPage.setTitle(title);
-                commentPage.setSummary(comment);
-                
-                cpm.update(commentPage, new ContentNodeBinder() {
-                    public void bind(Object content, Node node) throws ContentPersistenceBindingException {
+                try {
+                    // Retrieve writable session. NOTE: this session should be logged out manually!
+                    persistableSession = getPersistableSession(request);
+                    boolean requestPublishingAfterUpdate = true;
+                    // create ContentPersistenceManager with request-publishing-option
+                    cpm = getContentPersistenceManager(persistableSession, requestPublishingAfterUpdate);
+                    
+                    // retrieve the content news bean and its relative path
+                    HippoBean document = getContentBean(request);
+                    String siteContentBasePath = getSiteContentBasePath(request);
+                    String documentRelPath = PathUtils.normalizePath(document.getPath());
+                    if (documentRelPath.startsWith(siteContentBasePath)) {
+                        documentRelPath = documentRelPath.substring(siteContentBasePath.length() + 1);
+                    }
+                    // retrieve the physical path of the site content base node.
+                    String siteContentBasePhysicalPath = getSiteContentBasePhysicalPath(request);
+                    
+                    // calculates comments folder node path for this news document.
+                    String documentCommentsFolderNodePath = siteContentBasePhysicalPath + "/comments/" + documentRelPath;
+                    // comment node name is simply a concatenation of 'comment-' and current time millis. 
+                    String commentNodeName = "comment-" + System.currentTimeMillis();
+                    // calculates comment node path
+                    String commentNodeAbsPath = documentCommentsFolderNodePath + "/" + commentNodeName;
+                    
+                    // create comment node now
+                    cpm.create(documentCommentsFolderNodePath, "testproject:textpage", commentNodeName, true);
+    
+                    // retrieve the comment content to manipulate
+                    TextPage commentPage = (TextPage) cpm.getObject(commentNodeAbsPath);
+                    // update content properties
+                    commentPage.setTitle(title);
+                    commentPage.setBodyContent(comment);
+                    
+                    // update now
+                    cpm.update(commentPage);
+                    
+                    // save the pending changes
+                    cpm.save();
+                } catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Failed to create a comment.", e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Failed to create a comment. {}", e);
+                    }
+                    
+                    if (cpm != null) {
                         try {
-                            TextPage commentPage = (TextPage) content;
-                            node.setProperty("testproject:title", commentPage.getTitle());
-                            node.setProperty("testproject:summary", commentPage.getSummary());
-                        } catch (Exception e) {
-                            throw new ContentPersistenceBindingException(e);
+                            cpm.reset();
+                        } catch (ContentPersistenceException e1) {
+                            if (log.isWarnEnabled()) log.warn("Failed to reset. {}", e);
                         }
                     }
-                });
+                } finally {
+                    if (persistableSession != null) {
+                        persistableSession.logout();
+                    }
+                }
+            }
+        } else if ("remove".equals(type)) {
+            String commentPath = request.getParameter("path");
+            
+            if (commentPath != null) {
+                Session persistableSession = null;
+                ContentPersistenceManager cpm = null;
                 
-                cpm.save();
-                
-            } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Failed to create a comment.", e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Failed to create a comment. {}", e);
+                try {
+                    // Retrieve writable session. NOTE: this session should be logged out manually!
+                    persistableSession = getPersistableSession(request);
+                    boolean requestPublishingAfterUpdate = true;
+                    // create ContentPersistenceManager with request-publishing-option
+                    cpm = getContentPersistenceManager(persistableSession, requestPublishingAfterUpdate);
+                    
+                    TextPage commentPage = (TextPage) cpm.getObject(commentPath);
+                    
+                    cpm.remove(commentPage);
+                } catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Failed to create a comment.", e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Failed to create a comment. {}", e);
+                    }
+                    
+                    if (cpm != null) {
+                        try {
+                            cpm.reset();
+                        } catch (ContentPersistenceException e1) {
+                            if (log.isWarnEnabled()) log.warn("Failed to reset. {}", e);
+                        }
+                    }
+                } finally {
+                    if (persistableSession != null) {
+                        persistableSession.logout();
+                    }
                 }
             }
         }

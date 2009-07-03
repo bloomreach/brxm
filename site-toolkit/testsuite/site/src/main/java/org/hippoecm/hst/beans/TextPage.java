@@ -16,12 +16,16 @@
 package org.hippoecm.hst.beans;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.persistence.ContentNodeBinder;
+import org.hippoecm.hst.persistence.ContentPersistenceBindingException;
 
 @Node(jcrType="testproject:textpage")
-public class TextPage extends GeneralPage {
+public class TextPage extends GeneralPage implements ContentNodeBinder {
     
     protected String summary;
+    protected String bodyContent;
     
+    @Override
     public String getTitle() {
         if (title != null) {
             return title;
@@ -44,6 +48,30 @@ public class TextPage extends GeneralPage {
     
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+    
+    public String getBodyContent() {
+        if (bodyContent != null) {
+            return bodyContent;
+        } else {
+            return getHippoHtml("testproject:body").getContent();
+        }
+    }
+    
+    public void setBodyContent(String bodyContent) {
+        this.bodyContent = bodyContent;
+    }
+    
+    public void bind(Object content, javax.jcr.Node node) throws ContentPersistenceBindingException {
+        try {
+            TextPage commentPage = (TextPage) content;
+            node.setProperty("testproject:title", commentPage.getTitle());
+            node.setProperty("testproject:summary", commentPage.getSummary());
+            javax.jcr.Node body = node.getNode("testproject:body");
+            body.setProperty("hippostd:content", commentPage.getBodyContent());
+        } catch (Exception e) {
+            throw new ContentPersistenceBindingException(e);
+        }
     }
     
 }

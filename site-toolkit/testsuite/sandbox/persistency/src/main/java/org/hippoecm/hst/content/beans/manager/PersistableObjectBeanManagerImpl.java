@@ -57,11 +57,6 @@ import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 public class PersistableObjectBeanManagerImpl implements ContentPersistenceManager {
 
     /**
-     * Hippo Repository specific predefined folder node type name
-     */
-    private static final String HIPPOSTD_FOLDER_NODE_TYPE = "hippostd:folder";
-    
-    /**
      * {@link ObjectBeanManager} instance provided by HST content-beans to provide {@link #getObject(String)} facility. 
      */
     protected ObjectBeanManager obm;
@@ -76,6 +71,11 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
      */
     protected Map<String, ContentNodeBinder> contentNodeBinders;
     
+    /**
+     * Hippo Repository specific predefined folder node type name
+     */
+    protected String folderNodeTypeName = "hippostd:folder";
+
     /**
      * The workflow category name to get a folder workflow.
      */
@@ -138,7 +138,10 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
     /**
      * Creates content node(s) with the specified node type at the specified absolute path.
      * <P>
-     * The absolute path is regarded as the path of a workflow-enabled document/folder path. 
+     * The absolute path could be regarded differently according to physical implementations.
+     * For example, an implementation can regard the path as a simple one to create a simple JCR node.
+     * On the other hand, a sophisticated implementation can regard the path as an input for 
+     * a workflow-enabled document/folder path. 
      * </P>
      * 
      * @param absPath the absolute node path
@@ -147,9 +150,73 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
      * @throws ContentPersistenceException
      */
     public void create(String absPath, String nodeTypeName, String name) throws ContentPersistenceException {
+        create(absPath, nodeTypeName, name, false);
+    }
+    
+    /**
+     * Creates content node(s) with the specified node type at the specified absolute path.
+     * <P>
+     * The absolute path could be regarded differently according to physical implementations.
+     * For example, an implementation can regard the path as a simple one to create a simple JCR node.
+     * On the other hand, a sophisticated implementation can regard the path as an input for 
+     * a workflow-enabled document/folder path. 
+     * </P>
+     * <P>
+     * If <CODE>autoCreateFolders</CODE> is true, then folders will be automatically created.
+     * </P>
+     * 
+     * @param absPath the absolute node path
+     * @param nodeTypeName the node type name of the content object
+     * @param name the content node name
+     * @param autoCreateFolders the flag to create folders
+     * @throws ContentPersistenceException
+     */
+    public void create(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ContentPersistenceException {
         try {
-            Node folderNode = (Node) session.getItem(absPath);
+            if (!session.itemExists(absPath)) {
+                if (!autoCreateFolders) {
+                    throw new ContentPersistenceException("The folder node not found on the path: " + absPath);
+                } else {
+                    createMissingFolders(absPath);
+                }
+            }
             
+            createNodeByWorkflow((Node) session.getItem(absPath), nodeTypeName, name);
+        } catch (Exception e) {
+            throw new ContentPersistenceException(e);
+        }
+    }
+    
+    protected void createMissingFolders(String absPath) throws ContentPersistenceException {
+        try {
+            absPath += "/";
+            
+            String path = null;
+            String parentPath = null;
+            int offset1 = absPath.indexOf('/', 1);
+            int offset2 = 0;
+            
+            while (offset1 != -1) {
+                path = absPath.substring(0, offset1);
+                
+                if (path.length() > 0 && !session.itemExists(path)) {
+                    offset2 = path.lastIndexOf('/');
+                    parentPath = path.substring(0, offset2);
+                    Node parentNode = (Node) session.getItem(parentPath);
+                    String name = path.substring(offset2 + 1);
+                    
+                    createNodeByWorkflow(parentNode, folderNodeTypeName, name);
+                }
+                
+                offset1 = absPath.indexOf('/', offset1 + 1);
+            }
+        } catch (Exception e) {
+            throw new ContentPersistenceException(e);
+        }
+    }
+    
+    protected void createNodeByWorkflow(Node folderNode, String nodeTypeName, String name) throws ContentPersistenceException {
+        try {
             if (folderNode instanceof HippoNode) {
                 folderNode = ((HippoNode) folderNode).getCanonicalNode();
             }
@@ -162,13 +229,13 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
                 
                 String category = documentAdditionWorkflowCategory;
                 
-                if (HIPPOSTD_FOLDER_NODE_TYPE.equals(nodeTypeName)) {
+                if (nodeTypeName.equals(folderNodeTypeName)) {
                     category = folderAdditionWorkflowCategory;
                 }
                 
                 fwf.add(category, nodeTypeName, name);
             } else {
-                throw new ContentPersistenceException("The workflow is not a FolderWorkflow for " + absPath + ": " + wf);
+                throw new ContentPersistenceException("The workflow is not a FolderWorkflow for " + folderNode.getPath() + ": " + wf);
             }
         } catch (Exception e) {
             throw new ContentPersistenceException(e);
@@ -331,6 +398,22 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
         } catch (Exception e) {
             throw new ContentPersistenceException(e);
         }
+    }
+    
+    /**
+     * Sets the folder node type name which is used to create folders.
+     * @param folderNodeTypeName
+     */
+    public void setFolderNodeTypeName(String folderNodeTypeName) {
+        this.folderNodeTypeName = folderNodeTypeName;
+    }
+
+    /**
+     * Gets the folder node type name which is used to create folders.
+     * @return
+     */
+    public String getFolderNodeTypeName() {
+        return folderNodeTypeName;
     }
     
     /**

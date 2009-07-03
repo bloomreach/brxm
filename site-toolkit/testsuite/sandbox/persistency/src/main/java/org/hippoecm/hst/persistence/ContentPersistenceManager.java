@@ -66,6 +66,26 @@ public interface ContentPersistenceManager {
     void create(String absPath, String nodeTypeName, String name) throws ContentPersistenceException;
     
     /**
+     * Creates content node(s) with the specified node type at the specified absolute path.
+     * <P>
+     * The absolute path could be regarded differently according to physical implementations.
+     * For example, an implementation can regard the path as a simple one to create a simple JCR node.
+     * On the other hand, a sophisticated implementation can regard the path as an input for 
+     * a workflow-enabled document/folder path. 
+     * </P>
+     * <P>
+     * If <CODE>autoCreateFolders</CODE> is true, then folders will be automatically created.
+     * </P>
+     * 
+     * @param absPath the absolute node path
+     * @param nodeTypeName the node type name of the content object
+     * @param name the content node name
+     * @param autoCreateFolders the flag to create folders
+     * @throws ContentPersistenceException
+     */
+    void create(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ContentPersistenceException;
+    
+    /**
      * Updates the content node which is mapped to the object.
      * <P>
      * An implementation can provide binding the content object to the physical JCR node(s) and updates.

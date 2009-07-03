@@ -21,10 +21,14 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.PersistableObjectBeanManagerImpl;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.persistence.ContentNodeBinder;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
+import org.hippoecm.repository.api.HippoNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A base HstComponent implementation to provide some facility methods for accessing content node POJO objects,
@@ -53,12 +57,14 @@ import org.hippoecm.hst.persistence.ContentPersistenceManager;
  */
 public class BaseHstComponent extends org.hippoecm.hst.component.support.bean.BaseHstComponent {
     
+    private static Logger log = LoggerFactory.getLogger(BaseHstComponent.class);
+    
     /**
      * Returns a <CODE>ContentPersistenceManager</CODE> instance.
      * @param session
      * @return
      */
-    public ContentPersistenceManager getContentPersistenceManager(Session session) {
+    protected ContentPersistenceManager getContentPersistenceManager(Session session) {
         return getContentPersistenceManager(session, null);
     }
     
@@ -68,7 +74,7 @@ public class BaseHstComponent extends org.hippoecm.hst.component.support.bean.Ba
      * @param contentNodeBinders
      * @return
      */
-    public ContentPersistenceManager getContentPersistenceManager(Session session, Map<String, ContentNodeBinder> contentNodeBinders) {
+    protected ContentPersistenceManager getContentPersistenceManager(Session session, Map<String, ContentNodeBinder> contentNodeBinders) {
         return getContentPersistenceManager(session, contentNodeBinders, false);
     }
     
@@ -79,7 +85,7 @@ public class BaseHstComponent extends org.hippoecm.hst.component.support.bean.Ba
      * @param publishAfterUpdate
      * @return
      */
-    public ContentPersistenceManager getContentPersistenceManager(Session session, boolean publishAfterUpdate) {
+    protected ContentPersistenceManager getContentPersistenceManager(Session session, boolean publishAfterUpdate) {
         return getContentPersistenceManager(session, null, publishAfterUpdate);
     }
     
@@ -91,10 +97,32 @@ public class BaseHstComponent extends org.hippoecm.hst.component.support.bean.Ba
      * @param publishAfterUpdate
      * @return
      */
-    public ContentPersistenceManager getContentPersistenceManager(Session session, Map<String, ContentNodeBinder> contentNodeBinders, boolean publishAfterUpdate) {
+    protected ContentPersistenceManager getContentPersistenceManager(Session session, Map<String, ContentNodeBinder> contentNodeBinders, boolean publishAfterUpdate) {
         PersistableObjectBeanManagerImpl cpm = new PersistableObjectBeanManagerImpl(session, this.objectConverter, contentNodeBinders);
         cpm.setPublishAfterUpdate(publishAfterUpdate);
         return cpm;
+    }
+    
+    /**
+     * Returns the physical node path of site content base node.
+     * @param request
+     * @return
+     */
+    protected String getSiteContentBasePhysicalPath(HstRequest request) {
+        String physicalPath = null;
+        
+        try {
+            HippoBean siteContentBaseBean = getSiteContentBaseBean(request);
+            String siteContentBaseNodeUUID = siteContentBaseBean.getNode().getProperty("hippo:docbase").getString();
+            HippoNode siteContentPhysicalNode = (HippoNode) request.getRequestContext().getSession().getNodeByUUID(siteContentBaseNodeUUID);
+            physicalPath = siteContentPhysicalNode.getCanonicalNode().getPath();
+        } catch (Exception e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to retrieve the physical node of site content base: {}", e);
+            }
+        }
+        
+        return physicalPath;
     }
     
 }

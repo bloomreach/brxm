@@ -83,9 +83,13 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
     }
     
     public void create(String absPath, String nodeTypeName, String name) throws ContentPersistenceException {
-        // do nothing... use setObject for mocking.
+        create(absPath, nodeTypeName, name, false);
     }
 
+    public void create(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ContentPersistenceException {
+        // do nothing... use setObject for mocking.
+    }
+    
     public synchronized void update(Object content) throws ContentPersistenceException {
         String path = getPathProperty(content);
         if (path != null) {

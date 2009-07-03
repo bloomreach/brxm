@@ -14,7 +14,6 @@
   limitations under the License. --%>
 
 <%@ page language="java" %>
-<%@ page import="org.hippoecm.hst.content.beans.standard.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
@@ -42,7 +41,26 @@
   <br/>
   
   <div>
-    <form method="POST" action="<hst:actionURL/>">
+    <h3>Comments</h3>
+    <ul>
+      <c:forEach var="comment" items="${commentsFolder.documents}">
+        <hst:actionURL var="removeURL">
+          <hst:param name="type" value="remove"/>
+          <hst:param name="path" value="${comment.path}"/>
+        </hst:actionURL>
+        <li>${comment.title} (<a title="Delete" href="${removeURL}">X</a>)
+          <div style="background-color: #ffc">${comment.bodyContent}</div>
+        </li>
+      </c:forEach>
+    </ul>
+  </div>
+  
+  <hst:actionURL var="addURL">
+    <hst:param name="type" value="add"/>
+  </hst:actionURL>
+  
+  <div>
+    <form method="POST" action="${addURL}">
       <h4>Enter your comment here:</h4>
       <table>
         <tr>
