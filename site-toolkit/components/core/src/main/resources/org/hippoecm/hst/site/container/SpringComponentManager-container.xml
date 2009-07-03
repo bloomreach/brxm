@@ -48,6 +48,7 @@
   <bean id="org.hippoecm.hst.core.container.HstComponentInvoker"
         class="org.hippoecm.hst.core.container.HstComponentInvokerImpl">
     <property name="exceptionThrowable" value="${development.mode}" />
+    <property name="errorRenderPath" value="${component.error.page}" />
   </bean>
   
   <bean id="org.hippoecm.hst.core.container.HstNavigationalStateCodec"

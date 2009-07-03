@@ -51,6 +51,7 @@
         <fileSet filtered="true" encoding="UTF-8">
           <directory>src/main/webapp</directory>
           <excludes>
+            <exclude>**/WEB-INF/jsp/component-error-page.jsp</exclude>
             <exclude>**/WEB-INF/jsp/tracetool*.jsp</exclude>
           </excludes>
           <includes>
@@ -70,6 +71,7 @@
         <fileSet filtered="false" encoding="UTF-8">
           <directory>src/main/webapp</directory>
           <includes>
+            <include>**/WEB-INF/jsp/component-error-page.jsp</include>
             <include>**/WEB-INF/jsp/tracetool*.jsp</include>
             <include>**/*.gif</include>
             <include>**/*.css</include>

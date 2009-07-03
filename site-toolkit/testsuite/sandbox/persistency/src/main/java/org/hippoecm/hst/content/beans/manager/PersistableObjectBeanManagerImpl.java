@@ -94,7 +94,7 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
     /**
      * The workflow category name to add a new folder.
      */
-    protected String folderAdditionWorkflowCategory = "new-folder"; // fairy declaration, but it works!!
+    protected String folderAdditionWorkflowCategory = "new-folder"; // found in a test case for FolderWorkflow
     
     /**
      * Flag to request publishing after {@link #update(Object)} or {@link #update(Object, ContentNodeBinder)} is invoked.

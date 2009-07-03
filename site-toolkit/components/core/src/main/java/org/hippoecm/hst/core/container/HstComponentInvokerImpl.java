@@ -15,11 +15,7 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -39,8 +35,14 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
     
     protected boolean exceptionThrowable;
     
+    protected String errorRenderPath;
+    
     public void setExceptionThrowable(boolean exceptionThrowable) {
         this.exceptionThrowable = exceptionThrowable;
+    }
+    
+    public void setErrorRenderPath(String errorRenderPath) {
+        this.errorRenderPath = errorRenderPath;
     }
     
     public void invokeAction(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
@@ -54,23 +56,15 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
 
             try {
                 component.doAction(hstRequest, hstResponse);
-            } catch (HstComponentException e) {
-                if (this.exceptionThrowable) {
-                    throw e;
-                }
-                
-                window.addComponentExcpetion(e);
-                if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: {}", e.getMessage(), e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught: {}", e.getMessage());
-                }
             } catch (Throwable th) {
+                HstComponentException hce = (th instanceof HstComponentException ? (HstComponentException) th : new HstComponentException(th.getMessage()));
+                
                 if (this.exceptionThrowable) {
-                    throw new HstComponentException(th);
+                    throw hce;
                 }
                 
-                window.addComponentExcpetion(new HstComponentException(th.getMessage()));
+                window.addComponentExcpetion(hce);
+                
                 if (log.isDebugEnabled()) {
                     log.warn("Component exception caught: {}", th.getMessage(), th);
                 } else if (log.isWarnEnabled()) {
@@ -97,23 +91,15 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
 
             try {
                 component.doBeforeRender(hstRequest, hstResponse);
-            } catch (HstComponentException e) {
-                if (this.exceptionThrowable) {
-                    throw e;
-                }
-                
-                window.addComponentExcpetion(e);
-                if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: {}", e.getMessage(), e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught: {}", e.getMessage());
-                }
             } catch (Throwable th) {
+                HstComponentException hce = (th instanceof HstComponentException ? (HstComponentException) th : new HstComponentException(th.getMessage()));
+                
                 if (this.exceptionThrowable) {
-                    throw new HstComponentException(th);
+                    throw hce;
                 }
                 
-                window.addComponentExcpetion(new HstComponentException(th.getMessage()));
+                window.addComponentExcpetion(hce);
+                
                 if (log.isDebugEnabled()) {
                     log.warn("Component exception caught: {}", th.getMessage(), th);
                 } else if (log.isWarnEnabled()) {
@@ -144,12 +130,23 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         try {
             setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
             invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, dispatchUrl, window);
+        } catch (Throwable th) {
+            if (this.exceptionThrowable) {
+                throw new HstComponentException(th);
+            }
+            
+            window.addComponentExcpetion(new HstComponentException(th.getMessage()));
+            if (log.isDebugEnabled()) {
+                log.warn("Component exception caught: {} \n{}", th.getMessage(), th);
+            } else if (log.isWarnEnabled()) {
+                log.warn("Component exception caught: {}", th.getMessage());
+            }
         } finally {
             removeHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
         }
         
         if (window.hasComponentExceptions()) {
-            renderErrorInformation(window, hstResponse);
+            renderErrorInformation(requestContainerConfig, servletRequest, servletResponse, window);
         }
     }
 
@@ -164,23 +161,15 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
 
             try {
                 component.doBeforeServeResource(hstRequest, hstResponse);
-            } catch (HstComponentException e) {
-                if (this.exceptionThrowable) {
-                    throw e;
-                }
-                
-                window.addComponentExcpetion(e);
-                if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: {}", e.getMessage(), e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught: {}", e.getMessage());
-                }
             } catch (Throwable th) {
+                HstComponentException hce = (th instanceof HstComponentException ? (HstComponentException) th : new HstComponentException(th.getMessage()));
+                
                 if (this.exceptionThrowable) {
-                    throw new HstComponentException(th);
+                    throw hce;
                 }
                 
-                window.addComponentExcpetion(new HstComponentException(th.getMessage()));
+                window.addComponentExcpetion(hce);
+                
                 if (log.isDebugEnabled()) {
                     log.warn("Component exception caught: {}", th.getMessage(), th);
                 } else if (log.isWarnEnabled()) {
@@ -216,16 +205,30 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         try {
             setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
             invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, dispatchUrl, window);
+        } catch (Throwable th) {
+            HstComponentException hce = (th instanceof HstComponentException ? (HstComponentException) th : new HstComponentException(th.getMessage()));
+            
+            if (this.exceptionThrowable) {
+                throw hce;
+            }
+            
+            window.addComponentExcpetion(hce);
+            
+            if (log.isDebugEnabled()) {
+                log.warn("Component exception caught: {}", th.getMessage(), th);
+            } else if (log.isWarnEnabled()) {
+                log.warn("Component exception caught: {}", th.getMessage());
+            }
         } finally {
             removeHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
         }
 
         if (window.hasComponentExceptions()) {
-            renderErrorInformation(window, hstResponse);
+            renderErrorInformation(requestContainerConfig, servletRequest, servletResponse, window);
         }
     }
 
-    protected void invokeDispatcher(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, String dispatchUrl, HstComponentWindow window) throws ContainerException {
+    protected void invokeDispatcher(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, String dispatchUrl, HstComponentWindow window) throws Throwable {
         RequestDispatcher disp = null;
         
         if (dispatchUrl != null) {
@@ -250,39 +253,6 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
 
             try {
                 disp.include(servletRequest, servletResponse);
-            } catch (ServletException e) {
-                if (this.exceptionThrowable) {
-                    throw new HstComponentException(e);
-                }
-                
-                window.addComponentExcpetion(new HstComponentException(e.getMessage()));
-                if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: {} \n{}", e.getMessage(), e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught: {}", e.getMessage());
-                }
-            } catch (IOException e) {
-                if (this.exceptionThrowable) {
-                    throw new HstComponentException(e);
-                }
-
-                window.addComponentExcpetion(new HstComponentException(e.getMessage()));
-                if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: {} \n{}", e.getMessage(), e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught: {}", e.getMessage());
-                }
-            } catch (Throwable th) {
-                if (this.exceptionThrowable) {
-                    throw new HstComponentException(th);
-                }
-                
-                window.addComponentExcpetion(new HstComponentException(th.getMessage()));
-                if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: {} \n{}", th.getMessage(), th);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught: {}", th.getMessage());
-                }
             } finally {
                 if (currentClassloader != null) {
                     Thread.currentThread().setContextClassLoader(currentClassloader);
@@ -291,26 +261,25 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         }
     }
     
-    protected void renderErrorInformation(HstComponentWindow window, HstResponse hstResponse) {
-        
-        PrintWriter out = null;
+    protected void renderErrorInformation(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, HstComponentWindow window) {
         try {
-            hstResponse.reset();
-            // TODO see HSTTWO-651
-            if(false) {
-                out = hstResponse.getWriter();
-                for (HstComponentException hce : window.getComponentExceptions()) {
-                    out.println(hce.getMessage());
+            servletResponse.reset();
+            
+            if (errorRenderPath != null && errorRenderPath.length() != 0) {
+                try {
+                    servletRequest.setAttribute("errorComponentWindow", window);
+                    invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, errorRenderPath, window);
+                    servletResponse.flushBuffer();
+                } finally {
+                    servletRequest.removeAttribute("errorComponentWindow");
                 }
-            out.flush();
             }
-        } catch (Exception e) {
-            log.warn("Invalid out.");
-        } finally {
-            try {
-                hstResponse.flushBuffer();
-            } catch (IOException e) {
+        } catch (Throwable th) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to dispatch to error page: " + th);
             }
+            
+            servletResponse.reset();
         }
     }
     
