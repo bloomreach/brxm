@@ -15,9 +15,7 @@
  */
 package org.hippoecm.hst.components;
 
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.beans.TextPage;
 import org.hippoecm.hst.component.support.bean.persistency.BaseHstComponent;
@@ -27,20 +25,14 @@ import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.container.ContainerConfiguration;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.persistence.ContentPersistenceException;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
-import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Detail extends BaseHstComponent {
     
     private static Logger log = LoggerFactory.getLogger(Detail.class);
-    
-    private final static String DEFAULT_WRITABLE_USERNAME_PROPERTY = "writable.repository.user.name";
-    private final static String DEFAULT_WRITABLE_PASSWORD_PROPERTY = "writable.repository.password";
     
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
@@ -55,24 +47,12 @@ public class Detail extends BaseHstComponent {
         request.setAttribute("parent", document.getParentBean());
         request.setAttribute("document", document);
         
-        
-        // retrieves comments folder bean for this document
-        String siteContentBasePath = getSiteContentBasePath(request);
-        String documentRelPath = PathUtils.normalizePath(document.getPath());
-        if (documentRelPath.startsWith(siteContentBasePath)) {
-            documentRelPath = documentRelPath.substring(siteContentBasePath.length() + 1);
-        }
-        String commentsFolderNodePath = "/" + siteContentBasePath + "/comments/" + documentRelPath;
-        
         try {
+            String commentsFolderNodePath = "/" + getSiteContentBasePath(request) + "/comments/" + getContentRelativePath(request, document.getPath());
             HippoFolderBean commentsFolderBean = (HippoFolderBean) getObjectBeanManager(request).getObject(commentsFolderNodePath);
-            if (commentsFolderBean != null) {
-                request.setAttribute("commentsFolder", commentsFolderBean);
-            }
+            request.setAttribute("commentsFolder", commentsFolderBean);
         } catch (ObjectBeanManagerException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Failed to retrieve comments folder for {}: {}", commentsFolderNodePath, e);
-            }
+            log.warn("Failed to retrieve comments folder for {}: {}", document.getPath(), e);
         }
     }
 
@@ -89,34 +69,23 @@ public class Detail extends BaseHstComponent {
                 ContentPersistenceManager cpm = null;
                 
                 try {
-                    // Retrieve writable session. NOTE: this session should be logged out manually!
+                    // retrieves writable session. NOTE: this session should be logged out manually!
                     persistableSession = getPersistableSession(request);
+                    
                     boolean requestPublishingAfterUpdate = true;
                     // create ContentPersistenceManager with request-publishing-option
                     cpm = getContentPersistenceManager(persistableSession, requestPublishingAfterUpdate);
                     
-                    // retrieve the content news bean and its relative path
-                    HippoBean document = getContentBean(request);
-                    String siteContentBasePath = getSiteContentBasePath(request);
-                    String documentRelPath = PathUtils.normalizePath(document.getPath());
-                    if (documentRelPath.startsWith(siteContentBasePath)) {
-                        documentRelPath = documentRelPath.substring(siteContentBasePath.length() + 1);
-                    }
-                    // retrieve the physical path of the site content base node.
-                    String siteContentBasePhysicalPath = getSiteContentBasePhysicalPath(request);
-                    
-                    // calculates comments folder node path for this news document.
-                    String documentCommentsFolderNodePath = siteContentBasePhysicalPath + "/comments/" + documentRelPath;
+                    // retrieve comments folder path
+                    String commentsFolderPath = getCommentsFolderPath(request);
                     // comment node name is simply a concatenation of 'comment-' and current time millis. 
                     String commentNodeName = "comment-" + System.currentTimeMillis();
-                    // calculates comment node path
-                    String commentNodeAbsPath = documentCommentsFolderNodePath + "/" + commentNodeName;
                     
                     // create comment node now
-                    cpm.create(documentCommentsFolderNodePath, "testproject:textpage", commentNodeName, true);
+                    cpm.create(commentsFolderPath, "testproject:textpage", commentNodeName, true);
     
                     // retrieve the comment content to manipulate
-                    TextPage commentPage = (TextPage) cpm.getObject(commentNodeAbsPath);
+                    TextPage commentPage = (TextPage) cpm.getObject(commentsFolderPath + "/" + commentNodeName);
                     // update content properties
                     commentPage.setTitle(title);
                     commentPage.setBodyContent(comment);
@@ -127,17 +96,13 @@ public class Detail extends BaseHstComponent {
                     // save the pending changes
                     cpm.save();
                 } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Failed to create a comment.", e);
-                    } else if (log.isWarnEnabled()) {
-                        log.warn("Failed to create a comment. {}", e);
-                    }
+                    log.warn("Failed to create a comment. {}", e);
                     
                     if (cpm != null) {
                         try {
                             cpm.reset();
                         } catch (ContentPersistenceException e1) {
-                            if (log.isWarnEnabled()) log.warn("Failed to reset. {}", e);
+                            log.warn("Failed to reset. {}", e);
                         }
                     }
                 } finally {
@@ -164,17 +129,13 @@ public class Detail extends BaseHstComponent {
                     
                     cpm.remove(commentPage);
                 } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Failed to create a comment.", e);
-                    } else if (log.isWarnEnabled()) {
-                        log.warn("Failed to create a comment. {}", e);
-                    }
+                    log.warn("Failed to create a comment. {}", e);
                     
                     if (cpm != null) {
                         try {
                             cpm.reset();
                         } catch (ContentPersistenceException e1) {
-                            if (log.isWarnEnabled()) log.warn("Failed to reset. {}", e);
+                            log.warn("Failed to reset. {}", e);
                         }
                     }
                 } finally {
@@ -186,31 +147,20 @@ public class Detail extends BaseHstComponent {
         }
     }
     
-    protected Session getPersistableSession(HstRequest request) {
-        Session persistableSession = null;
-        
-        HstRequestContext requestContext = request.getRequestContext();
-        ContainerConfiguration config = requestContext.getContainerConfiguration();
-        
-        String username = config.getString(DEFAULT_WRITABLE_USERNAME_PROPERTY);
-        String password = config.getString(DEFAULT_WRITABLE_PASSWORD_PROPERTY);
-        
-        if (username == null || password == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("Cannot retrieve a writable user for '{}'", DEFAULT_WRITABLE_USERNAME_PROPERTY);
-            }
-        } else {
-            try {
-                persistableSession = requestContext.getSession().impersonate(new SimpleCredentials(username, password.toCharArray()));
-            } catch (RepositoryException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Cannot impersonate a session to user '{}'", username);
-                }
-            }
-        }
-        
-        return persistableSession;
+    /**
+     * Returns physical comments folder node path.
+     * @param request
+     * @return
+     */
+    protected String getCommentsFolderPath(HstRequest request) {
+        HippoBean document = getContentBean(request);
+        String documentRelPath = getContentRelativePath(request, document.getPath());
+        // retrieve the physical path of the site content base node.
+        String siteContentBasePhysicalPath = getSiteContentBasePhysicalPath(request);
+        // calculates comments folder node path for this news document.
+        return siteContentBasePhysicalPath + "/comments/" + documentRelPath;
     }
+    
 }
 
 

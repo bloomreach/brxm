@@ -17,15 +17,20 @@ package org.hippoecm.hst.component.support.bean.persistency;
 
 import java.util.Map;
 
+import javax.jcr.Credentials;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.PersistableObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.persistence.ContentNodeBinder;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
+import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +62,45 @@ import org.slf4j.LoggerFactory;
  */
 public class BaseHstComponent extends org.hippoecm.hst.component.support.bean.BaseHstComponent {
     
+    public static final String DEFAULT_WRITABLE_USERNAME_PROPERTY = "writable.repository.user.name";
+    public static final String DEFAULT_WRITABLE_PASSWORD_PROPERTY = "writable.repository.password";
+    
     private static Logger log = LoggerFactory.getLogger(BaseHstComponent.class);
+    
+    /**
+     * Creates a persistable JCR session with the default credentials
+     * <P>
+     * <EM>Note: The client should invoke <CODE>logout()</CODE> method on the session after use.</EM>
+     * </P>
+     * <P>
+     * Internally, {@link javax.jcr.Session#impersonate(Credentials)} method will be used to create a
+     * persistable JCR session. The method is invoked on the session from the session pooling repository.
+     * </P>
+     * @param request
+     * @return
+     */
+    protected Session getPersistableSession(HstRequest request) throws RepositoryException {
+        ContainerConfiguration config = request.getRequestContext().getContainerConfiguration();
+        String username = config.getString(DEFAULT_WRITABLE_USERNAME_PROPERTY);
+        String password = config.getString(DEFAULT_WRITABLE_PASSWORD_PROPERTY);
+        return getPersistableSession(request, new SimpleCredentials(username, password.toCharArray()));
+    }
+    
+    /**
+     * Creates a persistable JCR session with provided credentials.
+     * <P>
+     * <EM>Note: The client should invoke <CODE>logout()</CODE> method on the session after use.</EM>
+     * </P>
+     * <P>
+     * Internally, {@link javax.jcr.Session#impersonate(Credentials)} method will be used to create a
+     * persistable JCR session. The method is invoked on the session from the session pooling repository.
+     * </P>
+     * @param request
+     * @return
+     */
+    protected Session getPersistableSession(HstRequest request, Credentials credentials) throws RepositoryException {
+        return request.getRequestContext().getSession().impersonate(credentials);
+    }
     
     /**
      * Returns a <CODE>ContentPersistenceManager</CODE> instance.
@@ -123,6 +166,23 @@ public class BaseHstComponent extends org.hippoecm.hst.component.support.bean.Ba
         }
         
         return physicalPath;
+    }
+    
+    /**
+     * Returns the relative path of a node from the site content base path
+     * @param request
+     * @param contentPath
+     * @return
+     */
+    protected String getContentRelativePath(HstRequest request, String contentPath) {
+        String siteContentBasePath = getSiteContentBasePath(request);
+        String relPath = PathUtils.normalizePath(contentPath);
+        
+        if (relPath.startsWith(siteContentBasePath)) {
+            relPath = relPath.substring(siteContentBasePath.length() + 1);
+        }
+        
+        return relPath;
     }
     
 }
