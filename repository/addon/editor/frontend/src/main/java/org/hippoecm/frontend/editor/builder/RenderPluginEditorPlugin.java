@@ -144,20 +144,22 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
             }
         }.setVisible(editable));
 
-        add(new AjaxEventBehavior("onclick") {
-            private static final long serialVersionUID = 1L;
+        if (editable) {
+            add(new AjaxEventBehavior("onclick") {
+                private static final long serialVersionUID = 1L;
+    
+                @Override
+                protected void onEvent(AjaxRequestTarget target) {
+                    IModelReference pluginRef = context.getService(config.getString("model.plugin"), IModelReference.class);
+                    pluginRef.setModel(new Model(pluginId));
+                }
 
-            @Override
-            protected void onEvent(AjaxRequestTarget target) {
-                IModelReference pluginRef = context.getService(config.getString("model.plugin"), IModelReference.class);
-                pluginRef.setModel(new Model(pluginId));
-            }
-
-            @Override
-            protected IAjaxCallDecorator getAjaxCallDecorator() {
-                return new EventStoppingDecorator(super.getAjaxCallDecorator());
-            }
-        });
+                @Override
+                protected IAjaxCallDecorator getAjaxCallDecorator() {
+                    return new EventStoppingDecorator(super.getAjaxCallDecorator());
+                }
+            });
+        }
 
         updatePreview();
     }

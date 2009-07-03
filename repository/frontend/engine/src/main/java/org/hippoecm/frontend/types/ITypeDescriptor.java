@@ -52,6 +52,15 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
 
     void setIsMixin(boolean isMixin);
 
+    /**
+     * Returns true if this type is <code>typeName</code>
+     * or a subtype of <code>typeName</code>, otherwise returns
+     * <code>false</code>.
+     * @param typeName the name of a node type.
+     * @return a boolean
+     */
+    boolean isType(String typeName);
+
     Value createValue();
     
 }

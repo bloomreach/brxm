@@ -14,11 +14,19 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-<wicket:panel>
-  <ul class="hippo-editor-template-field-new">
+  <wicket:panel>
+    <wicket:container wicket:id="fragment" />
+  </wicket:panel>
+  <wicket:panel>
+    <wicket:container wicket:id="fragment"/>
+  </wicket:panel>
+  <wicket:fragment wicket:id="edit">
+    <ul class="hippo-editor-template-field-new">
       <li wicket:id="templates">
         <a wicket:id="template" href="#"><span wicket:id="template-name"></span></a>
       </li>
     </ul>
-</wicket:panel>
+  </wicket:fragment>
+  <wicket:fragment wicket:id="view">
+  </wicket:fragment>
 </html>

@@ -185,10 +185,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
     }
 
     public IClusterConfig getTemplate() throws BuilderException {
-        if (clusterConfig == null) {
-            final ITypeDescriptor type = getTypeDescriptor();
-
-        }
         return clusterConfig;
     }
 

@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.editor;
 
+import java.util.List;
+
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -38,5 +40,7 @@ public interface ITemplateEngine extends IClusterable {
     IClusterConfig getTemplate(ITypeDescriptor type, String mode) throws TemplateEngineException;
 
     IModel getPrototype(ITypeDescriptor type) throws TemplateEngineException;
+
+    List<String> getEditableTypes();
 
 }

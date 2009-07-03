@@ -182,4 +182,8 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
     public void stopObservation() {
     }
 
+    public boolean isType(String typeName) {
+        return getType().equals(typeName);
+    }
+
 }

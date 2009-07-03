@@ -26,8 +26,7 @@ public class TemplateEngineFactory implements IServiceFactory<ITemplateEngine> {
     private static final long serialVersionUID = 1L;
 
     public ITemplateEngine getService(IPluginContext context) {
-        // TODO: configure template engine based on context
-        return new TemplateEngine();
+        return new TemplateEngine(context);
     }
 
     public Class<? extends ITemplateEngine> getServiceClass() {

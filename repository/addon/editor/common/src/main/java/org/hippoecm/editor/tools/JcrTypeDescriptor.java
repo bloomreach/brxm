@@ -15,6 +15,7 @@
  */
 package org.hippoecm.editor.tools;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Map.Entry;
 
@@ -42,11 +44,14 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.JcrObject;
+import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.TypeDescriptorEvent;
+import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,12 +66,15 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     private String name;
     private String type;
+    private TypeLocator locator;
     private transient Map<String, IFieldDescriptor> fields;
     private transient Map<String, IObserver> observers = new TreeMap<String, IObserver>();
     private transient JcrFieldDescriptor primary;
 
-    public JcrTypeDescriptor(JcrNodeModel nodeModel) throws RepositoryException {
+    public JcrTypeDescriptor(JcrNodeModel nodeModel, TypeLocator locator) throws RepositoryException {
         super(nodeModel);
+
+        this.locator = locator;
 
         Node typeNode = nodeModel.getNode();
         Node templateTypeNode = typeNode;
@@ -420,6 +428,37 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
                 obContext.notifyObservers(collection);
             }
         }
+    }
+
+    public boolean isType(String typeName) {
+        if (type.equals(typeName)) {
+            return true;
+        }
+        List<String> candidates = getSuperTypes();
+        Set<String> done = new TreeSet<String>();
+        while (candidates.size() > 0) {
+            Set<String> todo = new TreeSet<String>();
+            for (String candidate : candidates) {
+                if (candidate.equals(typeName)) {
+                    return true;
+                } else {
+                    done.add(candidate);
+                    try {
+                        ITypeDescriptor descriptor = locator.locate(candidate);
+                        for (String superType : descriptor.getSuperTypes()) {
+                            if (!done.contains(superType)) {
+                                todo.add(superType);
+                            }
+                        }
+                    } catch (StoreException ex) {
+                        log.error(ex.getMessage());
+                        return false;
+                    }
+                }
+            }
+            candidates = new ArrayList<String>(todo);
+        }
+        return false;
     }
 
 }
