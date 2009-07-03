@@ -161,8 +161,11 @@ public class CndSerializer implements IClusterable {
         this.jcrTypeStore = new JcrTypeStore();
         this.builtinTypeStore = new BuiltinTypeStore();
 
+        this.namespaces = new HashMap<String, String>();
+        addNamespace(namespace);
+
         initTypes(namespace);
-        initNamespaces();
+        resolveNamespaces();
 
         versionNamespace(namespace);
     }
@@ -230,8 +233,7 @@ public class CndSerializer implements IClusterable {
         }
     }
 
-    private void initNamespaces() throws StoreException {
-        namespaces = new HashMap<String, String>();
+    private void resolveNamespaces() throws StoreException {
         for (TypeEntry entry : types.values()) {
             ITypeDescriptor descriptor = entry.getNewType();
             if (descriptor.isNode()) {

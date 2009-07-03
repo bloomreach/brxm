@@ -102,7 +102,12 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
         if (object instanceof JcrTypeDescriptor) {
             ((JcrTypeDescriptor) object).save();
         } else {
-            TypeInfo info = new TypeInfo(object.getType());
+            TypeInfo info;
+            try {
+                info = new TypeInfo(object.getType());
+            } catch (RepositoryException ex) {
+                throw new StoreException("unable to store type", ex);
+            }
             String path = info.getPath();
 
             HippoSession session = (HippoSession) getJcrSession();
@@ -192,7 +197,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
         
         String prefix;
         
-        NamespaceInfo(String prefix) {
+        NamespaceInfo(String prefix) throws RepositoryException {
             String uri = getUri(prefix);
             String nsVersion = "_" + uri.substring(uri.lastIndexOf("/") + 1);
             if (prefix.length() > nsVersion.length()
@@ -238,21 +243,16 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
             return "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix;
         }
 
-        String getUri() {
+        String getUri() throws RepositoryException {
             return getUri(prefix);
         }
 
-        private String getUri(String prefix) {
+        private String getUri(String prefix) throws RepositoryException {
             if ("system".equals(prefix)) {
                 return "internal";
             }
-            try {
-                NamespaceRegistry nsReg = getJcrSession().getWorkspace().getNamespaceRegistry();
-                return nsReg.getURI(prefix);
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-            return null;
+            NamespaceRegistry nsReg = getJcrSession().getWorkspace().getNamespaceRegistry();
+            return nsReg.getURI(prefix);
         }
     }
     
@@ -260,7 +260,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
         NamespaceInfo nsInfo;
         String subType;
 
-        TypeInfo(String type) {
+        TypeInfo(String type) throws RepositoryException {
             String prefix = "system";
             subType = type;
             if (type.indexOf(':') > 0) {

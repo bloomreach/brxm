@@ -17,14 +17,18 @@ package org.hippoecm.frontend.editor.impl;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -52,6 +56,56 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
 
     public JcrTemplateStore(IStore<ITypeDescriptor> typeStore) {
         this.typeStore = typeStore;
+    }
+
+    public List<String> getAvailableMixins() {
+        List<String> mixins = new LinkedList<String>();
+
+        try {
+            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+            QueryManager qMgr = session.getWorkspace().getQueryManager();
+            Query query = qMgr.createQuery("//element(*, hippo:nodetype)[@hippo:mixin='true']", Query.XPATH);
+            NodeIterator iter = query.execute().getNodes();
+            while (iter.hasNext()) {
+                Node node = iter.nextNode();
+                log.debug("search result: {}", node.getPath());
+
+                node = node.getParent();
+                if (!node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    log.debug("invalid parent");
+                    continue;
+                }
+                node = node.getParent();
+                if (!node.isNodeType("hippo:templatetype")) {
+                    log.debug("invalid ancestor");
+                    continue;
+                }
+
+                if (!node.hasNode("hippo:template")) {
+                    log.debug("no template present");
+                    continue;
+                }
+
+                Node parent = node.getParent();
+                if (!parent.isNodeType("hippo:namespace")) {
+                    log.debug("invalid great ancestor");
+                    continue;
+                }
+
+                String name;
+                if ("system".equals(parent.getName())) {
+                    name = node.getName();
+                } else {
+                    name = parent.getName() + ":" + node.getName();
+                }
+                log.debug("found: " + name);
+                mixins.add(name);
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+
+        return mixins;
     }
 
     public Iterator<IClusterConfig> find(Map<String, Object> criteria) {
