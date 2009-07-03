@@ -17,6 +17,7 @@ package org.hippoecm.frontend.editor.impl;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -31,9 +32,11 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
@@ -45,16 +48,21 @@ public class TemplateEngine implements ITemplateEngine {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(TemplateEngine.class);
+    static Logger log = LoggerFactory.getLogger(TemplateEngine.class);
 
+    private IPluginContext context;
     private IStore<ITypeDescriptor> typeStore;
     private IStore<IClusterConfig> jcrTemplateStore;
     private IStore<IClusterConfig> builtinTemplateStore;
     private JcrPrototypeStore prototypeStore;
+    private EditableTypes editableTypes;
 
-    public TemplateEngine() {
-        final IStore<ITypeDescriptor> jcrTypeStore = new JcrTypeStore();
-        final IStore<ITypeDescriptor> builtinTypeStore = new BuiltinTypeStore();
+    public TemplateEngine(IPluginContext context) {
+        this.context = context;
+
+        final JcrTypeStore jcrTypeStore = new JcrTypeStore();
+        final BuiltinTypeStore builtinTypeStore = new BuiltinTypeStore();
+        jcrTypeStore.setTypeLocator(new TypeLocator(new IStore[] { jcrTypeStore, builtinTypeStore }));
         typeStore = new IStore<ITypeDescriptor>() {
             private static final long serialVersionUID = 1L;
 
@@ -154,6 +162,13 @@ public class TemplateEngine implements ITemplateEngine {
 
     public IModel getPrototype(ITypeDescriptor type) {
         return prototypeStore.getPrototype(type.getName(), false);
+    }
+
+    public List<String> getEditableTypes() {
+        if (editableTypes == null) {
+            editableTypes = new EditableTypes();
+        }
+        return editableTypes;
     }
 
 }

@@ -39,6 +39,7 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
@@ -87,7 +88,7 @@ public class CndSerializer implements IClusterable {
                 IFieldDescriptor origField = entry.getValue();
                 FieldIdentifier oldId = new FieldIdentifier();
                 oldId.path = origField.getPath();
-                oldId.type = jcrTypeStore.load(origField.getType()).getType();
+                oldId.type = locator.locate(origField.getType()).getType();
 
                 if (newType != null) {
                     IFieldDescriptor newField = newType.getField(entry.getKey());
@@ -101,7 +102,7 @@ public class CndSerializer implements IClusterable {
                         if (types.containsKey(fieldTypeName)) {
                             fieldType = types.get(fieldTypeName).getNewType();
                         } else {
-                            fieldType = jcrTypeStore.load(fieldTypeName);
+                            fieldType = locator.locate(fieldTypeName);
                         }
                         newId.type = fieldType.getType();
 
@@ -152,14 +153,14 @@ public class CndSerializer implements IClusterable {
     private JcrSessionModel jcrSession;
     private Map<String, String> namespaces;
     private LinkedHashMap<String, TypeEntry> types;
-    private IStore<ITypeDescriptor> jcrTypeStore;
-    private IStore<ITypeDescriptor> builtinTypeStore;
+    private TypeLocator locator;
 
     public CndSerializer(JcrSessionModel sessionModel, String namespace) throws RepositoryException, StoreException {
         this.jcrSession = sessionModel;
 
-        this.jcrTypeStore = new JcrTypeStore();
-        this.builtinTypeStore = new BuiltinTypeStore();
+        IStore<ITypeDescriptor> jcrTypeStore = new JcrTypeStore();
+        IStore<ITypeDescriptor> builtinTypeStore = new BuiltinTypeStore();
+        locator = new TypeLocator(new IStore[] { jcrTypeStore, builtinTypeStore });
 
         this.namespaces = new HashMap<String, String>();
         addNamespace(namespace);
@@ -218,10 +219,10 @@ public class CndSerializer implements IClusterable {
                 Node version = versions.nextNode();
                 if (version.isNodeType(HippoNodeType.NT_REMODEL)) {
                     if (version.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
-                        oldType = new JcrTypeDescriptor(new JcrNodeModel(version));
+                        oldType = new JcrTypeDescriptor(new JcrNodeModel(version), locator);
                     }
                 } else {
-                    newType = new JcrTypeDescriptor(new JcrNodeModel(version));
+                    newType = new JcrTypeDescriptor(new JcrNodeModel(version), locator);
                 }
             }
 
@@ -419,11 +420,7 @@ public class CndSerializer implements IClusterable {
         if (types.containsKey(subType)) {
             return types.get(subType).getNewType();
         } else {
-            try {
-                return jcrTypeStore.load(subType);
-            } catch (StoreException ex) {
-                return builtinTypeStore.load(subType);
-            }
+            return locator.locate(subType);
         }
     }
 

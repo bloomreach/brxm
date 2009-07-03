@@ -252,19 +252,6 @@
             <sv:value>templateactions</sv:value>
             <sv:value>actionspanel</sv:value>
           </sv:property>
-          <sv:property sv:name="templates" sv:type="String">
-            <sv:value>String</sv:value>
-            <sv:value>Text</sv:value>
-            <sv:value>Html</sv:value>
-            <sv:value>hippostd:html</sv:value>
-            <sv:value>Date</sv:value>
-            <sv:value>Boolean</sv:value>
-            <sv:value>hippo:resource</sv:value>
-            <sv:value>hippo:query</sv:value>
-            <sv:value>hippo:facetselect</sv:value>
-            <sv:value>Double</sv:value>
-            <sv:value>Long</sv:value>
-          </sv:property>
         </sv:node>
 
       </sv:node>

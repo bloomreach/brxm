@@ -33,6 +33,7 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -51,7 +52,16 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
 
     static final Logger log = LoggerFactory.getLogger(JcrTypeStore.class);
 
+    private TypeLocator locator;
     private Map<String, JcrTypeDescriptor> types = new HashMap<String, JcrTypeDescriptor>();
+
+    public JcrTypeStore() {
+        locator = new TypeLocator(new IStore[] { this });
+    }
+
+    public void setTypeLocator(TypeLocator locator) {
+        this.locator = locator;
+    }
 
     public JcrTypeDescriptor getTypeDescriptor(String name) {
         if ("rep:root".equals(name)) {
@@ -66,7 +76,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
                     result = createTypeDescriptor(typeNode, name);
                     types.put(name, result);
                 } else {
-                    log.warn("No nodetype description found for " + name);
+                    log.debug("No nodetype description found for " + name);
                 }
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
@@ -75,10 +85,10 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
         return result;
     }
 
-    public Map<String,TypeUpdate> getUpdate(String prefix) throws RepositoryException {
+    public Map<String, TypeUpdate> getUpdate(String prefix) throws RepositoryException {
         return new NamespaceInfo(prefix).getUpdate();
     }
-    
+
     public void close() {
     }
 
@@ -185,7 +195,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
     private JcrTypeDescriptor createTypeDescriptor(Node typeNode, String type) throws RepositoryException {
         try {
             if (typeNode.isNodeType(HippoNodeType.NT_NODETYPE)) {
-                return new JcrTypeDescriptor(new JcrNodeModel(typeNode));
+                return new JcrTypeDescriptor(new JcrNodeModel(typeNode), locator);
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
@@ -194,9 +204,9 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
     }
 
     private class NamespaceInfo {
-        
+
         String prefix;
-        
+
         NamespaceInfo(String prefix) throws RepositoryException {
             String uri = getUri(prefix);
             String nsVersion = "_" + uri.substring(uri.lastIndexOf("/") + 1);
@@ -211,14 +221,15 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
         Map<String, TypeUpdate> getUpdate() throws RepositoryException {
             HippoSession session = (HippoSession) getJcrSession();
             Map<String, TypeUpdate> result = new HashMap<String, TypeUpdate>();
-            
+
             String uri = getUri();
             NodeIterator iter = ((Node) session.getItem(getPath())).getNodes();
             while (iter.hasNext()) {
                 Node typeNode = iter.nextNode();
 
                 Node draft = null, current = null;
-                NodeIterator versions = typeNode.getNodes(HippoNodeType.HIPPO_NODETYPE + "/" + HippoNodeType.HIPPO_NODETYPE);
+                NodeIterator versions = typeNode.getNodes(HippoNodeType.HIPPO_NODETYPE + "/"
+                        + HippoNodeType.HIPPO_NODETYPE);
                 while (versions.hasNext()) {
                     Node node = versions.nextNode();
                     if (!node.isNodeType(HippoNodeType.NT_REMODEL)) {
@@ -231,9 +242,11 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
                 }
 
                 if (current != null) {
-                    ITypeDescriptor currentType = new JcrTypeDescriptor(new JcrNodeModel(current));
-                    ITypeDescriptor draftType = draft == null ? null : new JcrTypeDescriptor(new JcrNodeModel(draft));
-                    result.put(typeNode.getName(), new TypeConversion(JcrTypeStore.this, currentType, draftType).getTypeUpdate());
+                    ITypeDescriptor currentType = new JcrTypeDescriptor(new JcrNodeModel(current), locator);
+                    ITypeDescriptor draftType = draft == null ? null : new JcrTypeDescriptor(new JcrNodeModel(draft),
+                            locator);
+                    result.put(typeNode.getName(), new TypeConversion(JcrTypeStore.this, currentType, draftType)
+                            .getTypeUpdate());
                 }
             }
             return result;
@@ -255,7 +268,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
             return nsReg.getURI(prefix);
         }
     }
-    
+
     private class TypeInfo {
         NamespaceInfo nsInfo;
         String subType;
@@ -273,7 +286,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
         NamespaceInfo getNamespaceInfo() {
             return nsInfo;
         }
-        
+
         String getPath() {
             return nsInfo.getPath() + "/" + subType;
         }

@@ -108,6 +108,17 @@ class BuiltinTypeDescriptor extends JavaTypeDescriptor {
     }
 
     @Override
+    public boolean isType(String typeName) {
+        load();
+        if (nt != null) {
+            return nt.isNodeType(typeName);
+        } else if (type.equals(typeName)) {
+            return true;
+        }
+        return false;
+    }
+    
+    @Override
     public Map<String, IFieldDescriptor> getFields() {
         return fields;
     }
