@@ -16,18 +16,26 @@
 package org.hippoecm.frontend.editor.workflow;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Check;
+import org.apache.wicket.markup.html.form.CheckGroup;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.editor.tools.CndSerializer;
 import org.hippoecm.editor.tools.JcrPrototypeStore;
@@ -35,12 +43,16 @@ import org.hippoecm.editor.tools.JcrTypeStore;
 import org.hippoecm.editor.tools.NamespaceUpdater;
 import org.hippoecm.editor.tools.TypeUpdate;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
+import org.hippoecm.frontend.editor.impl.JcrTemplateStore;
 import org.hippoecm.frontend.editor.workflow.dialog.RemodelDialog;
+import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -63,6 +75,7 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             public String name;
+            public List<String> mixins = new LinkedList<String>();
 
             @Override
             protected Dialog createRequestDialog() {
@@ -71,8 +84,26 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
+                NamespaceValidator.checkName(name);
+
                 NamespaceWorkflow workflow = (NamespaceWorkflow) wf;
-                workflow.addType("document", name);
+                try {
+                    workflow.addType("document", name);
+                } catch (ItemExistsException ex) {
+                    return "Type " + name + " already exists";
+                }
+
+                String prefix = (String) workflow.hints().get("prefix");
+                JcrTypeStore typeStore = new JcrTypeStore();
+
+                ITypeDescriptor typeDescriptor = typeStore.getTypeDescriptor(prefix + ":" + name);
+                List<String> types = typeDescriptor.getSuperTypes();
+                for (String mixin : mixins) {
+                    types.add(mixin);
+                }
+                typeDescriptor.setSuperTypes(types);
+
+                typeStore.save(typeDescriptor);
                 return null;
             }
         });
@@ -89,6 +120,8 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
+                NamespaceValidator.checkName(name);
+
                 NamespaceWorkflow workflow = (NamespaceWorkflow) wf;
                 workflow.addType("compound", name);
                 return null;
@@ -167,7 +200,7 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
         private static final long serialVersionUID = 1L;
 
         private String title;
-        
+
         public CreateTypeDialog(CompatibilityWorkflowPlugin.WorkflowAction action, String title) {
             action.super();
             add(setFocus(new TextFieldWidget("name", new PropertyModel(action, "name"))));
@@ -190,6 +223,24 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
         public CreateDocumentTypeDialog(WorkflowAction action) {
             super(action, "new-document-type");
+
+            CheckGroup cg = new CheckGroup("checkgroup", new PropertyModel(action, "mixins"));
+            add(cg);
+
+            JcrTemplateStore templateStore = new JcrTemplateStore(new JcrTypeStore());
+            
+            cg.add(new DataView("mixins", new ListDataProvider(templateStore.getAvailableMixins())) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void populateItem(Item item) {
+                    String mixin = item.getModelObjectAsString();
+                    item.add(new Check("check", item.getModel()));
+                    IModel typeName = new TypeTranslator(new JcrNodeTypeModel(mixin)).getTypeName();
+                    item.add(new Label("mixin", typeName));
+                }
+
+            });
         }
     }
 
@@ -200,5 +251,5 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             super(action, "new-compound-type");
         }
     }
-    
+
 }

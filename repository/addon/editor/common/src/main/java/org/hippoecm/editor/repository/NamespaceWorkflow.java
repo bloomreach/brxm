@@ -34,13 +34,12 @@ public interface NamespaceWorkflow extends Workflow {
      * 
      * @param template the template to use.  One of the entries in 
      * @param name
-     * @return The path to the newly created node that represents the type.
      * @throws WorkflowException
      * @throws MappingException
      * @throws RepositoryException
      * @throws RemoteException
      */
-    String addType(String template, String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    void addType(String template, String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     void updateModel(String cnd, Object updates) throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

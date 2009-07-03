@@ -50,8 +50,11 @@ public class NamespaceWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
+                NamespaceValidator.checkName(prefix);
+                NamespaceValidator.checkURI(url);
+
                 TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) wf;
-                workflow.createNamespace(NodeNameCodec.encode(prefix, true), url);
+                workflow.createNamespace(prefix, url);
                 return null;
             }
         });

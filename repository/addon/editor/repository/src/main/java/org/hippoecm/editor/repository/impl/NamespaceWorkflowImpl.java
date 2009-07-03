@@ -67,12 +67,15 @@ public class NamespaceWorkflowImpl extends WorkflowImpl implements NamespaceWork
         return hints;
     }
 
-    public String addType(String template, String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void addType(String template, String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         FolderWorkflow folderWorkflow = (FolderWorkflow) getWorkflowContext().getWorkflow("internal");
         Map<String,String> replacements = new TreeMap<String,String>();
         replacements.put("name", name);
         replacements.put("prefix:document", prefix + ":document");
-        return folderWorkflow.add("new-type", template, replacements);
+
+        // ignore return type, as workflow chaining implies that the folder workflow
+        // isn't executed until current method completes  
+        folderWorkflow.add("new-type", template, replacements);
     }
 
     public void updateModel(String cnd, Object updates) throws WorkflowException, MappingException, RepositoryException, RemoteException {

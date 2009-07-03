@@ -15,8 +15,11 @@
  */
 package org.hippoecm.frontend.editor.workflow;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import javax.jcr.NamespaceException;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 
 import org.apache.wicket.MarkupContainer;
@@ -32,6 +35,7 @@ import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -72,7 +76,7 @@ public class RemodelWorkflowPluginTest extends PluginTest {
                 "plugin.class", RemodelWorkflowPlugin.class.getName(),
                 "wicket.id", "service.actions",
                 "wicket.model", "service.model",
-        "/hippo:namespaces/test-ns", "hippo:namespace",
+        "/hippo:namespaces/testns", "hippo:namespace",
             "jcr:mixinTypes", "mix:referenceable",
     };
 
@@ -83,11 +87,17 @@ public class RemodelWorkflowPluginTest extends PluginTest {
     public void setUp() throws Exception {
         super.setUp();
         build(session, content);
+        NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
+        try {
+            nsReg.getURI("testns");
+        } catch (NamespaceException ex) {
+            nsReg.registerNamespace("testns", "http://example.org/test/0.0");
+        }
         session.save();
 
         start(new JcrPluginConfig(new JcrNodeModel("/test/menu")));
 
-        Node documentNode = session.getRootNode().getNode("hippo:namespaces/test-ns");
+        Node documentNode = session.getRootNode().getNode("hippo:namespaces/testns");
         String category = "test";
         WorkflowManager wflMgr = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
         WorkflowDescriptor descriptor = wflMgr.getWorkflowDescriptor(category, documentNode);
@@ -102,7 +112,7 @@ public class RemodelWorkflowPluginTest extends PluginTest {
     @After
     @Override
     public void teardown() throws Exception {
-        root.getNode("hippo:namespaces/test-ns").remove();
+        root.getNode("hippo:namespaces/testns").remove();
         session.save();
         super.teardown();
     }
@@ -117,12 +127,13 @@ public class RemodelWorkflowPluginTest extends PluginTest {
 
         // "test-type"
         FormTester formTest = tester.newFormTester("dialog:content:form");
-        formTest.setValue("name:widget", "test-type");
+        formTest.setValue("name:widget", "testtype");
+        formTest.selectMultiple("checkgroup", new int[] { 0 } );
         formTest.submit();
 
 //        printComponents(System.out);
 
-        JcrNodeModel nsNode = new JcrNodeModel("/hippo:namespaces/test-ns/test-type");
+        JcrNodeModel nsNode = new JcrNodeModel("/hippo:namespaces/testns/testtype");
         assertTrue(nsNode.getItemModel().exists());
     }
 
@@ -138,15 +149,15 @@ public class RemodelWorkflowPluginTest extends PluginTest {
 
         // "test-type"
         FormTester formTest = tester.newFormTester("dialog:content:form");
-        formTest.setValue("name:widget", "test-type");
+        formTest.setValue("name:widget", "testtype");
         formTest.submit();
 
-        JcrNodeModel nsNode = new JcrNodeModel("/hippo:namespaces/test-ns/test-type");
+        JcrNodeModel nsNode = new JcrNodeModel("/hippo:namespaces/testns/testtype");
         assertTrue(nsNode.getItemModel().exists());
     }
 
     @Test
-    public void remodelTest() {
+    public void remodelTest() throws Exception {
         start(config);
         refreshPage();
 
@@ -157,6 +168,9 @@ public class RemodelWorkflowPluginTest extends PluginTest {
         tester.executeBehavior((AbstractAjaxBehavior) home.get("dialog:content:form:wizard:form:view:progress").getBehaviors().get(0));
 
 //        printComponents(System.out);
+        session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+        NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
+        assertEquals(nsReg.getURI("testns"), "http://example.org/test/0.1");
     }
     
 }
