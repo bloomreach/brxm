@@ -833,6 +833,7 @@ div.wicket-modal div.wicket-tree {border: 0px;}
 .hippo-editor .hippo-editor-template-field-edit table{margin-top: 5px;}
 .hippo-editor .hippo-editor-template-field-edit table tr td{color: #b2b2b2; padding: 2px; }
 
+.hippo-editor .hippo-editor-template-field-new {height: 200px; overflow: auto;}
 .hippo-editor .hippo-editor-template-field-new li{list-style-type: none; margin-bottom: 5px;}
 .hippo-editor .hippo-editor-template-field-new li span em,
 .hippo-editor .hippo-editor-template-field-new li a{
