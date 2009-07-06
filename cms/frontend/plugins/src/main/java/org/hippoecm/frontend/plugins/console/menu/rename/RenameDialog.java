@@ -24,7 +24,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -41,7 +40,7 @@ public class RenameDialog extends AbstractDialog {
     private MenuPlugin plugin;
     private String name;
 
-    public RenameDialog(MenuPlugin plugin, IPluginContext context) {
+    public RenameDialog(MenuPlugin plugin) {
         this.plugin = plugin;
 
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
