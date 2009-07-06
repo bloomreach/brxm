@@ -38,18 +38,24 @@ ________________________________________________________________________________
      <img src="../../../../images/screenshots/cms_M13/inars/create_namespace.png" alt='Create namespace screenshot'/> 
     </div></div>
     <p>
-     About to select the action 'create namespace' in the
+     In the Configuration <a href='../../contributors/concepts/slider.html'>slider</a>,
+     about to select the action 'create namespace' in the
      <a href='../../contributors/concepts/folder_action_menu.html'>folder action menu</a> of
-     the hippo:namespaces folder. The hippo:namespaces folder is found in the
-     Configuration <a href='../../contributors/concepts/slider.html'>slider</a>.
-     </p>
+     the hippo:namespaces folder.
+    </p>
+    <p>
+     A popup will come up where you define a prefix for the namespace, e.g. 'snp' or 'docs'.
+     You also define a namespace URI, which has the form of a
+     <a href='../concepts/URL.html'>URL</a> with a version number, e.g.
+     http://www.swatia.org/newspaper/0.14 or http://www.blabla.com/docs/1.0.
+    </p>
    </div>
 
    <p>
     Type a prefix name for the namespace. The prefix name of the namespace will be used as a prefix to all
     names later defined within the namespace. It it advisable to choose the prefix name of
     your namespaces short, so that the names within the namespace will not get unfriendly long. You need
-    to choose a different prefix for each of your namespace. As you will use only one or a few namespaces,
+    to choose a different prefix for each of your namespaces. As you will use only one or a few namespaces,
     that will not be a problem.
    </p>
    <p>
