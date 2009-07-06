@@ -15,18 +15,23 @@
  */
 package org.hippoecm.hst.components;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.jcr.Session;
 
 import org.hippoecm.hst.beans.TextPage;
 import org.hippoecm.hst.component.support.bean.persistency.BaseHstComponent;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.persistence.ContentPersistenceException;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,13 +52,25 @@ public class Detail extends BaseHstComponent {
         request.setAttribute("parent", document.getParentBean());
         request.setAttribute("document", document);
         
+        List<HippoDocumentBean> commentList = null;
+            
         try {
-            String commentsFolderNodePath = "/" + getSiteContentBasePath(request) + "/comments/" + getContentRelativePath(request, document.getPath());
+            String commentsFolderNodePath = getCommentsFolderPath(request);
             HippoFolderBean commentsFolderBean = (HippoFolderBean) getObjectBeanManager(request).getObject(commentsFolderNodePath);
-            request.setAttribute("commentsFolder", commentsFolderBean);
+            
+            if (commentsFolderBean != null) {
+                commentList = commentsFolderBean.getDocuments();
+            }
+            
         } catch (ObjectBeanManagerException e) {
             log.warn("Failed to retrieve comments folder for {}: {}", document.getPath(), e);
         }
+        
+        if (commentList == null) {
+            commentList = Collections.emptyList();
+        }
+        
+        request.setAttribute("comments", commentList);
     }
 
     @Override
@@ -154,11 +171,14 @@ public class Detail extends BaseHstComponent {
      */
     protected String getCommentsFolderPath(HstRequest request) {
         HippoBean document = getContentBean(request);
-        String documentRelPath = getContentRelativePath(request, document.getPath());
-        // retrieve the physical path of the site content base node.
-        String siteContentBasePhysicalPath = getSiteContentBasePhysicalPath(request);
-        // calculates comments folder node path for this news document.
-        return siteContentBasePhysicalPath + "/comments/" + documentRelPath;
+        String siteContentBasePath = getSiteContentBasePath(request);
+        String documentRelPath = PathUtils.normalizePath(document.getPath());
+        
+        if (documentRelPath.startsWith(siteContentBasePath)) {
+            documentRelPath = documentRelPath.substring(siteContentBasePath.length() + 1);
+        }
+        
+        return "/" + getSiteContentBasePath(request) + "/comments/" + documentRelPath;
     }
     
 }

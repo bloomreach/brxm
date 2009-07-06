@@ -192,18 +192,23 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
         try {
             String [] folderNames = absPath.split("/");
             
-            Node curNode = session.getRootNode();
-            StringBuilder curPathBuilder = new StringBuilder(80);
+            Node rootNode = session.getRootNode();
+            Node curNode = rootNode;
+            String folderNodePath = null;
             
             for (String folderName : folderNames) {
                 if (!"".equals(folderName)) {
-                    curPathBuilder.append('/').append(folderName);
-                    
-                    if (session.itemExists(curPathBuilder.toString())) {
-                        curNode = curNode.getNode(folderName);
+                    if (curNode == rootNode) {
+                        folderNodePath = "/" + folderName;
                     } else {
+                        folderNodePath = curNode.getPath() + "/" + folderName;
+                    }
+                    
+                    if (!session.itemExists(folderNodePath)) {
                         createNodeByWorkflow(curNode, folderNodeTypeName, folderName);
                     }
+                    
+                    curNode = curNode.getNode(folderName);
 
                     if (curNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                         String docbaseUuid = curNode.getProperty("hippo:docbase").getString();

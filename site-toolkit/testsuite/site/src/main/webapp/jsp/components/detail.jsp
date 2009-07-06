@@ -43,7 +43,7 @@
   <div>
     <h3>Comments</h3>
     <ul>
-      <c:forEach var="comment" items="${commentsFolder.documents}">
+      <c:forEach var="comment" items="${comments}">
         <hst:actionURL var="removeURL">
           <hst:param name="type" value="remove"/>
           <hst:param name="path" value="${comment.path}"/>

@@ -24,16 +24,11 @@ import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.PersistableObjectBeanManagerImpl;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.persistence.ContentNodeBinder;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
-import org.hippoecm.hst.util.PathUtils;
-import org.hippoecm.repository.api.HippoNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A base HstComponent implementation to provide some facility methods for accessing content node POJO objects,
@@ -64,8 +59,6 @@ public class BaseHstComponent extends org.hippoecm.hst.component.support.bean.Ba
     
     public static final String DEFAULT_WRITABLE_USERNAME_PROPERTY = "writable.repository.user.name";
     public static final String DEFAULT_WRITABLE_PASSWORD_PROPERTY = "writable.repository.password";
-    
-    private static Logger log = LoggerFactory.getLogger(BaseHstComponent.class);
     
     /**
      * Creates a persistable JCR session with the default credentials
@@ -144,45 +137,6 @@ public class BaseHstComponent extends org.hippoecm.hst.component.support.bean.Ba
         PersistableObjectBeanManagerImpl cpm = new PersistableObjectBeanManagerImpl(session, this.objectConverter, contentNodeBinders);
         cpm.setPublishAfterUpdate(publishAfterUpdate);
         return cpm;
-    }
-    
-    /**
-     * Returns the physical node path of site content base node.
-     * @param request
-     * @return
-     */
-    protected String getSiteContentBasePhysicalPath(HstRequest request) {
-        String physicalPath = null;
-        
-        try {
-            HippoBean siteContentBaseBean = getSiteContentBaseBean(request);
-            String siteContentBaseNodeUUID = siteContentBaseBean.getNode().getProperty("hippo:docbase").getString();
-            HippoNode siteContentPhysicalNode = (HippoNode) request.getRequestContext().getSession().getNodeByUUID(siteContentBaseNodeUUID);
-            physicalPath = siteContentPhysicalNode.getCanonicalNode().getPath();
-        } catch (Exception e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Failed to retrieve the physical node of site content base: {}", e);
-            }
-        }
-        
-        return physicalPath;
-    }
-    
-    /**
-     * Returns the relative path of a node from the site content base path
-     * @param request
-     * @param contentPath
-     * @return
-     */
-    protected String getContentRelativePath(HstRequest request, String contentPath) {
-        String siteContentBasePath = getSiteContentBasePath(request);
-        String relPath = PathUtils.normalizePath(contentPath);
-        
-        if (relPath.startsWith(siteContentBasePath)) {
-            relPath = relPath.substring(siteContentBasePath.length() + 1);
-        }
-        
-        return relPath;
     }
     
 }

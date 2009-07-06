@@ -53,7 +53,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
     private static final String TEST_NEW_FOLDER_NODE_NAME = "SubSolutions";
     private static final String TEST_NEW_FOLDER_NODE_PATH = TEST_FOLDER_NODE_PATH + "/" + TEST_NEW_FOLDER_NODE_NAME;
     
-    private static final String TEST_AUTO_NEW_FOLDER_NODE_NAME = "comments";
+    private static final String TEST_AUTO_NEW_FOLDER_NODE_NAME = "comments/tests";
     private static final String TEST_AUTO_NEW_FOLDER_NODE_PATH = TEST_CONTENTS_PATH + "/" + TEST_AUTO_NEW_FOLDER_NODE_NAME;
     
     protected Object repository;
