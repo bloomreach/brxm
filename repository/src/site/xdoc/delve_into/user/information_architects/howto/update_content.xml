@@ -50,7 +50,18 @@ ________________________________________________________________________________
     available for writing documents of that type.
     In case of changes to an existing document type,
     update all content will change all existing documents of that type to conform to the new
-    definition.
+    definition. Therefor, you will always be asked if you really want to perform 'update all content'.
+   </p>
+   <p class='warn'>
+    Be warned that users may loose content if you use 'update all content' while users are
+    already using the document type you changed, i.e. they created documents of it.
+    'update all content' is no problem for a new document type or a document type
+    for which no meaningful documents exists yet. However, if you go about changing document types
+    that users already created documents of, you really must know what you are doing!
+    If you use 'update all content', all appropriate documents will be made to comply to the new document types.
+    So, if you removed a field from the type, that field will be removed from all the documents. But users
+    may have written content in it that they do not want to loose. They may have wished to move that content
+    to another field.
    </p>
 
   <subsection name='Next'>
