@@ -100,7 +100,7 @@ public class Detail extends BaseHstComponent {
                     
                     if (cpm != null) {
                         try {
-                            cpm.reset();
+                            cpm.refresh();
                         } catch (ContentPersistenceException e1) {
                             log.warn("Failed to reset. {}", e);
                         }
@@ -133,7 +133,7 @@ public class Detail extends BaseHstComponent {
                     
                     if (cpm != null) {
                         try {
-                            cpm.reset();
+                            cpm.refresh();
                         } catch (ContentPersistenceException e1) {
                             log.warn("Failed to reset. {}", e);
                         }

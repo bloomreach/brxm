@@ -389,12 +389,22 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
     }
 
     /**
-     * Discards all pending changes and resets the current state.
+     * Invokes {@link javax.jcr.Session#refresh(boolean)} with <CODE>false</CODE> parameter.  
+     * @param keepChanges
      * @throws ContentPersistenceException
      */
-    public void reset() throws ContentPersistenceException {
+    public void refresh() throws ContentPersistenceException {
+        refresh(false);
+    }
+    
+    /**
+     * Invokes {@link javax.jcr.Session#refresh(boolean)}.  
+     * @param keepChanges
+     * @throws ContentPersistenceException
+     */
+    public void refresh(boolean keepChanges) throws ContentPersistenceException {
         try {
-            session.refresh(false);
+            session.refresh(keepChanges);
         } catch (Exception e) {
             throw new ContentPersistenceException(e);
         }

@@ -117,7 +117,11 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
     public void save() throws ContentPersistenceException {
     }
 
-    public void reset() throws ContentPersistenceException {
+    public void refresh() throws ContentPersistenceException {
+        refresh(false);
+    }
+    
+    public void refresh(boolean keepChanges) throws ContentPersistenceException {
     }
     
     protected String getPathProperty(Object object) {

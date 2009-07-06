@@ -128,9 +128,17 @@ public interface ContentPersistenceManager {
     void save() throws ContentPersistenceException;
     
     /**
-     * Discards all pending changes and resets the current state.
+     * Invokes {@link javax.jcr.Session#refresh(boolean)} with <CODE>false</CODE> parameter.  
+     * @param keepChanges
      * @throws ContentPersistenceException
      */
-    void reset() throws ContentPersistenceException;
+    void refresh() throws ContentPersistenceException;
+    
+    /**
+     * Invokes {@link javax.jcr.Session#refresh(boolean)}.  
+     * @param keepChanges
+     * @throws ContentPersistenceException
+     */
+    void refresh(boolean keepChanges) throws ContentPersistenceException;
     
 }

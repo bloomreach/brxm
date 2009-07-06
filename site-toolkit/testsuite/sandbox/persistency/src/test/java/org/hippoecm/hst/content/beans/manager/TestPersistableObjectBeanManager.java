@@ -42,7 +42,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
     private static final String HIPPOSTD_FOLDER_NODE_TYPE = "hippostd:folder";
     private static final String TEST_DOCUMENT_NODE_TYPE = "testproject:textpage";
     
-    private static final String TEST_FOLDER_NODE_PATH = "/testcontent/documents/testproject/Solutions";
+    private static final String TEST_FOLDER_NODE_PATH = "/testpreview/testproject/hst:content/Solutions";
 
     private static final String TEST_EXISTING_DOCUMENT_NODE_PATH = TEST_FOLDER_NODE_PATH + "/SolutionsPage";
     
@@ -109,6 +109,8 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
                 // then the POJO object in the first parameter will be used as a binder. 
                 cpm.update(newPage);
                 
+                cpm.save();
+                
                 // retrieves the document created just before
                 newPage = (PersistableTextPage) cpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
                 assertEquals("Collaboration Portal Title", newPage.getTitle());
@@ -126,8 +128,6 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
                     cpm.remove(newPage);
                 }
             }
-            
-            cpm.save();
         } finally {
             if (session != null) session.logout();
         }
