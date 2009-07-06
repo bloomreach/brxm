@@ -27,6 +27,7 @@ import org.hippoecm.hst.persistence.ContentPersistenceException;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -189,26 +190,30 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
     
     protected void createMissingFolders(String absPath) throws ContentPersistenceException {
         try {
-            absPath += "/";
+            String [] folderNames = absPath.split("/");
             
-            String path = null;
-            String parentPath = null;
-            int offset1 = absPath.indexOf('/', 1);
-            int offset2 = 0;
+            Node curNode = session.getRootNode();
+            StringBuilder curPathBuilder = new StringBuilder(80);
             
-            while (offset1 != -1) {
-                path = absPath.substring(0, offset1);
-                
-                if (path.length() > 0 && !session.itemExists(path)) {
-                    offset2 = path.lastIndexOf('/');
-                    parentPath = path.substring(0, offset2);
-                    Node parentNode = (Node) session.getItem(parentPath);
-                    String name = path.substring(offset2 + 1);
+            for (String folderName : folderNames) {
+                if (!"".equals(folderName)) {
+                    curPathBuilder.append('/').append(folderName);
                     
-                    createNodeByWorkflow(parentNode, folderNodeTypeName, name);
+                    if (session.itemExists(curPathBuilder.toString())) {
+                        curNode = curNode.getNode(folderName);
+                    } else {
+                        createNodeByWorkflow(curNode, folderNodeTypeName, folderName);
+                    }
+
+                    if (curNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                        String docbaseUuid = curNode.getProperty("hippo:docbase").getString();
+                        curNode = session.getNodeByUUID(docbaseUuid);
+                    }
+                    
+                    if (curNode instanceof HippoNode) {
+                        curNode = ((HippoNode) curNode).getCanonicalNode();
+                    }
                 }
-                
-                offset1 = absPath.indexOf('/', offset1 + 1);
             }
         } catch (Exception e) {
             throw new ContentPersistenceException(e);

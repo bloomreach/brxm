@@ -42,7 +42,8 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
     private static final String HIPPOSTD_FOLDER_NODE_TYPE = "hippostd:folder";
     private static final String TEST_DOCUMENT_NODE_TYPE = "testproject:textpage";
     
-    private static final String TEST_FOLDER_NODE_PATH = "/testpreview/testproject/hst:content/Solutions";
+    private static final String TEST_CONTENTS_PATH = "/testpreview/testproject/hst:content";
+    private static final String TEST_FOLDER_NODE_PATH = TEST_CONTENTS_PATH + "/Solutions";
 
     private static final String TEST_EXISTING_DOCUMENT_NODE_PATH = TEST_FOLDER_NODE_PATH + "/SolutionsPage";
     
@@ -51,6 +52,9 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
     
     private static final String TEST_NEW_FOLDER_NODE_NAME = "SubSolutions";
     private static final String TEST_NEW_FOLDER_NODE_PATH = TEST_FOLDER_NODE_PATH + "/" + TEST_NEW_FOLDER_NODE_NAME;
+    
+    private static final String TEST_AUTO_NEW_FOLDER_NODE_NAME = "comments";
+    private static final String TEST_AUTO_NEW_FOLDER_NODE_PATH = TEST_CONTENTS_PATH + "/" + TEST_AUTO_NEW_FOLDER_NODE_NAME;
     
     protected Object repository;
     protected Credentials defaultCredentials;
@@ -153,6 +157,40 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
             
                 // retrieves the document created just before
                 newFolder = (HippoFolderBean) cpm.getObject(TEST_NEW_FOLDER_NODE_PATH);
+                assertNotNull(newFolder);
+                
+            } finally {
+                if (newFolder != null) {
+                    cpm.remove(newFolder);
+                }
+            }
+            
+            cpm.save();
+        } finally {
+            if (session != null) session.logout();
+        }
+        
+    }
+    
+    @Test
+    public void testFolderAutoCreateRemove() throws Exception {
+        Session session = null;
+        
+        try {
+            ObjectConverter objectConverter = getObjectConverter();
+            
+            session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
+            
+            cpm = new PersistableObjectBeanManagerImpl(session, objectConverter, persistBinders);
+            
+            HippoFolderBean newFolder = null;
+            
+            try {
+                // create a document with type and name 
+                cpm.create(TEST_AUTO_NEW_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, "testfolder", true);
+            
+                // retrieves the document created just before
+                newFolder = (HippoFolderBean) cpm.getObject(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/testfolder");
                 assertNotNull(newFolder);
                 
             } finally {
