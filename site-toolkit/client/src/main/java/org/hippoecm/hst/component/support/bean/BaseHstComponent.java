@@ -103,11 +103,17 @@ public class BaseHstComponent extends GenericHstComponent {
         return this.getComponentConfiguration().getParameters(request.getRequestContext().getResolvedSiteMapItem());
     }
     
-    public String getPublicRequestParameter(HstRequest request, String parameterName){
-        Map<String, String []> namespaceLessParameters = request.getParameterMap("");
+    public String getPublicRequestParameter(HstRequest request, String parameterName) {
+        String contextNamespaceReference = request.getRequestContext().getContextNamespace();
+        
+        if (contextNamespaceReference == null) {
+            contextNamespaceReference = "";
+        }
+        
+        Map<String, String []> namespaceLessParameters = request.getParameterMap(contextNamespaceReference);
         String [] paramValues = namespaceLessParameters.get(parameterName);
         
-        if (paramValues.length > 0) {
+        if (paramValues != null && paramValues.length > 0) {
             return paramValues[0];
         }
         

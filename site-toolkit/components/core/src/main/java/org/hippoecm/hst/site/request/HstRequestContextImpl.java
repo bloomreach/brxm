@@ -50,7 +50,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected ResolvedSiteMapItem resolvedSiteMapItem;
     protected HstURLFactory urlFactory;
     protected HstContainerURL baseURL;
-    protected String contextNamespace;
+    protected String contextNamespace = "";
     protected HstLinkCreator linkCreator;
     protected HstSiteMapMatcher siteMapMatcher;
     protected HstSiteMenus siteMenus;
