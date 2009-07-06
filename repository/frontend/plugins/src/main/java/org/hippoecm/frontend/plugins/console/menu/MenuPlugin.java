@@ -85,7 +85,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog() {
-                return new ResetDialog(MenuPlugin.this, getPluginContext());
+                return new ResetDialog(MenuPlugin.this);
             }
         };
         add(new DialogLink("reset-dialog", new Model("Reset"), dialogFactory, dialogService));
@@ -112,7 +112,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog() {
-                return new PropertyDialog(MenuPlugin.this, getPluginContext());
+                return new PropertyDialog(MenuPlugin.this);
             }
         };
         add(new DialogLink("property-dialog", new Model("Add Property"), dialogFactory, dialogService));
@@ -121,7 +121,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog() {
-                return new RenameDialog(MenuPlugin.this, getPluginContext());
+                return new RenameDialog(MenuPlugin.this);
             }
         };
         add(new DialogLink("rename-dialog", new Model("Rename Node"), dialogFactory, dialogService));
@@ -196,7 +196,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog() {
-                return new PermissionsDialog(MenuPlugin.this, getPluginContext());
+                return new PermissionsDialog(MenuPlugin.this);
             }
         };
         add(new DialogLink("permissions-dialog", new Model("View Permissions"), dialogFactory, dialogService));

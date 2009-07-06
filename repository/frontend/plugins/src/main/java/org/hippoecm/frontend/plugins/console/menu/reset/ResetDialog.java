@@ -26,7 +26,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.repository.api.HippoNode;
 
@@ -38,7 +37,7 @@ public class ResetDialog extends AbstractDialog {
     protected boolean hasPendingChanges;
     protected MenuPlugin plugin;
 
-    public ResetDialog(MenuPlugin plugin, IPluginContext context) {
+    public ResetDialog(MenuPlugin plugin) {
         this.plugin = plugin;
 
         Component message;
