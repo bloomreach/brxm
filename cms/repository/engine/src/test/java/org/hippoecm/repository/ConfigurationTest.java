@@ -30,6 +30,7 @@ public class ConfigurationTest extends TestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        session.getRootNode().addNode("test");
     }
 
     @After
