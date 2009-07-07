@@ -17,6 +17,8 @@ package org.hippoecm.hst.core.logging;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstRequestImpl;
+import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.logging.Logger;
@@ -40,12 +42,15 @@ public class HstComponentInvokerProfiler {
             Object [] args = call.getArgs();
             String method = call.toShortString();
             String pathInfo = "";
+            String windowName = "";
             String refNamespace = "";
             
             try {
                 
                 if (args.length > 1 && args[1] instanceof HstRequest) {
                     HstRequest hstRequest = (HstRequest) args[1];
+                    HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
+                    windowName = window.getName();
                     HstRequestContext hstRequestContext = hstRequest.getRequestContext();
                     HstContainerURL url = hstRequestContext.getBaseURL();
                     pathInfo = url.getPathInfo();
@@ -59,7 +64,7 @@ public class HstComponentInvokerProfiler {
                 
             } finally {
                 long laps = System.currentTimeMillis() - start;
-                logger.info("Profiling: {} of {} on {} took {}ms.", new Object [] { method, refNamespace, pathInfo, Long.toString(laps) });
+                logger.info("Profiling: {} of {} ({}) on {} took {}ms.", new Object [] { method, windowName, refNamespace, pathInfo, Long.toString(laps) });
             }
         } else {
             return call.proceed();
