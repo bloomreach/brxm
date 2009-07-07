@@ -31,6 +31,8 @@ public class ConfigurationTest extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         session.getRootNode().addNode("test");
+        session.save();
+        session.refresh(false);
     }
 
     @After
