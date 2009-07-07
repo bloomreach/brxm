@@ -109,7 +109,7 @@ public class HippoItem implements HippoBean{
         try {
             Object o = this.objectConverter.getObject(node, relPath);
             if(o == null) {
-                log.debug("Cannot get bean.");
+                log.debug("Cannot get bean for relpath {} for current bean {}.", relPath, this.getPath());
                 return null;
             }
             return (T)o;
