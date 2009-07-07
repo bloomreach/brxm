@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.jcr;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
@@ -31,6 +32,14 @@ public class GenericEventListener implements EventListener {
     public final void onEvent(EventIterator events) {
         while (events.hasNext()) {
             Event event = events.nextEvent();
+            try {
+                // we are never interested in events from the cms logging in the repository or the version environment
+                if(event.getPath().startsWith("/hippo:log") || event.getPath().startsWith("/jcr:system")) {
+                    continue;
+                }
+            } catch (RepositoryException e) {
+               continue;
+            }
             int type = event.getType();
             
             switch (type) {
