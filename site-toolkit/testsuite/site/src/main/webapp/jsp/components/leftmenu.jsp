@@ -100,4 +100,8 @@
         </li>
     </c:forEach>
     </ul>
+    
 </div>
+
+<img src="<hst:link path="/images/onehippo.gif"/>" alt="Static image path" title="If you see this image, then the static resource link works correctly!" /> 
+<br/>

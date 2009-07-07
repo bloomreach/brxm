@@ -28,6 +28,7 @@ import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
+import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class ActionValve extends AbstractValve
@@ -44,6 +45,7 @@ public class ActionValve extends AbstractValve
             HstContainerURL baseURL = requestContext.getBaseURL();
             HstComponentWindow window = findActionWindow(context.getRootComponentWindow(), baseURL.getActionWindowReferenceNamespace());
             HstResponseState responseState = null;
+            HstURLFactory urlFactory = getUrlFactory();
             
             if (window == null) {
                 if (log.isWarnEnabled()) {
@@ -66,7 +68,11 @@ public class ActionValve extends AbstractValve
                 Map<String, String []> renderParameters = response.getRenderParamerters();
                 
                 if (renderParameters != null) {
-                    getUrlFactory().getServletUrlProvider().mergeParameters(baseURL, window.getReferenceNamespace(), renderParameters);
+                    String referenceNamespace = window.getReferenceNamespace();
+                    if (urlFactory.isReferenceNamespaceIgnored()) {
+                        referenceNamespace = "";
+                    }
+                    urlFactory.getServletUrlProvider().mergeParameters(baseURL, referenceNamespace, renderParameters);
                     response.setRenderParameters(null);
                 }
                 
@@ -109,10 +115,10 @@ public class ActionValve extends AbstractValve
                         baseURL.setActionWindowReferenceNamespace(null);
                         
                         if (baseURL.isViaPortlet()) {
-                            HstContainerURLProvider urlProvider = getUrlFactory().getPortletUrlProvider();
+                            HstContainerURLProvider urlProvider = urlFactory.getPortletUrlProvider();
                             responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL));
                         } else {
-                            HstContainerURLProvider urlProvider = getUrlFactory().getServletUrlProvider();
+                            HstContainerURLProvider urlProvider = urlFactory.getServletUrlProvider();
                             responseState.sendRedirect(urlProvider.toURLString(baseURL, requestContext));
                         }
                     } catch (UnsupportedEncodingException e) {
