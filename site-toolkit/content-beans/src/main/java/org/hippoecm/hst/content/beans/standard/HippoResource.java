@@ -15,12 +15,9 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
 
 import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +26,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 @Node(jcrType = "hippo:resource")
-public class HippoResource extends HippoItem implements HippoBean {
+public class HippoResource extends HippoItem {
 
 
     private static Logger log = LoggerFactory.getLogger(HippoResource.class);
