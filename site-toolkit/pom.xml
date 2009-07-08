@@ -260,24 +260,6 @@
   
     <dependencies>
 
-      <!-- JTA Spec -->
-          
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jta_1.1_spec</artifactId>
-        <version>${jta.version}</version>
-        <scope>provided</scope>
-      </dependency>
-
-      <!-- JCR API dependency -->
-      
-      <dependency>
-        <groupId>javax.jcr</groupId>
-        <artifactId>jcr</artifactId>
-        <version>${javax.jcr.version}</version>
-        <scope>provided</scope>
-      </dependency>
-
       <!-- Servlet API dependencies -->
       
       <dependency>
@@ -287,6 +269,31 @@
         <scope>provided</scope>
       </dependency>
       
+      <!-- JTA Spec -->
+          
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jta_1.1_spec</artifactId>
+        <version>${jta.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <!-- JCR API and Hippo ECM API dependency -->
+      
+      <dependency>
+        <groupId>javax.jcr</groupId>
+        <artifactId>jcr</artifactId>
+        <version>${javax.jcr.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.hippoecm</groupId>
+        <artifactId>hippo-ecm-api</artifactId>
+        <version>${hippoecm.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
       <!-- Java Mail dependencies for site example -->
       
       <dependency>
@@ -548,13 +555,6 @@
     
       <dependency>
         <groupId>org.hippoecm</groupId>
-        <artifactId>hippo-ecm-package-war</artifactId>
-        <version>${hippoecm.version}</version>
-        <type>war</type>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-repository-connector</artifactId>
         <version>${hippoecm.version}</version>
         <exclusions>
@@ -575,6 +575,21 @@
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
         <version>${hippoecm.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.hippoecm</groupId>
+        <artifactId>hippo-ecm-package-war</artifactId>
+        <version>${hippoecm.version}</version>
+        <type>war</type>
+      </dependency>
+
+      <!-- Jackrabbit -->
+            
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-jcr-commons</artifactId>
+        <version>${jackrabbit.version}</version>
       </dependency>
       
       <dependency>

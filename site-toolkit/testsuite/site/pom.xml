@@ -40,14 +40,19 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>provided</scope>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-api</artifactId>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>javax.portlet</groupId>
@@ -374,6 +379,13 @@
           <artifactId>jcr</artifactId>
           <scope>provided</scope>
         </dependency>
+        <!--
+        <dependency>
+          <groupId>org.hippoecm</groupId>
+          <artifactId>hippo-ecm-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        -->
         <dependency>
           <groupId>org.onehippo.ecm.hst</groupId>
           <artifactId>hst-api</artifactId>
@@ -429,8 +441,11 @@
                   <tasks>
 
                     <echo>Replacing HST Shared Libraries.</echo>
-                    <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${jetspeed.hst.shared.lib}/jcr-1.0.jar" overwrite="true" />
                     <copy file="${settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${jetspeed.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" overwrite="true" />
+                    <copy file="${settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${jetspeed.hst.shared.lib}/jcr-1.0.jar" overwrite="true" />
+                    <!--
+                    <copy file="${settings.localRepository}/org/hippoecm/hippo-ecm-api/${hippoecm.version}/hippo-ecm-api-${hippoecm.version}.jar" tofile="${jetspeed.hst.shared.lib}/hippo-ecm-api-${hippoecm.version}.jar" overwrite="true" />
+                    -->
                     <copy file="../../api/target/hst-api-${project.version}.jar" tofile="${jetspeed.hst.shared.lib}/hst-api-${project.version}.jar" overwrite="true" />
                     <copy file="../../commons/target/hst-commons-${project.version}.jar" tofile="${jetspeed.hst.shared.lib}/hst-commons-${project.version}.jar" overwrite="true" />
                     
@@ -451,6 +466,7 @@
                         <include name="commons-proxy-*.jar" />
                       </fileset>
                       <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF/lib">
+                        <exclude name="asm-*.jar" />
                         <exclude name="commons-*.jar" />
                         <exclude name="hst-client-*.jar" />
                         <exclude name="jstl-*.jar" />
@@ -528,7 +544,6 @@ And, click `HST-2 Demo' menu!
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-jta_1.1_spec</artifactId>
                 <version>${jta.version}</version>
-                <scope>runtime</scope>
               </dependency>
             </dependencies>
           </plugin>
