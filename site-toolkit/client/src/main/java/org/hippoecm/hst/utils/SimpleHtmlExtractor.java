@@ -20,6 +20,10 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import org.htmlcleaner.CleanerProperties;
+import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.TagNode;
+
 /**
  * Simple HTML Tag Extractor
  * 
@@ -27,17 +31,51 @@ import java.io.StringWriter;
  */
 public class SimpleHtmlExtractor {
     
+    private static final int BUF_SIZE = 512;
+    
+    private static boolean htmlCleanerInitialized;
+    private static HtmlCleaner cleaner;
+    
     private SimpleHtmlExtractor() {
     }
-
+    
+    static synchronized void initCleaner() {
+        if (!htmlCleanerInitialized) {
+            cleaner = new HtmlCleaner();
+            CleanerProperties props = cleaner.getProperties();
+            props.setOmitComments(true);
+            props.setOmitXmlDeclaration(true);
+            htmlCleanerInitialized = true;
+        }
+    }
+    
     /**
-     * Extracts inner HTML of the tag which is first found by the tagName.
+     * Extracts inner HTML of the tag which is first found by the <CODE>tagName</CODE>.
+     * If <CODE>byHtmlCleaner</CODE> parameter is set to true, then HTML Cleaner library
+     * will be used to extract the inner content of the tag found by the <CODE>tagName</CODE>.
+     * <P>
+     * You can use <CODE>byHtmlCleaner</CODE> option to extract complex html tags, but it
+     * requires more operations because it needs html cleaning.
+     * So, for simple html input and for better performance, you can extract tags with simple
+     * extracting option by setting <CODE>byHtmlCleaner</CODE> to false.
+     * If the html input is more complex and you need more correct result, then you need to set
+     * <CODE>byHtmlCleaner</CODE> to true with more operational cost.
+     * </P>
      * @param html
      * @param tagName
+     * @param byHtmlCleaner
      * @return
      */
-    public static String getTagInnerContent(String html, String tagName) {
-        String tagInnerContent = "";
+    public static String getInnerHtml(String html, String tagName, boolean byHtmlCleaner) {
+        if (byHtmlCleaner) {
+            return getInnerHtmlByCleaner(html, tagName);
+        } else {
+            return getInnerHtmlSimply(html, tagName);
+        }
+    }
+    
+    private static String getInnerHtmlSimply(String html, String tagName) {
+        String tagInnerHtml = "";
         
         tagName = tagName.toUpperCase();
         String startTag = "<" + tagName;
@@ -55,7 +93,7 @@ public class SimpleHtmlExtractor {
         try {
             sr = new StringReader(html);
             br = new BufferedReader(sr);
-            sw = new StringWriter(512);
+            sw = new StringWriter(BUF_SIZE);
             out = new PrintWriter(sw);
             
             String line = br.readLine();
@@ -97,7 +135,7 @@ public class SimpleHtmlExtractor {
             }
             
             out.flush();
-            tagInnerContent = sw.toString();
+            tagInnerHtml = sw.toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -107,7 +145,30 @@ public class SimpleHtmlExtractor {
             if (sw != null) try { sw.close(); } catch (Exception ce) { }
         }
         
-        return tagInnerContent;
+        return tagInnerHtml;
+    }
+    
+    private static String getInnerHtmlByCleaner(String html, String tagName) {
+        if (!htmlCleanerInitialized) {
+            initCleaner();
+        }
+        
+        String tagInnerHtml = null;
+        
+        if (html != null) {
+            try {
+                TagNode rootNode = cleaner.clean(html);
+                TagNode [] targetNodes = rootNode.getElementsByName(tagName, true);
+                
+                if (targetNodes.length > 0) {
+                    tagInnerHtml = cleaner.getInnerHtml(targetNodes[0]);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        
+        return tagInnerHtml;
     }
     
 }

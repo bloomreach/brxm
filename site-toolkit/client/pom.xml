@@ -97,7 +97,13 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
     </dependency>
+    <dependency>
+      <groupId>net.sourceforge.htmlcleaner</groupId>
+      <artifactId>htmlcleaner</artifactId>
+    </dependency>
+    
     <!-- Test dependencies -->
+    
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

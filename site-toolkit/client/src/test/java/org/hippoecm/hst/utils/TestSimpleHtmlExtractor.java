@@ -17,27 +17,119 @@ package org.hippoecm.hst.utils;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.junit.Test;
 
 public class TestSimpleHtmlExtractor {
 
-    private static final String SIMPLE_HTML =
-        "<html>\n" +
-        "<head>\n" +
-        "<title>Hello</title>\n" +
-        "</head>\n" +
-        "<body>\n" +
-        "<h1>Hello, World!</h1>\n" +
-        "</body>\n" +
+    private static final String SIMPLE_HTML = 
+        "<html>\n" + 
+        "<head>\n" + 
+        "<title>Hello</title>\n" + 
+        "</head>\n" + 
+        "<body>\n" + 
+        "<h1>Hello, World!</h1>\n" + 
+        "</body>\n" + 
         "</html>";
     
     @Test
     public void testHtmlExtractor() throws Exception {
-        String titleInnerContent = SimpleHtmlExtractor.getTagInnerContent(SIMPLE_HTML, "title");
-        assertEquals("title content is not properly extracted: " + titleInnerContent.trim(), "Hello", titleInnerContent.trim());
+        String titleInnerHtml = SimpleHtmlExtractor.getInnerHtml(SIMPLE_HTML, "title", false);
+        System.out.println("title's inner content: " + titleInnerHtml);
+        assertEquals("title content is not properly extracted: " + titleInnerHtml.trim(), "Hello", titleInnerHtml.trim());
+
+        String bodyInnerHtml = SimpleHtmlExtractor.getInnerHtml(SIMPLE_HTML, "body", false);
+        System.out.println("body's inner content: " + bodyInnerHtml);
+        assertEquals("body content is not properly extracted: " + bodyInnerHtml.trim(), "<h1>Hello, World!</h1>", bodyInnerHtml.trim());
         
-        String bodyInnerContent = SimpleHtmlExtractor.getTagInnerContent(SIMPLE_HTML, "body");
-        assertEquals("body content is not properly extracted: " + bodyInnerContent.trim(), "<h1>Hello, World!</h1>", bodyInnerContent.trim());
+        titleInnerHtml = SimpleHtmlExtractor.getInnerHtml(SIMPLE_HTML, "title", true);
+        System.out.println("title's inner content: " + titleInnerHtml);
+        assertEquals("title content is not properly extracted: " + titleInnerHtml.trim(), "Hello", titleInnerHtml.trim());
+
+        bodyInnerHtml = SimpleHtmlExtractor.getInnerHtml(SIMPLE_HTML, "body", true);
+        System.out.println("body's inner content: " + bodyInnerHtml);
+        assertEquals("body content is not properly extracted: " + bodyInnerHtml.trim(), "<h1>Hello, World!</h1>", bodyInnerHtml.trim());
+    }
+    
+    @Test
+    public void testSimpleBenchmark() throws Exception {
+        String featuresHtml = readFeaturesHtml();
+        
+        //System.out.println("featuresHtml: " + featuresHtml);
+        
+        String bodyInnerHtml = SimpleHtmlExtractor.getInnerHtml(featuresHtml, "body", false);
+        String bodyInnerHtml2 = SimpleHtmlExtractor.getInnerHtml(featuresHtml, "body", true);
+        
+        //System.out.println("bodyInnerHtml: " + bodyInnerHtml);
+        //System.out.println("bodyInnerHtml2: " + bodyInnerHtml2);
+        
+        long t1 = 0L, t2 = 0L;
+        
+        t1 = System.currentTimeMillis();
+        
+        for (int i = 0; i < 100; i++) {
+            for (int j = 0; j < 10; j++) {
+                bodyInnerHtml = SimpleHtmlExtractor.getInnerHtml(featuresHtml, "body", false);
+            }
+        }
+
+        t2 = System.currentTimeMillis();
+        
+        System.out.println("Simple Extracting (no html cleaner) with 10 * 100 times: " + (t2 - t1) + "ms.");
+        
+        t1 = System.currentTimeMillis();
+        
+        for (int i = 0; i < 100; i++) {
+            for (int j = 0; j < 10; j++) {
+                bodyInnerHtml = SimpleHtmlExtractor.getInnerHtml(featuresHtml, "body", true);
+            }
+        }
+
+        t2 = System.currentTimeMillis();
+        
+        System.out.println("Simple Extracting (w/ html cleaner) with 10 * 100 times: " + (t2 - t1) + "ms.");
+    }
+    
+    private String readFeaturesHtml() throws Exception {
+        String html = "";
+        
+        InputStream is = null;
+        InputStreamReader isr = null;
+        BufferedReader br = null;
+        StringWriter sw = null;
+        PrintWriter out = null;
+        
+        try {
+            is = getClass().getClassLoader().getResourceAsStream("org/hippoecm/hst/utils/features.html");
+            isr = new InputStreamReader(is, "ISO-8859-1");
+            br = new BufferedReader(isr);
+            sw = new StringWriter(14000);
+            out = new PrintWriter(sw);
+            
+            String line = br.readLine();
+            
+            while (line != null) {
+                out.println(line);
+                line = br.readLine();
+            }
+            
+            out.flush();
+            
+            html = sw.toString();
+        } finally {
+            if (is != null) try { is.close(); } catch (Exception ce) { }
+            if (isr != null) try { isr.close(); } catch (Exception ce) { }
+            if (br != null) try { br.close(); } catch (Exception ce) { }
+            if (sw != null) try { sw.close(); } catch (Exception ce) { }
+            if (out != null) try { out.close(); } catch (Exception ce) { }
+        }
+        
+        return html;
     }
     
 }
