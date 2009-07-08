@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -32,34 +32,95 @@ ________________________________________________________________________________
    <script type="text/javascript">
     leftpx=450;
    </script>
-   <div class='group'> 
+   <div class='group'>
     <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/contribs/fill_markuped_text.png" alt='Fill marked-up text screenshot'/> 
-    </div></div> 
+    </div></div>
      <p>
-       Wrote the description for the document 'multibazaar2009'. 
+       Wrote the description for the document 'multibazaar2009'.
        The description contains
        italic text, namely <i>350 people and organizations</i>,
        boldfaced text, namely <b>address</b>, and
-       underlined text, namely <u>Malvin City</u>. 
+       underlined text, namely <u>Malvin City</u>.
        Italic, boldface and underline are examples of markup.
      </p>
    </div>
 
    <p>
      Ensure that in some way you have <a href='./set_edit_mode.html'>set the document in </a>
-     <a href='../concepts/edit_mode.html'>edit mode</a>.  
+     <a href='../concepts/edit_mode.html'>edit mode</a>.
      Click in a marked-up text inputfield, which is a multiline inputfield with clickable
      letters ('buttons') above it, at least 'B' for boldface, 'I' for italic and 'U' for underline.
      The text you type may consist of more than one line and also may contain markup,
-     which you may add using the markup 'buttons' above the 
-    <a href='../concepts/inputfield.html'>inputfield</a>. 
+     which you may add using the markup 'buttons' above the
+    <a href='../concepts/inputfield.html'>inputfield</a>.
    </p>
+
+
   <p>
-     <a href='./learn_meaning_of_inputfield.html'>Ensure 
-      that you know the meaning of the <a href='../concepts/markuped_text.html'>markuped text</a> 
-      inputfield</a> and fill in an appriopiate piece of text.
+   The Hippo CMS supplies two different types of fields for markuped text.
+   One for simple markuped text, as shown in the above example and one with much more capabilities.
+   Which capabilities will depend on the configuration of you system. Note that:
   </p>
+
+  <ol>
+   <li>A markuped field will at first be in review mode, even if the whole document is in edit mode.
+       In review mode, clicking the buttons will have no effect. The buttons have a gray color.
+   </li>
+   <li>Click in the markuped field to get it into edit mode. The buttons become colored and can
+       be used.
+   </li>
+   <li>Only one markuped field can be in edit mode at any time. If you are editing in one and click
+       in another, the first will go back to read mode.
+   </li>
+   <li>If the cursor is on a link in a markuped field and the field is in review mode, the
+       address of the link is shown in the lower left corner of the CMS window. In edit mode,
+       link addresses are not shown.
+   </li>
+   <li>You can copy/paste structurally markuped text from other applications into a Hippo markup field:
+      Structural markup like Boldface, italic, underline, headers and tables will all be preserved.
+   </li>
+   <li>If you copy/paste style markuped text into a Hippo markup field, the style markup will be
+    removed by a filter during save. Thus, colors will be removed. This is to ensure that the website
+    of your company will have one style. If every author would be allowed to add all kinds of colors,
+    your companies website would become an ugly mess of disharmonic colors.
+    You company can allow writers to add particular colors, by configuring special markup elements.
+   </li>
+   <li>A filter will change anything that looks remotely like a URL into an external link.
+       This includes any
+       sequence of characters that contains points with more than one character between the points.
+   </li>
+  </ol>
+
+  <p>The following notes are only important if you copy/paste from external application or if your
+     markuped text fields are configured so that you have an html mode where you
+     can add xhtml tags directly.
+  </p>
+
+  <ol>
+   <li>A filter will remove all none-xhtml elements from the markuped text, ensuring that the
+       text will always be correct xhtml, which is processable in the websites.
+   </li>
+   <li>If the contents of the markuped field does not comply to xhtml rules, the filter will
+       apply changes to ensure that it does. These changes may have effects you did not
+       expect. For example: img tags are not allowed in pre tags. If the filter finds an img tag inside
+       of a pre tag it will probably add a pre end tag before the img tag and an pre start tag after
+       the img element. It may also try an other solution for the non-compliance.
+   </li>
+   <li>Some external application contain lots of non-compliant markup, so if weird changes happen to such
+      text, improve by hand and try to avoid that external application.
+   </li>
+   <li>Apparently, in some cases, the filter changes xhtml comments into normal text. You will
+    then see text starting with '&lt;!--' in the text. You can safely remove that.
+   </li>
+  </ol>
+
+   <p>
+    <a href='./learn_meaning_of_inputfield.html'>
+      As with any inputfield: ensure that you know what type of information is expected in your company for this
+      inputfield</a> and fill in an appropriate piece of text.
+  </p>
+
 
    <subsection name='Next'>
     <ul>
